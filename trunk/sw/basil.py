@@ -1,5 +1,5 @@
 
-#sys.path.append('../TL/')
+#sys.path.append('./TL')
 
 import sys
 
