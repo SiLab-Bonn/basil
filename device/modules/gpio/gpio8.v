@@ -1,30 +1,42 @@
 
 module gpio8
+#(
+    parameter BASEADDR = 16'h0000,
+    parameter HIGHADDR = 16'h0000
+)
 (
   BUS_CLK, 
   BUS_RST,
-  
   BUS_ADD,                    
-  BUS_DATA_IN,                    
+  BUS_DATA,                    
   BUS_RD,                    
   BUS_WR,                    
-  BUS_DATA_OUT,  
-  
+
   IO
-  
 ); 
 
+    input           BUS_CLK;
+    input           BUS_RST;
+    input   [15:0]  BUS_ADD;
+    output  [7:0]   BUS_DATA;
+    input           BUS_RD;
+    input           BUS_WR;
+    inout   [7:0]   IO;
+        
+    reg     [7:0]   IP_DATA;
 
-    input                       BUS_CLK;
-    input                       BUS_RST;
-    input      [15:0]           BUS_ADD;
-    input      [7:0]            BUS_DATA_IN;
-    input                       BUS_RD;
-    input                       BUS_WR;
-    output     reg [7:0]        BUS_DATA_OUT;
-
-
-    inout [7:0] IO;
+    bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) ibus_to_ip
+    (
+        .BUS_RD(BUS_RD),
+        .BUS_WR(BUS_WR),
+        .BUS_ADD(BUS_ADD),
+        .BUS_DATA(BUS_DATA),
+        
+        .IP_RD(IP_RD),
+        .IP_WR(IP_WR),
+        .IP_ADD(IP_ADD),
+        .IP_DATA(IP_DATA) 
+    );
 
     /////
     wire SOFT_RST; //0
@@ -32,18 +44,18 @@ module gpio8
     reg [7:0] OUTPUT_DATA; //2
     reg [7:0] DIRECTION; //3
 
-    always@(*) begin
-        if(BUS_ADD == 1)
-            BUS_DATA_OUT = INPUT_DATA;
-        else if(BUS_ADD == 2)
-            BUS_DATA_OUT = OUTPUT_DATA;
-        else if(BUS_ADD == 3)
-            BUS_DATA_OUT = DIRECTION;
-        else
-            BUS_DATA_OUT = 0;
+    always@(posedge BUS_CLK) begin
+        if(BUS_WR) begin
+            if(IP_ADD == 1)
+                IP_DATA <= INPUT_DATA;
+            else if(IP_ADD == 2)
+                IP_DATA <= OUTPUT_DATA;
+            else if(IP_ADD == 3)
+                IP_DATA <= DIRECTION;
+        end
     end
 
-    assign SOFT_RST = (BUS_ADD==0 && BUS_WR);  
+    assign SOFT_RST = (IP_ADD==0 && IP_WR);  
 
     wire RST;
     assign RST = BUS_RST | SOFT_RST;
@@ -53,11 +65,11 @@ module gpio8
             DIRECTION <= 0;
             OUTPUT_DATA <= 0;
         end
-        else if(BUS_WR) begin
-            if(BUS_ADD == 2)
-                OUTPUT_DATA <= BUS_DATA_IN; 
-            else if(BUS_ADD == 3)
-                DIRECTION <= BUS_DATA_IN; 
+        else if(IP_WR) begin
+            if(IP_ADD == 2)
+                OUTPUT_DATA <= BUS_DATA; 
+            else if(IP_ADD == 3)
+                DIRECTION <= BUS_DATA; 
         end
     end
 
