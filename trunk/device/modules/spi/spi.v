@@ -140,7 +140,7 @@ wire SDI_MEM;
 
 blk_mem_gen_8_to_1_2k memout(
   .CLKA(BUS_CLK), .CLKB(SPI_CLK), .DOUTA(BUS_IN_MEM_IB), .DOUTB(SDI_MEM), .WEA(BUS_WR && BUS_ADD >=8 && BUS_ADD < 8+MEM_BYTES), .WEB(1'b0),
-  .ADDRA(memout_addra), .ADDRB(memout_addrb), .DINA(BUS_DATA_IN_IB), .DINB()
+  .ADDRA(memout_addra), .ADDRB(memout_addrb), .DINA(BUS_DATA_IN_IB), .DINB(1'b0)
 );
 
 wire [10:0] ADDRA_MIN;
@@ -155,11 +155,11 @@ blk_mem_gen_8_to_1_2k memin(
 
 wire RST_SYNC;
 wire RST_SOFT_SYNC;
-pulse_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(SPI_CLK), .pulse_out(RST_SOFT_SYNC));
+cdc_pulse_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(SPI_CLK), .pulse_out(RST_SOFT_SYNC));
 assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
 
 wire START_SYNC;
-pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(SPI_CLK), .pulse_out(START_SYNC));
+cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(SPI_CLK), .pulse_out(START_SYNC));
 
 wire [15:0] STOP_BIT;
 assign STOP_BIT = CONF_BIT_OUT + CONF_WAIT;

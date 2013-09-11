@@ -1,91 +1,100 @@
 
 module sram_fifo
-(
-  BUS_CLK,
-  BUS_CLK270,  
-  BUS_RST,                  
-  BUS_ADD,                    
-  BUS_DATA_IN,                    
-  BUS_RD,                    
-  BUS_WR,                    
-  BUS_DATA_OUT,  
-  
-  SRAM_A,
-  SRAM_IO,
-  SRAM_BHE_B,
-  SRAM_BLE_B,
-  SRAM_CE1_B,
-  SRAM_OE_B,
-  SRAM_WE_B,
+#(
+    parameter                   DEPTH = 21'h10_0000,
+    parameter                   FIFO_ALMOST_FULL_THRESHOLD = 95, // in percent
+    parameter                   FIFO_ALMOST_EMPTY_THRESHOLD = 5 // in percent
+) (
+    input wire                  BUS_CLK,
+    input wire                  BUS_CLK270,
+    input wire                  BUS_RST,
+    input wire [15:0]           BUS_ADD,
+    input wire [7:0]            BUS_DATA_IN,
+    input wire                  BUS_RD,
+    input wire                  BUS_WR,
+    output reg [7:0]            BUS_DATA_OUT,
     
-  USB_READ,
-  USB_DATA,
-  
-  FIFO_READ_NEXT_OUT,
-  FIFO_EMPTY_IN,
-  FIFO_DATA,
-
-  FIFO_NOT_EMPTY,
-  FIFO_READ_ERROR
-); 
+    output wire [19:0]          SRAM_A,
+    inout wire [15:0]           SRAM_IO,
+    output wire                 SRAM_BHE_B,
+    output wire                 SRAM_BLE_B,
+    output wire                 SRAM_CE1_B,
+    output wire                 SRAM_OE_B,
+    output wire                 SRAM_WE_B,
+    
+    input wire                  USB_READ,
+    output wire [7:0]           USB_DATA,
+    
+    output reg                  FIFO_READ_NEXT_OUT,
+    input wire                  FIFO_EMPTY_IN,
+    input wire [31:0]           FIFO_DATA,
+    
+    output wire                 FIFO_NOT_EMPTY,
+    output wire                 FIFO_FULL,
+    output reg                  FIFO_NEAR_FULL,
+    output wire                 FIFO_READ_ERROR
+);
 
 parameter OUT_LINES = 1;
 
-input                       BUS_CLK;
-input                       BUS_CLK270;
-input                       BUS_RST;
-input      [15:0]           BUS_ADD;
-input      [7:0]           	BUS_DATA_IN;
-input      					BUS_RD;
-input      					BUS_WR;
-output     reg [7:0]        BUS_DATA_OUT;
-
-
-output wire [19:0] SRAM_A;
-inout wire [15:0] SRAM_IO;
-output wire SRAM_BHE_B;
-output wire SRAM_BLE_B;
-output wire SRAM_CE1_B;
-output wire SRAM_OE_B;
-output wire SRAM_WE_B;
-    
-input USB_READ;
-output [7:0] USB_DATA;
-  
-output reg FIFO_READ_NEXT_OUT;
-input FIFO_EMPTY_IN;
-input [31:0] FIFO_DATA;
-output FIFO_NOT_EMPTY;
-output FIFO_READ_ERROR;
-  
 /////
 wire SOFT_RST; //0
-reg [20:0] CONF_SIZE; //1 - 2 -3
-reg [7:0] CONF_READ_ERROR;
-
-
-always@(*) begin
-    BUS_DATA_OUT = 0;
-    
-    if(BUS_ADD == 1)
-        BUS_DATA_OUT = {3'b000, CONF_SIZE[20:16]};
-    else if(BUS_ADD == 2)
-        BUS_DATA_OUT = CONF_SIZE[15:8];
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT = CONF_SIZE[7:0]; 
-    else if(BUS_ADD == 4)
-        BUS_DATA_OUT = CONF_READ_ERROR;
-end
-
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);  
 
 wire RST;
 assign RST = BUS_RST | SOFT_RST;
 
+reg [7:0] status_regs[7:0];
+
+// reg 0 for SOFT_RST
+wire [7:0] FIFO_ALMOST_FULL_VALUE;
+assign FIFO_ALMOST_FULL_VALUE = status_regs[1];
+wire [7:0] FIFO_ALMOST_EMPTY_VALUE;
+assign FIFO_ALMOST_EMPTY_VALUE = status_regs[2];
+
+always @(posedge BUS_CLK)
+begin
+    if(RST)
+    begin
+        status_regs[0] <= 0;
+        status_regs[1] <= 255*FIFO_ALMOST_FULL_THRESHOLD/100;
+        status_regs[2] <= 255*FIFO_ALMOST_EMPTY_THRESHOLD/100;
+        status_regs[3] <= 8'b0;
+        status_regs[4] <= 8'b0;
+        status_regs[5] <= 8'b0;
+        status_regs[6] <= 8'b0;
+        status_regs[7] <= 8'b0;
+    end
+    else if(BUS_WR && BUS_ADD < 8)
+    begin
+        status_regs[BUS_ADD[2:0]] <= BUS_DATA_IN;
+    end
+end
+
+// read reg
+reg [20:0] CONF_SIZE; // write data count, 1 - 2 - 3
+reg [7:0] CONF_READ_ERROR; // read error count (read attempts when FIFO is empty), 4
+
+always @ (negedge BUS_CLK) begin //(*) begin
+    //BUS_DATA_OUT = 0;
+    
+    if(BUS_ADD == 1)
+        BUS_DATA_OUT <= {3'b000, CONF_SIZE[20:16]};
+    else if(BUS_ADD == 2)
+        BUS_DATA_OUT <= CONF_SIZE[15:8];
+    else if(BUS_ADD == 3)
+        BUS_DATA_OUT <= CONF_SIZE[7:0]; 
+    else if(BUS_ADD == 4)
+        BUS_DATA_OUT <= CONF_READ_ERROR;
+    else
+        BUS_DATA_OUT <= 0;
+end
+
+
+
 wire empty, full;
 reg [19:0] rd_ponter, next_rd_ponter, wr_pointer, next_wr_pointer;
 
-///
 reg usb_read_dly;
 always@(posedge BUS_CLK)
     usb_read_dly <= USB_READ;
@@ -108,31 +117,32 @@ always@(posedge BUS_CLK)
         read_state <= READ_TRY_SRAM;
     else
         read_state <= read_state_next;
-        
-  always@(*) begin
-       read_state_next = read_state;
-       
-        case(read_state)
-            READ_TRY_SRAM: 
-                if(!empty)
-                    read_state_next = READ_SRAM;
-            READ_SRAM:
-                if(empty)
-                    read_state_next = READ_TRY_SRAM;
-                else
-                    read_state_next = READ_NOP_SRAM;
-            READ_NOP_SRAM:
-                if(empty)
-                    read_state_next = READ_TRY_SRAM;
-                else if(USB_READ && byte_to_read == 1 && !empty)
-                    read_state_next = READ_SRAM;
-            default : read_state_next = READ_TRY_SRAM;
-        endcase
-    end      
+
+always@(*) begin
+    read_state_next = read_state;
+    
+    case(read_state)
+        READ_TRY_SRAM: 
+            if(!empty)
+                read_state_next = READ_SRAM;
+        READ_SRAM:
+            if(empty)
+                read_state_next = READ_TRY_SRAM;
+            else
+                read_state_next = READ_NOP_SRAM;
+        READ_NOP_SRAM:
+            if(empty)
+                read_state_next = READ_TRY_SRAM;
+            else if(USB_READ && byte_to_read == 1 && !empty)
+                read_state_next = READ_SRAM;
+        default : read_state_next = READ_TRY_SRAM;
+    endcase
+end
 
 reg [15:0] sram_data_read;
 
 assign read_sram = (read_state == READ_SRAM);
+
 always@(posedge BUS_CLK)
     if(read_sram)
         sram_data_read <= SRAM_IO;
@@ -141,13 +151,12 @@ assign USB_DATA = byte_to_read ?  sram_data_read[7:0] : sram_data_read[15:8] ;
 
 always@(posedge BUS_CLK) begin
     if(RST)
-        CONF_READ_ERROR <=0;
+        CONF_READ_ERROR <= 0;
     else if(empty && USB_READ && CONF_READ_ERROR != 8'hff)
         CONF_READ_ERROR <= CONF_READ_ERROR +1;
 end      
-///
-          
-///
+
+
 reg write_sram;
 reg full_ff;
 
@@ -175,15 +184,12 @@ assign SRAM_BLE_B = 0;
 assign SRAM_CE1_B = 0;
 assign SRAM_OE_B = !read_sram;
 
-
-parameter DEPTH = 21'h10_0000;
-
 always @ (*) begin
      if(rd_ponter == DEPTH-1)
         next_rd_ponter = 0;
      else
         next_rd_ponter = rd_ponter + 1;
-end   
+end
 
 always@(posedge BUS_CLK) begin
     if(RST)
@@ -198,7 +204,7 @@ always @ (*) begin
         next_wr_pointer = 0;
     else
         next_wr_pointer = wr_pointer + 1;
-end   
+end
 
 always@(posedge BUS_CLK) begin
     if(RST)
@@ -221,18 +227,27 @@ always@(posedge BUS_CLK) begin
 end
 
 
-always @ (*) begin
+always @ (posedge BUS_CLK) begin //(*) begin
     if(wr_pointer >= rd_ponter)
         if(read_state == READ_NOP_SRAM)
-            CONF_SIZE = wr_pointer - rd_ponter+1;
+            CONF_SIZE <= wr_pointer - rd_ponter+1;
         else
-            CONF_SIZE = wr_pointer - rd_ponter;
+            CONF_SIZE <= wr_pointer - rd_ponter;
     else
-        CONF_SIZE = wr_pointer + (DEPTH-rd_ponter); 
-end	
+        CONF_SIZE <= wr_pointer + (DEPTH-rd_ponter);
+end
 
 assign FIFO_NOT_EMPTY = !empty;
+assign FIFO_FULL = full;
 assign FIFO_READ_ERROR = (CONF_READ_ERROR != 0);
 
+always @(posedge BUS_CLK) begin
+    if(RST)
+        FIFO_NEAR_FULL <= 1'b0;
+    else if (((((FIFO_ALMOST_FULL_VALUE+1)*DEPTH)>>8) <= CONF_SIZE) || (FIFO_ALMOST_FULL_VALUE == 8'b0 && CONF_SIZE >= 0))
+        FIFO_NEAR_FULL <= 1'b1;
+    else if (((((FIFO_ALMOST_EMPTY_VALUE+1)*DEPTH)>>8) >= CONF_SIZE && FIFO_ALMOST_EMPTY_VALUE != 8'b0) || CONF_SIZE == 21'b0)
+        FIFO_NEAR_FULL <= 1'b0;
+end
 
 endmodule
