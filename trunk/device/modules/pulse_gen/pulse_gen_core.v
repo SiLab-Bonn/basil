@@ -1,32 +1,20 @@
 
-module pulse_gen
+module pulse_gen_core
 (
-  BUS_CLK, 
-  BUS_RST,
-  
-  BUS_ADD,                    
-  BUS_DATA_IN,                    
-  BUS_RD,                    
-  BUS_WR,                    
-  BUS_DATA_OUT,  
-  
-  PULSE_CLK,
-  EXT_START,
-  PULSE
-  
+    input                       BUS_CLK,
+    input                       BUS_RST,
+    input      [15:0]           BUS_ADD,
+    input      [7:0]            BUS_DATA_IN,
+    input                       BUS_RD,
+    input                       BUS_WR,
+    output     reg [7:0]        BUS_DATA_OUT,
+    
+    input PULSE_CLK,
+    input EXT_START,
+    output reg PULSE
 ); 
 
-input                       BUS_CLK;
-input                       BUS_RST;
-input      [15:0]           BUS_ADD;
-input      [7:0]           	BUS_DATA_IN;
-input      					BUS_RD;
-input      					BUS_WR;
-output     reg [7:0]        BUS_DATA_OUT;
 
-input PULSE_CLK;
-input EXT_START;
-output reg PULSE;
 
 /////
 wire SOFT_RST; 
@@ -35,19 +23,19 @@ reg CONF_EN;
 reg [15:0] CONF_DELAY; 
 reg [15:0] CONF_WIDTH;
 
-always@(*) begin
-    if(BUS_ADD == 2)
-        BUS_DATA_OUT = {7'b0, CONF_EN};
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT = CONF_DELAY[15:8];
-    else if(BUS_ADD == 4)
-        BUS_DATA_OUT = CONF_DELAY[7:0];
-    else if(BUS_ADD == 5)
-        BUS_DATA_OUT = CONF_WIDTH[15:8];
-    else if(BUS_ADD == 6)
-        BUS_DATA_OUT = CONF_WIDTH[7:0];
-    else
-        BUS_DATA_OUT = 0;
+always@(posedge BUS_CLK) begin
+    if(BUS_RD) begin
+        if(BUS_ADD == 2)
+            BUS_DATA_OUT <= {7'b0, CONF_EN};
+        else if(BUS_ADD == 3)
+            BUS_DATA_OUT <= CONF_DELAY[15:8];
+        else if(BUS_ADD == 4)
+            BUS_DATA_OUT <= CONF_DELAY[7:0];
+        else if(BUS_ADD == 5)
+            BUS_DATA_OUT <= CONF_WIDTH[15:8];
+        else if(BUS_ADD == 6)
+            BUS_DATA_OUT <= CONF_WIDTH[7:0];
+    end
 end
 
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
@@ -64,7 +52,7 @@ always @(posedge BUS_CLK) begin
     end
     else if(BUS_WR) begin
         if(BUS_ADD == 2)
-             CONF_EN <= BUS_DATA_IN[0];
+            CONF_EN <= BUS_DATA_IN[0];
         else if(BUS_ADD == 3)
             CONF_DELAY[15:8] <= BUS_DATA_IN;
         else if(BUS_ADD == 4)
