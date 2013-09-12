@@ -1,11 +1,12 @@
 
-
 module fast_spi_rx
-(
+#(
+    parameter IDENTYFIER = 4'b0001
+)(
     input SCLK,
     input SDI,
     input SEN,
-     
+
     input FIFO_READ,
     output FIFO_EMPTY,
     output [31:0] FIFO_DATA,
@@ -18,10 +19,9 @@ module fast_spi_rx
     input BUS_WR,
     input BUS_RD
 ); 
-  
- parameter IDENTYFIER = 4'b0001;
+
 //output format #ID (as parameter IDENTYFIER + 12 id-frame + 16 bit data) 
-  
+
 wire SOFT_RST;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 
@@ -29,7 +29,7 @@ wire RST;
 assign RST = BUS_RST | SOFT_RST; 
 
 reg CONF_EN;
-  
+
 always @(posedge BUS_CLK) begin
     if(RST) begin
         CONF_EN <= 0;
@@ -43,12 +43,12 @@ end
 reg [7:0] LOST_DATA_CNT;
 
 always @(posedge BUS_CLK) begin
-    if(BUS_ADD == 2)
-        BUS_DATA_OUT <= {6'b0, CONF_EN};
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= LOST_DATA_CNT;
-    else
-        BUS_DATA_OUT <= 0;
+    if(BUS_RD) begin
+        if(BUS_ADD == 2)
+            BUS_DATA_OUT <= {6'b0, CONF_EN};
+        else if(BUS_ADD == 3)
+            BUS_DATA_OUT <= LOST_DATA_CNT;
+    end
 end
 
 wire RST_SYNC;
@@ -60,13 +60,13 @@ wire CONF_EN_SYNC;
 assign CONF_EN_SYNC  = CONF_EN;
 
 reg [7:0] sync_cnt;
-    always@(posedge BUS_CLK) begin
-        if(RST)
-            sync_cnt <= 120;
-        else if(sync_cnt != 100)
-            sync_cnt <= sync_cnt +1;
-    end 
-    
+always@(posedge BUS_CLK) begin
+    if(RST)
+        sync_cnt <= 120;
+    else if(sync_cnt != 100)
+        sync_cnt <= sync_cnt +1;
+end 
+
 wire RST_LONG;
 assign RST_LONG = sync_cnt[7];
 
@@ -135,14 +135,14 @@ cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) cdc_syncfifo_i
 );
 
 gerneric_fifo #(.DATA_SIZE(32), .DEPTH(1024))  fifo_i
-              ( .clk(BUS_CLK), .reset(RST_LONG | BUS_RST), 
-                .write(!cdc_fifo_empty),
-                .read(FIFO_READ), 
-                .data_in(cdc_data_out), 
-                .full(fifo_full), 
-                .empty(FIFO_EMPTY), 
-                .data_out(FIFO_DATA[31:0]), .size() 
-                );
+( .clk(BUS_CLK), .reset(RST_LONG | BUS_RST), 
+    .write(!cdc_fifo_empty),
+    .read(FIFO_READ), 
+    .data_in(cdc_data_out), 
+    .full(fifo_full), 
+    .empty(FIFO_EMPTY), 
+    .data_out(FIFO_DATA[31:0]), .size() 
+);
 
 //assign FIFO_DATA[31:30]  = 0;
 
