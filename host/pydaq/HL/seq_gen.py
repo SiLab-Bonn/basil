@@ -1,3 +1,14 @@
+#
+# ------------------------------------------------------------
+# Copyright (c) SILAB , Physics Institute of Bonn University
+# ------------------------------------------------------------
+#
+# SVN revision information:
+#  $Rev::                       $:
+#  $Author::                    $:
+#  $Date::                      $:
+#
+
 from HL.HardwareLayer import HardwareLayer
 from struct import pack, unpack
 
@@ -14,7 +25,6 @@ class seq_gen(HardwareLayer):
         self._intf.write(self._conf['base_addr'] + 1, [0])
 
     def set_size(self, value):
-        print unpack('BBBB', pack('>L', value))[2:4]
         self._intf.write(self._conf['base_addr'] + 3, unpack('BBBB', pack('>L', value))[2:4])
 
     def get_size(self):
