@@ -82,6 +82,7 @@ module gpac_adc_rx
     wire CONF_DONE; 
      
     always @(posedge BUS_CLK) begin
+        if (IP_RD) begin
         if(BUS_ADD == 1)
             BUS_DATA_OUT <= {7'b0, CONF_DONE};
         else if(BUS_ADD == 2)
@@ -98,8 +99,7 @@ module gpac_adc_rx
             BUS_DATA_OUT <= CONF_SAMPEL_DLY;        
         else if(BUS_ADD == 15)
             BUS_DATA_OUT <= CONF_ERROR_LOST;
-        else
-            BUS_DATA_OUT <= 0;           
+        end          
     end
     
     reg ADC_IN_BUF;
