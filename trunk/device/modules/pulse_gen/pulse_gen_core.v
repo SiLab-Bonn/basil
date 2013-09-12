@@ -4,9 +4,9 @@
  * ------------------------------------------------------------
  *
  * SVN revision information:
- * @version $Rev::               $:
- * @author  $Author::            $: 
- * @date    $Date::              $:
+ * $Rev::                       $:
+ * $Author::                    $: 
+ * $Date::                      $:
  */
  
 module pulse_gen_core
