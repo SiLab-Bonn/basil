@@ -87,6 +87,7 @@ wire [15:0] CONF_REP_START;
 assign CONF_REP_START = {status_regs[8],status_regs[9]};
 
 always @ (negedge BUS_CLK) begin
+    if(BUS_RD) begin
     if(BUS_ADD == 1)
         BUS_DATA_OUT <= {7'b0,CONF_DONE};
     else if(BUS_ADD == 3)
@@ -103,6 +104,7 @@ always @ (negedge BUS_CLK) begin
         BUS_DATA_OUT <= BUS_STATUS_OUT;
     else if(BUS_ADD < 16 + MEM_BYTES )
         BUS_DATA_OUT <= BUS_IN_MEM;
+    end
 end
 
 reg [15:0] out_bit_cnt;
