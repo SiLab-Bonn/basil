@@ -1,12 +1,21 @@
+#
+# ------------------------------------------------------------
+# Copyright (c) SILAB , Physics Institute of Bonn University 
+# ------------------------------------------------------------
+#
+# SVN revision information:
+#  $Rev::                       $:
+#  $Author::                    $: 
+#  $Date::                      $:
+#
+#--------------------------------------------------------------
+ 
 #...............................................................................
 #  Constraints File - Xilinx UCF format
 #
 #   	Device  :		XC3S1000-4FGG320C
 #   	Board   :		S3-Multi-IO-Board V1.03
 #   	Project :		S3_Multi_IO_USB
-#
-#	Autor   :		Johannes Schneider
-#   	Created :		09.12.2008
 #
 #...............................................................................
 #
@@ -59,22 +68,14 @@ NET "WR_B" LOC = V12;
 NET "RD_B" IOSTANDARD = LVCMOS33;
 NET "RD_B" LOC = U10;
 
-NET "DATA[7]" IOSTANDARD = LVCMOS33;
-NET "DATA[7]" LOC = T7;
-NET "DATA[6]" IOSTANDARD = LVCMOS33;
-NET "DATA[6]" LOC = R7;
-NET "DATA[5]" IOSTANDARD = LVCMOS33;
-NET "DATA[5]" LOC = V9;
-NET "DATA[4]" IOSTANDARD = LVCMOS33;
-NET "DATA[4]" LOC = U9;
-NET "DATA[3]" IOSTANDARD = LVCMOS33;
-NET "DATA[3]" LOC = P11;
-NET "DATA[2]" IOSTANDARD = LVCMOS33;
-NET "DATA[2]" LOC = N11;
-NET "DATA[1]" IOSTANDARD = LVCMOS33;
-NET "DATA[1]" LOC = R12;
-NET "DATA[0]" IOSTANDARD = LVCMOS33;
-NET "DATA[0]" LOC = T12;
+NET "BUS_DATA[7]" LOC = T7 |IOSTANDARD = LVCMOS33;
+NET "BUS_DATA[6]" LOC = R7 |IOSTANDARD = LVCMOS33;
+NET "BUS_DATA[5]" LOC = V9 |IOSTANDARD = LVCMOS33;
+NET "BUS_DATA[4]" LOC = U9 |IOSTANDARD = LVCMOS33;
+NET "BUS_DATA[3]" LOC = P11 |IOSTANDARD = LVCMOS33;
+NET "BUS_DATA[2]" LOC = N11 |IOSTANDARD = LVCMOS33;
+NET "BUS_DATA[1]" LOC = R12 |IOSTANDARD = LVCMOS33;
+NET "BUS_DATA[0]" LOC = T12 |IOSTANDARD = LVCMOS33;
 
 NET "ADD[15]" IOSTANDARD = LVCMOS33;
 NET "ADD[15]" LOC = R11;
@@ -412,7 +413,4 @@ NET "SCL" LOC = D14;
 #NET "DOUT13"  LOC = B6; #DOUT13
 #NET "DOUT14"  LOC = A4; #DOUT14
 #NET "DOUT15"  LOC = C8; #DOUT15
-
-
-
 

@@ -1,4 +1,14 @@
-
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * ------------------------------------------------------------
+ *
+ * SVN revision information:
+ *  $Rev::                       $:
+ *  $Author::                    $: 
+ *  $Date::                      $:
+ */
+ 
 
 module cdc_pulse_sync_cnt (input clk_in, input pulse_in, input clk_out, output pulse_out);
 

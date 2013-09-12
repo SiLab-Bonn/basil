@@ -1,4 +1,14 @@
-
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * ------------------------------------------------------------
+ *
+ * SVN revision information:
+ *  $Rev::                       $:
+ *  $Author::                    $: 
+ *  $Date::                      $:
+ */
+ 
 module rrp_arbiter 
 #(
     parameter WIDTH = 4,
@@ -37,6 +47,7 @@ reg hold;
 
 always@(*) begin
     normal_mode = 0;
+    select = 0;
     if( |HOLD_REQ && !hold) begin       
         m = 0;
         select = m;

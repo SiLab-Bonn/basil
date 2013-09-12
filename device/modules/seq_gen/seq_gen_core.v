@@ -1,5 +1,15 @@
-
-module seq_gen
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * ------------------------------------------------------------
+ *
+ * SVN revision information:
+ *  $Rev::                       $:
+ *  $Author::                    $: 
+ *  $Date::                      $:
+ */
+ 
+module seq_gen_core
 #(
     parameter MEM_BYTES = 16384,
     parameter OUT_BITS = 16 //4,8,16,32
@@ -30,6 +40,7 @@ output reg [OUT_BITS-1:0] SEQ_OUT;
 `include "../includes/log2func.v"
 
 localparam ADDR_SIZEA = log2(MEM_BYTES);
+localparam ADDR_SIZEB = (OUT_BITS > 8) ? log2(MEM_BYTES/(OUT_BITS/8)) : log2(MEM_BYTES*(8/OUT_BITS));
 
 reg [7:0] status_regs [15:0];  
 
@@ -109,15 +120,9 @@ end
 
 reg [15:0] out_bit_cnt;
 
-generate
-    if (OUT_BITS<=8) begin
-        wire [log2(MEM_BYTES*(8/OUT_BITS))-1:0] memout_addrb;
-    end else begin
-        wire [ log2(MEM_BYTES/(OUT_BITS/8))-1:0] memout_addrb;
-    end
-endgenerate
-
+wire [ADDR_SIZEB-1:0] memout_addrb;
 assign memout_addrb = out_bit_cnt-1;
+
 wire [ADDR_SIZEA-1:0] memout_addra;
 wire [15:0] BUS_ADD_MEM;
 assign BUS_ADD_MEM = BUS_ADD-16;

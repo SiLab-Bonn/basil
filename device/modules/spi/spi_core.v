@@ -1,43 +1,35 @@
-
-module spi
-(
-  BUS_CLK,                     
-  BUS_RST,                  
-  BUS_ADD,                    
-  BUS_DATA_IN,                    
-  BUS_RD,                    
-  BUS_WR,                    
-  BUS_DATA_OUT,  
-  
-  SPI_CLK,
-  
-  SCLK,
-  SDI,
-  SDO,
-  
-  SEN,
-  SLD
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * ------------------------------------------------------------
+ *
+ * SVN revision information:
+ *  $Rev::                       $:
+ *  $Author::                    $: 
+ *  $Date::                      $:
+ */
  
-); 
-
-parameter MEM_BYTES = 2;
-
-input                       BUS_CLK;
-input                       BUS_RST;
-input      [15:0]           BUS_ADD;
-input      [7:0]           	BUS_DATA_IN;
-input      					BUS_RD;
-input      					BUS_WR;
-output     reg [7:0]        BUS_DATA_OUT;
-
-input SPI_CLK;
-
-output SCLK;
-input SDO;
-output reg SDI;
-
-output reg SEN; 
-output reg SLD;
+module spi_core
+#(
+    parameter MEM_BYTES = 2
+)(
+    input                       BUS_CLK,
+    input                       BUS_RST,
+    input      [15:0]           BUS_ADD,
+    input      [7:0]            BUS_DATA_IN,
+    input                       BUS_RD,
+    input                       BUS_WR,
+    output     reg [7:0]        BUS_DATA_OUT,
+    
+    input SPI_CLK,
+    
+    output SCLK,
+    input SDO,
+    output reg SDI,
+    
+    output reg SEN,
+    output reg SLD
+);
 
 reg [7:0] status_regs [8+MEM_BYTES*2-1:0];  
 
@@ -66,8 +58,6 @@ end
 reg [7:0] BUS_IN_MEM;
 reg [7:0] BUS_OUT_MEM;
 
-// 1 - finished
-
 wire START;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 assign START = (BUS_ADD==1 && BUS_WR);
@@ -89,25 +79,27 @@ assign CONF_REPEAT = status_regs[7];
 wire [7:0] BUS_STATUS_OUT;
 assign BUS_STATUS_OUT = status_regs[BUS_ADD];
 
-always @(*) begin
-  if(BUS_ADD == 1)
-    BUS_DATA_OUT = {7'b0,CONF_DONE};
-  else if(BUS_ADD == 3)
-      BUS_DATA_OUT = CONF_BIT_OUT[15:8];    
-  else if(BUS_ADD == 4)
-      BUS_DATA_OUT = CONF_BIT_OUT[7:0];
-  else if(BUS_ADD == 5)
-      BUS_DATA_OUT = CONF_WAIT[15:8];
-  else if(BUS_ADD == 6)
-      BUS_DATA_OUT = CONF_WAIT[7:0]; 
-  else if(BUS_ADD == 7)
-      BUS_DATA_OUT = CONF_REPEAT;     
-  else if(BUS_ADD < 8)
-    BUS_DATA_OUT = BUS_STATUS_OUT;
-  else if(BUS_ADD < 8+MEM_BYTES )
-    BUS_DATA_OUT = BUS_IN_MEM;
-  else if(BUS_ADD < 8+MEM_BYTES+ MEM_BYTES)
-    BUS_DATA_OUT = BUS_OUT_MEM;
+always@(posedge BUS_CLK) begin
+    if(BUS_RD) begin
+        if(BUS_ADD == 1)
+            BUS_DATA_OUT <= {7'b0,CONF_DONE};
+        else if(BUS_ADD == 3)
+            BUS_DATA_OUT <= CONF_BIT_OUT[15:8];    
+        else if(BUS_ADD == 4)
+            BUS_DATA_OUT <= CONF_BIT_OUT[7:0];
+        else if(BUS_ADD == 5)
+            BUS_DATA_OUT <= CONF_WAIT[15:8];
+        else if(BUS_ADD == 6)
+            BUS_DATA_OUT <= CONF_WAIT[7:0]; 
+        else if(BUS_ADD == 7)
+            BUS_DATA_OUT <= CONF_REPEAT;     
+        else if(BUS_ADD < 8)
+            BUS_DATA_OUT <= BUS_STATUS_OUT;
+        else if(BUS_ADD < 8+MEM_BYTES )
+            BUS_DATA_OUT <= BUS_IN_MEM;
+        else if(BUS_ADD < 8+MEM_BYTES+ MEM_BYTES)
+            BUS_DATA_OUT <= BUS_OUT_MEM;
+    end
 end
 
 reg [15:0] out_bit_cnt;
@@ -139,8 +131,8 @@ end
 wire SDI_MEM;
 
 blk_mem_gen_8_to_1_2k memout(
-  .CLKA(BUS_CLK), .CLKB(SPI_CLK), .DOUTA(BUS_IN_MEM_IB), .DOUTB(SDI_MEM), .WEA(BUS_WR && BUS_ADD >=8 && BUS_ADD < 8+MEM_BYTES), .WEB(1'b0),
-  .ADDRA(memout_addra), .ADDRB(memout_addrb), .DINA(BUS_DATA_IN_IB), .DINB(1'b0)
+    .CLKA(BUS_CLK), .CLKB(SPI_CLK), .DOUTA(BUS_IN_MEM_IB), .DOUTB(SDI_MEM), .WEA(BUS_WR && BUS_ADD >=8 && BUS_ADD < 8+MEM_BYTES), .WEB(1'b0),
+    .ADDRA(memout_addra), .ADDRB(memout_addrb), .DINA(BUS_DATA_IN_IB), .DINB(1'b0)
 );
 
 wire [10:0] ADDRA_MIN;
@@ -149,8 +141,8 @@ wire [13:0] ADDRB_MIN;
 assign ADDRB_MIN = out_bit_cnt-1;
 reg SEN_INT;
 blk_mem_gen_8_to_1_2k memin(
-  .CLKA(BUS_CLK), .CLKB(SPI_CLK), .DOUTA(BUS_OUT_MEM_IB), .DOUTB(), .WEA(1'b0), .WEB(SEN_INT), 
-  .ADDRA( ADDRA_MIN ), .ADDRB( ADDRB_MIN ), .DINA(BUS_DATA_IN_IB), .DINB(SDO)
+    .CLKA(BUS_CLK), .CLKB(SPI_CLK), .DOUTA(BUS_OUT_MEM_IB), .DOUTB(), .WEA(1'b0), .WEB(SEN_INT), 
+    .ADDRA( ADDRA_MIN ), .ADDRB( ADDRB_MIN ), .DINA(BUS_DATA_IN_IB), .DINB(SDO)
 );
 
 wire RST_SYNC;
@@ -193,7 +185,7 @@ always @ (posedge SPI_CLK)
         REPEAT_COUNT <= 1;
     else if(out_bit_cnt == STOP_BIT)
         REPEAT_COUNT <= REPEAT_COUNT + 1;
-        
+
 
 reg [1:0] sync_ld;
 always @(posedge SPI_CLK) begin
@@ -218,5 +210,5 @@ always @(negedge SPI_CLK)
 
 always @(negedge SPI_CLK)
     SEN <= SEN_INT;
-    
+
 endmodule

@@ -1,5 +1,14 @@
-
-
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * ------------------------------------------------------------
+ *
+ * SVN revision information:
+ *  $Rev::                       $:
+ *  $Author::                    $: 
+ *  $Date::                      $:
+ */
+ 
 module gpac_adc_iobuf
 (   
     input ADC_DCO_P, ADC_DCO_N,
