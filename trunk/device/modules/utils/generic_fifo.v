@@ -1,3 +1,15 @@
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * ------------------------------------------------------------
+ *
+ * SVN revision information:
+ *  $Rev::                       $:
+ *  $Author::                    $: 
+ *  $Date::                      $:
+ */
+ 
+ 
 module gerneric_fifo ( clk, reset, write, read, data_in, 
                        full, empty, data_out, size);
 

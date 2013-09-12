@@ -1,4 +1,14 @@
-
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * ------------------------------------------------------------
+ *
+ * SVN revision information:
+ *  $Rev::                       $:
+ *  $Author::                    $: 
+ *  $Date::                      $:
+ */
+ 
 
 module cdc_syncfifo #(parameter DSIZE = 34, parameter ASIZE = 2)
     (

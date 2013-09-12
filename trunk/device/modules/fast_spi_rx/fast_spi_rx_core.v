@@ -1,5 +1,15 @@
-
-module fast_spi_rx
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * ------------------------------------------------------------
+ *
+ * SVN revision information:
+ *  $Rev::                       $:
+ *  $Author::                    $: 
+ *  $Date::                      $:
+ */
+ 
+module fast_spi_rx_core
 #(
     parameter IDENTYFIER = 4'b0001
 )(

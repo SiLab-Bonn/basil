@@ -22,6 +22,7 @@ sidev.WriteExternal(GPIO_BASE_ADDRESS + GPIO_SOFT_RST, [0x00])
 direction = 0x7f
 print "Set Direction:", hex(direction)
 sidev.WriteExternal(GPIO_BASE_ADDRESS + GPIO_DIRECTION, [direction])
+print "Direction:", hex(sidev.ReadExternal(GPIO_BASE_ADDRESS + GPIO_DIRECTION, 1)[0])
 
 output = 0x05
 print "Set Output:", hex(output)
