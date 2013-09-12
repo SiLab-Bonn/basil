@@ -1,4 +1,14 @@
-
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) SiLab , Physics Institute of Bonn University 
+ * ------------------------------------------------------------
+ *
+ * SVN revision information:
+ * @version $Rev::               $:
+ * @author  $Author::            $: 
+ * @date    $Date::              $:
+ */
+ 
 module pulse_gen_core
 (
     input                       BUS_CLK,
