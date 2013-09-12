@@ -1,4 +1,13 @@
-
+#
+# ------------------------------------------------------------
+# Copyright (c) SILAB , Physics Institute of Bonn University 
+# ------------------------------------------------------------
+#
+# SVN revision information:
+#  $Rev::                       $:
+#  $Author::                    $: 
+#  $Date::                      $:
+#
 
 class Base(object):
     def __init__(self, conf):

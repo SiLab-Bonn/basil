@@ -1,3 +1,15 @@
+#
+# ------------------------------------------------------------
+# Copyright (c) SILAB , Physics Institute of Bonn University
+# ------------------------------------------------------------
+#
+# SVN revision information:
+#  $Rev::                       $:
+#  $Author::                    $:
+#  $Date::                      $:
+#
+
+
 from RL.StdRegister import StdRegister
 from collections import Iterable
 

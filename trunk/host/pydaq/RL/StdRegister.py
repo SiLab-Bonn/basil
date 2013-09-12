@@ -1,3 +1,14 @@
+#
+# ------------------------------------------------------------
+# Copyright (c) SILAB , Physics Institute of Bonn University
+# ------------------------------------------------------------
+#
+# SVN revision information:
+#  $Rev::                       $:
+#  $Author::                    $:
+#  $Date::                      $:
+#
+
 from RL.RegisterLayer import RegisterLayer
 from utils.BitLogic import BitLogic
 
