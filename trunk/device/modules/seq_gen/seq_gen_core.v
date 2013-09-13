@@ -91,11 +91,11 @@ assign CONF_WAIT = {status_regs[5],status_regs[6]};
 wire [7:0] CONF_REPEAT;
 assign CONF_REPEAT = status_regs[7];
 
-wire [7:0] BUS_STATUS_OUT;
-assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
-
 wire [15:0] CONF_REP_START;
 assign CONF_REP_START = {status_regs[8],status_regs[9]};
+
+wire [7:0] BUS_STATUS_OUT;
+assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
 
 always @ (negedge BUS_CLK) begin
     if(BUS_RD) begin
