@@ -290,12 +290,12 @@ class GPAC(HardwareLayer):
 
     def init(self):
         #PWR GPIO
-        self.SetI2CMux(self.I2CBUS_DAC)
+        self._set_i2c_mux(self.I2CBUS_DAC)
         self._intf.write(self._base_addr + self.POWER_GPIO_ADD, (self.PCA9554_CFG, self.POWER_GPIO_CFG))
         self._intf.write(self._base_addr + self.POWER_GPIO_ADD, (self.PCA9554_OUT, 0x00))
 
         #ADC GPIO
-        self.SetI2CMux(self.I2CBUS_ADC)
+        self._set_i2c_mux(self.I2CBUS_ADC)
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_CFG, 0x00))
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_OUT, 0x00))
 
@@ -303,9 +303,9 @@ class GPAC(HardwareLayer):
         adc_setup = self.MAX11644_EXT_REF | self.MAX11644_SETUP
         self._intf.write(self._base_addr + self.MAX11644_ADD, [adc_setup])
 
-        self.SetI2CMux(self.I2CBUS_DEFAULT)
+        self._set_i2c_mux(self.I2CBUS_DEFAULT)
 
-    def SetVoltage(self, channel, value, unit='mV'):
+    def set_voltage(self, channel, value, unit='mV'):
 
         DACOffset = self._cal[channel]['DACV']['offset']
         DACGain = self._cal[channel]['DACV']['gain']
@@ -326,10 +326,10 @@ class GPAC(HardwareLayer):
         karg['value'] = 0 if DACval < 0 else DACval
         self.SetDACValue(**karg)
 
-    def GetVoltage(self, channel, unit='mV'):
+    def get_voltage(self, channel, unit='mV'):
 
         karg = self._map[channel]['ADCV']
-        raw = self.GetADCValue(**karg)
+        raw = self._get_adc_value(**karg)
 
         #VADCOffset = 0
         #VADCGain = 2
@@ -351,10 +351,10 @@ class GPAC(HardwareLayer):
         else:
             raise TypeError("Invalid unit type.")
 
-    def GetCurrent(self, channel, unit='mA'):
+    def get_current(self, channel, unit='mA'):
 
         karg = self._map[channel]['ADCI']
-        raw = self.GetADCValue(**karg)
+        raw = self._get_adc_value(**karg)
 
         #IADCOffset =    0.0;
         #IADCGain   =   20.0;
@@ -365,7 +365,7 @@ class GPAC(HardwareLayer):
         uA = 0
 
         if('SRC' in channel):
-            rawV = self.GetVoltage(channel, unit='raw')
+            rawV = self.get_voltage(channel, unit='raw')
             uA = (float)((raw - rawV - IADCOffset) / IADCGain)
         else:
             uA = (float)((raw - IADCOffset) / IADCGain)
@@ -381,15 +381,15 @@ class GPAC(HardwareLayer):
         else:
             raise TypeError("Invalid unit type.")
 
-    def Enable(self, channel, value):
+    def set_enable(self, channel, value):
         karg = self._map[channel]['GPIOEN']
         karg['value'] = value
-        self.SetPowerGPIO(**karg)
+        self._set_power_gpio(**karg)
 
-    def GetOverCurrent(self, channel):
-        return False if (self.GetPowerGPIO() & (0x01 << self._map[channel]['GPIOOC']['bit'])) else True
+    def get_over_current(self, channel):
+        return False if (self._get_power_gpio() & (0x01 << self._map[channel]['GPIOOC']['bit'])) else True
 
-    def SetCurrentLimit(self, channel, value, unit='mA'):
+    def set_current_limit(self, channel, value, unit='mA'):
 
         #TODO: add units / calibration
         CURRENT_LIMIT_GAIN = 20
@@ -397,7 +397,7 @@ class GPAC(HardwareLayer):
 
         self.SetDACValue(self.CURRENT_LIMIT_DAC_SLAVE_ADD, self.CURRENT_LIMIT_DAC_CH, raw)
 
-    def SetCurrent(self, channel, value, unit='mA'):
+    def set_current(self, channel, value, unit='mA'):
 
         #DACOffset  = -1024.0;
         #DACGain    = 0.5;
@@ -419,14 +419,14 @@ class GPAC(HardwareLayer):
         karg['value'] = DACval
         self.SetDACValue(**karg)
 
-    def SetI2CMux(self, bus_sel):
+    def _set_i2c_mux(self, bus_sel):
         self._intf.write(self._base_addr + self.PCA9540B_ADD, [bus_sel])
 
     def GetI2CMux(self):
         return self._intf.read(self._base_addr + self.PCA9540B_ADD | 1, 1)[0]
 
     def SetDACValue(self, addr, channel, value):
-        self.SetI2CMux(self.I2CBUS_DAC)
+        self._set_i2c_mux(self.I2CBUS_DAC)
 
         A = value >> 4 & 0xff
         B = value << 4 & 0xff
@@ -434,10 +434,10 @@ class GPAC(HardwareLayer):
         data = (self.DAC7578_CMD_UPDATE_CH | channel, A, B)
         self._intf.write(self._base_addr + addr, data)
 
-        self.SetI2CMux(self.I2CBUS_DEFAULT)
+        self._set_i2c_mux(self.I2CBUS_DEFAULT)
 
-    def GetADCValue(self, mux_ch, adc_ch):
-        self.SetI2CMux(self.I2CBUS_ADC)
+    def _get_adc_value(self, mux_ch, adc_ch):
+        self._set_i2c_mux(self.I2CBUS_ADC)
 
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_OUT, mux_ch))
 
@@ -448,24 +448,24 @@ class GPAC(HardwareLayer):
         raw_ch0 = ((0x0f & rawData[0]) * 256) + rawData[1]
         raw_ch1 = ((0x0f & rawData[2]) * 256) + rawData[3]
 
-        self.SetI2CMux(self.I2CBUS_DEFAULT)
+        self._set_i2c_mux(self.I2CBUS_DEFAULT)
 
         return raw_ch0 if adc_ch == 0 else raw_ch1
 
-    def SetPowerGPIO(self, bit, value):
-        self.SetI2CMux(self.I2CBUS_DAC)
+    def _set_power_gpio(self, bit, value):
+        self._set_i2c_mux(self.I2CBUS_DAC)
 
-        gpio = BitVector(size=8, intVal=self.GetPowerGPIO())
+        gpio = BitVector(size=8, intVal=self._get_power_gpio())
         gpio[7 - bit] = value
         self._intf.write(self._base_addr + self.POWER_GPIO_ADD, (self.PCA9554_OUT, gpio.intValue()))
 
-        self.SetI2CMux(self.I2CBUS_DEFAULT)
+        self._set_i2c_mux(self.I2CBUS_DEFAULT)
 
-    def GetPowerGPIO(self):
+    def _get_power_gpio(self):
         i2cbus = self.GetI2CMux()
-        self.SetI2CMux(self.I2CBUS_DAC)
+        self._set_i2c_mux(self.I2CBUS_DAC)
 
         self._intf.write(self._base_addr + self.POWER_GPIO_ADD, [self.PCA9554_IN])
         ret = self._intf.read(self._base_addr + self.POWER_GPIO_ADD | 1, 1)[0]
-        self.SetI2CMux(i2cbus)
+        self._set_i2c_mux(i2cbus)
         return ret

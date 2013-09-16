@@ -23,7 +23,7 @@ class TrackRegister(RegisterLayer):
         for track in self._conf['tracks']:
                 bv = BitVector(size=self._conf["seq_size"])
                 self._tracks[track['name']] = bv
-
+                
     def __getitem__(self, items):
         if items in self._tracks:
             return  self._tracks[items]
@@ -31,8 +31,13 @@ class TrackRegister(RegisterLayer):
             raise ValueError('Item does not exist')
 
     def __setitem__(self, key, value):
-        raise NotImplementedError("To be implemented.")
+        self._tracks[key] = value
 
+    def clear(self):
+        'Clear tracks in memory - all zero'
+        for track in self._tracks:
+            self._tracks[track].reset(0)
+        
     def write(self, size=-1):
         if size == -1:
             size = self._conf["seq_size"]
