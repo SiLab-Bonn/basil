@@ -10,6 +10,7 @@
 #
 
 from HL.HardwareLayer import HardwareLayer
+import numpy as np
 
 
 class data_fifo(HardwareLayer):
@@ -30,7 +31,9 @@ class data_fifo(HardwareLayer):
     def get_data(self, size='all'):
         if(size == 'all'):
             size = self.get_size()
-        return self._intf.read(self._conf['base_data_addr'], size * 2)
-
+        
+        data = self._intf.read(self._conf['base_data_addr'], (size - (size % 2)) * 2)
+        return np.fromstring(data.tostring(), dtype=np.dtype('>i4'))
+    
     def get_error_count(self):
         return self._intf.read(self._conf['base_addr'] + 4, 1)[0]
