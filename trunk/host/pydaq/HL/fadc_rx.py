@@ -27,9 +27,9 @@ class fadc_rx(HardwareLayer):
     def start(self):
         self._intf.write(self._conf['base_addr'] + 1, [0])
 
-    def set_align_to_sync(self, value=True):
+    def set_align_to_sync(self, value=False):
         current = self._intf.read(self._conf['base_addr'] + 2, 1)[0]
-        self._intf.write(self._conf['base_addr'] + 2, [current | value])
+        self._intf.write(self._conf['base_addr'] + 2, [(current & 0xfe) | value])
     
     def get_align_to_sync(self):
         return True if (self._intf.read(self._conf['base_addr'] + 2, 1)[0] & 0x01) else False
