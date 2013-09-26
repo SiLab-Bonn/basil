@@ -45,7 +45,17 @@ class TrackRegister(RegisterLayer):
         bv = BitVector(size=self._conf["seq_width"] * size)
         for i in xrange(size):
             for track in self._conf['tracks']:
-                bit = i * self._conf["seq_width"] + 16 - 1 - track['position']
+                bit = 0
+                if self._conf["seq_width"] >= 8:
+                    bit = i * self._conf["seq_width"] + self._conf["seq_width"] - 1 - track['position']
+                elif self._conf["seq_width"] == 4:
+                    if i % 2 == 0:
+                        bit = (i + 1) * self._conf["seq_width"] + self._conf["seq_width"] - 1 - track['position']
+                    else:
+                        bit = (i - 1) * self._conf["seq_width"] + self._conf["seq_width"] - 1 - track['position']
+                else:
+                    raise NotImplementedError("To be implemented.")
+                                  
                 bv[bit] = self._tracks[track['name']][i]
         
         ba = utils.bitvector_to_byte_array(bv)
