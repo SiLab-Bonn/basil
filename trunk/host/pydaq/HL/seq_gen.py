@@ -46,9 +46,9 @@ class seq_gen(HardwareLayer):
     def get_data(self, addr, size):
         return self._intf.read(self._conf['base_addr'] + 16 + addr, size)
     
-    def set_repaet_start(self, value):
+    def set_repeat_start(self, value):
         self._intf.write(self._conf['base_addr'] + 8, unpack('BBBB', pack('>L', value))[2:4])
 
-    def get_repaet_start(self):
+    def get_repeat_start(self):
         ret = self._intf.read(self._conf['base_addr'] + 8, 2)
         return ret[0] * (2 ** 8) + ret[1]
