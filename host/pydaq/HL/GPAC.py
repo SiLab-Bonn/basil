@@ -146,16 +146,16 @@ class GPAC(HardwareLayer):
                       'ADCI': {'offset': 0, 'gain': 2},
                     },
             'VREF': {
-                      'ADCV': {'mux_ch': 0, 'adc_ch': 0},
+                      'ADCV': {'offset': 0, 'gain': 2},
                     },
             'AUX0': {
-                      'ADCV': {'mux_ch': 9, 'adc_ch': 0},
+                      'ADCV': {'offset': 0, 'gain': 2},
                     },
             'INJ0': {
-                      'DACV': {'addr': DAC7578_3_ADD, 'channel': 6},
+                      'DACV': {'offset': 0, 'gain': 0.5},
                     },
             'INJ1': {
-                      'DACV': {'addr': DAC7578_3_ADD, 'channel': 7},
+                      'DACV': {'offset': 0, 'gain': 0.5},
                     },
             }
 
