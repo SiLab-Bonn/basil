@@ -65,6 +65,7 @@ assign START = (BUS_ADD==1 && BUS_WR);
 wire [15:0] CONF_BIT_OUT;
 assign CONF_BIT_OUT = {status_regs[3],status_regs[4]};
 
+//TODO:
 wire [7:0] CONF_CLK_DIV;
 assign CONF_CLK_DIV = status_regs[2];
 reg CONF_DONE;
