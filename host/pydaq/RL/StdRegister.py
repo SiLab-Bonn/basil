@@ -11,6 +11,7 @@
 
 from RL.RegisterLayer import RegisterLayer
 from utils.BitLogic import BitLogic
+from utils import utils
 
 
 class StdRegister(RegisterLayer):
@@ -32,11 +33,11 @@ class StdRegister(RegisterLayer):
                 self._fields[field['name']] = bv
         else:
             bv = BitLogic(size=self._conf['size'])
-            self._fields['NONE'] = bv
-            bv.offset = 0
+            bv.offset = self._conf['size'] - 1
+            self._fields[conf['name']] = bv
 
     def __getitem__(self, items):
-        print '__getitem__'
+        #print '__getitem__', items
         return self._fields[items]
 
     def __setslice__(self, i, j, sequence):
@@ -57,36 +58,46 @@ class StdRegister(RegisterLayer):
             raise TypeError("Invalid argument type.")
 
     def __str__(self):
-        ret = dict()
-        for field in self._fields:
-            ret[field] = str(len(self._fields[field])) + 'b' + str(self._fields[field])
+        fields = dict()
+        full = dict()
+        
+        reg = self._construct_reg()
+        full[self._conf['name']] = str(len(reg)) + 'b' + str(reg)
 
-        return str(ret)
+        for field in self._fields:
+            if field != self._conf['name']:
+                fields[field] = str(len(self._fields[field])) + 'b' + str(self._fields[field])
+        
+        return str([full, fields])
 
     def set(self, value):
         bv = BitLogic(intVal=value, size=self._size)
         self._deconstruct_reg(bv)
 
     def write(self):
-        pass
-        #print self.__class__.__name__ ,': Writing to driver. addr:', self._addr, ' data:'
-        #print args
-
-        self._drv.write(self._construct_reg())  # ????? //byte array?
-
+        reg = self._construct_reg()
+        ba = utils.bitvector_to_byte_array(reg)
+        #print reg, ba
+        self._drv.set_data(0, ba)
+        
     def read(self):
-        return self._drv.read()  # ????? //byte array
+        raise NotImplementedError("To be implemented.")
+        #return self._drv.read()  # ????? //byte array
 
     def _construct_reg(self):
         bv = BitLogic(size=self._size)
         for field in self._fields:
             off = self._fields[field].offset
             bvsize = len(self._fields[field])
-            bv[bvsize + off - 1:off] = self._fields[field]
+            bvstart = off
+            bvstop = off - bvsize + 1
+            bv[bvstart:bvstop] = self._fields[field]
         return bv
 
     def _deconstruct_reg(self, new_reg):
         for field in self._fields:
             off = self._fields[field].offset
             bvsize = len(self._fields[field])
-            self._fields[field].setValue(bitstring=str(new_reg[off + bvsize - 1:off]))
+            bvstart = off
+            bvstop = off - bvsize + 1
+            self._fields[field].setValue(bitstring=str(new_reg[bvstart:bvstop]))

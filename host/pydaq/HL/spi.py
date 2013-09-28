@@ -10,6 +10,7 @@
 #
 
 from HL.HardwareLayer import HardwareLayer
+from struct import pack, unpack
 
 
 class spi(HardwareLayer):
@@ -20,34 +21,39 @@ class spi(HardwareLayer):
     def reset(self):
         self._intf.write(self._conf['base_addr'], [0])
 
+    def init(self):
+        self.reset()
+        
     def start(self):
         self._intf.write(self._conf['base_addr'] + 1, [0])
+        
+    def set_size(self, value):
+        self._intf.write(self._conf['base_addr'] + 3, unpack('BBBB', pack('>L', value))[2:4])
 
-    def set_data_size(self, size):
-        raise NotImplementedError("To be implemented.")
+    def get_size(self):
+        ret = self._intf.read(self._conf['base_addr'] + 3, 2)
+        return ret[0] * (2 ** 8) + ret[1]
 
-    def get_data_size(self):
-        raise NotImplementedError("To be implemented.")
-
-    def set_wait(self, wait_cyc):
-        raise NotImplementedError("To be implemented.")
+    def set_wait(self, value):
+        self._intf.write(self._conf['base_addr'] + 5, unpack('BBBB', pack('>L', value))[2:4])
 
     def get_wait(self):
-        raise NotImplementedError("To be implemented.")
+        ret = self._intf.read(self._conf['base_addr'] + 5, 2)
+        return ret[0] * (2 ** 8) + ret[1]
 
-    def set_repeat(self, wait_cyc):
-        raise NotImplementedError("To be implemented.")
+    def set_repeat(self, value):
+        self._intf.write(self._conf['base_addr'] + 7, [value])
 
     def get_repeat(self):
-        raise NotImplementedError("To be implemented.")
+        self._intf.read(self._conf['base_addr'] + 7, 1)[0]
 
     def is_done(self):
         return True if (self._intf.read(self._conf['base_addr'], 1)[0] & 0x01) else False
 
-    def set_data(self, data, addr=0):
+    def set_data(self, addr, data):
         self._intf.write(self._conf['base_addr'] + 8 + addr, data)
 
-    def get_data(self, size=None, addr=0):
+    def get_data(self, addr=0, size=None):
         if(size == None):
             size = self._conf['mem_bytes']
 

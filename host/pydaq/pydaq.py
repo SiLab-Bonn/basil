@@ -56,16 +56,25 @@ class Dut:
                 kargs['conf'] = reg
                 self._registers[reg['name']] = self._factory('RL.' + reg['type'], reg['type'], *(), **kargs)
             else:
-                raise ValueError('No driver specyfied or reister %s' (reg['name']))
+                raise ValueError('No driver specified or register %s' (reg['name']))
 
     def _factory(self, importnamem, classname, *args, **kargs):
         _temp = __import__(importnamem, globals(), locals(), [classname], -1)
         aClass = getattr(_temp, classname)
         return aClass(*args, **kargs)
 
-    def __getitem__(self, items):
-        return self._registers[items]
-
+    def __getitem__(self, item):
+        if item in self._registers:
+            return self._registers[item]
+        elif item in self._user_drivers:
+            return self._user_drivers[item]
+        elif item in self._hardware_layer:
+            return self._hardware_layer[item]
+        elif item in self._transfer_layer:
+            return self._transfer_layer[item]
+        else:
+            raise ValueError('No item %s found' (item))
+        
     #TODO
     def __setitem__(self, key, value):
         self._registers[key].set(value)
