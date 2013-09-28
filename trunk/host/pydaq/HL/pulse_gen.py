@@ -39,7 +39,9 @@ class pulse_gen(HardwareLayer):
         return ret[0] * 255 + ret[1]
 
     def set_en(self, enable):
-        self._intf.write(self._conf['base_addr'] + 2, [0x01])
-
+        #self._intf.write(self._conf['base_addr'] + 2, [0x01])
+        current = self._intf.read(self._conf['base_addr'] + 2, 1)[0]
+        self._intf.write(self._conf['base_addr'] + 2, [(current & 0xfe) | enable])
+        
     def get_en(self):
         return True if (self._intf.read(self._conf['base_addr'] + 2, 1)[0] & 0x01) else False
