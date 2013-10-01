@@ -13,7 +13,7 @@ from HL.HardwareLayer import HardwareLayer
 
 
 class gpio(HardwareLayer):
-
+    
     def __init__(self, intf, conf):
         HardwareLayer.__init__(self, intf, conf)
 
@@ -23,6 +23,7 @@ class gpio(HardwareLayer):
                 self.set_direction(0, self._conf['init']['direction'])
         
     def reset(self):
+        '''Soft reset the module.'''
         self._intf.write(self._conf['base_addr'], [0])
 
     def set_direction(self, addr, value):
