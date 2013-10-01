@@ -225,28 +225,28 @@ class GPAC(HardwareLayer):
                     },
             'ISRC7': {
                       'DACI': {'addr': DAC7578_2_ADD, 'channel': 4},
-                      'ADCV': {'mux_ch': 26, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 26, 'adc_ch': 1},
+                      'ADCV': {'mux_ch': 27, 'adc_ch': 0},
+                      'ADCI': {'mux_ch': 27, 'adc_ch': 1},
                     },
             'ISRC8': {
                       'DACI': {'addr': DAC7578_2_ADD, 'channel': 5},
-                      'ADCV': {'mux_ch': 26, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 26, 'adc_ch': 1},
+                      'ADCV': {'mux_ch': 28, 'adc_ch': 0},
+                      'ADCI': {'mux_ch': 28, 'adc_ch': 1},
                     },
             'ISRC9': {
                       'DACI': {'addr': DAC7578_2_ADD, 'channel': 6},
-                      'ADCV': {'mux_ch': 26, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 26, 'adc_ch': 1},
+                      'ADCV': {'mux_ch': 29, 'adc_ch': 0},
+                      'ADCI': {'mux_ch': 29, 'adc_ch': 1},
                     },
             'ISRC10': {
                       'DACI': {'addr': DAC7578_2_ADD, 'channel': 7},
-                      'ADCV': {'mux_ch': 26, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 26, 'adc_ch': 1},
+                      'ADCV': {'mux_ch': 30, 'adc_ch': 0},
+                      'ADCI': {'mux_ch': 30, 'adc_ch': 1},
                     },
             'ISRC11': {
                       'DACI': {'addr': DAC7578_2_ADD, 'channel': 8},
-                      'ADCV': {'mux_ch': 26, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 26, 'adc_ch': 1},
+                      'ADCV': {'mux_ch': 31, 'adc_ch': 0},
+                      'ADCI': {'mux_ch': 31, 'adc_ch': 1},
                     },
             'VSRC0': {
                       'DACV': {'addr': DAC7578_3_ADD, 'channel': 1},
