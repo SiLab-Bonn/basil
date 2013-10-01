@@ -199,7 +199,7 @@ class GPAC(HardwareLayer):
                     },
             'ISRC2': {
                       'DACI': {'addr': DAC7578_1_ADD, 'channel': 7},
-                      'ADCV': {'mux_ch': 21, 'adc_ch': 0},
+                      'ADCV': {'mux_ch': 22, 'adc_ch': 0},
                       'ADCI': {'mux_ch': 22, 'adc_ch': 1},
                     },
             'ISRC3': {
