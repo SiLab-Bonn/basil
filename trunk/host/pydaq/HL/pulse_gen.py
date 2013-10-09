@@ -22,9 +22,15 @@ class pulse_gen(HardwareLayer):
         self._intf.write(self._conf['base_addr'], [0])
 
     def start(self):
+        '''
+        Software start of pulse at random time
+        '''
         self._intf.write(self._conf['base_addr'] + 1, [0])
 
     def set_delay(self, delay):
+        '''
+        Pulse delay w.r.t. shift register finish signal [in clock cycles(?)]
+        '''
         self._intf.write(self._conf['base_addr'] + 3, unpack('BB', pack('>H', delay)))
 
     def get_delay(self):
@@ -32,6 +38,9 @@ class pulse_gen(HardwareLayer):
         return ret[0] * 255 + ret[1]
 
     def set_width(self, width):
+        '''
+        Pulse width in terms of clock cycles
+        '''
         self._intf.write(self._conf['base_addr'] + 5, unpack('BB', pack('>H', width)))
 
     def get_width(self):
@@ -39,9 +48,16 @@ class pulse_gen(HardwareLayer):
         return ret[0] * 255 + ret[1]
 
     def set_en(self, enable):
+        '''
+        If true: The pulse comes with a fixed delay with respect to the shift register finish signal.
+        If false: The pulse comes at an uncorrelated time.
+        '''
         #self._intf.write(self._conf['base_addr'] + 2, [0x01])
         current = self._intf.read(self._conf['base_addr'] + 2, 1)[0]
         self._intf.write(self._conf['base_addr'] + 2, [(current & 0xfe) | enable])
         
     def get_en(self):
+        '''
+        Return info if pulse starts with a fixed delay w.r.t. shift register finish signal (true) or if it only starts with .start() (false)
+        '''
         return True if (self._intf.read(self._conf['base_addr'] + 2, 1)[0] & 0x01) else False
