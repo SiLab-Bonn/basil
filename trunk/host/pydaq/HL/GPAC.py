@@ -278,10 +278,10 @@ class GPAC(HardwareLayer):
                       'ADCV': {'mux_ch': 9, 'adc_ch': 0},
                     },
             'INJ0': {
-                      'DACV': {'addr': DAC7578_3_ADD, 'channel': 6},
+                      'DACV': {'addr': DAC7578_3_ADD, 'channel': 5},
                     },
             'INJ1': {
-                      'DACV': {'addr': DAC7578_3_ADD, 'channel': 7},
+                      'DACV': {'addr': DAC7578_3_ADD, 'channel': 6},
                     },
             }
 
