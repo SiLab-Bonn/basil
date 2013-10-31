@@ -20,7 +20,7 @@ class Base(object):
         raise NotImplementedError
 
 
-class Dut:
+class Dut(object):
 
     def __init__(self, config):
         self._transfer_layer = dict()
