@@ -86,9 +86,9 @@ flag_domain_crossing cmd_start_flag_domain_crossing (
 wire CONF_FINISH; //1
 wire CONF_EN_EXT_START, CONF_DIS_CLOCK_GATE, CONF_EN_NEGEDGE_DATA, CONF_DIS_CMD_PULSE; //2
 wire [15:0] CONF_CMD_SIZE; //3 - 4
-wire [15:0] CONF_REPEAT_COUNT; //5 - 6
+wire [31:0] CONF_REPEAT_COUNT; //5 - 6
 
-reg [7:0] status_regs[7:0];
+reg [7:0] status_regs[15:0];
 
 always @(posedge BUS_CLK) begin
     if(RST) begin
@@ -97,17 +97,25 @@ always @(posedge BUS_CLK) begin
         status_regs[2] <= 8'b0000_0000;
         status_regs[3] <= 0;
         status_regs[4] <= 0;
-        status_regs[5] <= 8'd1; //repeat once
+        status_regs[5] <= 8'd1; // repeat once by default
         status_regs[6] <= 0;
         status_regs[7] <= 0;
+        status_regs[8] <= 0;
+        status_regs[9] <= 0;
+        status_regs[10] <= 0;
+        status_regs[11] <= 0;
+        status_regs[12] <= 0;
+        status_regs[13] <= 0;
+        status_regs[14] <= 0;
+        status_regs[15] <= 0;
     end
-    else if(BUS_WR && BUS_ADD < 8)
-        status_regs[BUS_ADD[2:0]] <= BUS_DATA_IN;
+    else if(BUS_WR && BUS_ADD < 16)
+        status_regs[BUS_ADD[3:0]] <= BUS_DATA_IN;
 end
 
 
 assign CONF_CMD_SIZE = {status_regs[4], status_regs[3]};
-assign CONF_REPEAT_COUNT = {status_regs[6], status_regs[5]};
+assign CONF_REPEAT_COUNT = {status_regs[8], status_regs[7], status_regs[6], status_regs[5]};
 
 assign CONF_DIS_CMD_PULSE = status_regs[2][3];
 assign CONF_DIS_CLOCK_GATE = status_regs[2][2]; // no clock domain crossing needed
@@ -132,17 +140,17 @@ reg [7:0] cmd_mem [CMD_MEM_SIZE-1:0];
 always @ (negedge BUS_CLK) begin
     if(BUS_ADD == 1)
         BUS_DATA_OUT <= {7'b0, CONF_FINISH};
-    else if(BUS_ADD < 8)
-        BUS_DATA_OUT <= status_regs[BUS_ADD[2:0]];
-    else if(BUS_ADD < CMD_MEM_SIZE) // FIXME: BUS_ADD < CMD_MEM_SIZE+8
-        BUS_DATA_OUT <= cmd_mem[BUS_ADD[10:0]-8];
+    else if(BUS_ADD < 16)
+        BUS_DATA_OUT <= status_regs[BUS_ADD[3:0]];
+    else if(BUS_ADD < CMD_MEM_SIZE)
+        BUS_DATA_OUT <= cmd_mem[BUS_ADD[10:0]-16];
     else
         BUS_DATA_OUT <= 8'b0;
 end
 
 always @ (posedge BUS_CLK) begin
-    if (BUS_WR && BUS_ADD >= 8)  // FIXME: BUS_ADD < CMD_MEM_SIZE+8
-        cmd_mem[BUS_ADD[10:0]-8] <= BUS_DATA_IN;
+    if (BUS_WR && BUS_ADD >= 16)
+        cmd_mem[BUS_ADD[10:0]-16] <= BUS_DATA_IN;
 end
         
 reg [7:0] CMD_MEM_DATA;
