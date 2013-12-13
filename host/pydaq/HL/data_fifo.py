@@ -35,7 +35,7 @@ class data_fifo(HardwareLayer):
             size = self.get_size()
         
         data = self._intf.read(self._conf['base_data_addr'], size * 4)
-        return np.fromstring(data.tostring(), dtype=np.dtype('>i4'))
+        return np.fromstring(data.tostring(), dtype=np.dtype('>u4'))
     
     def get_error_count(self):
         return self._intf.read(self._conf['base_addr'] + 4, 1)[0]
