@@ -166,7 +166,7 @@ assign send_cmd = start_sync | ext_send_cmd;
 localparam WAIT = 1, SEND = 2;
 
 reg [15:0] cnt;
-reg [15:0] repeat_cnt;
+reg [31:0] repeat_cnt;
 reg [2:0] state, next_state;
 
 always @ (posedge CMD_CLK_IN)
@@ -203,7 +203,7 @@ end
 always @ (posedge CMD_CLK_IN) begin
     if (send_cmd || RST_CMD_CLK)
         repeat_cnt <= 1;
-    else if(state == SEND && cnt == CONF_CMD_SIZE && repeat_cnt != 16'hffff)
+    else if(state == SEND && cnt == CONF_CMD_SIZE && repeat_cnt != 32'hffffffff)
         repeat_cnt <= repeat_cnt + 1;
 end
 
