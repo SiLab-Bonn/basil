@@ -60,7 +60,7 @@
 
 // Registers
 wire SOFT_RST; // Address: 0
-assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
+assign SOFT_RST = (BUS_ADD == 0 && BUS_WR);
 
 // reset sync
 // when writing to addr = 0 then reset
@@ -100,6 +100,8 @@ wire reg_2_spare;
 assign reg_2_spare = status_regs[2][7];
 wire [7:0] TLU_TRIGGER_LOW_TIME_OUT;
 assign TLU_TRIGGER_LOW_TIME_OUT = status_regs[3];
+wire [31:0] SET_TRIGGER_NUMBER;
+assign SET_TRIGGER_NUMBER = {status_regs[11], status_regs[10], status_regs[9], status_regs[8]};
 
 always @(posedge BUS_CLK)
 begin
@@ -109,15 +111,15 @@ begin
         status_regs[1] <= 8'b0000_0000;
         status_regs[2] <= 8'd0; // 0: 32 clock cycles
         status_regs[3] <= 8'd0;
-        status_regs[4] <= 0; // set TLU trigger number
+        status_regs[4] <= 0; // TLU trigger number
         status_regs[5] <= 0;
         status_regs[6] <= 0;
         status_regs[7] <= 0;
-        status_regs[8] <= 0; // set trigger number
+        status_regs[8] <= 0; // set trigger counter
         status_regs[9] <= 0;
         status_regs[10] <= 0;
         status_regs[11] <= 0;
-        status_regs[12] <= 0; // set trigger number
+        status_regs[12] <= 0; // spare
         status_regs[13] <= 0;
         status_regs[14] <= 0;
         status_regs[15] <= 0;
@@ -356,7 +358,7 @@ begin
     end
 end
 
-always @ (posedge BUS_CLK)
+always @ (negedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TLU_TRIGGER_NUMBER_BUF <= 32'b0;
@@ -377,22 +379,36 @@ always @ (posedge BUS_CLK)
 wire CMD_EXT_START_ENABLE_FLAG_BUS_CLK;
 assign CMD_EXT_START_ENABLE_FLAG_BUS_CLK = ~CMD_EXT_START_ENABLE_BUS_CLK_FF & CMD_EXT_START_ENABLE_BUS_CLK;
 
+// latching trigger number
+// wire LATCH_TRIGGER_NUMBER_BUS_CLK;
+// assign LATCH_TRIGGER_NUMBER_BUS_CLK = (BUS_ADD == 11 && BUS_WR);
+
+// reg LATCH_TRIGGER_NUMBER_FF;
+// always @(posedge BUS_CLK) begin
+    // LATCH_TRIGGER_NUMBER_FF <= LATCH_TRIGGER_NUMBER_BUS_CLK;
+// end
+
+// wire LATCH_TRIGGER_NUMBER;
+// assign LATCH_TRIGGER_NUMBER = ~LATCH_TRIGGER_NUMBER_FF & LATCH_TRIGGER_NUMBER_BUS_CLK;
+
 always @ (posedge BUS_CLK)
 begin
     if (RST || (TLU_RESET_FLAG_BUS_CLK == 1'b1 && TLU_ENABLE_RESET == 1'b1))
         CURRENT_TRIGGER_NUMBER <= 32'b0;
     else
     begin
-        if (CMD_EXT_START_FLAG_BUS_CLK == 1'b1)
+        if (BUS_ADD == 11 && BUS_WR)
+            CURRENT_TRIGGER_NUMBER <= SET_TRIGGER_NUMBER;
+        else if (CMD_EXT_START_FLAG_BUS_CLK == 1'b1 && CMD_EXT_START_ENABLE_BUS_CLK == 1'b1 && CURRENT_TRIGGER_NUMBER != 32'b1111_1111_1111_1111_1111_1111_1111_1111)
             CURRENT_TRIGGER_NUMBER <= CURRENT_TRIGGER_NUMBER + 1;
-        else if (CMD_EXT_START_ENABLE_FLAG_BUS_CLK == 1'b1)
-            CURRENT_TRIGGER_NUMBER <= 32'b0;
+        //else if (CMD_EXT_START_ENABLE_FLAG_BUS_CLK == 1'b1)
+        //    CURRENT_TRIGGER_NUMBER <= 32'b0;
         else
             CURRENT_TRIGGER_NUMBER <= CURRENT_TRIGGER_NUMBER;
     end
 end
 
-always @ (posedge BUS_CLK)
+always @ (negedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TRIGGER_NUMBER_BUF <= 32'b0;
