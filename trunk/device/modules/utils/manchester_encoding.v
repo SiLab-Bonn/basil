@@ -25,7 +25,7 @@ module manchester_encoding (
 reg [1:0] cnt;
 reg rst;
 
-always @(posedge fclk)
+always @(posedge CLK4X)
 begin
 	if (ENABLE)
 		begin
@@ -48,15 +48,15 @@ begin
         DO <= DI;
 end
 
-always @ (posedge fclk)
+always @ (posedge CLK4X)
 begin
-    if (!rst && xclk)
+    if (!rst && CLK)
         rst <= 1;
     else
         rst <= 0;
 end
 
-always @(posedge fclk)
+always @(posedge CLK4X)
 begin
     if (rst)
         cnt <= 0;
