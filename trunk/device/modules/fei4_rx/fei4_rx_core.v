@@ -20,7 +20,6 @@ module fei4_rx_core
     input wire RX_CLK,
     input wire RX_CLK90,
     input wire DATA_CLK,
-    input wire RX_CLK_LOCKED,
     input wire RX_DATA,
     output wire RX_READY,
     output wire RX_8B10B_DECODER_ERR,
