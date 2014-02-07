@@ -96,8 +96,8 @@ wire TLU_ENABLE_RESET;
 assign TLU_ENABLE_RESET = status_regs[2][5];
 wire TLU_INVERT_LEMO_TRIGGER;
 assign TLU_INVERT_LEMO_TRIGGER = status_regs[2][6];
-wire reg_2_spare;
-assign reg_2_spare = status_regs[2][7];
+wire FORCE_USE_RJ45;
+assign FORCE_USE_RJ45 = status_regs[2][7];
 wire [7:0] TLU_TRIGGER_LOW_TIME_OUT;
 assign TLU_TRIGGER_LOW_TIME_OUT = status_regs[3];
 wire [31:0] SET_TRIGGER_NUMBER;
@@ -139,8 +139,15 @@ reg [31:0] CURRENT_TRIGGER_NUMBER_BUF;
 always @ (negedge BUS_CLK)
 begin
     //BUS_DATA_OUT <= 0;
-	 
-    if (BUS_ADD == 4)
+    if (BUS_ADD == 0)
+        BUS_DATA_OUT <= status_regs[0];
+    else if (BUS_ADD == 1)
+        BUS_DATA_OUT <= status_regs[1];
+    else if (BUS_ADD == 2)
+        BUS_DATA_OUT <= {RJ45_ENABLED, status_regs[2][6:0]};
+    else if (BUS_ADD == 3)
+        BUS_DATA_OUT <= status_regs[3];
+    else if (BUS_ADD == 4)
         BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUF[7:0];
     else if (BUS_ADD == 5)
         BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUF[15:8];
@@ -164,8 +171,8 @@ begin
         BUS_DATA_OUT <= 8'b0;
     else if (BUS_ADD == 15)
         BUS_DATA_OUT <= 8'b0;
-    else if(BUS_ADD < 4)
-        BUS_DATA_OUT <= status_regs[BUS_ADD[3:0]]; // BUG AR 20391: use synchronous logic
+    // else if(BUS_ADD < 4)
+        // BUS_DATA_OUT <= status_regs[BUS_ADD[3:0]]; // BUG AR 20391: use synchronous logic
     else
         BUS_DATA_OUT <= 0;
 end
@@ -319,8 +326,10 @@ begin
     begin
         if ((RJ45_TRIGGER_BUS_CLK && RJ45_RESET_BUS_CLK && !RJ45_ENABLED) || TLU_MODE == 2'b00)
             RJ45_ENABLED <= 1'b0;
-        else
+        else if (FORCE_USE_RJ45 == 1'b1)
             RJ45_ENABLED <= 1'b1;
+        else
+            RJ45_ENABLED <= RJ45_ENABLED;
     end
 end
 
