@@ -49,16 +49,16 @@ flag_domain_crossing reset_domain_crossing_fclk_inst (
 );
 
 // data to clock phase alignment
-wire RX_DATA_SYNC, USEAOUT, USEBOUT, USECOUT, USEDOUT;
+wire RX_DATA_SYNC; //, USEAOUT, USEBOUT, USECOUT, USEDOUT;
 sync_master sync_master_inst(
     .clk(FCLK),			    // clock input
     .clk90(FCLK90),		    // clock 90 input
     .datain(RX_DATA),       // data inputs
     .rst(RESET_FCLK),       // reset input
-    .useaout(USEAOUT),      // useA output for cascade
-    .usebout(USEBOUT),      // useB output for cascade
-    .usecout(USECOUT),      // useC output for cascade
-    .usedout(USEDOUT),      // useD output for cascade
+    .useaout(),             // useA output for cascade
+    .usebout(),             // useB output for cascade
+    .usecout(),             // useC output for cascade
+    .usedout(),             // useD output for cascade
     .ctrlout(),			    // ctrl outputs for cascade
     .sdataout(RX_DATA_SYNC)
 );
@@ -223,7 +223,7 @@ cdc_syncfifo #(
     .rrst(rst_long)
 );
 
-wire [15:0] fifo_size_int;
+wire [10:0] fifo_size_int;
 
 gerneric_fifo #(
     .DATA_SIZE(24),
@@ -241,7 +241,7 @@ gerneric_fifo #(
 );
 
 always @(posedge BUS_CLK) begin
-    fifo_size <= fifo_size_int;
+    fifo_size <= {5'b0, fifo_size_int};
 end
 
 

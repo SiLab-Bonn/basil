@@ -52,10 +52,10 @@ always@(posedge FCLK)
     else
         fdataout <= fdataout;
 
-reg [DSIZE-1:0] old_data;        
+// reg [DSIZE-1:0] old_data;
 always@(posedge WCLK) begin
     data <= fdataout;
-    old_data <= data;
+    // old_data <= data;
 end
 
 integer wait_cnt;
@@ -68,14 +68,14 @@ localparam      START  = 0,
                 IDLE = 4;
 
 localparam      K28_1P = 10'b00_1111_1001,
-                K28_1N = 10'b11_0000_0110;         
+                K28_1N = 10'b11_0000_0110;
 
 always @ (posedge WCLK) begin
     if (reset)  state <= START;
     else        state <= next_state;
 end
 
-always @ (state or data or old_data or wait_cnt or decoder_err) begin
+always @ (state or data or wait_cnt or decoder_err) begin // old_data
     
     case(state)
         START:
