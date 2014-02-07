@@ -23,26 +23,26 @@ reg empty;
 
 output reg [DATA_SIZE-1:0] data_out;
 
-  function integer log2;
+function integer log2;
     input integer value;
     reg [31:0] shifted;
     integer res;
-  begin
+begin
     if (value < 2)
-      log2 = value;
+        log2 = value;
     else
     begin
-      shifted = value-1;
-      for (res=0; shifted>0; res=res+1)
-        shifted = shifted>>1;
-      log2 = res;
+        shifted = value-1;
+        for (res=0; shifted>0; res=res+1)
+            shifted = shifted>>1;
+        log2 = res;
     end
-  end
-  endfunction
+end
+endfunction
   
-reg [DATA_SIZE:0] mem [DEPTH-1:0];   
+reg [DATA_SIZE:0] mem [DEPTH-1:0];
 
-localparam POINTER_SIZE = log2(DEPTH) ;//16;
+localparam POINTER_SIZE = log2(DEPTH);
 
 reg [POINTER_SIZE-1:0] rd_ponter, wr_pointer;
 output reg [POINTER_SIZE-1:0] size;
@@ -80,24 +80,22 @@ always@(posedge clk)
     else
         empty <= empty_loc;
 
-    
 assign empty_loc = (wr_pointer == rd_ponter);
-assign full = ((wr_pointer==(DEPTH-1) && rd_ponter==0) ||  (wr_pointer!=(DEPTH-1) && wr_pointer+1 == rd_ponter) );
+assign full = ((wr_pointer==(DEPTH-1) && rd_ponter==0) || (wr_pointer!=(DEPTH-1) && wr_pointer+1 == rd_ponter));
 
 always@(posedge clk)
     if(write && !full)
         mem[wr_pointer] <= data_in;
-    
+
 always@(posedge clk)
     //if(read && !empty)
         data_out <= mem[rd_ponter];
-        
+
 always @ (*) begin
     if(wr_pointer >= rd_ponter)
         size = wr_pointer - rd_ponter;
     else
-        size = wr_pointer + (DEPTH-rd_ponter); 
-end		
+        size = wr_pointer + (DEPTH-rd_ponter);
+end
 
-        
 endmodule
