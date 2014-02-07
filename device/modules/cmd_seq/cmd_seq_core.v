@@ -61,7 +61,7 @@ flag_domain_crossing cmd_rst_flag_domain_crossing (
     .FLAG_OUT_CLK_B(RST_CMD_CLK)
 );
 
-wire START; //1
+wire START; // 1
 assign START = (BUS_ADD==1 && BUS_WR);
 
 // start sync
@@ -83,10 +83,11 @@ flag_domain_crossing cmd_start_flag_domain_crossing (
     .FLAG_OUT_CLK_B(start_sync)
 );
 
-wire CONF_FINISH; //1
-wire CONF_EN_EXT_START, CONF_DIS_CLOCK_GATE, CONF_EN_NEGEDGE_DATA, CONF_DIS_CMD_PULSE; //2
-wire [15:0] CONF_CMD_SIZE; //3 - 4
-wire [31:0] CONF_REPEAT_COUNT; //5 - 6
+wire CONF_FINISH; // 1
+wire CONF_EN_EXT_START, CONF_DIS_CLOCK_GATE, CONF_DIS_CMD_PULSE; // 2
+wire [1:0] CONF_OUTPUT_MODE; // 2 Mode == 0: posedge, 1: negedge, 2: Manchester Code according to IEEE 802.3, 3:  Manchester Code according to G.E. Thomas aka Biphase-L or Manchester-II
+wire [15:0] CONF_CMD_SIZE; // 3 - 4
+wire [31:0] CONF_REPEAT_COUNT; // 5 - 6
 
 reg [7:0] status_regs[15:0];
 
@@ -117,9 +118,9 @@ end
 assign CONF_CMD_SIZE = {status_regs[4], status_regs[3]};
 assign CONF_REPEAT_COUNT = {status_regs[8], status_regs[7], status_regs[6], status_regs[5]};
 
-assign CONF_DIS_CMD_PULSE = status_regs[2][3];
-assign CONF_DIS_CLOCK_GATE = status_regs[2][2]; // no clock domain crossing needed
-assign CONF_EN_NEGEDGE_DATA = status_regs[2][1]; // no clock domain crossing needed
+assign CONF_DIS_CMD_PULSE = status_regs[2][4];
+assign CONF_DIS_CLOCK_GATE = status_regs[2][3]; // no clock domain crossing needed
+assign CONF_OUTPUT_MODE = status_regs[2][2:1]; // no clock domain crossing needed
 assign CONF_EN_EXT_START = status_regs[2][0];
 
 wire CONF_DIS_CMD_PULSE_CMD_CLK;
@@ -244,26 +245,33 @@ cmd_data_neg <= send_word[7];
 always @ (posedge CMD_CLK_IN)
 cmd_data_pos <= send_word[7];
 
-//assign CMD_DATA =  send_word[7];
-assign CMD_DATA = CONF_EN_NEGEDGE_DATA ? cmd_data_neg : cmd_data_pos;
+OFDDRRSE MANCHESTER_CODE_INST (
+	.CE(1'b1), 
+	.C0(CMD_CLK_IN),
+	.C1(~CMD_CLK_IN),
+	.D0((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? ~cmd_data_pos : cmd_data_pos))),
+	.D1((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? cmd_data_pos : ~cmd_data_pos))),
+	.R(1'b0),
+	.S(1'b0),
+	.Q(CMD_DATA)
+);
 
-assign CMD_CLK_OUT = CMD_CLK_IN; // TODO: CONF_DIS_CLOCK_GATE
 // wire CMD_CLK_INV_IN;
 // INV CMD_CLK_INV_INST (
     // .I(CMD_CLK_IN),
     // .O(CMD_CLK_INV_IN)
 // );
 
-// OFDDRCPE CMD_CLK_FORWARDING_INST (
-    // .CE(1'b1),
-    // .CLR(CONF_DIS_CLOCK_GATE),
-    // .C0(CMD_CLK_IN),
-    // .C1(CMD_CLK_INV_IN),
-    // .D0(1'b0),
-    // .D1(1'b1),
-    // .PRE(1'b0),
-    // .Q(CMD_CLK_OUT)
-// );
+OFDDRRSE CMD_CLK_FORWARDING_INST (
+	.CE(1'b1), 
+	.C0(CMD_CLK_IN),
+	.C1(~CMD_CLK_IN),
+	.D0(1'b1),
+	.D1(1'b0),
+	.R(CONF_DIS_CLOCK_GATE),
+	.S(1'b0),
+	.Q(CMD_CLK_OUT)
+);
 
 // command start flag
 always @ (posedge CMD_CLK_IN)
