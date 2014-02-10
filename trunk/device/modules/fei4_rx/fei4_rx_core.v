@@ -74,11 +74,27 @@ assign RX_READY = (ready_rec==1'b1);
 assign RX_8B10B_DECODER_ERR = (decoder_err_cnt!=8'b0);
 assign RX_FIFO_OVERFLOW_ERR = (lost_err_cnt!=8'b0);
 
-always @ (negedge BUS_CLK) begin //(*) begin
-    //BUS_DATA_OUT = 0;
+reg [7:0] status_regs[1:0];
 
-    if(BUS_ADD == 1)
-        BUS_DATA_OUT <= {7'b0, RX_READY};
+wire CONF_EN_INVERT_RX_DATA; // BUS_ADD==1 BIT==1
+assign CONF_EN_INVERT_RX_DATA = status_regs[1][1];
+
+reg [7:0] LOST_DATA_CNT; //BUS_ADD==2
+
+always @(posedge BUS_CLK) begin
+    if(RST) begin
+        status_regs[0] <= 8'b0;
+        status_regs[1] <= 8'b0;
+    end
+    else if(BUS_WR && BUS_ADD < 2)
+        status_regs[BUS_ADD[0]] <= BUS_DATA_IN;
+end
+
+always @ (negedge BUS_CLK) begin //(*) begin
+    if(BUS_ADD == 0)
+        BUS_DATA_OUT <= status_regs[0];
+    else if(BUS_ADD == 1)
+        BUS_DATA_OUT <= {status_regs[1][7:1], RX_READY};
     else if(BUS_ADD == 2)
         BUS_DATA_OUT <= fifo_size[7:0];
     else if(BUS_ADD == 3)
@@ -116,7 +132,8 @@ receiver_logic #(
     .rec_sync_ready(ready_rec),
     .lost_err_cnt(lost_err_cnt),
     .decoder_err_cnt(decoder_err_cnt),
-    .fifo_size(fifo_size)
+    .fifo_size(fifo_size),
+    .invert_rx_data(CONF_EN_INVERT_RX_DATA)
 );
 
 //assign fei4_rx_d = {11'b0};

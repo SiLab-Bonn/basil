@@ -29,7 +29,8 @@ module receiver_logic
     output wire             rec_sync_ready,
     output reg  [7:0]       lost_err_cnt,
     output reg  [7:0]       decoder_err_cnt,
-    output reg [15:0]       fifo_size
+    output reg [15:0]       fifo_size,
+    input wire              invert_rx_data
 );
 
 wire RESET_WCLK;
@@ -70,7 +71,7 @@ rec_sync #(
     .DSIZE(DSIZE)
 ) rec_sync_inst (
     .reset(RESET_WCLK),
-    .datain(RX_DATA_SYNC),
+    .datain(invert_rx_data ? ~RX_DATA_SYNC : RX_DATA_SYNC),
     .data(data_8b10b),
     .WCLK(WCLK),
     .FCLK(FCLK),
