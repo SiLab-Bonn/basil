@@ -59,9 +59,7 @@ always @(posedge BUS_CLK) begin
         status_regs[1] <= 8'b0;
     end
     else if(BUS_WR && BUS_ADD < 2)
-    begin
         status_regs[BUS_ADD[0]] <= BUS_DATA_IN;
-    end
 end
 
 always @(posedge BUS_CLK) begin
@@ -72,6 +70,8 @@ always @(posedge BUS_CLK) begin
             BUS_DATA_OUT <= status_regs[1];
         else if(BUS_ADD == 2)
             BUS_DATA_OUT <= LOST_DATA_CNT;
+        else
+            BUS_DATA_OUT <= 0;
     end
 end
 
