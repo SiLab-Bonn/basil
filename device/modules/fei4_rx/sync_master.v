@@ -119,14 +119,14 @@ end
 
 wire [1:0] DDRQ;
 IFDDRRSE IFDDRRSE_inst (
-.Q0(DDRQ[1]), // Posedge data output
-.Q1(DDRQ[0]), // Negedge data output
-.C0(clk_2x), // 0 degree clock input
-.C1(~clk_2x), // 180 degree clock input
-.CE(1'b1), // Clock enable input
-.D(datain), // Data input (connect directly to top-level port)
-.R(1'b0), // Synchronous reset input
-.S(1'b0) // Synchronous preset input
+    .Q0(DDRQ[1]), // Posedge data output
+    .Q1(DDRQ[0]), // Negedge data output
+    .C0(clk_2x), // 0 degree clock input
+    .C1(~clk_2x), // 180 degree clock input
+    .CE(1'b1), // Clock enable input
+    .D(datain), // Data input (connect directly to top-level port)
+    .R(1'b0), // Synchronous reset input
+    .S(1'b0) // Synchronous preset input
 );
 
 reg [1:0] DDRQ_DLY;
