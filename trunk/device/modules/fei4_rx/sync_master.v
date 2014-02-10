@@ -12,16 +12,17 @@
 `default_nettype none
 
 module sync_master(
-input wire          clk,                // clock input
-input wire          clk_2x,                // clock 90 input
-input wire          datain,                // data inputs
-input wire          rst,                // reset input
-output wire         useaout,            // useA output for cascade
-output wire         usebout,            // useB output for cascade
-output wire         usecout,            // useC output for cascade
-output wire         usedout,            // useD output for cascade
-output wire [1:0]   ctrlout,            // ctrl outputs for cascade
-output reg          sdataout );            // data out
+    input wire          clk,                // clock input
+    input wire          clk_2x,             // clock 90 input
+    input wire          datain,             // data inputs
+    input wire          rst,                // reset input
+    output wire         useaout,            // useA output for cascade
+    output wire         usebout,            // useB output for cascade
+    output wire         usecout,            // useC output for cascade
+    output wire         usedout,            // useD output for cascade
+    output wire [1:0]   ctrlout,            // ctrl outputs for cascade
+    output reg          sdataout            // data out
+);
 
 wire         aa0 ;
 wire         bb0 ;
@@ -113,7 +114,8 @@ always @ (posedge clk or posedge rst) begin
     end
 end
 
-// get all the samples into the same time domain
+// 320MHz clock domain
+// *** do not touch code below ***
 
 wire [1:0] DDRQ;
 IFDDRRSE IFDDRRSE_inst (
@@ -136,6 +138,10 @@ reg [3:0] DDRQ_DATA;
 always@(posedge clk_2x)
     DDRQ_DATA[3:0] <= {DDRQ_DLY[1:0], DDRQ[1:0]};
 
+// *** do not touch code above ***
+
+// 160MHz clock domain
+
 reg [3:0] DATA_IN;
 always@(posedge clk)
     DATA_IN[3:0] <= {DDRQ_DATA[3:0]};
@@ -143,7 +149,7 @@ always@(posedge clk)
 reg [3:0] DATA_IN_DLY;
 always@(posedge clk)
     DATA_IN_DLY[3:0] <= {DATA_IN[3:0]};
-  
+
 assign az[0] = DATA_IN[3];
 assign bz[0] = DATA_IN[2];
 assign cz[0] = DATA_IN[1];
@@ -153,7 +159,6 @@ assign az[1] = DATA_IN_DLY[3];
 assign bz[1] = DATA_IN_DLY[2];
 assign cz[1] = DATA_IN_DLY[1];
 assign dz[1] = DATA_IN_DLY[0];
-
 
 //FDC ff_az0(.D(datain), .C(clk), .CLR(rst), .Q(az[0]))/*synthesis rloc = "x0y0" */;
 //FDC ff_az1(.D(az[0]),     .C(clk), .CLR(rst), .Q(az[1]))/*synthesis rloc = "x2y0" */;
