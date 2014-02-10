@@ -18,7 +18,7 @@ module fei4_rx_core
 )
 (
     input wire RX_CLK,
-    input wire RX_CLK90,
+    input wire RX_CLK2X,
     input wire DATA_CLK,
     input wire RX_DATA,
     output wire RX_READY,
@@ -106,7 +106,7 @@ receiver_logic #(
     .RESET(RST),
     .WCLK(DATA_CLK),
     .FCLK(RX_CLK),
-    .FCLK90(RX_CLK90),
+    .FCLK2X(RX_CLK2X),
     .BUS_CLK(BUS_CLK),
     .RX_DATA(RX_DATA),
     .read(FIFO_READ),
