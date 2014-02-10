@@ -17,7 +17,7 @@ module sram_fifo
     parameter   FIFO_ALMOST_FULL_THRESHOLD = 95, // in percent
     parameter   FIFO_ALMOST_EMPTY_THRESHOLD = 5 // in percent
 ) (
-    input                   BUS_CLK270,
+//    input                   BUS_CLK270,
     
     input                   BUS_CLK,
     input                   BUS_RST,
@@ -82,7 +82,7 @@ sram_fifo_core
     .BUS_WR(IP_WR),                    
     .BUS_DATA_OUT(IP_DATA_OUT),  
  
-    .BUS_CLK270(BUS_CLK270),
+//    .BUS_CLK270(BUS_CLK270),
     
     .SRAM_A(SRAM_A),
     .SRAM_IO(SRAM_IO),
