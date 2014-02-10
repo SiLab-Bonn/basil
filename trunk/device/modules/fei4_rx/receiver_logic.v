@@ -19,7 +19,7 @@ module receiver_logic
     input wire              RESET,
     input wire              WCLK,
     input wire              FCLK,
-    input wire              FCLK90,
+    input wire              FCLK2X,
     input wire              BUS_CLK,
     input wire              RX_DATA,
     input wire              read,
@@ -52,7 +52,7 @@ flag_domain_crossing reset_domain_crossing_fclk_inst (
 wire RX_DATA_SYNC; //, USEAOUT, USEBOUT, USECOUT, USEDOUT;
 sync_master sync_master_inst(
     .clk(FCLK),			    // clock input
-    .clk90(FCLK90),		    // clock 90 input
+    .clk_2x(FCLK2X),		    // clock 90 input
     .datain(RX_DATA),       // data inputs
     .rst(RESET_FCLK),       // reset input
     .useaout(),             // useA output for cascade

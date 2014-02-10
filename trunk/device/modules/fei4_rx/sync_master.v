@@ -13,7 +13,7 @@
 
 module sync_master(
 input wire          clk,                // clock input
-input wire          clk90,                // clock 90 input
+input wire          clk_2x,                // clock 90 input
 input wire          datain,                // data inputs
 input wire          rst,                // reset input
 output wire         useaout,            // useA output for cascade
@@ -47,11 +47,7 @@ wire     [1:0]     dz ;
 reg         aap, bbp, ccp, ddp, az2, bz2, cz2, dz2 ;
 reg         aan, bbn, ccn, ddn ;
 reg         pipe_ce0 ;
-wire         notclk ;
-wire         notclk90 ;
 
-assign notclk = ~clk ;
-assign notclk90 = ~clk90 ;
 assign useaout = useaint ;
 assign usebout = usebint ;
 assign usecout = usecint ;
@@ -119,16 +115,53 @@ end
 
 // get all the samples into the same time domain
 
-FDC ff_az0(.D(datain), .C(clk), .CLR(rst), .Q(az[0]))/*synthesis rloc = "x0y0" */;
-FDC ff_az1(.D(az[0]),     .C(clk), .CLR(rst), .Q(az[1]))/*synthesis rloc = "x2y0" */;
+wire [1:0] DDRQ;
+IFDDRRSE IFDDRRSE_inst (
+.Q0(DDRQ[1]), // Posedge data output
+.Q1(DDRQ[0]), // Negedge data output
+.C0(clk_2x), // 0 degree clock input
+.C1(~clk_2x), // 180 degree clock input
+.CE(1'b1), // Clock enable input
+.D(datain), // Data input (connect directly to top-level port)
+.R(1'b0), // Synchronous reset input
+.S(1'b0) // Synchronous preset input
+);
 
-FDC ff_bz0(.D(datain), .C(clk90), .CLR(rst), .Q(bz[0]))/*synthesis rloc = "x1y0" */;
-FDC ff_bz1(.D(bz[0]),     .C(clk), .CLR(rst), .Q(bz[1]))/*synthesis rloc = "x4y0" */;
+reg [1:0] DDRQ_DLY;
 
-FDC ff_cz0(.D(datain), .C(notclk), .CLR(rst), .Q(cz[0]))/*synthesis rloc = "x1y1" */;
-FDC ff_cz1(.D(cz[0]),     .C(clk), .CLR(rst), .Q(cz[1]))/*synthesis rloc = "x2y0" */;
+always@(posedge clk_2x)
+    DDRQ_DLY[1:0] <= DDRQ[1:0];
 
-FDC ff_dz0(.D(datain), .C(notclk90), .CLR(rst), .Q(dz[0]))/*synthesis rloc = "x0y1" */;
-FDC ff_dz1(.D(dz[0]),     .C(clk90), .CLR(rst), .Q(dz[1]))/*synthesis rloc = "x3y0" */;
+reg [3:0] DDRQ_DATA;
+always@(posedge clk_2x)
+    DDRQ_DATA[3:0] <= {DDRQ_DLY[1:0], DDRQ[1:0]};
+
+reg [3:0] DATA_IN;
+always@(posedge clk)
+    DATA_IN[3:0] <= {DDRQ_DATA[3:0]};
+
+reg [3:0] DATA_IN_DLY;
+always@(posedge clk)
+    DATA_IN_DLY[3:0] <= {DATA_IN[3:0]};
+  
+assign az[0] = DATA_IN[3];
+assign bz[0] = DATA_IN[2];
+assign cz[0] = DATA_IN[1];
+assign dz[0] = DATA_IN[0];
+
+assign az[1] = DATA_IN_DLY[3];
+assign bz[1] = DATA_IN_DLY[2];
+assign cz[1] = DATA_IN_DLY[1];
+assign dz[1] = DATA_IN_DLY[0];
+
+
+//FDC ff_az0(.D(datain), .C(clk), .CLR(rst), .Q(az[0]))/*synthesis rloc = "x0y0" */;
+//FDC ff_az1(.D(az[0]),     .C(clk), .CLR(rst), .Q(az[1]))/*synthesis rloc = "x2y0" */;
+//FDC ff_bz0(.D(datain), .C(clk90), .CLR(rst), .Q(bz[0]))/*synthesis rloc = "x1y0" */;
+//FDC ff_bz1(.D(bz[0]),     .C(clk), .CLR(rst), .Q(bz[1]))/*synthesis rloc = "x4y0" */;
+//FDC ff_cz0(.D(datain), .C(notclk), .CLR(rst), .Q(cz[0]))/*synthesis rloc = "x1y1" */;
+//FDC ff_cz1(.D(cz[0]),     .C(clk), .CLR(rst), .Q(cz[1]))/*synthesis rloc = "x2y0" */;
+//FDC ff_dz0(.D(datain), .C(notclk90), .CLR(rst), .Q(dz[0]))/*synthesis rloc = "x0y1" */;
+//FDC ff_dz1(.D(dz[0]),     .C(clk90), .CLR(rst), .Q(dz[1]))/*synthesis rloc = "x3y0" */;
 
 endmodule
