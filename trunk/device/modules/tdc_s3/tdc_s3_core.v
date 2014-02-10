@@ -98,6 +98,11 @@ reg [15:0] DATA;
 always@(posedge CLK40)
     DATA <= DATA_IN_SR;
     
+wire ONE_DETECTED;
+assign ONE_DETECTED = |DATA;   
+
+wire ZERO_DETECTED;
+assign ZERO_DETECTED = |(~DATA);   
 
 wire RST_SYNC;
 flag_domain_crossing cmd_rst_flag_domain_crossing (
@@ -135,22 +140,18 @@ always @ (*) begin
     endcase
 end 
 
-wire ONE_DETECTED;
-assign ONE_DETECTED = |DATA;   
 
-wire ZERO_DETECTED;
-assign ZERO_DETECTED = |(~DATA);   
 
 wire FINISH;
 assign FINISH = (state == COUNT && next_state == WAIT);
 wire START;
 assign START = (state == WAIT && next_state == COUNT);
 
-
+integer i;
 reg [4:0] ONES;
 always@(*) begin 
     ONES = 0;
-    for(i=1;i<=16;i=i+1)
+    for(i=1;i<=16;i=i+1) begin
         ONES = ONES + DATA[i];
     end
 end
@@ -183,7 +184,6 @@ assign cdc_fifo_write = !wfull && FINISH;
 wire [31:0] cdc_data;
 assign cdc_data = {IDENTYFIER, EVENT_CNT, TDC_VAL};
 
-wire wfull;
 always@(posedge CLK40) begin
     if(RST_SYNC)
         LOST_DATA_CNT <= 0;
