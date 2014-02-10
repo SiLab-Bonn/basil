@@ -16,7 +16,7 @@ module sram_fifo_core
     parameter                   FIFO_ALMOST_EMPTY_THRESHOLD = 5 // in percent
 ) (
     input wire                  BUS_CLK,
-    input wire                  BUS_CLK270,
+//    input wire                  BUS_CLK270,
     input wire                  BUS_RST,
     input wire [15:0]           BUS_ADD,
     input wire [7:0]            BUS_DATA_IN,
