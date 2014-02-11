@@ -46,12 +46,14 @@ assign RST = BUS_RST | SOFT_RST;
 
 reg [7:0] status_regs[1:0];
 
-wire CONF_EN; //ENABLE BUS_ADD==1 BIT==0
+wire CONF_EN; // ENABLE BUS_ADD==1 BIT==0
 assign CONF_EN = status_regs[1][0];
-wire CONF_EN_ARM_TDC; //ENABLE BUS_ADD==1 BIT==1
-assign CONF_EN_ARM_TDC = status_regs[1][1];
-
-reg [7:0] LOST_DATA_CNT; //BUS_ADD==2
+wire CONF_REJECT_SMALL_TOT; // ENABLE BUS_ADD==1 BIT==1
+assign CONF_REJECT_SMALL_TOT = status_regs[1][1];
+wire CONF_EN_ARM_TDC; // ENABLE BUS_ADD==1 BIT==2
+assign CONF_EN_ARM_TDC = status_regs[1][2];
+reg [7:0] LOST_DATA_CNT, LOST_DATA_CNT_BUF; // BUS_ADD==2
+reg [15:0] EVENT_CNT, EVENT_CNT_BUF; // BUS_ADD==3 - 4
 
 always @(posedge BUS_CLK) begin
     if(RST) begin
@@ -69,9 +71,39 @@ always @(posedge BUS_CLK) begin
         else if(BUS_ADD == 1)
             BUS_DATA_OUT <= status_regs[1];
         else if(BUS_ADD == 2)
-            BUS_DATA_OUT <= LOST_DATA_CNT;
+            BUS_DATA_OUT <= LOST_DATA_CNT_BUF;
+        else if(BUS_ADD == 3)
+            BUS_DATA_OUT <= EVENT_CNT_BUF[7:0];
+        else if(BUS_ADD == 4)
+            BUS_DATA_OUT <= EVENT_CNT_BUF[15:8];
         else
             BUS_DATA_OUT <= 0;
+    end
+end
+
+always @ (negedge BUS_CLK)
+begin
+    if (RST)
+        LOST_DATA_CNT_BUF <= 8'b0;
+    else
+    begin
+        if (BUS_ADD == 2)
+            LOST_DATA_CNT_BUF <= LOST_DATA_CNT;
+        else
+            LOST_DATA_CNT_BUF <= LOST_DATA_CNT_BUF;
+    end
+end
+
+always @ (negedge BUS_CLK)
+begin
+    if (RST)
+        EVENT_CNT_BUF <= 16'b0;
+    else
+    begin
+        if (BUS_ADD == 3)
+            EVENT_CNT_BUF <= EVENT_CNT;
+        else
+            EVENT_CNT_BUF <= EVENT_CNT_BUF;
     end
 end
 
@@ -121,6 +153,9 @@ assign ONE_DETECTED = |DATA;
 wire ZERO_DETECTED;
 assign ZERO_DETECTED = |(~DATA);
 
+wire SMALL_TOT;
+assign SMALL_TOT = ONE_DETECTED && (DATA[0]==0);
+
 wire RST_SYNC;
 flag_domain_crossing cmd_rst_flag_domain_crossing (
     .CLK_A(BUS_CLK),
@@ -140,28 +175,44 @@ end
 wire RST_LONG;
 assign RST_LONG = sync_cnt[7];
 
-
-wire ARM_TDC_BUS_CLK;
-three_stage_synchronizer three_stage_rj45_trigger_synchronizer_bus_clk (
-    .CLK(BUS_CLK),
-    .IN(ARM_TDC),
-    .OUT(ARM_TDC_BUS_CLK)
-);
-
-wire ARM_TDC_CLK40;
-flag_domain_crossing arm_tdc_flag_domain_crossing (
-    .CLK_A(BUS_CLK),
-    .CLK_B(CLK40),
-    .FLAG_IN_CLK_A(ARM_TDC_BUS_CLK),
-    .FLAG_OUT_CLK_B(ARM_TDC_CLK40)
-);
-
 wire CONF_EN_CLK40;
 three_stage_synchronizer conf_en_three_stage_synchronizer_clk40 (
     .CLK(CLK40),
     .IN(CONF_EN),
     .OUT(CONF_EN_CLK40)
 );
+
+wire CONF_REJECT_SMALL_TOT_CLK40;
+three_stage_synchronizer conf_en_three_stage_synchronizer_clk40 (
+    .CLK(CLK40),
+    .IN(CONF_REJECT_SMALL_TOT),
+    .OUT(CONF_REJECT_SMALL_TOT_CLK40)
+);
+
+wire ARM_TDC_CLK160;
+three_stage_synchronizer three_stage_rj45_trigger_synchronizer_bus_clk (
+    .CLK(CLK160),
+    .IN(ARM_TDC),
+    .OUT(ARM_TDC_CLK160)
+);
+
+reg ARM_TDC_CLK160_FF;
+always@(posedge CLK160) begin
+    ARM_TDC_CLK160_FF <= ARM_TDC_CLK160;
+end
+
+wire ARM_TDC_FLAG_CLK160;
+assign ARM_TDC_FLAG_CLK160 = ~ARM_TDC_CLK160_FF & ARM_TDC_CLK160;
+
+wire ARM_TDC_FLAG_CLK40;
+flag_domain_crossing arm_tdc_flag_domain_crossing (
+    .CLK_A(CLK160),
+    .CLK_B(CLK40),
+    .FLAG_IN_CLK_A(ARM_TDC_FLAG_CLK160),
+    .FLAG_OUT_CLK_B(ARM_TDC_FLAG_CLK40)
+);
+
+
 
 wire CONF_EN_ARM_TDC_CLK40;
 three_stage_synchronizer conf_en_arm_three_stage_synchronizer_clk40 (
@@ -181,18 +232,18 @@ always @ (posedge CLK40)
     else
       state <= next_state;
 
-always @ (state or ONE_DETECTED or ZERO_DETECTED or CONF_EN_CLK40 or CONF_EN_ARM_TDC_CLK40 or ARM_TDC_CLK40) begin
+always @ (state or ONE_DETECTED or ZERO_DETECTED or CONF_EN_CLK40 or CONF_EN_ARM_TDC_CLK40 or ARM_TDC_FLAG_CLK40) begin
     case(state)
         IDLE:
-            if (ONE_DETECTED && CONF_EN_CLK40 && !CONF_EN_ARM_TDC_CLK40)
+            if (ONE_DETECTED && CONF_EN_CLK40 && !CONF_EN_ARM_TDC_CLK40 && !SMALL_TOT)
                 next_state = COUNT;
-            else if (ARM_TDC_CLK40 && CONF_EN_CLK40 && CONF_EN_ARM_TDC_CLK40)
+            else if (ARM_TDC_FLAG_CLK40 && CONF_EN_CLK40 && CONF_EN_ARM_TDC_CLK40)
                 next_state = ARMED;
             else
                 next_state = IDLE;
 
         ARMED:
-            if (ONE_DETECTED)
+            if (ONE_DETECTED && !SMALL_TOT)
                 next_state = COUNT;
             else if (!CONF_EN_CLK40)
                 next_state = IDLE;
@@ -211,7 +262,8 @@ always @ (state or ONE_DETECTED or ZERO_DETECTED or CONF_EN_CLK40 or CONF_EN_ARM
 end
 
 wire FINISH;
-assign FINISH = (state == COUNT && next_state == IDLE);
+assign FINISH = (state == COUNT && next_state == IDLE) || (state == IDLE && SMALL_TOT && !(CONF_REJECT_SMALL_TOT_CLK40==1'b1)) || (state == ARMED && SMALL_TOT && !(CONF_REJECT_SMALL_TOT_CLK40==1'b1));
+
 wire START;
 assign START = ((state == IDLE && next_state == COUNT) || (state == ARMED && next_state == COUNT));
 
@@ -234,9 +286,8 @@ always @ (posedge CLK40)
         TDC_PRE <= TDC_PRE + ONES;
 
 wire [11:0] TDC_VAL;
-assign TDC_VAL = TDC_PRE + ONES;
+assign TDC_VAL = ((state == IDLE && SMALL_TOT) || (state == ARMED && SMALL_TOT)) ? ONES : TDC_PRE + ONES;
 
-reg [15:0] EVENT_CNT;
 always @ (posedge CLK40)
     if(RST_SYNC)
         EVENT_CNT <= 0;
