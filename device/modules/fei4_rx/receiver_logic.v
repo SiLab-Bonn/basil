@@ -245,7 +245,6 @@ always @(posedge BUS_CLK) begin
     fifo_size <= {5'b0, fifo_size_int};
 end
 
-
 `ifdef SYNTHESIS_NOT
 wire [35:0] control_bus;
 chipscope_icon ichipscope_icon

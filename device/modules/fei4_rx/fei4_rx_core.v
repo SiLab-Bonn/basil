@@ -69,6 +69,8 @@ assign RST = BUS_RST_FLAG | SOFT_RST_FLAG;
 wire ready_rec;
 wire [15:0] fifo_size;
 wire [7:0] decoder_err_cnt, lost_err_cnt;
+reg [7:0] decoder_err_cnt_buf; // BUS_ADD==4
+reg [7:0] lost_err_cnt_buf; // BUS_ADD==5
 
 assign RX_READY = (ready_rec==1'b1);
 assign RX_8B10B_DECODER_ERR = (decoder_err_cnt!=8'b0);
@@ -78,8 +80,6 @@ reg [7:0] status_regs[1:0];
 
 wire CONF_EN_INVERT_RX_DATA; // BUS_ADD==1 BIT==1
 assign CONF_EN_INVERT_RX_DATA = status_regs[1][1];
-
-reg [7:0] LOST_DATA_CNT; //BUS_ADD==2
 
 always @(posedge BUS_CLK) begin
     if(RST) begin
@@ -100,9 +100,9 @@ always @ (negedge BUS_CLK) begin //(*) begin
     else if(BUS_ADD == 3)
         BUS_DATA_OUT <= fifo_size[15:8];
     else if(BUS_ADD == 4)
-        BUS_DATA_OUT <= decoder_err_cnt;
+        BUS_DATA_OUT <= decoder_err_cnt_buf;
     else if(BUS_ADD == 5)
-        BUS_DATA_OUT <= lost_err_cnt;
+        BUS_DATA_OUT <= lost_err_cnt_buf;
     else if(BUS_ADD == 6)
         BUS_DATA_OUT <= 8'b0;
     else if(BUS_ADD == 7)
@@ -115,6 +115,32 @@ wire [23:0] FE_DATA;
 wire [7:0] DATA_HEADER;
 assign DATA_HEADER = DATA_IDENTIFIER;
 assign FIFO_DATA = {DATA_HEADER, FE_DATA};
+
+always @ (negedge BUS_CLK)
+begin
+    if (RST)
+        decoder_err_cnt_buf <= 8'b0;
+    else
+    begin
+        if (BUS_ADD == 4)
+            decoder_err_cnt_buf <= decoder_err_cnt;
+        else
+            decoder_err_cnt_buf <= decoder_err_cnt_buf;
+    end
+end
+
+always @ (negedge BUS_CLK)
+begin
+    if (RST)
+        lost_err_cnt_buf <= 8'b0;
+    else
+    begin
+        if (BUS_ADD == 5)
+            lost_err_cnt_buf <= lost_err_cnt;
+        else
+            lost_err_cnt_buf <= lost_err_cnt_buf;
+    end
+end
 
 receiver_logic #(
     .DSIZE(DSIZE)
