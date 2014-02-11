@@ -183,7 +183,7 @@ three_stage_synchronizer conf_en_three_stage_synchronizer_clk40 (
 );
 
 wire CONF_REJECT_SMALL_TOT_CLK40;
-three_stage_synchronizer conf_en_three_stage_synchronizer_clk40 (
+three_stage_synchronizer conf_rej_small_tot_three_stage_synchronizer_clk40 (
     .CLK(CLK40),
     .IN(CONF_REJECT_SMALL_TOT),
     .OUT(CONF_REJECT_SMALL_TOT_CLK40)
