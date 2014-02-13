@@ -203,7 +203,7 @@ begin
                 counter_tlu_clock <= 0;
                 counter_sr_wait_cycles <= 0;
                 TLU_TRIGGER_LOW_TIMEOUT_ERROR <= 1'b0;
-                if (TLU_TRIGGER == 1'b1)
+                if (TLU_TRIGGER == 1'b1 && CMD_EXT_START_ENABLE == 1'b1)
                     TLU_TRIGGER_ACCEPT_ERROR <= 1'b1;
                 else
                     TLU_TRIGGER_ACCEPT_ERROR <= 1'b0;
