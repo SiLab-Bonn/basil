@@ -46,17 +46,19 @@ module fei4_rx_core
 // 4 - decoder_err_cnt
 // 5 - lost_err_cnt
 
-wire SOFT_RST;
+wire SOFT_RST, FIFO_RST;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
-
+assign FIFO_RST = (BUS_ADD==1 && BUS_WR); // resets FIFO and FIFO error counters only, keeping status register values
 // reset sync
 // when write to addr = 0 then reset
-reg RST_FF, RST_FF2, BUS_RST_FF, BUS_RST_FF2;
+reg RST_FF, RST_FF2, BUS_RST_FF, BUS_RST_FF2, FIFO_RST_FF, FIFO_RST_FF2;
 always @(posedge BUS_CLK) begin
     RST_FF <= SOFT_RST;
     RST_FF2 <= RST_FF;
     BUS_RST_FF <= BUS_RST;
     BUS_RST_FF2 <= BUS_RST_FF;
+    FIFO_RST_FF <= FIFO_RST;
+    FIFO_RST_FF2 <= FIFO_RST_FF;
 end
 
 wire SOFT_RST_FLAG;
@@ -65,50 +67,45 @@ wire BUS_RST_FLAG;
 assign BUS_RST_FLAG = BUS_RST_FF2 & ~BUS_RST_FF; // trailing edge
 wire RST;
 assign RST = BUS_RST_FLAG | SOFT_RST_FLAG;
+wire FIFO_RST_FLAG;
+assign FIFO_RST_FLAG = ~FIFO_RST_FF2 & FIFO_RST_FF;
 
 wire ready_rec;
-wire [15:0] fifo_size;
-wire [7:0] decoder_err_cnt, lost_err_cnt;
-reg [7:0] decoder_err_cnt_buf; // BUS_ADD==4
-reg [7:0] lost_err_cnt_buf; // BUS_ADD==5
+wire [15:0] fifo_size; // BUS_ADD==3 ,4
+reg [7:0] decoder_err_cnt_buf; // BUS_ADD==5
+reg [7:0] lost_err_cnt_buf; // BUS_ADD==6
 
+wire [7:0] decoder_err_cnt, lost_err_cnt;
 assign RX_READY = (ready_rec==1'b1);
 assign RX_8B10B_DECODER_ERR = (decoder_err_cnt!=8'b0);
 assign RX_FIFO_OVERFLOW_ERR = (lost_err_cnt!=8'b0);
 
-reg [7:0] status_regs[1:0];
+reg [7:0] status_regs;
 
-wire CONF_EN_INVERT_RX_DATA; // BUS_ADD==1 BIT==1
-assign CONF_EN_INVERT_RX_DATA = status_regs[1][1];
+wire CONF_EN_INVERT_RX_DATA; // BUS_ADD==2 BIT==1
+assign CONF_EN_INVERT_RX_DATA = status_regs[1];
 
 always @(posedge BUS_CLK) begin
     if(RST) begin
-        status_regs[0] <= 8'b0;
-        status_regs[1] <= 8'b0;
+        status_regs <= 8'b0;
     end
-    else if(BUS_WR && BUS_ADD < 2)
-        status_regs[BUS_ADD[0]] <= BUS_DATA_IN;
+    else if(BUS_WR && BUS_ADD == 2)
+        status_regs <= BUS_DATA_IN;
 end
 
 always @ (negedge BUS_CLK) begin //(*) begin
-    if(BUS_ADD == 0)
-        BUS_DATA_OUT <= status_regs[0];
-    else if(BUS_ADD == 1)
-        BUS_DATA_OUT <= {status_regs[1][7:1], RX_READY};
-    else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= fifo_size[7:0];
+    if(BUS_ADD == 2)
+        BUS_DATA_OUT <= {status_regs[7:1], RX_READY};
     else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= fifo_size[15:8];
+        BUS_DATA_OUT <= fifo_size[7:0];
     else if(BUS_ADD == 4)
-        BUS_DATA_OUT <= decoder_err_cnt_buf;
+        BUS_DATA_OUT <= fifo_size[15:8];
     else if(BUS_ADD == 5)
-        BUS_DATA_OUT <= lost_err_cnt_buf;
+        BUS_DATA_OUT <= decoder_err_cnt_buf;
     else if(BUS_ADD == 6)
-        BUS_DATA_OUT <= 8'b0;
-    else if(BUS_ADD == 7)
-        BUS_DATA_OUT <= 8'b0;
+        BUS_DATA_OUT <= lost_err_cnt_buf;
     else
-        BUS_DATA_OUT <= 0;
+        BUS_DATA_OUT <= 8'b0;
 end
 
 wire [23:0] FE_DATA;
@@ -145,7 +142,7 @@ end
 receiver_logic #(
     .DSIZE(DSIZE)
 ) ireceiver_logic (
-    .RESET(RST),
+    .RESET((RST | FIFO_RST_FLAG)),
     .WCLK(DATA_CLK),
     .FCLK(RX_CLK),
     .FCLK2X(RX_CLK2X),
