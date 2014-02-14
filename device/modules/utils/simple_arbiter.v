@@ -1,7 +1,9 @@
 // 'base' is a one hot signal indicating the first request
 // that should be considered for a grant.  Followed by higher
 // indexed requests, then wrapping around.
-//
+// NOTE: Ff there is more than one request at time, 
+//       this arbiter will finish all requests by the first request,
+//       and then go on with higher indexed request request.
 
 module arbiter (
     req, grant, base
