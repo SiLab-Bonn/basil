@@ -35,7 +35,7 @@ module sram_fifo_core
     input wire                  USB_READ,
     output wire [7:0]           USB_DATA,
     
-    output reg                  FIFO_READ_NEXT_OUT,
+    output wire                 FIFO_READ_NEXT_OUT,
     input wire                  FIFO_EMPTY_IN,
     input wire [31:0]           FIFO_DATA,
     
@@ -97,6 +97,24 @@ always @ (negedge BUS_CLK) begin //(*) begin
             BUS_DATA_OUT <= CONF_READ_ERROR;
     end
 end
+
+///
+reg                   FIFO_READ_NEXT_OUT_BUF;
+wire                  FIFO_EMPTY_IN_BUF;
+wire [31:0]           FIFO_DATA_BUF;
+wire FULL_BUF;
+
+assign FIFO_READ_NEXT_OUT = !FULL_BUF;
+
+gerneric_fifo #(.DATA_SIZE(32), .DEPTH(1024))  i_buf_fifo
+( .clk(BUS_CLK), .reset(RST), 
+    .write(!FIFO_EMPTY_IN),
+    .read(FIFO_READ_NEXT_OUT_BUF), 
+    .data_in(FIFO_DATA), 
+    .full(FULL_BUF), 
+    .empty(FIFO_EMPTY_IN_BUF), 
+    .data_out(FIFO_DATA_BUF[31:0]), .size() 
+);
 
 
 wire empty, full;
@@ -168,19 +186,19 @@ reg write_sram;
 reg full_ff;
 
 always @ (*) begin
-   if(!FIFO_EMPTY_IN && !full_ff && !read_sram)
+   if(!FIFO_EMPTY_IN_BUF && !full_ff && !read_sram)
        write_sram = 1;
    else
        write_sram = 0;
        
-    if(!FIFO_EMPTY_IN && !full && !read_sram && wr_pointer[0]==1)
-       FIFO_READ_NEXT_OUT = 1;
+    if(!FIFO_EMPTY_IN_BUF && !full && !read_sram && wr_pointer[0]==1)
+       FIFO_READ_NEXT_OUT_BUF = 1;
     else
-       FIFO_READ_NEXT_OUT = 0;
+       FIFO_READ_NEXT_OUT_BUF = 0;
 end
 
 wire [15:0] DATA_TO_SRAM;
-assign DATA_TO_SRAM = wr_pointer[0]==0 ? FIFO_DATA[31:16] : FIFO_DATA[15:0];
+assign DATA_TO_SRAM = wr_pointer[0]==0 ? FIFO_DATA_BUF[31:16] : FIFO_DATA_BUF[15:0];
 
 //CG_MOD_neg icg(.ck_in(BUS_CLK270), .enable(write_sram), .ck_out(SRAM_WE_B));
 
