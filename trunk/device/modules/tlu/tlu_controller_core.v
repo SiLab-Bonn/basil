@@ -324,12 +324,12 @@ begin
         RJ45_ENABLED <= 1'b0;
     else
     begin
-        if ((RJ45_TRIGGER_BUS_CLK && RJ45_RESET_BUS_CLK && !RJ45_ENABLED) || TLU_MODE == 2'b00)
-            RJ45_ENABLED <= 1'b0;
-        else if (FORCE_USE_RJ45 == 1'b1)
+        if (FORCE_USE_RJ45 == 1'b1 && TLU_MODE != 2'b00)
             RJ45_ENABLED <= 1'b1;
+        else if ((RJ45_TRIGGER_BUS_CLK && RJ45_RESET_BUS_CLK && !RJ45_ENABLED) || TLU_MODE == 2'b00)
+            RJ45_ENABLED <= 1'b0;
         else
-            RJ45_ENABLED <= RJ45_ENABLED;
+            RJ45_ENABLED <= 1'b1;
     end
 end
 
@@ -450,7 +450,7 @@ tlu_controller_fsm #(
     .CMD_EXT_START_FLAG(CMD_EXT_START_FLAG_BUS_CLK),
     .CMD_EXT_START_ENABLE(CMD_EXT_START_ENABLE_BUS_CLK),
     
-    .TLU_TRIGGER(TLU_TRIGGER_BUS_CLK_FF),
+    .TLU_TRIGGER(TLU_TRIGGER_BUS_CLK),
     .TLU_TRIGGER_FLAG(TLU_TRIGGER_FLAG_BUS_CLK),
     
     .TLU_MODE(TLU_MODE),
