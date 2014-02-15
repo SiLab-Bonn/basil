@@ -232,7 +232,7 @@ always @ (posedge CLK40)
     else
       state <= next_state;
 
-always @ (state or ONE_DETECTED or ZERO_DETECTED or CONF_EN_CLK40 or CONF_EN_ARM_TDC_CLK40 or ARM_TDC_FLAG_CLK40) begin
+always @ (state or ONE_DETECTED or ZERO_DETECTED or CONF_EN_CLK40 or CONF_EN_ARM_TDC_CLK40 or ARM_TDC_FLAG_CLK40 or SMALL_TOT) begin
     case(state)
         IDLE:
             if (ONE_DETECTED && CONF_EN_CLK40 && !CONF_EN_ARM_TDC_CLK40 && !SMALL_TOT)
