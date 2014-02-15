@@ -321,7 +321,7 @@ cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) cdc_syncfifo_i
     .rinc(!fifo_full), .rclk(BUS_CLK), .rrst(RST_LONG)
 );
 
-gerneric_fifo #(.DATA_SIZE(32), .DEPTH(1024))  fifo_i
+gerneric_fifo #(.DATA_SIZE(32), .DEPTH(512))  fifo_i
 ( .clk(BUS_CLK), .reset(RST_LONG | BUS_RST), 
     .write(!cdc_fifo_empty),
     .read(FIFO_READ), 
