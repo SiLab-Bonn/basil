@@ -89,7 +89,7 @@ end
 
 //wire [31:0] DATA_A [WIDTH-1:0];
 
-wire [WIDTH:0] DATA_A [31:0]; // this will simplify the loop below
+wire [WIDTH-1:0] DATA_A [31:0]; // this will simplify the loop below
 
 // generation of DATA_A
 genvar i, j;
