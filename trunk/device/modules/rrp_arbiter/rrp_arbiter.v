@@ -44,7 +44,7 @@ wire WRITE_REQ_OR, HOLD_REQ_OR;
 assign WRITE_REQ_OR = |WRITE_REQ;
 assign HOLD_REQ_OR = |HOLD_REQ;
 
-assign WRITE_OUT = |(WRITE_REQ & select);
+assign WRITE_OUT = |(WRITE_REQ & select & READ_GRANT);
 //assign WRITE_OUT = HOLD_REQ_OR ? WRITE_REQ[0] : WRITE_REQ_OR;
 
 always@(*) begin
@@ -109,6 +109,6 @@ generate
 endgenerate
 
 //assign DATA_OUT = DATA_A[select];
-assign READ_GRANT = select & {WIDTH{READY_OUT}};
+assign READ_GRANT = select & {WIDTH{READY_OUT}} & WRITE_REQ;
 
 endmodule
