@@ -44,10 +44,12 @@ reg [DATA_SIZE:0] mem [DEPTH-1:0];
 
 localparam POINTER_SIZE = log2(DEPTH);
 
-reg [POINTER_SIZE-1:0] rd_ponter, wr_pointer;
+reg [POINTER_SIZE-1:0] rd_ponter, rd_tmp, wr_pointer;
 output reg [POINTER_SIZE-1:0] size;
 
 wire empty_loc;
+
+
 
 always@(posedge clk) begin
     if(reset)
@@ -57,6 +59,16 @@ always@(posedge clk) begin
             rd_ponter <= 0;
         else
             rd_ponter <= rd_ponter + 1;
+    end
+end
+
+always@(*) begin
+    rd_tmp = rd_ponter;
+    if(read) begin
+        if(rd_ponter == DEPTH-1)
+            rd_tmp = 0;
+        else
+            rd_tmp = rd_ponter + 1;
     end
 end
 
@@ -89,7 +101,7 @@ always@(posedge clk)
 
 always@(posedge clk)
     //if(read && !empty)
-        data_out <= mem[rd_ponter];
+        data_out <= mem[rd_tmp];
 
 always @ (*) begin
     if(wr_pointer >= rd_ponter)
