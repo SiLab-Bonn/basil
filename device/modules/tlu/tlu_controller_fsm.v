@@ -377,7 +377,11 @@ begin
 
             WAIT_FOR_TLU_DATA_SAVED_CMD_READY:
             begin
-                FIFO_PREEMPT_REQ <= 1'b0;
+                if (FIFO_READ == 1'b1)
+                    FIFO_PREEMPT_REQ <= 1'b0;
+                else
+                    FIFO_PREEMPT_REQ <= FIFO_PREEMPT_REQ;
+                    
                 if (FIFO_READ == 1'b1)
                     FIFO_EMPTY <= 1'b1;
                 else
