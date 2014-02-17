@@ -326,7 +326,7 @@ begin
     begin
         if (FORCE_USE_RJ45 == 1'b1 && TLU_MODE != 2'b00)
             RJ45_ENABLED <= 1'b1;
-        else if ((RJ45_TRIGGER_BUS_CLK && RJ45_RESET_BUS_CLK && !RJ45_ENABLED) || TLU_MODE == 2'b00)
+        else if ((RJ45_TRIGGER_BUS_CLK == 1'b1 && RJ45_RESET_BUS_CLK == 1'b1 && !(RJ45_ENABLED == 1'b1)) || TLU_MODE == 2'b00)
             RJ45_ENABLED <= 1'b0;
         else
             RJ45_ENABLED <= 1'b1;
