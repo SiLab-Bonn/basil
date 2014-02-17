@@ -82,6 +82,7 @@ reg [7:0] counter_trigger_low_time_out;
 integer counter_tlu_clock;
 integer counter_sr_wait_cycles;
 integer n; // for for-loop
+reg CMD_WAS_BUSY;
 
 // standard state encoding
 reg     [2:0]   state;
@@ -103,7 +104,7 @@ begin
 end
 
 // combinational always block, blocking assignments
-always @ (state or CMD_READY or CMD_EXT_START_ENABLE or TLU_TRIGGER_FLAG or TLU_TRIGGER or TLU_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock or TLU_TRIGGER_CLOCK_CYCLES or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or FIFO_EMPTY or EXT_VETO) //or TLU_TRIGGER_BUSY)
+always @ (state or CMD_READY or CMD_WAS_BUSY or CMD_EXT_START_ENABLE or TLU_TRIGGER_FLAG or TLU_TRIGGER or TLU_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock or TLU_TRIGGER_CLOCK_CYCLES or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or FIFO_EMPTY or EXT_VETO) //or TLU_TRIGGER_BUSY)
 begin
     case (state)
     
@@ -144,7 +145,7 @@ begin
         
         WAIT_FOR_TLU_DATA_SAVED_CMD_READY:
         begin
-            if (FIFO_EMPTY == 1'b1 && CMD_READY == 1'b1) next = IDLE;
+            if (FIFO_EMPTY == 1'b1 && CMD_READY == 1'b1 && CMD_WAS_BUSY == 1'b1) next = IDLE;
             else next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY;
         end
         
@@ -175,6 +176,7 @@ begin
         TLU_TRIGGER_LOW_TIMEOUT_ERROR <= 1'b0;
         TLU_TRIGGER_ACCEPT_ERROR <= 1'b0;
         CMD_EXT_START_FLAG <= 1'b0;
+        CMD_WAS_BUSY <= 1'b0;
     end
     else
     begin
@@ -192,6 +194,7 @@ begin
         TLU_TRIGGER_LOW_TIMEOUT_ERROR <= TLU_TRIGGER_LOW_TIMEOUT_ERROR;
         TLU_TRIGGER_ACCEPT_ERROR <= TLU_TRIGGER_ACCEPT_ERROR;
         CMD_EXT_START_FLAG <= 1'b0;
+        CMD_WAS_BUSY <= 1'b0;
 
         case (next)
 
@@ -219,6 +222,7 @@ begin
                 else
                     TLU_TRIGGER_ACCEPT_ERROR <= 1'b0;
                 CMD_EXT_START_FLAG <= 1'b0;
+                CMD_WAS_BUSY <= 1'b0;
             end
             
             SEND_COMMAND_WAIT_FOR_TRIGGER_LOW:
@@ -250,6 +254,10 @@ begin
                     CMD_EXT_START_FLAG <= 1'b1;
                 else
                     CMD_EXT_START_FLAG <= 1'b0;
+                if (CMD_READY == 1'b0)
+                    CMD_WAS_BUSY <= 1'b1;
+                else
+                    CMD_WAS_BUSY <= CMD_WAS_BUSY;
             end
 
             SEND_TLU_CLOCK:
@@ -266,6 +274,10 @@ begin
                 TLU_TRIGGER_LOW_TIMEOUT_ERROR <= TLU_TRIGGER_LOW_TIMEOUT_ERROR;
                 TLU_TRIGGER_ACCEPT_ERROR <= TLU_TRIGGER_ACCEPT_ERROR;
                 CMD_EXT_START_FLAG <= 1'b0;
+                if (CMD_READY == 1'b0)
+                    CMD_WAS_BUSY <= 1'b1;
+                else
+                    CMD_WAS_BUSY <= CMD_WAS_BUSY;
             end
 
             WAIT_BEFORE_LATCH:
@@ -282,6 +294,10 @@ begin
                 TLU_TRIGGER_LOW_TIMEOUT_ERROR <= TLU_TRIGGER_LOW_TIMEOUT_ERROR;
                 TLU_TRIGGER_ACCEPT_ERROR <= TLU_TRIGGER_ACCEPT_ERROR;
                 CMD_EXT_START_FLAG <= 1'b0;
+                if (CMD_READY == 1'b0)
+                    CMD_WAS_BUSY <= 1'b1;
+                else
+                    CMD_WAS_BUSY <= CMD_WAS_BUSY;
             end
 
             LATCH_DATA:
@@ -387,6 +403,10 @@ begin
                 TLU_TRIGGER_LOW_TIMEOUT_ERROR <= TLU_TRIGGER_LOW_TIMEOUT_ERROR;
                 TLU_TRIGGER_ACCEPT_ERROR <= TLU_TRIGGER_ACCEPT_ERROR;
                 CMD_EXT_START_FLAG <= 1'b0;
+                if (CMD_READY == 1'b0)
+                    CMD_WAS_BUSY <= 1'b1;
+                else
+                    CMD_WAS_BUSY <= CMD_WAS_BUSY;
             end
 
             WAIT_FOR_TLU_DATA_SAVED_CMD_READY:
@@ -405,7 +425,7 @@ begin
                 else // de-assert TLU VETO here
                     TLU_ASSERT_VETO <= 1'b0;
                 // de-assert TLU busy as soon as possible
-                if ((FIFO_READ == 1'b1 || (WRITE_TIMESTAMP == 1'b0 && TLU_MODE != 2'b11)) && CMD_READY == 1'b1)
+                if ((FIFO_READ == 1'b1 || (WRITE_TIMESTAMP == 1'b0 && TLU_MODE != 2'b11)) && CMD_READY == 1'b1 && CMD_WAS_BUSY == 1'b1)
                     TLU_BUSY <= 1'b0;
                 else
                     TLU_BUSY <= TLU_BUSY;
@@ -416,6 +436,10 @@ begin
                 TLU_TRIGGER_LOW_TIMEOUT_ERROR <= TLU_TRIGGER_LOW_TIMEOUT_ERROR;
                 TLU_TRIGGER_ACCEPT_ERROR <= TLU_TRIGGER_ACCEPT_ERROR;
                 CMD_EXT_START_FLAG <= 1'b0;
+                if (CMD_READY == 1'b0)
+                    CMD_WAS_BUSY <= 1'b1;
+                else
+                    CMD_WAS_BUSY <= CMD_WAS_BUSY;
             end
 
         endcase
