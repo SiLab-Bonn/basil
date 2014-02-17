@@ -37,9 +37,9 @@
     input wire                  LEMO_TRIGGER,
     input wire                  RJ45_RESET,
     input wire                  LEMO_RESET,
-    output wire                  RJ45_ENABLED,
+    output wire                 RJ45_ENABLED,
     output wire                 TLU_BUSY,
-    output wire                  TLU_CLOCK,
+    output wire                 TLU_CLOCK,
     
     input wire                  EXT_VETO,
     
