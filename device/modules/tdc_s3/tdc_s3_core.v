@@ -251,7 +251,7 @@ always @ (state or ONE_DETECTED or ZERO_DETECTED or CONF_EN_CLK40 or CONF_EN_ARM
 end
 
 wire FINISH;
-assign FINISH = (state == COUNT && next_state == IDLE) || (state == IDLE && SMALL_TOT) || (state == ARMED && SMALL_TOT);
+assign FINISH = (state == COUNT && next_state == IDLE) || (state == IDLE && SMALL_TOT && CONF_EN_CLK40) || (state == ARMED && SMALL_TOT && CONF_EN_CLK40);
 
 wire START;
 assign START = ((state == IDLE && next_state == COUNT) || (state == ARMED && next_state == COUNT));
@@ -275,7 +275,7 @@ always @ (posedge CLK40)
         TDC_PRE <= TDC_PRE + ONES;
 
 wire [11:0] TDC_VAL;
-assign TDC_VAL = ((state == IDLE && SMALL_TOT) || (state == ARMED && SMALL_TOT)) ? ONES : TDC_PRE + ONES;
+assign TDC_VAL = ((state == IDLE && SMALL_TOT && CONF_EN_CLK40) || (state == ARMED && SMALL_TOT && CONF_EN_CLK40)) ? ONES : TDC_PRE + ONES;
 
 always @ (posedge CLK40)
     if(RST_SYNC)
