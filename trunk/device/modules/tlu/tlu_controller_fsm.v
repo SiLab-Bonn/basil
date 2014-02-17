@@ -51,20 +51,30 @@ module tlu_controller_fsm
 
     output reg                  TLU_TRIGGER_LOW_TIMEOUT_ERROR,
     output reg                  TLU_TRIGGER_ACCEPT_ERROR,
+
+    input wire                  WRITE_TIMESTAMP,
     
     input wire                  FIFO_NEAR_FULL
 );
 
 // reg TLU_TRIGGER_ACCEPT_ERROR;
 // reg TLU_TRIGGER_LOW_TIMEOUT_ERROR;
-
-assign FIFO_DATA[31:0] = {1'b1, TLU_TRIGGER_ACCEPT_ERROR, TLU_TRIGGER_LOW_TIMEOUT_ERROR, 14'b0, TLU_DATA[14:0]};
+reg [30:0] TIMESTAMP_DATA;
+assign FIFO_DATA[31:0] = (TLU_MODE==2'b11) ? {1'b1, TLU_DATA[30:0]} : {1'b1, TIMESTAMP_DATA};
 
 // shift register, serial to parallel, 32 FF
 reg     [(32*DIVISOR)-1:0]      tlu_data_sr;
 always @ (posedge CLK)
 begin
     tlu_data_sr[(32*DIVISOR)-1:0] <= {tlu_data_sr[(32*DIVISOR)-2:0], TLU_TRIGGER};
+end
+
+// timestamp
+reg [30:0] TIMESTAMP;
+always @ (posedge CLK)
+begin
+    if (RESET) TIMESTAMP <= 31'b0;
+    else TIMESTAMP <= TIMESTAMP + 1;
 end
 
 // FSM
@@ -134,7 +144,7 @@ begin
         
         WAIT_FOR_TLU_DATA_SAVED_CMD_READY:
         begin
-            if ((FIFO_EMPTY == 1'b1) && (CMD_READY == 1'b1)) next = IDLE;
+            if (FIFO_EMPTY == 1'b1 && CMD_READY == 1'b1) next = IDLE;
             else next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY;
         end
         
@@ -155,6 +165,7 @@ begin
         FIFO_PREEMPT_REQ <= 1'b0;
         FIFO_EMPTY <= 1'b1;
         TLU_DATA <= 32'b0000_0000_0000_0000_0000_0000_0000_0000;
+        TIMESTAMP_DATA <= 31'b000_0000_0000_0000_0000_0000_0000_0000;
         TLU_ASSERT_VETO <= 1'b0;
         TLU_BUSY <= 1'b0;
         TLU_CLOCK_ENABLE <= 1'b0;
@@ -169,7 +180,8 @@ begin
     begin
         FIFO_PREEMPT_REQ <= 1'b0;
         FIFO_EMPTY <= 1'b1;
-        TLU_DATA <= 32'b0000_0000_0000_0000_0000_0000_0000_0000;
+        TLU_DATA <= TLU_DATA;
+        TIMESTAMP_DATA <= TIMESTAMP_DATA;
         TLU_DATA_READY_FLAG <= 1'b0;
         TLU_ASSERT_VETO <= 1'b0;
         TLU_BUSY <= 1'b0;
@@ -187,7 +199,6 @@ begin
             begin
                 FIFO_PREEMPT_REQ <= 1'b0;
                 FIFO_EMPTY <= 1'b1;
-                TLU_DATA <= 32'b0000_0000_0000_0000_0000_0000_0000_0000;
                 TLU_DATA_READY_FLAG <= 1'b0;
                 if ((CMD_EXT_START_ENABLE == 1'b0) || (FIFO_NEAR_FULL == 1'b1 && TLU_DISABLE_VETO == 1'b0))
                     TLU_ASSERT_VETO <= 1'b1;
@@ -212,12 +223,16 @@ begin
             
             SEND_COMMAND_WAIT_FOR_TRIGGER_LOW:
             begin
-                if (TLU_MODE == 2'b11)
+                if (TLU_MODE == 2'b11 || WRITE_TIMESTAMP == 1'b1)
                     FIFO_PREEMPT_REQ <= 1'b1;
                 else
                     FIFO_PREEMPT_REQ <= 1'b0;
-                FIFO_EMPTY <= 1'b1;
-                TLU_DATA <= 32'b0000_0000_0000_0000_0000_0000_0000_0000;
+                // timestamp
+                if (WRITE_TIMESTAMP == 1'b1 && TLU_MODE != 2'b11)
+                    FIFO_EMPTY <= 1'b0;
+                else
+                    FIFO_EMPTY <= 1'b1;
+                TIMESTAMP_DATA <= TIMESTAMP;
                 TLU_DATA_READY_FLAG <= 1'b0;
                 TLU_ASSERT_VETO <= 1'b0;
                 TLU_BUSY <= 1'b1;
@@ -230,6 +245,7 @@ begin
                 else
                     TLU_TRIGGER_LOW_TIMEOUT_ERROR <= 1'b0;
                 TLU_TRIGGER_ACCEPT_ERROR <= TLU_TRIGGER_ACCEPT_ERROR;
+                // send flag at beginning of state
                 if (state != next)
                     CMD_EXT_START_FLAG <= 1'b1;
                 else
@@ -240,7 +256,6 @@ begin
             begin
                 FIFO_PREEMPT_REQ <= FIFO_PREEMPT_REQ;
                 FIFO_EMPTY <= 1'b1;
-                TLU_DATA <= 32'b0000_0000_0000_0000_0000_0000_0000_0000;
                 TLU_DATA_READY_FLAG <= 1'b0;
                 TLU_ASSERT_VETO <= 1'b0;
                 TLU_BUSY <= 1'b1;
@@ -257,7 +272,6 @@ begin
             begin
                 FIFO_PREEMPT_REQ <= FIFO_PREEMPT_REQ;
                 FIFO_EMPTY <= 1'b1;
-                TLU_DATA <= 32'b0000_0000_0000_0000_0000_0000_0000_0000;
                 TLU_DATA_READY_FLAG <= 1'b0;
                 TLU_ASSERT_VETO <= 1'b0;
                 TLU_BUSY <= 1'b1;
@@ -381,18 +395,20 @@ begin
                     FIFO_PREEMPT_REQ <= 1'b0;
                 else
                     FIFO_PREEMPT_REQ <= FIFO_PREEMPT_REQ;
-                    
                 if (FIFO_READ == 1'b1)
                     FIFO_EMPTY <= 1'b1;
                 else
                     FIFO_EMPTY <= FIFO_EMPTY;
-                TLU_DATA <= TLU_DATA;
                 TLU_DATA_READY_FLAG <= 1'b0;
                 if ((CMD_EXT_START_ENABLE == 1'b0) || (FIFO_NEAR_FULL == 1'b1 && TLU_DISABLE_VETO == 1'b0))
                     TLU_ASSERT_VETO <= 1'b1;
                 else // de-assert TLU VETO here
                     TLU_ASSERT_VETO <= 1'b0;
-                TLU_BUSY <= 1'b1;
+                // de-assert TLU busy as soon as possible
+                if ((FIFO_READ == 1'b1 || (WRITE_TIMESTAMP == 1'b0 && TLU_MODE != 2'b11)) && CMD_READY == 1'b1)
+                    TLU_BUSY <= 1'b0;
+                else
+                    TLU_BUSY <= TLU_BUSY;
                 TLU_CLOCK_ENABLE <= 1'b0;
                 counter_trigger_low_time_out <= 8'b0;
                 counter_tlu_clock <= 0;
