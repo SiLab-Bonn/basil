@@ -146,7 +146,7 @@ begin
     else if (BUS_ADD == 1)
         BUS_DATA_OUT <= status_regs[1];
     else if (BUS_ADD == 2)
-        BUS_DATA_OUT <= {RJ45_ENABLED, status_regs[2][6:0]};
+        BUS_DATA_OUT <= status_regs[2]; //{RJ45_ENABLED, status_regs[2][6:0]};
     else if (BUS_ADD == 3)
         BUS_DATA_OUT <= status_regs[3];
     else if (BUS_ADD == 4)
