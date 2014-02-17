@@ -96,8 +96,10 @@ wire TLU_ENABLE_RESET;
 assign TLU_ENABLE_RESET = status_regs[2][5];
 wire TLU_INVERT_LEMO_TRIGGER;
 assign TLU_INVERT_LEMO_TRIGGER = status_regs[2][6];
-wire FORCE_USE_RJ45;
-assign FORCE_USE_RJ45 = status_regs[2][7];
+//wire FORCE_USE_RJ45;
+//assign FORCE_USE_RJ45 = status_regs[2][7];
+wire CONF_EN_WRITE_TS;
+assign CONF_EN_WRITE_TS = status_regs[2][7];
 wire [7:0] TLU_TRIGGER_LOW_TIME_OUT;
 assign TLU_TRIGGER_LOW_TIME_OUT = status_regs[3];
 wire [31:0] SET_TRIGGER_NUMBER;
@@ -324,9 +326,9 @@ begin
         RJ45_ENABLED <= 1'b0;
     else
     begin
-        if (FORCE_USE_RJ45 == 1'b1 && TLU_MODE != 2'b00)
-            RJ45_ENABLED <= 1'b1;
-        else if ((RJ45_TRIGGER_BUS_CLK == 1'b1 && RJ45_RESET_BUS_CLK == 1'b1 && !(RJ45_ENABLED == 1'b1)) || TLU_MODE == 2'b00)
+//        if (FORCE_USE_RJ45 == 1'b1 && TLU_MODE != 2'b00)
+//            RJ45_ENABLED <= 1'b1;
+        if ((RJ45_TRIGGER_BUS_CLK == 1'b1 && RJ45_RESET_BUS_CLK == 1'b1 && !(RJ45_ENABLED == 1'b1)) || TLU_MODE == 2'b00)
             RJ45_ENABLED <= 1'b0;
         else
             RJ45_ENABLED <= 1'b1;
@@ -467,6 +469,8 @@ tlu_controller_fsm #(
 
     .TLU_TRIGGER_LOW_TIMEOUT_ERROR(),
     .TLU_TRIGGER_ACCEPT_ERROR(),
+    
+    .WRITE_TIMESTAMP(CONF_EN_WRITE_TS),
     
     .FIFO_NEAR_FULL(FIFO_NEAR_FULL)
 );
