@@ -75,7 +75,7 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
 tlu_controller_core 
 #(
     .DIVISOR(DIVISOR)
-) i_tlu_controller
+) i_tlu_controller_core
 (
     .BUS_CLK(BUS_CLK),                     
     .BUS_RST(BUS_RST),                  
