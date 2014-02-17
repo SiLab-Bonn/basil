@@ -104,7 +104,7 @@ begin
 end
 
 // combinational always block, blocking assignments
-always @ (state or CMD_READY or CMD_WAS_BUSY or CMD_EXT_START_ENABLE or TLU_TRIGGER_FLAG or TLU_TRIGGER or TLU_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock or TLU_TRIGGER_CLOCK_CYCLES or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or FIFO_EMPTY or EXT_VETO) //or TLU_TRIGGER_BUSY)
+always @ (state or CMD_READY or CMD_WAS_BUSY or CMD_EXT_START_ENABLE or TLU_TRIGGER_FLAG or TLU_TRIGGER or TLU_MODE or WRITE_TIMESTAMP or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock or TLU_TRIGGER_CLOCK_CYCLES or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or FIFO_EMPTY or EXT_VETO) //or TLU_TRIGGER_BUSY)
 begin
     case (state)
     
@@ -116,9 +116,11 @@ begin
         
         SEND_COMMAND_WAIT_FOR_TRIGGER_LOW:
         begin
-            if ((TLU_MODE == 2'b00) || (TLU_MODE == 2'b01)) next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY; // do not wait for trigger low
-            else if ((TLU_MODE == 2'b10) && ((TLU_TRIGGER == 1'b0) || (TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1))) next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY;
-            else if ((TLU_MODE == 2'b11) && ((TLU_TRIGGER == 1'b0) || (TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1))) next = SEND_TLU_CLOCK;
+            if (WRITE_TIMESTAMP == 1'b0 && (TLU_MODE == 2'b00 || TLU_MODE == 2'b01)) next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY; // do not wait for trigger low
+            if (WRITE_TIMESTAMP == 1'b1 && (TLU_MODE == 2'b00 || TLU_MODE == 2'b01)) next = LATCH_DATA; // do not wait for trigger low
+            else if (WRITE_TIMESTAMP == 1'b0 && TLU_MODE == 2'b10 && ((TLU_TRIGGER == 1'b0) || (TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1))) next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY;
+            else if (WRITE_TIMESTAMP == 1'b1 && TLU_MODE == 2'b10 && ((TLU_TRIGGER == 1'b0) || (TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1))) next = LATCH_DATA;
+            else if (TLU_MODE == 2'b11 && (TLU_TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1)) next = SEND_TLU_CLOCK;
             else next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
         end
         
@@ -231,12 +233,10 @@ begin
                     FIFO_PREEMPT_REQ <= 1'b1;
                 else
                     FIFO_PREEMPT_REQ <= 1'b0;
-                // timestamp
-                if (WRITE_TIMESTAMP == 1'b1 && TLU_MODE != 2'b11)
-                    FIFO_EMPTY <= 1'b0;
-                else
-                    FIFO_EMPTY <= 1'b1;
-                TIMESTAMP_DATA <= TIMESTAMP;
+                FIFO_EMPTY <= 1'b1;
+                // get timestamp closest to the trigger
+                if (state != next)
+                    TIMESTAMP_DATA <= TIMESTAMP;
                 TLU_DATA_READY_FLAG <= 1'b0;
                 TLU_ASSERT_VETO <= 1'b0;
                 TLU_BUSY <= 1'b1;
@@ -391,7 +391,7 @@ begin
                     end
                 end
                 TLU_DATA_READY_FLAG <= 1'b1;
-                if ((CMD_EXT_START_ENABLE == 1'b0) || (FIFO_NEAR_FULL == 1'b1 && TLU_DISABLE_VETO == 1'b0))
+                if (FIFO_NEAR_FULL == 1'b1 && TLU_DISABLE_VETO == 1'b0)
                     TLU_ASSERT_VETO <= 1'b1;
                 else
                     TLU_ASSERT_VETO <= 1'b0;
@@ -420,7 +420,7 @@ begin
                 else
                     FIFO_EMPTY <= FIFO_EMPTY;
                 TLU_DATA_READY_FLAG <= 1'b0;
-                if ((CMD_EXT_START_ENABLE == 1'b0) || (FIFO_NEAR_FULL == 1'b1 && TLU_DISABLE_VETO == 1'b0))
+                if (FIFO_NEAR_FULL == 1'b1 && TLU_DISABLE_VETO == 1'b0)
                     TLU_ASSERT_VETO <= 1'b1;
                 else // de-assert TLU VETO here
                     TLU_ASSERT_VETO <= 1'b0;
