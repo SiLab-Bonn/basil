@@ -17,7 +17,7 @@ module tdc_s3_core
     input CLK320,
     input CLK160,
     input CLK40,
-    input TDC_IN,
+    input TDC_IN, // pulse need to be longer than one cycle of CLK320, distance of pulses needs to be longer than one cycle of CLK40
     output TDC_OUT,
 
     input FIFO_READ,
@@ -48,10 +48,8 @@ reg [7:0] status_regs[1:0];
 
 wire CONF_EN; // ENABLE BUS_ADD==1 BIT==0
 assign CONF_EN = status_regs[1][0];
-wire CONF_REJECT_SMALL_TOT; // ENABLE BUS_ADD==1 BIT==1
-assign CONF_REJECT_SMALL_TOT = status_regs[1][1];
-wire CONF_EN_ARM_TDC; // ENABLE BUS_ADD==1 BIT==2
-assign CONF_EN_ARM_TDC = status_regs[1][2];
+wire CONF_EN_ARM_TDC; // ENABLE BUS_ADD==1 BIT==1
+assign CONF_EN_ARM_TDC = status_regs[1][1];
 reg [7:0] LOST_DATA_CNT, LOST_DATA_CNT_BUF; // BUS_ADD==2
 reg [15:0] EVENT_CNT, EVENT_CNT_BUF; // BUS_ADD==3 - 4
 
@@ -182,13 +180,6 @@ three_stage_synchronizer conf_en_three_stage_synchronizer_clk40 (
     .OUT(CONF_EN_CLK40)
 );
 
-wire CONF_REJECT_SMALL_TOT_CLK40;
-three_stage_synchronizer conf_rej_small_tot_three_stage_synchronizer_clk40 (
-    .CLK(CLK40),
-    .IN(CONF_REJECT_SMALL_TOT),
-    .OUT(CONF_REJECT_SMALL_TOT_CLK40)
-);
-
 wire ARM_TDC_CLK160;
 three_stage_synchronizer three_stage_rj45_trigger_synchronizer_bus_clk (
     .CLK(CLK160),
@@ -211,8 +202,6 @@ flag_domain_crossing arm_tdc_flag_domain_crossing (
     .FLAG_IN_CLK_A(ARM_TDC_FLAG_CLK160),
     .FLAG_OUT_CLK_B(ARM_TDC_FLAG_CLK40)
 );
-
-
 
 wire CONF_EN_ARM_TDC_CLK40;
 three_stage_synchronizer conf_en_arm_three_stage_synchronizer_clk40 (
@@ -262,7 +251,7 @@ always @ (state or ONE_DETECTED or ZERO_DETECTED or CONF_EN_CLK40 or CONF_EN_ARM
 end
 
 wire FINISH;
-assign FINISH = (state == COUNT && next_state == IDLE) || (state == IDLE && SMALL_TOT && !(CONF_REJECT_SMALL_TOT_CLK40==1'b1)) || (state == ARMED && SMALL_TOT && !(CONF_REJECT_SMALL_TOT_CLK40==1'b1));
+assign FINISH = (state == COUNT && next_state == IDLE) || (state == IDLE && SMALL_TOT) || (state == ARMED && SMALL_TOT);
 
 wire START;
 assign START = ((state == IDLE && next_state == COUNT) || (state == ARMED && next_state == COUNT));
