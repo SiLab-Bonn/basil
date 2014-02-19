@@ -35,7 +35,8 @@ module tdc_s3_core
     input ARM_TDC // assuming slower than 48MHz
 );
 
-//output format #ID (4 bit DATA_IDENTIFIER (parameter) + 16 bit event counter + 12 bit TDC data) 
+// output format: 4-bit DATA_IDENTIFIER (parameter) + 16 bit event counter + 12 bit TDC data
+// the TDC counter has a overflow bin: TDC value is 0 when an overflow occurs
 
 wire SOFT_RST;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
@@ -146,10 +147,10 @@ always@(posedge CLK40)
     DATA <= DATA_IN_SR;
 
 wire ONE_DETECTED;
-assign ONE_DETECTED = |DATA;
+assign ONE_DETECTED = |DATA; // asserted when one or more 1 occur
 
 wire ZERO_DETECTED;
-assign ZERO_DETECTED = |(~DATA);
+assign ZERO_DETECTED = |(~DATA); // asserted when one or more 0 occur
 
 wire SMALL_TOT;
 assign SMALL_TOT = ONE_DETECTED && (DATA[0]==0);
@@ -265,23 +266,26 @@ always@(*) begin
     end
 end
 
-reg [11:0] TDC_PRE;
+reg [12:0] TDC_PRE; // overflow bit
 always @ (posedge CLK40)
     if(RST_SYNC)
         TDC_PRE <= 0;
     else if(START)
         TDC_PRE <= ONES;
+    else if(state == COUNT && (TDC_PRE + ONES > 13'b0_1111_1111_1111 || TDC_PRE == 13'b0))
+        TDC_PRE <= 13'b0; // overflow!
     else if(state == COUNT)
         TDC_PRE <= TDC_PRE + ONES;
 
 wire [11:0] TDC_VAL;
-assign TDC_VAL = ((state == IDLE && SMALL_TOT && CONF_EN_CLK40) || (state == ARMED && SMALL_TOT && CONF_EN_CLK40)) ? ONES : TDC_PRE + ONES;
+// also check here for overflow
+assign TDC_VAL = ((state == IDLE && SMALL_TOT && CONF_EN_CLK40) || (state == ARMED && SMALL_TOT && CONF_EN_CLK40)) ? ONES : (TDC_PRE + ONES < 13'b1_0000_0000_0000 && TDC_PRE != 13'b0) ? TDC_PRE + ONES : 12'b0;
 
 always @ (posedge CLK40)
     if(RST_SYNC)
         EVENT_CNT <= 0;
     else if (FINISH)
-        EVENT_CNT <= EVENT_CNT +1;
+        EVENT_CNT <= EVENT_CNT + 1;
 
 wire wfull;
 wire cdc_fifo_write;
