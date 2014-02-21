@@ -15,7 +15,7 @@
 module fei4_rx
 #(
     parameter   BASEADDR = 16'h0000,
-    parameter   HIGHADDR = 16'h0000, 
+    parameter   HIGHADDR = 16'h0000,
     parameter   DSIZE = 10,
     parameter   DATA_IDENTIFIER = 0
 )
@@ -27,13 +27,13 @@ module fei4_rx
     output wire RX_READY,
     output wire RX_8B10B_DECODER_ERR,
     output wire RX_FIFO_OVERFLOW_ERR,
-     
+    
     input wire FIFO_READ,
     output wire FIFO_EMPTY,
     output wire [31:0] FIFO_DATA,
     
     output wire RX_FIFO_FULL,
-
+    
     input wire          BUS_CLK,
     input wire          BUS_RST,
     input wire  [15:0]  BUS_ADD,
@@ -54,7 +54,7 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
     .BUS_WR(BUS_WR),
     .BUS_ADD(BUS_ADD),
     .BUS_DATA(BUS_DATA),
-
+    
     .IP_RD(IP_RD),
     .IP_WR(IP_WR),
     .IP_ADD(IP_ADD),
@@ -62,20 +62,19 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
     .IP_DATA_OUT(IP_DATA_OUT)
 );
 
-
 fei4_rx_core
 #(
     .DSIZE(DSIZE),
     .DATA_IDENTIFIER(DATA_IDENTIFIER)
-) i_fei4_rx_core 
+) i_fei4_rx_core
 (
-    .BUS_CLK(BUS_CLK),                     
-    .BUS_RST(BUS_RST),                  
-    .BUS_ADD(IP_ADD),                    
-    .BUS_DATA_IN(IP_DATA_IN),                    
-    .BUS_RD(IP_RD),                    
-    .BUS_WR(IP_WR),                    
-    .BUS_DATA_OUT(IP_DATA_OUT),  
+    .BUS_CLK(BUS_CLK),
+    .BUS_RST(BUS_RST),
+    .BUS_ADD(IP_ADD),
+    .BUS_DATA_IN(IP_DATA_IN),
+    .BUS_RD(IP_RD),
+    .BUS_WR(IP_WR),
+    .BUS_DATA_OUT(IP_DATA_OUT),
     
     .RX_CLK(RX_CLK),
     .RX_CLK2X(RX_CLK2X),
@@ -90,6 +89,6 @@ fei4_rx_core
     .FIFO_DATA(FIFO_DATA),
     
     .RX_FIFO_FULL(RX_FIFO_FULL)
-); 
+);
 
 endmodule

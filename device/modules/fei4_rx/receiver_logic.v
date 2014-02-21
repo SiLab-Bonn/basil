@@ -52,15 +52,15 @@ flag_domain_crossing reset_domain_crossing_fclk_inst (
 // data to clock phase alignment
 wire RX_DATA_SYNC; //, USEAOUT, USEBOUT, USECOUT, USEDOUT;
 sync_master sync_master_inst(
-    .clk(FCLK),			    // clock input
-    .clk_2x(FCLK2X),		    // clock 90 input
+    .clk(FCLK),             // clock input
+    .clk_2x(FCLK2X),        // clock 90 input
     .datain(RX_DATA),       // data inputs
     .rst(RESET_FCLK),       // reset input
     .useaout(),             // useA output for cascade
     .usebout(),             // useB output for cascade
     .usecout(),             // useC output for cascade
     .usedout(),             // useD output for cascade
-    .ctrlout(),			    // ctrl outputs for cascade
+    .ctrlout(),             // ctrl outputs for cascade
     .sdataout(RX_DATA_SYNC)
 );
 
