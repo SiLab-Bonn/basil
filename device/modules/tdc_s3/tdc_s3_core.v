@@ -235,7 +235,7 @@ always @ (state or ONE_DETECTED or ZERO_DETECTED or CONF_EN_CLK40 or CONF_EN_ARM
         ARMED:
             if (ONE_DETECTED && !SMALL_TOT)
                 next_state = COUNT;
-            else if (!CONF_EN_CLK40)
+            else if (!CONF_EN_CLK40 || SMALL_TOT) // return here to idle when small ToT detected
                 next_state = IDLE;
             else
                 next_state = ARMED;
@@ -252,7 +252,7 @@ always @ (state or ONE_DETECTED or ZERO_DETECTED or CONF_EN_CLK40 or CONF_EN_ARM
 end
 
 wire FINISH;
-assign FINISH = (state == COUNT && next_state == IDLE) || (state == IDLE && SMALL_TOT && CONF_EN_CLK40) || (state == ARMED && SMALL_TOT && CONF_EN_CLK40);
+assign FINISH = (state == COUNT && next_state == IDLE) || (state == IDLE && SMALL_TOT && CONF_EN_CLK40 && !CONF_EN_ARM_TDC_CLK40) || (state == ARMED && SMALL_TOT && CONF_EN_CLK40);
 
 wire START;
 assign START = ((state == IDLE && next_state == COUNT) || (state == ARMED && next_state == COUNT));
