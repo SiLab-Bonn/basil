@@ -110,7 +110,7 @@ begin
     
         IDLE:
         begin
-            if ((CMD_READY == 1'b1) && (CMD_EXT_START_ENABLE == 1'b1) && ((TLU_TRIGGER_FLAG == 1'b1) || ((TLU_TRIGGER == 1'b1) && (TLU_MODE == 2'b11 || TLU_MODE == 2'b10))) && EXT_VETO == 1'b0) next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
+            if ((CMD_READY == 1'b1) && (CMD_EXT_START_ENABLE == 1'b1) && (TLU_TRIGGER_FLAG == 1'b1 || (TLU_TRIGGER == 1'b1 && (TLU_MODE == 2'b11 || TLU_MODE == 2'b10))) && EXT_VETO == 1'b0) next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
             else next = IDLE;
         end
         
