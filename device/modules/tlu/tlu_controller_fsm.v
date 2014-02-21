@@ -117,9 +117,9 @@ begin
         SEND_COMMAND_WAIT_FOR_TRIGGER_LOW:
         begin
             if (WRITE_TIMESTAMP == 1'b0 && (TLU_MODE == 2'b00 || TLU_MODE == 2'b01)) next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY; // do not wait for trigger low
-            if (WRITE_TIMESTAMP == 1'b1 && (TLU_MODE == 2'b00 || TLU_MODE == 2'b01)) next = LATCH_DATA; // do not wait for trigger low
-            else if (WRITE_TIMESTAMP == 1'b0 && TLU_MODE == 2'b10 && ((TLU_TRIGGER == 1'b0) || (TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1))) next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY;
-            else if (WRITE_TIMESTAMP == 1'b1 && TLU_MODE == 2'b10 && ((TLU_TRIGGER == 1'b0) || (TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1))) next = LATCH_DATA;
+            else if (WRITE_TIMESTAMP == 1'b1 && (TLU_MODE == 2'b00 || TLU_MODE == 2'b01)) next = LATCH_DATA; // do not wait for trigger low
+            else if (WRITE_TIMESTAMP == 1'b0 && TLU_MODE == 2'b10 && (TLU_TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1)) next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY;
+            else if (WRITE_TIMESTAMP == 1'b1 && TLU_MODE == 2'b10 && (TLU_TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1)) next = LATCH_DATA;
             else if (TLU_MODE == 2'b11 && (TLU_TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1)) next = SEND_TLU_CLOCK;
             else next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
         end
