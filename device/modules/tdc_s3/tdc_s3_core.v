@@ -136,8 +136,6 @@ reg [3:0] DATA_IN;
 always@(posedge CLK160)
     DATA_IN[3:0] <= {DDRQ_DATA[3:0]};
 
-assign TDC_OUT = |DATA_IN;
-
 reg [15:0] DATA_IN_SR;
 always@(posedge CLK160)
     DATA_IN_SR[15:0] <= {DATA_IN_SR[11:0],DATA_IN[3:0]};
@@ -146,6 +144,8 @@ reg [15:0] DATA;
 always@(posedge CLK40)
     DATA <= DATA_IN_SR;
 
+assign TDC_OUT = |DATA;
+    
 wire ONE_DETECTED;
 assign ONE_DETECTED = |DATA; // asserted when one or more 1 occur
 
