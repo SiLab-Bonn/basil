@@ -18,7 +18,7 @@ module tdc_s3_core
     input CLK160,
     input CLK40,
     input TDC_IN, // pulse need to be longer than one cycle of CLK320, distance of pulses needs to be longer than one cycle of CLK40
-    output TDC_OUT,
+    output TDC_OUT, // sampled with 320MHz, kept high for at least 40MHz
 
     input FIFO_READ,
     output FIFO_EMPTY,
@@ -298,7 +298,7 @@ always@(posedge CLK40) begin
     if(RST_SYNC)
         LOST_DATA_CNT <= 0;
     else if (wfull && cdc_fifo_write && LOST_DATA_CNT != -1)
-        LOST_DATA_CNT <= LOST_DATA_CNT +1;
+        LOST_DATA_CNT <= LOST_DATA_CNT + 1;
 end
 
 wire fifo_full, cdc_fifo_empty;
@@ -315,7 +315,8 @@ cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) cdc_syncfifo_i
 );
 
 gerneric_fifo #(.DATA_SIZE(32), .DEPTH(512))  fifo_i
-( .clk(BUS_CLK), .reset(RST_LONG | BUS_RST), 
+(
+    .clk(BUS_CLK), .reset(RST_LONG | BUS_RST), 
     .write(!cdc_fifo_empty),
     .read(FIFO_READ), 
     .data_in(cdc_data_out), 
