@@ -15,7 +15,7 @@
 #(
     parameter       BASEADDR = 16'h0000,
     parameter       HIGHADDR = 16'h0000, 
-    parameter       DIVISOR = 12
+    parameter       DIVISOR = 8
 )
 (
     input wire          BUS_CLK,
@@ -25,7 +25,7 @@
     input wire          BUS_RD,
     input wire          BUS_WR,
     
-    input wire                  CMD_CLK,
+    input wire                  CMD_CLK, // clock of the TLU FSM, usually connect clock of command sequencer here
     
     input wire                  FIFO_READ,
     output wire                 FIFO_EMPTY,
@@ -45,9 +45,7 @@
     
     input wire                  CMD_READY,
     output wire                 CMD_EXT_START_FLAG,
-    input wire                  CMD_EXT_START_ENABLE,
-    
-    input wire                  FIFO_NEAR_FULL
+    input wire                  CMD_EXT_START_ENABLE
 );
 
 
@@ -72,7 +70,7 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
 );
 
 
-tlu_controller_core 
+tlu_controller_core
 #(
     .DIVISOR(DIVISOR)
 ) i_tlu_controller_core
@@ -105,10 +103,7 @@ tlu_controller_core
     
     .CMD_READY(CMD_READY),
     .CMD_EXT_START_FLAG(CMD_EXT_START_FLAG),
-    .CMD_EXT_START_ENABLE(CMD_EXT_START_ENABLE),
-    
-    .FIFO_NEAR_FULL(FIFO_NEAR_FULL)
-    
+    .CMD_EXT_START_ENABLE(CMD_EXT_START_ENABLE)
 ); 
 
 endmodule
