@@ -22,7 +22,7 @@
  
  module tlu_controller_core
 #(
-    parameter                   DIVISOR = 12
+    parameter                   DIVISOR = 8 // dividing CMD_CLK by DIVISOR for TLU_CLOCK
 )
 (
     input wire                  BUS_CLK,
@@ -33,29 +33,27 @@
     input wire                  BUS_WR,
     output reg      [7:0]       BUS_DATA_OUT,
     
-    input wire                  CMD_CLK,
+    input wire                  CMD_CLK, // clock of the TLU FSM
     
     input wire                  FIFO_READ,
     output wire                 FIFO_EMPTY,
     output wire     [31:0]      FIFO_DATA,
     
-    output wire                 FIFO_PREEMPT_REQ,
+    output reg                  FIFO_PREEMPT_REQ, // FIFO hold request
     
-    input wire                  RJ45_TRIGGER,
-    input wire                  LEMO_TRIGGER,
-    input wire                  RJ45_RESET,
-    input wire                  LEMO_RESET,
-    output reg                  RJ45_ENABLED,
-    output wire                 TLU_BUSY,
-    output reg                  TLU_CLOCK,
+    input wire                  RJ45_TRIGGER, // trigger input
+    input wire                  LEMO_TRIGGER, // trigger input
+    input wire                  RJ45_RESET, // trigger reset input
+    input wire                  LEMO_RESET, // trigger reset input
+    output reg                  RJ45_ENABLED, // RJ45 enabled signal
+    output wire                 TLU_BUSY, // TLU FSM busy signal
+    output reg                  TLU_CLOCK, // trigger data clock
     
-    input wire                  EXT_VETO,
+    input wire                  EXT_VETO, // external veto signal (e.g. FIFO buffer full signal)
     
-    input wire                  CMD_READY,
-    output wire                 CMD_EXT_START_FLAG,
-    input wire                  CMD_EXT_START_ENABLE,
-    
-    input wire                  FIFO_NEAR_FULL
+    input wire                  CMD_READY, // CMD FSM ready signal
+    output wire                 CMD_EXT_START_FLAG, // CMD FSM external start flag (send command)
+    input wire                  CMD_EXT_START_ENABLE // CMD FSM external start enabled
 );
 
 // Registers
@@ -78,6 +76,14 @@ wire BUS_RST_FLAG;
 assign BUS_RST_FLAG = BUS_RST_FF2 & ~BUS_RST_FF; // trailing edge
 wire RST;
 assign RST = BUS_RST_FLAG | SOFT_RST_FLAG;
+
+wire RST_CMD_CLK;
+flag_domain_crossing cmd_rst_flag_domain_crossing (
+    .CLK_A(BUS_CLK),
+    .CLK_B(CMD_CLK),
+    .FLAG_IN_CLK_A(RST),
+    .FLAG_OUT_CLK_B(RST_CMD_CLK)
+);
 
 reg [7:0] status_regs[15:0];
 
@@ -133,16 +139,15 @@ begin
 end
 
 // read reg
-reg [31:0] CURRENT_TLU_TRIGGER_NUMBER;
-reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_BUF;
-reg [31:0] CURRENT_TRIGGER_NUMBER;
-reg [31:0] CURRENT_TRIGGER_NUMBER_BUF;
+reg [7:0] LOST_DATA_CNT, LOST_DATA_CNT_BUF; // BUS_ADD==0
+reg [31:0] CURRENT_TLU_TRIGGER_NUMBER, CURRENT_TLU_TRIGGER_NUMBER_BUF; // BUS_ADD==4 - 7
+reg [31:0] CURRENT_TRIGGER_NUMBER, CURRENT_TRIGGER_NUMBER_BUF; // BUS_ADD==8 - 11
 
 always @ (negedge BUS_CLK)
 begin
     //BUS_DATA_OUT <= 0;
     if (BUS_ADD == 0)
-        BUS_DATA_OUT <= status_regs[0];
+        BUS_DATA_OUT <= LOST_DATA_CNT_BUF;
     else if (BUS_ADD == 1)
         BUS_DATA_OUT <= status_regs[1];
     else if (BUS_ADD == 2)
@@ -177,6 +182,17 @@ begin
         // BUS_DATA_OUT <= status_regs[BUS_ADD[3:0]]; // BUG AR 20391: use synchronous logic
     else
         BUS_DATA_OUT <= 0;
+end
+
+always @ (negedge BUS_CLK)
+begin
+    if (RST)
+        LOST_DATA_CNT_BUF <= 8'b0;
+    else
+    begin
+        if (BUS_ADD == 0)
+            LOST_DATA_CNT_BUF <= LOST_DATA_CNT;
+    end
 end
 
 //always @(*)
@@ -217,22 +233,72 @@ end
 //assign some_value = {status_regs[x][y]}; // single bit
 //assign some_value = {status_regs[x][y:z]}; // multiple bits
 
-wire                TLU_CLOCK_ENABLE;
-wire                TLU_ASSERT_VETO;
-wire                TLU_TRIGGER_FLAG_BUS_CLK;
-wire                TLU_RESET_FLAG_BUS_CLK;
-
-// Register sync
-// nothing to do here
-
-// Input sync
-wire CMD_READY_BUS_CLK;
-three_stage_synchronizer three_stage_cmd_ready_synchronizer (
-    .CLK(BUS_CLK),
-    .IN(CMD_READY),
-    .OUT(CMD_READY_BUS_CLK)
+// register sync
+wire [1:0] TLU_MODE_CMD_CLK;
+three_stage_synchronizer #(
+    .WIDTH(2)
+) three_stage_tlu_mode_synchronizer (
+    .CLK(CMD_CLK),
+    .IN(TLU_MODE),
+    .OUT(TLU_MODE_CMD_CLK)
 );
 
+wire [7:0] TLU_TRIGGER_LOW_TIME_OUT_CMD_CLK;
+three_stage_synchronizer #(
+    .WIDTH(8)
+) three_stage_trigger_low_timeout_synchronizer (
+    .CLK(CMD_CLK),
+    .IN(TLU_TRIGGER_LOW_TIME_OUT),
+    .OUT(TLU_TRIGGER_LOW_TIME_OUT_CMD_CLK)
+);
+
+wire [4:0] TLU_TRIGGER_CLOCK_CYCLES_CMD_CLK;
+three_stage_synchronizer #(
+    .WIDTH(5)
+) three_stage_trigger_clock_cycles_synchronizer (
+    .CLK(CMD_CLK),
+    .IN(TLU_TRIGGER_CLOCK_CYCLES),
+    .OUT(TLU_TRIGGER_CLOCK_CYCLES_CMD_CLK)
+);
+
+wire [3:0] TLU_TRIGGER_DATA_DELAY_CMD_CLK;
+three_stage_synchronizer #(
+    .WIDTH(4)
+) three_stage_trigger_data_delay_synchronizer (
+    .CLK(CMD_CLK),
+    .IN(TLU_TRIGGER_DATA_DELAY),
+    .OUT(TLU_TRIGGER_DATA_DELAY_CMD_CLK)
+);
+
+wire TLU_TRIGGER_DATA_MSB_FIRST_CMD_CLK;
+three_stage_synchronizer three_stage_trigger_data_msb_first_synchronizer (
+    .CLK(CMD_CLK),
+    .IN(TLU_TRIGGER_DATA_MSB_FIRST),
+    .OUT(TLU_TRIGGER_DATA_MSB_FIRST_CMD_CLK)
+);
+
+wire TLU_DISABLE_VETO_CMD_CLK;
+three_stage_synchronizer three_stage_disable_veto_synchronizer (
+    .CLK(CMD_CLK),
+    .IN(TLU_DISABLE_VETO),
+    .OUT(TLU_DISABLE_VETO_CMD_CLK)
+);
+
+wire CONF_EN_WRITE_TS_CMD_CLK;
+three_stage_synchronizer three_stage_enable_write_ts_synchronizer (
+    .CLK(CMD_CLK),
+    .IN(CONF_EN_WRITE_TS),
+    .OUT(CONF_EN_WRITE_TS_CMD_CLK)
+);
+
+wire TLU_ENABLE_RESET_CMD_CLK;
+three_stage_synchronizer three_stage_enable_reset_command_synchronizer (
+    .CLK(CMD_CLK),
+    .IN(TLU_ENABLE_RESET),
+    .OUT(TLU_ENABLE_RESET_CMD_CLK)
+);
+
+// input sync
 wire CMD_EXT_START_ENABLE_BUS_CLK;
 three_stage_synchronizer three_stage_cmd_external_start_synchronizer (
     .CLK(BUS_CLK),
@@ -240,18 +306,49 @@ three_stage_synchronizer three_stage_cmd_external_start_synchronizer (
     .OUT(CMD_EXT_START_ENABLE_BUS_CLK)
 );
 
-// Output sync
-wire CMD_EXT_START_FLAG_BUS_CLK;
-flag_domain_crossing cmd_ext_start_flag_domain_crossing (
-    .CLK_A(BUS_CLK),
-    .CLK_B(CMD_CLK),
-    .FLAG_IN_CLK_A(CMD_EXT_START_FLAG_BUS_CLK),
-    .FLAG_OUT_CLK_B(CMD_EXT_START_FLAG)
+// TLU input sync
+wire RJ45_TRIGGER_CMD_CLK, LEMO_TRIGGER_CMD_CLK, RJ45_RESET_CMD_CLK, LEMO_RESET_CMD_CLK, EXT_VETO_CMD_CLK;
+
+wire LEMO_TRIGGER_MOD;
+assign LEMO_TRIGGER_MOD = TLU_INVERT_LEMO_TRIGGER ? ~LEMO_TRIGGER : LEMO_TRIGGER;
+
+three_stage_synchronizer three_stage_rj45_trigger_synchronizer_cmd_clk (
+    .CLK(CMD_CLK),
+    .IN(RJ45_TRIGGER),
+    .OUT(RJ45_TRIGGER_CMD_CLK)
 );
 
+three_stage_synchronizer three_stage_lemo_trigger_synchronizer_cmd_clk (
+    .CLK(CMD_CLK),
+    .IN(LEMO_TRIGGER_MOD),
+    .OUT(LEMO_TRIGGER_CMD_CLK)
+);
+
+three_stage_synchronizer three_stage_rj45_reset_synchronizer_cmd_clk (
+    .CLK(CMD_CLK),
+    .IN(RJ45_RESET),
+    .OUT(RJ45_RESET_CMD_CLK)
+);
+
+three_stage_synchronizer three_stage_lemo_reset_synchronizer_cmd_clk (
+    .CLK(CMD_CLK),
+    .IN(LEMO_RESET),
+    .OUT(LEMO_RESET_CMD_CLK)
+);
+
+three_stage_synchronizer three_stage_lemo_ext_veto_synchronizer_cmd_clk (
+    .CLK(CMD_CLK),
+    .IN(EXT_VETO),
+    .OUT(EXT_VETO_CMD_CLK)
+);
+
+// output sync
+// nothing to do here
+
 // TLU clock (not a real clock ...)
+wire TLU_ASSERT_VETO, TLU_CLOCK_ENABLE;
 integer counter_clk;
-always @ (posedge BUS_CLK)
+always @ (posedge CMD_CLK)
 begin
     if (TLU_ASSERT_VETO) // synchronous set
         TLU_CLOCK <= 1'b1;
@@ -270,102 +367,87 @@ begin
 end
 
 	
-always @ (posedge BUS_CLK)
+always @ (posedge CMD_CLK)
 begin
-    if (TLU_CLOCK_ENABLE)
-    begin
-        if (counter_clk == ((DIVISOR >> 1) - 1))
-            counter_clk <= 0;
-        else
-            counter_clk <= counter_clk + 1;
-    end
-    else
+    if (RST_CMD_CLK)
         counter_clk <= 0;
+    else
+    begin
+        if (TLU_CLOCK_ENABLE)
+        begin
+            if (counter_clk == ((DIVISOR >> 1) - 1))
+                counter_clk <= 0;
+            else
+                counter_clk <= counter_clk + 1;
+        end
+        else
+            counter_clk <= 0;
+    end
 end
 
-// Trigger sync
-wire RJ45_TRIGGER_BUS_CLK, LEMO_TRIGGER_BUS_CLK, RJ45_RESET_BUS_CLK, LEMO_RESET_BUS_CLK, EXT_VETO_BUS_CLK;
-
-wire LEMO_TRIGGER_MOD;
-assign LEMO_TRIGGER_MOD = TLU_INVERT_LEMO_TRIGGER ? ~LEMO_TRIGGER : LEMO_TRIGGER;
-
-three_stage_synchronizer three_stage_rj45_trigger_synchronizer_bus_clk (
-    .CLK(BUS_CLK),
-    .IN(RJ45_TRIGGER),
-    .OUT(RJ45_TRIGGER_BUS_CLK)
-);
-
-three_stage_synchronizer three_stage_lemo_trigger_synchronizer_bus_clk (
-    .CLK(BUS_CLK),
-    .IN(LEMO_TRIGGER_MOD),
-    .OUT(LEMO_TRIGGER_BUS_CLK)
-);
-
-three_stage_synchronizer three_stage_rj45_reset_synchronizer_bus_clk (
-    .CLK(BUS_CLK),
-    .IN(RJ45_RESET),
-    .OUT(RJ45_RESET_BUS_CLK)
-);
-
-three_stage_synchronizer three_stage_lemo_reset_synchronizer_bus_clk (
-    .CLK(BUS_CLK),
-    .IN(LEMO_RESET),
-    .OUT(LEMO_RESET_BUS_CLK)
-);
-
-three_stage_synchronizer three_stage_lemo_ext_veto_synchronizer_bus_clk (
-    .CLK(BUS_CLK),
-    .IN(EXT_VETO),
-    .OUT(EXT_VETO_BUS_CLK)
-);
-
 // Trigger input port select
-always @ (posedge BUS_CLK)
+always @ (posedge CMD_CLK)
 begin
-    if (RST)
+    if (RST_CMD_CLK)
         RJ45_ENABLED <= 1'b0;
     else
     begin
 //        if (FORCE_USE_RJ45 == 1'b1 && TLU_MODE != 2'b00)
 //            RJ45_ENABLED <= 1'b1;
-        if ((RJ45_TRIGGER_BUS_CLK == 1'b1 && RJ45_RESET_BUS_CLK == 1'b1 && !(RJ45_ENABLED == 1'b1)) || TLU_MODE == 2'b00)
+        if ((RJ45_TRIGGER_CMD_CLK == 1'b1 && RJ45_RESET_CMD_CLK == 1'b1 && !(RJ45_ENABLED == 1'b1)) || TLU_MODE_CMD_CLK == 2'b00)
             RJ45_ENABLED <= 1'b0;
         else
             RJ45_ENABLED <= 1'b1;
     end
 end
 
-wire TLU_TRIGGER_BUS_CLK, TLU_RESET_BUS_CLK;
-assign TLU_TRIGGER_BUS_CLK = (RJ45_ENABLED == 1'b1) ? RJ45_TRIGGER_BUS_CLK : LEMO_TRIGGER_BUS_CLK; // RJ45 inputs tied to 1 if no connector is plugged in
-assign TLU_RESET_BUS_CLK = (RJ45_ENABLED == 1'b1) ? RJ45_RESET_BUS_CLK : LEMO_RESET_BUS_CLK; // RJ45 inputs tied to 1 if no connector is plugged in
+wire TRIGGER_CMD_CLK, TRIGGER_RESET_CMD_CLK;
+assign TRIGGER_CMD_CLK = (RJ45_ENABLED == 1'b1) ? RJ45_TRIGGER_CMD_CLK : LEMO_TRIGGER_CMD_CLK; // RJ45 inputs tied to 1 if no connector is plugged in
+assign TRIGGER_RESET_CMD_CLK = (RJ45_ENABLED == 1'b1) ? RJ45_RESET_CMD_CLK : LEMO_RESET_CMD_CLK; // RJ45 inputs tied to 1 if no connector is plugged in
 
 // Trigger flag
-reg TLU_TRIGGER_BUS_CLK_FF;
-always @ (posedge BUS_CLK)
-    TLU_TRIGGER_BUS_CLK_FF <= TLU_TRIGGER_BUS_CLK;
+reg TLU_TRIGGER_CMD_CLK_FF;
+always @ (posedge CMD_CLK)
+    TLU_TRIGGER_CMD_CLK_FF <= TRIGGER_CMD_CLK;
 
-assign TLU_TRIGGER_FLAG_BUS_CLK = ~TLU_TRIGGER_BUS_CLK_FF & TLU_TRIGGER_BUS_CLK;
+wire TLU_TRIGGER_FLAG_CMD_CLK;
+assign TLU_TRIGGER_FLAG_CMD_CLK = ~TLU_TRIGGER_CMD_CLK_FF & TRIGGER_CMD_CLK;
 
 // Reset flag
-reg TLU_RESET_BUS_CLK_FF;
-always @ (posedge BUS_CLK)
-    TLU_RESET_BUS_CLK_FF <= TLU_RESET_BUS_CLK;
+reg TLU_RESET_CMD_CLK_FF;
+always @ (posedge CMD_CLK)
+    TLU_RESET_CMD_CLK_FF <= TRIGGER_RESET_CMD_CLK;
 
-assign TLU_RESET_FLAG_BUS_CLK = ~TLU_RESET_BUS_CLK_FF & TLU_RESET_BUS_CLK;
+wire TLU_RESET_FLAG_CMD_CLK;
+wire TLU_RESET_FLAG_BUS_CLK;
+assign TLU_RESET_FLAG_CMD_CLK = ~TLU_RESET_CMD_CLK_FF & TRIGGER_RESET_CMD_CLK & TLU_ENABLE_RESET_CMD_CLK;
+flag_domain_crossing tlu_reset_flag_domain_crossing (
+    .CLK_A(CMD_CLK),
+    .CLK_B(BUS_CLK),
+    .FLAG_IN_CLK_A(TLU_RESET_FLAG_CMD_CLK),
+    .FLAG_OUT_CLK_B(TLU_RESET_FLAG_BUS_CLK)
+);
 
 // writing current TLU trigger number to register
-wire TLU_DATA_READY_FLAG;
-wire [31:0] TLU_DATA;
+wire [31:0] TLU_TRIGGER_NUMBER_DATA;
+
+// flag comes later
+wire FIFO_WRITE, FIFO_WRITE_BUS_CLK;
+flag_domain_crossing fifo_write_flag_domain_crossing (
+    .CLK_A(CMD_CLK),
+    .CLK_B(BUS_CLK),
+    .FLAG_IN_CLK_A(FIFO_WRITE),
+    .FLAG_OUT_CLK_B(FIFO_WRITE_BUS_CLK)
+);
+
 always @ (posedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TLU_TRIGGER_NUMBER <= 32'b0;
     else
     begin
-        if (TLU_DATA_READY_FLAG == 1'b1)
-            CURRENT_TLU_TRIGGER_NUMBER <= TLU_DATA[31:0];
-        else
-            CURRENT_TLU_TRIGGER_NUMBER <= CURRENT_TLU_TRIGGER_NUMBER;
+        if (FIFO_WRITE_BUS_CLK == 1'b1)
+            CURRENT_TLU_TRIGGER_NUMBER <= TLU_TRIGGER_NUMBER_DATA;
     end
 end
 
@@ -377,34 +459,20 @@ begin
     begin
         if (BUS_ADD == 4)
             CURRENT_TLU_TRIGGER_NUMBER_BUF <= CURRENT_TLU_TRIGGER_NUMBER;
-        else
-            CURRENT_TLU_TRIGGER_NUMBER_BUF <= CURRENT_TLU_TRIGGER_NUMBER_BUF;
     end
 end
 
-// writing current trigger number (not TLU) to register
-// reg CMD_EXT_START_ENABLE_BUS_CLK_FF;
-// always @ (posedge BUS_CLK)
-    // CMD_EXT_START_ENABLE_BUS_CLK_FF <= CMD_EXT_START_ENABLE_BUS_CLK;
-
-// wire CMD_EXT_START_ENABLE_FLAG_BUS_CLK;
-// assign CMD_EXT_START_ENABLE_FLAG_BUS_CLK = ~CMD_EXT_START_ENABLE_BUS_CLK_FF & CMD_EXT_START_ENABLE_BUS_CLK;
-
-// latching trigger number
-// wire LATCH_TRIGGER_NUMBER_BUS_CLK;
-// assign LATCH_TRIGGER_NUMBER_BUS_CLK = (BUS_ADD == 11 && BUS_WR);
-
-// reg LATCH_TRIGGER_NUMBER_FF;
-// always @(posedge BUS_CLK) begin
-    // LATCH_TRIGGER_NUMBER_FF <= LATCH_TRIGGER_NUMBER_BUS_CLK;
-// end
-
-// wire LATCH_TRIGGER_NUMBER;
-// assign LATCH_TRIGGER_NUMBER = ~LATCH_TRIGGER_NUMBER_FF & LATCH_TRIGGER_NUMBER_BUS_CLK;
+wire CMD_EXT_START_FLAG_BUS_CLK;
+flag_domain_crossing cmd_ext_start_flag_domain_crossing (
+    .CLK_A(CMD_CLK),
+    .CLK_B(BUS_CLK),
+    .FLAG_IN_CLK_A(CMD_EXT_START_FLAG),
+    .FLAG_OUT_CLK_B(CMD_EXT_START_FLAG_BUS_CLK)
+);
 
 always @ (posedge BUS_CLK)
 begin
-    if (RST || (TLU_RESET_FLAG_BUS_CLK == 1'b1 && TLU_ENABLE_RESET == 1'b1))
+    if (RST | TLU_RESET_FLAG_BUS_CLK == 1'b1)
         CURRENT_TRIGGER_NUMBER <= 32'b0;
     else
     begin
@@ -432,47 +500,117 @@ begin
     end
 end
 
-// fucking FSM
+// TLU FSM
+wire TLU_FIFO_WRITE, FIFO_PREEMPT_REQ_FLAG_CMD_CLK;
+wire [31:0] TLU_FIFO_DATA;
 tlu_controller_fsm #(
     .DIVISOR(DIVISOR)
 ) tlu_controller_fsm_inst (
-    .RESET(RST),
-    .CLK(BUS_CLK),
+    .RESET(RST_CMD_CLK),
+    .CLK(CMD_CLK),
     
-    .FIFO_READ(FIFO_READ),
-    .FIFO_EMPTY(FIFO_EMPTY),
-    .FIFO_DATA(FIFO_DATA),
+    .TLU_FIFO_WRITE(TLU_FIFO_WRITE),
+    .TLU_FIFO_DATA(TLU_FIFO_DATA),
     
-    .FIFO_PREEMPT_REQ(FIFO_PREEMPT_REQ),
+    .FIFO_PREEMPT_REQ_FLAG(FIFO_PREEMPT_REQ_FLAG_CMD_CLK),
     
-    .TLU_DATA(TLU_DATA),
-    .TLU_DATA_READY_FLAG(TLU_DATA_READY_FLAG),
+    .TLU_TRIGGER_NUMBER_DATA(TLU_TRIGGER_NUMBER_DATA),
     
-    .CMD_READY(CMD_READY_BUS_CLK),
-    .CMD_EXT_START_FLAG(CMD_EXT_START_FLAG_BUS_CLK),
-    .CMD_EXT_START_ENABLE(CMD_EXT_START_ENABLE_BUS_CLK),
+    .CMD_READY(CMD_READY),
+    .CMD_EXT_START_FLAG(CMD_EXT_START_FLAG),
+    .CMD_EXT_START_ENABLE(CMD_EXT_START_ENABLE),
     
-    .TLU_TRIGGER(TLU_TRIGGER_BUS_CLK),
-    .TLU_TRIGGER_FLAG(TLU_TRIGGER_FLAG_BUS_CLK),
+    .TLU_TRIGGER(TRIGGER_CMD_CLK),
+    .TLU_TRIGGER_FLAG(TLU_TRIGGER_FLAG_CMD_CLK),
     
-    .TLU_MODE(TLU_MODE),
-    .TLU_TRIGGER_LOW_TIME_OUT(TLU_TRIGGER_LOW_TIME_OUT),
-    .TLU_TRIGGER_CLOCK_CYCLES(TLU_TRIGGER_CLOCK_CYCLES),
-    .TLU_TRIGGER_DATA_DELAY(TLU_TRIGGER_DATA_DELAY),
-    .TLU_TRIGGER_DATA_MSB_FIRST(TLU_TRIGGER_DATA_MSB_FIRST),
-    .TLU_DISABLE_VETO(TLU_DISABLE_VETO),
-    .EXT_VETO(EXT_VETO_BUS_CLK),
+    .TLU_MODE(TLU_MODE_CMD_CLK),
+    .TLU_TRIGGER_LOW_TIME_OUT(TLU_TRIGGER_LOW_TIME_OUT_CMD_CLK),
+    .TLU_TRIGGER_CLOCK_CYCLES(TLU_TRIGGER_CLOCK_CYCLES_CMD_CLK),
+    .TLU_TRIGGER_DATA_DELAY(TLU_TRIGGER_DATA_DELAY_CMD_CLK),
+    .TLU_TRIGGER_DATA_MSB_FIRST(TLU_TRIGGER_DATA_MSB_FIRST_CMD_CLK),
+    .TLU_DISABLE_VETO(TLU_DISABLE_VETO_CMD_CLK),
+    .EXT_VETO(EXT_VETO_CMD_CLK),
+    .TLU_RESET_FLAG(TLU_RESET_FLAG_CMD_CLK),
+    
+    .WRITE_TIMESTAMP(CONF_EN_WRITE_TS_CMD_CLK),
     
     .TLU_BUSY(TLU_BUSY),
     .TLU_CLOCK_ENABLE(TLU_CLOCK_ENABLE),
     .TLU_ASSERT_VETO(TLU_ASSERT_VETO),
 
     .TLU_TRIGGER_LOW_TIMEOUT_ERROR(),
-    .TLU_TRIGGER_ACCEPT_ERROR(),
-    
-    .WRITE_TIMESTAMP(CONF_EN_WRITE_TS),
-    
-    .FIFO_NEAR_FULL(FIFO_NEAR_FULL)
+    .TLU_TRIGGER_ACCEPT_ERROR()
+);
+
+wire FIFO_PREEMPT_REQ_FLAG_BUS_CLK;
+flag_domain_crossing fifo_preempt_flag_domain_crossing (
+    .CLK_A(CMD_CLK),
+    .CLK_B(BUS_CLK),
+    .FLAG_IN_CLK_A(FIFO_PREEMPT_REQ_FLAG_CMD_CLK),
+    .FLAG_OUT_CLK_B(FIFO_PREEMPT_REQ_FLAG_BUS_CLK)
+);
+
+// FIFO empty flag
+reg FIFO_EMPTY_FF;
+always @ (posedge BUS_CLK)
+    FIFO_EMPTY_FF <= FIFO_EMPTY;
+
+wire FIFO_EMPTY_FLAG_BUS_CLK;
+assign FIFO_EMPTY_FLAG_BUS_CLK = ~FIFO_EMPTY_FF & FIFO_EMPTY; // assert flag when FIFO is empty again
+
+// latch
+always @ (RST or FIFO_PREEMPT_REQ_FLAG_BUS_CLK or FIFO_EMPTY_FLAG_BUS_CLK)
+    if (RST)
+        FIFO_PREEMPT_REQ = 1'b0;
+    else
+        if (FIFO_PREEMPT_REQ_FLAG_BUS_CLK)
+            FIFO_PREEMPT_REQ = 1'b1;
+        else if (FIFO_EMPTY_FLAG_BUS_CLK)
+            FIFO_PREEMPT_REQ = 1'b0;
+
+reg [7:0] rst_cnt;
+always@(posedge BUS_CLK) begin
+    if (RST)
+        rst_cnt <= 8'b1111_1111; // start value
+    else if (rst_cnt != 0)
+        rst_cnt <= rst_cnt - 1;
+end 
+
+wire RST_LONG;
+assign RST_LONG = |rst_cnt;
+
+wire wfull;
+wire cdc_fifo_write;
+assign cdc_fifo_write = !wfull && TLU_FIFO_WRITE;
+wire fifo_full, cdc_fifo_empty;
+
+always@(posedge CMD_CLK) begin
+    if(RST_CMD_CLK)
+        LOST_DATA_CNT <= 0;
+    else if (wfull && cdc_fifo_write && LOST_DATA_CNT != -1)
+        LOST_DATA_CNT <= LOST_DATA_CNT + 1;
+end
+
+wire [31:0] cdc_data_out;
+cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) cdc_syncfifo_i
+(
+    .rdata(cdc_data_out),
+    .wfull(wfull),
+    .rempty(cdc_fifo_empty),
+    .wdata(TLU_FIFO_DATA),
+    .winc(cdc_fifo_write), .wclk(CMD_CLK), .wrst(RST_LONG),
+    .rinc(!fifo_full), .rclk(BUS_CLK), .rrst(RST_LONG)
+);
+
+gerneric_fifo #(.DATA_SIZE(32), .DEPTH(8))  fifo_i
+(
+    .clk(BUS_CLK), .reset(RST_LONG | BUS_RST), 
+    .write(!cdc_fifo_empty),
+    .read(FIFO_READ), 
+    .data_in(cdc_data_out), 
+    .full(fifo_full), 
+    .empty(FIFO_EMPTY), 
+    .data_out(FIFO_DATA[31:0]), .size() 
 );
 
 // Chipscope
