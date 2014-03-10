@@ -18,12 +18,12 @@
     parameter       DIVISOR = 8
 )
 (
-    input wire          BUS_CLK,
-    input wire          BUS_RST,
-    input wire  [15:0]  BUS_ADD,
-    inout wire  [7:0]   BUS_DATA,
-    input wire          BUS_RD,
-    input wire          BUS_WR,
+    input wire                  BUS_CLK,
+    input wire                  BUS_RST,
+    input wire      [15:0]      BUS_ADD,
+    inout wire      [7:0]       BUS_DATA,
+    input wire                  BUS_RD,
+    input wire                  BUS_WR,
     
     input wire                  CMD_CLK, // clock of the TLU FSM, usually connect clock of command sequencer here
     
@@ -45,7 +45,9 @@
     
     input wire                  CMD_READY,
     output wire                 CMD_EXT_START_FLAG,
-    input wire                  CMD_EXT_START_ENABLE
+    input wire                  CMD_EXT_START_ENABLE,
+    
+    output wire     [31:0]      TIMESTAMP
 );
 
 
@@ -103,7 +105,9 @@ tlu_controller_core
     
     .CMD_READY(CMD_READY),
     .CMD_EXT_START_FLAG(CMD_EXT_START_FLAG),
-    .CMD_EXT_START_ENABLE(CMD_EXT_START_ENABLE)
+    .CMD_EXT_START_ENABLE(CMD_EXT_START_ENABLE),
+    
+    .TIMESTAMP(TIMESTAMP)
 ); 
 
 endmodule
