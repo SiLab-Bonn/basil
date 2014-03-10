@@ -53,7 +53,9 @@
     
     input wire                  CMD_READY, // CMD FSM ready signal
     output wire                 CMD_EXT_START_FLAG, // CMD FSM external start flag (send command)
-    input wire                  CMD_EXT_START_ENABLE // CMD FSM external start enabled
+    input wire                  CMD_EXT_START_ENABLE, // CMD FSM external start enabled
+    
+    output reg      [31:0]      TIMESTAMP
 );
 
 // Registers
@@ -500,6 +502,13 @@ begin
     end
 end
 
+// 40 MHz time stamp
+always @ (posedge CMD_CLK)
+begin
+    if (RST_CMD_CLK | TLU_RESET_FLAG_CMD_CLK) TIMESTAMP <= 32'b0;
+    else TIMESTAMP <= TIMESTAMP + 1;
+end
+
 // TLU FSM
 wire TLU_FIFO_WRITE, FIFO_PREEMPT_REQ_FLAG_CMD_CLK;
 wire [31:0] TLU_FIFO_DATA;
@@ -513,7 +522,9 @@ tlu_controller_fsm #(
     .TLU_FIFO_DATA(TLU_FIFO_DATA),
     
     .FIFO_PREEMPT_REQ_FLAG(FIFO_PREEMPT_REQ_FLAG_CMD_CLK),
-    
+
+    .TIMESTAMP(TIMESTAMP),
+    .TIMESTAMP_DATA(),
     .TLU_TRIGGER_NUMBER_DATA(TLU_TRIGGER_NUMBER_DATA),
     
     .CMD_READY(CMD_READY),

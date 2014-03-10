@@ -25,7 +25,9 @@ module tlu_controller_fsm
     output wire     [31:0]      TLU_FIFO_DATA,
     
     output reg                  FIFO_PREEMPT_REQ_FLAG,
-    
+
+    input wire      [31:0]      TIMESTAMP,
+    output reg      [31:0]      TIMESTAMP_DATA,
     output reg      [31:0]      TLU_TRIGGER_NUMBER_DATA,
     
     input wire                  CMD_READY,
@@ -56,22 +58,13 @@ module tlu_controller_fsm
 
 // reg TLU_TRIGGER_ACCEPT_ERROR;
 // reg TLU_TRIGGER_LOW_TIMEOUT_ERROR;
-reg [30:0] TIMESTAMP_DATA;
-assign TLU_FIFO_DATA[31:0] = (TLU_MODE==2'b11 && WRITE_TIMESTAMP==1'b0) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : {1'b1, TIMESTAMP_DATA};
+assign TLU_FIFO_DATA[31:0] = (TLU_MODE==2'b11 && WRITE_TIMESTAMP==1'b0) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : {1'b1, TIMESTAMP_DATA[30:0]};
 
 // shift register, serial to parallel, 32 FF
 reg     [(32*DIVISOR)-1:0]      tlu_data_sr;
 always @ (posedge CLK)
 begin
     tlu_data_sr[(32*DIVISOR)-1:0] <= {tlu_data_sr[(32*DIVISOR)-2:0], TLU_TRIGGER};
-end
-
-// timestamp
-reg [30:0] TIMESTAMP;
-always @ (posedge CLK)
-begin
-    if (RESET | TLU_RESET_FLAG) TIMESTAMP <= 31'b0;
-    else TIMESTAMP <= TIMESTAMP + 1;
 end
 
 // FSM
@@ -165,7 +158,7 @@ begin
         FIFO_PREEMPT_REQ_FLAG <= 1'b0;
         TLU_FIFO_WRITE <= 1'b0;
         TLU_TRIGGER_NUMBER_DATA <= 32'b0000_0000_0000_0000_0000_0000_0000_0000;
-        TIMESTAMP_DATA <= 31'b000_0000_0000_0000_0000_0000_0000_0000;
+        TIMESTAMP_DATA <= 32'b0000_0000_0000_0000_0000_0000_0000_0000;
         TLU_ASSERT_VETO <= 1'b0;
         TLU_BUSY <= 1'b0;
         TLU_CLOCK_ENABLE <= 1'b0;
