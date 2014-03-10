@@ -14,25 +14,27 @@ module tdc_s3_core
 #(
     parameter DATA_IDENTIFIER = 4'b0100
 )(
-    input CLK320,
-    input CLK160,
-    input CLK40,
-    input TDC_IN, // pulse need to be longer than one cycle of CLK320, distance of pulses needs to be longer than one cycle of CLK40
-    output TDC_OUT, // sampled with 320MHz, kept high for at least 40MHz
+    input wire CLK320,
+    input wire CLK160,
+    input wire CLK40,
+    input wire TDC_IN, // pulse need to be longer than one cycle of CLK320, distance of pulses needs to be longer than one cycle of CLK40
+    output wire TDC_OUT, // sampled with 320MHz, kept high for at least 40MHz
 
-    input FIFO_READ,
-    output FIFO_EMPTY,
-    output [31:0] FIFO_DATA,
+    input wire FIFO_READ,
+    output wire FIFO_EMPTY,
+    output wire [31:0] FIFO_DATA,
 
-    input BUS_CLK,
-    input [15:0] BUS_ADD,
-    input [7:0] BUS_DATA_IN,
+    input wire BUS_CLK,
+    input wire [15:0] BUS_ADD,
+    input wire [7:0] BUS_DATA_IN,
     output reg [7:0] BUS_DATA_OUT,
-    input BUS_RST,
-    input BUS_WR,
-    input BUS_RD,
+    input wire BUS_RST,
+    input wire BUS_WR,
+    input wire BUS_RD,
 
-    input ARM_TDC // assuming slower than 48MHz
+    input wire ARM_TDC, // assuming slower than 48MHz
+    
+    input wire [15:0] TIMESTAMP
 );
 
 // output format: 4-bit DATA_IDENTIFIER (parameter) + 16 bit event counter + 12 bit TDC data
@@ -51,6 +53,8 @@ wire CONF_EN; // ENABLE BUS_ADD==1 BIT==0
 assign CONF_EN = status_regs[1][0];
 wire CONF_EN_ARM_TDC; // ENABLE BUS_ADD==1 BIT==1
 assign CONF_EN_ARM_TDC = status_regs[1][1];
+wire CONF_EN_WRITE_TS; // ENABLE BUS_ADD==1 BIT==2
+assign CONF_EN_WRITE_TS = status_regs[1][2];
 reg [7:0] LOST_DATA_CNT, LOST_DATA_CNT_BUF; // BUS_ADD==2
 reg [15:0] EVENT_CNT, EVENT_CNT_BUF; // BUS_ADD==3 - 4
 
@@ -257,6 +261,16 @@ assign FINISH = (state == COUNT && next_state == IDLE) || (state == IDLE && SMAL
 wire START;
 assign START = ((state == IDLE && next_state == COUNT) || (state == ARMED && next_state == COUNT));
 
+reg [15:0] CURR_TIMESTAMP;
+always @ (posedge CLK40)
+    if (RST_SYNC)
+        CURR_TIMESTAMP <= 16'b0;
+    else
+        if (START)
+            CURR_TIMESTAMP <= TIMESTAMP;
+        else if (FINISH && state == IDLE)
+            CURR_TIMESTAMP <= TIMESTAMP;
+
 integer i;
 reg [4:0] ONES;
 always@(*) begin 
@@ -292,7 +306,7 @@ wire cdc_fifo_write;
 assign cdc_fifo_write = !wfull && FINISH;
 
 wire [31:0] cdc_data;
-assign cdc_data = {DATA_IDENTIFIER, EVENT_CNT, TDC_VAL};
+assign cdc_data = (CONF_EN_WRITE_TS) ? {DATA_IDENTIFIER, CURR_TIMESTAMP, TDC_VAL} : {DATA_IDENTIFIER, EVENT_CNT, TDC_VAL};
 
 always@(posedge CLK40) begin
     if(RST_SYNC)

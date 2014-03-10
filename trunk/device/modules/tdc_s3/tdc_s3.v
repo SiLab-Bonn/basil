@@ -17,24 +17,26 @@ module tdc_s3
 
     parameter DATA_IDENTIFIER = 4'b0100
 )(
-    input BUS_CLK,
-    input [15:0] BUS_ADD,
+    input wire BUS_CLK,
+    input wire [15:0] BUS_ADD,
     inout [7:0] BUS_DATA,
-    input BUS_RST,
+    input wire BUS_RST,
     input BUS_WR,
-    input BUS_RD,
+    input wire BUS_RD,
 
     input CLK320,
-    input CLK160,
-    input CLK40,
-    input TDC_IN,
-    output TDC_OUT,
+    input wire CLK160,
+    input wire CLK40,
+    input wire TDC_IN,
+    output wire TDC_OUT,
 
-    input FIFO_READ,
-    output FIFO_EMPTY,
-    output [31:0] FIFO_DATA,
+    input wire FIFO_READ,
+    output wire FIFO_EMPTY,
+    output wire [31:0] FIFO_DATA,
 
-    input ARM_TDC
+    input wire ARM_TDC,
+    
+    input wire [15:0] TIMESTAMP
 );
 
 wire IP_RD, IP_WR;
@@ -79,7 +81,9 @@ tdc_s3_core
     .FIFO_EMPTY(FIFO_EMPTY),
     .FIFO_DATA(FIFO_DATA),
 
-    .ARM_TDC(ARM_TDC)
+    .ARM_TDC(ARM_TDC),
+    
+    .TIMESTAMP(TIMESTAMP)
 );
 
 endmodule
