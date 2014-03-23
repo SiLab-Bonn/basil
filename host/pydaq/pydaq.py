@@ -39,11 +39,12 @@ class Dut(object):
             kargs['conf'] = hwdrv
             self._hardware_layer[hwdrv['name']] = self._factory('HL.' + hwdrv['type'], hwdrv['type'], *(), **kargs)
 
-        for userdrv in config['user_drivers']:
-            kargs = {}
-            kargs['hw_driver'] = self._hardware_layer[userdrv['hw_driver']]
-            kargs['conf'] = userdrv
-            self._user_drivers[userdrv['name']] = self._factory('UL.' + userdrv['type'], userdrv['type'], *(), **kargs)
+        if 'user_drivers' in config:
+            for userdrv in config['user_drivers']:
+                kargs = {}
+                kargs['hw_driver'] = self._hardware_layer[userdrv['hw_driver']]
+                kargs['conf'] = userdrv
+                self._user_drivers[userdrv['name']] = self._factory('UL.' + userdrv['type'], userdrv['type'], *(), **kargs)
 
         for reg in config['registers']:
             kargs = {}
