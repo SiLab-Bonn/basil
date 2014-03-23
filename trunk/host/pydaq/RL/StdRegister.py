@@ -16,6 +16,8 @@ from utils import utils
 
 class StdRegister(RegisterLayer):
 
+    _bv = None
+
     def __init__(self, driver, conf):
         RegisterLayer.__init__(self, driver, conf)
         self._size = conf['size']
@@ -23,12 +25,17 @@ class StdRegister(RegisterLayer):
 
         if 'fields' in self._conf:
             for field in self._conf['fields']:
-                bv = BitLogic(size=field['size'])
-                self._fields[field['name']] = bv
-        else:
-            bv = BitLogic(size=self._conf['size'])
-            bv.offset = self._conf['size'] - 1
-            self._fields[conf['name']] = bv
+                if 'repeat' in field:
+                    reg_list = []
+                    for _ in range(field['repeat']):
+                        reg = StdRegister(None, field)
+                        reg_list.append(reg)
+                    self._fields[field['name']] = reg_list
+                else:
+                    bv = BitLogic(size=field['size'])
+                    self._fields[field['name']] = bv
+
+        self._bv = BitLogic(size=self._conf['size'])
 
     def __getitem__(self, items):
         #print '__getitem__', items
@@ -60,6 +67,9 @@ class StdRegister(RegisterLayer):
         else:
             raise TypeError("Invalid argument type.")
 
+    def __len__(self):
+        return self._conf['size']
+
     def __str__(self):
         fields = dict()
         full = dict()
@@ -68,10 +78,16 @@ class StdRegister(RegisterLayer):
         full[self._conf['name']] = str(len(reg)) + 'b' + str(reg)
 
         for field in self._fields:
-            if field != self._conf['name']:
+            if 'repeat' in self._get_filed_config(field):
+                for i, sub_reg in enumerate(self._fields[field]):
+                    fields[str(field) + '[' + str(i) + ']'] = str(sub_reg)
+            else:
                 fields[field] = str(len(self._fields[field])) + 'b' + str(self._fields[field])
 
-        return str([full, fields])
+        if self._fields:
+            return str([full, fields])
+        else:
+            return str(full)
 
     def set(self, value):
         bv = BitLogic(intVal=value, size=self._size)
@@ -88,14 +104,23 @@ class StdRegister(RegisterLayer):
         #return self._drv.read()  # ????? //byte array
 
     def _construct_reg(self):
-        bv = BitLogic(size=self._size)
+
         for field in self._fields:
             off = self._get_filed_config(field)['offset']
-            bvsize = len(self._fields[field])
-            bvstart = off
-            bvstop = off - bvsize + 1
-            bv[bvstart:bvstop] = self._fields[field]
-        return bv
+
+            if 'repeat' in self._get_filed_config(field):
+                for i, sub_filed in enumerate(self._fields[field]):
+                    bvstart = off - i * self._get_filed_config(field)['size']
+                    bvstop = bvstart - len(sub_filed._construct_reg()) + 1
+                    self._bv[bvstart:bvstop] = sub_filed._construct_reg()
+                    #print i, bvstart, bvstop, sub_filed._construct_reg()
+            else:
+                bvsize = len(self._fields[field])
+                bvstart = off
+                bvstop = off - bvsize + 1
+                self._bv[bvstart:bvstop] = self._fields[field]
+
+        return self._bv
 
     def _deconstruct_reg(self, new_reg):
         for field in self._fields:
@@ -103,7 +128,13 @@ class StdRegister(RegisterLayer):
             bvsize = len(self._fields[field])
             bvstart = off
             bvstop = off - bvsize + 1
-            self._fields[field].setValue(bitstring=str(new_reg[bvstart:bvstop]))
+            if 'repeat' in self._get_filed_config(field):
+                pass
+            else:
+                self._fields[field].setValue(bitstring=str(new_reg[bvstart:bvstop]))
 
     def _get_filed_config(self, field):
-        return next((x for x in self._conf['fields'] if x['name'] == field), None)
+        if 'fields' in self._conf:
+            return next((x for x in self._conf['fields'] if x['name'] == field), None)
+        else:
+            return ''
