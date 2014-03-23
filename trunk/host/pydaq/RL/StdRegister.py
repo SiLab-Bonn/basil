@@ -21,15 +21,9 @@ class StdRegister(RegisterLayer):
         self._size = conf['size']
         self._fields = dict()
 
-        if 'fields' in conf:
-            for field in conf['fields']:
+        if 'fields' in self._conf:
+            for field in self._conf['fields']:
                 bv = BitLogic(size=field['size'])
-
-                if 'offset' in field:
-                    bv.offset = field['offset']
-                else:
-                    bv.offset = field['address'] * conf['width'] + field['position']
-
                 self._fields[field['name']] = bv
         else:
             bv = BitLogic(size=self._conf['size'])
@@ -49,7 +43,16 @@ class StdRegister(RegisterLayer):
             reg[key.start:key.stop] = value
             self._deconstruct_reg(reg)
         elif isinstance(key, str):
+
             self._fields[key][self._fields[key].size - 1:0] = value
+
+            if 'bit_order' in self._get_filed_config(key):
+                new_val = BitLogic(size=len(self._fields[key]))
+                for i, bit in enumerate(self._get_filed_config(key)['bit_order']):
+                    new_val[len(self._fields[key]) - 1 - i] = self._fields[key][bit]
+
+                self._fields[key] = new_val
+
         elif isinstance(key, int):
             reg = self._construct_reg()
             reg[key] = value
@@ -60,14 +63,14 @@ class StdRegister(RegisterLayer):
     def __str__(self):
         fields = dict()
         full = dict()
-        
+
         reg = self._construct_reg()
         full[self._conf['name']] = str(len(reg)) + 'b' + str(reg)
 
         for field in self._fields:
             if field != self._conf['name']:
                 fields[field] = str(len(self._fields[field])) + 'b' + str(self._fields[field])
-        
+
         return str([full, fields])
 
     def set(self, value):
@@ -79,7 +82,7 @@ class StdRegister(RegisterLayer):
         ba = utils.bitvector_to_byte_array(reg)
         #print reg, ba
         self._drv.set_data(0, ba)
-        
+
     def read(self):
         raise NotImplementedError("To be implemented.")
         #return self._drv.read()  # ????? //byte array
@@ -87,7 +90,7 @@ class StdRegister(RegisterLayer):
     def _construct_reg(self):
         bv = BitLogic(size=self._size)
         for field in self._fields:
-            off = self._fields[field].offset
+            off = self._get_filed_config(field)['offset']
             bvsize = len(self._fields[field])
             bvstart = off
             bvstop = off - bvsize + 1
@@ -96,8 +99,11 @@ class StdRegister(RegisterLayer):
 
     def _deconstruct_reg(self, new_reg):
         for field in self._fields:
-            off = self._fields[field].offset
+            off = self._get_filed_config(field)['offset']
             bvsize = len(self._fields[field])
             bvstart = off
             bvstop = off - bvsize + 1
             self._fields[field].setValue(bitstring=str(new_reg[bvstart:bvstop]))
+
+    def _get_filed_config(self, field):
+        return next((x for x in self._conf['fields'] if x['name'] == field), None)
