@@ -10,6 +10,7 @@
 #
 
 from TL.TransferLayer import TransferLayer
+import array
 
 
 class Dummy (TransferLayer):
@@ -30,3 +31,4 @@ class Dummy (TransferLayer):
 
     def read(self, addr, size):
         print "DummyTransferLayer.read addr:", addr, "size:", size
+        return array.array('B', '\x00' * size)
