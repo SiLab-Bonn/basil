@@ -49,8 +49,8 @@ class pulse_gen(HardwareLayer):
 
     def set_en(self, enable):
         '''
-        If true: The pulse comes with a fixed delay with respect to the shift register finish signal.
-        If false: The pulse comes at an uncorrelated time.
+        If true: The pulse comes with a fixed delay with respect to the external trigger (EXT_START).
+        If false: The pulse comes only at software start.
         '''
         #self._intf.write(self._conf['base_addr'] + 2, [0x01])
         current = self._intf.read(self._conf['base_addr'] + 2, 1)[0]
