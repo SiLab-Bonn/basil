@@ -129,7 +129,7 @@ class StdRegister(RegisterLayer):
             bvstart = off
             bvstop = off - bvsize + 1
             if 'repeat' in self._get_filed_config(field):
-                pass
+                raise NotImplementedError("To be implemented.")
             else:
                 self._fields[field].setValue(bitstring=str(new_reg[bvstart:bvstop]))
 
