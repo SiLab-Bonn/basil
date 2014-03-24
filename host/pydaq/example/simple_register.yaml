@@ -38,21 +38,21 @@ registers:
           - name     : VINJECT
             size     : 6
             offset   : 19
-            bit_order: [4,0,3,2,1,5]
+            bit_order: [5,4,3,1,0,2]
           - name     : VPULSE
             size     : 6
             offset   : 13
           - name     : EN
             size     : 2
             offset   : 7
-          - name   : COL
+          - name   : COLUMN
             offset : 5
             size   : 3
             repeat : 2
             fields  : 
-            - name     : A
+            - name     : EnR
               size     : 1
               offset   : 2
-            - name     : B
+            - name     : DACR
               size     : 2
               offset   : 1
