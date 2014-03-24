@@ -161,10 +161,14 @@ reg [7:0] REPEAT_COUNT;
 wire REP_START;
 assign REP_START = (out_bit_cnt == STOP_BIT && (CONF_REPEAT==0 || REPEAT_COUNT < CONF_REPEAT));
 
+reg REP_START_DLY;
+always @ (posedge SPI_CLK)
+    REP_START_DLY <= REP_START;
+ 
 always @ (posedge SPI_CLK)
     if (RST_SYNC)
         SEN_INT <= 0;
-    else if(START_SYNC || REP_START)
+    else if(START_SYNC || REP_START_DLY)
         SEN_INT <= 1;
     else if(out_bit_cnt == CONF_BIT_OUT)
         SEN_INT <= 0;
@@ -174,10 +178,10 @@ always @ (posedge SPI_CLK)
         out_bit_cnt <= 0;
     else if(START_SYNC)
         out_bit_cnt <= 1;
-    else if(REP_START)
-        out_bit_cnt <= 1;
     else if(out_bit_cnt == STOP_BIT)
         out_bit_cnt <= 0;
+    else if(REP_START_DLY)
+        out_bit_cnt <= 1;
     else if(out_bit_cnt != 0)
         out_bit_cnt <= out_bit_cnt + 1;
 
@@ -207,7 +211,7 @@ always @(posedge SPI_CLK)
 CG_MOD_pos icg2(.ck_in(SPI_CLK), .enable(SEN), .ck_out(SCLK));
 
 always @(negedge SPI_CLK)
-    SDI <= SDI_MEM;
+    SDI <= SDI_MEM & SEN_INT;
 
 always @(negedge SPI_CLK)
     SEN <= SEN_INT;
