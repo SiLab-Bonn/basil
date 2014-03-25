@@ -201,12 +201,17 @@ end
 always @(posedge SPI_CLK)
     SLD <= (sync_ld[1]==1 && sync_ld[0]==0);
 
-always @(posedge SPI_CLK)
-    if(RST_SYNC | START_SYNC)
-        CONF_DONE <= 0;
-    else if(SLD && REPEAT_COUNT >= CONF_REPEAT)
-        CONF_DONE <= 1;
+wire DONE = SLD && REPEAT_COUNT >= CONF_REPEAT;
+wire DONE_SYNC;
+cdc_pulse_sync done_pulse_sync (.clk_in(SPI_CLK), .pulse_in(DONE), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
 
+always @(posedge BUS_CLK)
+    if(RST)
+        CONF_DONE <= 1;
+    else if(START)
+        CONF_DONE <= 0;
+    else if(DONE_SYNC)
+        CONF_DONE <= 1;
 
 CG_MOD_pos icg2(.ck_in(SPI_CLK), .enable(SEN), .ck_out(SCLK));
 
