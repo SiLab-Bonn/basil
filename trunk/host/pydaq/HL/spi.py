@@ -74,10 +74,10 @@ class spi(HardwareLayer):
         '''
         Gets Number of repititions of sequence with delay 'wait' (if 0 --> repeat forever)
         '''
-        self._intf.read(self._conf['base_addr'] + 7, 1)[0]
+        return self._intf.read(self._conf['base_addr'] + 7, 1)[0]
 
     def is_done(self):
-        return True if (self._intf.read(self._conf['base_addr'], 1)[0] & 0x01) else False
+        return True if (self._intf.read(self._conf['base_addr'] + 1, 1)[0] & 0x01) else False
 
     def set_data(self, addr, data):
         self._intf.write(self._conf['base_addr'] + 8 + addr, data)
