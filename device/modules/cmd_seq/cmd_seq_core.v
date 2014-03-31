@@ -101,11 +101,11 @@ always @(posedge BUS_CLK) begin
         status_regs[4] <= 0;
         status_regs[5] <= 8'd1; // repeat once by default
         status_regs[6] <= 0;
-        status_regs[7] <= 0; // CONF_START_REPEAT
+        status_regs[7] <= 0; 
         status_regs[8] <= 0;
-        status_regs[9] <= 0; // CONF_STOP_REPEAT
+        status_regs[9] <= 0; // CONF_START_REPEAT
         status_regs[10] <= 0;
-        status_regs[11] <= 0;
+        status_regs[11] <= 0;// CONF_STOP_REPEAT
         status_regs[12] <= 0;
         status_regs[13] <= 0;
         status_regs[14] <= 0;
@@ -118,8 +118,8 @@ end
 
 assign CONF_CMD_SIZE = {status_regs[4], status_regs[3]};
 assign CONF_REPEAT_COUNT = {status_regs[8], status_regs[7], status_regs[6], status_regs[5]};
-assign CONF_START_REPEAT = {status_regs[8], status_regs[7]};
-assign CONF_STOP_REPEAT = {status_regs[10], status_regs[9]};
+assign CONF_START_REPEAT = {status_regs[10], status_regs[9]};
+assign CONF_STOP_REPEAT = {status_regs[12], status_regs[11]};
 
 assign CONF_DIS_CMD_PULSE = status_regs[2][4];
 assign CONF_DIS_CLOCK_GATE = status_regs[2][3]; // no clock domain crossing needed
@@ -179,6 +179,19 @@ always @ (posedge CMD_CLK_IN)
     else
       state <= next_state;
   
+  
+reg END_SEQ_REP_NEXT, END_SEQ_REP;
+always @ (*) begin
+    if(repeat_cnt < CONF_REPEAT_COUNT && cnt == CONF_CMD_SIZE-1-CONF_STOP_REPEAT && !END_SEQ_REP)
+        END_SEQ_REP_NEXT = 1;
+    else
+        END_SEQ_REP_NEXT = 0;
+end
+
+always @ (posedge CMD_CLK_IN)
+    END_SEQ_REP <= END_SEQ_REP_NEXT;
+    
+
 always @ (*) begin
     case(state)
         WAIT : if(send_cmd)
@@ -198,8 +211,12 @@ always @ (posedge CMD_CLK_IN) begin
         cnt <= 0;
     else if(state != next_state)
         cnt <= 0;
-    else if(cnt == CONF_CMD_SIZE)
-        cnt <= 1;    
+    else if(cnt == CONF_CMD_SIZE || END_SEQ_REP) begin
+        if(CONF_START_REPEAT != 0)
+            cnt <= CONF_START_REPEAT+1;    
+        else
+            cnt <= 1;
+    end
     else
         cnt <= cnt +1;
 end
@@ -207,7 +224,7 @@ end
 always @ (posedge CMD_CLK_IN) begin
     if (send_cmd || RST_CMD_CLK)
         repeat_cnt <= 1;
-    else if(state == SEND && cnt == CONF_CMD_SIZE && repeat_cnt != 32'hffffffff)
+    else if(state == SEND && (cnt == CONF_CMD_SIZE || END_SEQ_REP) && repeat_cnt != 32'hffffffff)
         repeat_cnt <= repeat_cnt + 1;
 end
 
@@ -215,10 +232,18 @@ always @ (*) begin
     if(state != next_state && next_state == SEND)
         CMD_MEM_ADD = 0;
     else if(state == SEND)
-        if(cnt == CONF_CMD_SIZE-1)
-            CMD_MEM_ADD = 0;
-        else
-            CMD_MEM_ADD = (cnt+1)/8;
+        if(cnt == CONF_CMD_SIZE-1 || END_SEQ_REP_NEXT) begin
+            if(CONF_START_REPEAT != 0)
+                CMD_MEM_ADD = (CONF_START_REPEAT)/8;
+            else
+                CMD_MEM_ADD = 0;
+            end
+        else begin
+            if(END_SEQ_REP)
+                CMD_MEM_ADD = (CONF_START_REPEAT+1)/8;
+            else
+                CMD_MEM_ADD = (cnt+1)/8;
+        end
     else
         CMD_MEM_ADD = 0; //no latch
 end
@@ -231,22 +256,26 @@ always @ (posedge CMD_CLK_IN) begin
     else if(state == SEND) begin
         if(next_state == WAIT)
             send_word <= 0; // by default set to output to zero (this is strange -> bug of FEI4?)
-        else if(cnt == CONF_CMD_SIZE)
+        else if(cnt == CONF_CMD_SIZE || END_SEQ_REP)
             send_word <= CMD_MEM_DATA;
         else if(cnt %8 == 0)
             send_word <= CMD_MEM_DATA;
-        else
-            send_word[7:0] <= {send_word[6:0], 1'b0};
+        //else
+        //    send_word[7:0] <= {send_word[6:0], 1'b0};
     end
 end
+
+wire cmd_data_ser;
+assign cmd_data_ser = send_word[7-((cnt-1)%8)];
+
 
 reg cmd_data_neg;
 reg cmd_data_pos;
 always @ (negedge CMD_CLK_IN)
-cmd_data_neg <= send_word[7];
+    cmd_data_neg <= cmd_data_ser;
 
 always @ (posedge CMD_CLK_IN)
-cmd_data_pos <= send_word[7];
+    cmd_data_pos <= cmd_data_ser;
 
 OFDDRRSE MANCHESTER_CODE_INST (
 	.CE(1'b1), 
