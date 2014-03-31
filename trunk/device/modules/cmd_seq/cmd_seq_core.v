@@ -88,7 +88,8 @@ wire CONF_EN_EXT_START, CONF_DIS_CLOCK_GATE, CONF_DIS_CMD_PULSE; // 2
 wire [1:0] CONF_OUTPUT_MODE; // 2 Mode == 0: posedge, 1: negedge, 2: Manchester Code according to IEEE 802.3, 3:  Manchester Code according to G.E. Thomas aka Biphase-L or Manchester-II
 wire [15:0] CONF_CMD_SIZE; // 3 - 4
 wire [31:0] CONF_REPEAT_COUNT; // 5 - 6
-
+wire [15:0] CONF_START_REPEAT; // 7 - 8
+wire [15:0] CONF_STOP_REPEAT; // 9 - 10
 reg [7:0] status_regs[15:0];
 
 always @(posedge BUS_CLK) begin
@@ -100,9 +101,9 @@ always @(posedge BUS_CLK) begin
         status_regs[4] <= 0;
         status_regs[5] <= 8'd1; // repeat once by default
         status_regs[6] <= 0;
-        status_regs[7] <= 0;
+        status_regs[7] <= 0; // CONF_START_REPEAT
         status_regs[8] <= 0;
-        status_regs[9] <= 0;
+        status_regs[9] <= 0; // CONF_STOP_REPEAT
         status_regs[10] <= 0;
         status_regs[11] <= 0;
         status_regs[12] <= 0;
@@ -117,6 +118,8 @@ end
 
 assign CONF_CMD_SIZE = {status_regs[4], status_regs[3]};
 assign CONF_REPEAT_COUNT = {status_regs[8], status_regs[7], status_regs[6], status_regs[5]};
+assign CONF_START_REPEAT = {status_regs[8], status_regs[7]};
+assign CONF_STOP_REPEAT = {status_regs[10], status_regs[9]};
 
 assign CONF_DIS_CMD_PULSE = status_regs[2][4];
 assign CONF_DIS_CLOCK_GATE = status_regs[2][3]; // no clock domain crossing needed
