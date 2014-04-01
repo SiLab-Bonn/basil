@@ -87,9 +87,9 @@ wire CONF_FINISH; // 1
 wire CONF_EN_EXT_START, CONF_DIS_CLOCK_GATE, CONF_DIS_CMD_PULSE; // 2
 wire [1:0] CONF_OUTPUT_MODE; // 2 Mode == 0: posedge, 1: negedge, 2: Manchester Code according to IEEE 802.3, 3:  Manchester Code according to G.E. Thomas aka Biphase-L or Manchester-II
 wire [15:0] CONF_CMD_SIZE; // 3 - 4
-wire [31:0] CONF_REPEAT_COUNT; // 5 - 6
-wire [15:0] CONF_START_REPEAT; // 7 - 8
-wire [15:0] CONF_STOP_REPEAT; // 9 - 10
+wire [31:0] CONF_REPEAT_COUNT; // 5 - 8
+wire [15:0] CONF_START_REPEAT; // 9 - 10
+wire [15:0] CONF_STOP_REPEAT; // 11 - 12
 reg [7:0] status_regs[15:0];
 
 always @(posedge BUS_CLK) begin
@@ -99,7 +99,7 @@ always @(posedge BUS_CLK) begin
         status_regs[2] <= 8'b0000_0000;
         status_regs[3] <= 0;
         status_regs[4] <= 0;
-        status_regs[5] <= 8'd1; // repeat once by default
+        status_regs[5] <= 8'd1; // CONF_REPEAT_COUNT, repeat once by default
         status_regs[6] <= 0;
         status_regs[7] <= 0; 
         status_regs[8] <= 0;
@@ -178,8 +178,8 @@ always @ (posedge CMD_CLK_IN)
       state <= WAIT;
     else
       state <= next_state;
-  
-  
+
+
 reg END_SEQ_REP_NEXT, END_SEQ_REP;
 always @ (*) begin
     if(repeat_cnt < CONF_REPEAT_COUNT && cnt == CONF_CMD_SIZE-1-CONF_STOP_REPEAT && !END_SEQ_REP)
@@ -190,7 +190,6 @@ end
 
 always @ (posedge CMD_CLK_IN)
     END_SEQ_REP <= END_SEQ_REP_NEXT;
-    
 
 always @ (*) begin
     case(state)
@@ -213,18 +212,18 @@ always @ (posedge CMD_CLK_IN) begin
         cnt <= 0;
     else if(cnt == CONF_CMD_SIZE || END_SEQ_REP) begin
         if(CONF_START_REPEAT != 0)
-            cnt <= CONF_START_REPEAT+1;    
+            cnt <= CONF_START_REPEAT+1;
         else
             cnt <= 1;
     end
     else
-        cnt <= cnt +1;
+        cnt <= cnt + 1;
 end
 
 always @ (posedge CMD_CLK_IN) begin
     if (send_cmd || RST_CMD_CLK)
         repeat_cnt <= 1;
-    else if(state == SEND && (cnt == CONF_CMD_SIZE || END_SEQ_REP) && repeat_cnt != 32'hffffffff)
+    else if(state == SEND && (cnt == CONF_CMD_SIZE || END_SEQ_REP) && repeat_cnt != 0)
         repeat_cnt <= repeat_cnt + 1;
 end
 
