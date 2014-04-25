@@ -34,10 +34,14 @@ wire START;
 reg CONF_EN;
 reg [15:0] CONF_DELAY; 
 reg [15:0] CONF_WIDTH;
+reg [7:0] CONF_REPEAT;
+reg CONF_DONE;
 
 always@(posedge BUS_CLK) begin
     if(BUS_RD) begin
-        if(BUS_ADD == 2)
+        if(BUS_ADD == 1)
+            BUS_DATA_OUT <= {7'b0, CONF_DONE};
+        else if(BUS_ADD == 2)
             BUS_DATA_OUT <= {7'b0, CONF_EN};
         else if(BUS_ADD == 3)
             BUS_DATA_OUT <= CONF_DELAY[15:8];
@@ -47,6 +51,8 @@ always@(posedge BUS_CLK) begin
             BUS_DATA_OUT <= CONF_WIDTH[15:8];
         else if(BUS_ADD == 6)
             BUS_DATA_OUT <= CONF_WIDTH[7:0];
+        else if(BUS_ADD == 7)
+            BUS_DATA_OUT <= CONF_REPEAT[7:0];
     end
 end
 
@@ -61,6 +67,7 @@ always @(posedge BUS_CLK) begin
         CONF_EN <= 0;
         CONF_DELAY <= 0;
         CONF_WIDTH <= 0;
+        CONF_REPEAT <= 1;
     end
     else if(BUS_WR) begin
         if(BUS_ADD == 2)
@@ -73,6 +80,8 @@ always @(posedge BUS_CLK) begin
             CONF_WIDTH[15:8] <= BUS_DATA_IN;
         else if(BUS_ADD == 6)
             CONF_WIDTH[7:0] <= BUS_DATA_IN;
+        else if(BUS_ADD == 7)
+            CONF_REPEAT[7:0] <= BUS_DATA_IN;
     end
 end
 
@@ -87,12 +96,30 @@ cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(PU
 
 reg [15:0] CNT;
 
+wire [15:0] LAST_CNT;
+assign LAST_CNT = CONF_DELAY + CONF_WIDTH;
+
+reg [7:0] REAPAT_CNT;
+
+always @ (posedge PULSE_CLK) begin
+    if (RST_SYNC)
+        REAPAT_CNT <= 0; 
+    else if(START_SYNC || (EXT_START && CONF_EN))
+        REAPAT_CNT <= CONF_REPEAT; 
+    else if(REAPAT_CNT != 0 && CNT == 1)
+        REAPAT_CNT <= REAPAT_CNT - 1;
+end
+
 always @ (posedge PULSE_CLK) begin
     if (RST_SYNC)
         CNT <= 0; //IS THIS RIGHT?
     else if(START_SYNC || (EXT_START && CONF_EN))
         CNT <= 1;
-    else if(CNT != 0 )
+    else if(CNT == LAST_CNT && REAPAT_CNT != 0)
+        CNT <= 1;
+    else if(CNT == LAST_CNT && REAPAT_CNT == 0)
+        CNT <= 0;
+    else if(CNT != 0)
         CNT <= CNT + 1;
 end
 
@@ -101,8 +128,25 @@ always @ (posedge PULSE_CLK) begin
         PULSE <= 0;
     else if(CNT == CONF_DELAY && CNT > 0)
         PULSE <= 1;
-    else if(CNT == CONF_DELAY + CONF_WIDTH)
+    else if(CNT == LAST_CNT)
         PULSE <= 0;
 end
+
+assign DONE = (CNT == 0);
+
+wire DONE_SYNC;
+cdc_pulse_sync done_pulse_sync (.clk_in(PULSE_CLK), .pulse_in(DONE), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
+
+wire EXT_START_SYNC;
+cdc_pulse_sync ex_start_pulse_sync (.clk_in(PULSE_CLK), .pulse_in(EXT_START && CONF_EN), .clk_out(BUS_CLK), .pulse_out(EXT_START_SYNC));
+
+always @(posedge BUS_CLK)
+    if(RST)
+        CONF_DONE <= 1;
+    else if(START || EXT_START_SYNC)
+        CONF_DONE <= 0;
+    else if(DONE_SYNC)
+        CONF_DONE <= 1;
+        
 
 endmodule
