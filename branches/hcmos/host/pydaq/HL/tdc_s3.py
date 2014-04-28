@@ -30,10 +30,9 @@ class tdc_s3(HardwareLayer):
 
     '''
     Initialise the TDC controller module
-    '''                                   
+    '''
     def init(self):
         self.reset()
-        
 
     def set_en(self, enable):
         current = self._intf.read(self._conf['base_addr'] + 1, 1)[0]
@@ -43,10 +42,10 @@ class tdc_s3(HardwareLayer):
         return True if (self._intf.read(self._conf['base_addr'] + 1, 1)[0] & 0x01) else False
     
     def set_exten(self, enable):
-        current = self._intf.read(self._conf['base_addr'] + 1, 1)[3]
-        self._intf.write(self._conf['base_addr'] + 1, [(current & 0xfe) | enable])
+        current = self._intf.read(self._conf['base_addr'] + 1, 4)
+        self._intf.write(self._conf['base_addr'] + 1, [(current[3] & 0xfe) | enable,current[2],current[1],current[0]])
         
     def get_exten(self):
-        return True if (self._intf.read(self._conf['base_addr'] + 1, 1)[3] & 0x01) else False
+        return True if (self._intf.read(self._conf['base_addr'] + 1, 4)[3] & 0x01) else False
 
     

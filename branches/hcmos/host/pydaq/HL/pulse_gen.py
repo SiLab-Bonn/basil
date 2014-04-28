@@ -51,7 +51,7 @@ class pulse_gen(HardwareLayer):
         '''
         Pulse repetition in range of 0-255
         '''
-        self._intf.write(self._conf['base_addr'] + 7, unpack('BB', pack('>H', width)))
+        self._intf.write(self._conf['base_addr'] + 7, [repeat])
 
     def get_repeat(self):
         ret = self._intf.read(self._conf['base_addr'] + 7, 1)
