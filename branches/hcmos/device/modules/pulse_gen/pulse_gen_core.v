@@ -132,6 +132,7 @@ always @ (posedge PULSE_CLK) begin
         PULSE <= 0;
 end
 
+wire DONE;
 assign DONE = (CNT == 0);
 
 wire DONE_SYNC;
