@@ -90,7 +90,10 @@ class StdRegister(RegisterLayer):
             return str(full)
 
     def set(self, value):
-        bv = BitLogic(intVal=value, size=self._size)
+        if isinstance(value, int):
+            bv = BitLogic(intVal=value, size=self._size)
+        else:
+            bv = BitLogic(bitstring=str(value))  ## TODO: added binary string ex "10100101". Should it be like "8b10100101"?
         self._deconstruct_reg(bv)
 
     def write(self):
@@ -101,36 +104,35 @@ class StdRegister(RegisterLayer):
 
     def read(self):
         raise NotImplementedError("To be implemented.")
-        #return self._drv.read()  # ????? //byte array
 
     def _construct_reg(self):
-
         for field in self._fields:
             off = self._get_filed_config(field)['offset']
-
             if 'repeat' in self._get_filed_config(field):
                 for i, sub_filed in enumerate(self._fields[field]):
                     bvstart = off - i * self._get_filed_config(field)['size']
                     bvstop = bvstart - len(sub_filed._construct_reg()) + 1
                     self._bv[bvstart:bvstop] = sub_filed._construct_reg()
-                    #print i, bvstart, bvstop, sub_filed._construct_reg()
             else:
                 bvsize = len(self._fields[field])
                 bvstart = off
                 bvstop = off - bvsize + 1
                 self._bv[bvstart:bvstop] = self._fields[field]
-
         return self._bv
 
     def _deconstruct_reg(self, new_reg):
         for field in self._fields:
             off = self._get_filed_config(field)['offset']
-            bvsize = len(self._fields[field])
-            bvstart = off
-            bvstop = off - bvsize + 1
             if 'repeat' in self._get_filed_config(field):
-                raise NotImplementedError("To be implemented.")
+                for i, sub_field in enumerate(self._fields[field]):
+                    bvstart = off - i * self._get_filed_config(field)['size']
+                    bvstop = bvstart - self._get_filed_config(field)['size'] + 1
+                    print "...", bvstart, bvstop, new_reg[bvstart:bvstop]
+                    sub_field._deconstruct_reg(new_reg[bvstart:bvstop])
             else:
+                bvsize = len(self._fields[field])
+                bvstart = off
+                bvstop = off - bvsize + 1
                 self._fields[field].setValue(bitstring=str(new_reg[bvstart:bvstop]))
 
     def _get_filed_config(self, field):

@@ -46,7 +46,20 @@ class pulse_gen(HardwareLayer):
     def get_width(self):
         ret = self._intf.read(self._conf['base_addr'] + 5, 2)
         return ret[0] * 255 + ret[1]
+    
+    def set_repeat(self, repeat):
+        '''
+        Pulse repetition in range of 0-255
+        '''
+        self._intf.write(self._conf['base_addr'] + 7, unpack('BB', pack('>H', width)))
 
+    def get_repeat(self):
+        ret = self._intf.read(self._conf['base_addr'] + 7, 1)
+        return ret[0]
+
+    def is_done(self):
+        return True if (self._intf.read(self._conf['base_addr'] + 1, 1)[0] & 0x01) else False
+    
     def set_en(self, enable):
         '''
         If true: The pulse comes with a fixed delay with respect to the external trigger (EXT_START).
@@ -62,4 +75,6 @@ class pulse_gen(HardwareLayer):
         '''
         return True if (self._intf.read(self._conf['base_addr'] + 2, 1)[0] & 0x01) else False
     
-    
+ 
+  
+ 
