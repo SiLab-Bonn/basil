@@ -52,7 +52,6 @@ class MemoryMapRegister(StdRegister):
 
     def Write(self, args=None):
         print self._fields
-        print args  #hirono
         reg_sel = list()
 
         if(args == None):
