@@ -43,7 +43,6 @@ class tdc_s3(HardwareLayer):
     
     def set_exten(self, enable):
         current = self._intf.read(self._conf['base_addr'] + 1, 4)
-        print current
         self._intf.write(self._conf['base_addr'] + 1, [(current[3] & 0xfe) | enable,current[2],current[1],current[0]])
         
     def get_exten(self):

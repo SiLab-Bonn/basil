@@ -127,7 +127,6 @@ class StdRegister(RegisterLayer):
                 for i, sub_field in enumerate(self._fields[field]):
                     bvstart = off - i * self._get_filed_config(field)['size']
                     bvstop = bvstart - self._get_filed_config(field)['size'] + 1
-                    print "...", bvstart, bvstop, new_reg[bvstart:bvstop]
                     sub_field._deconstruct_reg(new_reg[bvstart:bvstop])
             else:
                 bvsize = len(self._fields[field])
