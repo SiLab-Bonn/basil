@@ -99,7 +99,6 @@ class StdRegister(RegisterLayer):
     def write(self):
         reg = self._construct_reg()
         ba = utils.bitvector_to_byte_array(reg)
-        #print reg, ba
         self._drv.set_data(0, ba)
 
     def read(self):

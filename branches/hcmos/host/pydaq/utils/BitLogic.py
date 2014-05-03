@@ -9,38 +9,52 @@
 #  $Date::                      $:
 #
 
-from BitVector import BitVector
+from bitarray import bitarray
 
 
-class BitLogic(BitVector):
-
-    def __init__(self, *args, **kwargs):
-        BitVector.__init__(self, *args, **kwargs)
+class BitLogic():
+    def __init__(self,*args, **kwargs):
+        ##bitarray.__init__(self,kwargs["size"])  ## this does not work
+        if len(args)!=0:
+            raise TypeError("Invalid arguent")
+        if kwargs.has_key("size"):
+            self.ba=bitarray(kwargs["size"])
+            del kwargs["size"]
+        elif len(kwargs)==0:
+            self.ba=bitarray()
+        if len(kwargs)!=0:
+            raise TypeError("Invalid arguent")
+        self.size=len(self.ba)
+    def __len__(self):
+        return self.size
+    
+    def __str__(self):
+        return str(self.ba)[10:-2]
 
     def swap_bits(self):
         svec = str(self)
         return BitLogic(bitstring=svec[::-1])
 
     def __getslice__(self, i, j):
-        ret = BitVector.__getslice__(self, j, i + 1)
-        return BitLogic(bitstring=str(ret)).swap_bits()
+        ret = self.ba[self.size-j, self.size-i + 1]
+        return ret
 
     def __getitem__(self, key):
         if isinstance(key, int):
-            return BitVector.__getitem__(self, self.size - 1 - key)
+            return self.ba[self.size - 1 - key]
         else:
             raise TypeError("Invalid argument type.")
 
     def __setitem__(self, key, item):
-
         if isinstance(key, slice):
             if isinstance(item, (int, long)):
-                BitVector.__setitem__(self, slice(key.stop, key.start + 1), BitVector(bitstring=str(BitVector(size=key.start - key.stop + 1, intVal=item))[::-1]))
-            elif isinstance(item, BitVector):
-                BitVector.__setitem__(self, slice(key.stop, key.start + 1), BitVector(bitstring=str(item)[::-1]))
+                self.ba[self.size-key.start - 1:self.size-key.stop]=bitarray(format(item, '0%db'%(key.start-key.stop + 1)))
+            elif isinstance(item, BitLogic):
+                print "__setitem__", item.ba, str(item.ba)
+                self.ba[self.size-key.start - 1:self.size-key.stop]=item.ba
             else:
                 raise TypeError("Invalid argument type.")
         elif isinstance(key, int):
-            return BitVector.__setitem__(self, self.size - 1 - key, item)
+            self.ba[self.size - 1 - key] = item
         else:
             raise TypeError("Invalid argument type.")
