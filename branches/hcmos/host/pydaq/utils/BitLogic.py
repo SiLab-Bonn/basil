@@ -16,14 +16,15 @@ class BitLogic():
     def __init__(self,*args, **kwargs):
         ##bitarray.__init__(self,kwargs["size"])  ## this does not work
         if len(args)!=0:
-            raise TypeError("Invalid arguent")
+            raise TypeError("Invalid argument")
         if kwargs.has_key("size"):
             self.ba=bitarray(kwargs["size"])
+            self.ba.setall(False)
             del kwargs["size"]
         elif len(kwargs)==0:
             self.ba=bitarray()
         if len(kwargs)!=0:
-            raise TypeError("Invalid arguent")
+            raise TypeError("Invalid argument")
         self.size=len(self.ba)
     def __len__(self):
         return self.size
@@ -50,7 +51,6 @@ class BitLogic():
             if isinstance(item, (int, long)):
                 self.ba[self.size-key.start - 1:self.size-key.stop]=bitarray(format(item, '0%db'%(key.start-key.stop + 1)))
             elif isinstance(item, BitLogic):
-                print "__setitem__", item.ba, str(item.ba)
                 self.ba[self.size-key.start - 1:self.size-key.stop]=item.ba
             else:
                 raise TypeError("Invalid argument type.")

@@ -38,8 +38,17 @@ class StdRegister(RegisterLayer):
         self._bv = BitLogic(size=self._conf['size'])
 
     def __getitem__(self, items):
-        #print '__getitem__', items
-        return self._fields[items]
+        if isinstance(items, str):
+            if 'bit_order' in self._get_filed_config(items):  ##need this?
+                new_val = BitLogic(size=len(self._fields[items]))
+                for i, bit in enumerate(self._get_filed_config(items)['bit_order']):
+                    new_val[bit] = self._fields[items][len(self._fields[items]) - 1 - i]
+                ret=new_val
+            else:
+                ret=self._fields[items]
+        else:
+            ret=self._fields[items]      
+        return ret
 
     def __setslice__(self, i, j, sequence):
         return self.__setitem__(slice(i, j), sequence)
@@ -50,16 +59,12 @@ class StdRegister(RegisterLayer):
             reg[key.start:key.stop] = value
             self._deconstruct_reg(reg)
         elif isinstance(key, str):
-
             self._fields[key][self._fields[key].size - 1:0] = value
-
             if 'bit_order' in self._get_filed_config(key):
                 new_val = BitLogic(size=len(self._fields[key]))
                 for i, bit in enumerate(self._get_filed_config(key)['bit_order']):
                     new_val[len(self._fields[key]) - 1 - i] = self._fields[key][bit]
-
                 self._fields[key] = new_val
-
         elif isinstance(key, int):
             reg = self._construct_reg()
             reg[key] = value
