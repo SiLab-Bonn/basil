@@ -90,8 +90,10 @@ class StdRegister(RegisterLayer):
             return str(full)
 
     def set(self, value):
-        bv = BitLogic(intVal=value, size=self._size)
-        self._deconstruct_reg(bv)
+        self.__setitem__(slice(len(self) - 1, 0), value)
+        #bv = BitLogic(intVal=value, size=self._size)W
+        #print("value",value, str(bv))
+        #self._deconstruct_reg(bv)
 
     def write(self):
         reg = self._construct_reg()
