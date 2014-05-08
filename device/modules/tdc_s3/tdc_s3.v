@@ -14,7 +14,7 @@ module tdc_s3
 #(
     parameter BASEADDR = 16'h0000,
     parameter HIGHADDR = 16'h0000,
-
+	parameter CLKDV = 4,
     parameter DATA_IDENTIFIER = 4'b0100
 )(
     input wire BUS_CLK,
@@ -26,7 +26,7 @@ module tdc_s3
 
     input CLK320,
     input wire CLK160,
-    input wire CLK40,
+    input wire DV_CLK, // clock synchronous to CLK160 division factor can be set by CLKDV parameter
     input wire TDC_IN,
     output wire TDC_OUT,
 
@@ -61,7 +61,7 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
 
 tdc_s3_core 
 #(
-    .DATA_IDENTIFIER(DATA_IDENTIFIER)
+    .DATA_IDENTIFIER(DATA_IDENTIFIER), .CLKDV(CLKDV) 
 ) i_tdc_s3_core
 (
     .BUS_CLK(BUS_CLK),
@@ -74,7 +74,7 @@ tdc_s3_core
 
     .CLK320(CLK320),
     .CLK160(CLK160),
-    .CLK40(CLK40),
+    .DV_CLK(DV_CLK),
     .TDC_IN(TDC_IN),
     .TDC_OUT(TDC_OUT),
 
