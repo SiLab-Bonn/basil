@@ -1,10 +1,11 @@
 #
 # ------------------------------------------------------------
-# Copyright (c) SILAB , Physics Institute of Bonn University
+# Copyright (c) All rights reserved
+# SiLab , Physics Institute of Bonn University
 # ------------------------------------------------------------
 #
 # SVN revision information:
-#  $Rev::                      $:
+#  $Rev::                       $:
 #  $Author::                    $:
 #  $Date::                      $:
 #
