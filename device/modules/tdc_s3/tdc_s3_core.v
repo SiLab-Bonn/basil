@@ -34,14 +34,15 @@ module tdc_s3_core
 
     input wire ARM_TDC, // assuming slower than 48MHz
     
-    input wire [15:0] TIMESTAMP
+    input wire [15:0] TIMESTAMP,
+    input wire EXT_EN //give a possibility to enable by hardware enable for fix time eg. for occupancy measurements
 );
 
 // output format: 4-bit DATA_IDENTIFIER (parameter) + 16 bit event counter + 12 bit TDC data
 // the TDC counter has a overflow bin: TDC value is 0 when an overflow occurs
 
 wire SOFT_RST;
-assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
+assign SOFT_RST = (BUS_ADD==0 && BUS_WR); 
 
 wire RST;
 assign RST = BUS_RST | SOFT_RST; 
@@ -49,7 +50,9 @@ assign RST = BUS_RST | SOFT_RST;
 
 reg [7:0] status_regs[1:0];
 
-wire CONF_EN; // ENABLE BUS_ADD==1 BIT==0
+wire CONF_EN; // ENABLE BUS_ADD==1 BIT==0 or BUS_ADD==1 BIT==3
+wire CONF_EN_EXT;
+assign CONF_EN_EXT = status_regs[1][3];
 assign CONF_EN = status_regs[1][0];
 wire CONF_EN_ARM_TDC; // ENABLE BUS_ADD==1 BIT==1
 assign CONF_EN_ARM_TDC = status_regs[1][1];
@@ -179,11 +182,13 @@ wire RST_LONG;
 assign RST_LONG = sync_cnt[7];
 
 wire CONF_EN_CLK40;
+
 three_stage_synchronizer conf_en_three_stage_synchronizer_clk40 (
     .CLK(CLK40),
-    .IN(CONF_EN),
+    .IN(CONF_EN | (CONF_EN_EXT & EXT_EN)),
     .OUT(CONF_EN_CLK40)
 );
+
 
 wire ARM_TDC_CLK160;
 three_stage_synchronizer three_stage_rj45_trigger_synchronizer_bus_clk (
@@ -226,7 +231,7 @@ always @ (posedge CLK40)
     else
       state <= next_state;
 
-always @ (state or ONE_DETECTED or ZERO_DETECTED or CONF_EN_CLK40 or CONF_EN_ARM_TDC_CLK40 or ARM_TDC_FLAG_CLK40 or SMALL_TOT) begin
+always @ (*) begin
     case(state)
         IDLE:
             if (ONE_DETECTED && CONF_EN_CLK40 && !CONF_EN_ARM_TDC_CLK40 && !SMALL_TOT)

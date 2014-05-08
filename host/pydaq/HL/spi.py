@@ -66,13 +66,13 @@ class spi(HardwareLayer):
     def set_repeat(self, value):
         '''
         If 0: Repeat sequence forever
-        Other: Number of repititions of sequence with delay 'wait'
+        Other: Number of repetitions of sequence with delay 'wait'
         '''
         self._intf.write(self._conf['base_addr'] + 7, [value])
 
     def get_repeat(self):
         '''
-        Gets Number of repititions of sequence with delay 'wait' (if 0 --> repeat forever)
+        Gets Number of repetitions of sequence with delay 'wait' (if 0 --> repeat forever)
         '''
         return self._intf.read(self._conf['base_addr'] + 7, 1)[0]
 

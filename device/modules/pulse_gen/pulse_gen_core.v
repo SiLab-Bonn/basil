@@ -94,9 +94,20 @@ assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
 wire START_SYNC;
 cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(PULSE_CLK), .pulse_out(START_SYNC));
 
+wire EXT_START_SYNC;
+reg [2:0] EXT_START_FF;
+always @(posedge PULSE_CLK) // first stage
+begin
+    EXT_START_FF[0] <= EXT_START;
+    EXT_START_FF[1] <= EXT_START_FF[0];
+    EXT_START_FF[2] <= EXT_START_FF[1];
+end
+
+assign EXT_START_SYNC = !EXT_START_FF[2] & EXT_START_FF[1];
+
 reg [15:0] CNT;
 
-wire [15:0] LAST_CNT;
+wire [16:0] LAST_CNT;
 assign LAST_CNT = CONF_DELAY + CONF_WIDTH;
 
 reg [7:0] REAPAT_CNT;
@@ -104,7 +115,7 @@ reg [7:0] REAPAT_CNT;
 always @ (posedge PULSE_CLK) begin
     if (RST_SYNC)
         REAPAT_CNT <= 0; 
-    else if(START_SYNC || (EXT_START && CONF_EN))
+    else if(START_SYNC || (EXT_START_SYNC && CONF_EN))
         REAPAT_CNT <= CONF_REPEAT; 
     else if(REAPAT_CNT != 0 && CNT == 1)
         REAPAT_CNT <= REAPAT_CNT - 1;
@@ -113,7 +124,7 @@ end
 always @ (posedge PULSE_CLK) begin
     if (RST_SYNC)
         CNT <= 0; //IS THIS RIGHT?
-    else if(START_SYNC || (EXT_START && CONF_EN))
+    else if(START_SYNC || (EXT_START_SYNC && CONF_EN))
         CNT <= 1;
     else if(CNT == LAST_CNT && REAPAT_CNT != 0)
         CNT <= 1;
@@ -124,7 +135,7 @@ always @ (posedge PULSE_CLK) begin
 end
 
 always @ (posedge PULSE_CLK) begin
-    if(RST_SYNC || START_SYNC || (EXT_START && CONF_EN))
+    if(RST_SYNC || START_SYNC || (EXT_START_SYNC && CONF_EN))
         PULSE <= 0;
     else if(CNT == CONF_DELAY && CNT > 0)
         PULSE <= 1;
@@ -132,18 +143,19 @@ always @ (posedge PULSE_CLK) begin
         PULSE <= 0;
 end
 
+wire DONE;
 assign DONE = (CNT == 0);
 
 wire DONE_SYNC;
 cdc_pulse_sync done_pulse_sync (.clk_in(PULSE_CLK), .pulse_in(DONE), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
 
-wire EXT_START_SYNC;
-cdc_pulse_sync ex_start_pulse_sync (.clk_in(PULSE_CLK), .pulse_in(EXT_START && CONF_EN), .clk_out(BUS_CLK), .pulse_out(EXT_START_SYNC));
+wire EXT_START_SYNC_BUS;
+cdc_pulse_sync ex_start_pulse_sync (.clk_in(PULSE_CLK), .pulse_in(EXT_START && CONF_EN), .clk_out(BUS_CLK), .pulse_out(EXT_START_SYNC_BUS));
 
 always @(posedge BUS_CLK)
     if(RST)
         CONF_DONE <= 1;
-    else if(START || EXT_START_SYNC)
+    else if(START || EXT_START_SYNC_BUS)
         CONF_DONE <= 0;
     else if(DONE_SYNC)
         CONF_DONE <= 1;
