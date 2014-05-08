@@ -12,13 +12,14 @@
  
 module tdc_s3_core
 #(
-    parameter DATA_IDENTIFIER = 4'b0100
+    parameter DATA_IDENTIFIER = 4'b0100,
+    parameter CLKDV = 4
 )(
     input wire CLK320,
     input wire CLK160,
-    input wire CLK40,
-    input wire TDC_IN, // pulse need to be longer than one cycle of CLK320, distance of pulses needs to be longer than one cycle of CLK40
-    output wire TDC_OUT, // sampled with 320MHz, kept high for at least 40MHz
+    input wire DV_CLK,
+    input wire TDC_IN, // pulse need to be longer than one cycle of CLK320, distance of pulses needs to be longer than one cycle of DV_CLK
+    output wire TDC_OUT, // sampled with 320MHz, kept high for at least DV_CLK
 
     input wire FIFO_READ,
     output wire FIFO_EMPTY,
@@ -143,12 +144,13 @@ reg [3:0] DATA_IN;
 always@(posedge CLK160)
     DATA_IN[3:0] <= {DDRQ_DATA[3:0]};
 
-reg [15:0] DATA_IN_SR;
-always@(posedge CLK160)
-    DATA_IN_SR[15:0] <= {DATA_IN_SR[11:0],DATA_IN[3:0]};
 
-reg [15:0] DATA;
-always@(posedge CLK40)
+reg [CLKDV*4-1:0] DATA_IN_SR;
+always@(posedge CLK160)
+    DATA_IN_SR <= {DATA_IN_SR[CLKDV*4-5:0],DATA_IN[3:0]};
+
+reg [CLKDV*4-1:0] DATA;
+always@(posedge DV_CLK)
     DATA <= DATA_IN_SR;
 
 assign TDC_OUT = |DATA;
@@ -165,7 +167,7 @@ assign SMALL_TOT = ONE_DETECTED && (DATA[0]==0);
 wire RST_SYNC;
 flag_domain_crossing cmd_rst_flag_domain_crossing (
     .CLK_A(BUS_CLK),
-    .CLK_B(CLK40),
+    .CLK_B(DV_CLK),
     .FLAG_IN_CLK_A(RST),
     .FLAG_OUT_CLK_B(RST_SYNC)
 );
@@ -181,12 +183,12 @@ end
 wire RST_LONG;
 assign RST_LONG = sync_cnt[7];
 
-wire CONF_EN_CLK40;
+wire CONF_EN_DV_CLK;
 
-three_stage_synchronizer conf_en_three_stage_synchronizer_clk40 (
-    .CLK(CLK40),
+three_stage_synchronizer conf_en_three_stage_synchronizer_DV_CLK (
+    .CLK(DV_CLK),
     .IN(CONF_EN | (CONF_EN_EXT & EXT_EN)),
-    .OUT(CONF_EN_CLK40)
+    .OUT(CONF_EN_DV_CLK)
 );
 
 
@@ -205,19 +207,19 @@ end
 wire ARM_TDC_FLAG_CLK160;
 assign ARM_TDC_FLAG_CLK160 = ~ARM_TDC_CLK160_FF & ARM_TDC_CLK160;
 
-wire ARM_TDC_FLAG_CLK40;
+wire ARM_TDC_FLAG_DV_CLK;
 flag_domain_crossing arm_tdc_flag_domain_crossing (
     .CLK_A(CLK160),
-    .CLK_B(CLK40),
+    .CLK_B(DV_CLK),
     .FLAG_IN_CLK_A(ARM_TDC_FLAG_CLK160),
-    .FLAG_OUT_CLK_B(ARM_TDC_FLAG_CLK40)
+    .FLAG_OUT_CLK_B(ARM_TDC_FLAG_DV_CLK)
 );
 
-wire CONF_EN_ARM_TDC_CLK40;
-three_stage_synchronizer conf_en_arm_three_stage_synchronizer_clk40 (
-    .CLK(CLK40),
+wire CONF_EN_ARM_TDC_DV_CLK;
+three_stage_synchronizer conf_en_arm_three_stage_synchronizer_DV_CLK (
+    .CLK(DV_CLK),
     .IN(CONF_EN_ARM_TDC),
-    .OUT(CONF_EN_ARM_TDC_CLK40)
+    .OUT(CONF_EN_ARM_TDC_DV_CLK)
 );
 
 reg [1:0] state, next_state;
@@ -225,7 +227,7 @@ localparam      IDLE  = 2'b00,
                 ARMED = 2'b01,
                 COUNT = 2'b10;
 
-always @ (posedge CLK40)
+always @ (posedge DV_CLK)
     if (RST_SYNC)
       state <= IDLE;
     else
@@ -234,9 +236,9 @@ always @ (posedge CLK40)
 always @ (*) begin
     case(state)
         IDLE:
-            if (ONE_DETECTED && CONF_EN_CLK40 && !CONF_EN_ARM_TDC_CLK40 && !SMALL_TOT)
+            if (ONE_DETECTED && CONF_EN_DV_CLK && !CONF_EN_ARM_TDC_DV_CLK && !SMALL_TOT)
                 next_state = COUNT;
-            else if (ARM_TDC_FLAG_CLK40 && CONF_EN_CLK40 && CONF_EN_ARM_TDC_CLK40)
+            else if (ARM_TDC_FLAG_DV_CLK && CONF_EN_DV_CLK && CONF_EN_ARM_TDC_DV_CLK)
                 next_state = ARMED;
             else
                 next_state = IDLE;
@@ -244,7 +246,7 @@ always @ (*) begin
         ARMED:
             if (ONE_DETECTED && !SMALL_TOT)
                 next_state = COUNT;
-            else if (!CONF_EN_CLK40 || SMALL_TOT) // return here to idle when small ToT detected
+            else if (!CONF_EN_DV_CLK || SMALL_TOT) // return here to idle when small ToT detected
                 next_state = IDLE;
             else
                 next_state = ARMED;
@@ -252,7 +254,7 @@ always @ (*) begin
         COUNT:
             if (ZERO_DETECTED)
                 next_state = IDLE;
-            else if (!CONF_EN_CLK40)
+            else if (!CONF_EN_DV_CLK)
                 next_state = IDLE;
             else
                 next_state = COUNT;
@@ -261,13 +263,13 @@ always @ (*) begin
 end
 
 wire FINISH;
-assign FINISH = (state == COUNT && next_state == IDLE) || (state == IDLE && SMALL_TOT && CONF_EN_CLK40 && !CONF_EN_ARM_TDC_CLK40) || (state == ARMED && SMALL_TOT && CONF_EN_CLK40);
+assign FINISH = (state == COUNT && next_state == IDLE) || (state == IDLE && SMALL_TOT && CONF_EN_DV_CLK && !CONF_EN_ARM_TDC_DV_CLK) || (state == ARMED && SMALL_TOT && CONF_EN_DV_CLK);
 
 wire START;
 assign START = ((state == IDLE && next_state == COUNT) || (state == ARMED && next_state == COUNT));
 
 reg [15:0] CURR_TIMESTAMP;
-always @ (posedge CLK40)
+always @ (posedge DV_CLK)
     if (RST_SYNC)
         CURR_TIMESTAMP <= 16'b0;
     else
@@ -277,16 +279,16 @@ always @ (posedge CLK40)
             CURR_TIMESTAMP <= TIMESTAMP;
 
 integer i;
-reg [4:0] ONES;
+integer ONES;
 always@(*) begin 
     ONES = 0;
-    for(i=0;i<16;i=i+1) begin
+    for(i=0; i<CLKDV*4; i=i+1) begin
         ONES = ONES + DATA[i];
     end
 end
 
 reg [12:0] TDC_PRE; // overflow bit
-always @ (posedge CLK40)
+always @ (posedge DV_CLK)
     if(RST_SYNC)
         TDC_PRE <= 0;
     else if(START)
@@ -298,9 +300,9 @@ always @ (posedge CLK40)
 
 wire [11:0] TDC_VAL;
 // also check here for overflow
-assign TDC_VAL = ((state == IDLE && SMALL_TOT && CONF_EN_CLK40) || (state == ARMED && SMALL_TOT && CONF_EN_CLK40)) ? ONES : (TDC_PRE + ONES < 13'b1_0000_0000_0000 && TDC_PRE != 13'b0) ? TDC_PRE + ONES : 12'b0;
+assign TDC_VAL = ((state == IDLE && SMALL_TOT && CONF_EN_DV_CLK) || (state == ARMED && SMALL_TOT && CONF_EN_DV_CLK)) ? ONES : (TDC_PRE + ONES < 13'b1_0000_0000_0000 && TDC_PRE != 13'b0) ? TDC_PRE + ONES : 12'b0;
 
-always @ (posedge CLK40)
+always @ (posedge DV_CLK)
     if(RST_SYNC)
         EVENT_CNT <= 0;
     else if (FINISH)
@@ -313,7 +315,7 @@ assign cdc_fifo_write = !wfull && FINISH;
 wire [31:0] cdc_data;
 assign cdc_data = (CONF_EN_WRITE_TS) ? {DATA_IDENTIFIER, CURR_TIMESTAMP, TDC_VAL} : {DATA_IDENTIFIER, EVENT_CNT, TDC_VAL};
 
-always@(posedge CLK40) begin
+always@(posedge DV_CLK) begin
     if(RST_SYNC)
         LOST_DATA_CNT <= 0;
     else if (wfull && cdc_fifo_write && LOST_DATA_CNT != -1)
@@ -329,7 +331,7 @@ cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) cdc_syncfifo_i
     .wfull(wfull),
     .rempty(cdc_fifo_empty),
     .wdata(cdc_data),
-    .winc(cdc_fifo_write), .wclk(CLK40), .wrst(RST_LONG),
+    .winc(cdc_fifo_write), .wclk(DV_CLK), .wrst(RST_LONG),
     .rinc(!fifo_full), .rclk(BUS_CLK), .rrst(RST_LONG)
 );
 
