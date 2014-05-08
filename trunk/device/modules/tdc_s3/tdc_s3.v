@@ -36,7 +36,8 @@ module tdc_s3
 
     input wire ARM_TDC,
     
-    input wire [15:0] TIMESTAMP
+    input wire [15:0] TIMESTAMP,
+	 input wire EXT_EN
 );
 
 wire IP_RD, IP_WR;
@@ -83,7 +84,8 @@ tdc_s3_core
 
     .ARM_TDC(ARM_TDC),
     
-    .TIMESTAMP(TIMESTAMP)
+    .TIMESTAMP(TIMESTAMP),
+	 .EXT_EN(EXT_EN)
 );
 
 endmodule
