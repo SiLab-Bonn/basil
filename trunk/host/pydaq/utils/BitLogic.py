@@ -55,7 +55,7 @@ class BitLogic(bitarray):
             raise TypeError("Invalid argument type")
 
     def __str__(self):
-        return bitarray.__str__(self)[10:-2]
+        return bitarray.to01(self)
 
     def __setitem__(self, key, item):
         if isinstance(key, slice):
