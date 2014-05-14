@@ -46,6 +46,17 @@ class BitLogic(bitarray):
             else:
                 bitarray.__delitem__(self, slice(size, self.length()))  # or use __delslice__() (deprecated)
 
+    def tovalue(self, fmt='Q'):
+        '''
+        Convert bitstring to a int/long number.
+        '''
+        format_size = struct.calcsize(fmt)
+        if self.length() > format_size * 8:
+            raise ValueError('Cannot convert to number')
+        ba = self.copy()
+        ba.extend((format_size * 8 - self.length()) * [0])
+        return struct.unpack_from(fmt, ba.tobytes())[0]
+
     def __getitem__(self, key):
         if isinstance(key, slice):
             return bitarray.__getitem__(self, self._swap_slice_indices(key))
@@ -55,7 +66,10 @@ class BitLogic(bitarray):
             raise TypeError("Invalid argument type")
 
     def __str__(self):
-        return bitarray.to01(self)
+        if self.endian() == 'little':
+            return self.to01()[::-1]
+        else:
+            return self.to01()
 
     def __setitem__(self, key, item):
         if isinstance(key, slice):
