@@ -16,7 +16,7 @@ from pydaq import Base
 class RegisterLayer(Base):
 
     def __init__(self, driver, conf):
-        Base.__init__(self, conf)
+        super(RegisterLayer, self).__init__(conf)
         self._drv = driver
 
     def __getattr__(self, name):

@@ -9,38 +9,79 @@
 #  $Date::                      $:
 #
 
-from BitVector import BitVector
+import struct
+from bitarray import bitarray
 
 
-class BitLogic(BitVector):
+class BitLogic(bitarray):
+    def __new__(cls, *args, **kwargs):
+        if 'endian' in kwargs:
+            endian = kwargs.pop('endian')
+            ba = super(BitLogic, cls).__new__(cls, *args, endian=endian, **kwargs)
+        else:
+            ba = super(BitLogic, cls).__new__(cls, *args, endian='little', **kwargs)  # set little endian by default
+        if args and isinstance(args[0], (int, long)):
+            ba.setall(False)
+        return ba
 
-    def __init__(self, *args, **kwargs):
-        BitVector.__init__(self, *args, **kwargs)
+    @classmethod
+    def from_value(cls, value, size=None, fmt='Q', **kwargs):
+        '''
+        Factory method
 
-    def swap_bits(self):
-        svec = str(self)
-        return BitLogic(bitstring=svec[::-1])
+        For format characters see: https://docs.python.org/2/library/struct.html
+        '''
+        bl = cls(**kwargs)  # size is 0 by default
+        bl.fromvalue(value=value, size=size, fmt=fmt)
+        return bl
 
-    def __getslice__(self, i, j):
-        ret = BitVector.__getslice__(self, j, i + 1)
-        return BitLogic(bitstring=str(ret)).swap_bits()
+    def fromvalue(self, value, size=None, fmt='Q'):
+        '''
+        Append from a int/long number.
+        '''
+        self.frombytes(struct.pack(fmt, value))
+        if size:
+            if size > self.length():
+                bitarray.extend(self, (size - self.length()) * [0])
+            else:
+                bitarray.__delitem__(self, slice(size, self.length()))  # or use __delslice__() (deprecated)
 
     def __getitem__(self, key):
-        if isinstance(key, int):
-            return BitVector.__getitem__(self, self.size - 1 - key)
+        if isinstance(key, slice):
+            return bitarray.__getitem__(self, self._swap_slice_indices(key))
+        elif isinstance(key, (int, long)):
+            return bitarray.__getitem__(self, key)
         else:
-            raise TypeError("Invalid argument type.")
+            raise TypeError("Invalid argument type")
 
     def __setitem__(self, key, item):
-
         if isinstance(key, slice):
             if isinstance(item, (int, long)):
-                BitVector.__setitem__(self, slice(key.stop, key.start + 1), BitVector(bitstring=str(BitVector(size=key.start - key.stop + 1, intVal=item))[::-1]))
-            elif isinstance(item, BitVector):
-                BitVector.__setitem__(self, slice(key.stop, key.start + 1), BitVector(bitstring=str(item)[::-1]))
+                slc = self._swap_slice_indices(key)
+                bl = BitLogic.from_value(value=item, size=slc.stop - slc.start - 1)
+                bitarray.__setitem__(self, self._swap_slice_indices(key), bitarray.__getitem__(bl, slice(None, None)))
+            elif isinstance(item, bitarray):
+                bitarray.__setitem__(self, self._swap_slice_indices(key), bitarray.__getitem__(item, slice(None, None)))
             else:
-                raise TypeError("Invalid argument type.")
-        elif isinstance(key, int):
-            return BitVector.__setitem__(self, self.size - 1 - key, item)
+                raise TypeError("Invalid argument type")
+        elif isinstance(key, (int, long)):
+            return bitarray.__setitem__(self, key, item)
         else:
-            raise TypeError("Invalid argument type.")
+            raise TypeError("Invalid argument type")
+
+    def _swap_slice_indices(self, slc):
+        '''
+        Swap slice indices
+        '''
+        if not slc.start:
+            stop = self.length() + 1
+        else:
+            stop = slc.start + 1
+        if not slc.stop:
+            start = 0
+        else:
+            start = slc.stop
+        step = slc.step
+        return slice(start, stop, step)
+
+
