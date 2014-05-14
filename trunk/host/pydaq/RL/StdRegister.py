@@ -17,6 +17,7 @@ from utils import utils
 class StdRegister(RegisterLayer):
 
     _bv = None
+    _fields_conf = dict()
 
     def __init__(self, driver, conf):
         super(StdRegister, self).__init__(driver, conf)
@@ -34,6 +35,8 @@ class StdRegister(RegisterLayer):
                 else:
                     bv = BitLogic(field['size'])
                     self._fields[field['name']] = bv
+
+                self._fields_conf[field['name']] = field
 
         self._bv = BitLogic(self._conf['size'])
 
@@ -126,7 +129,4 @@ class StdRegister(RegisterLayer):
                 self._fields[field].setValue(bitstring=str(new_reg[bvstart:bvstop]))
 
     def _get_filed_config(self, field):
-        if 'fields' in self._conf:
-            return next((x for x in self._conf['fields'] if x['name'] == field), None)
-        else:
-            return None
+        return self._fields_conf[field]
