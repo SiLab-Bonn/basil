@@ -35,7 +35,7 @@ class TestClass(unittest.TestCase):
         self.dut['TEST1'].write()
         mem = dict()
         mem[0] = 0  # reset
-        mem[8] = 0
+        mem[8] = 0  # has an offset of 8 bytes
         mem[9] = 0
         mem[10] = 0
         mem[11] = 0
