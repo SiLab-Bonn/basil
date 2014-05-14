@@ -59,12 +59,12 @@ class BitLogic(bitarray):
 
     def __setitem__(self, key, item):
         if isinstance(key, slice):
-            if isinstance(item, (int, long)):
+            if isinstance(item, bitarray):
+                bitarray.__setitem__(self, self._swap_slice_indices(key), item)
+            elif isinstance(item, (int, long)):
                 slc = self._swap_slice_indices(key)
                 bl = BitLogic.from_value(value=item, size=slc.stop - slc.start)
-                bitarray.__setitem__(self, self._swap_slice_indices(key), bitarray.__getitem__(bl, slice(None, None)))
-            elif isinstance(item, bitarray):
-                bitarray.__setitem__(self, self._swap_slice_indices(key), bitarray.__getitem__(item, slice(None, None)))
+                bitarray.__setitem__(self, slc, bl)
             else:
                 raise TypeError("Invalid argument type")
         elif isinstance(key, (int, long)):
@@ -86,5 +86,3 @@ class BitLogic(bitarray):
             start = slc.stop
         step = slc.step
         return slice(start, stop, step)
-
-
