@@ -46,6 +46,9 @@ class BitLogic(bitarray):
             else:
                 bitarray.__delitem__(self, slice(size, self.length()))  # or use __delslice__() (deprecated)
 
+    def __str__(self):
+        return str(self.ba)[10:-2]
+
     def __getitem__(self, key):
         if isinstance(key, slice):
             return bitarray.__getitem__(self, self._swap_slice_indices(key))
