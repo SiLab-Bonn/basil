@@ -58,7 +58,9 @@ class BitLogic(bitarray):
         if isinstance(key, slice):
             if isinstance(item, (int, long)):
                 slc = self._swap_slice_indices(key)
-                bl = BitLogic.from_value(value=item, size=slc.stop - slc.start - 1)
+                if key.start == key.stop:
+                    print slc.start, slc.stop
+                bl = BitLogic.from_value(value=item, size=slc.stop - slc.start)
                 bitarray.__setitem__(self, self._swap_slice_indices(key), bitarray.__getitem__(bl, slice(None, None)))
             elif isinstance(item, bitarray):
                 bitarray.__setitem__(self, self._swap_slice_indices(key), bitarray.__getitem__(item, slice(None, None)))
@@ -74,7 +76,7 @@ class BitLogic(bitarray):
         Swap slice indices
         '''
         if not slc.start:
-            stop = self.length() + 1
+            stop = self.length()
         else:
             stop = slc.start + 1
         if not slc.stop:

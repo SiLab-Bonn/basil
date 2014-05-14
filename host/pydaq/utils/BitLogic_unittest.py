@@ -66,7 +66,11 @@ class TestBitLogic(unittest.TestCase):
         self.assertEqual(bl[:], bitarray('011100000'))
         bl[:] = 5
         self.assertEqual(bl[:], bitarray('101000000'))
-        bl[0:3] = 5
+        bl[5:3] = 5
+        self.assertEqual(bl[:], bitarray('101101000'))
+        bl[4:4] = bitarray('1')
+        self.assertEqual(bl[:], bitarray('101111000'))
+        bl[4:4] = 0
         self.assertEqual(bl[:], bitarray('101101000'))
 
     def test_init_to_zero(self):
