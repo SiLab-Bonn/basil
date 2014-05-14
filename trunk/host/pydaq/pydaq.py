@@ -1,13 +1,14 @@
 #
 # ------------------------------------------------------------
-# Copyright (c) SILAB , Physics Institute of Bonn University 
+# Copyright (c) SILAB , Physics Institute of Bonn University
 # ------------------------------------------------------------
 #
 # SVN revision information:
 #  $Rev::                       $:
-#  $Author::                    $: 
+#  $Author::                    $:
 #  $Date::                      $:
 #
+
 
 class Base(object):
     def __init__(self, conf):
@@ -75,7 +76,7 @@ class Dut(object):
             return self._transfer_layer[item]
         else:
             raise ValueError('No item %s found' (item))
-        
+
     #TODO
     def __setitem__(self, key, value):
         self._registers[key].set(value)
