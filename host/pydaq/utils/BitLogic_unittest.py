@@ -62,8 +62,10 @@ class TestBitLogic(unittest.TestCase):
         self.assertEqual(ba[:], bitarray('011100000'))
         bl = BitLogic.from_value(12, size=9, fmt='Q')
         self.assertEqual(bl[:], bitarray('001100000'))
-        bl[2:1] = bitarray('11')
-        self.assertEqual(bl[:], bitarray('011100000'))
+        bl[2:1] = bitarray('10')
+        self.assertEqual(bl[:], bitarray('010100000'))
+        bl[2:1] = bitarray('01')
+        self.assertEqual(bl[:], bitarray('001100000'))
         bl[:] = 5
         self.assertEqual(bl[:], bitarray('101000000'))
         bl[5:3] = 5
