@@ -51,7 +51,7 @@ class StdRegister(RegisterLayer):
             if 'bit_order' in self._get_filed_config(key):
                 new_val = BitLogic(len(self._fields[key]))
                 for i, bit in enumerate(self._get_filed_config(key)['bit_order']):
-                    new_val[len(self._fields[key]) - 1 - i] = self._fields[key][bit-2]
+                    new_val[len(self._fields[key]) - 1 - i] = self._fields[key][bit]
                 self._fields[key] = new_val
         elif isinstance(key, (int, long)):
             reg = self._construct_reg()
