@@ -24,6 +24,12 @@ class TestBitLogic(unittest.TestCase):
         bl = BitLogic.from_value(12, size=9, fmt='Q')
         self.assertEqual(bl, bitarray('001100000'))
 
+    def test_to_value(self):
+        value = 12
+        bl = BitLogic.from_value(value, size=16, fmt='I')
+        ret_val = bl.tovalue()
+        self.assertEqual(ret_val, value)
+
     def test_get_item(self):
         bl = BitLogic.from_value(8, size=9, fmt='Q')
         self.assertEqual(bl[3], True)
