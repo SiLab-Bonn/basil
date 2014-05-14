@@ -19,7 +19,7 @@ class StdRegister(RegisterLayer):
     _bv = None
 
     def __init__(self, driver, conf):
-        RegisterLayer.__init__(self, driver, conf)
+        super(StdRegister, self).__init__(driver, conf)
         self._size = conf['size']
         self._fields = dict()
 
@@ -32,17 +32,14 @@ class StdRegister(RegisterLayer):
                         reg_list.append(reg)
                     self._fields[field['name']] = reg_list
                 else:
-                    bv = BitLogic(size=field['size'])
+                    bv = BitLogic(field['size'])
                     self._fields[field['name']] = bv
 
-        self._bv = BitLogic(size=self._conf['size'])
+        self._bv = BitLogic(self._conf['size'])
 
     def __getitem__(self, items):
         #print '__getitem__', items
         return self._fields[items]
-
-    def __setslice__(self, i, j, sequence):
-        return self.__setitem__(slice(i, j), sequence)
 
     def __setitem__(self, key, value):
         if isinstance(key, slice):
@@ -50,17 +47,13 @@ class StdRegister(RegisterLayer):
             reg[key.start:key.stop] = value
             self._deconstruct_reg(reg)
         elif isinstance(key, str):
-
-            self._fields[key][self._fields[key].size - 1:0] = value
-
+            self._fields[key][len(self._fields[key]) - 1:0] = value
             if 'bit_order' in self._get_filed_config(key):
-                new_val = BitLogic(size=len(self._fields[key]))
+                new_val = BitLogic(len(self._fields[key]))
                 for i, bit in enumerate(self._get_filed_config(key)['bit_order']):
-                    new_val[len(self._fields[key]) - 1 - i] = self._fields[key][bit]
-
+                    new_val[len(self._fields[key]) - 1 - i] = self._fields[key][bit-2]
                 self._fields[key] = new_val
-
-        elif isinstance(key, int):
+        elif isinstance(key, (int, long)):
             reg = self._construct_reg()
             reg[key] = value
             self._deconstruct_reg(reg)
@@ -90,14 +83,11 @@ class StdRegister(RegisterLayer):
             return str(full)
 
     def set(self, value):
-        self.__setitem__(slice(len(self) - 1, 0), value)
-        #bv = BitLogic(intVal=value, size=self._size)W
-        #print("value",value, str(bv))
-        #self._deconstruct_reg(bv)
+        self[:] = value
 
     def write(self):
         reg = self._construct_reg()
-        ba = utils.bitvector_to_byte_array(reg)
+        ba = utils.bitarray_to_byte_array(reg)
         #print reg, ba
         self._drv.set_data(0, ba)
 
@@ -139,4 +129,4 @@ class StdRegister(RegisterLayer):
         if 'fields' in self._conf:
             return next((x for x in self._conf['fields'] if x['name'] == field), None)
         else:
-            return ''
+            return None

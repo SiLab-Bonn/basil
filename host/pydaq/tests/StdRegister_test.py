@@ -13,7 +13,9 @@
 import yaml
 import unittest
 import sys
-sys.path.append('../')
+#sys.path.append('../')
+import os
+print os.environ['PYTHONPATH'].split(os.pathsep)
 
 from pydaq import Dut
 
