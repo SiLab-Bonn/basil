@@ -101,19 +101,20 @@ class StdRegister(RegisterLayer):
     def _construct_reg(self):
 
         for field in self._fields:
-            off = self._get_filed_config(field)['offset']
+            off = self._fields_conf[field]['offset']
 
-            if 'repeat' in self._get_filed_config(field):
+            if 'repeat' in self._fields_conf[field]:
                 for i, sub_filed in enumerate(self._fields[field]):
                     bvstart = off - i * self._get_filed_config(field)['size']
                     bvstop = bvstart - len(sub_filed._construct_reg()) + 1
-                    self._bv[bvstart:bvstop] = sub_filed._construct_reg()
-                    #print i, bvstart, bvstop, sub_filed._construct_reg()
+                    #self._bv[bvstart:bvstop] = sub_filed._construct_reg()
+                    self._bv.set_slice_ba(bvstart, bvstop, sub_filed._construct_reg())
             else:
                 bvsize = len(self._fields[field])
                 bvstart = off
                 bvstop = off - bvsize + 1
-                self._bv[bvstart:bvstop] = self._fields[field]
+                #self._bv[bvstart:bvstop] = self._fields[field]
+                self._bv.set_slice_ba(bvstart, bvstop, self._fields[field])
 
         return self._bv
 
