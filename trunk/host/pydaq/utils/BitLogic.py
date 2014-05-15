@@ -100,3 +100,6 @@ class BitLogic(bitarray):
             start = slc.stop
         step = slc.step
         return slice(start, stop, step)
+
+    def set_slice_ba(self, start, stop, item):
+        bitarray.__setitem__(self, slice(stop, start + 1), item)
