@@ -115,7 +115,6 @@ always @(posedge BUS_CLK) begin
         status_regs[BUS_ADD[3:0]] <= BUS_DATA_IN;
 end
 
-
 assign CONF_CMD_SIZE = {status_regs[4], status_regs[3]};
 assign CONF_REPEAT_COUNT = {status_regs[8], status_regs[7], status_regs[6], status_regs[5]};
 assign CONF_START_REPEAT = {status_regs[10], status_regs[9]};
@@ -178,7 +177,6 @@ always @ (posedge CMD_CLK_IN)
       state <= WAIT;
     else
       state <= next_state;
-
 
 reg END_SEQ_REP_NEXT, END_SEQ_REP;
 always @ (*) begin
@@ -267,7 +265,6 @@ end
 wire cmd_data_ser;
 assign cmd_data_ser = send_word[7-((cnt-1)%8)];
 
-
 reg cmd_data_neg;
 reg cmd_data_pos;
 always @ (negedge CMD_CLK_IN)
@@ -277,14 +274,14 @@ always @ (posedge CMD_CLK_IN)
     cmd_data_pos <= cmd_data_ser;
 
 OFDDRRSE MANCHESTER_CODE_INST (
-	.CE(1'b1), 
-	.C0(CMD_CLK_IN),
-	.C1(~CMD_CLK_IN),
-	.D0((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? ~cmd_data_pos : cmd_data_pos))),
-	.D1((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? cmd_data_pos : ~cmd_data_pos))),
-	.R(1'b0),
-	.S(1'b0),
-	.Q(CMD_DATA)
+    .CE(1'b1), 
+    .C0(CMD_CLK_IN),
+    .C1(~CMD_CLK_IN),
+    .D0((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? ~cmd_data_pos : cmd_data_pos))),
+    .D1((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? cmd_data_pos : ~cmd_data_pos))),
+    .R(1'b0),
+    .S(1'b0),
+    .Q(CMD_DATA)
 );
 
 // wire CMD_CLK_INV_IN;
@@ -294,14 +291,14 @@ OFDDRRSE MANCHESTER_CODE_INST (
 // );
 
 OFDDRRSE CMD_CLK_FORWARDING_INST (
-	.CE(1'b1), 
-	.C0(CMD_CLK_IN),
-	.C1(~CMD_CLK_IN),
-	.D0(1'b1),
-	.D1(1'b0),
-	.R(CONF_DIS_CLOCK_GATE),
-	.S(1'b0),
-	.Q(CMD_CLK_OUT)
+    .CE(1'b1), 
+    .C0(CMD_CLK_IN),
+    .C1(~CMD_CLK_IN),
+    .D0(1'b1),
+    .D1(1'b0),
+    .R(CONF_DIS_CLOCK_GATE),
+    .S(1'b0),
+    .Q(CMD_CLK_OUT)
 );
 
 // command start flag
