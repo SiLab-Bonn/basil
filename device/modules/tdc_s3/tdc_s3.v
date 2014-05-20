@@ -35,9 +35,9 @@ module tdc_s3
     output wire [31:0] FIFO_DATA,
 
     input wire ARM_TDC,
-    
-    input wire [15:0] TIMESTAMP,
-	 input wire EXT_EN
+    input wire EXT_EN,
+
+    input wire [15:0] TIMESTAMP
 );
 
 wire IP_RD, IP_WR;
@@ -83,9 +83,9 @@ tdc_s3_core
     .FIFO_DATA(FIFO_DATA),
 
     .ARM_TDC(ARM_TDC),
-    
-    .TIMESTAMP(TIMESTAMP),
-	 .EXT_EN(EXT_EN)
+    .EXT_EN(EXT_EN),
+
+    .TIMESTAMP(TIMESTAMP)
 );
 
 endmodule
