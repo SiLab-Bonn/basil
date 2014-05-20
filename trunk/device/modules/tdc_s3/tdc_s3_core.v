@@ -33,10 +33,10 @@ module tdc_s3_core
     input wire BUS_WR,
     input wire BUS_RD,
 
-    input wire ARM_TDC, // assuming slower than 48MHz
+    input wire ARM_TDC, // enable TDC for single measurement, assuming signal slower than DV_CLK
+    input wire EXT_EN, // enable TDC for a fixed time period (signal needs to be asserted to enable TDC) e.g. for occupancy measurements, assuming signal slower than DV_CLK
     
-    input wire [15:0] TIMESTAMP,
-    input wire EXT_EN //give a possibility to enable by hardware enable for fix time eg. for occupancy measurements
+    input wire [15:0] TIMESTAMP
 );
 
 // output format: 4-bit DATA_IDENTIFIER (parameter) + 16 bit event counter + 12 bit TDC data
@@ -190,7 +190,6 @@ three_stage_synchronizer conf_en_three_stage_synchronizer_DV_CLK (
     .IN(CONF_EN | (CONF_EN_EXT & EXT_EN)),
     .OUT(CONF_EN_DV_CLK)
 );
-
 
 wire ARM_TDC_CLK160;
 three_stage_synchronizer three_stage_rj45_trigger_synchronizer_bus_clk (
