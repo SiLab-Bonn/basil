@@ -95,7 +95,9 @@ class StdRegister(RegisterLayer):
         self._drv.set_data(0, ba)
 
     def read(self):
-        raise NotImplementedError("To be implemented.")
+        return self._drv.get_data()
+        #self._drv.get_data(0, ba)
+        #raise NotImplementedError("To be implemented.")
         #return self._drv.read()  # ????? //byte array
 
     def _construct_reg(self):
