@@ -37,7 +37,6 @@ class StdRegister(RegisterLayer):
                     self._fields[field['name']] = bv
 
                 self._fields_conf[field['name']] = field
-
         self._bv = BitLogic(self._conf['size'])
 
     def __getitem__(self, items):
@@ -95,9 +94,7 @@ class StdRegister(RegisterLayer):
         self._drv.set_data(0, ba)
 
     def read(self):
-        return self._drv.get_data()
-        #self._drv.get_data(0, ba)
-        #raise NotImplementedError("To be implemented.")
+        raise NotImplementedError("To be implemented.")
         #return self._drv.read()  # ????? //byte array
 
     def _construct_reg(self):
