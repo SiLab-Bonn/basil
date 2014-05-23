@@ -85,6 +85,4 @@ class spi(HardwareLayer):
     def get_data(self, addr=0, size=None):
         if(size == None):
             size = self._conf['mem_bytes']
-        print "spi.get_data() 0x%x 0x%x"%(self._conf['base_addr'], self._conf['mem_bytes'])
-        data=self._intf.read(self._conf['base_addr'] + 8 + self._conf['mem_bytes'], size)
-        return data
+        return self._intf.read(self._conf['base_addr'] + 8 + self._conf['mem_bytes'], size)
