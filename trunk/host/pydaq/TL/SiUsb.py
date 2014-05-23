@@ -39,7 +39,6 @@ class SiUsb (TransferLayer):
         if(addr >= self.BASE_ADDRESS_I2C and addr < self.HIGH_ADDRESS_I2C):
             self._sidev.WriteI2C(addr - self.BASE_ADDRESS_I2C, data)
         elif(addr >= self.BASE_ADDRESS_EXTERNAL and addr < self.HIGH_ADDRESS_EXTERNAL):
-            #print "SiUsb() addr=0x%x-0x%x, data="%(addr,self.BASE_ADDRESS_EXTERNAL),data
             self._sidev.WriteExternal(addr - self.BASE_ADDRESS_EXTERNAL, data)
         elif(addr >= self.BASE_ADDRESS_BLOCK and addr < self.HIGH_ADDRESS_BLOCK):
             self._sidev.FastBlockWrite(data)
@@ -49,7 +48,6 @@ class SiUsb (TransferLayer):
             return self._sidev.ReadI2C(addr - self.BASE_ADDRESS_I2C, size)
         elif(addr >= self.BASE_ADDRESS_EXTERNAL and addr < self.HIGH_ADDRESS_EXTERNAL):
             data=self._sidev.ReadExternal(addr - self.BASE_ADDRESS_EXTERNAL, size)
-            #print "SiUsb() addr=0x%x-0x%x, data="%(addr,self.BASE_ADDRESS_EXTERNAL),data
             return data
         elif(addr >= self.BASE_ADDRESS_BLOCK and addr < self.HIGH_ADDRESS_BLOCK):
             return self._sidev.FastBlockRead(size)
