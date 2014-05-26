@@ -27,7 +27,10 @@ class seq_gen(HardwareLayer):
     def __init__(self, intf, conf):
         HardwareLayer.__init__(self, intf, conf)
         self._cmd_mem_offset = 16  # in bytes
-        self._cmd_mem_size = conf['cmd_mem_size'] - self._cmd_mem_offset  # in bytes
+        try:
+            self._cmd_mem_size = conf['mem_size'] - self._cmd_mem_offset  # in bytes
+        except KeyError:
+            self._cmd_mem_size = 2048 - self._cmd_mem_offset  # default is 2048 bytes
 
     def init(self):
         self.reset()
@@ -52,7 +55,7 @@ class seq_gen(HardwareLayer):
         self._intf.write(self._conf['base_addr'] + + 2, data=(reg,))
 
     def set_output_mode(self, value):
-        if value > 3 or value < 0:
+        if value not in output_modes.iterkeys():
             raise ValueError('Output mode not existing')
         ret = self._intf.read(self._conf['base_addr'] + 2, size=1)
         reg = unpack_from('B', ret)[0]
