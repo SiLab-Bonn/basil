@@ -52,7 +52,7 @@ class seq_gen(HardwareLayer):
             reg |= 0x01
         else:
             reg &= ~0x01
-        self._intf.write(self._conf['base_addr'] + + 2, data=(reg,))
+        self._intf.write(self._conf['base_addr'] + 2, data=(reg,))
 
     def set_output_mode(self, value):
         if value not in output_modes.iterkeys():
@@ -60,7 +60,7 @@ class seq_gen(HardwareLayer):
         ret = self._intf.read(self._conf['base_addr'] + 2, size=1)
         reg = unpack_from('B', ret)[0]
         reg = ((value & 0x03) << 1) | (reg & 0xf9)
-        self._intf.write(self._conf['base_addr'] + + 2, data=(reg,))
+        self._intf.write(self._conf['base_addr'] + 2, data=(reg,))
 
     def set_clock_gate(self, value):
         ret = self._intf.read(self._conf['base_addr'] + 2, size=1)
@@ -69,7 +69,7 @@ class seq_gen(HardwareLayer):
             reg |= 0x08
         else:
             reg &= ~0x08
-        self._intf.write(self._conf['base_addr'] + + 2, data=(reg,))
+        self._intf.write(self._conf['base_addr'] + 2, data=(reg,))
 
     def set_cmd_pulse(self, value):
         ret = self._intf.read(self._conf['base_addr'] + 2, size=1)
@@ -78,7 +78,7 @@ class seq_gen(HardwareLayer):
             reg |= 0x10
         else:
             reg &= ~0x10
-        self._intf.write(self._conf['base_addr'] + + 2, data=(reg,))
+        self._intf.write(self._conf['base_addr'] + 2, data=(reg,))
 
     def get_size(self):
         ret = self._intf.read(self._conf['base_addr'] + 3, size=2)
