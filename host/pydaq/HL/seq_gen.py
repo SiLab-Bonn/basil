@@ -14,6 +14,14 @@ from struct import pack, unpack, unpack_from
 from array import array
 
 
+output_modes = {
+    0: 'positive edge (default)',
+    1: 'negative edge',
+    2: 'Manchester Code IEEE 802.3 (for capacitively coupled transmission)',
+    3: 'Manchester Code G.E. Thomas'
+}
+
+
 class seq_gen(HardwareLayer):
 
     def __init__(self, intf, conf):
