@@ -56,7 +56,7 @@ class seq_gen(HardwareLayer):
 
     def set_output_mode(self, value):
         if value not in output_modes.iterkeys():
-            raise ValueError('Output mode not existing')
+            raise ValueError('Output mode does not exist')
         ret = self._intf.read(self._conf['base_addr'] + 2, size=1)
         reg = unpack_from('B', ret)[0]
         reg = ((value & 0x03) << 1) | (reg & 0xf9)
