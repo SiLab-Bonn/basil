@@ -36,6 +36,10 @@ class tlu(HardwareLayer):
         self._intf.write(self._conf['base_addr'], (0,))
         self.reset()
 
+    def get_lost_data_counter(self):
+        ret = self._intf.read(self._conf['base_addr'], size=1)
+        return unpack_from('B', ret)[0]
+
     def set_trigger_mode(self, value):
         if value not in trigger_modes.iterkeys():
             raise ValueError('Trigger mode does not exist')
