@@ -22,7 +22,7 @@ output_modes = {
 }
 
 
-class seq_gen(HardwareLayer):
+class SeqGenDriver(HardwareLayer):
 
     def __init__(self, intf, conf):
         HardwareLayer.__init__(self, intf, conf)
