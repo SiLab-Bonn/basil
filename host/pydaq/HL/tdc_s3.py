@@ -15,7 +15,7 @@ from struct import pack, unpack, unpack_from
 from array import array
 
 
-class tdc_s3(HardwareLayer):
+class TdcS3Driver(HardwareLayer):
     '''
     TDC controller interface
     '''
