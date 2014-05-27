@@ -11,9 +11,8 @@
 #
 
 from HL.HardwareLayer import HardwareLayer
-
-import struct
-import array
+from struct import pack, unpack, unpack_from
+from array import array
 
 
 class tdc_s3(HardwareLayer):
@@ -23,30 +22,48 @@ class tdc_s3(HardwareLayer):
     def __init__(self, intf, conf):
         HardwareLayer.__init__(self, intf, conf)
 
-    '''
-    Resets the TDC controller module inside the FPGA, base adress zero
-    '''                                   
-    def reset(self):
-        self._intf.write(self._conf['base_addr'], [0])
-
-    '''
-    Initialise the TDC controller module
-    '''
     def init(self):
         self.reset()
 
-    def set_en(self, enable):
-        current = self._intf.read(self._conf['base_addr'] + 1, 1)[0]
-        self._intf.write(self._conf['base_addr'] + 1, [(current & 0xfe) | enable])
-        
-    def get_en(self):
-        return True if (self._intf.read(self._conf['base_addr'] + 1, 1)[0] & 0x01) else False
-    
-    def set_exten(self, enable):
-        current = self._intf.read(self._conf['base_addr'] + 1, 4)
-        self._intf.write(self._conf['base_addr'] + 1, [(current[3] & 0xfe) | enable,current[2],current[1],current[0]])
-        
-    def get_exten(self):
-        return True if (self._intf.read(self._conf['base_addr'] + 1, 4)[3] & 0x01) else False
+    def reset(self):
+        self._intf.write(self._conf['base_addr'], (0,))
 
-    
+    def get_lost_data_counter(self):
+        ret = self._intf.read(self._conf['base_addr'], size=1)
+        return unpack_from('B', ret)[0]
+
+    def set_en(self, value):
+        reg = self._intf.read(self._conf['base_addr'] + 1, size=1)[0]
+        reg = (value & 0x01) | (reg & 0xfe)
+        self._intf.write(self._conf['base_addr'] + 1, data=(reg,))
+
+    def get_en(self):
+        return True if (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x01) else False
+
+    def set_en_extern(self, value):
+        reg = self._intf.read(self._conf['base_addr'] + 1, size=1)
+        reg = ((value & 0x01) << 1) | (reg & 0xfd)
+        self._intf.write(self._conf['base_addr'] + 1, data=(reg,))
+
+    def get_en_extern(self):
+        return True if (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x02) else False
+
+    def set_arming(self, value):
+        reg = self._intf.read(self._conf['base_addr'] + 1, size=1)
+        reg = ((value & 0x01) << 2) | (reg & 0xfb)
+        self._intf.write(self._conf['base_addr'] + 1, data=(reg,))
+
+    def get_arming(self):
+        return True if (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x04) else False
+
+    def set_write_timestamp(self, value):
+        reg = self._intf.read(self._conf['base_addr'] + 1, size=1)
+        reg = ((value & 0x01) << 3) | (reg & 0xf7)
+        self._intf.write(self._conf['base_addr'] + 1, data=(reg,))
+
+    def get_write_timestamp(self):
+        return True if (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x08) else False
+
+    def get_event_counter(self):
+        ret = self._intf.read(self._conf['base_addr'] + 2, size=2)
+        return unpack_from('H', ret)[0]
