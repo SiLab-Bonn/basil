@@ -15,9 +15,9 @@ from struct import pack, unpack, unpack_from
 from array import array
 
 
-class Fei4RxDriver(HardwareLayer):
+class fei4_rx(HardwareLayer):
     '''
-    FEI4 Rx Controller Interface
+    FEI4 receiver controller interface for fei4_rx FPGA module
     '''
     def __init__(self, intf, conf):
         HardwareLayer.__init__(self, intf, conf)
