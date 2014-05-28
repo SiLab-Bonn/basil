@@ -14,13 +14,16 @@ from struct import pack, unpack
 
 
 class seq_gen(HardwareLayer):
+    '''
+    Sequencer generator controller interface for seq_gen FPGA module.
+    '''
 
     def __init__(self, intf, conf):
         HardwareLayer.__init__(self, intf, conf)
 
     def init(self):
         self.reset()
-        
+
     def reset(self):
         self._intf.write(self._conf['base_addr'], [0])
 
@@ -45,7 +48,7 @@ class seq_gen(HardwareLayer):
 
     def get_data(self, addr, size):
         return self._intf.read(self._conf['base_addr'] + 16 + addr, size)
-    
+
     def set_repeat_start(self, value):
         self._intf.write(self._conf['base_addr'] + 8, unpack('BBBB', pack('>L', value))[2:4])
 
