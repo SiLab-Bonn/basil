@@ -22,7 +22,7 @@ trigger_modes = {
 }
 
 
-class TluDriver(HardwareLayer):
+class tlu(HardwareLayer):
     '''
     TLU controller interface
     '''
