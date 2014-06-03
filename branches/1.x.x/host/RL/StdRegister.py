@@ -100,33 +100,33 @@ class StdRegister(RegisterLayer):
     def _construct_reg(self):
 
         for field in self._fields:
-            off = self._fields_conf[field]['offset']
+            offs = self._fields_conf[field]['offset']
 
             if 'repeat' in self._fields_conf[field]:
                 for i, sub_filed in enumerate(self._fields[field]):
-                    bvstart = off - i * self._get_filed_config(field)['size']
+                    bvstart = offs - i * self._get_filed_config(field)['size']
                     bvstop = bvstart - len(sub_filed._construct_reg()) + 1
                     #self._bv[bvstart:bvstop] = sub_filed._construct_reg()
                     self._bv.set_slice_ba(bvstart, bvstop, sub_filed._construct_reg())
             else:
                 bvsize = len(self._fields[field])
-                bvstart = off
-                bvstop = off - bvsize + 1
+                bvstart = offs
+                bvstop = offs - bvsize + 1
                 #self._bv[bvstart:bvstop] = self._fields[field]
                 self._bv.set_slice_ba(bvstart, bvstop, self._fields[field])
 
         return self._bv
 
-    def _deconstruct_reg(self, new_reg):
+    def _deconstruct_reg(self, reg):
         for field in self._fields:
-            off = self._get_filed_config(field)['offset']
+            offs = self._get_filed_config(field)['offset']
             bvsize = len(self._fields[field])
-            bvstart = off
-            bvstop = off - bvsize + 1
+            bvstart = offs
+            bvstop = offs - bvsize + 1
             if 'repeat' in self._get_filed_config(field):
                 raise NotImplementedError("To be implemented.")
             else:
-                self._fields[field].setValue(bitstring=str(new_reg[bvstart:bvstop]))
+                self._fields[field] = reg[bvstart:bvstop]
 
     def _get_filed_config(self, field):
         return self._fields_conf[field]
