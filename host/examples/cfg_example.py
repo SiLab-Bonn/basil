@@ -14,7 +14,7 @@ import array
 #class AA(DUTLayer):
 #        pass
     
-stream = open("cfg.yaml", 'r')
+stream = open("cfg_example.yaml", 'r')
 cnfg = yaml.load(stream)
 #print cnfg
 
