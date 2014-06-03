@@ -1,0 +1,2 @@
+include *.txt VERSION
+recursive-include docs *.txt
