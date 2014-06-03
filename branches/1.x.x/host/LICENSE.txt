@@ -1,4 +1,4 @@
-Copyright (c) SILAB , Physics Institute of Bonn University 
+Copyright (c) SILAB , Institute of Physics, University of Bonn
 
 All rights reserved.
 

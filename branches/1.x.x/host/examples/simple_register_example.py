@@ -5,7 +5,7 @@ sys.path.append('../')
 
 from pydaq import Dut
 
-setup_file = open("simple_register.yaml", 'r')
+setup_file = open("simple_register_example.yaml", 'r')
 cnfg = yaml.load(setup_file)
 
 chip = Dut(cnfg)
