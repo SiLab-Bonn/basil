@@ -40,17 +40,16 @@ print 'PIX ', chip['PIXEL_SR2']._construct_reg()
 #vec = chip['PIXEL_SR2']._construct_reg().vector
 #print vec
 
-print 'kkk'
-bv = BitLogic( size = 8, intVal = 0)
+print 'test'
+bv = BitLogic(8)  # size is 8 bit
 bv[6] = 1
-print bv
-print bv.vector
-print 'hhh', bitvector_to_array(bv)
+print 'Bit array:', bv
+print 'Byte array:', bitarray_to_byte_array(bv)
 
 
 #print chip['PIXEL_SR2']['ON'].size
-#bv =  BitLogic( bitstring = '111' )
-#chip['PIXEL_SR2']['ON'] = BitLogic( bitstring = '111' )
+#bv =  BitLogic('111')
+#chip['PIXEL_SR2']['ON'] = BitLogic('111')
 
 #vec = chip['PIXEL_SR2']._construct_reg().vector
 #print vec
@@ -131,21 +130,21 @@ print "FADC_CONF:GetData = ",chip['FADC_CONF'].GetData()[1]
 chip['PULSE_INJ'].Reset()
 chip['PULSE_INJ'].SetDelay(10)
 
-chip['DATA_FIFO'].Reset()
-print 'GetSize',chip['DATA_FIFO'].GetSize()
-print 'GetData',chip['DATA_FIFO'].GetData(4)
-print 'GetSize',chip['DATA_FIFO'].GetSize()
-chip['DATA_FIFO'].Reset()
-print 'GetSize',chip['DATA_FIFO'].GetSize()
+chip['SRAM_FIFO'].Reset()
+print 'GetSize',chip['SRAM_FIFO'].GetSize()
+print 'GetData',chip['SRAM_FIFO'].GetData(4)
+print 'GetSize',chip['SRAM_FIFO'].GetSize()
+chip['SRAM_FIFO'].Reset()
+print 'GetSize',chip['SRAM_FIFO'].GetSize()
 
-print 'GetErrorCount',chip['DATA_FIFO'].GetErrorCount()
+print 'GetErrorCount',chip['SRAM_FIFO'].GetErrorCount()
 
 chip['FADC_RX'].Reset()
 chip['FADC_RX'].SetDataCount(0x80000)
 chip['FADC_RX'].Start()
 time.sleep(0.5)
 
-print 'GetSize',hex(chip['DATA_FIFO'].GetSize())
+print 'GetSize',hex(chip['SRAM_FIFO'].GetSize())
 
 
 

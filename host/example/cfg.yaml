@@ -34,8 +34,8 @@ hw_drivers:
     interface : usb
     base_addr : 0x10010
     
-  - name      : data_fifo
-    type      : data_fifo
+  - name      : sram_fifo
+    type      : sram_fifo
     interface : usb
     base_addr : 0x10020 
     base_data_addr: 0x0001000000000000
@@ -158,9 +158,9 @@ registers:
     type        : FunctionalRegister
     hw_driver   : pulse_inj
     
-  - name        : DATA_FIFO
+  - name        : SRAM_FIFO
     type        : FunctionalRegister
-    hw_driver   : data_fifo
+    hw_driver   : sram_fifo
 
   - name        : FADC_RX
     type        : FunctionalRegister
