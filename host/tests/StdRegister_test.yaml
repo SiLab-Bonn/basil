@@ -44,14 +44,14 @@ registers:
           - name     : EN
             size     : 2
             offset   : 7
-          - name   : COLUMN
-            offset : 5
-            size   : 3
-            repeat : 2
-            fields  : 
-            - name     : EnR
-              size     : 1
-              offset   : 2
-            - name     : DACR
-              size     : 2
-              offset   : 1
+          - name     : COLUMN
+            offset   : 5
+            size     : 3
+            repeat   : 2
+            fields   : 
+              - name     : EnR
+                size     : 1
+                offset   : 2
+              - name     : DACR
+                size     : 2
+                offset   : 1
