@@ -118,9 +118,12 @@ class cmd_seq(HardwareLayer):
     def set_data(self, data, addr=0):
         if self._cmd_mem_size < len(data):
             raise ValueError('Size of data is too big')
-        self._intf.write(self._conf['base_addr'] + 16 + addr, data)
+        self._intf.write(self._conf['base_addr'] + self._cmd_mem_offset + addr, data)
 
-    def get_data(self, size, addr=0):
+    def get_data(self, size=None, addr=0):
         if self._cmd_mem_size < size:
             raise ValueError('Size is too big')
-        return self._intf.read(self._conf['base_addr'] + 16 + addr, size)
+        if not size:
+            return self._intf.read(self._conf['base_addr'] + self._cmd_mem_offset + addr, self._cmd_mem_size)
+        else:
+            return self._intf.read(self._conf['base_addr'] + self._cmd_mem_offset + addr, size)
