@@ -13,9 +13,10 @@ from pydaq import Base
 
 
 class TransferLayer(Base):
-
+    '''Transfer Layer
+    '''
     def __init__(self, conf):
-        Base.__init__(self, conf)
+        super(TransferLayer, self).__init__(conf)
 
     def read(self, addr, size):
         pass
