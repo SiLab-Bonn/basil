@@ -15,14 +15,15 @@ class Base(object):
         self._conf = conf
 
     def init(self):
-        pass
+        pass  # nothing to do here
 
     def get_configuration(self):
-        raise NotImplementedError
+        return self._conf
 
 
 class Dut(object):
-
+    '''Device
+    '''
     def __init__(self, config):
         self._transfer_layer = dict()
         self._hardware_layer = dict()
@@ -58,10 +59,10 @@ class Dut(object):
                 kargs['conf'] = reg
                 self._registers[reg['name']] = self._factory('RL.' + reg['type'], reg['type'], *(), **kargs)
             else:
-                raise ValueError('No driver specified or register %s' (reg['name']))
+                raise ValueError('No driver specified for register: %s' % (reg['name'],))
 
-    def _factory(self, importnamem, classname, *args, **kargs):
-        _temp = __import__(importnamem, globals(), locals(), [classname], -1)
+    def _factory(self, importname, classname, *args, **kargs):
+        _temp = __import__(importname, globals(), locals(), [classname], -1)
         aClass = getattr(_temp, classname)
         return aClass(*args, **kargs)
 
@@ -75,7 +76,7 @@ class Dut(object):
         elif item in self._transfer_layer:
             return self._transfer_layer[item]
         else:
-            raise ValueError('No item %s found' (item))
+            raise ValueError('Item not existing: %s' % (item,))
 
     #TODO
     def __setitem__(self, key, value):
