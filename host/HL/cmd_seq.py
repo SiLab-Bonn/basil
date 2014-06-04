@@ -23,12 +23,10 @@ output_modes = {
 
 
 class cmd_seq(HardwareLayer):
+    '''FEI4 Command Sequencer Controller Interface for cmd_seq FPGA module.
     '''
-    FEI4 Command Sequencer Controller Interface for cmd_seq FPGA module.
-    '''
-
     def __init__(self, intf, conf):
-        HardwareLayer.__init__(self, intf, conf)
+        super(cmd_seq, self).__init__(intf, conf)
         self._cmd_mem_offset = 16  # in bytes
         try:
             self._cmd_mem_size = conf['mem_size'] - self._cmd_mem_offset  # in bytes
