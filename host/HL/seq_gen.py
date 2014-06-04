@@ -18,8 +18,8 @@ class seq_gen(HardwareLayer):
     '''Sequencer generator controller interface for seq_gen FPGA module.
     '''
     def __init__(self, intf, conf):
-        HardwareLayer.__init__(self, intf, conf)
-        self._seq_mem_offset = 8  # in bytes
+        super(seq_gen, self).__init__(intf, conf)
+        self._seq_mem_offset = 16  # in bytes
         try:
             self._seq_mem_size = conf['mem_size'] - self._seq_mem_offset  # in bytes
         except KeyError:
