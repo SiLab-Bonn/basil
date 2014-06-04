@@ -23,11 +23,10 @@ trigger_modes = {
 
 
 class tlu(HardwareLayer):
-    '''
-    TLU controller interface
+    '''TLU controller interface
     '''
     def __init__(self, intf, conf):
-        HardwareLayer.__init__(self, intf, conf)
+        super(tlu, self).__init__(intf, conf)
 
     def init(self):
         self.reset()

@@ -14,6 +14,8 @@ from BitVector import BitVector
 
 
 class GPAC(HardwareLayer):
+    '''GPAC interface
+    '''
 
     #DACS
     DAC7578_1_ADD = 0x90  # slave addresses
@@ -286,7 +288,7 @@ class GPAC(HardwareLayer):
             }
 
     def __init__(self, intf, conf):
-        HardwareLayer.__init__(self, intf, conf)
+        super(GPAC, self).__init__(intf, conf)
 
     def init(self):
         #PWR GPIO

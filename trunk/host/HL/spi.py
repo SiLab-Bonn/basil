@@ -21,7 +21,7 @@ class spi(HardwareLayer):
     >>> dut[ <name of SR as defined in YAML config file> ][bit position] = value
     '''
     def __init__(self, intf, conf):
-        HardwareLayer.__init__(self, intf, conf)
+        super(spi, self).__init__(intf, conf)
         self._spi_mem_offset = 8  # in bytes
         try:
             self._spi_mem_size = conf['mem_size'] - self._spi_mem_offset  # in bytes
