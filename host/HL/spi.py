@@ -66,7 +66,7 @@ class spi(HardwareLayer):
         Gets time delay between repetitions in clock cycles (80ns)
         '''
         ret = self._intf.read(self._conf['base_addr'] + 5, size=2)
-        return unpack_from('L', ret)[0]
+        return unpack_from('H', ret)[0]
 
     def set_repeat(self, value):
         '''
