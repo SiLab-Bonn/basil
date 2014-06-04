@@ -15,11 +15,10 @@ import numpy as np
 
 
 class sram_fifo(HardwareLayer):
-    '''
-    SRAM FIFO controller interface for sram_fifo FPGA module.
+    '''SRAM FIFO controller interface for sram_fifo FPGA module.
     '''
     def __init__(self, intf, conf):
-        HardwareLayer.__init__(self, intf, conf)
+        super(sram_fifo, self).__init__(intf, conf)
 
     def init(self):
         self.reset()

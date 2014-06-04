@@ -13,10 +13,10 @@ from HL.HardwareLayer import HardwareLayer
 
 
 class gpio(HardwareLayer):
-    '''GPIO
+    '''GPIO interface
     '''
     def __init__(self, intf, conf):
-        HardwareLayer.__init__(self, intf, conf)
+        super(gpio, self).__init__(intf, conf)
 
     def init(self):
         if 'init' in self._conf:
