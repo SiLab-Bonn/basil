@@ -14,13 +14,13 @@ module seq_gen_core
     parameter MEM_BYTES = 16384,
     parameter OUT_BITS = 16 //4,8,16,32
 )(
-    BUS_CLK,                     
-    BUS_RST,                  
-    BUS_ADD,                    
-    BUS_DATA_IN,                    
-    BUS_RD,                    
-    BUS_WR,                    
-    BUS_DATA_OUT,  
+    BUS_CLK,
+    BUS_RST,
+    BUS_ADD,
+    BUS_DATA_IN,
+    BUS_RD,
+    BUS_WR,
+    BUS_DATA_OUT,
 
     SEQ_CLK,
     SEQ_OUT
@@ -32,7 +32,7 @@ input      [15:0]           BUS_ADD;
 input      [7:0]            BUS_DATA_IN;
 input                       BUS_RD;
 input                       BUS_WR;
-output     reg [7:0]        BUS_DATA_OUT;
+output reg [7:0]            BUS_DATA_OUT;
 
 input SEQ_CLK;
 output reg [OUT_BITS-1:0] SEQ_OUT;
@@ -42,7 +42,7 @@ output reg [OUT_BITS-1:0] SEQ_OUT;
 localparam ADDR_SIZEA = log2(MEM_BYTES);
 localparam ADDR_SIZEB = (OUT_BITS > 8) ? log2(MEM_BYTES/(OUT_BITS/8)) : log2(MEM_BYTES*(8/OUT_BITS));
 
-reg [7:0] status_regs [15:0];  
+reg [7:0] status_regs [15:0];
 
 wire RST;
 wire SOFT_RST;
@@ -56,13 +56,13 @@ always @(posedge BUS_CLK) begin
         status_regs[0] <= 0;
         status_regs[1] <= 0;
         status_regs[2] <= 1;
-        status_regs[3] <= DEF_BIT_OUT[15:8]; //bits
-        status_regs[4] <= DEF_BIT_OUT[7:0]; //bits
+        status_regs[3] <= DEF_BIT_OUT[7:0]; //bits
+        status_regs[4] <= DEF_BIT_OUT[15:8]; //bits
         status_regs[5] <= 0; //wait
         status_regs[6] <= 0; //wait
         status_regs[7] <= 0; // 7  repeat
         status_regs[8] <= 0; //repeat start
-        status_regs[9] <= 0; //repeat start 
+        status_regs[9] <= 0; //repeat start
         
     end
     else if(BUS_WR && BUS_ADD < 16)
@@ -79,20 +79,20 @@ assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 assign START = (BUS_ADD==1 && BUS_WR);
 
 wire [15:0] CONF_COUNT;
-assign CONF_COUNT = {status_regs[3],status_regs[4]};
+assign CONF_COUNT = {status_regs[4], status_regs[3]};
 
 wire [7:0] CONF_CLK_DIV;
-assign CONF_CLK_DIV = status_regs[2] -1;
+assign CONF_CLK_DIV = status_regs[2] - 1;
 reg CONF_DONE;
 
 wire [15:0] CONF_WAIT;
-assign CONF_WAIT = {status_regs[5],status_regs[6]};
+assign CONF_WAIT = {status_regs[6], status_regs[5]};
 
 wire [7:0] CONF_REPEAT;
 assign CONF_REPEAT = status_regs[7];
 
 wire [15:0] CONF_REP_START;
-assign CONF_REP_START = {status_regs[8],status_regs[9]};
+assign CONF_REP_START = {status_regs[9], status_regs[8]};
 
 wire [7:0] BUS_STATUS_OUT;
 assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
@@ -102,18 +102,22 @@ always @ (negedge BUS_CLK) begin
     if(BUS_ADD == 1)
         BUS_DATA_OUT <= {7'b0,CONF_DONE};
     else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= CONF_COUNT[15:8];    
-    else if(BUS_ADD == 4)
         BUS_DATA_OUT <= CONF_COUNT[7:0];
+    else if(BUS_ADD == 4)
+        BUS_DATA_OUT <= CONF_COUNT[15:8];
     else if(BUS_ADD == 5)
-        BUS_DATA_OUT <= CONF_WAIT[15:8];
+        BUS_DATA_OUT <= CONF_WAIT[7:0];
     else if(BUS_ADD == 6)
-        BUS_DATA_OUT <= CONF_WAIT[7:0]; 
+        BUS_DATA_OUT <= CONF_WAIT[15:8];
     else if(BUS_ADD == 7)
-        BUS_DATA_OUT <= CONF_REPEAT;     
+        BUS_DATA_OUT <= CONF_REPEAT;
+    else if(BUS_ADD == 8)
+        BUS_DATA_OUT <= CONF_REP_START[7:0];
+    else if(BUS_ADD == 9)
+        BUS_DATA_OUT <= CONF_REP_START[15:8];
     else if(BUS_ADD < 16)
         BUS_DATA_OUT <= BUS_STATUS_OUT;
-    else if(BUS_ADD < 16 + MEM_BYTES )
+    else if(BUS_ADD < 16 + MEM_BYTES)
         BUS_DATA_OUT <= BUS_IN_MEM;
     end
 end
@@ -194,5 +198,5 @@ always @(posedge SEQ_CLK)
 always @(negedge SEQ_CLK)
     SEQ_OUT <= SEQ_OUT_MEM;
 
-    
-endmodule  
+
+endmodule

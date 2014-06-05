@@ -16,11 +16,10 @@ from array import array
 
 
 class fei4_rx(HardwareLayer):
-    '''
-    FEI4 receiver controller interface for fei4_rx FPGA module
+    '''FEI4 receiver controller interface for fei4_rx FPGA module
     '''
     def __init__(self, intf, conf):
-        HardwareLayer.__init__(self, intf, conf)
+        super(fei4_rx, self).__init__(intf, conf)
 
     def init(self):
         self.reset()

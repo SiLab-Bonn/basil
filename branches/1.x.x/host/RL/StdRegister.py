@@ -70,14 +70,14 @@ class StdRegister(RegisterLayer):
         full = dict()
 
         reg = self._construct_reg()
-        full[self._conf['name']] = str(len(reg)) + 'b' + str(reg.to01())
+        full[self._conf['name']] = str(len(reg)) + 'b' + reg.to01()
 
         for field in self._fields:
             if 'repeat' in self._get_filed_config(field):
                 for i, sub_reg in enumerate(self._fields[field]):
                     fields[str(field) + '[' + str(i) + ']'] = str(sub_reg)
             else:
-                fields[field] = str(len(self._fields[field])) + 'b' + str(self._fields[field].to01())
+                fields[field] = str(len(self._fields[field])) + 'b' + self._fields[field].to01()
 
         if self._fields:
             return str([full, fields])
@@ -91,11 +91,11 @@ class StdRegister(RegisterLayer):
         reg = self._construct_reg()
         ba = utils.bitarray_to_byte_array(reg)
         #print reg, ba
-        self._drv.set_data(0, ba)
+        self._drv.set_data(ba)
 
     def read(self):
-        raise NotImplementedError("To be implemented.")
-        #return self._drv.read()  # ????? //byte array
+        raise NotImplementedError("Not implemented")
+        #return self._drv.get_data()
 
     def _construct_reg(self):
 
@@ -124,7 +124,7 @@ class StdRegister(RegisterLayer):
             bvstart = offs
             bvstop = offs - bvsize + 1
             if 'repeat' in self._get_filed_config(field):
-                raise NotImplementedError("To be implemented.")
+                raise NotImplementedError("Not implemented")
             else:
                 self._fields[field] = reg[bvstart:bvstop]
 
