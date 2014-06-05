@@ -11,6 +11,7 @@
 
 from yaml import safe_load
 
+
 class Base(object):
     def __init__(self, conf):
         self._conf = conf
