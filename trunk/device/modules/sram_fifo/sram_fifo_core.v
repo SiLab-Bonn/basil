@@ -45,8 +45,6 @@ module sram_fifo_core
     output wire                 FIFO_READ_ERROR
 );
 
-parameter OUT_LINES = 1;
-
 /////
 wire SOFT_RST; //0
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);  
