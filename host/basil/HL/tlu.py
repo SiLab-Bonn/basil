@@ -1,16 +1,17 @@
 #
 # ------------------------------------------------------------
-# Copyright (c) SILAB , Physics Institute of Bonn University
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
 # SVN revision information:
-#  $Rev::                      $:
+#  $Rev::                       $:
 #  $Author::                    $:
 #  $Date::                      $:
 #
 
-from HL.HardwareLayer import HardwareLayer
-from struct import pack, unpack, unpack_from
+from basil.HL.HardwareLayer import HardwareLayer
+from struct import pack, unpack_from
 from array import array
 
 

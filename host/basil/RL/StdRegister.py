@@ -1,6 +1,7 @@
 #
 # ------------------------------------------------------------
-# Copyright (c) SILAB , Physics Institute of Bonn University
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
 # SVN revision information:
@@ -9,9 +10,9 @@
 #  $Date::                      $:
 #
 
-from RL.RegisterLayer import RegisterLayer
-from utils.BitLogic import BitLogic
-from utils import utils
+from basil.RL.RegisterLayer import RegisterLayer
+from basil.utils.BitLogic import BitLogic
+from basil.utils import utils
 
 
 class StdRegister(RegisterLayer):
