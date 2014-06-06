@@ -55,7 +55,7 @@ class sram_fifo(HardwareLayer):
         fifo_size : int
             FIFO size in units of integers (32 bit).
         '''
-        fifo_size = self.get_fifo_size(self)
+        fifo_size = self.get_fifo_size()
         # sometimes reading of FIFO size happens during writing to SRAM, but we want to have a multiplicity of 32 bits
         return (fifo_size - (fifo_size % 2)) / 2
 
