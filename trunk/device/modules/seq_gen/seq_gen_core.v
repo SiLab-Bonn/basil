@@ -39,8 +39,8 @@ output reg [OUT_BITS-1:0] SEQ_OUT;
 
 `include "../includes/log2func.v"
 
-localparam ADDR_SIZEA = log2(MEM_BYTES);
-localparam ADDR_SIZEB = (OUT_BITS > 8) ? log2(MEM_BYTES/(OUT_BITS/8)) : log2(MEM_BYTES*(8/OUT_BITS));
+localparam ADDR_SIZEA = `CLOG2(MEM_BYTES);
+localparam ADDR_SIZEB = (OUT_BITS > 8) ? `CLOG2(MEM_BYTES/(OUT_BITS/8)) : `CLOG2(MEM_BYTES*(8/OUT_BITS));
 
 reg [7:0] status_regs [15:0];
 
@@ -69,7 +69,7 @@ always @(posedge BUS_CLK) begin
         status_regs[BUS_ADD[3:0]] <= BUS_DATA_IN;
 end
 
-wire [7:0] BUS_IN_MEM;
+reg [7:0] BUS_IN_MEM;
 reg [7:0] BUS_OUT_MEM;
 
 // 1 - finished
@@ -139,11 +139,36 @@ generate
     end
 endgenerate
 
-wire [OUT_BITS-1:0] SEQ_OUT_MEM;
+reg [OUT_BITS-1:0] SEQ_OUT_MEM;
 
-seq_gen_blk_mem memout(
-    .clka(BUS_CLK), .clkb(SEQ_CLK), .douta(BUS_IN_MEM), .doutb(SEQ_OUT_MEM), .wea(BUS_WR && BUS_ADD >=16 && BUS_ADD < 16+MEM_BYTES), .web(1'b0), .addra(memout_addra), .addrb(memout_addrb), .dina(BUS_DATA_IN), .dinb({OUT_BITS{1'b0}})
-);
+wire WEA;
+assign WEA = BUS_WR && BUS_ADD >=16 && BUS_ADD < 16+MEM_BYTES;
+
+generate
+    if (OUT_BITS==8) begin
+		(* RAM_STYLE="{AUTO | BLOCK |  BLOCK_POWER1 | BLOCK_POWER2}" *)
+		reg [7:0] mem [(2**ADDR_SIZEA)-1:0];
+		
+		always @(posedge BUS_CLK) begin
+			if (WEA)
+				mem[memout_addra] <= BUS_DATA_IN;
+			BUS_IN_MEM <= mem[memout_addra];
+		end
+			
+		always @(posedge SEQ_CLK)
+				SEQ_OUT_MEM <= mem[memout_addrb];
+										 
+	end else begin
+        seq_gen_blk_mem memout(
+			.clka(BUS_CLK), .clkb(SEQ_CLK), .douta(BUS_IN_MEM), .doutb(SEQ_OUT_MEM), 
+			.wea(WEA), .web(1'b0), .addra(memout_addra), .addrb(memout_addrb), 
+			.dina(BUS_DATA_IN), .dinb({OUT_BITS{1'b0}})
+		);
+    end
+endgenerate
+
+
+
 
 wire RST_SYNC;
 wire RST_SOFT_SYNC;
@@ -188,15 +213,26 @@ always @ (posedge SEQ_CLK)
     else if(out_bit_cnt == STOP_BIT && dev_cnt == CONF_CLK_DIV)
         REPEAT_COUNT <= REPEAT_COUNT + 1;
 
-
+reg DONE;
 always @(posedge SEQ_CLK)
     if(RST_SYNC | START_SYNC)
-        CONF_DONE <= 0;
+        DONE <= 0;
     else if(REPEAT_COUNT >= CONF_REPEAT)
-        CONF_DONE <= 1;
+        DONE <= 1;
 
 always @(negedge SEQ_CLK)
     SEQ_OUT <= SEQ_OUT_MEM;
 
+wire DONE_SYNC;
+cdc_pulse_sync done_pulse_sync (.clk_in(SEQ_CLK), .pulse_in(DONE), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
+
+always @(posedge BUS_CLK)
+    if(RST)
+        CONF_DONE <= 1;
+    else if(START)
+        CONF_DONE <= 0;
+    else if(DONE_SYNC)
+        CONF_DONE <= 1;
+		
 
 endmodule
