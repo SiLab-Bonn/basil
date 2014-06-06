@@ -36,7 +36,7 @@ class seq_gen(HardwareLayer):
         self._intf.write(self._conf['base_addr'] + 1, (0,))
 
     def set_size(self, value):
-        self._intf.write(self._conf['base_addr'] + 3, array.array('B', pack('H', value)))
+        self._intf.write(self._conf['base_addr'] + 3, array('B', pack('H', value)))
 
     def get_size(self):
         ret = self._intf.read(self._conf['base_addr'] + 3, size=2)
