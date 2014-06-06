@@ -19,7 +19,7 @@ class tdc_s3(HardwareLayer):
     '''TDC controller interface
     '''
     def __init__(self, intf, conf):
-        super(tdc_s3, self).__init__(intf, conf))
+        super(tdc_s3, self).__init__(intf, conf)
 
     def init(self):
         self.reset()
