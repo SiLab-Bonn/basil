@@ -12,18 +12,19 @@
  
 module bus_to_ip
 #(
-    parameter BASEADDR = 16'h0000,
-    parameter HIGHADDR = 16'h0000
+    parameter BASEADDR = 0,
+    parameter HIGHADDR = 0,
+	parameter ABUSWIDTH = 16
 )
 (
     input BUS_RD,
     input BUS_WR,
-    input [15:0] BUS_ADD,
+    input [ABUSWIDTH-1:0] BUS_ADD,
     inout [7:0] BUS_DATA,
     
     output IP_RD,
     output IP_WR,
-    output [15:0] IP_ADD,    
+    output [ABUSWIDTH-1:0] IP_ADD,    
     output [7:0] IP_DATA_IN,
     input [7:0] IP_DATA_OUT
 );
