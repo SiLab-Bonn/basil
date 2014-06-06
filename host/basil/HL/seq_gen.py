@@ -62,6 +62,12 @@ class seq_gen(HardwareLayer):
         ret = self._intf.read(self._conf['base_addr'] + 8, size=2)
         return unpack_from('H', ret)[0]
 
+    def set_repeat(self, value):
+        self._intf.write(self._conf['base_addr'] + 7, (value,))
+
+    def get_repeat(self):
+        return self._intf.read(self._conf['base_addr'] + 7, 1)[0] 
+
     @property
     def is_ready(self):
         return (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x01) == 1
