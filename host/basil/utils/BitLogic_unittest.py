@@ -1,6 +1,18 @@
-import unittest
+#
+# ------------------------------------------------------------
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
+# ------------------------------------------------------------
+#
+# SVN revision information:
+#  $Rev::                       $:
+#  $Author::                    $:
+#  $Date::                      $:
+#
+ 
+ import unittest
 
-from BitLogic import BitLogic
+from basil.utils.BitLogic import BitLogic
 from bitarray import bitarray
 
 
