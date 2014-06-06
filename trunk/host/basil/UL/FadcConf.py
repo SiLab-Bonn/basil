@@ -9,7 +9,7 @@
 #  $Date::                      $:
 #
 
-from UL.UserLayer import UserLayer
+from basil.UL.UserLayer import UserLayer
 
 
 class FadcConf(UserLayer):
