@@ -1,0 +1,62 @@
+#
+# ------------------------------------------------------------
+# Copyright (c) SILAB , Physics Institute of Bonn University 
+# ------------------------------------------------------------
+#
+# SVN revision information:
+#  $Rev:: 218                   $:
+#  $Author:: jejan              $: 
+#  $Date:: 2014-06-03 15:20:53 #$:
+#
+---
+name    : ExamplePixelDut 
+version : 0.01
+
+transfer_layer:
+    - name  : usb
+      type  : Dummy
+      board_id  : -1
+    
+hw_drivers:    
+  - name      : DATA
+    type      : sram_fifo
+    interface : usb
+    base_addr : 0x10020 
+    base_data_addr: 0x0001000000000000
+
+  - name      : SEQ_GEN
+    type      : seq_gen
+    interface : usb
+    base_addr : 0x11000
+
+  - name      : TDC
+    type      : tdc_s3
+    interface : usb
+    base_addr : 0x10200
+
+  - name      : PIXEL_RX
+    type      : fast_spi_rx
+    interface : usb
+    base_addr : 0x10100
+ 
+registers:
+
+  - name        : CONF_REG
+    type        : StdRegister
+    driver      : None
+    size        : 9     
+    fields  : 
+          - name     : RESET
+            size     : 1         
+            offset   : 7
+          - name     : 'ON'
+            size     : 3         
+            offset   : 0
+          - name     : 'OFF'
+            size     : 4         
+            offset   : 3
+    
+  - name        : PIXEL_REG
+    type        : StdRegister
+    driver      : None
+    size        : 144
