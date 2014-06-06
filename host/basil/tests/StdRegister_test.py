@@ -16,7 +16,7 @@ import sys
 sys.path.append('../')
 
 
-from pydaq import Dut
+from basil.dut import Dut
 
 
 class TestClass(unittest.TestCase):

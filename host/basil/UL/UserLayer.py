@@ -9,7 +9,7 @@
 #  $Date::                      $:
 #
 
-from pydaq import Base
+from dut import Base
 
 
 class UserLayer(Base):

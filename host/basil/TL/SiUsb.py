@@ -9,7 +9,7 @@
 #  $Date::                      $:
 #
 
-from TL.TransferLayer import TransferLayer
+from basil.TL.TransferLayer import TransferLayer
 from SiLibUSB import GetUSBBoards, SiUSBDevice
 
 

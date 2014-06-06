@@ -9,7 +9,7 @@
 #  $Date::                      $:
 #
 
-from pydaq import Base
+from basil.dut import Base
 
 
 class TransferLayer(Base):

@@ -10,7 +10,7 @@
 #
 
 
-from pydaq import Base
+from basil.dut import Base
 
 
 class RegisterLayer(Base):
