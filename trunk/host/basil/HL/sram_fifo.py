@@ -2,9 +2,9 @@
 # ------------------------------------------------------------
 #
 # SVN revision information:
-#  $Rev:: 183                   $:
-#  $Author:: jejan              $:
-#  $Date:: 2014-05-27 11:55:36 #$:
+#  $Rev::                       $:
+#  $Author::                    $:
+#  $Date::                      $:
 #
 
 from HL.HardwareLayer import HardwareLayer
