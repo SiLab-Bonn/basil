@@ -1,19 +1,15 @@
 import yaml
 import time
 
-import sys
-sys.path.append('../')
-
-
-from pydaq import *
-from utils.BitLogic import *
-from utils.utils import *
+from basil.dut import *
+from basil.utils.BitLogic import *
+from basil.utils.utils import *
 import BitVector
 import array
 
 #class AA(DUTLayer):
 #        pass
-    
+
 stream = open("cfg_example.yaml", 'r')
 cnfg = yaml.load(stream)
 #print cnfg
@@ -32,7 +28,7 @@ chip = Dut(cnfg)
 #print chip['PIXEL_SR2']
 #chip['PIXEL_SR2'][7:5] = 0;
 #print chip['PIXEL_SR2']
-chip['PIXEL_SR2'][8] = 1;
+chip['PIXEL_SR2'][8] = 1
 print 'PIX ', chip['PIXEL_SR2']._construct_reg()
 
 
@@ -62,8 +58,6 @@ print 'Byte array:', bitarray_to_byte_array(bv)
 
 #for r in chip._registers:
 #    print r, type(chip._registers[r]), hex(id(chip._registers[r]))
-    
-    
 
 #print 'aaa0', oo[0]
 #print 'aaa1', oo[1]
