@@ -1,9 +1,6 @@
 import yaml
 
-import sys
-sys.path.append('../')
-
-from pydaq import Dut
+from basil.dut import Dut
 
 setup_file = open("simple_register_example.yaml", 'r')
 cnfg = yaml.load(setup_file)
