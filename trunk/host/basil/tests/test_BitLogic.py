@@ -10,7 +10,7 @@
 #  $Date::                      $:
 #
  
- import unittest
+import unittest
 
 from basil.utils.BitLogic import BitLogic
 from bitarray import bitarray
