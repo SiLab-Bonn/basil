@@ -10,9 +10,8 @@
 #  $Date::                      $:
 #
 
-from HL.HardwareLayer import HardwareLayer
-from struct import pack, unpack, unpack_from
-from array import array
+from basil.HL.HardwareLayer import HardwareLayer
+from struct import unpack_from
 
 
 class tdc_s3(HardwareLayer):

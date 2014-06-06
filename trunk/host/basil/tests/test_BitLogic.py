@@ -9,7 +9,7 @@
 #  $Author::                    $:
 #  $Date::                      $:
 #
- 
+
 import unittest
 
 from basil.utils.BitLogic import BitLogic

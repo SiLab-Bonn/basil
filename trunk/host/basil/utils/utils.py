@@ -1,6 +1,7 @@
 #
 # ------------------------------------------------------------
-# Copyright (c) SILAB , Physics Institute of Bonn University
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
 # SVN revision information:
@@ -12,6 +13,7 @@
 import array
 import numpy as np
 from bitarray import bitarray
+
 
 def logging(fn):
 
@@ -43,4 +45,3 @@ def bitarray_to_byte_array(bitarr):
     bs = np.fromstring(ba.tobytes(), dtype=np.uint8)  # byte padding happens here, bitarray.tobytes()
     bs = (bs * 0x0202020202 & 0x010884422010) % 1023
     return bs.astype(np.uint8)
-

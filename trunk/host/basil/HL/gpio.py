@@ -1,6 +1,7 @@
 #
 # ------------------------------------------------------------
-# Copyright (c) SILAB , Physics Institute of Bonn University
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
 # SVN revision information:
@@ -9,7 +10,7 @@
 #  $Date::                      $:
 #
 
-from HL.HardwareLayer import HardwareLayer
+from basil.HL.HardwareLayer import HardwareLayer
 
 
 class gpio(HardwareLayer):

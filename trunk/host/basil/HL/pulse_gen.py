@@ -1,6 +1,7 @@
 #
 # ------------------------------------------------------------
-# Copyright (c) SILAB , Physics Institute of Bonn University
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
 # SVN revision information:
@@ -9,7 +10,7 @@
 #  $Date::                      $:
 #
 
-from HL.HardwareLayer import HardwareLayer
+from basil.HL.HardwareLayer import HardwareLayer
 from struct import pack, unpack
 
 
@@ -47,7 +48,7 @@ class pulse_gen(HardwareLayer):
     def get_width(self):
         ret = self._intf.read(self._conf['base_addr'] + 5, 2)
         return ret[0] * 256 + ret[1]
-    
+
     def set_repeat(self, repeat):
         '''
         Pulse repetition in range of 0-255
@@ -60,7 +61,7 @@ class pulse_gen(HardwareLayer):
 
     def is_done(self):
         return True if (self._intf.read(self._conf['base_addr'] + 1, 1)[0] & 0x01) else False
-    
+
     def set_en(self, enable):
         '''
         If true: The pulse comes with a fixed delay with respect to the external trigger (EXT_START).
@@ -68,13 +69,9 @@ class pulse_gen(HardwareLayer):
         '''
         current = self._intf.read(self._conf['base_addr'] + 2, 1)[0]
         self._intf.write(self._conf['base_addr'] + 2, [(current & 0xfe) | enable])
-        
+
     def get_en(self):
         '''
         Return info if pulse starts with a fixed delay w.r.t. shift register finish signal (true) or if it only starts with .start() (false)
         '''
         return True if (self._intf.read(self._conf['base_addr'] + 2, 1)[0] & 0x01) else False
-    
- 
-  
- 

@@ -1,6 +1,7 @@
 #
 # ------------------------------------------------------------
-# Copyright (c) SILAB , Physics Institute of Bonn University
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
 # SVN revision information:
@@ -10,7 +11,7 @@
 #
 
 
-from RL.RegisterLayer import RegisterLayer
+from basil.RL.RegisterLayer import RegisterLayer
 
 
 class FunctionalRegister(RegisterLayer):

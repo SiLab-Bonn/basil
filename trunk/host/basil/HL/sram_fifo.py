@@ -7,8 +7,8 @@
 #  $Date::                      $:
 #
 
-from HL.HardwareLayer import HardwareLayer
-from struct import pack, unpack, unpack_from
+from basil.HL.HardwareLayer import HardwareLayer
+from struct import pack, unpack_from
 from array import array
 from time import sleep
 import numpy as np

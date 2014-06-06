@@ -10,11 +10,9 @@
 #  $Date::                      $:
 #
 
-import yaml
 import unittest
-import sys
-sys.path.append('../')
 
+import yaml
 
 from basil.dut import Dut
 
@@ -22,7 +20,7 @@ from basil.dut import Dut
 class TestClass(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        setup_file = open("StdRegister_test.yaml", 'r')
+        setup_file = open("test_StdRegister.yaml", 'r')
         cnfg = yaml.load(setup_file)
         cls.dut = Dut(cnfg)
         cls.dut.init()
