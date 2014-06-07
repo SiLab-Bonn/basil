@@ -22,33 +22,16 @@ output full, empty;
 reg empty;
 
 output reg [DATA_SIZE-1:0] data_out;
-
-function integer log2;
-    input integer value;
-    reg [31:0] shifted;
-    integer res;
-begin
-    if (value < 2)
-        log2 = value;
-    else
-    begin
-        shifted = value-1;
-        for (res=0; shifted>0; res=res+1)
-            shifted = shifted>>1;
-        log2 = res;
-    end
-end
-endfunction
-  
+`include "../includes/log2func.v"
+ 
 reg [DATA_SIZE:0] mem [DEPTH-1:0];
 
-localparam POINTER_SIZE = log2(DEPTH);
+parameter POINTER_SIZE = `CLOG2(1024);
 
 reg [POINTER_SIZE-1:0] rd_ponter, rd_tmp, wr_pointer;
 output reg [POINTER_SIZE-1:0] size;
 
 wire empty_loc;
-
 
 
 always@(posedge clk) begin

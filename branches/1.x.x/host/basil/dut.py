@@ -81,7 +81,10 @@ class Dut(object):
         for reg in config_dict['registers']:
             kargs = {}
             if 'driver' in reg:
-                kargs['driver'] = self._user_drivers[reg['driver']]
+                if reg['driver'] == 'None':
+                    kargs['driver'] = None   
+                else:
+                    kargs['driver'] = self._user_drivers[reg['driver']]
                 kargs['conf'] = reg
                 self._registers[reg['name']] = self._factory('RL.' + reg['type'], reg['type'], *(), **kargs)
             elif 'hw_driver' in reg:
