@@ -11,7 +11,7 @@
 #
 
 from basil.RL.RegisterLayer import RegisterLayer
-from BitVector import BitVector
+from bitarray import bitarray
 from basil.utils import utils
 
 
@@ -23,7 +23,7 @@ class TrackRegister(RegisterLayer):
         self._tracks = dict()
 
         for track in self._conf['tracks']:
-                bv = BitVector(size=self._conf["seq_size"])
+                bv = bitarray(self._conf["seq_size"])
                 self._tracks[track['name']] = bv
 
     def __getitem__(self, items):
@@ -44,7 +44,7 @@ class TrackRegister(RegisterLayer):
         if size == -1:
             size = self._conf["seq_size"]
 
-        bv = BitVector(size=self._conf["seq_width"] * size)
+        bv = bitarray(self._conf["seq_width"] * size)
         for i in xrange(size):
             for track in self._conf['tracks']:
                 bit = 0
@@ -59,5 +59,6 @@ class TrackRegister(RegisterLayer):
                     raise NotImplementedError("To be implemented.")
                 bv[bit] = self._tracks[track['name']][i]
 
-        ba = utils.bitvector_to_byte_array(bv)
+        #ba = utils.bitvector_to_byte_array(bv)
+        ba = utils.bitarray_to_byte_array(bv)
         self._drv.set_data(ba)  # TODO: this probably has to be done different way
