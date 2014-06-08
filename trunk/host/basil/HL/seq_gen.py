@@ -22,9 +22,9 @@ class seq_gen(HardwareLayer):
         super(seq_gen, self).__init__(intf, conf)
         self._seq_mem_offset = 16  # in bytes
         try:
-            self._seq_mem_size = conf['mem_size'] - self._seq_mem_offset  # in bytes
+            self._seq_mem_size = conf['mem_size']  # in bytes
         except KeyError:
-            self._seq_mem_size = 2048 - self._seq_mem_offset  # default is 2048 bytes
+            self._seq_mem_size = 2048 # default is 2048 bytes
 
     def init(self):
         self.reset()
