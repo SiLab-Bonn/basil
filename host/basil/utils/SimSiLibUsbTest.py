@@ -44,7 +44,7 @@ def socket_test(dut, debug=True):
     bus = FullSpeedBus(dut, dut.FCLK_IN)
 
     yield RisingEdge(dut.FCLK_IN)
-    for _ in range(100):
+    for _ in range(1000):
 	#while dut.BUS_RST.value:
         yield RisingEdge(dut.FCLK_IN)
 
