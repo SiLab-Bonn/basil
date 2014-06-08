@@ -51,31 +51,46 @@ module example (
     
     assign DEBUG_D = 16'ha5a5;
     
-    wire BUS_CLK, BUS_CLK270;
+    reg  BUS_CLK, BUS_CLK270;
     wire SPI_CLK;
     wire ADC_ENC;
     wire CLK_LOCKED;
     wire BUS_RST;
     
     reset_gen i_reset_gen(.CLK(BUS_CLK), .RST(BUS_RST));
-    
+ 
+`ifdef COCOTB_SIM
+    always @(*)
+        BUS_CLK = FCLK_IN;
+
+    initial begin
+        $dumpfile("waveform.vcd");
+        $dumpvars(0,example);
+    end
+`else   
     clk_gen i_clkgen(
         .CLKIN(FCLK_IN),
         .CLKINBUF(BUS_CLK),
         .CLKINBUF270(BUS_CLK270),
         .LOCKED(CLK_LOCKED)
     );
+`endif
+
     
 
     //MODULE ADREESSES
     localparam GPIO_BASEADDR = 16'h0000;
     localparam GPIO_HIGHADDR = 16'h000f;
     
-    wire [15:0] BUS_ADD;
-    assign BUS_ADD = ADD - 16'h4000;
-    wire BUS_RD, BUS_WR;
-    assign BUS_RD = ~RD_B;
-    assign BUS_WR = ~WR_B;
+    reg [15:0] BUS_ADD;
+   // assign BUS_ADD = ADD - 16'h4000;
+    reg BUS_RD, BUS_WR;
+
+    always @(*) begin
+        BUS_RD = ~RD_B;
+        BUS_WR = ~WR_B;
+        BUS_ADD = ADD - 16'h4000;
+    end
 
     // MODULES //
     wire [1:0] GPIO_NOT_USED;
