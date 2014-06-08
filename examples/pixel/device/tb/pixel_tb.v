@@ -1,12 +1,13 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  *
  * SVN revision information:
- *  $Rev:: 107                   $:
- *  $Author:: themperek          $:
- *  $Date:: 2014-03-24 22:39:46 #$:
+ *  $Rev::                       $:
+ *  $Author::                    $:
+ *  $Date::                      $:
  */
  
 //`timescale 1ns / 1ps
