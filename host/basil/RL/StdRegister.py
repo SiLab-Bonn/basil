@@ -42,7 +42,13 @@ class StdRegister(RegisterLayer):
 
     def __getitem__(self, items):
         #print '__getitem__', items
-        return self._fields[items]
+        if isinstance(items, str):
+            return self._fields[items]
+        elif isinstance(items, slice):
+            reg = self._construct_reg()
+            return reg.__getitem__(items)
+        else:
+            raise TypeError("Invalid argument type.")
 
     def __setitem__(self, key, value):
         if isinstance(key, slice):
