@@ -10,7 +10,7 @@ VERILOG_SOURCES = $(PWD)/../../../device/modules/utils/reset_gen.v \
                   $(PWD)/../../../device/modules/utils/bus_to_ip.v \
                   $(PWD)/../../../device/modules/gpio/gpio8.v \
                   $(PWD)/../src/example.v \
-                  $(PWD)/example_tb.v
+                  $(PWD)/example_top.v
 
 TOPLEVEL = example_top
 MODULE   = basil.utils.SimSiLibUsbTest

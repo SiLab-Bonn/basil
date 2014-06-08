@@ -59,7 +59,6 @@ module example (
     
     reset_gen i_reset_gen(.CLK(BUS_CLK), .RST(BUS_RST));
  
-`ifdef COCOTB_SIM
     always @(*)
         BUS_CLK = FCLK_IN;
 
@@ -67,16 +66,6 @@ module example (
         $dumpfile("waveform.vcd");
         $dumpvars(0,example);
     end
-`else   
-    clk_gen i_clkgen(
-        .CLKIN(FCLK_IN),
-        .CLKINBUF(BUS_CLK),
-        .CLKINBUF270(BUS_CLK270),
-        .LOCKED(CLK_LOCKED)
-    );
-`endif
-
-    
 
     //MODULE ADREESSES
     localparam GPIO_BASEADDR = 16'h0000;
