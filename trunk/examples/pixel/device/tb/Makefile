@@ -1,9 +1,22 @@
+#
+# ------------------------------------------------------------
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
+# ------------------------------------------------------------
+#
+# SVN revision information:
+#  $Rev::                       $:
+#  $Author::                    $:
+#  $Date::                      $:
+#
+
 
 PWD=$(shell pwd)
 
 BASIL = ../../../../../../basil
 XILINX_INSTALL = /c/Xilinx/14.7/ISE_DS
-XILINX_SRC = $(XILINX_INSTALL)/ISE/verilog/src
+#XILINX_SRC = $(XILINX_INSTALL)/ISE/verilog/src
+XILINX_SRC = ./XILINX
 	
 VERILOG_SOURCES = \
 				  $(BASIL)/trunk/device/modules/utils/*.v \
@@ -39,5 +52,4 @@ show:
 clean:
 	rm -f *.vvp; rm -rf *.vcd
  
-
 

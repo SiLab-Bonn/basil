@@ -1,12 +1,13 @@
 #
 # ------------------------------------------------------------
-# Copyright (c) SILAB , Physics Institute of Bonn University 
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
 # SVN revision information:
-#  $Rev:: 218                   $:
-#  $Author:: jejan              $: 
-#  $Date:: 2014-06-03 15:20:53 #$:
+#  $Rev::                       $:
+#  $Author::                    $:
+#  $Date::                      $:
 #
 ---
 name    : ExamplePixelDut 
@@ -27,6 +28,7 @@ hw_drivers:
   - name      : SEQ_GEN
     type      : seq_gen
     interface : usb
+    mem_size  : 8192
     base_addr : 0x11000
 
   - name      : TDC
@@ -41,22 +43,63 @@ hw_drivers:
  
 registers:
 
-  - name        : CONF_REG
+  - name        : GLOBAL_REG
     type        : StdRegister
     driver      : None
-    size        : 9     
+    size        : 176     
     fields  : 
-          - name     : RESET
+          - name     : global_readout_enable 
             size     : 1         
-            offset   : 7
-          - name     : 'ON'
-            size     : 3         
-            offset   : 0
-          - name     : 'OFF'
-            size     : 4         
-            offset   : 3
+            offset   : 175
+          - name     : SRDO_load 
+            size     : 1         
+            offset   : 174
+          - name     : NCout2 
+            size     : 1         
+            offset   : 173
+ 
+          - name     : DEFAULT0 
+            size     : 8         
+            offset   : 143
+          - name     : DEFAULT1 
+            size     : 8         
+            offset   : 135
+          - name     : DEFAULT2 
+            size     : 8         
+            offset   : 127
+          - name     : DEFAULT3 
+            size     : 8         
+            offset   : 119
+          - name     : DisVbn 
+            size     : 8         
+            offset   : 111
+          
     
   - name        : PIXEL_REG
     type        : StdRegister
     driver      : None
-    size        : 144
+    size        : 128
+
+  - name        : SEQ
+    type        : TrackRegister
+    hw_driver   : SEQ_GEN
+    seq_width   : 8
+    seq_size    : 8192
+    tracks  : 
+      - name     : SHIFT_IN
+        position : 0
+      - name     : GLOBAL_SHIFT_EN
+        position : 1  
+      - name     : GLOBAL_CTR_LD
+        position : 2
+      - name     : GLOBAL_DAC_LD
+        position : 3
+      - name     : PIXEL_SHIFT_EN
+        position : 4
+      - name     : INJECTION
+        position : 5
+      - name     : NOT_USED_0
+        position : 6
+      - name     : NOT_USED_1
+        position : 7
+
