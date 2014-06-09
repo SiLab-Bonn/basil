@@ -40,7 +40,7 @@ def socket_test(dut, debug=True):
         dut.log.setLevel(logging.DEBUG)
 
     # Kick off a clock generator
-    cocotb.fork(Clock(dut.FCLK_IN, 5000).start())
+    cocotb.fork(Clock(dut.FCLK_IN, 20833).start())
     bus = FullSpeedBus(dut, dut.FCLK_IN)
 
     yield RisingEdge(dut.FCLK_IN)
