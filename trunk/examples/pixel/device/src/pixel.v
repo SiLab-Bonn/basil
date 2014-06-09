@@ -77,13 +77,11 @@ module pixel (
     
     wire BUS_CLK;
     wire SPI_CLK;
-    wire ADC_ENC;
     wire CLK_LOCKED;
     wire BUS_RST;
     
     assign LEMO_TX[0] = INJECT;
 
-	
     wire CLK320, CLK160;
     reset_gen i_reset_gen(.CLK(BUS_CLK), .RST(BUS_RST));
     wire ADC_CLK;
@@ -102,7 +100,7 @@ module pixel (
     localparam FIFO_BASEADDR = 16'h0020;                    // 0x0020
     localparam FIFO_HIGHADDR = FIFO_BASEADDR + 15;          // 0x002f
     
-    localparam FAST_SR_AQ_BASEADDR = 16'h00100;                    
+    localparam FAST_SR_AQ_BASEADDR = 16'h0100;                    
     localparam FAST_SR_AQ_HIGHADDR = FAST_SR_AQ_BASEADDR + 15;
     
     localparam TDC_BASEADDR = 16'h0200;                    
@@ -133,6 +131,10 @@ module pixel (
     wire TDC_FIFO_READ;
     wire TDC_FIFO_EMPTY;
     wire [31:0] TDC_FIFO_DATA;
+    
+    wire [31:0] FIFO_DATA_SPI_RX;
+    wire FIFO_EMPTY_SPI_RX;
+    wire FIFO_READ_SPI_RX;
     
     rrp_arbiter 
     #( 

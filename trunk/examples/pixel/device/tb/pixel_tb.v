@@ -107,7 +107,7 @@ module pixel_tb;
     assign SRAM_IO = !SRAM_OE_B ? sram[SRAM_A] : 16'hzzzz;
     
     initial begin
-            FCLK_IN = 0;
+            FCLK_IN = 1;
             forever
                 #(20.833/2) FCLK_IN =!FCLK_IN;
     end
