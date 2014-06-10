@@ -196,7 +196,7 @@ module pixel (
         .FIFO_NEAR_FULL(FIFO_NEAR_FULL)
     ); 
     
-	assign LED1 = FIFO_NEAR_FULL;
+    assign LED1 = FIFO_NEAR_FULL;
     
     
     wire [7:0] SEQ_OUT;
@@ -220,38 +220,38 @@ module pixel (
     
     );
     
-	wire GLOBAL_SR_EN, PIXEL_SR_EN;
-	
-    assign SR_IN    			= SEQ_OUT[0];
-    assign GLOBAL_SR_EN     	= SEQ_OUT[1];   
+    wire GLOBAL_SR_EN, PIXEL_SR_EN;
+    
+    assign SR_IN                = SEQ_OUT[0];
+    assign GLOBAL_SR_EN         = SEQ_OUT[1];   
     assign GLOBAL_CTR_LD        = SEQ_OUT[2];   
-    assign GLOBAL_DAC_LD        = SEQ_OUT[3]; 	
-    assign PIXEL_SR_EN       	= SEQ_OUT[4];
-    assign INJECT  				= SEQ_OUT[5];
-	
-	OFDDRRSE GLOBAL_SR_GC (
+    assign GLOBAL_DAC_LD        = SEQ_OUT[3];     
+    assign PIXEL_SR_EN           = SEQ_OUT[4];
+    assign INJECT                  = SEQ_OUT[5];
+    
+    OFDDRRSE GLOBAL_SR_GC (
     .CE(GLOBAL_SR_EN), 
-    .C0(~SPI_CLK),
-    .C1(SPI_CLK),
+    .C0(SPI_CLK),
+    .C1(~SPI_CLK),
     .D0(1'b1),
     .D1(1'b0),
     .R(1'b0),
     .S(1'b0),
     .Q(GLOBAL_SR_CLK)
-	);
+    );
 
-	OFDDRRSE PIXEL_SR_GC (
+    OFDDRRSE PIXEL_SR_GC (
     .CE(PIXEL_SR_EN), 
-    .C0(~SPI_CLK),
-    .C1(SPI_CLK),
+    .C0(SPI_CLK),
+    .C1(~SPI_CLK),
     .D0(1'b1),
     .D1(1'b0),
     .R(1'b0),
     .S(1'b0),
     .Q(PIXEL_SR_CLK)
-	);
-	
-	fast_spi_rx 
+    );
+    
+    fast_spi_rx 
     #(         
         .BASEADDR(FAST_SR_AQ_BASEADDR), 
         .HIGHADDR(FAST_SR_AQ_HIGHADDR)
@@ -274,7 +274,7 @@ module pixel (
 
     ); 
     
-	
+    
     tdc_s3
     #(
          .BASEADDR(TDC_BASEADDR),

@@ -46,7 +46,7 @@ pixel_cocotb.uut.i_seq_gen.i_seq_gen_core.SEQ_OUT[7:0]
 pixel_cocotb.uut.i_seq_gen.i_seq_gen_core.memout_addrb[12:0]
 @1401200
 -SEQ
-@c00201
+@c00200
 -FAST_RX
 @22
 pixel_cocotb.uut.i_pixel_sr_fast_rx.i_fast_spi_rx_core.BUS_ADD[15:0]
@@ -64,6 +64,23 @@ pixel_cocotb.uut.i_pixel_sr_fast_rx.i_fast_spi_rx_core.SDI
 pixel_cocotb.uut.i_pixel_sr_fast_rx.i_fast_spi_rx_core.SEN
 @24
 pixel_cocotb.uut.i_pixel_sr_fast_rx.i_fast_spi_rx_core.bit_cnt[4:0]
-@1401201
+@1401200
 -FAST_RX
+@800200
+-CONTROL
+@28
+pixel_cocotb.uut.SR_IN
+@29
+pixel_cocotb.uut.PIXEL_SR_CLK
+@28
+pixel_cocotb.uut.PIXEL_SR_EN
+pixel_cocotb.uut.PIXEL_SR_OUT
+pixel_cocotb.uut.GLOBAL_CTR_LD
+pixel_cocotb.uut.GLOBAL_DAC_LD
+pixel_cocotb.uut.GLOBAL_SR_CLK
+pixel_cocotb.uut.GLOBAL_SR_EN
+pixel_cocotb.uut.HIT_OR
+pixel_cocotb.uut.INJECT
+@1000200
+-CONTROL
 
