@@ -27,7 +27,7 @@ class spi(HardwareLayer):
         try:
             self._spi_mem_size = conf['mem_size'] - self._spi_mem_offset  # in bytes
         except KeyError:
-            self._spi_mem_size = 2048 - self._spi_mem_offset  # default is 2048 bytes
+            self._spi_mem_size = 2048  # default is 2048 bytes, user should be aware of address ranges in FPGA
 
     def reset(self):
         self._intf.write(self._conf['base_addr'], (0,))
