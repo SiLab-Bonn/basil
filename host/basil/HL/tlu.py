@@ -34,7 +34,6 @@ class tlu(HardwareLayer):
 
     def reset(self):
         self._intf.write(self._conf['base_addr'], (0,))
-        self.reset()
 
     def get_lost_data_counter(self):
         ret = self._intf.read(self._conf['base_addr'], size=1)
