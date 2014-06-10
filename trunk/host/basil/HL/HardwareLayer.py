@@ -32,17 +32,17 @@ class HardwareLayer(Base):
         div, mod = divmod(size + offset, 8)
         if mod:
             div += 1
-        ret = self._intf.read(self._conf['base_addr'] + addr, size=div)
+        ret = self._intf.read(self._base_addr + addr, size=div)
         reg = BitLogic()
         reg.frombytes(ret.tostring())
         reg[size + offset - 1:offset] = BitLogic.from_value(value)[size - 1:0]  # offset + size + 1:offset
-        self._intf.write(self._conf['base_addr'] + addr, data=reg.tobytes())
+        self._intf.write(self._base_addr + addr, data=reg.tobytes())
 
     def _get(self, addr, size=8, offset=0):
         div, mod = divmod(size + offset, 8)
         if mod:
             div += 1
-        ret = self._intf.read(self._conf['base_addr'] + addr, size=div)
+        ret = self._intf.read(self._base_addr + addr, size=div)
         reg = BitLogic()
         reg.frombytes(ret.tostring())
         return reg[size + offset - 1:offset].tovalue()
