@@ -25,6 +25,23 @@ class HardwareLayer(Base):
         self._base_addr = conf['base_addr']
 
     def _set(self, value, addr, size=8, offset=0):
+        '''Writing a value of any arbitrary size and offset to a register
+
+        Parameters
+        ----------
+        value : int
+            The register value to be written.
+        addr : int
+            The register address.
+        size : int
+            Bit size/length of the value to be written to the register.
+        offset : int
+            Offset of the value to be written to the register (in number of bits).
+
+        Returns
+        -------
+        nothing
+        '''
         if not size:
             raise ValueError('Size must be greater than zero')
         if value.bit_length() > size:
@@ -39,6 +56,22 @@ class HardwareLayer(Base):
         self._intf.write(self._base_addr + addr, data=reg.tobytes())
 
     def _get(self, addr, size=8, offset=0):
+        '''Reading a value of any arbitrary size and offset from a register
+
+        Parameters
+        ----------
+        addr : int
+            The register address.
+        size : int
+            Bit size/length of the value to be written to the register.
+        offset : int
+            Offset of the value to be written to the register (in number of bits).
+
+        Returns
+        -------
+        reg : int
+            Register value.
+        '''
         div, mod = divmod(size + offset, 8)
         if mod:
             div += 1
