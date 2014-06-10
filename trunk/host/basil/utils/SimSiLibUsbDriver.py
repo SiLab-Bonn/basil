@@ -93,7 +93,7 @@ class FullSpeedBus(BusDriver):
 
         yield RisingEdge(self.clock)
         self.bus.ADD            <= address + 0x4000
-        self.bus.BUS_DATA       <= value
+        self.bus.BUS_DATA       <= int(value)
         yield RisingEdge(self.clock)
         self.bus.WR_B           <= 0
         yield RisingEdge(self.clock)
