@@ -13,11 +13,13 @@
 from basil.TL.TransferLayer import TransferLayer
 import array
 
+from struct import unpack
+
 
 class Dummy(TransferLayer):
     '''Dummy device
     '''
-    mem = dict()  # dummy memory
+    mem = dict()  # dummy memory, keys are addresses, values are of type int
 
     def __init__(self, conf):
         super(Dummy, self).__init__(conf)
@@ -32,7 +34,7 @@ class Dummy(TransferLayer):
         #    print line.strip()
         print "DummyTransferLayer.write addr:", addr, "data:", data
         for curr_addr, d in enumerate(data, start=addr):
-            self.mem[curr_addr] = d
+            self.mem[curr_addr] = unpack('B', d)[0]
 
     def read(self, addr, size):
         print "DummyTransferLayer.read addr:", addr, "size:", size
