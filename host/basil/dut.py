@@ -65,34 +65,36 @@ class Dut(object):
             kargs['conf'] = intf
             self._transfer_layer[intf['name']] = self._factory('TL.' + intf['type'], intf['type'], *(), **kargs)
 
-        for hwdrv in config_dict['hw_drivers']:
-            kargs = {}
-            kargs['intf'] = self._transfer_layer[hwdrv['interface']]
-            kargs['conf'] = hwdrv
-            self._hardware_layer[hwdrv['name']] = self._factory('HL.' + hwdrv['type'], hwdrv['type'], *(), **kargs)
+        if 'hw_drivers' in config_dict:
+            if config_dict['hw_drivers']:
+                for hwdrv in config_dict['hw_drivers']:
+                    kargs = {}
+                    kargs['intf'] = self._transfer_layer[hwdrv['interface']]
+                    kargs['conf'] = hwdrv
+                    self._hardware_layer[hwdrv['name']] = self._factory('HL.' + hwdrv['type'], hwdrv['type'], *(), **kargs)
 
         if 'user_drivers' in config_dict:
-            for userdrv in config_dict['user_drivers']:
-                kargs = {}
-                kargs['hw_driver'] = self._hardware_layer[userdrv['hw_driver']]
-                kargs['conf'] = userdrv
-                self._user_drivers[userdrv['name']] = self._factory('UL.' + userdrv['type'], userdrv['type'], *(), **kargs)
+            if config_dict['user_drivers']:
+                for userdrv in config_dict['user_drivers']:
+                    kargs = {}
+                    kargs['hw_driver'] = self._hardware_layer[userdrv['hw_driver']]
+                    kargs['conf'] = userdrv
+                    self._user_drivers[userdrv['name']] = self._factory('UL.' + userdrv['type'], userdrv['type'], *(), **kargs)
 
-        for reg in config_dict['registers']:
-            kargs = {}
-            if 'driver' in reg:
-                if reg['driver'] == 'None':
-                    kargs['driver'] = None   
-                else:
-                    kargs['driver'] = self._user_drivers[reg['driver']]
-                kargs['conf'] = reg
-                self._registers[reg['name']] = self._factory('RL.' + reg['type'], reg['type'], *(), **kargs)
-            elif 'hw_driver' in reg:
-                kargs['driver'] = self._hardware_layer[reg['hw_driver']]
-                kargs['conf'] = reg
-                self._registers[reg['name']] = self._factory('RL.' + reg['type'], reg['type'], *(), **kargs)
-            else:
-                raise ValueError('No driver specified for register: %s' % (reg['name'],))
+        if 'registers' in config_dict:
+            if config_dict['registers']:
+                for reg in config_dict['registers']:    
+                    kargs = {}
+                    if 'driver' in reg:
+                        kargs['driver'] = self._user_drivers[reg['driver']]
+                        kargs['conf'] = reg
+                        self._registers[reg['name']] = self._factory('RL.' + reg['type'], reg['type'], *(), **kargs)
+                    elif 'hw_driver' in reg:
+                        kargs['driver'] = self._hardware_layer[reg['hw_driver']]
+                        kargs['conf'] = reg
+                        self._registers[reg['name']] = self._factory('RL.' + reg['type'], reg['type'], *(), **kargs)
+                    else:
+                        raise ValueError('No driver specified for register: %s' % (reg['name'],))
 
     def _factory(self, importname, classname, *args, **kargs):
         _temp = __import__(importname, globals(), locals(), [classname], -1)
