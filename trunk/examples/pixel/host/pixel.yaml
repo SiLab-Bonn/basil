@@ -15,8 +15,9 @@ version : 0.01
 
 transfer_layer:
     - name  : usb
-      type  : Dummy
+      type  : SimSiUsb
       board_id  : -1
+      bit_file : '../ise/pixel.bit'
     
 hw_drivers:    
   - name      : DATA
