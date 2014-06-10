@@ -24,6 +24,7 @@ Communicate via a socket to the simulator
 import sys
 import os
 import socket
+import array
 
 from SimSiLibUsbProtocol import WriteExternalRequest, ReadExternalRequest, ReadExternalResponse, ReadFastBlockRequest, ReadFastBlockResponse, PickleInterface
 
@@ -70,7 +71,7 @@ class SiUSBDevice(object):
         resp = self._iface.recv()
         if not isinstance(resp, ReadExternalResponse):
             raise ValueError("Communication error with Simulation: got %s" % repr(resp))
-        return resp.data
+        return array.array('B', resp.data)
 
     def FastBlockRead(self, size):
         req = ReadFastBlockRequest(size)
@@ -78,7 +79,7 @@ class SiUSBDevice(object):
         resp = self._iface.recv()
         if not isinstance(resp, ReadFastBlockResponse):
             raise ValueError("Communication error with Simulation: got %s" % repr(resp))
-        return resp.data
+        return array.array('B', resp.data)
     
     def FastBlockWrite(self, size):
         raise NotImplementedError("To be implemented.")
