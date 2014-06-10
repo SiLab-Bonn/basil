@@ -23,7 +23,7 @@ from cocotb.result import ReturnValue
 
 class FullSpeedBus(BusDriver):
 
-    _signals = ["BUS_DATA", "ADD", "RD_B", "WR_B", "FREAD", "FSTROBE", "FMODE"]
+    _signals = ["BUS_DATA", "ADD", "RD_B", "WR_B", "FD", "FREAD", "FSTROBE", "FMODE"]
 
     def __init__(self, entity, clock):
         BusDriver.__init__(self, entity, "", clock)
@@ -42,8 +42,10 @@ class FullSpeedBus(BusDriver):
         self.bus.ADD    <= 0
         self.bus.FREAD  <= 0
         self.bus.FSTROBE<= 0;
+        self.bus.FMODE  <= 0;  
         self.bus.BUS_DATA <= self._high_impedence
-
+        self.bus.FD <= self._high_impedence
+        
     @cocotb.coroutine
     def read_external(self, address):
         """Copied from silusb.sv testbench interface"""
@@ -61,16 +63,22 @@ class FullSpeedBus(BusDriver):
         self.bus.RD_B           <= 0
         yield RisingEdge(self.clock)
         self.bus.RD_B           <= 0
-        yield RisingEdge(self.clock)
-        self.bus.RD_B           <= 1
         yield ReadOnly()
         result = self.bus.BUS_DATA.value.integer
+        #print "read_external result", result
+        yield RisingEdge(self.clock)
+        self.bus.RD_B           <= 1
+        
         yield RisingEdge(self.clock)
         self.bus.RD_B           <= 1
         self.bus.ADD            <= self._x
 
         yield RisingEdge(self.clock)
-        result = self.bus.BUS_DATA.value.integer
+        #result = self.bus.BUS_DATA.value.integer
+        
+        for _ in range(5):
+            yield RisingEdge(self.clock)
+        
         raise ReturnValue(result)
 
  
@@ -97,7 +105,7 @@ class FullSpeedBus(BusDriver):
         self.bus.WR_B           <= 1
         self.bus.ADD            <= self._x
 
-        for i in range(5):
+        for _ in range(5):
             yield RisingEdge(self.clock)
 
     @cocotb.coroutine

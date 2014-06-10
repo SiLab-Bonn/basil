@@ -22,7 +22,7 @@ from cocotb.triggers import RisingEdge, Timer
 from cocotb.result import TestError
 
 from SimSiLibUsbDriver import FullSpeedBus
-from SimSiLibUsbProtocol import WriteExternalRequest, ReadExternalRequest, ReadExternalResponse, PickleInterface
+from SimSiLibUsbProtocol import WriteExternalRequest, ReadExternalRequest, ReadExternalResponse, ReadFastBlockRequest, ReadFastBlockResponse, PickleInterface
 
 @cocotb.test()
 def socket_test(dut, debug=True):
@@ -44,7 +44,7 @@ def socket_test(dut, debug=True):
     bus = FullSpeedBus(dut, dut.FCLK_IN)
 
     yield RisingEdge(dut.FCLK_IN)
-    for _ in range(1000):
+    for _ in range(500):
 	#while dut.BUS_RST.value:
         yield RisingEdge(dut.FCLK_IN)
 
@@ -81,6 +81,14 @@ def socket_test(dut, debug=True):
                     val = yield bus.read_external(req.address + byte)
                     result.append(val)
                 iface.send(ReadExternalResponse(result))
+                
+            elif isinstance(req, ReadFastBlockRequest):
+                result = []
+                for byte in xrange(req.size):
+                    val = yield bus.fast_block_read()
+                    result.append(val)
+                iface.send(ReadFastBlockResponse(result))
+
             else:
                 raise NotImplementedError("Unsupported request type: %s" % str(type(req)))
 

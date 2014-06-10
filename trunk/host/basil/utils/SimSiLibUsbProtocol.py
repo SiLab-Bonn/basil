@@ -43,7 +43,26 @@ class ReadExternalResponse(ProtocolBase):
     def __str__(self):
         return "ReadExternalResponse: %s" % str(self.data)
 
+class WriteFastBlockRequest(ProtocolBase):
+    def __init__(self, data):
+        self.address = 0
+        self.data = data
 
+    def __str__(self):
+        return "WriteFastBlockRequest:  %s" % (self.data)
+    
+class ReadFastBlockRequest(ProtocolBase):
+    def __init__(self, size):
+        self.size = size
+    def __str__(self):
+        return "ReadFastBlockRequest: (size %d)" % (self.size)
+
+class ReadFastBlockResponse(ProtocolBase):
+    def __init__(self, data):
+        self.data = data
+    def __str__(self):
+        return "ReadFastBlockResponse: %s" % str(self.data)
+        
 class PickleInterface(ProtocolBase):
 
     def __init__(self, sock):
