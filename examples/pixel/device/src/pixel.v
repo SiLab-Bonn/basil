@@ -84,7 +84,8 @@ module pixel (
 
     wire CLK320, CLK160;
     reset_gen i_reset_gen(.CLK(BUS_CLK), .RST(BUS_RST));
-    wire ADC_CLK;
+    
+    wire TDC_WCLK; 
     
     reg FCLK_IN_BUF;
     always@(*)
@@ -93,6 +94,8 @@ module pixel (
     clk_gen i_clkgen(
         .CLKIN(FCLK_IN),
         .BUS_CLK(BUS_CLK),
+        .U2_CLK5(),
+        .U2_CLK80(TDC_WCLK),
         .U2_CLK160(CLK160),
         .U2_CLK320(CLK320),
         .SPI_CLK(SPI_CLK),
@@ -226,29 +229,29 @@ module pixel (
     assign GLOBAL_SR_EN         = SEQ_OUT[1];   
     assign GLOBAL_CTR_LD        = SEQ_OUT[2];   
     assign GLOBAL_DAC_LD        = SEQ_OUT[3];     
-    assign PIXEL_SR_EN           = SEQ_OUT[4];
-    assign INJECT                  = SEQ_OUT[5];
+    assign PIXEL_SR_EN          = SEQ_OUT[4];
+    assign INJECT               = SEQ_OUT[5];
     
     OFDDRRSE GLOBAL_SR_GC (
-    .CE(GLOBAL_SR_EN), 
-    .C0(SPI_CLK),
-    .C1(~SPI_CLK),
-    .D0(1'b1),
-    .D1(1'b0),
-    .R(1'b0),
-    .S(1'b0),
-    .Q(GLOBAL_SR_CLK)
+        .CE(GLOBAL_SR_EN), 
+        .C0(SPI_CLK),
+        .C1(~SPI_CLK),
+        .D0(1'b1),
+        .D1(1'b0),
+        .R(1'b0),
+        .S(1'b0),
+        .Q(GLOBAL_SR_CLK)
     );
 
     OFDDRRSE PIXEL_SR_GC (
-    .CE(PIXEL_SR_EN), 
-    .C0(SPI_CLK),
-    .C1(~SPI_CLK),
-    .D0(1'b1),
-    .D1(1'b0),
-    .R(1'b0),
-    .S(1'b0),
-    .Q(PIXEL_SR_CLK)
+        .CE(PIXEL_SR_EN), 
+        .C0(SPI_CLK),
+        .C1(~SPI_CLK),
+        .D0(1'b1),
+        .D1(1'b0),
+        .R(1'b0),
+        .S(1'b0),
+        .Q(PIXEL_SR_CLK)
     );
     
     fast_spi_rx 
@@ -285,7 +288,7 @@ module pixel (
     (
          .CLK320(CLK320),
          .CLK160(CLK160),
-         .DV_CLK(ADC_CLK),
+         .DV_CLK(TDC_WCLK),
          .TDC_IN(HIT_OR),
          .TDC_OUT(),
 

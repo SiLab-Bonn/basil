@@ -14,6 +14,9 @@
 module clk_gen(
     input CLKIN,
     output wire BUS_CLK,
+    
+    output U2_CLK5,
+    output U2_CLK80,
     output U2_CLK160,
     output U2_CLK320, 
     output SPI_CLK,
@@ -29,8 +32,8 @@ module clk_gen(
 
     wire U2_CLKDV_BUF, U2_CLK0_BUF, U2_CLK2X_BUF, U2_CLKFX_BUF;
     
-    //assign U2_CLK5 = U2_CLKDV_BUF;
-    //assign U2_CLK80 = U2_CLK0_BUF;
+    assign U2_CLK5 = U2_CLKDV_BUF;
+    assign U2_CLK80 = U2_CLK0_BUF;
     assign U2_CLK160 = U2_CLK2X_BUF;
     assign U2_CLK320 = U2_CLKFX_BUF;
     
