@@ -25,7 +25,7 @@ import sys
 import os
 import socket
 
-from SimSiLibUsbProtocol import WriteExternalRequest, ReadExternalRequest, ReadExternalResponse, PickleInterface
+from SimSiLibUsbProtocol import WriteExternalRequest, ReadExternalRequest, ReadExternalResponse, ReadFastBlockRequest, ReadFastBlockResponse, PickleInterface
 
 __version__ = "0.0.1"
 
@@ -72,3 +72,20 @@ class SiUSBDevice(object):
             raise ValueError("Communication error with Simulation: got %s" % repr(resp))
         return resp.data
 
+    def FastBlockRead(self, size):
+        req = ReadFastBlockRequest(size)
+        self._iface.send(req)
+        resp = self._iface.recv()
+        if not isinstance(resp, ReadFastBlockResponse):
+            raise ValueError("Communication error with Simulation: got %s" % repr(resp))
+        return resp.data
+    
+    def FastBlockWrite(self, size):
+        raise NotImplementedError("To be implemented.")
+        
+    def WriteI2C(self, address, data):
+        raise NotImplementedError("To be implemented.")
+        
+    def ReadI2C(address, size):
+        raise NotImplementedError("To be implemented.")
+    
