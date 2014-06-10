@@ -21,11 +21,12 @@ class TrackRegister(RegisterLayer):
     def __init__(self, driver, conf):
         RegisterLayer.__init__(self, driver, conf)
         self._tracks = dict()
-
+        
         for track in self._conf['tracks']:
-                bv = bitarray(self._conf["seq_size"])
-                self._tracks[track['name']] = bv
-
+            bv = bitarray(self._conf["seq_size"])
+            bv.setall(False)
+            self._tracks[track['name']] = bv
+            
     def __getitem__(self, items):
         if items in self._tracks:
             return  self._tracks[items]
@@ -58,7 +59,15 @@ class TrackRegister(RegisterLayer):
                 else:
                     raise NotImplementedError("To be implemented.")
                 bv[bit] = self._tracks[track['name']][i]
-
+        
         #ba = utils.bitvector_to_byte_array(bv)
         ba = utils.bitarray_to_byte_array(bv)
+        #print 'ba1', ba
+        ba = ba[::-1]
+        #print 'ba2', ba
+         
+        #print 'bv', bv[:32]
+        #for track in self._conf['tracks']:
+        #    print track['name'], track['position'], self._tracks[track['name']][:32].to01(), len(self._tracks[track['name']])
+       
         self._drv.set_data(ba)  # TODO: this probably has to be done different way
