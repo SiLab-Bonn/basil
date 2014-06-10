@@ -146,24 +146,31 @@ assign WEA = BUS_WR && BUS_ADD >=16 && BUS_ADD < 16+MEM_BYTES;
 
 generate
     if (OUT_BITS==8) begin
-		(* RAM_STYLE="{AUTO | BLOCK |  BLOCK_POWER1 | BLOCK_POWER2}" *)
-		reg [7:0] mem [(2**ADDR_SIZEA)-1:0];
-		
-		always @(posedge BUS_CLK) begin
-			if (WEA)
-				mem[memout_addra] <= BUS_DATA_IN;
-			BUS_IN_MEM <= mem[memout_addra];
-		end
-			
-		always @(posedge SEQ_CLK)
-				SEQ_OUT_MEM <= mem[memout_addrb];
-										 
-	end else begin
+        (* RAM_STYLE="{AUTO | BLOCK |  BLOCK_POWER1 | BLOCK_POWER2}" *)
+        reg [7:0] mem [(2**ADDR_SIZEA)-1:0];
+        
+        
+        //to make simulator happy (no X propagation)
+        integer i;
+        initial 
+            for(i = 0; i<(2**ADDR_SIZEA); i = i + 1)
+                mem[i] = 0; 
+        
+        always @(posedge BUS_CLK) begin
+            if (WEA)
+                mem[memout_addra] <= BUS_DATA_IN;
+            BUS_IN_MEM <= mem[memout_addra];
+        end
+            
+        always @(posedge SEQ_CLK)
+                SEQ_OUT_MEM <= mem[memout_addrb];
+                                         
+    end else begin
         seq_gen_blk_mem memout(
-			.clka(BUS_CLK), .clkb(SEQ_CLK), .douta(BUS_IN_MEM), .doutb(SEQ_OUT_MEM), 
-			.wea(WEA), .web(1'b0), .addra(memout_addra), .addrb(memout_addrb), 
-			.dina(BUS_DATA_IN), .dinb({OUT_BITS{1'b0}})
-		);
+            .clka(BUS_CLK), .clkb(SEQ_CLK), .douta(BUS_IN_MEM), .doutb(SEQ_OUT_MEM), 
+            .wea(WEA), .web(1'b0), .addra(memout_addra), .addrb(memout_addrb), 
+            .dina(BUS_DATA_IN), .dinb({OUT_BITS{1'b0}})
+        );
     end
 endgenerate
 
@@ -210,14 +217,14 @@ always @ (posedge SEQ_CLK)
 always @ (posedge SEQ_CLK)
     if (RST_SYNC || START_SYNC)
         REPEAT_COUNT <= 1;
-    else if(out_bit_cnt == STOP_BIT && dev_cnt == CONF_CLK_DIV)
+    else if(out_bit_cnt == STOP_BIT && dev_cnt == CONF_CLK_DIV && REPEAT_COUNT <= CONF_REPEAT)
         REPEAT_COUNT <= REPEAT_COUNT + 1;
 
 reg DONE;
 always @(posedge SEQ_CLK)
     if(RST_SYNC | START_SYNC)
         DONE <= 0;
-    else if(REPEAT_COUNT >= CONF_REPEAT)
+    else if(REPEAT_COUNT > CONF_REPEAT)
         DONE <= 1;
 
 always @(negedge SEQ_CLK)
@@ -233,6 +240,6 @@ always @(posedge BUS_CLK)
         CONF_DONE <= 0;
     else if(DONE_SYNC)
         CONF_DONE <= 1;
-		
+
 
 endmodule
