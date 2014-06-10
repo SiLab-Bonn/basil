@@ -85,6 +85,11 @@ module pixel (
     wire CLK320, CLK160;
     reset_gen i_reset_gen(.CLK(BUS_CLK), .RST(BUS_RST));
     wire ADC_CLK;
+    
+    reg FCLK_IN_BUF;
+    always@(*)
+        FCLK_IN_BUF = FCLK_IN;
+    
     clk_gen i_clkgen(
         .CLKIN(FCLK_IN),
         .BUS_CLK(BUS_CLK),

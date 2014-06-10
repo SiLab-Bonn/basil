@@ -11,29 +11,36 @@ print "Name: " + str(sidev.GetName())
 print "BoardId: " +str(sidev.GetBoardId())
 
 
-GPIO_BASE_ADDRESS = 0x0000
-GPIO_SOFT_RST = 0
-GPIO_INPUT = 1;
-GPIO_OUTPUT_DATA = 2; 
-GPIO_DIRECTION = 3; 
-
 print "Programming FPGA ..."
-print "FPGA OK?:", sidev.DownloadXilinx("../ise/example.bit")
+print "FPGA OK?:", sidev.DownloadXilinx("../ise/pixel.bit")
 
-print "Reset"
-sidev.WriteExternal(GPIO_BASE_ADDRESS + GPIO_SOFT_RST, [0x00])
+SEQ_GEN_BASEADDR = 0x1000
+FAST_SR_AQ  = 0x0100
+FIFO_BASE_ADD = 0x0020
 
-direction = 0x7f
-print "Set Direction:", hex(direction)
-sidev.WriteExternal(GPIO_BASE_ADDRESS + GPIO_DIRECTION, [direction])
+#enable FAST_SR_AQ
+sidev.WriteExternal( FAST_SR_AQ + 2,  [0x01]);
 
-result = sidev.ReadExternal(GPIO_BASE_ADDRESS + GPIO_DIRECTION, 1)
-print "Got %s" % repr(result)
 
-print "Direction:", hex(sidev.ReadExternal(GPIO_BASE_ADDRESS + GPIO_DIRECTION, 1)[0])
+#put some data into SEQ memory
+sidev.WriteExternal( SEQ_GEN_BASEADDR + 16,  [0x00]*100 ); 
+sidev.WriteExternal( SEQ_GEN_BASEADDR + 16 + 16,  [0xff]*16 );
+sidev.WriteExternal( SEQ_GEN_BASEADDR + 16 + 16 + 7,  [0xfe]*2 ); #to have some pattern 
+#set size
+sidev.WriteExternal( SEQ_GEN_BASEADDR + 3,  [100,0]); 
+#set repeat
+sidev.WriteExternal( SEQ_GEN_BASEADDR + 7,  [1]); 
+#start
+sidev.WriteExternal( SEQ_GEN_BASEADDR + 1,  [0x00]);  
+  
+while not (sidev.ReadExternal( SEQ_GEN_BASEADDR + 1,  1)[0] & 0x01):
+    print "Done?"
+    
+print "DONE!"
+    
+ret = sidev.ReadExternal( FIFO_BASE_ADD + 1,  3); 
+print ret
+fifo_size =  ret[0] + ret[1] * 256 + ret[2] * 65536    
 
-output = 0x05
-print "Set Output:", hex(output)
-sidev.WriteExternal(GPIO_BASE_ADDRESS + GPIO_OUTPUT_DATA, [output])
+print "Read Fast: size=", fifo_size , sidev.FastBlockRead((fifo_size/2)*4)
 
-print "Get Input:" , hex(sidev.ReadExternal(GPIO_BASE_ADDRESS + GPIO_INPUT, 1)[0])

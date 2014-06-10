@@ -18,7 +18,7 @@
 
 `define SEQ_GEN_BASEADDR 16'h1000
 
-`define FAST_SR_AQ 16'h0080
+`define FAST_SR_AQ 16'h0100
 `define FAST_SR_AQ_EN `FAST_SR_AQ + 2
 
 module pixel_tb;

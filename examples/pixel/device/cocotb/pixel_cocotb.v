@@ -48,9 +48,9 @@ module pixel_cocotb (
     wire GLOBAL_DAC_LD;
 
     wire PIXEL_SR_CLK;
-    wire PIXEL_SR_OUT;
+    //wire PIXEL_SR_OUT;
 
-    wire HIT_OR;
+    //wire HIT_OR;
     wire INJECT;
     
     SiLibUSB sidev(FCLK_IN);
@@ -90,26 +90,20 @@ module pixel_cocotb (
         .GLOBAL_DAC_LD(GLOBAL_DAC_LD),
 
         .PIXEL_SR_CLK(PIXEL_SR_CLK),
-        .PIXEL_SR_OUT(PIXEL_SR_OUT),
+        .PIXEL_SR_OUT(SR_IN), // loop SR_IN to SR_OUT for testing
 
-        .HIT_OR(HIT_OR),
+        .HIT_OR(INJECT), // loop INJECT to HIT_OR for testing
         .INJECT(INJECT)
         
         
     );
    
-    /// SRAM
+    /// SRAM Model
     reg [15:0] sram [1048576-1:0];
     always@(negedge SRAM_WE_B)
         sram[SRAM_A] <= SRAM_IO;
     
     assign SRAM_IO = !SRAM_OE_B ? sram[SRAM_A] : 16'hzzzz;
-    
-    //initial begin
-    //        FCLK_IN = 0;
-    //        forever
-    //            #(20.833/2) FCLK_IN =!FCLK_IN;
-    //end
     
     initial begin
         $dumpfile("uut.vcd");
