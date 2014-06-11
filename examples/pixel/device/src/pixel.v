@@ -81,7 +81,9 @@ module pixel (
     wire BUS_RST;
     
     assign LEMO_TX[0] = INJECT;
-
+    assign LEMO_TX[1] = 1'b0;
+	assign LEMO_TX[2] = 1'b0;
+	 
     wire CLK320, CLK160;
     reset_gen i_reset_gen(.CLK(BUS_CLK), .RST(BUS_RST));
     
