@@ -28,22 +28,16 @@ import array
 
 from SimSiLibUsbProtocol import WriteExternalRequest, ReadExternalRequest, ReadExternalResponse, ReadFastBlockRequest, ReadFastBlockResponse, PickleInterface
 
-__version__ = "0.0.1"
-
-_simulation_host = os.getenv("SIMULATION_HOST")
-_simulation_port = os.getenv("SIMULATION_PORT")
-
-if _simulation_host is None or _simulation_port is None:
-    raise ImportError("Unable to use SimSiLibUSB: Need to set SIMULATION_HOST and SIMULATION_PORT env vars")
-else:
-    _simulation_port = int(_simulation_port)
+__version__ = "0.0.2"
 
 class SiUSBDevice(object):
 
     """Simulation library to emulate SiUSBDevices"""
 
-    def __init__(self, device=None):
+    def __init__(self, device=None, simulation_host='localhost', simulation_port=12345):
         self._sock = None
+        self.simulation_host = simulation_host
+        self.simulation_port = simulation_port
 
     def GetFWVersion(self):
         return __version__
@@ -52,12 +46,12 @@ class SiUSBDevice(object):
         return "Simulated Device"
 
     def GetBoardId(self):
-        return "%s:%d" % (_simulation_host, _simulation_port)
+        return "%s:%d" % (self.simulation_host, self.simulation_port)
 
     def DownloadXilinx(self, bitfile):
         """We hijack this call to perform the socket connect"""
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._sock.connect((_simulation_host, _simulation_port))
+        self._sock.connect((self.simulation_host, self.simulation_port))
         self._iface = PickleInterface(self._sock)
         return True
 
