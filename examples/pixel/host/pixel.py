@@ -34,7 +34,7 @@ chip['GLOBAL_REG']['NCout2'] = 1
 
 #define patter for every output 
 #set global register
-      
+
 chip['SEQ']['SHIFT_IN'][0:176] = chip['GLOBAL_REG'][:]
 chip['SEQ']['GLOBAL_SHIFT_EN'][0:176] = True
 
@@ -47,7 +47,7 @@ chip['SEQ']['GLOBAL_CTR_LD'][178:179] = True
 chip['SEQ']['GLOBAL_DAC_LD'][178:179] = True
 
 #set pixel register
-chip['PIXEL_REG'][10] = True #just for test
+chip['PIXEL_REG'][12] = True #just for test
 chip['SEQ']['SHIFT_IN'][180:180+128] = chip['PIXEL_REG'][:]
 chip['SEQ']['PIXEL_SHIFT_EN'][180:180+128] = True
 
@@ -61,7 +61,7 @@ chip['SEQ']['GLOBAL_DAC_LD'][490:491] = True
 #inject
 chip['SEQ']['INJECTION'][500:501] = True
 
-print "chip['SEQ'].write(550)"
+print "chip['SEQ'].write(550) writes pattern"
 chip['SEQ'].write(550)
 
 chip['SEQ_GEN'].set_size(550) # define size of pattern
@@ -87,11 +87,7 @@ data1 = np.right_shift(rxd, 8).astype(np.uint8) # Rightshift rxd 8 bits and take
 data = np.reshape(np.vstack((data1, data0)), -1, order='F') # data is now a 1 dimensional array of all bytes read from the FIFO
 bdata = np.unpackbits(data).reshape(-1,128)
 
-print data
+print bdata
 sum =  np.sum(bdata, axis=0)
 sum = sum[::-1] # reverse the array
 #print sum
-
-
-    
-
