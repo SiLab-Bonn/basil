@@ -14,7 +14,7 @@ module bus_to_ip
 #(
     parameter BASEADDR = 0,
     parameter HIGHADDR = 0,
-	parameter ABUSWIDTH = 16
+    parameter ABUSWIDTH = 16
 )
 (
     input BUS_RD,
