@@ -24,6 +24,12 @@ class FEI4AdapterCard(HardwareLayer):
     #ADC
     MAX_1239_ADD = 0x6a
 
+    ## EEPROM
+    CAL_EEPROM_ADD = 0xa8
+    #CAL_DATA_HEADER_V1 ((unsigned short)(0xa101))
+    #CAL_DATA_HEADER_V2 ((unsigned short)(0xa102))
+    CAL_EEPROM_PAGE_SIZE = 32
+
     SCAN_OFF = 0x60
     SCAN_ON = 0x00
     SINGLE_ENDED = 0x01
@@ -37,30 +43,29 @@ class FEI4AdapterCard(HardwareLayer):
 	#CalData.ImeasGain   = 3296.45;
 	#CalData.IqOffset = 6;
 	#CalData.IqVgain = 6;
-    
-    
+
     _cal = {'VDDA1': {
                       'DACV': {'offset': 1.558, 'gain': -0.00193},
-                      'ADCV': {'offset': 0, 'gain': 1638.4;},
-                      'ADCI': {'offset': 0, 'gain': 1638.4;},
+                      'ADCV': {'offset': 0.0, 'gain': 1638.4},
+                      'ADCI': {'offset': 0.0, 'gain': 3296.45},
                     },
             'VDDA2': {
                       'DACV': {'offset': 1.558, 'gain': -0.00193},
-                      'ADCV': {'offset': 0, 'gain': 1638.4;},
-                      'ADCI': {'offset': 0, 'gain': 3296.45},
+                      'ADCV': {'offset': 0.0, 'gain': 1638.4},
+                      'ADCI': {'offset': 0.0, 'gain': 3296.45},
                     },
             'VDDD1': {
                       'DACV': {'offset': 1.558, 'gain': -0.00193},
-                      'ADCV': {'offset': 0, 'gain': 1638.4},
-                      'ADCI': {'offset': 0, 'gain': 3296.45},
+                      'ADCV': {'offset': 0.0, 'gain': 1638.4},
+                      'ADCI': {'offset': 0.0, 'gain': 3296.45},
                     },
             'VDDD2': {
                       'DACV': {'offset': 1.558, 'gain': -0.00193},
-                      'ADCV': {'offset': 0, 'gain': 1638.4},
-                      'ADCI': {'offset': 0, 'gain': 3296.45},
-                    },
+                      'ADCV': {'offset': 0.0, 'gain': 1638.4},
+                      'ADCI': {'offset': 0.0, 'gain': 3296.45},
+                    }
+            }
 
-            
     _map = {'VDDA2': {
                       'DACV': {'dac_ch': 0},
                       'ADCV': {'adc_ch': 2},
@@ -84,15 +89,16 @@ class FEI4AdapterCard(HardwareLayer):
             }
 
     def __init__(self, intf, conf):
-        super(GPAC, self).__init__(intf, conf)
+        super(FEI4AdapterCard, self).__init__(intf, conf)
 
     def init(self):
-
+        pass
         #ADC
         #adc_setup = self.MAX11644_EXT_REF | self.MAX11644_SETUP
         #self._intf.write(self._base_addr + self.MAX11644_ADD, [adc_setup])
 
-    def set_voltage(self, channel, value, unit='mV'):
+    def set_voltage(self, channel, value, unit='V'):
+        print "set voltage", value
 
         DACOffset = self._cal[channel]['DACV']['offset']
         DACGain = self._cal[channel]['DACV']['gain']
@@ -101,19 +107,19 @@ class FEI4AdapterCard(HardwareLayer):
         if unit == 'raw':
             DACval = value
         elif unit == 'V':
-            DACval = (int)((value * 1000 - DACOffset) / DACGain)
-        elif unit == 'mV':
             DACval = (int)((value - DACOffset) / DACGain)
+        elif unit == 'mV':
+            DACval = (int)((value / 1000 - DACOffset) / DACGain)
         else:
             raise TypeError("Invalid unit type.")
 
         karg = self._map[channel]['DACV']
-        #print 'DACval', DACval
+        print 'DACval', DACval
         karg['value'] = (2 ** 8 - 1) if DACval > (2 ** 8) else DACval
         karg['value'] = 0 if DACval < 0 else DACval
-        self.SetDACValue(**karg)
+        self._set_dac_value(**karg)
 
-    def get_voltage(self, channel, unit='mV'):
+    def get_voltage(self, channel, unit='V'):
 
         karg = self._map[channel]['ADCV']
         raw = self._get_adc_value(**karg)
@@ -121,14 +127,14 @@ class FEI4AdapterCard(HardwareLayer):
         VADCOffset = self._cal[channel]['ADCV']['offset']
         VADCGain = self._cal[channel]['ADCV']['gain']
 
-        mV = (float)((raw - VADCOffset) / VADCGain)
+        volt = (float)((raw - VADCOffset) / VADCGain)
 
         if unit == 'raw':
             return raw
         elif unit == 'V':
-            return mV / 1000
+            return volt
         elif unit == 'mV':
-            return mV
+            return volt * 1000
         else:
             raise TypeError("Invalid unit type.")
 
@@ -144,6 +150,7 @@ class FEI4AdapterCard(HardwareLayer):
         IADCGain = self._cal[channel]['ADCI']['gain']
 
         uA = 0
+        raise TypeError("To be implemented.")
 
         if('SRC' in channel):
             rawV = self.get_voltage(channel, unit='raw')
@@ -153,7 +160,7 @@ class FEI4AdapterCard(HardwareLayer):
 
         #CurrentRawIq = CurrentRaw - (CalData.IqOffset + CalData.IqVgain * Voltage);
         #return (Current = (double)((CurrentRawIq - CalData.ImeasOffset) / CalData.ImeasGain));
-    
+
         if unit == 'raw':
             return raw
         elif unit == 'A':
@@ -165,9 +172,9 @@ class FEI4AdapterCard(HardwareLayer):
         else:
             raise TypeError("Invalid unit type.")
 
-    def SetDACValue(self, dac_ch, value):
+    def _set_dac_value(self, dac_ch, value):
 
-        data = (dac_ch, value & 0xff )
+        data = (dac_ch, value & 0xff)
         self._intf.write(self._base_addr + self.MAX_520_ADD, data)
 
     def _get_adc_value(self, adc_ch):
@@ -178,6 +185,5 @@ class FEI4AdapterCard(HardwareLayer):
         rawData = self._intf.read(self._base_addr + self.MAX_1239_ADD | 1, 2)
         raw = ((0x0f & rawData[0]) * 256) + rawData[1]
 
+        print '_get_adc_value', adc_ch, raw
         return raw
-
-    
