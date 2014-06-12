@@ -65,7 +65,13 @@ module pixel (
     input PIXEL_SR_OUT,
 
     input HIT_OR,
-    output INJECT
+    output INJECT,
+	 
+	 output EN_VA1,
+    output EN_VA2,
+    output EN_VD2,
+    output EN_VD1
+	 
 );   
     
 
@@ -73,7 +79,8 @@ module pixel (
     assign SCL = 1'bz;
     
     assign DEBUG_D = 16'ha5a5;
-    assign {LED2, LED3, LED4, LED5}  = 4'b1011;
+    //assign {LED2, LED3, LED4, LED5}  = 4'b1011;
+	 assign {LED4, LED5}  = 2'b11;
     
     wire BUS_CLK;
     wire SPI_CLK;
@@ -82,7 +89,7 @@ module pixel (
     
     assign LEMO_TX[0] = INJECT;
     assign LEMO_TX[1] = 1'b0;
-	assign LEMO_TX[2] = 1'b0;
+	 assign LEMO_TX[2] = 1'b0;
 	 
     wire CLK320, CLK160;
     reset_gen i_reset_gen(.CLK(BUS_CLK), .RST(BUS_RST));
@@ -107,6 +114,9 @@ module pixel (
     
     // -------  MODULE ADREESSES  ------- //
     
+    localparam GPIO_BASEADDR = 16'h0000;
+    localparam GPIO_HIGHADDR = 16'h000f;
+ 
     localparam FIFO_BASEADDR = 16'h0020;                    // 0x0020
     localparam FIFO_HIGHADDR = FIFO_BASEADDR + 15;          // 0x002f
     
@@ -118,7 +128,7 @@ module pixel (
 
     localparam SEQ_GEN_BASEADDR = 16'h1000;                      //0x1000
     localparam SEQ_GEN_HIGHADDR = SEQ_GEN_BASEADDR + 16 + 16'h1fff;   //0x300f
-    
+
     // -------  BUS SYGNALING  ------- //
     wire [15:0] BUS_ADD;
     assign BUS_ADD = ADD - 16'h4000;
@@ -307,6 +317,22 @@ module pixel (
 
          .ARM_TDC(1'b0)
     );
+    
+    gpio 
+    #( 
+        .BASEADDR(GPIO_BASEADDR), 
+        .HIGHADDR(GPIO_HIGHADDR),
+        .IO_WIDTH(4),
+        .IO_DIRECTION(4'b1111)
+    ) i_gpio
+    (
+        .BUS_CLK(BUS_CLK),
+        .BUS_RST(BUS_RST),
+        .BUS_ADD(BUS_ADD),
+        .BUS_DATA(BUS_DATA),
+        .BUS_RD(BUS_RD),
+        .BUS_WR(BUS_WR),
+        .IO({EN_VD1, EN_VD1, EN_VA2, EN_VA1})
+    );
      
-
 endmodule
