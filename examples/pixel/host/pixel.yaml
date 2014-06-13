@@ -15,9 +15,8 @@ version : 0.01
 
 transfer_layer:
     - name  : usb
-      type  : SimSiUsb
+      type  : SiUsb # or SimSiUsb to run as simulation
       board_id  : -1
-      bit_file : '../ise/pixel.bit'
     
 hw_drivers:    
   - name      : DATA
@@ -51,29 +50,88 @@ registers:
     fields  : 
           - name     : global_readout_enable 
             size     : 1         
-            offset   : 175
+            offset   : 143
           - name     : SRDO_load 
             size     : 1         
-            offset   : 174
+            offset   : 142
           - name     : NCout2 
             size     : 1         
-            offset   : 173
- 
-          - name     : DEFAULT0 
-            size     : 8         
-            offset   : 143
-          - name     : DEFAULT1 
-            size     : 8         
-            offset   : 135
-          - name     : DEFAULT2 
-            size     : 8         
-            offset   : 127
-          - name     : DEFAULT3 
-            size     : 8         
-            offset   : 119
-          - name     : DisVbn 
-            size     : 8         
-            offset   : 111
+            offset   : 141
+          - name     : count_hits_not
+            size     : 1
+            offset   : 140
+          - name     : count_enable
+            size     : 1
+            offset   : 139
+          - name     : count_clear_not
+            size     : 1
+            offset   : 138
+          - name     : S0
+            size     : 1
+            offset   : 137
+          - name     : S1
+            size     : 1
+            offset   : 136
+          - name     : config_mode
+            size     : 2
+            offset   : 134
+          - name     : LD_IN0_7
+            size     : 8
+            offset   : 126
+          - name     : LDENABLE_SEL
+            size     : 1
+            offset   : 125
+          - name     : SRCLR_SEL
+            size     : 1
+            offset   : 124
+          - name     : HITLD_IN
+            size     : 1
+            offset   : 123
+          - name     : NCout21_25
+            size     : 5
+            offset   : 118
+          - name     : column_address
+            size     : 6
+            offset   : 112
+          - name     : DisVbn
+            size     : 8
+            offset   : 104
+          - name     : EMPTY_0
+            size     : 48
+            offset   : 56
+          - name     : VbpThStep
+            size     : 8
+            offset   : 48
+          - name     : PrmpVbp
+            size     : 8
+            offset   : 40
+          - name     : PrmpVbnFol
+            size     : 8
+            offset   : 32
+          - name     : vth
+            size     : 8
+            offset   : 24
+          - name     : PrmpVbf
+            size     : 8
+            offset   : 16
+          - name     : EMPTY_1
+            size     : 16
+            offset   : 0
+#          - name     : DEFAULT0 
+#            size     : 8         
+#            offset   : 143
+#          - name     : DEFAULT1 
+#            size     : 8         
+#            offset   : 135
+#          - name     : DEFAULT2 
+#            size     : 8         
+#            offset   : 127
+#          - name     : DEFAULT3 
+#            size     : 8         
+#            offset   : 119
+#          - name     : DisVbn 
+#            size     : 8         
+#            offset   : 111
           
     
   - name        : PIXEL_REG
