@@ -11,58 +11,64 @@
 #
 
 from basil.HL.HardwareLayer import HardwareLayer
-from BitVector import BitVector
+
+from struct import pack, unpack_from
+from array import array
 
 
 class FEI4AdapterCard(HardwareLayer):
     '''FEI4AdapterCard interface
     '''
 
-    #DACS
+    #DAC MAX520
     MAX_520_ADD = 0x58
 
-    #ADC
+    #ADC MAX1238
     MAX_1239_ADD = 0x6a
+    INT_REF_OFF_EXT_REF_ON = 0x20
+    INT_REF_ON_OUTPUT_OFF = 0x50
+    VDD_REF = 0x00
+    SETUP_DATA = 0x80
+    NO_RESET = 0x02
+    EXT_CLK = 0x08
+    SETUP_FLAGS = (SETUP_DATA | INT_REF_OFF_EXT_REF_ON | NO_RESET | EXT_CLK)  # use external reference
+    SETUP_FLAGS_BI = (SETUP_DATA | INT_REF_ON_OUTPUT_OFF | NO_RESET | EXT_CLK)  # use internal reference
 
-    ## EEPROM
+    # EEPROM 24LC128
     CAL_EEPROM_ADD = 0xa8
-    #CAL_DATA_HEADER_V1 ((unsigned short)(0xa101))
-    #CAL_DATA_HEADER_V2 ((unsigned short)(0xa102))
     CAL_EEPROM_PAGE_SIZE = 32
+    CAL_DATA_HEADER_FORMAT = 'BB'
+    CAL_DATA_HEADER_V1 = 0xa101
+    CAL_DATA_CH_V1_FORMAT = 'ccccccccddddddddd'
+    CAL_DATA_CONST_V1_FORMAT = 'dddddd'
+    CAL_DATA_V1_FORMAT = CAL_DATA_HEADER_FORMAT + 4 * CAL_DATA_CH_V1_FORMAT + CAL_DATA_CONST_V1_FORMAT
+    CAL_DATA_HEADER_V2 = 0xa102
+    CAL_DATA_CH_V2_FORMAT = 'ccccccccddddddddddddddd'
+    CAL_DATA_V1_FORMAT = CAL_DATA_HEADER_FORMAT + 8 * CAL_DATA_CH_V2_FORMAT
 
     SCAN_OFF = 0x60
     SCAN_ON = 0x00
     SINGLE_ENDED = 0x01
 
-    #From USBPixI4DCS.cpp - STDSupplyChannel::STDSupplyChannel
-    #CalData.VsetOffset  = 1.558;
-	#CalData.VsetGain    = -0.00193;
-	#CalData.VmeasOffset = 0.0;
-	#CalData.VmeasGain   = 1638.4;
-	#CalData.ImeasOffset = 0;
-	#CalData.ImeasGain   = 3296.45;
-	#CalData.IqOffset = 6;
-	#CalData.IqVgain = 6;
-
     _cal = {'VDDA1': {
                       'DACV': {'offset': 1.558, 'gain': -0.00193},
                       'ADCV': {'offset': 0.0, 'gain': 1638.4},
-                      'ADCI': {'offset': 0.0, 'gain': 3296.45},
+                      'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6, 'iq_gain': 6},
                     },
             'VDDA2': {
                       'DACV': {'offset': 1.558, 'gain': -0.00193},
                       'ADCV': {'offset': 0.0, 'gain': 1638.4},
-                      'ADCI': {'offset': 0.0, 'gain': 3296.45},
+                      'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6, 'iq_gain': 6},
                     },
             'VDDD1': {
                       'DACV': {'offset': 1.558, 'gain': -0.00193},
                       'ADCV': {'offset': 0.0, 'gain': 1638.4},
-                      'ADCI': {'offset': 0.0, 'gain': 3296.45},
+                      'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6, 'iq_gain': 6},
                     },
             'VDDD2': {
                       'DACV': {'offset': 1.558, 'gain': -0.00193},
                       'ADCV': {'offset': 0.0, 'gain': 1638.4},
-                      'ADCI': {'offset': 0.0, 'gain': 3296.45},
+                      'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6, 'iq_gain': 6},
                     }
             }
 
@@ -92,14 +98,12 @@ class FEI4AdapterCard(HardwareLayer):
         super(FEI4AdapterCard, self).__init__(intf, conf)
 
     def init(self):
-        pass
-        #ADC
-        #adc_setup = self.MAX11644_EXT_REF | self.MAX11644_SETUP
-        #self._intf.write(self._base_addr + self.MAX11644_ADD, [adc_setup])
+        self.setup_adc()
+
+    def setup_adc(self):
+        self._intf.write(self._base_addr + self.MAX_1239_ADD, array('B', pack('B', self.SETUP_FLAGS)))
 
     def set_voltage(self, channel, value, unit='V'):
-        print "set voltage", value
-
         DACOffset = self._cal[channel]['DACV']['offset']
         DACGain = self._cal[channel]['DACV']['gain']
 
@@ -107,83 +111,104 @@ class FEI4AdapterCard(HardwareLayer):
         if unit == 'raw':
             DACval = value
         elif unit == 'V':
-            DACval = (int)((value - DACOffset) / DACGain)
+            DACval = int((value - DACOffset) / DACGain)
         elif unit == 'mV':
-            DACval = (int)((value / 1000 - DACOffset) / DACGain)
+            DACval = int((value / 1000 - DACOffset) / DACGain)
         else:
             raise TypeError("Invalid unit type.")
 
-        karg = self._map[channel]['DACV']
-        print 'DACval', DACval
-        karg['value'] = (2 ** 8 - 1) if DACval > (2 ** 8) else DACval
-        karg['value'] = 0 if DACval < 0 else DACval
-        self._set_dac_value(**karg)
+        kwargs = self._map[channel]['DACV']
+        kwargs['value'] = (2 ** 8 - 1) if DACval >= (2 ** 8) else DACval
+        kwargs['value'] = 0 if DACval < 0 else DACval
+        self._set_dac_value(**kwargs)
 
     def get_voltage(self, channel, unit='V'):
+        kwargs = self._map[channel]['ADCV']
+        voltage_raw = self._get_adc_value(**kwargs)
 
-        karg = self._map[channel]['ADCV']
-        raw = self._get_adc_value(**karg)
-
-        VADCOffset = self._cal[channel]['ADCV']['offset']
-        VADCGain = self._cal[channel]['ADCV']['gain']
-
-        volt = (float)((raw - VADCOffset) / VADCGain)
+        voltage = (voltage_raw - self._cal[channel]['ADCV']['offset']) / self._cal[channel]['ADCV']['gain']
 
         if unit == 'raw':
-            return raw
+            return voltage_raw
         elif unit == 'V':
-            return volt
+            return voltage
         elif unit == 'mV':
-            return volt * 1000
+            return voltage * 1000
         else:
             raise TypeError("Invalid unit type.")
 
-    def get_current(self, channel, unit='mA'):
+    def get_current(self, channel, unit='A'):
+        kwargs = self._map[channel]['ADCI']
+        current_raw = self._get_adc_value(**kwargs)
+        voltage = self.get_voltage(channel)
 
-        karg = self._map[channel]['ADCI']
-        raw = self._get_adc_value(**karg)
-
-        #IADCOffset =    0.0;
-        #IADCGain   =   20.0;
-
-        IADCOffset = self._cal[channel]['ADCI']['offset']
-        IADCGain = self._cal[channel]['ADCI']['gain']
-
-        uA = 0
-        raise TypeError("To be implemented.")
-
-        if('SRC' in channel):
-            rawV = self.get_voltage(channel, unit='raw')
-            uA = (float)((raw - rawV - IADCOffset) / IADCGain)
-        else:
-            uA = (float)((raw - IADCOffset) / IADCGain)
-
-        #CurrentRawIq = CurrentRaw - (CalData.IqOffset + CalData.IqVgain * Voltage);
-        #return (Current = (double)((CurrentRawIq - CalData.ImeasOffset) / CalData.ImeasGain));
+        current_raw_iq = current_raw - (self._cal[channel]['ADCI']['iq_offset'] + self._cal[channel]['ADCI']['iq_gain'] * voltage)  # quiescent current (IQ) compensation
+        current = (current_raw_iq - self._cal[channel]['ADCI']['offset']) / self._cal[channel]['ADCI']['gain']
 
         if unit == 'raw':
-            return raw
+            return current_raw
+        elif unit == 'raw_iq':
+            return current_raw_iq
         elif unit == 'A':
-            return uA / 1000000
+            return current
         elif unit == 'mA':
-            return uA / 1000
+            return current * 1000
         elif unit == 'uA':
-            return uA
+            return current * 1000000
         else:
             raise TypeError("Invalid unit type.")
 
     def _set_dac_value(self, dac_ch, value):
+        '''Writing DAC MAX520
+        '''
+        self._intf.write(self._base_addr + self.MAX_520_ADD, array('B', pack('BB', dac_ch, value)))
 
-        data = (dac_ch, value & 0xff)
-        self._intf.write(self._base_addr + self.MAX_520_ADD, data)
-
-    def _get_adc_value(self, adc_ch):
-
+    def _get_adc_value(self, adc_ch, average=None):
+        '''Reading ADC MAX1238
+        '''
         confByte = self.SCAN_OFF | self.SINGLE_ENDED | ((0x1e) & (adc_ch << 1))
+        #self._intf.write(self._base_addr + self.MAX_1239_ADD, array('B', pack('B', confByte)))
         self._intf.write(self._base_addr + self.MAX_1239_ADD, [confByte])
 
-        rawData = self._intf.read(self._base_addr + self.MAX_1239_ADD | 1, 2)
-        raw = ((0x0f & rawData[0]) * 256) + rawData[1]
+        if average:
+            raw = 0
+            for _ in range(average):
+                ret = self._intf.read(self._base_addr + self.MAX_1239_ADD | 1, size=2)
+                ret.reverse()
+                ret[1] = ret[1] & 0x0f  # 12-bit ADC
+                raw += unpack_from('H', ret)[0]
+            raw /= average
+        else:
+            ret = self._intf.read(self._base_addr + self.MAX_1239_ADD | 1, size=2)
+            ret.reverse()
+            ret[1] = ret[1] & 0x0f  # 12-bit ADC
+            raw = unpack_from('H', ret)[0]
 
-        print '_get_adc_value', adc_ch, raw
         return raw
+
+    def _read_eeprom(self, addr, size):
+        '''Reading EEPROM 24LC128
+        '''
+        n_pages, n_bytes = divmod(size, self.CAL_EEPROM_PAGE_SIZE)
+
+        self._intf.write(self._base_addr + self.CAL_EEPROM_ADD, array('B', pack('H', addr & 0x3FFF)))  # 14-bit address, 16384 bytes
+
+        data = array('B')
+        for _ in range(n_pages):
+            data.extend(self._intf.read(self._base_addr + self.CAL_EEPROM_ADD | 1, size=self.CAL_EEPROM_PAGE_SIZE))
+
+        if n_bytes > 0:
+            data.extend(self._intf.read(self._base_addr + self.CAL_EEPROM_ADD | 1, size=n_bytes))
+
+        return data
+
+    def read_eeprom_calibration(self):
+        '''Reading EEPROM calibration
+        '''
+        ret = self._read_eeprom(0, 2)
+        ret.reverse()
+        header = unpack_from('H', ret)[0]
+        if header == self.CAL_DATA_HEADER_V1:
+            raise NotImplementedError('Reading EEPROM calibration not supported')
+        else:
+            raise NotImplementedError('Format not supported')
