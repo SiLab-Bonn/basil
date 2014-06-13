@@ -11,7 +11,7 @@
 #
 
 from basil.TL.TransferLayer import TransferLayer
-import basil.utils.SimSiLibUSB as SiLibUSB
+import basil.utils.SimSiLibUsb as SiLibUSB
 
 class SimSiUsb (TransferLayer):
     '''SiLab USB device
