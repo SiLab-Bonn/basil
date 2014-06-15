@@ -11,26 +11,25 @@ module uartlib(
     task write_byte;
         input [7:0]  data;
         begin    
-            counter = 0;
-                
-            while(counter < 8) begin
-                //start bit
-                repeat(4) @(posedge UART_CLK) UART_TX = 0;
-                //data    
-                @(posedge UART_CLK) UART_TX = data[counter%8];
-                @(posedge UART_CLK) UART_TX = data[counter%8];
-                @(posedge UART_CLK) UART_TX = data[counter%8];
-                @(posedge UART_CLK) UART_TX = data[counter%8];
+            //start bit
+            $display("write_byte: 0x%x (0b%b) [%c]", data, data, data); 
+            
+            repeat(2) @(posedge UART_CLK) UART_TX <= 1;
+            
+            @(posedge UART_CLK) UART_TX <= 0;
+            //data    
+            @(posedge UART_CLK) UART_TX <= data[0];
+            @(posedge UART_CLK) UART_TX <= data[1];
+            @(posedge UART_CLK) UART_TX <= data[2];
+            @(posedge UART_CLK) UART_TX <= data[3];
 
-                @(posedge UART_CLK) UART_TX = data[counter%8];
-                @(posedge UART_CLK) UART_TX = data[counter%8];
-                @(posedge UART_CLK) UART_TX = data[counter%8];
-                @(posedge UART_CLK) UART_TX = data[counter%8];
-                //stop bit
-                @(posedge UART_CLK) UART_TX = 1;
-                repeat(4) @(posedge UART_CLK);
-                counter = counter + 1;
-            end
+            @(posedge UART_CLK) UART_TX <= data[4];
+            @(posedge UART_CLK) UART_TX <= data[5];
+            @(posedge UART_CLK) UART_TX <= data[6];
+            @(posedge UART_CLK) UART_TX <= data[7];
+            //stop bit
+            @(posedge UART_CLK) UART_TX <= 1;
+            repeat(2) @(posedge UART_CLK);
         end
     endtask
         
@@ -38,7 +37,6 @@ module uartlib(
         input [31:0] addr;
         input [31:0] size;
     begin
-        $display("Start task: writing write"); 
         
         write_byte(8'h61); // 0x61 = a
         
@@ -55,8 +53,7 @@ module uartlib(
         write_byte(size[31:24]);
         
         write_byte(8'h77);  //0x77 = w
-        
-        $display("Stop task: writing data");
+
     end
     endtask
 
@@ -64,7 +61,6 @@ module uartlib(
         input [31:0] addr;
         input [31:0] size;
     begin
-        $display("Start task: writing read");
         
         write_byte(8'h61); // 0x61 = a
         
@@ -81,8 +77,7 @@ module uartlib(
         write_byte(size[31:24]);
         
         write_byte(8'h72);  // 0x72 = r
-     
-        $display("Stop task: reading data");
+
     end
     endtask
 
