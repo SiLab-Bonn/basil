@@ -11,6 +11,7 @@
  
 module seq_gen_core
 #(
+    parameter ABUSWIDTH = 16,
     parameter MEM_BYTES = 16384,
     parameter OUT_BITS = 16 //4,8,16,32
 )(
@@ -28,7 +29,7 @@ module seq_gen_core
 
 input                       BUS_CLK;
 input                       BUS_RST;
-input      [15:0]           BUS_ADD;
+input      [ABUSWIDTH-1:0]  BUS_ADD;
 input      [7:0]            BUS_DATA_IN;
 input                       BUS_RD;
 input                       BUS_WR;
@@ -128,14 +129,14 @@ wire [ADDR_SIZEB-1:0] memout_addrb;
 assign memout_addrb = out_bit_cnt-1;
 
 wire [ADDR_SIZEA-1:0] memout_addra;
-wire [15:0] BUS_ADD_MEM;
+wire [ABUSWIDTH-1:0] BUS_ADD_MEM;
 assign BUS_ADD_MEM = BUS_ADD-16;
 
 generate
     if (OUT_BITS<=8) begin
         assign memout_addra = BUS_ADD_MEM; 
     end else begin
-        assign memout_addra = {BUS_ADD_MEM[15:OUT_BITS/8-1], {(OUT_BITS/8-1){1'b0}}} + (OUT_BITS/8-1) - (BUS_ADD_MEM % (OUT_BITS/8)); //Byte order
+        assign memout_addra = {BUS_ADD_MEM[ABUSWIDTH-1:OUT_BITS/8-1], {(OUT_BITS/8-1){1'b0}}} + (OUT_BITS/8-1) - (BUS_ADD_MEM % (OUT_BITS/8)); //Byte order
     end
 endgenerate
 
@@ -149,12 +150,14 @@ generate
         (* RAM_STYLE="{AUTO | BLOCK |  BLOCK_POWER1 | BLOCK_POWER2}" *)
         reg [7:0] mem [(2**ADDR_SIZEA)-1:0];
         
-        
+        // synthesis translate_off
         //to make simulator happy (no X propagation)
         integer i;
-        initial 
+        initial begin 
             for(i = 0; i<(2**ADDR_SIZEA); i = i + 1)
                 mem[i] = 0; 
+        end
+        // synthesis translate_on
         
         always @(posedge BUS_CLK) begin
             if (WEA)
@@ -166,11 +169,18 @@ generate
                 SEQ_OUT_MEM <= mem[memout_addrb];
                                          
     end else begin
-        seq_gen_blk_mem memout(
-            .clka(BUS_CLK), .clkb(SEQ_CLK), .douta(BUS_IN_MEM), .doutb(SEQ_OUT_MEM), 
+        wire [7:0] douta;
+        wire [OUT_BITS-1:0] doutb;
+          seq_gen_blk_mem memout(
+            .clka(BUS_CLK), .clkb(SEQ_CLK), .douta(douta), .doutb(doutb), 
             .wea(WEA), .web(1'b0), .addra(memout_addra), .addrb(memout_addrb), 
             .dina(BUS_DATA_IN), .dinb({OUT_BITS{1'b0}})
         );
+          
+        always@(*) begin
+            BUS_IN_MEM = douta;
+            SEQ_OUT_MEM = doutb;
+        end
     end
 endgenerate
 
@@ -227,7 +237,7 @@ always @(posedge SEQ_CLK)
     else if(REPEAT_COUNT > CONF_REPEAT)
         DONE <= 1;
 
-always @(negedge SEQ_CLK)
+always @(posedge SEQ_CLK)
     SEQ_OUT <= SEQ_OUT_MEM;
 
 wire DONE_SYNC;
