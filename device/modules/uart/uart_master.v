@@ -60,14 +60,14 @@ uart u_uart(
 
 
 integer     i;
-reg [4:0]     STATE, NEXTSTATE;
-reg [31:0]     cnt;
-wire[15:0]    block_len;
+reg    [4:0]     STATE, NEXTSTATE;
+reg    [31:0]     cnt;
+wire   [15:0]    block_len;
 reg    [7:0]    block_len_0[3:0];
 
 reg            op_done;
 
-wire[15:0]    address_0;
+wire  [31:0]    address_0;
 reg    [7:0]    address_0_0[3:0];        
 
 //reg    [7:0]    test_mem [255:0];
@@ -75,7 +75,7 @@ wire[7:0]    roger_word [2:0];
 
 
 assign block_len     =     {block_len_0[1],block_len_0[0]};
-assign address_0    =    {address_0_0[1],address_0_0[0]};
+assign address_0    =    {address_0_0[3], address_0_0[2], address_0_0[1],address_0_0[0]};
 
 assign roger_word[0] = {8'h4f}; // "OK\n"
 assign roger_word[1] = {8'h4B}; // "OK\n"
