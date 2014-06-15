@@ -1,5 +1,5 @@
 
-module reset_gen
+module reset_gen #(parameter CNT = 8'd128)
 (
   CLK,                     
   RST                 
@@ -8,14 +8,14 @@ module reset_gen
 input CLK;
 output RST;
 
-reg [8:0] rst_cnt;
+reg [7:0] rst_cnt;
  
-initial rst_cnt = 9'b1_0000_0000;
+initial rst_cnt = CNT;
 
 always@(posedge CLK)
-     if(rst_cnt[8] == 1)
-        rst_cnt <= rst_cnt +1;
+     if(rst_cnt != 0)
+        rst_cnt <= rst_cnt -1;
 
-assign RST = rst_cnt[8];
+assign RST = (rst_cnt != 0 );
 
 endmodule
