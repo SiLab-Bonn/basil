@@ -18,7 +18,7 @@ Possible extra options:
 - multi window recording (sorted with but multiple times)
 */
 
-module scope_core
+module seq_rec_core
 #(
     parameter MEM_BYTES = 8*1024,
     parameter ABUSWIDTH = 16,
@@ -123,7 +123,7 @@ generate
     if (IN_BITS<=8) begin
         assign memout_addra = BUS_ADD_MEM; 
     end else begin
-        assign memout_addra = {BUS_ADD_MEM[15:IN_BITS/8-1], {(IN_BITS/8-1){1'b0}}} + (IN_BITS/8-1) - (BUS_ADD_MEM % (IN_BITS/8)); //Byte order
+        assign memout_addra = {BUS_ADD_MEM[ABUSWIDTH-1:IN_BITS/8-1], {(IN_BITS/8-1){1'b0}}} + (IN_BITS/8-1) - (BUS_ADD_MEM % (IN_BITS/8)); //Byte order
     end
 endgenerate
 
@@ -156,11 +156,17 @@ generate
                 mem[memout_addrb] <= SEQ_IN;
                                          
     end else begin
-        blk_mem memout(
-            .clka(BUS_CLK), .clkb(SEQ_CLK), .douta(BUS_IN_MEM), .doutb(), 
+	     wire [7:0] douta;
+		  
+        seq_rec_blk_mem memout(
+            .clka(BUS_CLK), .clkb(SEQ_CLK), .douta(douta), .doutb(), 
             .wea(WEA), .web(WEB), .addra(memout_addra), .addrb(memout_addrb), 
             .dina(BUS_DATA_IN), .dinb(SEQ_IN)
         );
+        always@(*) begin
+            BUS_IN_MEM = douta;
+        end
+		  
     end
 endgenerate
 

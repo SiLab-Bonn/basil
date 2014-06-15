@@ -9,7 +9,7 @@
  *  $Date:: 2013-09-12 12:07:54 #$:
  */
  
-module scope
+module seq_rec
 #(
     parameter BASEADDR = 0,
     parameter HIGHADDR = 0,
@@ -49,7 +49,7 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i
     .IP_DATA_OUT(IP_DATA_OUT)
 );
 
-scope_core 
+seq_rec_core 
 #(
     .MEM_BYTES(MEM_BYTES),
     .IN_BITS(IN_BITS),
