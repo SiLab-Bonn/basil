@@ -74,7 +74,7 @@ reg    [7:0]    address_0_0[3:0];
 wire[7:0]    roger_word [2:0];
 
 
-assign block_len     =     {block_len_0[1],block_len_0[0]};
+assign block_len     =     {block_len_0[3], block_len_0[2], block_len_0[1],block_len_0[0]};
 assign address_0    =    {address_0_0[3], address_0_0[2], address_0_0[1],address_0_0[0]};
 
 assign roger_word[0] = {8'h4f}; // "OK\n"
