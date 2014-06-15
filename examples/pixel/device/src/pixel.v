@@ -246,8 +246,8 @@ module pixel (
     
     OFDDRRSE GLOBAL_SR_GC (
         .CE(GLOBAL_SR_EN), 
-        .C0(SPI_CLK),
-        .C1(~SPI_CLK),
+        .C0(~SPI_CLK),
+        .C1(SPI_CLK),
         .D0(1'b1),
         .D1(1'b0),
         .R(1'b0),
@@ -257,8 +257,8 @@ module pixel (
 
     OFDDRRSE PIXEL_SR_GC (
         .CE(PIXEL_SR_EN), 
-        .C0(SPI_CLK),
-        .C1(~SPI_CLK),
+        .C0(~SPI_CLK),
+        .C1(SPI_CLK),
         .D0(1'b1),
         .D1(1'b0),
         .R(1'b0),
@@ -332,7 +332,7 @@ module pixel (
         .BUS_DATA(BUS_DATA),
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
-        .IO({EN_VD1, EN_VD1, EN_VA2, EN_VA1})
+        .IO({EN_VD1, EN_VD2, EN_VA2, EN_VA1})
     );
      
 endmodule

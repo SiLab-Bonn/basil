@@ -30,6 +30,7 @@ VERILOG_SOURCES = \
 				  $(BASIL)/trunk/device/modules/seq_gen/seq_gen_core.v \
 				  $(BASIL)/trunk/device/modules/seq_gen/seq_gen.v \
 				  $(BASIL)/trunk/device/modules/rrp_arbiter/*.v \
+				  $(BASIL)/trunk/device/modules/gpio/gpio.v \
 				  $(BASIL)/trunk/device/modules/tb/silbusb.v \
 				  $(PWD)/pixel_cocotb.v \
 				  $(XILINX_SRC)/unisims/IFDDRRSE.v \
