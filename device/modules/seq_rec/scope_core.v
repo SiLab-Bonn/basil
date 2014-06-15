@@ -140,10 +140,10 @@ generate
         
         
         //to make simulator happy (no X propagation)
-        integer i;
-        initial 
-            for(i = 0; i<(2**ADDR_SIZEA); i = i + 1)
-                mem[i] = 0; 
+        //integer i;
+        //initial 
+        //    for(i = 0; i < (2**ADDR_SIZEA); i = i + 1)
+        //        mem[i] = 0; 
         
         always @(posedge BUS_CLK) begin
             if (WEA)

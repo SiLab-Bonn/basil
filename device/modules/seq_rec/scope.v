@@ -35,7 +35,7 @@ wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
 wire [7:0] IP_DATA_OUT;
 
-bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
+bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i_bus_to_ip
 (
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
@@ -52,7 +52,8 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
 scope_core 
 #(
     .MEM_BYTES(MEM_BYTES),
-    .OUT_BITS(OUT_BITS)
+    .IN_BITS(IN_BITS),
+    .ABUSWIDTH(ABUSWIDTH)
 ) i_scope_core 
 (
     .BUS_CLK(BUS_CLK),                     
