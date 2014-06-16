@@ -30,7 +30,7 @@ module seq_gen
 );
 
 wire IP_RD, IP_WR;
-wire [15:0] IP_ADD;
+wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
 wire [7:0] IP_DATA_OUT;
 

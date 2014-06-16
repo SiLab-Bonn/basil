@@ -27,7 +27,7 @@ module seq_rec
 
     input                SEQ_CLK,
     input [IN_BITS-1:0]  SEQ_IN,
-    input TRIGGER
+    input SEQ_TRIGGER
 );
 
 wire IP_RD, IP_WR;
@@ -66,7 +66,7 @@ seq_rec_core
 
     .SEQ_CLK(SEQ_CLK),
     .SEQ_IN(SEQ_IN),
-    .TRIGGER(TRIGGER)
+    .SEQ_TRIGGER(SEQ_TRIGGER)
 ); 
 
 endmodule  
