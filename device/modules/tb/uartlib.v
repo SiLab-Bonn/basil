@@ -37,6 +37,7 @@ module uartlib(
         input [31:0] addr;
         input [31:0] size;
     begin
+        repeat (40) @(posedge UART_CLK);
         
         write_byte(8'h61); // 0x61 = a
         
@@ -45,6 +46,8 @@ module uartlib(
         write_byte(addr[23:16]);
         write_byte(addr[31:24]);
         
+        repeat(40) @(posedge UART_CLK) ;
+        
         write_byte(8'h6c);  // 0x6c = l
         
         write_byte(size[7:0]);
@@ -52,7 +55,11 @@ module uartlib(
         write_byte(size[23:16]);
         write_byte(size[31:24]);
         
+        repeat(40) @(posedge UART_CLK) ;
+        
         write_byte(8'h77);  //0x77 = w
+        
+        repeat(40) @(posedge UART_CLK) ;
 
     end
     endtask
@@ -62,12 +69,16 @@ module uartlib(
         input [31:0] size;
     begin
         
+        repeat (40) @(posedge UART_CLK);
+        
         write_byte(8'h61); // 0x61 = a
         
         write_byte(addr[7:0]);
         write_byte(addr[15:8]);
         write_byte(addr[23:16]);
         write_byte(addr[31:24]);
+        
+        repeat(40) @(posedge UART_CLK) ;
         
         write_byte(8'h6c);  // 0x6c = l
         
@@ -76,8 +87,12 @@ module uartlib(
         write_byte(size[23:16]);
         write_byte(size[31:24]);
         
+        repeat(40) @(posedge UART_CLK) ;//wait for receiving OK
+        
         write_byte(8'h72);  // 0x72 = r
-
+        
+        repeat(40) @(posedge UART_CLK) ;
+        
     end
     endtask
 

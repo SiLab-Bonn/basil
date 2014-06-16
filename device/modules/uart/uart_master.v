@@ -228,11 +228,11 @@ always @(posedge clk or posedge UART_RST)
                 //hence cnt/4 and cnt[1:0]==3
                 if(is_transmitting)
                     transmit <= 0;
-                else if (cnt/4 > block_len)
-                    op_done    <=1; 
+                else if (cnt/4 >= block_len)
+                    op_done  <= 1; 
                 else if ((!is_transmitting)&&(!transmit)) begin
                     if (cnt[1:0]==3) begin
-                        $write("transmitting the byte %d of value %d\n",cnt/4,tx_byte);
+                    //    $write("transmitting the byte %d of value %d\n",cnt/4,tx_byte);
                         transmit     <=  1;
                     end
                     tx_byte        <=    data_i;
