@@ -13,8 +13,8 @@
 // WARNING! THIS MODULE IS WORK IN PROGRESS! NOT TESTED!
 /*
 Possible extra options:
-- delay block that allow trigger in past (enabled by parameter - for speed needed applications a simple memory circular buffer)
-- trigger selections as pulse or as gate/enable
+- delay block that allow SEQ_TRIGGER in past (enabled by parameter - for speed needed applications a simple memory circular buffer)
+- SEQ_TRIGGER selections as pulse or as gate/enable
 - multi window recording (sorted with but multiple times)
 */
 
@@ -35,7 +35,7 @@ module seq_rec_core
 
     SEQ_CLK,
     SEQ_IN,
-    TRIGGER
+    SEQ_TRIGGER
 ); 
 
 input                       BUS_CLK;
@@ -48,7 +48,7 @@ output reg [7:0]            BUS_DATA_OUT;
 
 input SEQ_CLK;
 input [IN_BITS-1:0] SEQ_IN;
-input TRIGGER;
+input SEQ_TRIGGER;
 
 `include "../includes/log2func.v"
 
@@ -88,7 +88,7 @@ assign START = (BUS_ADD==1 && BUS_WR);
 wire [15:0] CONF_COUNT;
 assign CONF_COUNT = {status_regs[4], status_regs[3]};
 
-wire [7:0] CONF_EN_TRIGGER;
+wire [7:0] CONF_EN_SEQ_TRIGGER;
 assign CONF_CLK_DIV = status_regs[2][0];
 reg CONF_DONE;
 
@@ -186,7 +186,7 @@ wire [ADDR_SIZEB:0] STOP_BIT;
 assign STOP_BIT = CONF_COUNT;
 
 wire START_SYNC_OR_TRIG;
-assign START_SYNC_OR_TRIG = START_SYNC || (CONF_EN_TRIGGER && TRIGGER);
+assign START_SYNC_OR_TRIG = START_SYNC || (CONF_EN_SEQ_TRIGGER && SEQ_TRIGGER);
 
 always @ (posedge SEQ_CLK)
     if (RST_SYNC)
