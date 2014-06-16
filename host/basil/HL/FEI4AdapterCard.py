@@ -139,6 +139,19 @@ class FEI4AdapterCard(HardwareLayer):
     def setup_adc(self):
         self._intf.write(self._base_addr + self.MAX_1239_ADD, array('B', pack('B', self.SETUP_FLAGS)))
 
+    def set_default(self, channels=True):
+        '''Set default voltage
+        '''
+        if isinstance(channels, Iterable):
+            sel_channels = channels
+        else:
+            if channels:
+                sel_channels = self._ch_cal.keys()
+            else:
+                sel_channels = []
+        for channel in sel_channels:
+            self.set_voltage(channel, self._ch_cal[channel]['default'], unit='V')
+
     def set_voltage(self, channel, value, unit='V'):
         DACOffset = self._ch_cal[channel]['DACV']['offset']
         DACGain = self._ch_cal[channel]['DACV']['gain']
