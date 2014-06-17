@@ -30,13 +30,13 @@ class HardwareLayer(Base):
     def init(self):
         pass
 
-    def _set_value(self, value, addr, size, offset):
+    def _set_value(self, value, addr, size=8, offset=0):  # TODO: allow bit string for value (e.g. '10011110')
         '''Writing a value of any arbitrary size (max. unsigned int 64) and offset to a register
 
         Parameters
         ----------
-        value : int, str
-            The register value (int, long, bit string) to be written.
+        value : int
+            The register value to be written.
         addr : int
             The register address.
         size : int
@@ -48,9 +48,9 @@ class HardwareLayer(Base):
         -------
         nothing
         '''
-        if not size and isinstance(value, (int, long)):
+        if not size:
             raise ValueError('Size must be greater than zero')
-        if (isinstance(value, (int, long)) and value.bit_length() > size) or (isinstance(value, basestring) and len(value) > size):
+        if value.bit_length() > size:
             raise ValueError('Bit length of value is too big for given size')
         div, mod = divmod(size + offset, 8)
         if mod:
@@ -58,13 +58,10 @@ class HardwareLayer(Base):
         ret = self._intf.read(self._base_addr + addr, size=div)
         reg = BitLogic()
         reg.frombytes(ret.tostring())
-        if isinstance(value, basestring):
-            reg[size + offset - 1:offset] = BitLogic(value)[size - 1:0]
-        else:
-            reg[size + offset - 1:offset] = BitLogic.from_value(value)[size - 1:0]
+        reg[size + offset - 1:offset] = BitLogic.from_value(value)[size - 1:0]  # offset + size + 1:offset
         self._intf.write(self._base_addr + addr, data=reg.tobytes())
 
-    def _get_value(self, addr, size, offset):
+    def _get_value(self, addr, size=8, offset=0):
         '''Reading a value of any arbitrary size (max. unsigned int 64) and offset from a register
 
         Parameters
@@ -72,7 +69,7 @@ class HardwareLayer(Base):
         addr : int
             The register address.
         size : int
-            Bit size/length of the value.
+            Bit size/length of the value to be written to the register.
         offset : int
             Offset of the value to be written to the register (in number of bits).
 
@@ -94,8 +91,8 @@ class HardwareLayer(Base):
 
         Parameters
         ----------
-        data : iterable
-            The data (byte array) to be written.
+        value : iterable
+            The data () to be written.
         addr : int
             The register address.
 
@@ -103,21 +100,18 @@ class HardwareLayer(Base):
         -------
         nothing
         '''
-        self._intf.write(self._conf['base_addr'] + addr, data)
+        raise NotImplementedError('Has to be implemented')
 
-    def _get_data(self, addr, size):
+    def _get_data(self, addr):
         '''Reading bytes of any arbitrary size
 
         Parameters
         ----------.
         addr : int
             The register address.
-        size : int
-            Byte length of the value.
 
         Returns
         -------
-        data : iterable
-            Byte array.
+        nothing
         '''
-        return self._intf.read(self._conf['base_addr'] + addr, size)
+        raise NotImplementedError('Has to be implemented')
