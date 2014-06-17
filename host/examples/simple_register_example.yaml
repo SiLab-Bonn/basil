@@ -32,7 +32,7 @@ registers:
     
   - name        : REG
     type        : StdRegister
-    driver   : 
+    hw_driver   : spi_module
     size        : 20
     fields  : 
           - name     : VINJECT
