@@ -17,10 +17,10 @@ SIMULATION_PORT?=12345
 export SIMULATION_HOST
 export SIMULATION_PORT
 
-BASIL = $(PWD)/../../../../../../basil
-XILINX_INSTALL = /c/Xilinx/14.7/ISE_DS
-#XILINX_SRC = $(XILINX_INSTALL)/ISE/verilog/src
-XILINX_SRC = $(PWD)/XILINX
+BASIL = ../../../../../../basil
+# Must have XILINX set as an environment variable.
+# i.e. export XILINX=~/Xilinx/14.7/ISE_DS
+XILINX_SRC = $(XILINX)/ISE/verilog/src
 	
 VERILOG_SOURCES = \
 				  $(BASIL)/trunk/device/modules/utils/*.v \
