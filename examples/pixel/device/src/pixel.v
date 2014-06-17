@@ -79,8 +79,6 @@ module pixel (
     assign SCL = 1'bz;
     
     assign DEBUG_D = 16'ha5a5;
-    //assign {LED2, LED3, LED4, LED5}  = 4'b1011;
-	 assign {LED4, LED5}  = 2'b11;
     
     wire BUS_CLK;
     wire SPI_CLK;
@@ -322,8 +320,8 @@ module pixel (
     #( 
         .BASEADDR(GPIO_BASEADDR), 
         .HIGHADDR(GPIO_HIGHADDR),
-        .IO_WIDTH(4),
-        .IO_DIRECTION(4'b1111)
+        .IO_WIDTH(8),
+        .IO_DIRECTION(8'hff)
     ) i_gpio
     (
         .BUS_CLK(BUS_CLK),
@@ -332,7 +330,7 @@ module pixel (
         .BUS_DATA(BUS_DATA),
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
-        .IO({EN_VD1, EN_VD2, EN_VA2, EN_VA1})
+        .IO({LED5, LED4, LED3, LED2, EN_VD1, EN_VD2, EN_VA2, EN_VA1})
     );
      
 endmodule
