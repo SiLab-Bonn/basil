@@ -87,7 +87,7 @@ chip['SEQ'].write(550)
 chip['SEQ_GEN'].set_size(550) # define size of pattern
 chip['SEQ_GEN'].set_repeat(1)
 
-chip['PIXEL_RX'].set_en(True) #enable reciver
+chip['PIXEL_RX'].set_en(True) #enable receiver
 
 print "chip['SEQ_GEN'].start()"
 chip['SEQ_GEN'].start()
