@@ -16,7 +16,6 @@ from basil.utils.BitLogic import BitLogic
 from bitarray import bitarray
 import struct
 from array import array
-import sys
 
 
 class TestBitLogic(unittest.TestCase):
@@ -25,6 +24,10 @@ class TestBitLogic(unittest.TestCase):
 
     def test_from_value_format(self):
         bl = BitLogic.from_value(2232744712, fmt='I')
+        self.assertEqual(bl, bitarray('10000101000101001111101100001000'[::-1]))
+
+    def test_from_bit_str(self):
+        bl = BitLogic('10000101000101001111101100001000', endian='big')  # 2232744712
         self.assertEqual(bl, bitarray('10000101000101001111101100001000'[::-1]))
 
     def test_from_value_long_long(self):
