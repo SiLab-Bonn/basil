@@ -33,6 +33,12 @@ for i in range(16):
     time.sleep(0.5)
     chip['PWR'].write()
 
+chip['PWR']['EN_VD1'] = 1
+chip['PWR']['EN_VD2'] = 1
+chip['PWR']['EN_VA1'] = 1
+chip['PWR']['EN_VA2'] = 1
+chip['PWR'].write()
+ 
 #create configuration pattern
 
 #settings for global reg 
