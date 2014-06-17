@@ -41,6 +41,10 @@ chip['PWR']['EN_VA1'] = 1
 chip['PWR']['EN_VA2'] = 1
 chip['PWR'].write()
 
+#this is fro debug is hack
+chip['usb'].write( 0x10000 + 2, [0x00])
+chip['usb'].write( 0x10000 + 2, [0xff])
+
 chip['PWRAC'].set_voltage("VDDD1",1.2)
 print "VDDD1", chip['PWRAC'].get_voltage("VDDD1"), chip['PWRAC'].get_current("VDDD1")
 
