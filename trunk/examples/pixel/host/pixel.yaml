@@ -47,7 +47,7 @@ registers:
   - name        : GLOBAL_REG
     type        : StdRegister
     driver      : None
-    size        : 176     
+    size        : 144
     fields  : 
           - name     : global_readout_enable 
             size     : 1         
