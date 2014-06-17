@@ -47,7 +47,7 @@ class spi(HardwareLayer):
         Number of clock cycles for shifting in data
         length of matrix shift register (number of pixels daisy chained)
         '''
-        self._intf.write(self._conf['base_addr'] + 3, array.array('B', pack('H', value)))
+        self._intf.write(self._conf['base_addr'] + 3, array('B', pack('H', value)))
 
     def get_size(self):
         '''
@@ -60,7 +60,7 @@ class spi(HardwareLayer):
         '''
         Defines time delay between repetitions in clock cycles (80ns)
         '''
-        self._intf.write(self._conf['base_addr'] + 5, array.array('B', pack('H', value)))
+        self._intf.write(self._conf['base_addr'] + 5, array('B', pack('H', value)))
 
     def get_wait(self):
         '''
