@@ -14,6 +14,9 @@ import unittest
 
 from basil.utils.BitLogic import BitLogic
 from bitarray import bitarray
+import struct
+from array import array
+import sys
 
 
 class TestBitLogic(unittest.TestCase):
@@ -21,20 +24,23 @@ class TestBitLogic(unittest.TestCase):
         pass
 
     def test_from_value_format(self):
-        bl = BitLogic.from_value(12, fmt='I')
-        self.assertEqual(bl, bitarray('0011' + 28 * '0'))
+        bl = BitLogic.from_value(2232744712, fmt='I')
+        self.assertEqual(bl, bitarray('10000101000101001111101100001000'[::-1]))
 
-    def test_from_value(self):
-        bl = BitLogic.from_value(12, fmt='Q')
-        self.assertEqual(bl, bitarray('0011' + 60 * '0'))
+    def test_from_value_long_long(self):
+        if struct.calcsize("P") == 4:  # 32-bit
+            self.assertRaises(struct.error, BitLogic.from_value, 57857885568556688222588556, fmt='Q')
+        else:
+            bl = BitLogic.from_value(4772894553230993930 * 2, fmt='Q')
+            self.assertEqual(bl, bitarray('1000010001111001011101001001110111010111011101011101010000010100'[::-1]))
 
     def test_from_value_with_size_bigger(self):
-        bl = BitLogic.from_value(12, size=70, fmt='Q')
-        self.assertEqual(bl, bitarray('0011' + 66 * '0'))
+        bl = BitLogic.from_value(2232744712, size=70, fmt='Q')
+        self.assertEqual(bl, bitarray('10000101000101001111101100001000'[::-1] + '0' * 38))
 
     def test_from_value_with_size_smaller(self):
-        bl = BitLogic.from_value(12, size=9, fmt='Q')
-        self.assertEqual(bl, bitarray('001100000'))
+        bl = BitLogic.from_value(259, size=9, fmt='Q')
+        self.assertEqual(bl, bitarray('100000011'[::-1]))
 
     def test_to_value(self):
         value = 12
@@ -43,10 +49,29 @@ class TestBitLogic(unittest.TestCase):
         self.assertEqual(ret_val, value)
 
     def test_get_item(self):
-        bl = BitLogic.from_value(8, size=9, fmt='Q')
-        self.assertEqual(bl[3], True)
+        bl = BitLogic.from_value(259, size=9, fmt='Q')
+        self.assertEqual(bl[0], True)
+        self.assertEqual(bl[1], True)
         self.assertEqual(bl[2], False)
+        self.assertEqual(bl[3], False)
         self.assertEqual(bl[4], False)
+        self.assertEqual(bl[5], False)
+        self.assertEqual(bl[6], False)
+        self.assertEqual(bl[7], False)
+        self.assertEqual(bl[8], True)
+
+    def test_endianness(self):
+        '''changing the bit order of each byte
+        '''
+        bl = BitLogic.from_value(259, size=9, fmt='Q', endian='big')
+        self.assertEqual(bl[0], False)
+        self.assertEqual(bl[1], False)
+        self.assertEqual(bl[2], False)
+        self.assertEqual(bl[3], False)
+        self.assertEqual(bl[5], False)
+        self.assertEqual(bl[6], True)
+        self.assertEqual(bl[7], True)
+        self.assertEqual(bl[8], False)
 
     def test_get_item_with_slice(self):
         bl = BitLogic.from_value(12, size=9, fmt='Q')
