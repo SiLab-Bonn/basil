@@ -65,7 +65,7 @@ class FEI4AdapterCard(HardwareLayer):
 
     _temp_cal = dict(
         B_NTC=3425.0,  # NTC 'b' coefficient, NTC Semitec 103KT1608-1P
-        R_NTC_25=10000.0,  # NTC 25°C resistance, NTC Semitec 103KT1608-1P
+        R_NTC_25=10000.0,  # NTC 25 C resistance, NTC Semitec 103KT1608-1P
         R1=3900.0,  # resistor value for NTC voltage divider
         R2=4700.0,  # value of R2 in the reference voltage divider
         R4=10000.0,  # value of R4 in the reference voltage divider
@@ -217,10 +217,10 @@ class FEI4AdapterCard(HardwareLayer):
 #         R_NTC = R_25 * exp(B_NTC * (1/T - 1/T_25))
 #
 #         R_NTC       measured NTC resistance
-#         R_NTC_25    resistance @ 25°C
+#         R_NTC_25    resistance @ 25C
 #         B_NTC       temperature coefficient
 #         Temperature current temperature (Kelvin)
-#         T_25        298,15 K (25°C)
+#         T_25        298,15 K (25C)
 
         v_adc = ((temp_raw - self._ch_cal.items()[0][1]['ADCV']['offset']) / self._ch_cal.items()[0][1]['ADCV']['gain'])  # voltage
         k = self._temp_cal['R4'] / (self._temp_cal['R2'] + self._temp_cal['R4'])  # reference voltage divider
