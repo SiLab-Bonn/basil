@@ -18,9 +18,12 @@ class BitLogic(bitarray):
     def __new__(cls, *args, **kwargs):
         if 'endian' in kwargs:
             endian = kwargs.pop('endian')
-            ba = super(BitLogic, cls).__new__(cls, *args, endian=endian, **kwargs)
         else:
-            ba = super(BitLogic, cls).__new__(cls, *args, endian='little', **kwargs)  # set little endian by default
+            kwargs['endian'] = 'little'  # set little endian by default
+        if args and isinstance(args[0], basestring):
+            ba = super(BitLogic, cls).__new__(cls, args[0][::-1], *args[1:], **kwargs)
+        else:
+            ba = super(BitLogic, cls).__new__(cls, *args, **kwargs)
         if args and isinstance(args[0], (int, long)):
             ba.setall(False)
         return ba
