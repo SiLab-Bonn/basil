@@ -21,11 +21,11 @@ FIFO_BASE_ADD = 0x0020
 GPIO_BASE_ADD = 0x0000
 
 #blink some diodes
-sidev.WriteExternal( GPIO_BASE_ADD + 2,  8'hff);
+sidev.WriteExternal( GPIO_BASE_ADD + 2,  [0xff])
 time.sleep(0.5) 
-sidev.WriteExternal( GPIO_BASE_ADD + 2,  8'h00);
+sidev.WriteExternal( GPIO_BASE_ADD + 2,  [0x00])
 time.sleep(0.5) 
-sidev.WriteExternal( GPIO_BASE_ADD + 2,  8'hff);
+sidev.WriteExternal( GPIO_BASE_ADD + 2,  [0xff])
 
 
 #enable FAST_SR_AQ
