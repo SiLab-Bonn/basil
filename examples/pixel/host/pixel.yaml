@@ -15,7 +15,7 @@ version : 0.01
 
 transfer_layer:
   - name  : usb
-    type  : SiUsb # or SimSiUsb to run as simulation
+    type  : SimSiUsb # or SimSiUsb to run as simulation
     board_id  : -1
     bit_file : "../device/ise/pixel.bit"
     
@@ -47,7 +47,12 @@ hw_drivers:
     interface : usb
     base_addr : 0x10000
     size      : 8
- 
+
+  - name      : PWRAC
+    type      : FEI4AdapterCard
+    interface : usb
+    base_addr : 0x00000
+
 registers:
 
   - name        : GLOBAL_REG

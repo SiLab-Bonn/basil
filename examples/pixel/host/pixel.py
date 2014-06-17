@@ -24,9 +24,11 @@ stream = open("pixel.yaml", 'r')
 cnfg = yaml.load(stream)
 chip = Pixel(cnfg)
 
-chip.init()
-
-
+try:      
+    chip.init()
+except NotImplementedError: # this is to make simulation not fail
+    pass
+    
 print 'play with diodes'
 for i in range(16):
     chip['PWR']['LED'] = i
@@ -38,7 +40,10 @@ chip['PWR']['EN_VD2'] = 1
 chip['PWR']['EN_VA1'] = 1
 chip['PWR']['EN_VA2'] = 1
 chip['PWR'].write()
- 
+
+chip['PWRAC'].set_voltage("VDDD1",1.2)
+print "VDDD1", chip['PWRAC'].get_voltage("VDDD1"), chip['PWRAC'].get_current("VDDD1")
+
 #create configuration pattern
 
 #settings for global reg 
