@@ -87,14 +87,14 @@ class cmd_seq(HardwareLayer):
         return unpack_from('H', ret)[0]
 
     def set_size(self, value):
-        self._intf.write(self._conf['base_addr'] + 3, array.array('B', pack('H', value)))  # alternatively: unpack('BB', pack('H', value))
+        self._intf.write(self._conf['base_addr'] + 3, array('B', pack('H', value)))  # alternatively: unpack('BB', pack('H', value))
 
     def get_repeat(self):
         ret = self._intf.read(self._conf['base_addr'] + 5, size=4)
         return unpack_from('L', ret)[0]
 
     def set_repeat(self, value):
-        self._intf.write(self._conf['base_addr'] + 5, array.array('B', pack('L', value)))
+        self._intf.write(self._conf['base_addr'] + 5, array('B', pack('L', value)))
 
     def get_start_seq_length(self):
         ret = self._intf.read(self._conf['base_addr'] + 9, size=2)
@@ -103,7 +103,7 @@ class cmd_seq(HardwareLayer):
     def set_start_seq_length(self, value):
         if value < 2:
             raise ValueError('Length is too short')  # bug in FPGA module
-        self._intf.write(self._conf['base_addr'] + 9, array.array('B', pack('H', value)))
+        self._intf.write(self._conf['base_addr'] + 9, array('B', pack('H', value)))
 
     def get_stop_seq_length(self):
         ret = self._intf.read(self._conf['base_addr'] + 11, size=2)
@@ -112,7 +112,7 @@ class cmd_seq(HardwareLayer):
     def set_stop_seq_length(self, value):
         if value < 2:
             raise ValueError('Length is too short')  # bug in FPGA module
-        self._intf.write(self._conf['base_addr'] + 1, array.array('B', pack('H', value)))
+        self._intf.write(self._conf['base_addr'] + 1, array('B', pack('H', value)))
 
     def set_data(self, data, addr=0):
         if self._cmd_mem_size < len(data):

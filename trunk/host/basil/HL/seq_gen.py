@@ -43,7 +43,7 @@ class seq_gen(HardwareLayer):
         return unpack_from('H', ret)[0]
 
     def set_wait(self, value):
-        self._intf.write(self._conf['base_addr'] + 5, array.array('B', pack('H', value)))
+        self._intf.write(self._conf['base_addr'] + 5, array('B', pack('H', value)))
 
     def get_wait(self):
         ret = self._intf.read(self._conf['base_addr'] + 5, size=2)
@@ -56,7 +56,7 @@ class seq_gen(HardwareLayer):
         return self._intf.read(self._conf['base_addr'] + 2, 1)[0]
 
     def set_repeat_start(self, value):
-        self._intf.write(self._conf['base_addr'] + 8, array.array('B', pack('H', value)))
+        self._intf.write(self._conf['base_addr'] + 8, array('B', pack('H', value)))
 
     def get_repeat_start(self):
         ret = self._intf.read(self._conf['base_addr'] + 8, size=2)

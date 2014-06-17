@@ -109,7 +109,7 @@ class tlu(HardwareLayer):
         self._intf.write(self._conf['base_addr'] + 2, data=(reg,))
 
     def set_trigger_low_timeout(self, value):
-        self._intf.write(self._conf['base_addr'] + 3, array.array('B', pack('B', value)))  # alternatively: unpack('B', pack('B', value))
+        self._intf.write(self._conf['base_addr'] + 3, array('B', pack('B', value)))  # alternatively: unpack('B', pack('B', value))
 
     def get_current_tlu_trigger_number(self):
         '''Reading current trigger number.
@@ -120,7 +120,7 @@ class tlu(HardwareLayer):
     def set_trigger_counter(self, value):
         '''Setting trigger counter.
         '''
-        self._intf.write(self._conf['base_addr'] + 8, array.array('B', pack('I', value)))
+        self._intf.write(self._conf['base_addr'] + 8, array('B', pack('I', value)))
 
     def get_trigger_counter(self):
         '''Reading trigger counter.
