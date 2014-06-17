@@ -26,6 +26,13 @@ chip = Pixel(cnfg)
 
 chip.init()
 
+
+print 'play with diodes'
+for i in range(16):
+    chip['PWR']['LED'] = i
+    time.sleep(0.5)
+    chip['PWR'].write()
+
 #create configuration pattern
 
 #settings for global reg 
@@ -92,9 +99,11 @@ chip['PIXEL_RX'].set_en(True) #enable receiver
 print "chip['SEQ_GEN'].start()"
 chip['SEQ_GEN'].start()
 
+i = 0
 while chip['SEQ_GEN'].is_ready == False:
     time.sleep(0.01)
-    print "Wait for done..."
+    print "Wait for done...",i
+    i = i + 1 
     
 print "chip['DATA'].get_fifo_size()", chip['DATA'].get_fifo_size()
     

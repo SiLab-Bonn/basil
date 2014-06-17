@@ -41,6 +41,12 @@ hw_drivers:
     type      : fast_spi_rx
     interface : usb
     base_addr : 0x10100
+  
+  - name      : gpio
+    type      : gpio
+    interface : usb
+    base_addr : 0x10000
+    size      : 8
  
 registers:
 
@@ -163,3 +169,23 @@ registers:
       - name     : NOT_USED_1
         position : 7
 
+  - name        : PWR
+    type        : StdRegister
+    hw_driver   : gpio
+    size        : 8
+    fields:
+      - name    : LED
+        size    : 4
+        offset  : 7
+      - name    : EN_VD1
+        size    : 1
+        offset  : 3
+      - name    : EN_VD2
+        size    : 1
+        offset  : 2
+      - name    : EN_VA2
+        size    : 1
+        offset  : 1
+      - name    : EN_VA1
+        size    : 1
+        offset  : 0
