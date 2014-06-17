@@ -14,9 +14,9 @@
 PWD=$(shell pwd)
 
 BASIL = ../../../../../../basil
-XILINX_INSTALL = /c/Xilinx/14.7/ISE_DS
-#XILINX_SRC = $(XILINX_INSTALL)/ISE/verilog/src
-XILINX_SRC = ./XILINX
+# Must have XILINX set as an environment variable.
+# i.e. export XILINX=~/Xilinx/14.7/ISE_DS
+XILINX_SRC = $(XILINX)/ISE/verilog/src
 	
 VERILOG_SOURCES = \
 				  $(BASIL)/trunk/device/modules/utils/*.v \
