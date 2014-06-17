@@ -35,8 +35,8 @@ chip['GLOBAL_REG']['NCout2'] = 0# size = 1 bit
 chip['GLOBAL_REG']['count_hits_not'] = 0# size = 1
 chip['GLOBAL_REG']['count_enable'] = 0# size = 1
 chip['GLOBAL_REG']['count_clear_not'] = 0# size = 1
-chip['GLOBAL_REG']['S0'] = 0# size = 1
-chip['GLOBAL_REG']['S1'] = 0# size = 1
+chip['GLOBAL_REG']['S0'] = 1# size = 1
+chip['GLOBAL_REG']['S1'] = 1# size = 1
 chip['GLOBAL_REG']['config_mode'] = 0# size = 2
 chip['GLOBAL_REG']['LD_IN0_7'] = 0# size = 8
 chip['GLOBAL_REG']['LDENABLE_SEL'] = 0# size = 1
@@ -55,16 +55,16 @@ chip['GLOBAL_REG']['PrmpVbf'] = 0# size = 8
 #define patter for every output 
 #set global register
 
-chip['SEQ']['SHIFT_IN'][0:176] = chip['GLOBAL_REG'][:]
-chip['SEQ']['GLOBAL_SHIFT_EN'][0:176] = True
+chip['SEQ']['SHIFT_IN'][0:144] = chip['GLOBAL_REG'][:]
+chip['SEQ']['GLOBAL_SHIFT_EN'][0:144] = True
 
 #chip['SEQ']['GLOBAL_SHIFT_EN'][:] = True
 
 #print 'A', chip['GLOBAL_REG'][:], len(chip['SEQ']['SHIFT_IN'][0:176]), type(chip['GLOBAL_REG'][:])
 #print 'B', chip['SEQ']['SHIFT_IN'][:200].to01()
 
-chip['SEQ']['GLOBAL_CTR_LD'][178:179] = True
-chip['SEQ']['GLOBAL_DAC_LD'][178:179] = True
+chip['SEQ']['GLOBAL_CTR_LD'][146:147] = True
+chip['SEQ']['GLOBAL_DAC_LD'][146:147] = True
 
 #set pixel register
 chip['PIXEL_REG'][12] = True #just for test
@@ -100,14 +100,15 @@ print "chip['DATA'].get_fifo_size()", chip['DATA'].get_fifo_size()
     
 print "chip['DATA'].get_data()"
 rxd = chip['DATA'].get_data() #get data from sram fifo
-print rxd
+print "rxd = ", rxd
 
 data0 = rxd.astype(np.uint8) # Change type to unsigned int 8 bits and take from rxd only the last 8 bits
 data1 = np.right_shift(rxd, 8).astype(np.uint8) # Rightshift rxd 8 bits and take again last 8 bits
 data = np.reshape(np.vstack((data1, data0)), -1, order='F') # data is now a 1 dimensional array of all bytes read from the FIFO
 bdata = np.unpackbits(data).reshape(-1,128)
 
-print bdata
+print "data = ", data
+print "bdata = ", bdata
 sum =  np.sum(bdata, axis=0)
 sum = sum[::-1] # reverse the array
 #print sum
