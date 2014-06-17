@@ -17,7 +17,7 @@ transfer_layer:
   - name  : usb
     type  : SiUsb # or SimSiUsb to run as simulation
     board_id  : -1
-    bit_file : "../device/ise/pixel.bit""
+    bit_file : "../device/ise/pixel.bit"
     
 hw_drivers:    
   - name      : DATA
