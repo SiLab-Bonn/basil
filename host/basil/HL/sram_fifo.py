@@ -28,10 +28,10 @@ class sram_fifo(HardwareLayer):
         sleep(0.01)  # wait some time for initialization
 
     def set_almost_full_threshold(self, value):
-        self._intf.write(self._conf['base_addr'] + 1, array.array('B', pack('B', value)))  # no get function possible
+        self._intf.write(self._conf['base_addr'] + 1, array('B', pack('B', value)))  # no get function possible
 
     def set_almost_empty_threshold(self, value):
-        self._intf.write(self._conf['base_addr'] + 2, array.array('B', pack('B', value)))  # no get function possible
+        self._intf.write(self._conf['base_addr'] + 2, array('B', pack('B', value)))  # no get function possible
 
     def get_fifo_size(self):
         '''
