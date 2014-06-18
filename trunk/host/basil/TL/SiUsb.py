@@ -32,7 +32,7 @@ class SiUsb (TransferLayer):
         super(SiUsb, self).__init__(conf)
 
     def init(self):
-        if 'board_id' in self._conf.keys():
+        if 'board_id' in self._conf.keys() and self._conf['board_id'] and int(self._conf['board_id']) >= 0:
             self._sidev = SiUSBDevice.from_board_id(self._conf['board_id'])
         else:
             # search for any available device
