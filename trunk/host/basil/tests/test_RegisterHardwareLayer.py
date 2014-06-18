@@ -24,6 +24,8 @@ class MyHardwareLayer(RegisterHardwareLayer):
     _registers = {'REG1': {'default': 12, 'current': None, 'descr': {'addr': 0, 'size': 15, 'offset': 0}},
                   'REG2': {'default': 1, 'current': None, 'descr': {'addr': 1, 'size': 1, 'offset': 7}},
                   'REG3': {'default': 2 ** 16 - 1, 'current': None, 'descr': {'addr': 2, 'size': 16, 'offset': 0}},
+                  'REG4_ro': {'default': 0, 'descr': {'addr': 1, 'size': 8, 'properties': ['readonly']}},
+                  'REG5_wo': {'default': 0, 'descr': {'addr': 2, 'size': 8, 'properties': ['writeonly']}},
     }
 
 
@@ -31,6 +33,13 @@ class TestRegisterHardwareLayer(unittest.TestCase):
     def setUp(self):
         dummy = Dummy(conf=None)
         self.hl = MyHardwareLayer(dummy, {'base_addr': 0})
+
+    def test_read_only(self):
+        val = self.hl.REG1
+        self.assertRaises(IOError, self.hl._set, 'REG4_ro', value=val)
+
+    def test_write_only(self):
+        self.assertRaises(IOError, self.hl._get, 'REG5_wo')
 
     def test_set_default(self):
         self.hl.set_default()
@@ -45,10 +54,10 @@ class TestRegisterHardwareLayer(unittest.TestCase):
         self.assertDictEqual(mem, self.hl._intf.mem)
 
     def test_write_read_reg(self):
-        for reg in self.hl._registers.iterkeys():
+        for reg in ['REG1', 'REG2', 'REG3']:
             val = self.hl._registers[reg]['default']
-            self.hl.set(reg, val)
-            ret_val = self.hl.get(reg)
+            self.hl._set(reg, val)
+            ret_val = self.hl._get(reg)
             self.assertEqual(ret_val, val)
         self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255}, self.hl._intf.mem)
 
@@ -71,7 +80,7 @@ class TestRegisterHardwareLayer(unittest.TestCase):
 
     def test_set_attribute_too_long_string(self):
         val = '11010101010101010'  # 17 bit
-        self.assertRaises(ValueError, self.hl.set, 'REG3', value=val)
+        self.assertRaises(ValueError, self.hl._set, 'REG3', value=val)
 
     def test_set_attribute_dict_access(self):
         self.hl['REG1'] = 27306  # 27306
@@ -79,7 +88,7 @@ class TestRegisterHardwareLayer(unittest.TestCase):
 
     def test_set_attribute_too_big_val(self):
         val = 2 ** 16  # max 2 ** 16 - 1
-        self.assertRaises(ValueError, self.hl.set, 'REG3', value=val)
+        self.assertRaises(ValueError, self.hl._set, 'REG3', value=val)
 
 if __name__ == '__main__':
     unittest.main()
