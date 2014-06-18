@@ -55,3 +55,9 @@ class RegisterHardwareLayer(HardwareLayer):
         descr.setdefault('offset', 0)
         self._registers[reg].update({'current': value if isinstance(value, (int, long)) else int(value, base=2)})
         self._set_value(value, **descr)
+
+    def __getitem__(self, name):
+        return self.get(name)
+
+    def __setitem__(self, name, value):
+        return self.set(name, value)
