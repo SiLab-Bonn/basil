@@ -73,6 +73,10 @@ class TestRegisterHardwareLayer(unittest.TestCase):
         val = '11010101010101010'  # 17 bit
         self.assertRaises(ValueError, self.hl.set, 'REG3', value=val)
 
+    def test_set_attribute_dict_access(self):
+        self.hl['REG1'] = 27306  # 27306
+        self.assertEqual(27306, self.hl['REG1'])
+
     def test_set_attribute_too_big_val(self):
         val = 2 ** 16  # max 2 ** 16 - 1
         self.assertRaises(ValueError, self.hl.set, 'REG3', value=val)
