@@ -36,6 +36,14 @@ class TestRegisterHardwareLayer(unittest.TestCase):
         self.hl.set_default()
         self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255}, self.hl._intf.mem)
 
+    def test_set_attribute_add(self):
+        mem = self.hl._intf.mem
+        val = self.hl._registers['REG1']['default']
+        self.hl.REG1 = val  # 12
+        self.hl.REG1 += 1  # 13
+        mem[0] = 13
+        self.assertDictEqual(mem, self.hl._intf.mem)
+
     def test_write_read_reg(self):
         for reg in self.hl._registers.iterkeys():
             val = self.hl._registers[reg]['default']
@@ -56,7 +64,6 @@ class TestRegisterHardwareLayer(unittest.TestCase):
         mem[2] = 170
         mem[3] = 170
         self.assertDictEqual(mem, self.hl._intf.mem)
-        print self.hl._intf.mem
 
     def test_get_attribute_by_string(self):
         self.hl.REG3 = '1010101010101010'  # 43690
