@@ -13,6 +13,8 @@
 from basil.dut import Base
 from basil.utils.BitLogic import BitLogic
 
+from array import array
+
 
 class HardwareLayer(Base):
     '''Hardware Layer.
@@ -30,7 +32,7 @@ class HardwareLayer(Base):
     def init(self):
         pass
 
-    def _set_value(self, value, addr, size, offset):
+    def _set_value(self, value, addr, size, offset, **kwargs):
         '''Writing a value of any arbitrary size (max. unsigned int 64) and offset to a register
 
         Parameters
@@ -66,9 +68,9 @@ class HardwareLayer(Base):
             reg[size + offset - 1:offset] = BitLogic(value)
         else:
             raise ValueError('Type not supported')
-        self._intf.write(self._base_addr + addr, data=reg.tobytes())
+        self._intf.write(self._base_addr + addr, data=array('B', reg.tobytes()))
 
-    def _get_value(self, addr, size, offset):
+    def _get_value(self, addr, size, offset, **kwargs):
         '''Reading a value of any arbitrary size (max. unsigned int 64) and offset from a register
 
         Parameters
@@ -93,7 +95,7 @@ class HardwareLayer(Base):
         reg.frombytes(ret.tostring())
         return reg[size + offset - 1:offset].tovalue()
 
-    def _set_data(self, data, addr):
+    def _set_data(self, data, addr, **kwargs):
         '''Writing bytes of any arbitrary size
 
         Parameters
@@ -109,7 +111,7 @@ class HardwareLayer(Base):
         '''
         self._intf.write(self._conf['base_addr'] + addr, data)
 
-    def _get_data(self, addr, size):
+    def _get_data(self, addr, size, **kwargs):
         '''Reading bytes of any arbitrary size
 
         Parameters
