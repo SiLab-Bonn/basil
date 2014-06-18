@@ -46,12 +46,12 @@ class FEI4AdapterCard(HardwareLayer):
     HEADER_FORMAT = '>H'  # Version of EEPROM data
     HEADER_V1 = 0xa101
     HEADER_V2 = 0xa102
-    ID_ADDR = 2
+    ID_ADDR = HEADER_ADDR + calcsize(HEADER_FORMAT)
     ID_FORMAT = '>H'  # Adapter Card ID
     CAL_DATA_CH_V1_FORMAT = '8sddddddddd'
     CAL_DATA_CH_V2_FORMAT = '8sddddddddddddddd'
     CAL_DATA_CONST_V1_FORMAT = 'dddddd'
-    CAL_DATA_ADDR = 4
+    CAL_DATA_ADDR = ID_ADDR + calcsize(ID_FORMAT)
     CAL_DATA_V1_FORMAT = '<' + 4 * CAL_DATA_CH_V1_FORMAT + CAL_DATA_CONST_V1_FORMAT
     CAL_DATA_V2_FORMAT = '<' + 4 * CAL_DATA_CH_V2_FORMAT
 
@@ -65,7 +65,7 @@ class FEI4AdapterCard(HardwareLayer):
 
     _temp_cal = dict(
         B_NTC=3425.0,  # NTC 'b' coefficient, NTC Semitec 103KT1608-1P
-        R_NTC_25=10000.0,  # NTC 25 C resistance, NTC Semitec 103KT1608-1P
+        R_NTC_25=10000.0,  # NTC 25C resistance, NTC Semitec 103KT1608-1P
         R1=3900.0,  # resistor value for NTC voltage divider
         R2=4700.0,  # value of R2 in the reference voltage divider
         R4=10000.0,  # value of R4 in the reference voltage divider
@@ -256,6 +256,14 @@ class FEI4AdapterCard(HardwareLayer):
 
         return raw
 
+    def get_format(self):
+        ret = self._read_eeprom(self.HEADER_ADDR, size=calcsize(self.HEADER_FORMAT))
+        return unpack_from(self.HEADER_FORMAT, ret)[0]
+
+    def get_id(self):
+        ret = self._read_eeprom(self.ID_ADDR, size=calcsize(self.ID_FORMAT))
+        return unpack_from(self.ID_FORMAT, ret)[0]
+
     def _read_eeprom(self, addr, size):
         '''Reading EEPROM 24LC128
         '''
@@ -282,8 +290,7 @@ class FEI4AdapterCard(HardwareLayer):
                 channels = self._ch_cal.keys()
             else:
                 channels = []
-        ret = self._read_eeprom(self.HEADER_ADDR, size=calcsize(self.HEADER_FORMAT))
-        header = unpack_from(self.HEADER_FORMAT, ret)[0]
+        header = self.get_format()
         if header == self.HEADER_V1:
             data = self._read_eeprom(self.CAL_DATA_ADDR, size=calcsize(self.CAL_DATA_V1_FORMAT))
             for idx, channel in enumerate(self._ch_cal.iterkeys()):
