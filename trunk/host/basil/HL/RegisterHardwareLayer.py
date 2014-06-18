@@ -46,7 +46,6 @@ class RegisterHardwareLayer(HardwareLayer):
         descr.setdefault('offset', 0)
         curr_val = self._registers[reg].setdefault('current', None)
         ret_val = self._get_value(**descr)
-        print reg, curr_val, ret_val
         if curr_val and curr_val != ret_val:
             raise ValueError('Read value is not expected')
         return ret_val
