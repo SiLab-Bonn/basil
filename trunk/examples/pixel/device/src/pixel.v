@@ -78,7 +78,7 @@ module pixel (
     assign SDA = 1'bz;
     assign SCL = 1'bz;
     
-    assign DEBUG_D = 16'ha5a5;
+
     
     wire BUS_CLK;
     wire SPI_CLK;
@@ -242,6 +242,8 @@ module pixel (
     assign PIXEL_SR_EN          = SEQ_OUT[4];
     assign INJECT               = SEQ_OUT[5];
     
+	 assign DEBUG_D = {SEQ_OUT,SEQ_OUT};
+		  
     OFDDRRSE GLOBAL_SR_GC (
         .CE(GLOBAL_SR_EN), 
         .C0(~SPI_CLK),
