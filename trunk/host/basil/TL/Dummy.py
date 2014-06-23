@@ -17,14 +17,17 @@ import array
 class Dummy(TransferLayer):
     '''Dummy device
     '''
-    mem = dict()  # dummy memory, keys are addresses, values are of type int
+    mem = {}  # dummy memory dictionary, keys are addresses, values are of type int
 
     def __init__(self, conf):
         super(Dummy, self).__init__(conf)
+        print 'DummyTransferLayer.__init__'
 
     def init(self):
-        print "Init Dummy TransferLayer"
-        print "Conf:", str(self._conf)
+        print "DummyTransferLayer.init "
+        print "DummyTransferLayer configuration:", str(self._conf)
+        print 'DummyTransferLayer: clear dummy memory'
+        self.mem = {}
 
     def write(self, addr, data):
         '''Write to dummy memory
@@ -42,7 +45,7 @@ class Dummy(TransferLayer):
         '''
         print "DummyTransferLayer.write addr:", hex(addr), "data:", data
         for curr_addr, d in enumerate(data, start=addr):
-            self.mem[curr_addr] = array.array('B', [d])[0]
+            self.mem[curr_addr] = array.array('B', [d])[0]  # write int
 
     def read(self, addr, size):
         '''
