@@ -13,14 +13,13 @@ module seq_gen
 #(
     parameter BASEADDR = 16'h0000,
     parameter HIGHADDR = 16'h0000,
-    parameter ABUSWIDTH = 16,
 
     parameter MEM_BYTES = 16384,
     parameter OUT_BITS = 16
 )(
     input           BUS_CLK,
     input           BUS_RST,
-    input   [ABUSWIDTH-1:0]  BUS_ADD,
+    input   [15:0]  BUS_ADD,
     inout   [7:0]   BUS_DATA,
     input           BUS_RD,
     input           BUS_WR,
@@ -30,11 +29,11 @@ module seq_gen
 );
 
 wire IP_RD, IP_WR;
-wire [ABUSWIDTH-1:0] IP_ADD;
+wire [15:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
 wire [7:0] IP_DATA_OUT;
 
-bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH)) i_bus_to_ip
+bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
 (
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
@@ -50,7 +49,6 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH)) i_
 
 seq_gen_core 
 #(
-    .ABUSWIDTH(ABUSWIDTH),
     .MEM_BYTES(MEM_BYTES),
     .OUT_BITS(OUT_BITS)
 ) i_seq_gen_core 

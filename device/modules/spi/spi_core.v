@@ -19,7 +19,7 @@ module spi_core
     input      [7:0]            BUS_DATA_IN,
     input                       BUS_RD,
     input                       BUS_WR,
-    output reg [7:0]            BUS_DATA_OUT,
+    output     reg [7:0]        BUS_DATA_OUT,
     
     input SPI_CLK,
     
@@ -31,7 +31,7 @@ module spi_core
     output reg SLD
 );
 
-reg [7:0] status_regs [8+MEM_BYTES*2-1:0];
+reg [7:0] status_regs [8+MEM_BYTES*2-1:0];  
 
 wire RST;
 wire SOFT_RST;
@@ -45,8 +45,8 @@ always @(posedge BUS_CLK) begin
         status_regs[0] <= 0;
         status_regs[1] <= 0;
         status_regs[2] <= 0;
-        status_regs[3] <= DEF_BIT_OUT[7:0]; //bits
-        status_regs[4] <= DEF_BIT_OUT[15:8]; //bits
+        status_regs[3] <= DEF_BIT_OUT[15:8]; //bits
+        status_regs[4] <= DEF_BIT_OUT[7:0]; //bits
         status_regs[5] <= 0; //wait
         status_regs[6] <= 0; //wait
         status_regs[7] <= 1; // 7  repeat
@@ -63,7 +63,7 @@ assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 assign START = (BUS_ADD==1 && BUS_WR);
 
 wire [15:0] CONF_BIT_OUT;
-assign CONF_BIT_OUT = {status_regs[4],status_regs[3]};
+assign CONF_BIT_OUT = {status_regs[3],status_regs[4]};
 
 //TODO:
 wire [7:0] CONF_CLK_DIV;
@@ -71,7 +71,7 @@ assign CONF_CLK_DIV = status_regs[2];
 reg CONF_DONE;
 
 wire [15:0] CONF_WAIT;
-assign CONF_WAIT = {status_regs[6],status_regs[5]};
+assign CONF_WAIT = {status_regs[5],status_regs[6]};
 
 wire [7:0] CONF_REPEAT;
 assign CONF_REPEAT = status_regs[7];
@@ -85,15 +85,15 @@ always@(posedge BUS_CLK) begin
         if(BUS_ADD == 1)
             BUS_DATA_OUT <= {7'b0,CONF_DONE};
         else if(BUS_ADD == 3)
-            BUS_DATA_OUT <= CONF_BIT_OUT[7:0];
+            BUS_DATA_OUT <= CONF_BIT_OUT[15:8];    
         else if(BUS_ADD == 4)
-            BUS_DATA_OUT <= CONF_BIT_OUT[15:8];
+            BUS_DATA_OUT <= CONF_BIT_OUT[7:0];
         else if(BUS_ADD == 5)
-            BUS_DATA_OUT <= CONF_WAIT[7:0];
+            BUS_DATA_OUT <= CONF_WAIT[15:8];
         else if(BUS_ADD == 6)
-            BUS_DATA_OUT <= CONF_WAIT[15:8]; 
+            BUS_DATA_OUT <= CONF_WAIT[7:0]; 
         else if(BUS_ADD == 7)
-            BUS_DATA_OUT <= CONF_REPEAT;
+            BUS_DATA_OUT <= CONF_REPEAT;     
         else if(BUS_ADD < 8)
             BUS_DATA_OUT <= BUS_STATUS_OUT;
         else if(BUS_ADD < 8+MEM_BYTES )
@@ -137,7 +137,7 @@ blk_mem_gen_8_to_1_2k memout(
 );
 
 wire [10:0] ADDRA_MIN;
-assign ADDRA_MIN = (BUS_ADD-8-MEM_BYTES);
+assign ADDRA_MIN = (BUS_ADD-8-MEM_BYTES) ;
 wire [13:0] ADDRB_MIN;
 assign ADDRB_MIN = out_bit_cnt-1;
 reg SEN_INT;

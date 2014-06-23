@@ -51,16 +51,16 @@ assign RST = BUS_RST | SOFT_RST;
 
 reg [7:0] status_regs[1:0];
 
-wire CONF_EN; // ENABLE BUS_ADD==1 BIT==0
+wire CONF_EN; // ENABLE BUS_ADD==1 BIT==0 or BUS_ADD==1 BIT==3
+wire CONF_EN_EXT;
+assign CONF_EN_EXT = status_regs[1][3];
 assign CONF_EN = status_regs[1][0];
-wire CONF_EN_EXT; // ENABLE EXTERN BUS_ADD==1 BIT==1
-assign CONF_EN_EXT = status_regs[1][1];
-wire CONF_EN_ARM_TDC; // BUS_ADD==1 BIT==2
-assign CONF_EN_ARM_TDC = status_regs[1][2];
-wire CONF_EN_WRITE_TS; // BUS_ADD==1 BIT==3
-assign CONF_EN_WRITE_TS = status_regs[1][3];
-reg [7:0] LOST_DATA_CNT, LOST_DATA_CNT_BUF; // BUS_ADD==0
-reg [15:0] EVENT_CNT, EVENT_CNT_BUF; // BUS_ADD==2 - 3
+wire CONF_EN_ARM_TDC; // ENABLE BUS_ADD==1 BIT==1
+assign CONF_EN_ARM_TDC = status_regs[1][1];
+wire CONF_EN_WRITE_TS; // ENABLE BUS_ADD==1 BIT==2
+assign CONF_EN_WRITE_TS = status_regs[1][2];
+reg [7:0] LOST_DATA_CNT, LOST_DATA_CNT_BUF; // BUS_ADD==2
+reg [15:0] EVENT_CNT, EVENT_CNT_BUF; // BUS_ADD==3 - 4
 
 always @(posedge BUS_CLK) begin
     if(RST) begin
@@ -74,12 +74,14 @@ end
 always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if (BUS_ADD == 0)
-            BUS_DATA_OUT <= LOST_DATA_CNT_BUF;
+            BUS_DATA_OUT <= status_regs[0];
         else if(BUS_ADD == 1)
             BUS_DATA_OUT <= status_regs[1];
         else if(BUS_ADD == 2)
-            BUS_DATA_OUT <= EVENT_CNT_BUF[7:0];
+            BUS_DATA_OUT <= LOST_DATA_CNT_BUF;
         else if(BUS_ADD == 3)
+            BUS_DATA_OUT <= EVENT_CNT_BUF[7:0];
+        else if(BUS_ADD == 4)
             BUS_DATA_OUT <= EVENT_CNT_BUF[15:8];
         else
             BUS_DATA_OUT <= 0;
@@ -105,7 +107,7 @@ begin
         EVENT_CNT_BUF <= 16'b0;
     else
     begin
-        if (BUS_ADD == 2)
+        if (BUS_ADD == 3)
             EVENT_CNT_BUF <= EVENT_CNT;
         else
             EVENT_CNT_BUF <= EVENT_CNT_BUF;
