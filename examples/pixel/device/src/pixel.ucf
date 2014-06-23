@@ -391,21 +391,23 @@ NET "SCL" LOC = D14;
 #NET "INMUX[3]" LOC = F11;
 #NET "INMUX[1]" LOC = E12;
 
-NET "PIXEL_SR_OUT" LOC = A9; #IoMxIn0 on chip
-NET "HIT_OR" LOC = E12; #IoMxIn1 on chip
+# outputs (from FPGA -> chip)
 NET "INJECT" LOC = E11; #IoMxSel0
-NET "SR_IN" LOC = D11; #IoMxIn2
-NET "GLOBAL_DAC_LD" LOC = A4; #SelAltBus
-NET "GLOBAL_SR_CLK" LOC = F11; #IoMxIn3
 NET "GLOBAL_CTR_LD" LOC = B9; #IoMxSel1
-NET "PIXEL_SR_CLK" LOC = B6; #SelCmd
+NET "PIXEL_SR_EN" LOC = E10; #IoMxSel2
+NET "GLOBAL_SR_EN" LOC = A9; #IoMxIn0 on chip
+NET "GLOBAL_DAC_LD" LOC = E12; #IoMxIn1 on chip
+NET "SR_IN" LOC = D11; #IoMxIn2
+NET "GLOBAL_SR_CLK" LOC = F11; #IoMxIn3
+NET "PIXEL_SR_CLK" LOC = B6; #SelCmd # does not work
 
-#NET "" LOC = A7; #IoMxOut0
-#NET "" LOC = E10; #IoMxSel2
+NET "PIXEL_SR_OUT" LOC = A7; #IoMxOut0
+NET "HIT_OR" LOC = D12; #IoMxOut1
+
 #NET "" LOC = D14; #SDA
 #NET "" LOC = D10; #SCL
-#NET "" LOC = D12; #IoMxOut1
 #NET "" LOC = A8; #IoMxOut2
+#NET "" LOC = A4; #SelAltBus
 
 # Enable Regulators
 NET "EN_VA1" LOC = H6 | IOSTANDARD = LVCMOS33;

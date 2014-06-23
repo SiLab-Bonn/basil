@@ -15,7 +15,7 @@ version : 0.01
 
 transfer_layer:
   - name  : usb
-    type  : SimSiUsb # or SimSiUsb to run as simulation
+    type  : SiUsb # or SimSiUsb to run as simulation
     board_id  : -1
     bit_file : "../device/ise/pixel.bit"
     
@@ -129,23 +129,7 @@ registers:
           - name     : EMPTY_1
             size     : 16
             offset   : 0
-#          - name     : DEFAULT0 
-#            size     : 8         
-#            offset   : 143
-#          - name     : DEFAULT1 
-#            size     : 8         
-#            offset   : 135
-#          - name     : DEFAULT2 
-#            size     : 8         
-#            offset   : 127
-#          - name     : DEFAULT3 
-#            size     : 8         
-#            offset   : 119
-#          - name     : DisVbn 
-#            size     : 8         
-#            offset   : 111
-          
-    
+
   - name        : PIXEL_REG
     type        : StdRegister
     driver      : None

@@ -15,50 +15,54 @@ import numpy as np
 import time
 
 from basil.dut import Dut
+
+# rename Dut to Pixel
 class Pixel(Dut):
     pass
 
 ##
 
+# Read in the configuration YAML file
 stream = open("pixel.yaml", 'r')
 cnfg = yaml.load(stream)
+
+# Create the Pixel object
 chip = Pixel(cnfg)
 
 try:      
+    # Initialize the chip
     chip.init()
 except NotImplementedError: # this is to make simulation not fail
     pass
     
-print 'play with diodes'
-for i in range(16):
-    chip['PWR']['LED'] = i
-    time.sleep(0.5)
-    chip['PWR'].write()
-
+# turn on the adapter card's power
 chip['PWR']['EN_VD1'] = 1
 chip['PWR']['EN_VD2'] = 1
 chip['PWR']['EN_VA1'] = 1
 chip['PWR']['EN_VA2'] = 1
 chip['PWR'].write()
 
-#this is fro debug is hack
-chip['usb'].write( 0x10000 + 2, [0x00])
-chip['usb'].write( 0x10000 + 2, [0xff])
+# TODO: not sure if this line is necessary
+#chip['PWRAC'].set_voltage("VDDD1",1.2)
+#print "VDDD1", chip['PWRAC'].get_voltage("VDDD1"), chip['PWRAC'].get_current("VDDD1")
 
-chip['PWRAC'].set_voltage("VDDD1",1.2)
-print "VDDD1", chip['PWRAC'].get_voltage("VDDD1"), chip['PWRAC'].get_current("VDDD1")
+# set inputs to chip
+# all inputs must end up assigned to a field in chip['SEQ']
+# when chip['SEQ'] is set up, call
+# chip['SEQ'].write(num_bits)
+# chip['SEQ_GEN'].set_size(num_bits)
+# chip['SEQ_GEN'].set_repeat(0->forever, n->n times)
+# chip['SEQ_GEN'].start()
 
-#create configuration pattern
-
-#settings for global reg 
+#settings for global register
 chip['GLOBAL_REG']['global_readout_enable'] = 0# size = 1 bit
 chip['GLOBAL_REG']['SRDO_load'] = 0# size = 1 bit
 chip['GLOBAL_REG']['NCout2'] = 0# size = 1 bit
 chip['GLOBAL_REG']['count_hits_not'] = 0# size = 1
 chip['GLOBAL_REG']['count_enable'] = 0# size = 1
 chip['GLOBAL_REG']['count_clear_not'] = 0# size = 1
-chip['GLOBAL_REG']['S0'] = 1# size = 1
-chip['GLOBAL_REG']['S1'] = 1# size = 1
+chip['GLOBAL_REG']['S0'] = 0# size = 1
+chip['GLOBAL_REG']['S1'] = 0# size = 1
 chip['GLOBAL_REG']['config_mode'] = 0# size = 2
 chip['GLOBAL_REG']['LD_IN0_7'] = 0# size = 8
 chip['GLOBAL_REG']['LDENABLE_SEL'] = 0# size = 1
@@ -73,17 +77,11 @@ chip['GLOBAL_REG']['PrmpVbnFol'] = 0# size = 8
 chip['GLOBAL_REG']['vth'] = 0# size = 8
 chip['GLOBAL_REG']['PrmpVbf'] = 0# size = 8
 
-
-#define patter for every output 
+#define pattern for every output 
 #set global register
 
 chip['SEQ']['SHIFT_IN'][0:144] = chip['GLOBAL_REG'][:]
 chip['SEQ']['GLOBAL_SHIFT_EN'][0:144] = True
-
-#chip['SEQ']['GLOBAL_SHIFT_EN'][:] = True
-
-#print 'A', chip['GLOBAL_REG'][:], len(chip['SEQ']['SHIFT_IN'][0:176]), type(chip['GLOBAL_REG'][:])
-#print 'B', chip['SEQ']['SHIFT_IN'][:200].to01()
 
 chip['SEQ']['GLOBAL_CTR_LD'][146:147] = True
 chip['SEQ']['GLOBAL_DAC_LD'][146:147] = True
@@ -114,25 +112,25 @@ chip['PIXEL_RX'].set_en(True) #enable receiver
 print "chip['SEQ_GEN'].start()"
 chip['SEQ_GEN'].start()
 
-i = 0
-while chip['SEQ_GEN'].is_ready == False:
-    time.sleep(0.01)
-    print "Wait for done...",i
-    i = i + 1 
-    
-print "chip['DATA'].get_fifo_size()", chip['DATA'].get_fifo_size()
-    
-print "chip['DATA'].get_data()"
-rxd = chip['DATA'].get_data() #get data from sram fifo
-print "rxd = ", rxd
-
-data0 = rxd.astype(np.uint8) # Change type to unsigned int 8 bits and take from rxd only the last 8 bits
-data1 = np.right_shift(rxd, 8).astype(np.uint8) # Rightshift rxd 8 bits and take again last 8 bits
-data = np.reshape(np.vstack((data1, data0)), -1, order='F') # data is now a 1 dimensional array of all bytes read from the FIFO
-bdata = np.unpackbits(data).reshape(-1,128)
-
-print "data = ", data
-print "bdata = ", bdata
-sum =  np.sum(bdata, axis=0)
-sum = sum[::-1] # reverse the array
-#print sum
+#i = 0
+#while chip['SEQ_GEN'].is_ready == False:
+#    time.sleep(0.01)
+#    print "Wait for done...",i
+#    i = i + 1 
+#    
+#print "chip['DATA'].get_fifo_size()", chip['DATA'].get_fifo_size()
+#    
+#print "chip['DATA'].get_data()"
+#rxd = chip['DATA'].get_data() #get data from sram fifo
+#print "rxd = ", rxd
+#
+#data0 = rxd.astype(np.uint8) # Change type to unsigned int 8 bits and take from rxd only the last 8 bits
+#data1 = np.right_shift(rxd, 8).astype(np.uint8) # Rightshift rxd 8 bits and take again last 8 bits
+#data = np.reshape(np.vstack((data1, data0)), -1, order='F') # data is now a 1 dimensional array of all bytes read from the FIFO
+#bdata = np.unpackbits(data).reshape(-1,128)
+#
+#print "data = ", data
+#print "bdata = ", bdata
+#sum =  np.sum(bdata, axis=0)
+#sum = sum[::-1] # reverse the array
+##print sum

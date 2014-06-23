@@ -21,6 +21,10 @@ FIFO_BASE_ADD = 0x0020
 GPIO_BASE_ADD = 0x0000
 
 #blink some diodes
+# GPIO 0 = reset
+# 1 = ?
+# 2 = set
+# 0xff is enable, 0x00 is disable
 sidev.WriteExternal( GPIO_BASE_ADD + 2,  [0xff])
 time.sleep(0.5) 
 sidev.WriteExternal( GPIO_BASE_ADD + 2,  [0x00])
@@ -29,12 +33,14 @@ sidev.WriteExternal( GPIO_BASE_ADD + 2,  [0xff])
 
 
 #enable FAST_SR_AQ
-sidev.WriteExternal( FAST_SR_AQ + 2,  [0x01]);
+#sidev.WriteExternal( FAST_SR_AQ + 2,  [0x01]);
 
 #put some data into SEQ memory
+#sidev.WriteExternal( SEQ_GEN_BASEADDR + 16,  [0x00]*100 ); 
+#sidev.WriteExternal( SEQ_GEN_BASEADDR + 16 + 16,  [0xff]*16 );
+#sidev.WriteExternal( SEQ_GEN_BASEADDR + 16 + 16 + 7,  [0xfe]*2 ); #to have some pattern 
 sidev.WriteExternal( SEQ_GEN_BASEADDR + 16,  [0x00]*100 ); 
-sidev.WriteExternal( SEQ_GEN_BASEADDR + 16 + 16,  [0xff]*16 );
-sidev.WriteExternal( SEQ_GEN_BASEADDR + 16 + 16 + 7,  [0xfe]*2 ); #to have some pattern 
+sidev.WriteExternal( SEQ_GEN_BASEADDR + 16,  [0b10101010, 0b01010101, 0b10101010, 0b11111111] ); 
 #set size
 sidev.WriteExternal( SEQ_GEN_BASEADDR + 3,  [100,0]); 
 #set repeat
