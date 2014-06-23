@@ -20,11 +20,14 @@ class Base(object):
     def init(self):
         pass  # nothing to do here
 
+    def set_configuration(self, conf):
+        pass
+
     def get_configuration(self):
-        return self._conf
+        return {}
 
 
-class Dut(object):
+class Dut(Base):
     '''Device
     '''
     _transfer_layer = None
@@ -32,58 +35,83 @@ class Dut(object):
     _user_drivers = None
     _registers = None
 
-    def __init__(self, config):
-        self.load(config)
+    def __init__(self, conf):
+        super(Dut, self).__init__(conf)
+        self.load_configuration(self._conf)
 
     def init(self):
-        for tl in self._transfer_layer:
-            self._transfer_layer[tl].init()
-        for hl in self._hardware_layer:
-            self._hardware_layer[hl].init()
-        for ul in self._user_drivers:
-            self._user_drivers[ul].init()
-        for rl in self._registers:
-            self._registers[rl].init()
+        for tl in self._transfer_layer.itervalues():
+            tl.init()
+        for hl in self._hardware_layer.itervalues():
+            hl.init()
+        for ul in self._user_drivers.itervalues():
+            ul.init()
+        for rl in self._registers.itervalues():
+            rl.init()
 
-    def load(self, config, extend_config=False):
+    def set_configuration(self, conf):
+        if isinstance(conf, basestring):
+            stream = open(conf)
+            conf = safe_load(stream)  # parse the first YAML document in a stream
+        elif isinstance(conf, file):
+            conf = safe_load(conf)  # parse the first YAML document in a stream
+        else:
+            pass  # conf is already a dict
+
+        for item, item_conf in conf.iteritems():
+            self[item].set_configuration(item_conf)
+
+    def get_configuration(self):
+        conf = {}
+        for key, value in self._registers.iteritems():
+            conf[key] = value.get_configuration()
+        for key, value in self._user_drivers.iteritems():
+            conf[key] = value.get_configuration()
+        for key, value in self._hardware_layer.iteritems():
+            conf[key] = value.get_configuration()
+        for key, value in self._transfer_layer.iteritems():
+            conf[key] = value.get_configuration()
+        return conf
+
+    def load_configuration(self, conf, extend_config=False):
         if not extend_config:
             self._transfer_layer = {}
             self._hardware_layer = {}
             self._user_drivers = {}
             self._registers = {}
 
-        if isinstance(config, basestring):
-            stream = open(config)
-            config_dict = safe_load(stream)  # parse the first YAML document in a stream
-        elif isinstance(config, file):
-            config_dict = safe_load(config)  # parse the first YAML document in a stream
+        if isinstance(conf, basestring):
+            stream = open(conf)
+            conf = safe_load(stream)  # parse the first YAML document in a stream
+        elif isinstance(conf, file):
+            conf = safe_load(conf)  # parse the first YAML document in a stream
         else:
-            config_dict = config
+            pass  # conf is already a dict
 
-        for intf in config_dict['transfer_layer']:
+        for intf in conf['transfer_layer']:
             kargs = {}
             kargs['conf'] = intf
             self._transfer_layer[intf['name']] = self._factory('TL.' + intf['type'], intf['type'], *(), **kargs)
 
-        if 'hw_drivers' in config_dict:
-            if config_dict['hw_drivers']:
-                for hwdrv in config_dict['hw_drivers']:
+        if 'hw_drivers' in conf:
+            if conf['hw_drivers']:
+                for hwdrv in conf['hw_drivers']:
                     kargs = {}
                     kargs['intf'] = self._transfer_layer[hwdrv['interface']]
                     kargs['conf'] = hwdrv
                     self._hardware_layer[hwdrv['name']] = self._factory('HL.' + hwdrv['type'], hwdrv['type'], *(), **kargs)
 
-        if 'user_drivers' in config_dict:
-            if config_dict['user_drivers']:
-                for userdrv in config_dict['user_drivers']:
+        if 'user_drivers' in conf:
+            if conf['user_drivers']:
+                for userdrv in conf['user_drivers']:
                     kargs = {}
                     kargs['hw_driver'] = self._hardware_layer[userdrv['hw_driver']]
                     kargs['conf'] = userdrv
                     self._user_drivers[userdrv['name']] = self._factory('UL.' + userdrv['type'], userdrv['type'], *(), **kargs)
 
-        if 'registers' in config_dict:
-            if config_dict['registers']:
-                for reg in config_dict['registers']:
+        if 'registers' in conf:
+            if conf['registers']:
+                for reg in conf['registers']:
                     kargs = {}
                     if 'driver' in reg:
                         if reg['driver'].lower() == 'none' or not reg['driver']:
@@ -119,6 +147,3 @@ class Dut(object):
     #TODO
     def __setitem__(self, key, value):
         self._registers[key].set(value)
-
-    def get_configuration(self):
-        raise NotImplementedError
