@@ -60,6 +60,8 @@ module pixel (
     output GLOBAL_SR_CLK,
     output GLOBAL_CTR_LD,
     output GLOBAL_DAC_LD,
+	 output GLOBAL_SR_EN,
+	 output PIXEL_SR_EN,
 
     output PIXEL_SR_CLK,
     input PIXEL_SR_OUT,
@@ -233,7 +235,7 @@ module pixel (
     
     );
     
-    wire GLOBAL_SR_EN, PIXEL_SR_EN;
+    //wire GLOBAL_SR_EN, PIXEL_SR_EN;
     
     assign SR_IN                = SEQ_OUT[0];
     assign GLOBAL_SR_EN         = SEQ_OUT[1];   
