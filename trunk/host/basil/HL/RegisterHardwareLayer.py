@@ -32,6 +32,18 @@ class RegisterHardwareLayer(HardwareLayer):
     def init(self):
         pass
 
+    def set_configuration(self, conf):
+        for reg, value in conf.iteritems():
+            self[reg] = value
+
+    def get_configuration(self):
+        conf = {}
+        for reg in self._registers.iterkeys():
+            descr = self._registers[reg]['descr']
+            if not ('properties' in descr and [i for i in write_only if i in descr['properties']]):
+                conf[reg] = self[reg]
+        return conf
+
     def add_property(self, attribute):
         # create local setter and getter with a particular attribute name
         getter = lambda self: self._get(attribute)
