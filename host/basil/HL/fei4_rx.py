@@ -10,13 +10,23 @@
 #  $Date::                      $:
 #
 
-from basil.HL.HardwareLayer import HardwareLayer
+from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from struct import unpack_from
 
 
-class fei4_rx(HardwareLayer):
+class fei4_rx(RegisterHardwareLayer):
     '''FEI4 receiver controller interface for fei4_rx FPGA module
     '''
+
+    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'SOFT_RESET': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
+                  'READY': {'descr': {'addr': 2, 'size': 1, 'properties': ['ro']}},
+                  'INVERT_RX': {'descr': {'addr': 2, 'size': 1, 'offset': 1}},
+                  'FIFO_SIZE': {'default': 0, 'descr': {'addr': 3, 'size': 16, 'properties': ['ro']}},
+                  'DECODER_ERROR_COUNTER': {'descr': {'addr': 5, 'size': 8, 'properties': ['ro']}},
+                  'LOST_DATA_COUNTER': {'descr': {'addr': 6, 'size': 8, 'properties': ['ro']}}
+    }
+
     def __init__(self, intf, conf):
         super(fei4_rx, self).__init__(intf, conf)
 
