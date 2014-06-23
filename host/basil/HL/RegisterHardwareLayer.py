@@ -54,7 +54,7 @@ class RegisterHardwareLayer(HardwareLayer):
 
     def set_default(self):
         for reg, value in self._registers.iteritems():
-            if not 'properties' in value['descr'] or not [i for i in read_only if i in self._registers[reg]['descr']['properties']]:
+            if 'default' in value and not ('properties' in value['descr'] and [i for i in read_only if i in self._registers[reg]['descr']['properties']]):
                 self._set(reg, value['default'])
 
     def _get(self, reg):
