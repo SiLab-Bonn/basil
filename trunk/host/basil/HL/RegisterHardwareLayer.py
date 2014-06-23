@@ -84,10 +84,7 @@ class RegisterHardwareLayer(HardwareLayer):
 
     def __getattr__(self, name):
         def method(*args, **kargs):
-            
             nsplit = name.split('_')
-            print 'RegisterHardwareLayegetatt', name, nsplit, args
-            
             if(len(nsplit) == 2):
                 if(nsplit[0] == 'set' and len(args)== 1):
                     self[nsplit[1]] = args[0]
