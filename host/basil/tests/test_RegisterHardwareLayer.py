@@ -105,6 +105,16 @@ class TestRegisterHardwareLayer(unittest.TestCase):
     def test_set_attribute_too_big_val(self):
         val = 2 ** 16  # max 2 ** 16 - 1
         self.assertRaises(ValueError, self.dut['test_register']._set, 'REG3', value=val)
+        
+    def test_set_by_function(self):
+        self.dut['test_register'].set_REG1(27308)
+        self.assertEqual(27308, self.dut['test_register']['REG1'])
+    
+    def test_get_by_function(self):
+        self.dut['test_register']['REG1'] = 27305  # 27306
+        ret = self.dut['test_register'].get_REG1()
+        self.assertEqual(ret, self.dut['test_register']['REG1'])
+        
 
 if __name__ == '__main__':
     unittest.main()
