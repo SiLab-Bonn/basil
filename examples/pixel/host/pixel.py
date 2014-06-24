@@ -26,6 +26,7 @@ class Pixel(Dut):
         
         gr_size = len(self['GLOBAL_REG'][:]) #get the size
         self['SEQ']['SHIFT_IN'][0:gr_size] = self['GLOBAL_REG'][:] # this will be shifted out
+        self['SEQ']['INJECTION'][0:gr_size] = self['GLOBAL_REG'][:] # this will be shifted out
         self['SEQ']['GLOBAL_SHIFT_EN'][0:gr_size] = bitarray( gr_size * '1') #this is to enable clock
         self['SEQ']['GLOBAL_CTR_LD'][gr_size+1:gr_size+2] = bitarray("1") # load signals
         self['SEQ']['GLOBAL_DAC_LD'][gr_size+1:gr_size+2] = bitarray("1")
@@ -41,6 +42,7 @@ class Pixel(Dut):
         
         px_size = len(self['PIXEL_REG'][:]) #get the size
         self['SEQ']['SHIFT_IN'][0:px_size] = self['PIXEL_REG'][:] # this will be shifted out
+        self['SEQ']['INJECTION'][0:px_size] = self['PIXEL_REG'][:] # this will be shifted out
         self['SEQ']['PIXEL_SHIFT_EN'][0:px_size] = bitarray( px_size * '1') #this is to enable clock
         
         self['SEQ'].write(px_size+1) #write pattern to memeory(add 1 bit more so there is 0 at the end other way will stay high)
@@ -86,9 +88,9 @@ chip['PWR']['EN_VA1'] = 1
 chip['PWR']['EN_VA2'] = 1
 chip['PWR'].write()
 
-# TODO: not sure if this line is necessary
-#chip['PWRAC'].set_voltage("VDDD1",1.2)
-#print "VDDD1", chip['PWRAC'].get_voltage("VDDD1"), chip['PWRAC'].get_current("VDDD1")
+# Set the output voltage on the pins
+chip['PWRAC'].set_voltage("VDDD1",1.2)
+print "VDDD1", chip['PWRAC'].get_voltage("VDDD1"), chip['PWRAC'].get_current("VDDD1")
 
 # set inputs to chip
 # all inputs must end up assigned to a field in chip['SEQ']
@@ -99,13 +101,13 @@ chip['PWR'].write()
 # chip['SEQ_GEN'].start()
 
 #settings for global register
-chip['GLOBAL_REG']['global_readout_enable'] = 0# size = 1 bit
+chip['GLOBAL_REG']['global_readout_enable'] = 1# size = 1 bit
 chip['GLOBAL_REG']['SRDO_load'] = 0# size = 1 bit
-chip['GLOBAL_REG']['NCout2'] = 0# size = 1 bit
+chip['GLOBAL_REG']['NCout2'] = 1# size = 1 bit
 chip['GLOBAL_REG']['count_hits_not'] = 0# size = 1
-chip['GLOBAL_REG']['count_enable'] = 0# size = 1
+chip['GLOBAL_REG']['count_enable'] = 1# size = 1
 chip['GLOBAL_REG']['count_clear_not'] = 0# size = 1
-chip['GLOBAL_REG']['S0'] = 0# size = 1
+chip['GLOBAL_REG']['S0'] = 1# size = 1
 chip['GLOBAL_REG']['S1'] = 0# size = 1
 chip['GLOBAL_REG']['config_mode'] = 0# size = 2
 chip['GLOBAL_REG']['LD_IN0_7'] = 0# size = 8
@@ -128,8 +130,11 @@ chip.program_global_reg()
 chip['PIXEL_RX'].set_en(True) #enable receiver it work only if pixel register is enabled/clocked
 
 #set something to pixel register
-chip['PIXEL_REG'][0] = 1
-chip['PIXEL_REG'][2] = 1
+#chip['PIXEL_REG'][2] = 1
+#chip['PIXEL_REG'][3] = 1
+
+chip['PIXEL_REG'][:] = bitarray('1'*128)
+chip['PIXEL_REG'][0] = 0
 
 print "program pixel register..."
 chip.program_pixel_reg()
