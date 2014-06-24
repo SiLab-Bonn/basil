@@ -90,9 +90,22 @@ class spi(HardwareLayer):
         return (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x01) == 1
 
     def set_data(self, data, addr=0):
+        """
+        To call start() automatically yaml file needs "auto_start"
+        example
+          - name      : CCPD_PCB_SPI
+            type      : spi
+            interface : usb
+            base_addr : 0x18900
+            mem_bytes : 4
+            auto_start: True  <----
+        """
         if self._spi_mem_size < len(data):
             raise ValueError('Size of data is too big')
         self._intf.write(self._conf['base_addr'] + self._spi_mem_offset + addr, data)
+        if self._conf.has_key("auto_start"):
+            if self._conf["auto_start"]:
+                self.start()
 
     def get_data(self, size=None, addr=0):
         if size and self._spi_mem_size < size:
