@@ -19,10 +19,53 @@ from basil.dut import Dut
 
 # rename Dut to Pixel
 class Pixel(Dut):
-    pass
+    
+    def program_global_reg(self):
+        
+        self.cler_strobes()
+        
+        gr_size = len(self['GLOBAL_REG'][:]) #get the size
+        self['SEQ']['SHIFT_IN'][0:gr_size] = self['GLOBAL_REG'][:] # this will be shifted out
+        self['SEQ']['GLOBAL_SHIFT_EN'][0:gr_size] = bitarray( gr_size * '1') #this is to enable clock
+        self['SEQ']['GLOBAL_CTR_LD'][gr_size+1:gr_size+2] = bitarray("1") # load signals
+        self['SEQ']['GLOBAL_DAC_LD'][gr_size+1:gr_size+2] = bitarray("1")
 
-##
+        # those function will run on driver SEQ_GEN but this is python magic
+        self['SEQ'].write(gr_size+3) #write pattern to memeory
+        
+        self.run_seq(gr_size+3)
+    
+    def program_pixel_reg(self):
+        
+        self.cler_strobes()
+        
+        px_size = len(self['PIXEL_REG'][:]) #get the size
+        self['SEQ']['SHIFT_IN'][0:px_size] = self['PIXEL_REG'][:] # this will be shifted out
+        self['SEQ']['PIXEL_SHIFT_EN'][0:px_size] = bitarray( px_size * '1') #this is to enable clock
+        
+        self['SEQ'].write(px_size+1) #write pattern to memeory(add 1 bit more so there is 0 at the end other way will stay high)
+        
+        self.run_seq(px_size+1)
+            
+    def run_seq(self, size):
+        self['SEQ'].set_size(size)  # set size
+        self['SEQ'].set_repeat(1) # set reapet
+        self['SEQ'].start() # start
+        
+        i = 0
+        while not chip['SEQ'].get_done():
+            time.sleep(0.01)
+            print "Wait for done...",i
+            i = i + 1
 
+    def cler_strobes(self):
+        #reset some stuff
+        self['SEQ']['GLOBAL_SHIFT_EN'].setall(False)
+        self['SEQ']['GLOBAL_CTR_LD'].setall(False)
+        self['SEQ']['GLOBAL_DAC_LD'].setall(False)
+        self['SEQ']['PIXEL_SHIFT_EN'].setall(False)
+        
+        
 # Read in the configuration YAML file
 stream = open("pixel.yaml", 'r')
 cnfg = yaml.load(stream)
@@ -34,7 +77,7 @@ try:
     # Initialize the chip
     chip.init()
 except NotImplementedError: # this is to make simulation not fail
-    pass
+    print 'chip.init() :: NotImplementedError'
     
 # turn on the adapter card's power
 chip['PWR']['EN_VD1'] = 1
@@ -78,18 +121,23 @@ chip['GLOBAL_REG']['PrmpVbnFol'] = 0# size = 8
 chip['GLOBAL_REG']['vth'] = 0# size = 8
 chip['GLOBAL_REG']['PrmpVbf'] = 0# size = 8
 
-chip['SEQ']['SHIFT_IN'][0:144] = chip['GLOBAL_REG'][:]
-chip['SEQ']['GLOBAL_SHIFT_EN'][0:6] = chip['GLOBAL_REG'][:]
-chip['SEQ']['GLOBAL_CTR_LD'][0:6] = bitarray("000111")
-chip['SEQ']['GLOBAL_DAC_LD'][0:6] = bitarray("001111")
-chip['SEQ']['PIXEL_SHIFT_EN'][0:6] = bitarray("011111")
-chip['SEQ']['INJECTION'][0:6] = bitarray("101010")
+print "program global register..."
+chip.program_global_reg()
 
-# send data to chip and begin
-chip['SEQ'].write(144)
-chip['SEQ_GEN'].set_size(144)
-chip['SEQ_GEN'].set_repeat(0)
-chip['SEQ_GEN'].start()
+
+chip['PIXEL_RX'].set_en(True) #enable receiver it work only if pixel register is enabled/clocked
+
+#set something to pixel register
+chip['PIXEL_REG'][0] = 1
+chip['PIXEL_REG'][2] = 1
+
+print "program pixel register..."
+chip.program_pixel_reg()
+
+
+#chip['SEQ']['PIXEL_SHIFT_EN'][0:6] = bitarray("011111")
+#chip['SEQ']['INJECTION'][0:6] = bitarray("101010")
+
 
 #define pattern for every output 
 #set global register
@@ -122,18 +170,19 @@ chip['SEQ_GEN'].start()
 #chip['SEQ_GEN'].set_repeat(1)
 #
 # required to receive input
-chip['PIXEL_RX'].set_en(True) #enable receiver
+
 #
 #print "chip['SEQ_GEN'].start()"
 #chip['SEQ_GEN'].start()
 
-i = 0
-while chip['SEQ_GEN'].is_ready == False:
-    time.sleep(0.01)
-    print "Wait for done...",i
-    i = i + 1 
-    
-print "chip['DATA'].get_fifo_size()", chip['DATA'].get_fifo_size()
+#i = 0
+#while chip['SEQ_GEN'].is_ready == False:
+#    time.sleep(0.01)
+#    print "Wait for done...",i
+#    i = i + 1 
+
+
+print "chip['DATA'].get_fifo_size() = ", chip['DATA'].get_fifo_size()
     
 print "chip['DATA'].get_data()"
 rxd = chip['DATA'].get_data() #get data from sram fifo
