@@ -86,10 +86,10 @@ registers:
             offset   : 136
           - name     : config_mode
             size     : 2
-            offset   : 134
+            offset   : 135
           - name     : LD_IN0_7
             size     : 8
-            offset   : 126
+            offset   : 133
           - name     : LDENABLE_SEL
             size     : 1
             offset   : 125
@@ -101,34 +101,34 @@ registers:
             offset   : 123
           - name     : NCout21_25
             size     : 5
-            offset   : 118
+            offset   : 122
           - name     : column_address
             size     : 6
-            offset   : 112
+            offset   : 117
           - name     : DisVbn
             size     : 8
-            offset   : 104
+            offset   : 111
           - name     : EMPTY_0
             size     : 48
-            offset   : 56
+            offset   : 103
           - name     : VbpThStep
             size     : 8
-            offset   : 48
+            offset   : 55
           - name     : PrmpVbp
             size     : 8
-            offset   : 40
+            offset   : 47
           - name     : PrmpVbnFol
             size     : 8
-            offset   : 32
+            offset   : 39
           - name     : vth
             size     : 8
-            offset   : 24
+            offset   : 31
           - name     : PrmpVbf
             size     : 8
-            offset   : 16
+            offset   : 23
           - name     : EMPTY_1
             size     : 16
-            offset   : 0
+            offset   : 15
 
   - name        : PIXEL_REG
     type        : StdRegister

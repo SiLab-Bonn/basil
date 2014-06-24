@@ -44,7 +44,7 @@ sidev.WriteExternal( SEQ_GEN_BASEADDR + 16,  [0b10101010, 0b01010101, 0b10101010
 #set size
 sidev.WriteExternal( SEQ_GEN_BASEADDR + 3,  [100,0]); 
 #set repeat
-sidev.WriteExternal( SEQ_GEN_BASEADDR + 7,  [1]); 
+sidev.WriteExternal( SEQ_GEN_BASEADDR + 7,  [0]); 
 #start
 sidev.WriteExternal( SEQ_GEN_BASEADDR + 1,  [0x00]);  
   
