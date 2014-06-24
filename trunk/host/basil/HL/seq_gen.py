@@ -70,6 +70,9 @@ class seq_gen(HardwareLayer):
 
     @property
     def is_ready(self):
+        return self.get_done()
+
+    def get_done(self):
         return (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x01) == 1
 
     def set_data(self, data, addr=0):
