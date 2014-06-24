@@ -95,10 +95,22 @@ class StdRegister(RegisterLayer):
         self[:] = value
 
     def write(self):
+        """
+        to call start() automatically, set yaml file as follows:
+        registers:
+          - name        : CCPD_PCB
+            type        : StdRegister
+            hw_driver   : CCPD_PCB_SPI
+            size        : 32
+            auto_start  : True  <------ add this
+            fields: ......
+        """
         reg = self._construct_reg()
         ba = utils.bitarray_to_byte_array(reg)
-        #print reg, ba
         self._drv.set_data(ba)
+        if self._conf.has_key("auto_start"):
+            if self._conf["auto_start"] :
+                self._drv.start()
 
     def read(self):
         raise NotImplementedError("Not implemented")
