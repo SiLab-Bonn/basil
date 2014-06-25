@@ -10,12 +10,12 @@
 #  $Date::                      $:
 #
 
-from basil.HL.HardwareLayer import HardwareLayer
+from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from struct import pack, unpack_from
 from array import array
 
 
-class seq_gen(HardwareLayer):
+class seq_gen(RegisterHardwareLayer):
     '''Sequencer generator controller interface for seq_gen FPGA module.
     '''
 
