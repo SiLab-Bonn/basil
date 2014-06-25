@@ -33,7 +33,7 @@ class Pixel(Dut):
 
         """
         
-        self.clear_strobes()
+        self._clear_strobes()
         
         gr_size = len(self['GLOBAL_REG'][:]) #get the size
         self['SEQ']['SHIFT_IN'][0:gr_size] = self['GLOBAL_REG'][:] # this will be shifted out
@@ -61,7 +61,7 @@ class Pixel(Dut):
 
         """
         
-        self.clear_strobes()
+        self._clear_strobes()
 
         #enable receiver it work only if pixel register is enabled/clocked
         chip['PIXEL_RX'].set_en(enable_receiver) 
@@ -87,7 +87,7 @@ class Pixel(Dut):
             time.sleep(0.01)
             print "Wait for done..."
 
-    def clear_strobes(self):
+    def _clear_strobes(self):
         """
         Resets the "enable" and "load" output streams to all 0.
 
