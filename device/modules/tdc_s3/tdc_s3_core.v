@@ -60,7 +60,7 @@ assign CONF_EN_ARM_TDC = status_regs[1][2];
 wire CONF_EN_WRITE_TS; // BUS_ADD==1 BIT==3
 assign CONF_EN_WRITE_TS = status_regs[1][3];
 reg [7:0] LOST_DATA_CNT, LOST_DATA_CNT_BUF; // BUS_ADD==0
-reg [15:0] EVENT_CNT, EVENT_CNT_BUF; // BUS_ADD==2 - 3
+reg [31:0] EVENT_CNT, EVENT_CNT_BUF; // BUS_ADD==2 - 3
 
 always @(posedge BUS_CLK) begin
     if(RST) begin
@@ -81,6 +81,10 @@ always @(posedge BUS_CLK) begin
             BUS_DATA_OUT <= EVENT_CNT_BUF[7:0];
         else if(BUS_ADD == 3)
             BUS_DATA_OUT <= EVENT_CNT_BUF[15:8];
+        else if(BUS_ADD == 4)
+            BUS_DATA_OUT <= EVENT_CNT_BUF[23:16];
+        else if(BUS_ADD == 5)
+            BUS_DATA_OUT <= EVENT_CNT_BUF[31:24];
         else
             BUS_DATA_OUT <= 0;
     end
@@ -102,7 +106,7 @@ end
 always @ (negedge BUS_CLK)
 begin
     if (RST)
-        EVENT_CNT_BUF <= 16'b0;
+        EVENT_CNT_BUF <= 32'b0;
     else
     begin
         if (BUS_ADD == 2)
@@ -310,7 +314,7 @@ wire cdc_fifo_write;
 assign cdc_fifo_write = !wfull && FINISH;
 
 wire [31:0] cdc_data;
-assign cdc_data = (CONF_EN_WRITE_TS) ? {DATA_IDENTIFIER, CURR_TIMESTAMP, TDC_VAL} : {DATA_IDENTIFIER, EVENT_CNT, TDC_VAL};
+assign cdc_data = (CONF_EN_WRITE_TS) ? {DATA_IDENTIFIER, CURR_TIMESTAMP, TDC_VAL} : {DATA_IDENTIFIER, EVENT_CNT[15:0], TDC_VAL};
 
 always@(posedge DV_CLK) begin
     if(RST_SYNC)

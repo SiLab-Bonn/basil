@@ -10,13 +10,23 @@
 #  $Date::                      $:
 #
 
-from basil.HL.HardwareLayer import HardwareLayer
+from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from struct import unpack_from
 
 
-class tdc_s3(HardwareLayer):
+class tdc_s3(RegisterHardwareLayer):
     '''TDC controller interface
     '''
+
+    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'LOST_DATA_COUNTER': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
+                  'ENABLE': {'descr': {'addr': 1, 'size': 1, 'offset': 0}},
+                  'ENABLE_EXTERN': {'descr': {'addr': 1, 'size': 1, 'offset': 1}},
+                  'EN_ARMING': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},
+                  'EN_WRITE_TIMESTAMP': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},
+                  'EVENT_COUNTER': {'descr': {'addr': 2, 'size': 32, 'properties': ['ro']}}
+    }
+
     def __init__(self, intf, conf):
         super(tdc_s3, self).__init__(intf, conf)
 
@@ -63,5 +73,5 @@ class tdc_s3(HardwareLayer):
         return True if (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x08) else False
 
     def get_event_counter(self):
-        ret = self._intf.read(self._conf['base_addr'] + 2, size=2)
-        return unpack_from('H', ret)[0]
+        ret = self._intf.read(self._conf['base_addr'] + 2, size=4)
+        return unpack_from('I', ret)[0]
