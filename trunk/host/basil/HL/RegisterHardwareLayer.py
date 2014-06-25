@@ -13,6 +13,8 @@
 
 from basil.HL.HardwareLayer import HardwareLayer
 
+from copy import deepcopy
+
 read_only = ['read-only', 'readonly', 'ro']
 write_only = ['write-only', 'writeonly', 'wo']
 
@@ -58,23 +60,30 @@ class RegisterHardwareLayer(HardwareLayer):
                 self._set(reg, value['default'])
 
     def _get(self, reg):
-        descr = self._registers[reg]['descr']
+        descr = deepcopy(self._registers[reg]['descr'])
         if 'properties' in descr and [i for i in write_only if i in descr['properties']]:
-            raise IOError('Value is write-only')
-        descr.setdefault('offset', 0)
-        curr_val = self._registers[reg].setdefault('current', None)
-        ret_val = self._get_value(**descr)
-        if curr_val and curr_val != ret_val:
-            raise ValueError('Read value is not expected')
-        return ret_val
+            #raise IOError('Register is write-only')
+            self._set(reg, 0)  # allows a lazy style of programming
+            # return nothing to prevent misuse
+        else:
+            descr.setdefault('offset', 0)
+            ret_val = self._get_value(**descr)
+            curr_val = self._registers[reg].setdefault('current', None)
+            if curr_val and curr_val != ret_val:
+                raise ValueError('Read value is not expected', curr_val, ret_val)
+            return ret_val
 
     def _set(self, reg, value):
-        descr = self._registers[reg]['descr']
+        descr = deepcopy(self._registers[reg]['descr'])
         if 'properties' in descr and [i for i in read_only if i in descr['properties']]:
-            raise IOError('Value is read-only')
+            raise IOError('Register is read-only')
         descr.setdefault('offset', 0)
-        self._registers[reg].update({'current': value if isinstance(value, (int, long)) else int(value, base=2)})
-        self._set_value(value, **descr)
+        try:
+            self._set_value(value, **descr)
+        except ValueError:
+            raise
+        else:
+            self._registers[reg].update({'current': value if isinstance(value, (int, long)) else int(value, base=2)})
 
     def __getitem__(self, name):
         return self._get(name)
