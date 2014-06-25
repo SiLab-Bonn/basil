@@ -15,7 +15,6 @@ import unittest
 
 from basil.dut import Dut
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
-from basil.TL.Dummy import Dummy
 
 
 class MyRegisterHardwareLayer(RegisterHardwareLayer):
@@ -37,6 +36,14 @@ class TestRegisterHardwareLayer(unittest.TestCase):
         self.dut._hardware_layer['test_register'] = MyRegisterHardwareLayer(self.dut['test_register']._intf, self.dut['test_register']._conf)
         self.dut.init()
 
+    def test_lazy_programming(self):
+        self.dut['test_register'].set_default()
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0}, self.dut['dummy_tl'].mem)
+        self.dut['test_register'].REG5_wo = 255
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 255}, self.dut['dummy_tl'].mem)
+        self.dut['test_register'].REG5_wo  # get value from write-only register, but this will write zero instead
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0}, self.dut['dummy_tl'].mem)
+
     def test_get_dut_configuration(self):
         self.dut['test_register'].set_default()
         conf = self.dut.get_configuration()
@@ -54,17 +61,26 @@ class TestRegisterHardwareLayer(unittest.TestCase):
     def test_read_only(self):
         self.assertRaises(IOError, self.dut['test_register']._set, 'REG4_ro', value=0)
 
-    def test_write_only(self):
-        self.assertRaises(IOError, self.dut['test_register']._get, 'REG5_wo')
+#     def test_write_only(self):
+#         self.assertRaises(IOError, self.dut['test_register']._get, 'REG5_wo')
+
+    def test_write_only_lazy_programming(self):
+        self.dut['test_register'].set_default()
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0}, self.dut['dummy_tl'].mem)
+        self.dut['test_register'].REG5_wo = 20
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 20}, self.dut['dummy_tl'].mem)
+        self.dut['test_register'].REG5_wo
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0}, self.dut['dummy_tl'].mem)
+        self.assertIs(None, self.dut['test_register']._get('REG5_wo'))
 
     def test_set_default(self):
         self.dut['test_register'].set_default()
         self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0}, self.dut['dummy_tl'].mem)
 
     def test_set_attribute_add(self):
-        mem = self.dut['dummy_tl'].mem
         val = self.dut['test_register']._registers['REG1']['default']
         self.dut['test_register'].REG1 = val  # 12
+        mem = self.dut['dummy_tl'].mem.copy()
         self.dut['test_register'].REG1 += 1  # 13
         mem[0] = 13
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
@@ -78,14 +94,16 @@ class TestRegisterHardwareLayer(unittest.TestCase):
         self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255}, self.dut['dummy_tl'].mem)
 
     def test_set_attribute_by_value(self):
-        mem = self.dut['dummy_tl'].mem
+        self.dut['test_register'].set_default()
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0}, self.dut['dummy_tl'].mem)
         self.dut['test_register'].REG2 = 0
-        mem[1] += 128
+        mem = self.dut['dummy_tl'].mem.copy()
+        mem[1] = 0
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
     def test_set_attribute_by_string(self):
-        mem = self.dut['dummy_tl'].mem
-        self.dut['test_register'].REG3 = '1010101010101010'
+        mem = self.dut['dummy_tl'].mem.copy()
+        self.dut['test_register'].REG3 = '1010101010101010'  # dfghfghdfghgfdghf
         mem[2] = 170
         mem[3] = 170
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
