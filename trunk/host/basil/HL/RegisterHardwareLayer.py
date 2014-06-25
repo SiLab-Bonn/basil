@@ -65,7 +65,11 @@ class RegisterHardwareLayer(HardwareLayer):
         descr = deepcopy(self._registers[reg]['descr'])
         if 'properties' in descr and [i for i in write_only if i in descr['properties']]:
             #raise IOError('Register is write-only')
-            self._set(reg, 0)  # allows a lazy style of programming
+            # allows a lazy style of programming
+            if 'default' in self._registers[reg]:
+                self._set(reg, self._registers[reg]['default'])
+            else:
+                self._set(reg, 0)
             # return nothing to prevent misuse
         else:
             descr.setdefault('offset', 0)
