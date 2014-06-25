@@ -18,6 +18,17 @@ from array import array
 class seq_gen(HardwareLayer):
     '''Sequencer generator controller interface for seq_gen FPGA module.
     '''
+
+    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
+                  'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
+                  'CLK_DIV': {'descr': {'addr': 2, 'size': 8}},
+                  'SIZE': {'descr': {'addr': 3, 'size': 16}},
+                  'WAIT': {'descr': {'addr': 5, 'size': 16}},
+                  'REPEAT': {'descr': {'addr': 7, 'size': 8}},
+                  'REPEAT_START': {'descr': {'addr': 8, 'size': 16}},
+    }
+
     def __init__(self, intf, conf):
         super(seq_gen, self).__init__(intf, conf)
         self._seq_mem_offset = 16  # in bytes
