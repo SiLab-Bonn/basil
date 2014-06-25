@@ -83,10 +83,12 @@ class RegisterHardwareLayer(HardwareLayer):
         return self._set(name, value)
 
     def __getattr__(self, name):
+        '''called only on last resort if there are no attributes in the instance that match the name
+        '''
         def method(*args, **kargs):
             nsplit = name.split('_')
             if(len(nsplit) == 2):
-                if(nsplit[0] == 'set' and len(args)== 1):
+                if(nsplit[0] == 'set' and len(args) == 1):
                     self[nsplit[1]] = args[0]
                 elif(nsplit[0] == 'get'):
                     return self[nsplit[1]]
@@ -94,5 +96,4 @@ class RegisterHardwareLayer(HardwareLayer):
                     raise AttributeError("%r object has no attribute %r" % (self.__class__, name))
             else:
                 raise AttributeError("%r object has no attribute %r" % (self.__class__, name))
-        
         return method
