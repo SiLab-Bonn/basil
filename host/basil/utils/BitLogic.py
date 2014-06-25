@@ -43,8 +43,12 @@ class BitLogic(bitarray):
         '''
         Append from a int/long number.
         '''
+        if size and value.bit_length() > size:
+            raise ValueError('Value is too big for given size')
         self.frombytes(struct.pack(fmt, value))
         if size:
+            if not isinstance(size, (int, long)) or not size > 0:
+                raise ValueError('Size must be greater than zero')
             if size > self.length():
                 bitarray.extend(self, (size - self.length()) * [0])
             else:
@@ -61,6 +65,12 @@ class BitLogic(bitarray):
         ba.extend((format_size * 8 - self.length()) * [0])
         return struct.unpack_from(fmt, ba.tobytes())[0]
 
+    def __str__(self):
+        if self.endian() == 'little':
+            return self.to01()[::-1]
+        else:
+            return self.to01()
+
     def __getitem__(self, key):
         if isinstance(key, slice):
             return bitarray.__getitem__(self, self._swap_slice_indices(key))
@@ -68,12 +78,6 @@ class BitLogic(bitarray):
             return bitarray.__getitem__(self, key)
         else:
             raise TypeError("Invalid argument type")
-
-    def __str__(self):
-        if self.endian() == 'little':
-            return self.to01()[::-1]
-        else:
-            return self.to01()
 
     def __setitem__(self, key, item):
         if isinstance(key, slice):
@@ -91,14 +95,15 @@ class BitLogic(bitarray):
             raise TypeError("Invalid argument type")
 
     def _swap_slice_indices(self, slc):
+        '''Swap slice indices
+
+        Change slice indices from Verilog slicing (e.g. IEEE 1800-2012) to Python slicing.
         '''
-        Swap slice indices
-        '''
-        if not slc.start:
+        if not slc.start and slc.start != 0:
             stop = self.length()
         else:
             stop = slc.start + 1
-        if not slc.stop:
+        if not slc.stop and slc.stop != 0:
             start = 0
         else:
             start = slc.stop
