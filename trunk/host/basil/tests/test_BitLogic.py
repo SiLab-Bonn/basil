@@ -15,7 +15,6 @@ import unittest
 from basil.utils.BitLogic import BitLogic
 from bitarray import bitarray
 import struct
-from array import array
 
 
 class TestBitLogic(unittest.TestCase):
@@ -40,6 +39,12 @@ class TestBitLogic(unittest.TestCase):
     def test_from_value_with_size_bigger(self):
         bl = BitLogic.from_value(2232744712, size=70, fmt='Q')
         self.assertEqual(bl, bitarray('10000101000101001111101100001000'[::-1] + '0' * 38))
+
+    def test_from_value_with_int_bigger_than_size(self):
+        self.assertRaises(ValueError, BitLogic.from_value, 8, size=3, fmt='Q')
+
+    def test_from_value_with_funny_size(self):
+        self.assertRaises(ValueError, BitLogic.from_value, 8, size='123', fmt='Q')
 
     def test_from_value_with_size_smaller(self):
         bl = BitLogic.from_value(259, size=9, fmt='Q')
@@ -114,12 +119,18 @@ class TestBitLogic(unittest.TestCase):
         self.assertEqual(bl[:], bitarray('001100000'))
         bl[:] = 5
         self.assertEqual(bl[:], bitarray('101000000'))
-        bl[5:3] = 5
-        self.assertEqual(bl[:], bitarray('101101000'))
-        bl[4:4] = bitarray('1')
+        bl[5:3] = 7
         self.assertEqual(bl[:], bitarray('101111000'))
+        bl[5:3] = 0
+        self.assertEqual(bl[:], bitarray('101000000'))
+        bl[4:4] = bitarray('1')
+        self.assertEqual(bl[:], bitarray('101010000'))
         bl[4:4] = 0
-        self.assertEqual(bl[:], bitarray('101101000'))
+        self.assertEqual(bl[:], bitarray('101000000'))
+        bl[8:8] = 1
+        self.assertEqual(bl[:], bitarray('101000001'))
+        bl[0:0] = 0
+        self.assertEqual(bl[:], bitarray('001000001'))
 
     def test_init_to_zero(self):
         bl = BitLogic(55)
