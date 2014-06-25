@@ -10,12 +10,20 @@
 #  $Date::                      $:
 #
 
-from basil.HL.HardwareLayer import HardwareLayer
+from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
-class gpio(HardwareLayer):
+class gpio(RegisterHardwareLayer):
     '''GPIO interface
     '''
+
+    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}}
+                  # TODO: registers needs to be adjusted to module parameters:
+                  # parameter IO_WIDTH = 8,
+                  # parameter IO_DIRECTION = 0,
+                  # parameter IO_TRI = 0
+    }
+
     def __init__(self, intf, conf):
         super(gpio, self).__init__(intf, conf)
 
