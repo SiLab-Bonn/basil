@@ -10,22 +10,38 @@
 #  $Date::                      $:
 #
 
-from basil.HL.HardwareLayer import HardwareLayer
+from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from struct import pack, unpack_from
 from array import array
 
 
 trigger_modes = {
-    0: 'external trigger',
-    1: 'TLU no handshake',
-    2: 'TLU simple handshake',
-    3: 'TLU trigger data handshake'
+    'EXTERNAL': 0,  # external trigger
+    'NO_HANDSHAKE': 1,  # TLU no handshake
+    'SIMPLE_HANDSHALKE': 2,  # TLU simple handshake
+    'DATA_HANDSHAKE': 3  # TLU trigger data handshake
 }
 
 
-class tlu(HardwareLayer):
+class tlu(RegisterHardwareLayer):
     '''TLU controller interface
     '''
+
+    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'LOST_DATA_COUNTER': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
+                  'TRIGGER_MODE': {'descr': {'addr': 1, 'size': 2, 'offset': 0}},
+                  'TRIGGER_DATA_MSB_FIRST': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},
+                  'EN_VETO': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},
+                  'TRIGGER_DATA_DELAY': {'descr': {'addr': 1, 'size': 4, 'offset': 4}},
+                  'TRIGGER_CLOCK_CYCLES': {'descr': {'addr': 2, 'size': 5, 'offset': 0}},
+                  'EN_TLU_RESET': {'descr': {'addr': 2, 'size': 1, 'offset': 5}},
+                  'EN_INVERT_TRIGGER': {'descr': {'addr': 2, 'size': 1, 'offset': 6}},
+                  'EN_WRITE_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 7}},
+                  'TRIGGER_LOW_TIMEOUT': {'descr': {'addr': 3, 'size': 8}},
+                  'CURRENT_TLU_TRIGGER_NUMBER': {'descr': {'addr': 4, 'size': 32}},
+                  'TRIGGER_COUNTER': {'descr': {'addr': 8, 'size': 32}},
+    }
+
     def __init__(self, intf, conf):
         super(tlu, self).__init__(intf, conf)
 
