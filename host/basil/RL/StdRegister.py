@@ -38,6 +38,12 @@ class StdRegister(RegisterLayer):
                     self._fields[field['name']] = bv
 
                 self._fields_conf[field['name']] = field
+                
+                #set default
+                if field.has_key("default"):
+                    self[field['name']] = field['default']
+                        
+                
         self._bv = BitLogic(self._conf['size'])
 
     def __getitem__(self, items):

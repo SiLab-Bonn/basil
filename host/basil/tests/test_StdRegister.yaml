@@ -38,6 +38,7 @@ registers:
             size     : 6
             offset   : 19
             bit_order: [5,4,3,1,0,2]
+            default  : 0
           - name     : VPULSE
             size     : 6
             offset   : 13

@@ -21,13 +21,9 @@ class TestClass(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         setup_file = open("test_StdRegister.yaml", 'r')
-        cnfg = yaml.load(setup_file)
-        cls.dut = Dut(cnfg)
+        cls.cnfg = yaml.load(setup_file)
+        cls.dut = Dut(cls.cnfg)
         cls.dut.init()
-
-    def test_one(self):
-        x = "this"
-        assert 'i' in x
 
     def test_init_simple(self):
         self.dut['TEST1'].write()
@@ -128,6 +124,19 @@ class TestClass(unittest.TestCase):
         mem[10] = 0x10
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
+    def test_default(self):
+        self.cnfg['registers'][1]['fields'][0]['default'] = 0x01#VINJECT
+        self.dut = Dut(self.cnfg)
+        self.dut.init()
+        
+        mem = dict()
+        mem[0] = 0  # reset
+        mem[8] = 0x08
+        mem[9] = 0
+        mem[10] = 0
+        self.dut['TEST2'].write()
+        self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
+        
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestClass)
