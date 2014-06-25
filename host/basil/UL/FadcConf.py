@@ -22,10 +22,10 @@ class FadcConf(UserLayer):
 
         print "Initializing FADC ..."
 
-        self._drv.set_data(0, [0x00, 0x10])  # RESET ADC
+        self._drv.set_data([0x00, 0x10])  # RESET ADC
         self._drv.start()
 
-        self._drv.set_data(0, [0x02, 0x07])  # SET 16 bit mode
+        self._drv.set_data([0x02, 0x07])  # SET 16 bit mode
         self._drv.start()
 
         #print 'chip[\'FADC_CONF\'].IsDone() = ', dut['FADC_CONF'].IsDone()
