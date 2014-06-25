@@ -10,17 +10,26 @@
 #  $Date::                      $:
 #
 
-from basil.HL.HardwareLayer import HardwareLayer
+from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from struct import pack, unpack_from
 from array import array
 
 
-class spi(HardwareLayer):
+class spi(RegisterHardwareLayer):
     '''Serial programming interface.
     Together with a GPIO module it is used to configure the local registers of the pixel matrix
     Assigns bits like in the following example:
     >>> dut[ <name of SR as defined in YAML config file> ][bit position] = value
     '''
+
+    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
+                  'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
+                  'SIZE': {'descr': {'addr': 3, 'size': 16}},
+                  'WAIT': {'descr': {'addr': 5, 'size': 16}},
+                  'REPEAT': {'descr': {'addr': 7, 'size': 8}},
+    }
+
     def __init__(self, intf, conf):
         super(spi, self).__init__(intf, conf)
         self._spi_mem_offset = 8  # in bytes
