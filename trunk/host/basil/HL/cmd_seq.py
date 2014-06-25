@@ -57,6 +57,9 @@ class cmd_seq(RegisterHardwareLayer):
     def start(self):
         self._intf.write(self._conf['base_addr'] + 1, (0,))
 
+    def is_done(self):
+        return self.is_ready
+
     @property
     def is_ready(self):
         return (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x01) == 1

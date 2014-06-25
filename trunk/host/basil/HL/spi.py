@@ -83,7 +83,7 @@ class spi(HardwareLayer):
         return self._intf.read(self._conf['base_addr'] + 7, 1)[0]
 
     def is_done(self):
-        return True if (self._intf.read(self._conf['base_addr'] + 1, 1)[0] & 0x01) else False
+        return self.is_ready
 
     @property
     def is_ready(self):
