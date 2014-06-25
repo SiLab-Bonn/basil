@@ -62,7 +62,7 @@ uart u_uart(
 integer     i;
 reg    [4:0]     STATE, NEXTSTATE;
 reg    [31:0]     cnt;
-wire   [15:0]    block_len;
+wire   [31:0]    block_len;
 reg    [7:0]    block_len_0[3:0];
 
 reg            op_done;
@@ -114,7 +114,7 @@ assign uart_busy = is_receiving || is_transmitting;
 //end
 
 always @* begin
-    //NEXTSTATE    =    IDLE;                        
+    NEXTSTATE    =    IDLE;                        
     //if (!uart_busy) 
     
     case (STATE)
