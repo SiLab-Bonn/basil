@@ -32,7 +32,9 @@ class RegisterHardwareLayer(HardwareLayer):
             self.add_property(item)
 
     def init(self):
-        pass
+        for reg in self._registers.itervalues():
+            if 'current' in reg:
+                reg['current'] = None
 
     def set_configuration(self, conf):
         for reg, value in conf.iteritems():
