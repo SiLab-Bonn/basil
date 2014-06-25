@@ -10,22 +10,36 @@
 #  $Date::                      $:
 #
 
-from basil.HL.HardwareLayer import HardwareLayer
+from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from struct import pack, unpack_from
 from array import array
 
 
 output_modes = {
-    0: 'positive edge (default)',
-    1: 'negative edge',
-    2: 'Manchester Code IEEE 802.3 (for capacitively coupled transmission)',
-    3: 'Manchester Code G.E. Thomas'
+    'PE': 0,  # positive edge (default)
+    'NE': 1,  # negative edge
+    'MC': 2,  # Manchester Code IEEE 802.3 (for capacitively coupled transmission)
+    'MC_THOMAS': 3  # Manchester Code G.E. Thomas
 }
 
 
-class cmd_seq(HardwareLayer):
+class cmd_seq(RegisterHardwareLayer):
     '''FEI4 Command Sequencer Controller Interface for cmd_seq FPGA module.
     '''
+
+    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
+                  'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
+                  'EN_EXT_TRIGGER': {'descr': {'addr': 2, 'size': 1, 'offset': 0}},
+                  'OUTPUT_MODE': {'descr': {'addr': 2, 'size': 2, 'offset': 1}},
+                  'CLOCK_GATE': {'descr': {'addr': 2, 'size': 1, 'offset': 3}},
+                  'CMD_PULSE': {'descr': {'addr': 2, 'size': 1, 'offset': 4}},
+                  'CMD_SIZE': {'descr': {'addr': 3, 'size': 16}},
+                  'CMD_REPEAT': {'descr': {'addr': 5, 'size': 32}},
+                  'START_SEQUENCE_LENGTH': {'descr': {'addr': 9, 'size': 16}},
+                  'STOP_SEQUENCE_LENGTH': {'descr': {'addr': 11, 'size': 16}},
+    }
+
     def __init__(self, intf, conf):
         super(cmd_seq, self).__init__(intf, conf)
         self._cmd_mem_offset = 16  # in bytes
