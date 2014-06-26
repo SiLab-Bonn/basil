@@ -212,7 +212,7 @@ always @ (posedge SEQ_CLK)
     else if(REP_START)
         out_bit_cnt <= CONF_REP_START+1;
     else if(out_bit_cnt == STOP_BIT && dev_cnt == CONF_CLK_DIV)
-        out_bit_cnt <= out_bit_cnt;
+        out_bit_cnt <= 0;
     else if(out_bit_cnt != 0 && dev_cnt == CONF_CLK_DIV)
         out_bit_cnt <= out_bit_cnt + 1;
 
