@@ -25,10 +25,10 @@ class FEI4AdapterCard(HardwareLayer):
     '''FEI4AdapterCard interface
     '''
 
-    #DAC MAX520
+    # DAC MAX520
     MAX_520_ADD = 0x58
 
-    #ADC MAX1238
+    # ADC MAX1238
     MAX_1239_ADD = 0x6a
     INT_REF_OFF_EXT_REF_ON = 0x20
     INT_REF_ON_OUTPUT_OFF = 0x50
@@ -75,59 +75,59 @@ class FEI4AdapterCard(HardwareLayer):
     _ch_cal = OrderedDict([
         ('VDDA1',
             {'name': '',
-            'default': 0.0,
-            'DACV': {'offset': 1.558, 'gain': -0.00193},
-            'ADCV': {'offset': 0.0, 'gain': 1638.4},
-            'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6, 'iq_gain': 6},
-        }),
+             'default': 0.0,
+             'DACV': {'offset': 1.558, 'gain': -0.00193},
+             'ADCV': {'offset': 0.0, 'gain': 1638.4},
+             'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6, 'iq_gain': 6},
+             }),
         ('VDDA2',
             {'name': '',
-            'default': 0.0,
-            'DACV': {'offset': 1.558, 'gain': -0.00193},
-            'ADCV': {'offset': 0.0, 'gain': 1638.4},
-            'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6, 'iq_gain': 6},
-        }),
+             'default': 0.0,
+             'DACV': {'offset': 1.558, 'gain': -0.00193},
+             'ADCV': {'offset': 0.0, 'gain': 1638.4},
+             'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6, 'iq_gain': 6},
+             }),
         ('VDDD1',
             {'name': '',
-            'default': 0.0,
-            'DACV': {'offset': 1.558, 'gain': -0.00193},
-            'ADCV': {'offset': 0.0, 'gain': 1638.4},
-            'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6, 'iq_gain': 6},
-        }),
+             'default': 0.0,
+             'DACV': {'offset': 1.558, 'gain': -0.00193},
+             'ADCV': {'offset': 0.0, 'gain': 1638.4},
+             'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6, 'iq_gain': 6},
+             }),
         ('VDDD2',
             {'name': '',
-            'default': 0.0,
-            'DACV': {'offset': 1.558, 'gain': -0.00193},
-            'ADCV': {'offset': 0.0, 'gain': 1638.4},
-            'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6, 'iq_gain': 6},
-        })]
+             'default': 0.0,
+             'DACV': {'offset': 1.558, 'gain': -0.00193},
+             'ADCV': {'offset': 0.0, 'gain': 1638.4},
+             'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6, 'iq_gain': 6},
+             })]
     )
 
-    _map = OrderedDict(
-        VDDA1={
-            'DACV': {'dac_ch': 3},
-            'ADCV': {'adc_ch': 0},
-            'ADCI': {'adc_ch': 1},
-        },
-        VDDA2={
-            'DACV': {'dac_ch': 0},
-            'ADCV': {'adc_ch': 2},
-            'ADCI': {'adc_ch': 3},
-        },
-        VDDD1={
-            'DACV': {'dac_ch': 1},
-            'ADCV': {'adc_ch': 4},
-            'ADCI': {'adc_ch': 5},
-        },
-        VDDD2={
-            'DACV': {'dac_ch': 2},
-            'ADCV': {'adc_ch': 6},
-            'ADCI': {'adc_ch': 7},
-        },
-        NTC1={'adc_ch': 8},
-        NTC2={'adc_ch': 9},
-        VNTC={'adc_ch': 10}
-    )
+    _map = OrderedDict([
+        ('VDDA1',
+         {'DACV': {'dac_ch': 3},
+          'ADCV': {'adc_ch': 0},
+          'ADCI': {'adc_ch': 1},
+          }),
+        ('VDDA2',
+         {'DACV': {'dac_ch': 0},
+          'ADCV': {'adc_ch': 2},
+          'ADCI': {'adc_ch': 3},
+          }),
+        ('VDDD1',
+         {'DACV': {'dac_ch': 1},
+          'ADCV': {'adc_ch': 4},
+          'ADCI': {'adc_ch': 5},
+          }),
+        ('VDDD2',
+         {'DACV': {'dac_ch': 2},
+          'ADCV': {'adc_ch': 6},
+          'ADCI': {'adc_ch': 7},
+          }),
+        ('NTC1', {'adc_ch': 8}),
+        ('NTC2', {'adc_ch': 9}),
+        ('VNTC', {'adc_ch': 10})
+    ])
 
     def __init__(self, intf, conf):
         super(FEI4AdapterCard, self).__init__(intf, conf)
@@ -237,7 +237,7 @@ class FEI4AdapterCard(HardwareLayer):
         '''Reading ADC MAX1238
         '''
         confByte = self.SCAN_OFF | self.SINGLE_ENDED | ((0x1e) & (adc_ch << 1))
-        #self._intf.write(self._base_addr + self.MAX_1239_ADD, array('B', pack('B', confByte)))
+#         self._intf.write(self._base_addr + self.MAX_1239_ADD, array('B', pack('B', confByte)))
         self._intf.write(self._base_addr + self.MAX_1239_ADD, [confByte])
 
         if average:
