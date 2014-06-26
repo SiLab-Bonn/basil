@@ -37,8 +37,9 @@ class RegisterHardwareLayer(HardwareLayer):
                 reg['current'] = None
 
     def set_configuration(self, conf):
-        for reg, value in conf.iteritems():
-            self[reg] = value
+        if conf:
+            for reg, value in conf.iteritems():
+                self[reg] = value
 
     def get_configuration(self):
         conf = {}

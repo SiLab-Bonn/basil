@@ -58,8 +58,9 @@ class Dut(Base):
         else:
             pass  # conf is already a dict
 
-        for item, item_conf in conf.iteritems():
-            self[item].set_configuration(item_conf)
+        if conf:
+            for item, item_conf in conf.iteritems():
+                self[item].set_configuration(item_conf)
 
     def get_configuration(self):
         conf = {}
