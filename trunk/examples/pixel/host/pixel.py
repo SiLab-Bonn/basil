@@ -40,9 +40,7 @@ class Pixel(Dut):
         self['SEQ']['GLOBAL_SHIFT_EN'][0:gr_size] = bitarray( gr_size * '1') #this is to enable clock
         self['SEQ']['GLOBAL_CTR_LD'][gr_size+1:gr_size+2] = bitarray("1") # load signals
         self['SEQ']['GLOBAL_DAC_LD'][gr_size+1:gr_size+2] = bitarray("1")
-
-        # Write the sequence to the sequence generator (hw driver)
-        self['SEQ'].write(gr_size+3) #write pattern to memory
+        
         
         # Execute the program (write bits to output pins)
         # + 1 extra 0 bit so that everything ends on LOW instead of HIGH
@@ -52,7 +50,7 @@ class Pixel(Dut):
         """
         Send the pixel register to the chip and store the output.
 
-        Loads the values of self['GLOBAL_REG'] onto the chip.
+        Loads the values of self['PIXEL_REG'] onto the chip.
         Includes enabling the clock, and loading the Control (CTR)
         and DAC shadow registers.
 
@@ -70,15 +68,17 @@ class Pixel(Dut):
         self['SEQ']['SHIFT_IN'][0:px_size] = self['PIXEL_REG'][:] # this will be shifted out
         self['SEQ']['PIXEL_SHIFT_EN'][0:px_size] = bitarray( px_size * '1') #this is to enable clock
         
-        self['SEQ'].write(px_size+1) #write pattern to memeory(add 1 bit more so there is 0 at the end other way will stay high)
-        
-        self._run_seq(px_size+1)
+        self._run_seq(px_size+1) #add 1 bit more so there is 0 at the end other way will stay high
             
     def _run_seq(self, size):
         """
         Send the contents of self['SEQ'] to the chip and wait until it finishes.
 
         """
+        
+        # Write the sequence to the sequence generator (hw driver)
+        self['SEQ'].write(size) #write pattern to memory
+        
         self['SEQ'].set_size(size)  # set size
         self['SEQ'].set_repeat(1) # set reapet
         self['SEQ'].start() # start
@@ -97,6 +97,8 @@ class Pixel(Dut):
         self['SEQ']['GLOBAL_CTR_LD'].setall(False)
         self['SEQ']['GLOBAL_DAC_LD'].setall(False)
         self['SEQ']['PIXEL_SHIFT_EN'].setall(False)
+        self['SEQ']['INJECTION'].setall(False)
+        
         
 if __name__ == "__main__":
     # Read in the configuration YAML file
