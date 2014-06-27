@@ -60,46 +60,42 @@ module pixel (
     output GLOBAL_SR_CLK,
     output GLOBAL_CTR_LD,
     output GLOBAL_DAC_LD,
-	 output GLOBAL_SR_EN,
-	 output PIXEL_SR_EN,
+    output GLOBAL_SR_EN,
+    output PIXEL_SR_EN,
 
     output PIXEL_SR_CLK,
-    input PIXEL_SR_OUT,
+    input  PIXEL_SR_OUT,
 
-    input HIT_OR,
+    input  HIT_OR,
     output INJECT,
-	 
-	 output EN_VA1,
+ 
+    output EN_VA1,
     output EN_VA2,
     output EN_VD2,
     output EN_VD1
-	 
 );   
-    
 
     assign SDA = 1'bz;
     assign SCL = 1'bz;
-    
 
-    
     wire BUS_CLK;
     wire SPI_CLK;
     wire CLK_LOCKED;
     wire BUS_RST;
-    
+
     assign LEMO_TX[0] = INJECT;
     assign LEMO_TX[1] = 1'b0;
-	 assign LEMO_TX[2] = 1'b0;
-	 
+    assign LEMO_TX[2] = 1'b0;
+
     wire CLK320, CLK160;
     reset_gen i_reset_gen(.CLK(BUS_CLK), .RST(BUS_RST));
-    
+
     wire TDC_WCLK; 
-    
+
     reg FCLK_IN_BUF;
     always@(*)
         FCLK_IN_BUF = FCLK_IN;
-    
+
     clk_gen i_clkgen(
         .CLKIN(FCLK_IN),
         .BUS_CLK(BUS_CLK),
@@ -109,14 +105,13 @@ module pixel (
         .U2_CLK320(CLK320),
         .SPI_CLK(SPI_CLK),
         .LOCKED(CLK_LOCKED)
-    );
-      
-    
+    ); 
+
     // -------  MODULE ADREESSES  ------- //
-    
+
     localparam GPIO_BASEADDR = 16'h0000;
     localparam GPIO_HIGHADDR = 16'h000f;
- 
+
     localparam FIFO_BASEADDR = 16'h0020;                    // 0x0020
     localparam FIFO_HIGHADDR = FIFO_BASEADDR + 15;          // 0x002f
     
@@ -244,8 +239,9 @@ module pixel (
     assign PIXEL_SR_EN          = SEQ_OUT[4];
     assign INJECT               = SEQ_OUT[5];
     
-	 assign DEBUG_D = {SEQ_OUT,SEQ_OUT};
-		  
+    assign DEBUG_D = {SEQ_OUT,SEQ_OUT};
+
+
     OFDDRRSE GLOBAL_SR_GC (
         .CE(GLOBAL_SR_EN), 
         .C0(~SPI_CLK),
