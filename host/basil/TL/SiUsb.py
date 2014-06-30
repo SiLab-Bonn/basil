@@ -63,3 +63,9 @@ class SiUsb (TransferLayer):
             return data
         elif(addr >= self.BASE_ADDRESS_BLOCK and addr < self.HIGH_ADDRESS_BLOCK):
             return self._sidev.FastBlockRead(size)
+    def __del__(self):
+        try:
+            self._sidev.dispose()
+        except:
+            pass
+        
