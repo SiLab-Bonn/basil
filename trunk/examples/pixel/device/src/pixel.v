@@ -277,7 +277,7 @@ module pixel (
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
         
-        .SCLK(SPI_CLK),
+        .SCLK(~SPI_CLK),
         .SDI(PIXEL_SR_OUT),
         .SEN(PIXEL_SR_EN),
     
