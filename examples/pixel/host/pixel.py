@@ -80,7 +80,7 @@ class Pixel(Dut):
         self['SEQ'].write(size) #write pattern to memory
         
         self['SEQ'].set_size(size)  # set size
-        self['SEQ'].set_repeat(1) # set reapet
+        self['SEQ'].set_repeat(1) # set repeat
         self['SEQ'].start() # start
         
         while not chip['SEQ'].get_done():
@@ -128,15 +128,15 @@ if __name__ == "__main__":
     #settings for global register (to input into global SR)
     # can be an integer representing the binary number desired,
     # or a bitarray (of the form bitarray("10101100")).
-    chip['GLOBAL_REG']['global_readout_enable'] = 1# size = 1 bit
+    chip['GLOBAL_REG']['global_readout_enable'] = 0# size = 1 bit
     chip['GLOBAL_REG']['SRDO_load'] = 0# size = 1 bit
-    chip['GLOBAL_REG']['NCout2'] = 1# size = 1 bit
+    chip['GLOBAL_REG']['NCout2'] = 0# size = 1 bit
     chip['GLOBAL_REG']['count_hits_not'] = 0# size = 1
-    chip['GLOBAL_REG']['count_enable'] = 1# size = 1
+    chip['GLOBAL_REG']['count_enable'] = 0# size = 1
     chip['GLOBAL_REG']['count_clear_not'] = 0# size = 1
-    chip['GLOBAL_REG']['S0'] = 1# size = 1
+    chip['GLOBAL_REG']['S0'] = 0# size = 1
     chip['GLOBAL_REG']['S1'] = 0# size = 1
-    chip['GLOBAL_REG']['config_mode'] = 0# size = 2
+    chip['GLOBAL_REG']['config_mode'] = 3# size = 2
     chip['GLOBAL_REG']['LD_IN0_7'] = 0# size = 8
     chip['GLOBAL_REG']['LDENABLE_SEL'] = 0# size = 1
     chip['GLOBAL_REG']['SRCLR_SEL'] = 0# size = 1
@@ -158,7 +158,7 @@ if __name__ == "__main__":
     # can be an integer representing the binary number desired,
     # or a bitarray (of the form bitarray("10101100")).
 
-    chip['PIXEL_REG'][:] = bitarray('1'*128)
+    chip['PIXEL_REG'][:] = bitarray('10'*64)
     chip['PIXEL_REG'][0] = 0
 
     print "program pixel register..."
@@ -170,15 +170,11 @@ if __name__ == "__main__":
     # Get output in bytes
     print "chip['DATA'].get_data()"
     rxd = chip['DATA'].get_data() #get data from sram fifo
-    print "rxd = ", rxd
-    print "rxd(hex) = ", map(hex, rxd)
 
     data0 = rxd.astype(np.uint8) # Change type to unsigned int 8 bits and take from rxd only the last 8 bits
     data1 = np.right_shift(rxd, 8).astype(np.uint8) # Rightshift rxd 8 bits and take again last 8 bits
     data = np.reshape(np.vstack((data1, data0)), -1, order='F') # data is now a 1 dimensional array of all bytes read from the FIFO
-    bdata = np.unpackbits(data)#.reshape(-1,128)
+    bdata = np.unpackbits(data)
 
     print "data = ", data
     print "bdata = ", bdata
-
-    print 'ids=', np.right_shift(np.bitwise_and(rxd, 0x0fff0000), 16)
