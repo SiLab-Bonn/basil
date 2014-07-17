@@ -11,8 +11,7 @@
 #
 
 from basil.HL.HardwareLayer import HardwareLayer
-from BitVector import BitVector
-
+from basil.utils.BitLogic import BitLogic
 
 class GPAC(HardwareLayer):
     '''GPAC interface
@@ -458,9 +457,9 @@ class GPAC(HardwareLayer):
     def _set_power_gpio(self, bit, value):
         self._set_i2c_mux(self.I2CBUS_DAC)
 
-        gpio = BitVector(size=8, intVal=self._get_power_gpio())
-        gpio[7 - bit] = value
-        self._intf.write(self._base_addr + self.POWER_GPIO_ADD, (self.PCA9554_OUT, gpio.intValue()))
+        gpio = BitLogic.from_value(self._get_power_gpio(), size=8)
+        gpio[bit] = value
+        self._intf.write(self._base_addr + self.POWER_GPIO_ADD, (self.PCA9554_OUT, gpio.tovalue()))
 
         self._set_i2c_mux(self.I2CBUS_DEFAULT)
 
