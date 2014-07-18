@@ -45,7 +45,7 @@ class SiUsb (TransferLayer):
                     raise ValueError('Please specify ID of USB board')
                 self._sidev = devices[0]
         if 'bit_file' in self._conf.keys():
-            print "FPGA Programming:", self._sidev.DownloadXilinx(self._conf['bit_file'])
+            print "Programming FPGA: %s ... %s" % (self._conf['bit_file'], 'SUCCESS' if self._sidev.DownloadXilinx(self._conf['bit_file']) else 'FAILED')
 
     def write(self, addr, data):
         if(addr >= self.BASE_ADDRESS_I2C and addr < self.HIGH_ADDRESS_I2C):
