@@ -12,14 +12,12 @@
 
 from basil.TL.TransferLayer import TransferLayer
 
+
 class SerialDummy(TransferLayer):
     '''Dummy class for serial device
     ''' 
     def __init__(self, conf):
         pass
-
-    def init(self):
-        return 
 
     def write(self, addr, data):
         pass

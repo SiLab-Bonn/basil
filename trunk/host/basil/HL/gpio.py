@@ -28,9 +28,8 @@ class gpio(RegisterHardwareLayer):
         super(gpio, self).__init__(intf, conf)
 
     def init(self):
-        if 'init' in self._conf:
-            if 'direction' in self._conf['init']:
-                self.set_direction(0, self._conf['init']['direction'])
+        if 'direction' in self._init:
+            self.set_direction(0, self._init['direction'])
 
     def reset(self):
         '''Soft reset the module.'''
