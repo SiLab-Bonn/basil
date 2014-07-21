@@ -24,7 +24,7 @@ class Base(object):
         pass
 
     def get_configuration(self):
-        return {}
+        return self._conf
 
 
 class Dut(Base):
@@ -37,7 +37,7 @@ class Dut(Base):
 
     def __init__(self, conf):
         super(Dut, self).__init__(conf)
-        self.load_configuration(self._conf)
+        self.load_hw_configuration(self._conf)
 
     def init(self):
         for tl in self._transfer_layer.itervalues():
@@ -74,13 +74,7 @@ class Dut(Base):
             conf[key] = value.get_configuration()
         return conf
 
-    def load_configuration(self, conf, extend_config=False):
-        if not extend_config:
-            self._transfer_layer = {}
-            self._hardware_layer = {}
-            self._user_drivers = {}
-            self._registers = {}
-
+    def load_hw_configuration(self, conf, extend_config=False):
         if isinstance(conf, basestring):
             stream = open(conf)
             conf = safe_load(stream)  # parse the first YAML document in a stream
@@ -88,6 +82,20 @@ class Dut(Base):
             conf = safe_load(conf)  # parse the first YAML document in a stream
         else:
             pass  # conf is already a dict
+
+        if not extend_config:
+            if conf['name']:
+                self.name = conf['name']
+            else:
+                self.name = None
+            if conf['version']:
+                self.version = conf['version']
+            else:
+                self.version = None
+            self._transfer_layer = {}
+            self._hardware_layer = {}
+            self._user_drivers = {}
+            self._registers = {}
 
         for intf in conf['transfer_layer']:
             kargs = {}
