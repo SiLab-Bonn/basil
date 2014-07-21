@@ -38,16 +38,12 @@ class StdRegister(RegisterLayer):
                     self._fields[field['name']] = bv
 
                 self._fields_conf[field['name']] = field
-                
-                #set default
-                if field.has_key("default"):
+                # set default
+                if "default" in field:
                     self[field['name']] = field['default']
-                        
-                
         self._bv = BitLogic(self._conf['size'])
 
     def __getitem__(self, items):
-        #print '__getitem__', items
         if isinstance(items, str):
             return self._fields[items]
         elif isinstance(items, slice):
@@ -114,13 +110,13 @@ class StdRegister(RegisterLayer):
         reg = self._construct_reg()
         ba = utils.bitarray_to_byte_array(reg)
         self._drv.set_data(ba)
-        if self._conf.has_key("auto_start"):
-            if self._conf["auto_start"] :
+        if "auto_start" in self._conf:
+            if self._conf["auto_start"]:
                 self._drv.start()
 
     def read(self):
         raise NotImplementedError("Not implemented")
-        #return self._drv.get_data()
+#         return self._drv.get_data()
 
     def _construct_reg(self):
 
@@ -131,13 +127,13 @@ class StdRegister(RegisterLayer):
                 for i, sub_filed in enumerate(self._fields[field]):
                     bvstart = offs - i * self._get_filed_config(field)['size']
                     bvstop = bvstart - len(sub_filed._construct_reg()) + 1
-                    #self._bv[bvstart:bvstop] = sub_filed._construct_reg()
+#                     self._bv[bvstart:bvstop] = sub_filed._construct_reg()
                     self._bv.set_slice_ba(bvstart, bvstop, sub_filed._construct_reg())
             else:
                 bvsize = len(self._fields[field])
                 bvstart = offs
                 bvstop = offs - bvsize + 1
-                #self._bv[bvstart:bvstop] = self._fields[field]
+#                 self._bv[bvstart:bvstop] = self._fields[field]
                 self._bv.set_slice_ba(bvstart, bvstop, self._fields[field])
 
         return self._bv
