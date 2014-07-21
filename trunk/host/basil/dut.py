@@ -14,17 +14,43 @@ from yaml import safe_load
 
 
 class Base(object):
+    name = None
+    version = None
+    _init = {}
+    _paramters = {}
+
     def __init__(self, conf):
-        self._conf = conf
+        self._conf = self._open_conf(conf)
+        if 'name' in self._conf:
+            self.name = self._conf['name']
+        if 'version' in self._conf:
+            self.version = self._conf['version']
+        if 'init' in self._conf:
+            self._update_init(self._conf['init'])
+
+    def _open_conf(self, conf):
+        if isinstance(conf, basestring):  # parse the first YAML document in a stream
+            stream = open(conf)
+            return safe_load(stream)
+        elif isinstance(conf, file):  # parse the first YAML document in a stream
+            return safe_load(conf)
+        else:  # conf is already a dict
+            return conf
+
+    def _update_init(self, init_dict=None, **kwargs):
+        print self.name, init_dict, kwargs
+        if init_dict:
+            self._init.update(kwargs)
+        self._init.update(kwargs)
 
     def init(self):
-        pass  # nothing to do here
+        raise NotImplementedError("init() not implemented")
 
     def set_configuration(self, conf):
-        pass
+        raise NotImplementedError("set_configuration() not implemented")
 
     def get_configuration(self):
-        return self._conf
+        raise NotImplementedError("get_configuration() not implemented")
 
 
 class Dut(Base):
@@ -39,24 +65,33 @@ class Dut(Base):
         super(Dut, self).__init__(conf)
         self.load_hw_configuration(self._conf)
 
-    def init(self):
+    def init(self, **kwargs):
+        def update_init(mod):
+            if mod.name in kwargs:
+                mod._update_init(kwargs[mod.name])
+
+        def catch_exception_on_init(mod):
+            try:
+                mod.init()
+            except NotImplementedError, e:
+                pass
+#                 print '%s: %s' % (type(mod), e)
+
         for tl in self._transfer_layer.itervalues():
-            tl.init()
+            update_init(tl)
+            catch_exception_on_init(tl)
         for hl in self._hardware_layer.itervalues():
-            hl.init()
+            update_init(tl)
+            catch_exception_on_init(hl)
         for ul in self._user_drivers.itervalues():
-            ul.init()
+            update_init(tl)
+            catch_exception_on_init(ul)
         for rl in self._registers.itervalues():
-            rl.init()
+            update_init(tl)
+            catch_exception_on_init(rl)
 
     def set_configuration(self, conf):
-        if isinstance(conf, basestring):
-            stream = open(conf)
-            conf = safe_load(stream)  # parse the first YAML document in a stream
-        elif isinstance(conf, file):
-            conf = safe_load(conf)  # parse the first YAML document in a stream
-        else:
-            pass  # conf is already a dict
+        conf = self._open_conf(conf)
 
         if conf:
             for item, item_conf in conf.iteritems():
@@ -75,13 +110,7 @@ class Dut(Base):
         return conf
 
     def load_hw_configuration(self, conf, extend_config=False):
-        if isinstance(conf, basestring):
-            stream = open(conf)
-            conf = safe_load(stream)  # parse the first YAML document in a stream
-        elif isinstance(conf, file):
-            conf = safe_load(conf)  # parse the first YAML document in a stream
-        else:
-            pass  # conf is already a dict
+        conf = self._open_conf(conf)
 
         if not extend_config:
             if conf['name']:
