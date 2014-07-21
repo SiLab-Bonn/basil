@@ -29,7 +29,9 @@ class Base(object):
             self._update_init(self._conf['init'])
 
     def _open_conf(self, conf):
-        if isinstance(conf, basestring):  # parse the first YAML document in a stream
+        if not conf:
+            return None
+        elif isinstance(conf, basestring):  # parse the first YAML document in a stream
             stream = open(conf)
             return safe_load(stream)
         elif isinstance(conf, file):  # parse the first YAML document in a stream
@@ -37,9 +39,10 @@ class Base(object):
         else:  # conf is already a dict
             return conf
 
-    def _update_init(self, init_dict=None, **kwargs):
-        if init_dict:
-            self._init.update(kwargs)
+    def _update_init(self, init_conf=None, **kwargs):
+        init_conf = self._open_conf(init_conf)
+        if init_conf:
+            self._init.update(init_conf)
         self._init.update(kwargs)
 
     def init(self):
@@ -64,10 +67,18 @@ class Dut(Base):
         super(Dut, self).__init__(conf)
         self.load_hw_configuration(self._conf)
 
-    def init(self, **kwargs):
+    def init(self, init_conf=None, **kwargs):
+        init_conf = self._open_conf(init_conf)
+
         def update_init(mod):
+            if init_conf:
+                if mod.name in init_conf:
+                    mod._update_init(init_conf[mod.name])
             if mod.name in kwargs:
                 mod._update_init(kwargs[mod.name])
+            # copy _conf to _init for backward compatibility
+            if not mod._init:
+                mod._init = mod._conf
 
         def catch_exception_on_init(mod):
             try:
