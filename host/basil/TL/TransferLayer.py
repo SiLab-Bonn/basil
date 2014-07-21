@@ -24,6 +24,3 @@ class TransferLayer(Base):
 
     def write(self, addr, data):
         pass
-
-    def init(self):
-        pass

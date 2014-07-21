@@ -13,6 +13,7 @@
 from basil.TL.TransferLayer import TransferLayer
 import basil.utils.SimSiLibUsb as SiLibUSB
 
+
 class SimSiUsb (TransferLayer):
     '''SiLab USB device
     '''
@@ -32,8 +33,8 @@ class SimSiUsb (TransferLayer):
 
     def init(self):
         self._sidev = SiLibUSB.SiUSBDevice()
-        if 'bit_file' in self._conf.keys():
-            print "FPGA Programming:", self._sidev.DownloadXilinx(self._conf['bit_file'])
+        if 'bit_file' in self._init:
+            print "FPGA Programming:", self._sidev.DownloadXilinx(self._init['bit_file'])
 
     def write(self, addr, data):
         if(addr >= self.BASE_ADDRESS_I2C and addr < self.HIGH_ADDRESS_I2C):

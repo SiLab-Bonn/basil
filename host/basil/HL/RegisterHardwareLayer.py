@@ -23,6 +23,16 @@ class RegisterHardwareLayer(HardwareLayer):
     '''Register Hardware Layer.
 
     Implementation of advanced register operations.
+
+    Example:
+    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},       <-- 8-bit reset register, writeonly
+                  'LOST_DATA_COUNTER': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},  <-- 8-bit data register, 'ro' equivalent to 'readonly'
+                  'ENABLE': {'descr': {'addr': 1, 'size': 1, 'offset': 0}},                      <-- 1-bit register
+                  'ENABLE_EXTERN': {'descr': {'addr': 1, 'size': 1, 'offset': 1}},               <-- 1-bit register
+                  'EN_ARMING': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},                   <-- 1-bit register
+                  'EN_WRITE_TIMESTAMP': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},          <-- 1-bit register
+                  'EVENT_COUNTER': {'descr': {'addr': 2, 'size': 32, 'properties': ['ro']}}      <-- 32-bit register, 'ro' equivalent to 'readonly'
+
     '''
     _registers = {}
 
@@ -33,8 +43,12 @@ class RegisterHardwareLayer(HardwareLayer):
 
     def init(self):
         for reg in self._registers.itervalues():
+            # clear values
             if 'current' in reg:
                 reg['current'] = None
+            # set values from init
+            if reg in self._init:
+                self[reg] = self._init[reg]
 
     def set_configuration(self, conf):
         if conf:
