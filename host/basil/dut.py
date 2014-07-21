@@ -38,7 +38,6 @@ class Base(object):
             return conf
 
     def _update_init(self, init_dict=None, **kwargs):
-        print self.name, init_dict, kwargs
         if init_dict:
             self._init.update(kwargs)
         self._init.update(kwargs)
