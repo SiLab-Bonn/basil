@@ -31,9 +31,9 @@ class SiUsb (TransferLayer):
     def __init__(self, conf):
         super(SiUsb, self).__init__(conf)
 
-    def init(self):
-        if 'board_id' in self._conf.keys() and self._conf['board_id'] and int(self._conf['board_id']) >= 0:
-            self._sidev = SiUSBDevice.from_board_id(self._conf['board_id'])
+    def init(self, **kwargs):
+        if 'board_id' in self._init and self._init['board_id'] and int(self._init['board_id']) >= 0:
+            self._sidev = SiUSBDevice.from_board_id(self._init['board_id'])
         else:
             # search for any available device
             devices = GetUSBBoards()
@@ -44,11 +44,11 @@ class SiUsb (TransferLayer):
                 if len(devices) > 1:
                     raise ValueError('Please specify ID of USB board')
                 self._sidev = devices[0]
-        if 'bit_file' in self._conf.keys():
-            if 'avoid_download' in self._conf.keys() and self._conf['avoid_download'] is True and self._sidev.XilinxAlreadyLoaded():
+        if 'bit_file' in self._init.keys():
+            if 'avoid_download' in self._init.keys() and self._init['avoid_download'] is True and self._sidev.XilinxAlreadyLoaded():
                 print "FPGA already programmed, skipping download"
             else:
-                print "Programming FPGA: %s ... %s" % (self._conf['bit_file'], 'SUCCESS' if self._sidev.DownloadXilinx(self._conf['bit_file']) else 'FAILED')
+                print "Programming FPGA: %s ... %s" % (self._init['bit_file'], 'SUCCESS' if self._sidev.DownloadXilinx(self._init['bit_file']) else 'FAILED')
 
     def write(self, addr, data):
         if(addr >= self.BASE_ADDRESS_I2C and addr < self.HIGH_ADDRESS_I2C):
