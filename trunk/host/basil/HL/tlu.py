@@ -38,7 +38,7 @@ class tlu(RegisterHardwareLayer):
                   'EN_INVERT_TRIGGER': {'descr': {'addr': 2, 'size': 1, 'offset': 6}},
                   'EN_WRITE_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 7}},
                   'TRIGGER_LOW_TIMEOUT': {'descr': {'addr': 3, 'size': 8}},
-                  'CURRENT_TLU_TRIGGER_NUMBER': {'descr': {'addr': 4, 'size': 32}},
+                  'CURRENT_TLU_TRIGGER_NUMBER': {'descr': {'addr': 4, 'size': 32, 'properties': ['ro']}},
                   'TRIGGER_COUNTER': {'descr': {'addr': 8, 'size': 32}},
     }
 
