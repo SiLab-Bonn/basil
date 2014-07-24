@@ -28,8 +28,7 @@ class gpio(RegisterHardwareLayer):
         super(gpio, self).__init__(intf, conf)
 
     def init(self):
-        if "_init" in self.__dict__:
-            if 'direction' in self._init:
+        if 'direction' in self._init:
                 self.set_direction(0, self._init['direction'])
 
     def reset(self):
