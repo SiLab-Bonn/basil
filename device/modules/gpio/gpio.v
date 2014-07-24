@@ -107,13 +107,13 @@ generate
     for(i=0; i<IO_WIDTH; i=i+1) begin: sreggen
     if(IO_TRI[i])
                 assign IO[i] = DIRECTION_DATA[i/8][i%8] ? OUTPUT_DATA[i/8][i%8] : 1'bz;
-          else if(IO_DIRECTION[i])
+    else if(IO_DIRECTION[i])
                 assign IO[i] = OUTPUT_DATA[i/8][i%8];
     end
 endgenerate
 
 always@(*)
-    for(bi = 0; bi < IO_BYTES; bi = bi + 1)
+    for(bi = 0; bi < IO_WIDTH; bi = bi + 1)
         INPUT_DATA[bi/8][bi%8] = IO[bi];
 
 

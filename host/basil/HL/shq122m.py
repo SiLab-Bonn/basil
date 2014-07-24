@@ -26,7 +26,6 @@ import iseg_shq
 #     def close(self):
 #         pass
 
-
 class shq122m(HardwareLayer):
     '''interface for iseg SHQ 122M
         ###### yaml file #####
@@ -45,8 +44,10 @@ class shq122m(HardwareLayer):
         self.intf = intf
 
     def init(self):
-#         print self._conf['port']
-        self.s = iseg_shq.IsegShqCom(message_q=Queue.Queue(), port_num=self._init['port'])
+        if self._conf.has_key("port"):
+            self.s = iseg_shq.IsegShqCom(message_q=Queue.Queue(), port_num=self._conf['port'])
+        else:
+            self.s = iseg_shq.IsegShqCom(message_q=Queue.Queue(), port_num=self._init['port'])
         self.s.init_iseg()
         self.info = self.s.read_identifier()
 
