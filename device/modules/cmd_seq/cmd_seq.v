@@ -26,13 +26,13 @@ module cmd_seq
     input wire          BUS_RD,
     input wire          BUS_WR,
     
-    output wire                 CMD_CLK_OUT,
-    input wire                  CMD_CLK_IN,
-    input wire                  CMD_EXT_START_FLAG,
-    output wire                 CMD_EXT_START_ENABLE,
-    output wire                 CMD_DATA,
-    output wire                  CMD_READY,
-    output wire                  CMD_START_FLAG
+    output wire         CMD_CLK_OUT,
+    input wire          CMD_CLK_IN,
+    input wire          CMD_EXT_START_FLAG,
+    output wire         CMD_EXT_START_ENABLE,
+    output wire         CMD_DATA,
+    output wire         CMD_READY,
+    output wire         CMD_START_FLAG
 );
 
 wire IP_RD, IP_WR;
