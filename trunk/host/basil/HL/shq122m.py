@@ -44,10 +44,7 @@ class shq122m(HardwareLayer):
         self.intf = intf
 
     def init(self):
-        if self._conf.has_key("port"):
-            self.s = iseg_shq.IsegShqCom(message_q=Queue.Queue(), port_num=self._conf['port'])
-        else:
-            self.s = iseg_shq.IsegShqCom(message_q=Queue.Queue(), port_num=self._init['port'])
+        self.s = iseg_shq.IsegShqCom(message_q=Queue.Queue(), port_num=self._init['port'])
         self.s.init_iseg()
         self.info = self.s.read_identifier()
 
