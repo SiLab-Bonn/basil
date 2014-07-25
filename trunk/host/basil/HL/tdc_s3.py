@@ -49,7 +49,7 @@ class tdc_s3(RegisterHardwareLayer):
         return True if (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x01) else False
 
     def set_en_extern(self, value):
-        reg = self._intf.read(self._conf['base_addr'] + 1, size=1)
+        reg = self._intf.read(self._conf['base_addr'] + 1, size=1)[0]
         reg = ((value & 0x01) << 1) | (reg & 0xfd)
         self._intf.write(self._conf['base_addr'] + 1, data=(reg,))
 
