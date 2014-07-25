@@ -1,0 +1,58 @@
+#
+# ------------------------------------------------------------
+# Copyright (c) SILAB , Physics Institute of Bonn University 
+# ------------------------------------------------------------
+#
+# SVN revision information:
+#  $Rev:: 36                    $:
+#  $Author:: themperek          $: 
+#  $Date:: 2013-09-12 12:16:59 #$:
+#
+---
+name    : SimpleExample 
+version : 0.01
+
+transfer_layer:
+    - name  : usb
+      type  : Dummy
+      board_id  : -1
+    
+hw_drivers:
+  - name      : spi_module
+    type      : spi
+    interface : usb
+    base_addr : 0x10000
+    mem_bytes : 2
+          
+registers: 
+  - name        : TEST
+    type        : StdRegister
+    hw_driver   : spi_module
+    size        : 3
+    
+  - name        : REG
+    type        : StdRegister
+    hw_driver   : spi_module
+    size        : 20
+    fields  : 
+          - name     : VINJECT
+            size     : 6
+            offset   : 19
+            bit_order: [5,4,3,1,0,2]
+          - name     : VPULSE
+            size     : 6
+            offset   : 13
+          - name     : EN
+            size     : 2
+            offset   : 7
+          - name   : COLUMN
+            offset : 5
+            size   : 3
+            repeat : 2
+            fields  : 
+            - name     : EnR
+              size     : 1
+              offset   : 2
+            - name     : DACR
+              size     : 2
+              offset   : 1
