@@ -41,8 +41,8 @@ class spi(RegisterHardwareLayer):
     def reset(self):
         self._intf.write(self._conf['base_addr'], (0,))
 
-    def init(self):
-        self.reset()
+#    def init(self):
+#        self.reset()
 
     def start(self):
         '''
