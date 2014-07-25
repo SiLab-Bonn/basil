@@ -216,3 +216,6 @@ class Dut(Base):
     #TODO
     def __setitem__(self, key, value):
         self._registers[key].set(value)
+
+    def __repr__(self):
+        return str(self.get_configuration())
