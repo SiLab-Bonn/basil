@@ -14,12 +14,10 @@ from yaml import safe_load
 
 
 class Base(object):
-    name = None
-    version = None
-    _init = {}
-    _paramters = {}
-
     def __init__(self, conf):
+        self.name = None
+        self.version = None
+        self._init = {}
         self._conf = self._open_conf(conf)
         if 'name' in self._conf:
             self.name = self._conf['name']
