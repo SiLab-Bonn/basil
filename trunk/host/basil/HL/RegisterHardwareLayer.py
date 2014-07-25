@@ -19,7 +19,7 @@ read_only = ['read-only', 'readonly', 'ro']
 write_only = ['write-only', 'writeonly', 'wo']
 
 
-class RegisterHardwareLayer(HardwareLayer):
+class RegisterHardwareLayer(HardwareLayer, dict):
     '''Register Hardware Layer.
 
     Implementation of advanced register operations.
@@ -38,17 +38,25 @@ class RegisterHardwareLayer(HardwareLayer):
 
     def __init__(self, intf, conf):
         super(RegisterHardwareLayer, self).__init__(intf, conf)
-        for item in self._registers.iterkeys():
-            self.add_property(item)
+        for reg in self._registers.iterkeys():
+            self.add_property(reg)
+            dict.__setitem__(self, reg, None)  # set values, but not writing to the interface
 
     def init(self):
-        for reg in self._registers.itervalues():
-            # clear values
-            if 'current' in reg:
-                reg['current'] = None
-            # set values from init
+        print 'in init'
+        print 'init dict', self._init
+        for reg, value in self._registers.iteritems():
+            print reg
             if reg in self._init:
+                print 'set from init dict'
                 self[reg] = self._init[reg]
+            elif 'default' in value and not ('properties' in value['descr'] and [i for i in read_only if i in value['descr']['properties']]):
+                print 'set from default'
+                self[reg] = value['default']
+            else:  # do nothing here, no value to write
+                print 'do nothing'
+                pass
+#                 self[reg] = None
 
     def set_configuration(self, conf):
         if conf:
@@ -59,7 +67,7 @@ class RegisterHardwareLayer(HardwareLayer):
         conf = {}
         for reg in self._registers.iterkeys():
             descr = self._registers[reg]['descr']
-            if not ('properties' in descr and [i for i in write_only if i in descr['properties']]):
+            if not ('properties' in descr and [i for i in write_only if i in descr['properties']]) and not ('properties' in descr and [i for i in read_only if i in descr['properties']]):
                 conf[reg] = self[reg]
         return conf
 
@@ -80,7 +88,7 @@ class RegisterHardwareLayer(HardwareLayer):
         descr = deepcopy(self._registers[reg]['descr'])
         if 'properties' in descr and [i for i in write_only if i in descr['properties']]:
             #raise IOError('Register is write-only')
-            # allows a lazy style of programming
+            # allows a lazy-style of programming
             if 'default' in self._registers[reg]:
                 self._set(reg, self._registers[reg]['default'])
             else:
@@ -89,9 +97,10 @@ class RegisterHardwareLayer(HardwareLayer):
         else:
             descr.setdefault('offset', 0)
             ret_val = self._get_value(**descr)
-            curr_val = self._registers[reg].setdefault('current', None)
+            curr_val = dict.__getitem__(self, reg)
+#             curr_val = self.setdefault(reg, None)
             if curr_val and curr_val != ret_val:
-                raise ValueError('Read value is not expected', curr_val, ret_val)
+                raise ValueError('Read value was not expected: read: %d, expected: %d' % (ret_val, curr_val))
             return ret_val
 
     def _set(self, reg, value):
@@ -104,7 +113,7 @@ class RegisterHardwareLayer(HardwareLayer):
         except ValueError:
             raise
         else:
-            self._registers[reg].update({'current': value if isinstance(value, (int, long)) else int(value, base=2)})
+            dict.__setitem__(self, reg, value if isinstance(value, (int, long)) else int(value, base=2))
 
     def __getitem__(self, name):
         return self._get(name)
@@ -115,15 +124,12 @@ class RegisterHardwareLayer(HardwareLayer):
     def __getattr__(self, name):
         '''called only on last resort if there are no attributes in the instance that match the name
         '''
-        def method(*args, **kargs):
+        def method(*args, **kwargs):
             nsplit = name.split('_')
-            if(len(nsplit) == 2):
-                if(nsplit[0] == 'set' and len(args) == 1):
-                    self[nsplit[1]] = args[0]
-                elif(nsplit[0] == 'get'):
-                    return self[nsplit[1]]
-                else:
-                    raise AttributeError("%r object has no attribute %r" % (self.__class__, name))
+            if len(nsplit) == 2 and nsplit[0] == 'set' and len(args) == 1 and not kwargs:
+                self[nsplit[1]] = args[0]  # returns None
+            elif len(nsplit) == 2 and nsplit[0] == 'get' and not args and not kwargs:
+                return self[nsplit[1]]
             else:
                 raise AttributeError("%r object has no attribute %r" % (self.__class__, name))
         return method
