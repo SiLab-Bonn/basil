@@ -18,7 +18,8 @@ from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
 _test_init = {
-    'REG_test_init': 15
+    'REG_test_init': 15,
+    'REG1': 120
 }
 
 
@@ -138,7 +139,7 @@ class TestRegisterHardwareLayer(unittest.TestCase):
         self.dut['test_register'].set_default()
         self.dut.init({'test_register': _test_init})
         conf = self.dut.get_configuration()
-        self.assertDictEqual({'test_register': {'REG1': 12, 'REG2': 1, 'REG3': 65535, 'REG_test_init': 15}, 'dummy_tl': {}}, conf)
+        self.assertDictEqual({'test_register': {'REG1': 120, 'REG2': 1, 'REG3': 65535, 'REG_test_init': 15}, 'dummy_tl': {}}, conf)
 
     def test_get_dut_configuration(self):
         self.dut['test_register'].set_default()
