@@ -43,18 +43,12 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             dict.__setitem__(self, reg, None)  # set values, but not writing to the interface
 
     def init(self):
-        print 'in init'
-        print 'init dict', self._init
         for reg, value in self._registers.iteritems():
-            print reg
             if reg in self._init:
-                print 'set from init dict'
                 self[reg] = self._init[reg]
             elif 'default' in value and not ('properties' in value['descr'] and [i for i in read_only if i in value['descr']['properties']]):
-                print 'set from default'
                 self[reg] = value['default']
             else:  # do nothing here, no value to write
-                print 'do nothing'
                 pass
 #                 self[reg] = None
 
