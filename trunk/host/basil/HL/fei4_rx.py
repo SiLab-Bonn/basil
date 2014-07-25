@@ -30,8 +30,8 @@ class fei4_rx(RegisterHardwareLayer):
     def __init__(self, intf, conf):
         super(fei4_rx, self).__init__(intf, conf)
 
-    def init(self):
-        self.reset()
+#    def init(self):
+#        self.reset()
 
     def reset(self):
         self.soft_reset()
