@@ -15,7 +15,7 @@ from basil.HL.HardwareLayer import HardwareLayer
 from struct import unpack_from
 
 
-class tdc_s3(HardwareLayer):
+class tdc_s3(RegisterHardwareLayer):
     '''TDC controller interface
     '''
 
