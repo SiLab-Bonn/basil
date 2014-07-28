@@ -90,7 +90,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             # return nothing to prevent misuse
         else:
             descr.setdefault('offset', 0)
-            ret_val = self._get_value(**descr)
+            ret_val = self.get_value(**descr)
             curr_val = dict.__getitem__(self, reg)
 #             curr_val = self.setdefault(reg, None)
             if curr_val and curr_val != ret_val:
@@ -103,7 +103,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             raise IOError('Register is read-only')
         descr.setdefault('offset', 0)
         try:
-            self._set_value(value, **descr)
+            self.set_value(value, **descr)
         except ValueError:
             raise
         else:
