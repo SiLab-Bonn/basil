@@ -29,7 +29,7 @@ class HardwareLayer(Base):
         self._intf = intf
         self._base_addr = conf['base_addr']
 
-    def _set_value(self, value, addr, size, offset, **kwargs):
+    def set_value(self, value, addr, size, offset, **kwargs):
         '''Writing a value of any arbitrary size (max. unsigned int 64) and offset to a register
 
         Parameters
@@ -67,7 +67,7 @@ class HardwareLayer(Base):
             raise ValueError('Type not supported')
         self._intf.write(self._base_addr + addr, data=array('B', reg.tobytes()))
 
-    def _get_value(self, addr, size, offset, **kwargs):
+    def get_value(self, addr, size, offset, **kwargs):
         '''Reading a value of any arbitrary size (max. unsigned int 64) and offset from a register
 
         Parameters
@@ -92,7 +92,7 @@ class HardwareLayer(Base):
         reg.frombytes(ret.tostring())
         return reg[size + offset - 1:offset].tovalue()
 
-    def _set_data(self, data, addr, **kwargs):
+    def set_data(self, data, addr, **kwargs):
         '''Writing bytes of any arbitrary size
 
         Parameters
@@ -108,7 +108,7 @@ class HardwareLayer(Base):
         '''
         self._intf.write(self._conf['base_addr'] + addr, data)
 
-    def _get_data(self, addr, size, **kwargs):
+    def get_data(self, addr, size, **kwargs):
         '''Reading bytes of any arbitrary size
 
         Parameters
