@@ -19,6 +19,6 @@ transfer_layer:
     
 hw_drivers:
   - name      : test_register
-    type      : RegisterHardwareLayer
+    type      : test_RegisterHardwareLayer
     interface : dummy_tl
     base_addr : 0x0

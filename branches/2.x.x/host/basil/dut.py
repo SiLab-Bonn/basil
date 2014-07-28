@@ -14,12 +14,10 @@ from yaml import safe_load
 
 
 class Base(object):
-    name = None
-    version = None
-    _init = {}
-    _paramters = {}
-
     def __init__(self, conf):
+        self.name = None
+        self.version = None
+        self._init = {}
         self._conf = self._open_conf(conf)
         if 'name' in self._conf:
             self.name = self._conf['name']
@@ -87,40 +85,60 @@ class Dut(Base):
                 pass
 #                 print '%s: %s' % (type(mod), e)
 
-        for tl in self._transfer_layer.itervalues():
-            update_init(tl)
-            catch_exception_on_init(tl)
-        for hl in self._hardware_layer.itervalues():
-            update_init(tl)
-            catch_exception_on_init(hl)
-        for ul in self._user_drivers.itervalues():
-            update_init(tl)
-            catch_exception_on_init(ul)
-        for rl in self._registers.itervalues():
-            update_init(tl)
-            catch_exception_on_init(rl)
+        for item in self._transfer_layer.itervalues():
+            update_init(item)
+            catch_exception_on_init(item)
+        for item in self._hardware_layer.itervalues():
+            update_init(item)
+            catch_exception_on_init(item)
+        for item in self._user_drivers.itervalues():
+            update_init(item)
+            catch_exception_on_init(item)
+        for item in self._registers.itervalues():
+            update_init(item)
+            catch_exception_on_init(item)
 
     def set_configuration(self, conf):
         conf = self._open_conf(conf)
 
         if conf:
             for item, item_conf in conf.iteritems():
-                self[item].set_configuration(item_conf)
+                try:
+                    self[item].set_configuration(item_conf)
+                except NotImplementedError:
+                    pass
 
     def get_configuration(self):
         conf = {}
         for key, value in self._registers.iteritems():
-            conf[key] = value.get_configuration()
+            try:
+                conf[key] = value.get_configuration()
+            except NotImplementedError:
+                conf[key] = {}
         for key, value in self._user_drivers.iteritems():
-            conf[key] = value.get_configuration()
+            try:
+                conf[key] = value.get_configuration()
+            except NotImplementedError:
+                conf[key] = {}
         for key, value in self._hardware_layer.iteritems():
-            conf[key] = value.get_configuration()
+            try:
+                conf[key] = value.get_configuration()
+            except NotImplementedError:
+                conf[key] = {}
         for key, value in self._transfer_layer.iteritems():
-            conf[key] = value.get_configuration()
+            try:
+                conf[key] = value.get_configuration()
+            except NotImplementedError:
+                conf[key] = {}
         return conf
 
     def load_hw_configuration(self, conf, extend_config=False):
         conf = self._open_conf(conf)
+
+        if extend_config:
+            self._conf.update(conf)
+        else:
+            self._conf = conf
 
         if not extend_config:
             if conf['name']:
@@ -176,7 +194,10 @@ class Dut(Base):
                         raise ValueError('No driver specified for register: %s' % (reg['name'],))
 
     def _factory(self, importname, classname, *args, **kargs):
-        _temp = __import__(importname, globals(), locals(), [classname], -1)
+        try:
+            _temp = __import__(importname, globals(), locals(), [classname], -1)
+        except ImportError:
+            _temp = __import__(importname.split('.')[-1], globals(), locals(), [classname], -1)
         aClass = getattr(_temp, classname)
         return aClass(*args, **kargs)
 
@@ -195,3 +216,6 @@ class Dut(Base):
     #TODO
     def __setitem__(self, key, value):
         self._registers[key].set(value)
+
+    def __repr__(self):
+        return str(self.get_configuration())

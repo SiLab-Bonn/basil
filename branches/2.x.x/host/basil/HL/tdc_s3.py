@@ -31,8 +31,8 @@ class tdc_s3(HardwareLayer):
     def __init__(self, intf, conf):
         super(tdc_s3, self).__init__(intf, conf)
 
-    def init(self):
-        self.reset()
+#    def init(self):
+#        self.reset()
 
     def reset(self):
         self._intf.write(self._conf['base_addr'], (0,))
