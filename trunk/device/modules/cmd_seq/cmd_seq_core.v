@@ -142,6 +142,42 @@ three_stage_synchronizer conf_en_ext_start_sync (
     .OUT(CMD_EXT_START_ENABLE)
 );
 
+wire [15:0] CONF_CMD_SIZE_CMD_CLK;
+three_stage_synchronizer #(
+    .WIDTH(16)
+) cmd_size_sync (
+    .CLK(CMD_CLK_IN),
+    .IN(CONF_CMD_SIZE),
+    .OUT(CONF_CMD_SIZE_CMD_CLK)
+);
+
+wire [31:0] CONF_REPEAT_COUNT_CMD_CLK;
+three_stage_synchronizer #(
+    .WIDTH(32)
+) repeat_cnt_sync (
+    .CLK(CMD_CLK_IN),
+    .IN(CONF_REPEAT_COUNT),
+    .OUT(CONF_REPEAT_COUNT_CMD_CLK)
+);
+
+wire [15:0] CONF_START_REPEAT_CMD_CLK;
+three_stage_synchronizer #(
+    .WIDTH(16)
+) start_repeat_sync (
+    .CLK(CMD_CLK_IN),
+    .IN(CONF_START_REPEAT),
+    .OUT(CONF_START_REPEAT_CMD_CLK)
+);
+
+wire [15:0] CONF_STOP_REPEAT_CMD_CLK;
+three_stage_synchronizer #(
+    .WIDTH(16)
+) stop_repeat_sync (
+    .CLK(CMD_CLK_IN),
+    .IN(CONF_STOP_REPEAT),
+    .OUT(CONF_STOP_REPEAT_CMD_CLK)
+);
+
 (* RAM_STYLE="{AUTO | BLOCK | BLOCK_POWER1 | BLOCK_POWER2}" *)
 reg [7:0] cmd_mem [CMD_MEM_SIZE-1:0];
 always @ (negedge BUS_CLK) begin
@@ -184,7 +220,7 @@ always @ (posedge CMD_CLK_IN)
 
 reg END_SEQ_REP_NEXT, END_SEQ_REP;
 always @ (*) begin
-    if(repeat_cnt < CONF_REPEAT_COUNT && cnt == CONF_CMD_SIZE-1-CONF_STOP_REPEAT && !END_SEQ_REP)
+    if(repeat_cnt < CONF_REPEAT_COUNT_CMD_CLK && cnt == CONF_CMD_SIZE_CMD_CLK-1-CONF_STOP_REPEAT_CMD_CLK && !END_SEQ_REP)
         END_SEQ_REP_NEXT = 1;
     else
         END_SEQ_REP_NEXT = 0;
@@ -199,7 +235,7 @@ always @ (*) begin
                     next_state = SEND;
                 else
                     next_state = WAIT;
-        SEND : if(cnt == CONF_CMD_SIZE && repeat_cnt==CONF_REPEAT_COUNT)
+        SEND : if(cnt == CONF_CMD_SIZE_CMD_CLK && repeat_cnt==CONF_REPEAT_COUNT_CMD_CLK)
                     next_state = WAIT;
                 else
                     next_state = SEND;
@@ -212,9 +248,9 @@ always @ (posedge CMD_CLK_IN) begin
         cnt <= 0;
     else if(state != next_state)
         cnt <= 0;
-    else if(cnt == CONF_CMD_SIZE || END_SEQ_REP) begin
-        if(CONF_START_REPEAT != 0)
-            cnt <= CONF_START_REPEAT+1;
+    else if(cnt == CONF_CMD_SIZE_CMD_CLK || END_SEQ_REP) begin
+        if(CONF_START_REPEAT_CMD_CLK != 0)
+            cnt <= CONF_START_REPEAT_CMD_CLK+1;
         else
             cnt <= 1;
     end
@@ -225,7 +261,7 @@ end
 always @ (posedge CMD_CLK_IN) begin
     if (send_cmd || RST_CMD_CLK)
         repeat_cnt <= 1;
-    else if(state == SEND && (cnt == CONF_CMD_SIZE || END_SEQ_REP) && repeat_cnt != 0)
+    else if(state == SEND && (cnt == CONF_CMD_SIZE_CMD_CLK || END_SEQ_REP) && repeat_cnt != 0)
         repeat_cnt <= repeat_cnt + 1;
 end
 
@@ -233,15 +269,15 @@ always @ (*) begin
     if(state != next_state && next_state == SEND)
         CMD_MEM_ADD = 0;
     else if(state == SEND)
-        if(cnt == CONF_CMD_SIZE-1 || END_SEQ_REP_NEXT) begin
-            if(CONF_START_REPEAT != 0)
-                CMD_MEM_ADD = (CONF_START_REPEAT)/8;
+        if(cnt == CONF_CMD_SIZE_CMD_CLK-1 || END_SEQ_REP_NEXT) begin
+            if(CONF_START_REPEAT_CMD_CLK != 0)
+                CMD_MEM_ADD = (CONF_START_REPEAT_CMD_CLK)/8;
             else
                 CMD_MEM_ADD = 0;
             end
         else begin
             if(END_SEQ_REP)
-                CMD_MEM_ADD = (CONF_START_REPEAT+1)/8;
+                CMD_MEM_ADD = (CONF_START_REPEAT_CMD_CLK+1)/8;
             else
                 CMD_MEM_ADD = (cnt+1)/8;
         end
@@ -257,7 +293,7 @@ always @ (posedge CMD_CLK_IN) begin
     else if(state == SEND) begin
         if(next_state == WAIT)
             send_word <= 0; // by default set to output to zero (this is strange -> bug of FEI4?)
-        else if(cnt == CONF_CMD_SIZE || END_SEQ_REP)
+        else if(cnt == CONF_CMD_SIZE_CMD_CLK || END_SEQ_REP)
             send_word <= CMD_MEM_DATA;
         else if(cnt %8 == 0)
             send_word <= CMD_MEM_DATA;
@@ -307,7 +343,7 @@ OFDDRRSE CMD_CLK_FORWARDING_INST (
 
 // command start flag
 always @ (posedge CMD_CLK_IN)
-    if (state == SEND && cnt == 1 && CONF_DIS_CMD_PULSE_CMD_CLK == 1'b0)
+    if (state == SEND && cnt == (CONF_START_REPEAT_CMD_CLK + 1) && CONF_DIS_CMD_PULSE_CMD_CLK == 1'b0)
         CMD_START_FLAG <= 1'b1;
     else
         CMD_START_FLAG <= 1'b0;
