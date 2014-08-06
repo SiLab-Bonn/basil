@@ -185,7 +185,7 @@ begin
         TLU_TRIGGER_LOW_TIMEOUT_ERROR <= TLU_TRIGGER_LOW_TIMEOUT_ERROR;
         TLU_TRIGGER_ACCEPT_ERROR <= TLU_TRIGGER_ACCEPT_ERROR;
         CMD_EXT_START_FLAG <= 1'b0;
-        CMD_WAS_BUSY <= 1'b0;
+        CMD_WAS_BUSY <= CMD_WAS_BUSY;
 
         case (next)
 
@@ -244,8 +244,6 @@ begin
                     CMD_EXT_START_FLAG <= 1'b0;
                 if (CMD_READY == 1'b0)
                     CMD_WAS_BUSY <= 1'b1;
-                else
-                    CMD_WAS_BUSY <= CMD_WAS_BUSY;
             end
 
             SEND_TLU_CLOCK:
@@ -263,8 +261,6 @@ begin
                 CMD_EXT_START_FLAG <= 1'b0;
                 if (CMD_READY == 1'b0)
                     CMD_WAS_BUSY <= 1'b1;
-                else
-                    CMD_WAS_BUSY <= CMD_WAS_BUSY;
             end
 
             WAIT_BEFORE_LATCH:
@@ -282,8 +278,6 @@ begin
                 CMD_EXT_START_FLAG <= 1'b0;
                 if (CMD_READY == 1'b0)
                     CMD_WAS_BUSY <= 1'b1;
-                else
-                    CMD_WAS_BUSY <= CMD_WAS_BUSY;
             end
 
             LATCH_DATA:
@@ -347,8 +341,6 @@ begin
                 CMD_EXT_START_FLAG <= 1'b0;
                 if (CMD_READY == 1'b0)
                     CMD_WAS_BUSY <= 1'b1;
-                else
-                    CMD_WAS_BUSY <= CMD_WAS_BUSY;
             end
 
             WAIT_FOR_TLU_DATA_SAVED_CMD_READY:
@@ -370,8 +362,6 @@ begin
                 CMD_EXT_START_FLAG <= 1'b0;
                 if (CMD_READY == 1'b0)
                     CMD_WAS_BUSY <= 1'b1;
-                else
-                    CMD_WAS_BUSY <= CMD_WAS_BUSY;
             end
 
         endcase
