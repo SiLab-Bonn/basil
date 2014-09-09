@@ -21,9 +21,6 @@ class HardwareLayer(Base):
 
     Implementation of very basic register operations.
     '''
-    _intf = None
-    _base_addr = None
-
     def __init__(self, intf, conf):
         super(HardwareLayer, self).__init__(conf)
         self._intf = intf
