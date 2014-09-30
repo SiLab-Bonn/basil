@@ -15,10 +15,8 @@ module gpac_adc_rx_core
     parameter [0:0] HEADER_ID = 0
 )
 (
-    input ADC_CLK,
-    input ADC_DCO,
-    input ADC_FCO,
-    input ADC_IN,
+    input ADC_ENC,
+    input [13:0] ADC_IN,
 
     input ADC_SYNC,
     input ADC_TRIGGER,
@@ -89,7 +87,7 @@ wire [7:0] CONF_SAMPEL_DLY = status_regs[7];
 reg [7:0] CONF_ERROR_LOST;
 assign LOST_ERROR = CONF_ERROR_LOST!=0;
 
-wire CONF_DONE; 
+reg CONF_DONE; 
 
 always @(posedge BUS_CLK) begin
     if (BUS_RD) begin
@@ -112,42 +110,15 @@ always @(posedge BUS_CLK) begin
     end          
 end
 
-reg ADC_IN_BUF;
-always@(posedge ADC_CLK)
-    ADC_IN_BUF <= ADC_IN;
-
-reg [13:0] adc_des;
-always@(posedge ADC_CLK) begin
-    adc_des <= {adc_des[12:0],ADC_IN_BUF};
-end
-
-reg [1:0] fco_sync;
-always@(posedge ADC_CLK) begin
-    fco_sync <= {fco_sync[0],ADC_FCO};
-end
-
-wire adc_des_rst;
-assign adc_des_rst = fco_sync[0] & !fco_sync[1] ;
-
-reg [3:0] adc_des_cnt;
-always@(posedge ADC_CLK) begin
-    if(adc_des_rst)
-        adc_des_cnt <= 0;
-    else
-        adc_des_cnt <= adc_des_cnt +1;
-end
-
-wire adc_load;
-assign adc_load = (adc_des_cnt==13);
 
 wire rst_adc_sync;
-cdc_pulse_sync_cnt isync_rst (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(ADC_CLK), .pulse_out(rst_adc_sync));
+cdc_pulse_sync_cnt isync_rst (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(ADC_ENC), .pulse_out(rst_adc_sync));
 
 wire start_adc_sync;
-cdc_pulse_sync_cnt istart_rst (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(ADC_CLK), .pulse_out(start_adc_sync));
+cdc_pulse_sync_cnt istart_rst (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(ADC_ENC), .pulse_out(start_adc_sync));
 
 wire adc_sync_pulse;
-pulse_gen_rising pulse_adc_sync (.clk_in(ADC_CLK), .in(ADC_SYNC), .out(adc_sync_pulse));
+pulse_gen_rising pulse_adc_sync (.clk_in(ADC_ENC), .in(ADC_SYNC), .out(adc_sync_pulse));
 
 //long reset is needed
 reg [7:0] sync_cnt;
@@ -160,21 +131,21 @@ end
 wire RST_LONG;
 assign RST_LONG = sync_cnt[7];
 
+/*
 reg [7:0] align_cnt;
-always@(posedge ADC_CLK) begin
-    if(adc_sync_pulse) //sync and load?
+always@(posedge ADC_ENC) begin
+    if(adc_sync_pulse)
         align_cnt <= 0;
-    else if(align_cnt == (CONF_SAMPLE_SKIP - 1) && adc_load)
+    else if(align_cnt == (CONF_SAMPLE_SKIP - 1))
         align_cnt <= 0;
-    else if (adc_load)
+    else
         align_cnt <= align_cnt + 1; 
 end
-
-wire adc_load_skip = adc_load && align_cnt == CONF_SAMPEL_DLY;
+*/
 
 reg adc_sync_wait;
-always@(posedge ADC_CLK) begin
-    if(RST)
+always@(posedge ADC_ENC) begin
+    if(rst_adc_sync)
         adc_sync_wait <= 0;
     else if(start_adc_sync)
         adc_sync_wait <= 1;        
@@ -182,32 +153,30 @@ always@(posedge ADC_CLK) begin
         adc_sync_wait <= 0; 
 end
 
-
 wire start_data_count;
 assign start_data_count = CONF_START_WITH_SYNC ? (adc_sync_wait && adc_sync_pulse) : start_adc_sync;
 
+
 reg [23:0] rec_cnt;
-always@(posedge ADC_CLK) begin
+always@(posedge ADC_ENC) begin
     if(rst_adc_sync)
         rec_cnt <= 0;
     else if(start_data_count)
         rec_cnt <= 1;
-    else if(rec_cnt != -1 && rec_cnt>0 && adc_load_skip && CONF_DATA_CNT!=0 )
+    else if(rec_cnt != -1 && rec_cnt>0 && CONF_DATA_CNT!=0 )
         rec_cnt <= rec_cnt + 1;
 end
 
-assign CONF_DONE  = rec_cnt > CONF_DATA_CNT;
-
-
-
+wire DONE;
+assign DONE  = rec_cnt > CONF_DATA_CNT;
 
 reg cdc_fifo_write_single;
 
 always@(*) begin
     if(CONF_DATA_CNT==0 && rec_cnt>=1) //forever
-        cdc_fifo_write_single = adc_load_skip;
+        cdc_fifo_write_single = 1;
     else if(rec_cnt>=1 && rec_cnt <= CONF_DATA_CNT) //to CONF_DATA_CNT
-        cdc_fifo_write_single = adc_load_skip;
+        cdc_fifo_write_single = 1;
     else
         cdc_fifo_write_single = 0;
 end
@@ -216,18 +185,16 @@ reg [13:0] prev_data;
 reg prev_sync;
 reg prev_ready;
 
-always@(posedge ADC_CLK) begin
+always@(posedge ADC_ENC) begin
     if(rst_adc_sync || start_adc_sync)
         prev_ready <= 0;
-    else if(cdc_fifo_write_single)
+    else
         prev_ready <= !prev_ready;
 end
 
-always@(posedge ADC_CLK) begin
-    if(cdc_fifo_write_single) begin
-        prev_data <= adc_des;
+always@(posedge ADC_ENC) begin
+        prev_data <= ADC_IN;
         prev_sync <= ADC_SYNC;
-    end
 end
 
 
@@ -237,7 +204,7 @@ assign cdc_fifo_write_double = cdc_fifo_write_single && prev_ready; //write ever
 wire wfull;
 reg cdc_fifo_write;
 
-always@(posedge ADC_CLK) begin
+always@(posedge ADC_ENC) begin
     if(RST)
         CONF_ERROR_LOST <= 0;
     else if (CONF_ERROR_LOST!=8'hff && wfull && cdc_fifo_write)
@@ -247,9 +214,9 @@ end
 reg [31:0] data_to_fifo;
 always@(*) begin
     if(CONF_SINGLE_DATA)
-        data_to_fifo = {HEADER_ID, ADC_ID, ADC_SYNC, 14'b0, adc_des};
+        data_to_fifo = {HEADER_ID, ADC_ID, ADC_SYNC, 14'b0, ADC_IN};
     else
-        data_to_fifo = {HEADER_ID, ADC_ID, prev_sync, prev_data, adc_des};
+        data_to_fifo = {HEADER_ID, ADC_ID, prev_sync, prev_data, ADC_IN};
 
     if(CONF_SINGLE_DATA)
         cdc_fifo_write = cdc_fifo_write_single;
@@ -265,7 +232,7 @@ cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) cdc_syncfifo_i
     .wfull(wfull),
     .rempty(cdc_fifo_empty),
     .wdata(data_to_fifo), //.wdata({ADC_SYNC,2'd0,ADC_SYNC,14'd0,adc_des}),
-    .winc(cdc_fifo_write), .wclk(ADC_CLK), .wrst(RST_LONG),
+    .winc(cdc_fifo_write), .wclk(ADC_ENC), .wrst(RST_LONG),
     .rinc(!fifo_full), .rclk(BUS_CLK), .rrst(RST_LONG)
 );
 
@@ -280,20 +247,18 @@ gerneric_fifo #(.DATA_SIZE(32), .DEPTH(1024))  fifo_i
 
 //assign FIFO_DATA[31:30]  = 0;
 
-    `ifdef SYNTHESIS_
-wire [35:0] control_bus;
-chipscope_icon ichipscope_icon
-(
-    .CONTROL0(control_bus)
-); 
 
-chipscope_ila ichipscope_ila 
-(
-    .CONTROL(control_bus),
-    .CLK(ADC_CLK), 
-    .TRIG0({adc_des, wfull, cdc_fifo_write, adc_load, ADC_OUT1, ADC_FCO,rst_adc_sync})
-); 
-    `endif
+wire DONE_SYNC;
+cdc_pulse_sync done_pulse_sync (.clk_in(ADC_ENC), .pulse_in(DONE), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
 
+always @(posedge BUS_CLK)
+    if(RST)
+        CONF_DONE <= 1;
+    else if(START)
+        CONF_DONE <= 0;
+    else if(DONE_SYNC)
+        CONF_DONE <= 1;
 
+        
+        
 endmodule

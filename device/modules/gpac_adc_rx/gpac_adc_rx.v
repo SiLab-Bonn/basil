@@ -17,10 +17,8 @@ module gpac_adc_rx
     parameter [0:0] HEADER_ID = 0
 )
 (
-    input ADC_CLK,
-    input ADC_DCO,
-    input ADC_FCO,
-    input ADC_IN,
+    input ADC_ENC,
+    input [13:0] ADC_IN,
 
     input ADC_SYNC,
     input ADC_TRIGGER,
@@ -72,9 +70,7 @@ gpac_adc_rx_core
     .BUS_WR(IP_WR),                    
     .BUS_DATA_OUT(IP_DATA_OUT),  
 
-    .ADC_CLK(ADC_CLK),
-    .ADC_DCO(ADC_DCO),
-    .ADC_FCO(ADC_FCO),
+    .ADC_ENC(ADC_ENC),
     .ADC_IN(ADC_IN),
 
     .ADC_SYNC(ADC_SYNC),
