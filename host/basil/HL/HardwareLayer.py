@@ -23,8 +23,9 @@ class HardwareLayer(Base):
     '''
     def __init__(self, intf, conf):
         super(HardwareLayer, self).__init__(conf)
-        self._intf = intf
-        self._base_addr = conf['base_addr']
+        if intf != None:
+            self._intf = intf
+            self._base_addr = conf['base_addr']
 
     def set_value(self, value, addr, size, offset, **kwargs):
         '''Writing a value of any arbitrary size (max. unsigned int 64) and offset to a register
