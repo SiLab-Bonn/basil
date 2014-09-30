@@ -163,7 +163,10 @@ class Dut(Base):
             if conf['hw_drivers']:
                 for hwdrv in conf['hw_drivers']:
                     kargs = {}
-                    kargs['intf'] = self._transfer_layer[hwdrv['interface']]
+                    if hwdrv['interface'] != 'None':
+                        kargs['intf'] = self._transfer_layer[hwdrv['interface']]
+                    else:
+                        kargs['intf'] = None
                     kargs['conf'] = hwdrv
                     self._hardware_layer[hwdrv['name']] = self._factory('HL.' + hwdrv['type'], hwdrv['type'], *(), **kargs)
 
