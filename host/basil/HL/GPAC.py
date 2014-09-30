@@ -126,7 +126,31 @@ class GPAC(HardwareLayer):
                       'ADCV': {'offset': 0, 'gain': 2},
                       'ADCI': {'offset': 0, 'gain': 2},
                     },
-
+            'ISRC7': {
+                      'DACI': {'offset': -1024, 'gain': 0.5},
+                      'ADCV': {'offset': 0, 'gain': 2},
+                      'ADCI': {'offset': 0, 'gain': 2},
+                    },
+            'ISRC8': {
+                      'DACI': {'offset': -1024, 'gain': 0.5},
+                      'ADCV': {'offset': 0, 'gain': 2},
+                      'ADCI': {'offset': 0, 'gain': 2},
+                    }, 
+            'ISRC9': {
+                      'DACI': {'offset': -1024, 'gain': 0.5},
+                      'ADCV': {'offset': 0, 'gain': 2},
+                      'ADCI': {'offset': 0, 'gain': 2},
+                    },
+            'ISRC10': {
+                      'DACI': {'offset': -1024, 'gain': 0.5},
+                      'ADCV': {'offset': 0, 'gain': 2},
+                      'ADCI': {'offset': 0, 'gain': 2},
+                    },
+            'ISRC11': {
+                      'DACI': {'offset': -1024, 'gain': 0.5},
+                      'ADCV': {'offset': 0, 'gain': 2},
+                      'ADCI': {'offset': 0, 'gain': 2},
+                    },
             'VSRC0': {
                       'DACV': {'offset': 0, 'gain': 0.5},
                       'ADCV': {'offset': 0, 'gain': 2},
