@@ -39,7 +39,7 @@ class TrackRegister(RegisterLayer):
     def clear(self):
         'Clear tracks in memory - all zero'
         for track in self._tracks:
-            self._tracks[track].reset(0)
+            self._tracks[track].setall(False)
 
     def write(self, size=-1):
         if size == -1:
