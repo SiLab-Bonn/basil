@@ -11,6 +11,7 @@
 #
 import time
 import Queue
+import math
 
 from basil.HL.HardwareLayer import HardwareLayer
 
@@ -29,26 +30,28 @@ import iseg_shq
 class shq122m(HardwareLayer):
     '''interface for iseg SHQ 122M
         ###### yaml file #####
-        transfer_layer:
-          - name  : serial_dummy
-            type: SerialDummy
         hw_drivers:
-          - name      : HV
+          - name      : SHQ
             type      : shq122m
-            interface : serial_dummy
+            interface : None
             port : \\.\COM5
+       registers:     
+          - name        : HV
+            type        : FunctionalRegister
+            hw_driver   : SHQ
+            arg_names   : [ value ]
+            arg_add     : { 'channel': 1}
     '''
 
     def __init__(self, intf, conf):
-        self._conf = conf
-        self.intf = intf
+        super(shq122m, self).__init__(intf, conf)
 
     def init(self):
         self.s = iseg_shq.IsegShqCom(message_q=Queue.Queue(), port_num=self._init['port'])
         self.s.init_iseg()
         self.info = self.s.read_identifier()
 
-    def set_voltage(self, channel=1, value=0, unit='mV'):
+    def set_voltage(self, channel=1, value=0, unit='mV', verror=0.1, timeout=1):
         if unit == 'raw':
             raw = value
         elif unit == 'V':
@@ -59,14 +62,16 @@ class shq122m(HardwareLayer):
             raise TypeError("Invalid unit type.")
         self.s.write_v_set(channel, raw)
         self.s.write_start_ramp(channel)
-        for _ in range(3000):
-            ret = self.s.read_status_word()
-            if ret == "ON":
-                break
-            else:
-                time.sleep(0.001)
-        if ret != "ON":
-            raise Exception("shq122m timeout")
+        start_time = time.time()
+        
+        while self.s.read_status_word() != 'ON' or abs(self.s.read_voltage()+raw) > verror or math.isnan(self.s.read_current()):
+            self.s.read_status_word()
+            self.s.write_v_set(voltage=raw)
+            self.s.write_start_ramp()
+            time.sleep(0.001)
+            
+            if time.time()-start_time > timeout:
+                raise Exception("shq122m timeout")
 
     def get_voltage(self, channel=1, unit='mV'):
         raw = self.s.read_voltage(channel)
