@@ -9,6 +9,7 @@
 #  $Author::                    $:
 #  $Date::                      $:
 #
+import os
 
 from basil.TL.TransferLayer import TransferLayer
 from SiLibUSB import GetUSBBoards, SiUSBDevice
@@ -47,10 +48,21 @@ class SiUsb (TransferLayer):
                     raise ValueError('Please specify ID of USB board')
                 self._sidev = devices[0]
         if 'bit_file' in self._init.keys():
-            if self._init['avoid_download'] is True and self._sidev.XilinxAlreadyLoaded():
+            if 'avoid_download' in self._init.keys() and self._init['avoid_download'] is True and self._sidev.XilinxAlreadyLoaded():
                 print "FPGA already programmed, skipping download"
             else:
-                print "Programming FPGA: %s ... %s" % (self._init['bit_file'], 'SUCCESS' if self._sidev.DownloadXilinx(self._init['bit_file']) else 'FAILED')
+                if os.path.exists(self._init['bit_file']):
+                    bit_file = self._init['bit_file']
+                elif os.path.exists(os.path.join(os.path.dirname(self.parent.conf_path), self._init['bit_file'])):
+                    bit_file = os.path.join(os.path.dirname(self.parent.conf_path), self._init['bit_file'])
+                else:
+                    raise ValueError('No such bit file: %s' % self._init['bit_file'])
+                print "Programming FPGA: %s ... %s" % (self._init['bit_file'], 'SUCCESS' if self._sidev.DownloadXilinx(bit_file) else 'FAILED')
+        else:
+            if not self._sidev.XilinxAlreadyLoaded():
+                raise ValueError('FPGA not initialized, bit_file not specified')
+            else:
+                print "Programming FPGA: bit_file not specified"
 
     def write(self, addr, data):
         if(addr >= self.BASE_ADDRESS_I2C and addr < self.HIGH_ADDRESS_I2C):
