@@ -17,25 +17,35 @@ class Base(object):
     def __init__(self, conf):
         self.name = None
         self.version = None
+        self.conf_path = None
+        self.parent = None
         self._init = {}
         self._conf = self._open_conf(conf)
         if 'name' in self._conf:
             self.name = self._conf['name']
         if 'version' in self._conf:
             self.version = self._conf['version']
+        if 'conf_path' in self._conf:
+            self.conf_path = self._conf['conf_path']
+        if 'parent' in self._conf:
+            self.parent = self._conf['parent']
         if 'init' in self._conf:
             self._update_init(self._conf['init'])
 
     def _open_conf(self, conf):
+        conf_dict = {}
         if not conf:
-            return None
+            pass
         elif isinstance(conf, basestring):  # parse the first YAML document in a stream
-            stream = open(conf)
-            return safe_load(stream)
+            with open(conf, 'r') as f:
+                conf_dict.update(safe_load(f))
+                conf_dict.update(conf_path=f.name)
         elif isinstance(conf, file):  # parse the first YAML document in a stream
-            return safe_load(conf)
+            conf_dict.update(safe_load(conf))
+            conf_dict.update(conf_path=conf.name)
         else:  # conf is already a dict
-            return conf
+            conf_dict.update(conf)
+        return conf_dict
 
     def _update_init(self, init_conf=None, **kwargs):
         init_conf = self._open_conf(init_conf)
@@ -56,13 +66,12 @@ class Base(object):
 class Dut(Base):
     '''Device
     '''
-    _transfer_layer = None
-    _hardware_layer = None
-    _user_drivers = None
-    _registers = None
-
     def __init__(self, conf):
         super(Dut, self).__init__(conf)
+        self._transfer_layer = None
+        self._hardware_layer = None
+        self._user_drivers = None
+        self._registers = None
         self.load_hw_configuration(self._conf)
 
     def init(self, init_conf=None, **kwargs):
@@ -141,12 +150,12 @@ class Dut(Base):
             self._conf = conf
 
         if not extend_config:
-            if conf['name']:
-                self.name = conf['name']
+            if 'name' in self._conf:
+                self.name = self._conf['name']
             else:
                 self.name = None
-            if conf['version']:
-                self.version = conf['version']
+            if 'version' in self._conf:
+                self.version = self._conf['version']
             else:
                 self.version = None
             self._transfer_layer = {}
@@ -155,6 +164,7 @@ class Dut(Base):
             self._registers = {}
 
         for intf in conf['transfer_layer']:
+            intf['parent'] = self
             kargs = {}
             kargs['conf'] = intf
             self._transfer_layer[intf['name']] = self._factory('TL.' + intf['type'], intf['type'], *(), **kargs)
@@ -162,17 +172,19 @@ class Dut(Base):
         if 'hw_drivers' in conf:
             if conf['hw_drivers']:
                 for hwdrv in conf['hw_drivers']:
+                    hwdrv['parent'] = self
                     kargs = {}
-                    if hwdrv['interface'] != 'None':
-                        kargs['intf'] = self._transfer_layer[hwdrv['interface']]
-                    else:
+                    if not hwdrv['interface'] or hwdrv['interface'].lower() == 'none':
                         kargs['intf'] = None
+                    else:
+                        kargs['intf'] = self._transfer_layer[hwdrv['interface']]
                     kargs['conf'] = hwdrv
                     self._hardware_layer[hwdrv['name']] = self._factory('HL.' + hwdrv['type'], hwdrv['type'], *(), **kargs)
 
         if 'user_drivers' in conf:
             if conf['user_drivers']:
                 for userdrv in conf['user_drivers']:
+                    userdrv['parent'] = self
                     kargs = {}
                     kargs['hw_driver'] = self._hardware_layer[userdrv['hw_driver']]
                     kargs['conf'] = userdrv
@@ -181,9 +193,10 @@ class Dut(Base):
         if 'registers' in conf:
             if conf['registers']:
                 for reg in conf['registers']:
+                    reg['parent'] = self
                     kargs = {}
                     if 'driver' in reg:
-                        if reg['driver'].lower() == 'none' or not reg['driver']:
+                        if not reg['driver'] or reg['driver'].lower() == 'none':
                             kargs['driver'] = None
                         else:
                             kargs['driver'] = self._user_drivers[reg['driver']]
