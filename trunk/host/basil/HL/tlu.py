@@ -56,8 +56,12 @@ class tlu(RegisterHardwareLayer):
         return unpack_from('B', ret)[0]
 
     def set_trigger_mode(self, value):
-        if value not in trigger_modes.iterkeys():
-            raise ValueError('Trigger mode does not exist')
+        if isinstance(value, basestring):
+            if value not in trigger_modes.iterkeys():
+                raise ValueError('Given trigger mode does not exist')
+            value = trigger_modes[value]
+        if value not in trigger_modes.itervalues():
+            raise ValueError('Given trigger mode does not exist')
         ret = self._intf.read(self._conf['base_addr'] + 1, size=1)
         reg = unpack_from('B', ret)[0]
         reg = (value & 0x03) | (reg & 0xfc)
