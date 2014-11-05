@@ -60,7 +60,7 @@ class shq122m(HardwareLayer):
                 self.iseg.write_v_ramp(channel=ch, ramp_speed=self._init['ramp_speed'])
             self.trip_reset(channel=ch)
 
-    def set_voltage(self, channel, value=0, unit='mV', ramp_speed=None):
+    def set_voltage(self, channel, value=0, unit='V', ramp_speed=None):
         if unit == 'raw':
             raw = value
         elif unit == 'V':
@@ -85,7 +85,7 @@ class shq122m(HardwareLayer):
                 break
         logging.info('Finished ramping voltage')
 
-    def get_voltage(self, channel, unit='mV'):
+    def get_voltage(self, channel, unit='V'):
         raw = self.iseg.read_voltage(channel)
         if unit == 'raw':
             return raw
@@ -96,7 +96,7 @@ class shq122m(HardwareLayer):
         else:
             raise TypeError("Invalid unit type.")
 
-    def get_current(self, channel, unit='mA'):
+    def get_current(self, channel, unit='A'):
         raw = self.iseg.read_current(channel)
         if unit == 'raw':
             return raw
