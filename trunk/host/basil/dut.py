@@ -9,6 +9,8 @@
 #  $Author::                    $:
 #  $Date::                      $:
 #
+import logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
 
 from yaml import safe_load
 
@@ -163,11 +165,12 @@ class Dut(Base):
             self._user_drivers = {}
             self._registers = {}
 
-        for intf in conf['transfer_layer']:
-            intf['parent'] = self
-            kargs = {}
-            kargs['conf'] = intf
-            self._transfer_layer[intf['name']] = self._factory('TL.' + intf['type'], intf['type'], *(), **kargs)
+        if 'transfer_layer' in conf:
+            for intf in conf['transfer_layer']:
+                intf['parent'] = self
+                kargs = {}
+                kargs['conf'] = intf
+                self._transfer_layer[intf['name']] = self._factory('TL.' + intf['type'], intf['type'], *(), **kargs)
 
         if 'hw_drivers' in conf:
             if conf['hw_drivers']:
