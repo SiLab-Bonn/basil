@@ -223,9 +223,9 @@ class Dut(Base):
             mod = import_module(importname.split('.')[-1])
         clsmembers = getmembers(mod, is_base_class)
         if len(clsmembers) > 1:
-            raise ValueError('Found more than one matching class.')
+            raise ValueError('Found more than one matching class in %s.' % importname)
         elif not len(clsmembers):
-            raise ValueError('Found no matching class.')
+            raise ValueError('Found no matching class in %s.' % importname)
         cls = clsmembers[0][1]
         return cls(*args, **kargs)
 
