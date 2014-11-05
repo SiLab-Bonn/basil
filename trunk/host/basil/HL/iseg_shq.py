@@ -13,11 +13,11 @@ import logging
 
 from basil.HL.HardwareLayer import HardwareLayer
 
-from iseg_shq_com import IsegShqCom, status_words
+from pyiseg import IsegShqCom, status_words
 
 
 class IsegShq(HardwareLayer):
-    '''Interface for ISEG SHQ series
+    '''Python interface for ISEG SHQ series
 
     Example:
     --------
