@@ -9,49 +9,52 @@
 #  $Author:: jejan              $:
 #  $Date:: 2014-06-06 15:16:45 #$:
 #
-import time
-import Queue
-import math
+import logging
 
 from basil.HL.HardwareLayer import HardwareLayer
 
-import iseg_shq
+from iseg_shq import IsegShqCom, status_words
 
-
-# # class for debug
-# class Queue.Queue()Message_q():
-#     def __init__(self):
-#         pass
-#     def put(self, message):
-#         print message
-#     def close(self):
-#         pass
 
 class shq122m(HardwareLayer):
-    '''interface for iseg SHQ 122M
-        ###### yaml file #####
-        hw_drivers:
-          - name      : SHQ
-            type      : shq122m
-            interface : None
-            port : \\.\COM5
-       registers:     
-          - name        : HV
-            type        : FunctionalRegister
-            hw_driver   : SHQ
-            arg_names   : [ value ]
-            arg_add     : { 'channel': 1}
+    '''Interface for ISEG SHQ 122M
+
+    Example:
+    hw_drivers:
+      - name      : SHQ
+        type      : shq122m
+        interface : None
+        init      :
+            port            : \\.\COM5
+            trip_current_ma : 0
+            trip_current_ua : 0
+            ramp_speed      : 2
+    registers:
+      - name      : HV
+        type      : FunctionalRegister
+        hw_driver : SHQ
+        arg_names : [value]
+        arg_add   : {'channel': 1}
     '''
 
     def __init__(self, intf, conf):
         super(shq122m, self).__init__(intf, conf)
 
     def init(self):
-        self.s = iseg_shq.IsegShqCom(message_q=Queue.Queue(), port_num=self._init['port'])
-        self.s.init_iseg()
-        self.info = self.s.read_identifier()
+        print self._conf
+        self.iseg = IsegShqCom(port_num=self._init['port'])
+        self.iseg.init_iseg()
+        for ch in self.iseg.channel_list:
+            # default values
+            if 'trip_current_ma' in self._conf:
+                self.iseg.write_i_trip_ma(channel=ch, current=self._init['trip_current_ma'])
+            if 'trip_current_ua' in self._conf:
+                self.iseg.write_i_trip_ua(channel=ch, current=self._init['trip_current_ua'])
+            if 'ramp_speed' in self._conf:
+                self.iseg.write_v_ramp(channel=ch, ramp_speed=self._init['ramp_speed'])
+            self.trip_reset(channel=ch)
 
-    def set_voltage(self, channel=1, value=0, unit='mV', verror=0.1, timeout=1):
+    def set_voltage(self, channel, value=0, unit='mV', verror=0.1, ramp_speed=None):
         if unit == 'raw':
             raw = value
         elif unit == 'V':
@@ -60,39 +63,55 @@ class shq122m(HardwareLayer):
             raw = value * 0.001
         else:
             raise TypeError("Invalid unit type.")
-        self.s.write_v_set(channel, raw)
-        self.s.write_start_ramp(channel)
-        start_time = time.time()
-        
-        while self.s.read_status_word() != 'ON' or abs(self.s.read_voltage()+raw) > verror or math.isnan(self.s.read_current()):
-            self.s.read_status_word()
-            self.s.write_v_set(voltage=raw)
-            self.s.write_start_ramp()
-            time.sleep(0.001)
-            
-            if time.time()-start_time > timeout:
-                raise Exception("shq122m timeout")
+        if ramp_speed:
+            self.write_v_ramp(self, channel=channel, ramp_speed=ramp_speed)
+        self.iseg.write_v_set(channel, raw)
+        logging.info('Ramping voltage...')
+        self.iseg.write_start_ramp(channel)
+        while True:
+            status = self.iseg.read_status_word(channel=channel)
+            if status == 'L2H' or status() == 'H2L':
+                pass
+            elif status == 'ON':
+                break
+            else:
+                logging.warning('CH%d: status %s (%s) during ramping' (channel, status, status_words[status]))
+                break
+        logging.info('Finished ramping voltage')
 
-    def get_voltage(self, channel=1, unit='mV'):
-        raw = self.s.read_voltage(channel)
+    def get_voltage(self, channel, unit='mV'):
+        raw = self.iseg.read_voltage(channel)
         if unit == 'raw':
             return raw
         elif unit == 'V':
             return raw
         elif unit == 'mV':
-            return raw * 1000
+            return raw * 1000.0
         else:
             raise TypeError("Invalid unit type.")
 
-    def get_current(self, channel=1, unit='mA'):
-        raw = self.s.read_current(channel)
+    def get_current(self, channel, unit='mA'):
+        raw = self.iseg.read_current(channel)
         if unit == 'raw':
             return raw
         elif unit == 'A':
             return raw
         elif unit == 'mA':
-            return raw * 1000
+            return raw * 1000.0
         elif unit == 'uA':
-            return raw * 1000000
+            return raw * 1000000.0
+        elif unit == 'nA':
+            return raw * 1000000000.0
         else:
             raise TypeError("Invalid unit type.")
+
+    def trip_reset(self, channel):
+        loop_cnt = 0
+        while True:
+            status = self.iseg.read_status_word(channel=channel)
+            if status == 'ON' or status == 'OFF':
+                break
+            if loop_cnt >= 3:
+                logging.warning('CH%d: status %s (%s) after trip reset' (channel, status, status_words[status]))
+                break
+            loop_cnt += 1
