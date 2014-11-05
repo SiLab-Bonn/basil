@@ -13,20 +13,20 @@ import logging
 
 from basil.HL.HardwareLayer import HardwareLayer
 
-from iseg_shq import IsegShqCom, status_words
+from iseg_shq_com import IsegShqCom, status_words
 
 
-class shq122m(HardwareLayer):
-    '''Interface for ISEG SHQ 122M
+class IsegShq(HardwareLayer):
+    '''Interface for ISEG SHQ series
 
     Example:
     --------
     hw_drivers:
       - name      : SHQ
-        type      : shq122m
+        type      : iseg_shq
         interface : None
         init      :
-            port            : \\.\COM5
+            port            : COM1
             trip_current_ma : 0
             trip_current_ua : 0
             ramp_speed      : 2
@@ -41,11 +41,11 @@ class shq122m(HardwareLayer):
     ------
     dut = basil.DUT(config.yaml)
     dut.init()
-    dut['HV'].set_voltage(15)
+    dut['HV'].set_voltage(value=10.0)
     '''
 
     def __init__(self, intf, conf):
-        super(shq122m, self).__init__(intf, conf)
+        super(IsegShq, self).__init__(intf, conf)
 
     def init(self):
         self.iseg = IsegShqCom(port_num=self._init['port'])
