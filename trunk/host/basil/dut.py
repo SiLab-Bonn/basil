@@ -170,7 +170,7 @@ class Dut(Base):
                 intf['parent'] = self
                 kargs = {}
                 kargs['conf'] = intf
-                self._transfer_layer[intf['name']] = self._factory('TL.' + intf['type'], intf['type'], *(), **kargs)
+                self._transfer_layer[intf['name']] = self._factory('basil.TL.' + intf['type'], intf['type'], *(), **kargs)
 
         if 'hw_drivers' in conf:
             if conf['hw_drivers']:
@@ -182,7 +182,7 @@ class Dut(Base):
                     else:
                         kargs['intf'] = self._transfer_layer[hwdrv['interface']]
                     kargs['conf'] = hwdrv
-                    self._hardware_layer[hwdrv['name']] = self._factory('HL.' + hwdrv['type'], hwdrv['type'], *(), **kargs)
+                    self._hardware_layer[hwdrv['name']] = self._factory('basil.HL.' + hwdrv['type'], hwdrv['type'], *(), **kargs)
 
         if 'user_drivers' in conf:
             if conf['user_drivers']:
@@ -191,7 +191,7 @@ class Dut(Base):
                     kargs = {}
                     kargs['hw_driver'] = self._hardware_layer[userdrv['hw_driver']]
                     kargs['conf'] = userdrv
-                    self._user_drivers[userdrv['name']] = self._factory('UL.' + userdrv['type'], userdrv['type'], *(), **kargs)
+                    self._user_drivers[userdrv['name']] = self._factory('basil.UL.' + userdrv['type'], userdrv['type'], *(), **kargs)
 
         if 'registers' in conf:
             if conf['registers']:
@@ -204,11 +204,11 @@ class Dut(Base):
                         else:
                             kargs['driver'] = self._user_drivers[reg['driver']]
                         kargs['conf'] = reg
-                        self._registers[reg['name']] = self._factory('RL.' + reg['type'], reg['type'], *(), **kargs)
+                        self._registers[reg['name']] = self._factory('basil.RL.' + reg['type'], reg['type'], *(), **kargs)
                     elif 'hw_driver' in reg:
                         kargs['driver'] = self._hardware_layer[reg['hw_driver']]
                         kargs['conf'] = reg
-                        self._registers[reg['name']] = self._factory('RL.' + reg['type'], reg['type'], *(), **kargs)
+                        self._registers[reg['name']] = self._factory('basil.RL.' + reg['type'], reg['type'], *(), **kargs)
                     else:
                         raise ValueError('No driver specified for register: %s' % (reg['name'],))
 
