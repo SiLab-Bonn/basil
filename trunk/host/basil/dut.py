@@ -92,7 +92,7 @@ class Dut(Base):
         def catch_exception_on_init(mod):
             try:
                 mod.init()
-            except NotImplementedError, e:
+            except NotImplementedError:
                 pass
 #                 print '%s: %s' % (type(mod), e)
 
@@ -232,7 +232,7 @@ class Dut(Base):
         else:
             raise ValueError('Item not existing: %s' % (item,))
 
-    #TODO
+    # TODO:
     def __setitem__(self, key, value):
         self._registers[key].set(value)
 
