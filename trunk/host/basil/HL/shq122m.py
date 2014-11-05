@@ -20,6 +20,7 @@ class shq122m(HardwareLayer):
     '''Interface for ISEG SHQ 122M
 
     Example:
+    --------
     hw_drivers:
       - name      : SHQ
         type      : shq122m
@@ -35,13 +36,18 @@ class shq122m(HardwareLayer):
         hw_driver : SHQ
         arg_names : [value]
         arg_add   : {'channel': 1}
+
+    Usage:
+    ------
+    dut = basil.DUT(config.yaml)
+    dut.init()
+    dut['HV'].set_voltage(15)
     '''
 
     def __init__(self, intf, conf):
         super(shq122m, self).__init__(intf, conf)
 
     def init(self):
-        print self._conf
         self.iseg = IsegShqCom(port_num=self._init['port'])
         self.iseg.init_iseg()
         for ch in self.iseg.channel_list:
@@ -54,7 +60,7 @@ class shq122m(HardwareLayer):
                 self.iseg.write_v_ramp(channel=ch, ramp_speed=self._init['ramp_speed'])
             self.trip_reset(channel=ch)
 
-    def set_voltage(self, channel, value=0, unit='mV', verror=0.1, ramp_speed=None):
+    def set_voltage(self, channel, value=0, unit='mV', ramp_speed=None):
         if unit == 'raw':
             raw = value
         elif unit == 'V':
@@ -70,12 +76,12 @@ class shq122m(HardwareLayer):
         self.iseg.write_start_ramp(channel)
         while True:
             status = self.iseg.read_status_word(channel=channel)
-            if status == 'L2H' or status() == 'H2L':
+            if status == 'L2H' or status == 'H2L':
                 pass
             elif status == 'ON':
                 break
             else:
-                logging.warning('CH%d: status %s (%s) during ramping' (channel, status, status_words[status]))
+                logging.warning('CH%d: ramping voltage failed with status %s (%s)' (channel, status, status_words[status]))
                 break
         logging.info('Finished ramping voltage')
 
