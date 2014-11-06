@@ -9,7 +9,10 @@
 #  $Author::                    $:
 #  $Date::                      $:
 #
-
+import logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
+from importlib import import_module
+from inspect import getmembers
 from yaml import safe_load
 
 
@@ -90,7 +93,7 @@ class Dut(Base):
         def catch_exception_on_init(mod):
             try:
                 mod.init()
-            except NotImplementedError, e:
+            except NotImplementedError:
                 pass
 #                 print '%s: %s' % (type(mod), e)
 
@@ -163,11 +166,12 @@ class Dut(Base):
             self._user_drivers = {}
             self._registers = {}
 
-        for intf in conf['transfer_layer']:
-            intf['parent'] = self
-            kargs = {}
-            kargs['conf'] = intf
-            self._transfer_layer[intf['name']] = self._factory('TL.' + intf['type'], intf['type'], *(), **kargs)
+        if 'transfer_layer' in conf:
+            for intf in conf['transfer_layer']:
+                intf['parent'] = self
+                kargs = {}
+                kargs['conf'] = intf
+                self._transfer_layer[intf['name']] = self._factory('basil.TL.' + intf['type'], *(), **kargs)
 
         if 'hw_drivers' in conf:
             if conf['hw_drivers']:
@@ -179,7 +183,7 @@ class Dut(Base):
                     else:
                         kargs['intf'] = self._transfer_layer[hwdrv['interface']]
                     kargs['conf'] = hwdrv
-                    self._hardware_layer[hwdrv['name']] = self._factory('HL.' + hwdrv['type'], hwdrv['type'], *(), **kargs)
+                    self._hardware_layer[hwdrv['name']] = self._factory('basil.HL.' + hwdrv['type'], *(), **kargs)
 
         if 'user_drivers' in conf:
             if conf['user_drivers']:
@@ -188,7 +192,7 @@ class Dut(Base):
                     kargs = {}
                     kargs['hw_driver'] = self._hardware_layer[userdrv['hw_driver']]
                     kargs['conf'] = userdrv
-                    self._user_drivers[userdrv['name']] = self._factory('UL.' + userdrv['type'], userdrv['type'], *(), **kargs)
+                    self._user_drivers[userdrv['name']] = self._factory('basil.UL.' + userdrv['type'], *(), **kargs)
 
         if 'registers' in conf:
             if conf['registers']:
@@ -201,21 +205,29 @@ class Dut(Base):
                         else:
                             kargs['driver'] = self._user_drivers[reg['driver']]
                         kargs['conf'] = reg
-                        self._registers[reg['name']] = self._factory('RL.' + reg['type'], reg['type'], *(), **kargs)
+                        self._registers[reg['name']] = self._factory('basil.RL.' + reg['type'], *(), **kargs)
                     elif 'hw_driver' in reg:
                         kargs['driver'] = self._hardware_layer[reg['hw_driver']]
                         kargs['conf'] = reg
-                        self._registers[reg['name']] = self._factory('RL.' + reg['type'], reg['type'], *(), **kargs)
+                        self._registers[reg['name']] = self._factory('basil.RL.' + reg['type'], *(), **kargs)
                     else:
                         raise ValueError('No driver specified for register: %s' % (reg['name'],))
 
-    def _factory(self, importname, classname, *args, **kargs):
+    def _factory(self, importname, *args, **kargs):
+        def is_base_class(item):
+            return isinstance(item, Base.__class__) and item.__module__ == importname
+
         try:
-            _temp = __import__(importname, globals(), locals(), [classname], -1)
+            mod = import_module(importname)
         except ImportError:
-            _temp = __import__(importname.split('.')[-1], globals(), locals(), [classname], -1)
-        aClass = getattr(_temp, classname)
-        return aClass(*args, **kargs)
+            mod = import_module(importname.split('.')[-1])
+        clsmembers = getmembers(mod, is_base_class)
+        if len(clsmembers) > 1:
+            raise ValueError('Found more than one matching class in %s.' % importname)
+        elif not len(clsmembers):
+            raise ValueError('Found no matching class in %s.' % importname)
+        cls = clsmembers[0][1]
+        return cls(*args, **kargs)
 
     def __getitem__(self, item):
         if item in self._registers:
@@ -229,7 +241,7 @@ class Dut(Base):
         else:
             raise ValueError('Item not existing: %s' % (item,))
 
-    #TODO
+    # TODO:
     def __setitem__(self, key, value):
         self._registers[key].set(value)
 
