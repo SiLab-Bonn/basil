@@ -83,7 +83,7 @@ flag_domain_crossing cmd_start_flag_domain_crossing (
     .FLAG_OUT_CLK_B(start_sync)
 );
 
-reg CONF_FINISH; // 1
+wire CONF_FINISH; // 1
 wire CONF_EN_EXT_START, CONF_DIS_CLOCK_GATE, CONF_DIS_CMD_PULSE; // 2
 wire [1:0] CONF_OUTPUT_MODE; // 2 Mode == 0: posedge, 1: negedge, 2: Manchester Code according to IEEE 802.3, 3:  Manchester Code according to G.E. Thomas aka Biphase-L or Manchester-II
 wire [15:0] CONF_CMD_SIZE; // 3 - 4
@@ -356,15 +356,10 @@ always @ (posedge CMD_CLK_IN)
         CMD_READY <= 1'b0;
 
 // ready readout sync 
-cdc_pulse_sync done_pulse_sync (.clk_in(CMD_CLK_IN), .pulse_in(CMD_READY), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
+three_stage_synchronizer ready_signal_sync (
+    .CLK(BUS_CLK),
+    .IN(CMD_READY),
+    .OUT(CONF_FINISH)
+);
 
-always @(posedge BUS_CLK)
-    if(RST)
-        CONF_FINISH <= 1;
-    else if(START)
-        CONF_FINISH <= 0;
-    else if(DONE_SYNC)
-        CONF_FINISH <= 1;
-
-   
 endmodule
