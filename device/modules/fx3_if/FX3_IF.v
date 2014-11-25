@@ -28,17 +28,25 @@ module FX3_IF (
     output reg fx3_ack,
     output reg fx3_rd_finish,		
     input wire fx3_rst,
-    input wire [31:0] DataOut, // data from FPGA core
-    output reg [31:0] DataIn,  // data to FPGA core, force IOB register
-    output reg WR,
-    output reg RD,
+    
+    output wire         BUS_CLK,  // FX3 generates user clock
+    output wire         BUS_RST,
+    output reg          BUS_WR,
+    output reg          BUS_RD,
+    output reg [31:0]   BUS_ADD,
+    inout wire [31:0]   BUS_DATA,
+    input wire          BUS_BYTE_ACCESS,
+    
     input wire FLAG1,
-    input wire FLAG2,
-    output reg [31:0] Addr,
-    output wire CLK_100MHz,  // FX3 generates user clock
-    output wire RST,
-    input wire BYTE_ACCESS
+    input wire FLAG2
+
    );
+
+
+wire [31:0] DataOut; // data from FPGA core
+reg [31:0] DataIn;  // data to FPGA core, force IOB register
+assign BUS_DATA = BUS_WR ? DataIn[31:0]: 32'bz;
+assign DataOut[31:0] = BUS_WR ? 32'bz : BUS_DATA;
 
 genvar gen;
 
@@ -55,14 +63,14 @@ reg  FLAG2_reg;
 reg RD_VALID;
 reg RDY;
 
-assign RST = fx3_rst;
+assign BUS_RST = fx3_rst;
 
 // clock buffer
 IBUFG #(
       .IBUF_LOW_PWR("TRUE"),  // Low power (TRUE) vs. performance (FALSE) setting for referenced I/O standards 
       .IOSTANDARD("DEFAULT")  // Specify the input I/O standard
    ) IBUFG_inst (
-      .O(CLK_100MHz), // Clock buffer output
+      .O(BUS_CLK), // Clock buffer output
       .I(fx3_clk)  // Clock buffer input (connect directly to top-level port)
 );
 
@@ -74,19 +82,21 @@ assign BYTE = ReqCount[1:0]-1;
 
 reg WR_BYTE;
          
-always@ (posedge CLK_100MHz)
+always@ (posedge BUS_CLK)
     DATA_BYTE_RD[BYTE] <= DataOut[7:0];
 
 reg RD_FINISH;
 // output register
-always @ (posedge CLK_100MHz)
+always @ (posedge BUS_CLK)
 begin 
  	fx3_ack <= RD_VALID; // will be generated during RD_ADDR_INC
  	fx3_rd_finish <= RD_FINISH;
  	
 	fx3_rdy <= RDY;
 	
-	if(BYTE_ACCESS) begin
+	if(BUS_RST)
+	   DATA_MISO <= 0;
+	else if(BUS_BYTE_ACCESS) begin
 	   if(BYTE==0)
 	       DATA_MISO <= { {3{8'b0}}, DataOut[7:0]};
 	   else if(BYTE==1)
@@ -103,21 +113,21 @@ end
 reg first_word_written_check;
 
 // input register
-always @ (posedge CLK_100MHz)
+always @ (posedge BUS_CLK)
 begin 
- 	if(BYTE_ACCESS)
- 	   WR <= (fx3_wr | WR_BYTE);
+ 	if(BUS_BYTE_ACCESS)
+ 	   BUS_WR <= (fx3_wr | WR_BYTE);
  	else
- 	   WR <= fx3_wr;
+ 	   BUS_WR <= fx3_wr;
  	OE <= fx3_oe;
  	CS <= fx3_cs;
  	FLAG1_reg <= FLAG1;
     FLAG2_reg <= FLAG2;
     
-    if(!CS | !BYTE_ACCESS)
+    if(!CS | !BUS_BYTE_ACCESS)
         first_word_written_check <= 0;
     
- 	if(BYTE_ACCESS & (fx3_wr | WR) & ((ReqCount+1) < ReqCountLimit)) begin
+ 	if(BUS_BYTE_ACCESS & (fx3_wr | BUS_WR) & ((ReqCount+1) < ReqCountLimit)) begin
  	   if(((ReqCount[1:0]==0)|(ReqCount[1:0]==3)) & (!first_word_written_check)) begin
  	       {DATA_BYTE_WR[2], DATA_BYTE_WR[1], DATA_BYTE_WR[0], DataIn[7:0]} <= DATA_MOSI;
            first_word_written_check <= 1;
@@ -147,8 +157,8 @@ parameter WAIT        = 7;
 
 reg [4:0] state, next_state;
 
-always @ (posedge CLK_100MHz)
-    if (fx3_rst)
+always @ (posedge BUS_CLK)
+    if (BUS_RST)
       state <= IDLE;
     else
       state <= next_state;
@@ -165,21 +175,21 @@ always @ (*) begin
         IN_COUNT :
             if (OE)
                 next_state = RD_ADDR_INC;
-            else if (WR)      
+            else if (BUS_WR)      
                 next_state = WR_ADDR_INC;
             else
                 next_state = WAIT;
         WR_ADDR_INC :
-            if(BYTE_ACCESS)
+            if(BUS_BYTE_ACCESS)
             begin
-                if (WR & ((ReqCount+1) != ReqCountLimit))
+                if (BUS_WR & ((ReqCount+1) != ReqCountLimit))
                     next_state = WR_ADDR_INC;
                 else if ((ReqCount+1) == ReqCountLimit)
                     next_state = IDLE;
             end
             else 
             begin
-                if (WR)
+                if (BUS_WR)
                     next_state = WR_ADDR_INC;
                 else if (!CS)
                     next_state = IDLE;
@@ -196,7 +206,7 @@ always @ (*) begin
         WAIT :
             if (OE)
                next_state = RD_ADDR_INC;
-            else if (WR)
+            else if (BUS_WR)
                next_state = WR_ADDR_INC;
             else
                next_state = WAIT;
@@ -204,14 +214,14 @@ always @ (*) begin
     endcase
 end
 
-always @ (posedge CLK_100MHz)
+always @ (posedge BUS_CLK)
 begin
-    if (fx3_rst) 
+    if (BUS_RST) 
     begin
-        Addr <= 32'd0;
+        BUS_ADD <= 32'd0;
         ReqCountLimit <= 32'd0;
         ReqCount <= 32'd0;
-        RD <= 0;
+        BUS_RD <= 0;
         RD_VALID <= 0;
         RDY <= 0;
         RD_FINISH <= 0;
@@ -223,47 +233,47 @@ begin
         begin
             ReqCountLimit <= 32'd0;
             ReqCount <= 32'd0;
-            RD <= 0;
+            BUS_RD <= 0;
             RDY <= 0;
         end
         else if (state == IN_ADDR)
         begin
-            Addr <= DataIn[31:0];
+            BUS_ADD <= DataIn[31:0];
             RD_FINISH <= 0;
             RDY <= 1; // First RDY strobe is generated for FX3. FX3 will receive it and go to Write Data state where fx3_wr signal will be asserted. (3 clock cycles delay between RDY and fx3_wr)
         end
         else if (state == IN_COUNT)
         begin
             if (OE)
-                RD <= 1;
-            else if (WR)
+                BUS_RD <= 1;
+            else if (BUS_WR)
             begin
-                if(BYTE_ACCESS) 
+                if(BUS_BYTE_ACCESS) 
                 begin
-                    Addr[31:0] <= Addr[31:0] + 1;
+                    BUS_ADD[31:0] <= BUS_ADD[31:0] + 1;
                     ReqCount <= ReqCount + 1;
                 end
                 else 
-                    Addr[31:0] <= Addr[31:0] + 4;
+                    BUS_ADD[31:0] <= BUS_ADD[31:0] + 4;
             end
             else
             begin
                 ReqCountLimit <= (DataIn[31:0]);
-                if (BYTE_ACCESS)
+                if (BUS_BYTE_ACCESS)
                     RDY <= 0; // Deassert first RDY strobe
                 else
                     RDY <= 1;
-                if (fx3_wr & BYTE_ACCESS)
+                if (fx3_wr & BUS_BYTE_ACCESS)
                     WR_BYTE <= 1; // "Or" with WR - to keep WR high even when fx3_wr is low during BYTE_ACCESS
             end 
         end
         else if (state == WR_ADDR_INC)
         begin
-            if(BYTE_ACCESS) 
+            if(BUS_BYTE_ACCESS) 
             begin
-                if (WR & ((ReqCount+1) != ReqCountLimit))
+                if (BUS_WR & ((ReqCount+1) != ReqCountLimit))
                 begin
-                    Addr[31:0] <= Addr[31:0] + 1;
+                    BUS_ADD[31:0] <= BUS_ADD[31:0] + 1;
                     ReqCount <= ReqCount + 1;
                     if(ReqCount[1:0] == 2'b11 && ((ReqCount+4) < ReqCountLimit))
                         RDY <= 1; // Assert next RDY strobe if there is next transfer of 1-4 bytes expected. RDY will be asserted on the next cycle after the last byte of the current transfer that was sampled.
@@ -275,21 +285,21 @@ begin
                     WR_BYTE <= 0;
             end
             else
-                if (WR)
-                    Addr[31:0] <= Addr[31:0] + 4;
+                if (BUS_WR)
+                    BUS_ADD[31:0] <= BUS_ADD[31:0] + 4;
         end
         else if (state == RD_ADDR_INC)
         begin
             if (OE & (ReqCount != ReqCountLimit))  
             begin
-                if(BYTE_ACCESS)
+                if(BUS_BYTE_ACCESS)
                 begin
-                    Addr[31:0] <= Addr + 1;
+                    BUS_ADD[31:0] <= BUS_ADD + 1;
                     ReqCount <= ReqCount + 1;
                     if(ReqCount + 1 == ReqCountLimit)
-                        RD <= 0;
+                        BUS_RD <= 0;
                     else
-                        RD <= 1;
+                        BUS_RD <= 1;
                   
                     if(ReqCount[1:0] == 2'b11 || ReqCount + 1 == ReqCountLimit)
                         RD_VALID <= 1;
@@ -298,19 +308,19 @@ begin
                 end
                 else
                 begin
-                    Addr[31:0] <= Addr + 4;
+                    BUS_ADD[31:0] <= BUS_ADD + 4;
                     ReqCount <= ReqCount + 4;
                     if(ReqCount + 4 == ReqCountLimit)
-                        RD <= 0;
+                        BUS_RD <= 0;
                     else
-                        RD <= 1;
+                        BUS_RD <= 1;
 
                     RD_VALID <= 1;
                 end
             end
             else if (ReqCount == ReqCountLimit)
             begin
-                RD <= 0;
+                BUS_RD <= 0;
                 RD_VALID <= 0;
                 RD_FINISH <= 1;
             end  
@@ -320,21 +330,21 @@ begin
         else if (state == WAIT)
         begin
             if (OE)
-                RD <= 1;
-            else if (WR)
+                BUS_RD <= 1;
+            else if (BUS_WR)
             begin
-                if(BYTE_ACCESS) 
+                if(BUS_BYTE_ACCESS) 
                 begin
-                    Addr[31:0] <= Addr[31:0] + 1;
+                    BUS_ADD[31:0] <= BUS_ADD[31:0] + 1;
                     ReqCount <= ReqCount + 1;
                     RDY <= 0; // Deassert second RDY strobe
                     if(ReqCountLimit == 2)
                         WR_BYTE <= 0; // WR deasserts with 1 cycle delay after WR_BYTE deasserts
                 end
                 else 
-                    Addr[31:0] <= Addr[31:0] + 4;
+                    BUS_ADD[31:0] <= BUS_ADD[31:0] + 4;
             end
-            else if (fx3_wr & BYTE_ACCESS)
+            else if (fx3_wr & BUS_BYTE_ACCESS)
             begin
                 if(ReqCountLimit > 1)
                     WR_BYTE <= 1;
