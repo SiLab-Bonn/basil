@@ -29,7 +29,7 @@ module FX3_IF (
     output reg fx3_rd_finish,		
     input wire fx3_rst,
     input wire [31:0] DataOut, // data from FPGA core
-/*(* IOB = "FORCE" *)*/ output reg [31:0] DataIn,  // data to FPGA core, force IOB register
+    output reg [31:0] DataIn,  // data to FPGA core, force IOB register
     output reg WR,
     output reg RD,
     input wire FLAG1,
