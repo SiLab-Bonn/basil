@@ -355,8 +355,9 @@ always @ (posedge CMD_CLK_IN)
     else
         CMD_READY <= 1'b0;
 
-// ready readout sync 
-cdc_pulse_sync done_pulse_sync (.clk_in(CMD_CLK_IN), .pulse_in(CMD_READY), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
+// ready readout sync
+wire DONE_SYNC;
+cdc_pulse_sync done_pulse_sync(.clk_in(CMD_CLK_IN), .pulse_in(CMD_READY), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
 
 always @(posedge BUS_CLK)
     if(RST)
@@ -366,5 +367,4 @@ always @(posedge BUS_CLK)
     else if(DONE_SYNC)
         CONF_FINISH <= 1;
 
-   
 endmodule
