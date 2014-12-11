@@ -44,7 +44,7 @@ module tlu_controller_fsm
     input wire                  TLU_TRIGGER_DATA_MSB_FIRST,
     input wire                  TLU_DISABLE_VETO,
     input wire                  EXT_VETO,
-    inout wire                  TLU_RESET_FLAG,
+    input wire                  TLU_RESET_FLAG,
 
     input wire                  WRITE_TIMESTAMP,
 
@@ -89,7 +89,7 @@ parameter   [2:0]
 // sequential always block, non-blocking assignments
 always @ (posedge CLK)
 begin
-    if (RESET)  state <= IDLE; // get D-FF for state
+    if (RESET | TLU_RESET_FLAG)  state <= IDLE; // get D-FF for state
     else        state <= next;
 end
 
@@ -153,7 +153,7 @@ end
 // sequential always block, non-blocking assignments, registered outputs
 always @ (posedge CLK)
 begin
-    if (RESET) // get D-FF
+    if (RESET | TLU_RESET_FLAG) // get D-FF
     begin
         FIFO_PREEMPT_REQ_FLAG <= 1'b0;
         TLU_FIFO_WRITE <= 1'b0;
