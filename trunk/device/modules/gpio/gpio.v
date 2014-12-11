@@ -21,13 +21,13 @@ module gpio
 )(
     BUS_CLK, 
     BUS_RST,
-    BUS_ADD,                    
-    BUS_DATA,                    
-    BUS_RD,                    
-    BUS_WR,                    
+    BUS_ADD,
+    BUS_DATA,
+    BUS_RD,
+    BUS_WR,
 
     IO
-); 
+);
 
 input                   BUS_CLK;
 input                   BUS_RST;
@@ -106,9 +106,9 @@ genvar i;
 generate
     for(i=0; i<IO_WIDTH; i=i+1) begin: sreggen
     if(IO_TRI[i])
-                assign IO[i] = DIRECTION_DATA[i/8][i%8] ? OUTPUT_DATA[i/8][i%8] : 1'bz;
+        assign IO[i] = DIRECTION_DATA[i/8][i%8] ? OUTPUT_DATA[i/8][i%8] : 1'bz;
     else if(IO_DIRECTION[i])
-                assign IO[i] = OUTPUT_DATA[i/8][i%8];
+        assign IO[i] = OUTPUT_DATA[i/8][i%8];
     end
 endgenerate
 
