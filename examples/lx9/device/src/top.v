@@ -31,9 +31,9 @@ module top (
       // CLKOUT0_DIVIDE - CLKOUT5_DIVIDE: Divide amount for CLKOUT# clock output (1-128)
       .CLKOUT0_DIVIDE(20), //40
       .CLKOUT1_DIVIDE(32), //25
-      .CLKOUT2_DIVIDE(20), 
-      .CLKOUT3_DIVIDE(20),
-      .CLKOUT4_DIVIDE(20),
+      .CLKOUT2_DIVIDE(80), //10
+      .CLKOUT3_DIVIDE(10), 
+      .CLKOUT4_DIVIDE(5), 
       .CLKOUT5_DIVIDE(20),
       // CLKOUT0_DUTY_CYCLE - CLKOUT5_DUTY_CYCLE: Duty cycle for CLKOUT# clock output (0.01-0.99).
       .CLKOUT0_DUTY_CYCLE(0.5),
@@ -60,7 +60,7 @@ module top (
       // CLKOUT0 - CLKOUT5: 1-bit (each) output: Clock outputs
       .CLKOUT0(CLKOUT0),
       .CLKOUT1(CLKOUT1),
-      .CLKOUT2(),
+      .CLKOUT2(CLKOUT2),
       .CLKOUT3(),
       .CLKOUT4(),
       .CLKOUT5(),
@@ -75,6 +75,7 @@ module top (
     BUFG BUFG_BUS (  .O(BUS_CLK),  .I(CLKOUT0) );
     BUFG BUFG_ETH (  .O(ETH_CLK),  .I(CLKOUT1) );
     BUFG BUFG_ETH_RX_CLK (  .O(ETH_RX_CLK_BUFG),  .I(ETH_RX_CLK) );
+    BUFG BUFG_SPI(  .O(SPI_CLK),  .I(CLKOUT2) );
 
     wire EEPROM_CS, EEPROM_SK, EEPROM_DI;
     wire TCP_CLOSE_REQ;
@@ -198,10 +199,22 @@ module top (
     .BUS_DATA(BUS_DATA)
   );
     
-     //MODULE ADREESSES
+    //MODULE ADREESSES
     localparam GPIO_BASEADDR = 32'h0000_0000;
     localparam GPIO_HIGHADDR = 32'h0000_000f;
-      
+    
+    localparam FIFO_BASEADDR = 32'h0020;                    // 0x0020
+    localparam FIFO_HIGHADDR = FIFO_BASEADDR + 15;          // 0x002f
+    
+    localparam FAST_SR_AQ_BASEADDR = 32'h0100;                    
+    localparam FAST_SR_AQ_HIGHADDR = FAST_SR_AQ_BASEADDR + 15;
+    
+    localparam TDC_BASEADDR = 32'h0200;                    
+    localparam TDC_HIGHADDR = TDC_BASEADDR + 15; 
+
+    localparam SEQ_GEN_BASEADDR = 32'h1000;                      //0x1000
+    localparam SEQ_GEN_HIGHADDR = SEQ_GEN_BASEADDR + 16 + 32'h1fff;   //0x300f
+    
      
     // MODULES //
     gpio 
@@ -222,5 +235,55 @@ module top (
         .IO({GPIO_DIP, GPIO_LED})
     );
      
+    wire [7:0] SEQ_OUT;
+    seq_gen 
+    #( 
+        .BASEADDR(SEQ_GEN_BASEADDR), 
+        .HIGHADDR(SEQ_GEN_HIGHADDR),
+        .ABUSWIDTH(32),
+        .MEM_BYTES(8*1024), 
+        .OUT_BITS(8) 
+    ) i_seq_gen
+    (
+        .BUS_CLK(BUS_CLK),
+        .BUS_RST(BUS_RST),
+        .BUS_ADD(BUS_ADD),
+        .BUS_DATA(BUS_DATA),
+        .BUS_RD(BUS_RD),
+        .BUS_WR(BUS_WR),
+    
+        .SEQ_CLK(SPI_CLK),
+        .SEQ_OUT(SEQ_OUT)
+    );
+    
+    assign SR_IN                = SEQ_OUT[0];
+    assign GLOBAL_SR_EN         = SEQ_OUT[1];   
+    assign GLOBAL_CTR_LD        = SEQ_OUT[2];   
+    assign GLOBAL_DAC_LD        = SEQ_OUT[3];     
+    assign PIXEL_SR_EN          = SEQ_OUT[4];
+    assign INJECT               = SEQ_OUT[5];
+ 
+    OFDDRRSE GLOBAL_SR_GC (
+        .CE(GLOBAL_SR_EN), 
+        .C0(~SPI_CLK),
+        .C1(SPI_CLK),
+        .D0(1'b1),
+        .D1(1'b0),
+        .R(1'b0),
+        .S(1'b0),
+        .Q(GLOBAL_SR_CLK)
+    );
 
+    OFDDRRSE PIXEL_SR_GC (
+        .CE(PIXEL_SR_EN), 
+        .C0(~SPI_CLK),
+        .C1(SPI_CLK),
+        .D0(1'b1),
+        .D1(1'b0),
+        .R(1'b0),
+        .S(1'b0),
+        .Q(PIXEL_SR_CLK)
+    );
+ 
+  
 endmodule
