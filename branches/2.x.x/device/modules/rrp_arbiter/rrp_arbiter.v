@@ -37,7 +37,6 @@ integer m;
 reg [WIDTH-1:0] prev_select; // one hot
 reg [WIDTH-1:0] select; // one hot
 
-reg normal_mode;
 reg hold;
 
 wire WRITE_REQ_OR, HOLD_REQ_OR;

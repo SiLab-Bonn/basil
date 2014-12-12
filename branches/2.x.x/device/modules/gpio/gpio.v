@@ -21,13 +21,19 @@ module gpio
 )(
     BUS_CLK, 
     BUS_RST,
-    BUS_ADD,                    
-    BUS_DATA,                    
-    BUS_RD,                    
-    BUS_WR,                    
+    BUS_ADD,
+    BUS_DATA,
+    BUS_RD,
+    BUS_WR,
 
     IO
-); 
+);
+
+// ORDER:
+// 0 - RESET
+// 1 - INPUT
+// 2 - OUTPUT
+// 3 - DIRECTION
 
 input                   BUS_CLK;
 input                   BUS_RST;
@@ -66,7 +72,7 @@ reg [7:0] OUTPUT_DATA [IO_BYTES-1:0]; //2
 reg [7:0] DIRECTION_DATA [IO_BYTES-1:0]; //3
 
 always@(posedge BUS_CLK) begin
-    if(IP_RD) begin
+    //if(IP_RD) begin
         if(IP_ADD == 0)
             IP_DATA_OUT <= 0;
         else if(IP_ADD - 1 < IO_BYTES)
@@ -75,7 +81,7 @@ always@(posedge BUS_CLK) begin
             IP_DATA_OUT <= OUTPUT_DATA[IP_ADD - (IO_BYTES+1)];
         else if(IP_ADD - (IO_BYTES*2+1) < IO_BYTES)
             IP_DATA_OUT <= DIRECTION_DATA[IP_ADD - (IO_BYTES*2+1)];
-    end
+    //end
 end
 
 assign SOFT_RST = (IP_ADD==0 && IP_WR);  
@@ -106,9 +112,9 @@ genvar i;
 generate
     for(i=0; i<IO_WIDTH; i=i+1) begin: sreggen
     if(IO_TRI[i])
-                assign IO[i] = DIRECTION_DATA[i/8][i%8] ? OUTPUT_DATA[i/8][i%8] : 1'bz;
+        assign IO[i] = DIRECTION_DATA[i/8][i%8] ? OUTPUT_DATA[i/8][i%8] : 1'bz;
     else if(IO_DIRECTION[i])
-                assign IO[i] = OUTPUT_DATA[i/8][i%8];
+        assign IO[i] = OUTPUT_DATA[i/8][i%8];
     end
 endgenerate
 

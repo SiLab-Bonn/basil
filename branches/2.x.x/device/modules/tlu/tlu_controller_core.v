@@ -145,7 +145,7 @@ reg [7:0] LOST_DATA_CNT, LOST_DATA_CNT_BUF; // BUS_ADD==0
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER, CURRENT_TLU_TRIGGER_NUMBER_BUF; // BUS_ADD==4 - 7
 reg [31:0] CURRENT_TRIGGER_NUMBER, CURRENT_TRIGGER_NUMBER_BUF; // BUS_ADD==8 - 11
 
-always @ (negedge BUS_CLK)
+always @ (posedge BUS_CLK)
 begin
     //BUS_DATA_OUT <= 0;
     if (BUS_ADD == 0)
@@ -186,7 +186,7 @@ begin
         BUS_DATA_OUT <= 0;
 end
 
-always @ (negedge BUS_CLK)
+always @ (posedge BUS_CLK)
 begin
     if (RST)
         LOST_DATA_CNT_BUF <= 8'b0;
@@ -431,36 +431,47 @@ flag_domain_crossing tlu_reset_flag_domain_crossing (
 );
 
 // writing current TLU trigger number to register
-wire [31:0] TLU_TRIGGER_NUMBER_DATA;
-
-// flag comes later
-wire FIFO_WRITE, FIFO_WRITE_BUS_CLK;
-flag_domain_crossing fifo_write_flag_domain_crossing (
-    .CLK_A(CMD_CLK),
-    .CLK_B(BUS_CLK),
-    .FLAG_IN_CLK_A(FIFO_WRITE),
-    .FLAG_OUT_CLK_B(FIFO_WRITE_BUS_CLK)
-);
-
-always @ (posedge BUS_CLK)
+reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK;
+wire [31:0] TLU_TRIGGER_NUMBER_DATA, TLU_FIFO_WRITE;
+always @ (posedge CMD_CLK)
 begin
-    if (RST)
-        CURRENT_TLU_TRIGGER_NUMBER <= 32'b0;
+    if (RST_CMD_CLK)
+        CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK <= 32'b0;
     else
     begin
-        if (FIFO_WRITE_BUS_CLK == 1'b1)
-            CURRENT_TLU_TRIGGER_NUMBER <= TLU_TRIGGER_NUMBER_DATA;
+        if (TLU_FIFO_WRITE == 1'b1)
+            CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK <= TLU_TRIGGER_NUMBER_DATA;
     end
 end
 
-always @ (negedge BUS_CLK)
+wire TLU_FIFO_WRITE_BUS_CLK;
+flag_domain_crossing tlu_fifo_write_flag_domain_crossing (
+    .CLK_A(CMD_CLK),
+    .CLK_B(BUS_CLK),
+    .FLAG_IN_CLK_A(TLU_FIFO_WRITE),
+    .FLAG_OUT_CLK_B(TLU_FIFO_WRITE_BUS_CLK)
+);
+
+reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK;
+always @ (posedge BUS_CLK)
+begin
+    if (RST)
+        CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK <= 32'b0;
+    else
+    begin
+        if (TLU_FIFO_WRITE_BUS_CLK == 1'b1)
+            CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK <= CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK;
+    end
+end
+
+always @ (posedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TLU_TRIGGER_NUMBER_BUF <= 32'b0;
     else
     begin
         if (BUS_ADD == 4)
-            CURRENT_TLU_TRIGGER_NUMBER_BUF <= CURRENT_TLU_TRIGGER_NUMBER;
+            CURRENT_TLU_TRIGGER_NUMBER_BUF <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK;
     end
 end
 
@@ -489,7 +500,7 @@ begin
     end
 end
 
-always @ (negedge BUS_CLK)
+always @ (posedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TRIGGER_NUMBER_BUF <= 32'b0;
@@ -510,7 +521,7 @@ begin
 end
 
 // TLU FSM
-wire TLU_FIFO_WRITE, FIFO_PREEMPT_REQ_FLAG_CMD_CLK;
+wire FIFO_PREEMPT_REQ_FLAG_CMD_CLK;
 wire [31:0] TLU_FIFO_DATA;
 tlu_controller_fsm #(
     .DIVISOR(DIVISOR)
@@ -569,15 +580,14 @@ always @ (posedge BUS_CLK)
 wire FIFO_EMPTY_FLAG_BUS_CLK;
 assign FIFO_EMPTY_FLAG_BUS_CLK = ~FIFO_EMPTY_FF & FIFO_EMPTY; // assert flag when FIFO is empty again
 
-// latch
-always @ (RST or FIFO_PREEMPT_REQ_FLAG_BUS_CLK or FIFO_EMPTY_FLAG_BUS_CLK)
+always @ (BUS_CLK)
     if (RST)
-        FIFO_PREEMPT_REQ = 1'b0;
+        FIFO_PREEMPT_REQ <= 1'b0;
     else
         if (FIFO_PREEMPT_REQ_FLAG_BUS_CLK)
-            FIFO_PREEMPT_REQ = 1'b1;
+            FIFO_PREEMPT_REQ <= 1'b1;
         else if (FIFO_EMPTY_FLAG_BUS_CLK)
-            FIFO_PREEMPT_REQ = 1'b0;
+            FIFO_PREEMPT_REQ <= 1'b0;
 
 reg [7:0] rst_cnt;
 always@(posedge BUS_CLK) begin

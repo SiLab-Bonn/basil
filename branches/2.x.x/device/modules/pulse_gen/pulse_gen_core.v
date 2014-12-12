@@ -38,22 +38,20 @@ reg [7:0] CONF_REPEAT;
 reg CONF_DONE;
 
 always@(posedge BUS_CLK) begin
-    if(BUS_RD) begin
-        if(BUS_ADD == 1)
-            BUS_DATA_OUT <= {7'b0, CONF_DONE};
-        else if(BUS_ADD == 2)
-            BUS_DATA_OUT <= {7'b0, CONF_EN};
-        else if(BUS_ADD == 3)
-            BUS_DATA_OUT <= CONF_DELAY[15:8];
-        else if(BUS_ADD == 4)
-            BUS_DATA_OUT <= CONF_DELAY[7:0];
-        else if(BUS_ADD == 5)
-            BUS_DATA_OUT <= CONF_WIDTH[15:8];
-        else if(BUS_ADD == 6)
-            BUS_DATA_OUT <= CONF_WIDTH[7:0];
-        else if(BUS_ADD == 7)
-            BUS_DATA_OUT <= CONF_REPEAT[7:0];
-    end
+    if(BUS_ADD == 1)
+        BUS_DATA_OUT <= {7'b0, CONF_DONE};
+    else if(BUS_ADD == 2)
+        BUS_DATA_OUT <= {7'b0, CONF_EN};
+    else if(BUS_ADD == 3)
+        BUS_DATA_OUT <= CONF_DELAY[15:8];
+    else if(BUS_ADD == 4)
+        BUS_DATA_OUT <= CONF_DELAY[7:0];
+    else if(BUS_ADD == 5)
+        BUS_DATA_OUT <= CONF_WIDTH[15:8];
+    else if(BUS_ADD == 6)
+        BUS_DATA_OUT <= CONF_WIDTH[7:0];
+    else if(BUS_ADD == 7)
+        BUS_DATA_OUT <= CONF_REPEAT[7:0];
 end
 
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);

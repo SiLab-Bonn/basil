@@ -43,12 +43,12 @@ class sram_fifo(RegisterHardwareLayer):
 
     def get_fifo_size(self):
         '''
-        Get FIFO size in units of two bytes (16 bit).
+        Get FIFO size in units of bytes (8 bit).
 
         Returns
         -------
         fifo_size : int
-            FIFO size in units of shorts (16 bit).
+            FIFO size in units of bytes (8 bit).
         '''
         ret = self._intf.read(self._conf['base_addr'] + 1, size=3)
         ret.append(0)  # increase to 4 bytes to do the conversion
@@ -66,7 +66,7 @@ class sram_fifo(RegisterHardwareLayer):
         '''
         fifo_size = self.FIFO_SIZE
         # sometimes reading of FIFO size happens during writing to SRAM, but we want to have a multiplicity of 32 bits
-        return (fifo_size - (fifo_size % 2)) / 2
+        return (fifo_size - (fifo_size % 4)) / 4
 
     def get_fifo_int_size(self):
         '''
@@ -102,6 +102,6 @@ class sram_fifo(RegisterHardwareLayer):
         '''
         fifo_int_size = self.get_fifo_int_size()
         if fifo_int_size:
-            return np.fromstring(self._intf.read(self._conf['base_data_addr'], size=4 * fifo_int_size).tostring(), dtype=np.dtype('>u4'))  # size in number of bytes
+            return np.fromstring(self._intf.read(self._conf['base_data_addr'], size=4 * fifo_int_size).tostring(), dtype=np.dtype('<u4'))  # size in number of bytes
         else:
-            return np.array([], dtype=np.dtype('>u4'))
+            return np.array([], dtype=np.dtype('<u4'))

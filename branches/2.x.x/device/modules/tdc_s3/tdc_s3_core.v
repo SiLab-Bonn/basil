@@ -72,25 +72,23 @@ always @(posedge BUS_CLK) begin
 end
 
 always @(posedge BUS_CLK) begin
-    if(BUS_RD) begin
-        if (BUS_ADD == 0)
-            BUS_DATA_OUT <= LOST_DATA_CNT_BUF;
-        else if(BUS_ADD == 1)
-            BUS_DATA_OUT <= status_regs[1];
-        else if(BUS_ADD == 2)
-            BUS_DATA_OUT <= EVENT_CNT_BUF[7:0];
-        else if(BUS_ADD == 3)
-            BUS_DATA_OUT <= EVENT_CNT_BUF[15:8];
-        else if(BUS_ADD == 4)
-            BUS_DATA_OUT <= EVENT_CNT_BUF[23:16];
-        else if(BUS_ADD == 5)
-            BUS_DATA_OUT <= EVENT_CNT_BUF[31:24];
-        else
-            BUS_DATA_OUT <= 0;
-    end
+    if (BUS_ADD == 0)
+        BUS_DATA_OUT <= LOST_DATA_CNT_BUF;
+    else if(BUS_ADD == 1)
+        BUS_DATA_OUT <= status_regs[1];
+    else if(BUS_ADD == 2)
+        BUS_DATA_OUT <= EVENT_CNT_BUF[7:0];
+    else if(BUS_ADD == 3)
+        BUS_DATA_OUT <= EVENT_CNT_BUF[15:8];
+    else if(BUS_ADD == 4)
+        BUS_DATA_OUT <= EVENT_CNT_BUF[23:16];
+    else if(BUS_ADD == 5)
+        BUS_DATA_OUT <= EVENT_CNT_BUF[31:24];
+    else
+        BUS_DATA_OUT <= 0;
 end
 
-always @ (negedge BUS_CLK)
+always @ (posedge BUS_CLK)
 begin
     if (RST)
         LOST_DATA_CNT_BUF <= 8'b0;
@@ -103,7 +101,7 @@ begin
     end
 end
 
-always @ (negedge BUS_CLK)
+always @ (posedge BUS_CLK)
 begin
     if (RST)
         EVENT_CNT_BUF <= 32'b0;

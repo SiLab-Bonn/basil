@@ -95,8 +95,7 @@ reg CONF_DONE;
 wire [7:0] BUS_STATUS_OUT;
 assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
 
-always @ (negedge BUS_CLK) begin
-    if(BUS_RD) begin
+always @ (posedge BUS_CLK) begin
     if(BUS_ADD == 1)
         BUS_DATA_OUT <= {7'b0,CONF_DONE};
     else if(BUS_ADD == 3)
@@ -107,7 +106,6 @@ always @ (negedge BUS_CLK) begin
         BUS_DATA_OUT <= BUS_STATUS_OUT;
     else if(BUS_ADD < 16 + MEM_BYTES)
         BUS_DATA_OUT <= BUS_IN_MEM;
-    end
 end
 
 reg [ABUSWIDTH-1:0] out_bit_cnt;
