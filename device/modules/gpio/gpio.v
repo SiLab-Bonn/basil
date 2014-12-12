@@ -29,6 +29,12 @@ module gpio
     IO
 );
 
+// ORDER:
+// 0 - RESET
+// 1 - INPUT
+// 2 - OUTPUT
+// 3 - DIRECTION
+
 input                   BUS_CLK;
 input                   BUS_RST;
 input   [ABUSWIDTH-1:0] BUS_ADD;
@@ -66,7 +72,7 @@ reg [7:0] OUTPUT_DATA [IO_BYTES-1:0]; //2
 reg [7:0] DIRECTION_DATA [IO_BYTES-1:0]; //3
 
 always@(posedge BUS_CLK) begin
-    if(IP_RD) begin
+    //if(IP_RD) begin
         if(IP_ADD == 0)
             IP_DATA_OUT <= 0;
         else if(IP_ADD - 1 < IO_BYTES)
@@ -75,7 +81,7 @@ always@(posedge BUS_CLK) begin
             IP_DATA_OUT <= OUTPUT_DATA[IP_ADD - (IO_BYTES+1)];
         else if(IP_ADD - (IO_BYTES*2+1) < IO_BYTES)
             IP_DATA_OUT <= DIRECTION_DATA[IP_ADD - (IO_BYTES*2+1)];
-    end
+    //end
 end
 
 assign SOFT_RST = (IP_ADD==0 && IP_WR);  
