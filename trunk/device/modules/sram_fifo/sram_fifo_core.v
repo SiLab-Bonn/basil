@@ -90,7 +90,7 @@ localparam VERSION = 1;
 
 always @ (posedge BUS_CLK) begin //(*) begin
     if(BUS_ADD == 0)
-        BUS_DATA_OUT = VERSION;
+        BUS_DATA_OUT <= VERSION;
     else if(BUS_ADD == 1)
         BUS_DATA_OUT <= CONF_SIZE_BYTE[7:0]; // in units of bytes
     else if(BUS_ADD == 2)
