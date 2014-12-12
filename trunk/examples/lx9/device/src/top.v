@@ -90,7 +90,7 @@ module top (
     wire   mdio_gem_t;
     
     wire [3:0] ETH_TX_D_NO;
-    WRAP_SiTCP_GMII_XC6S_16K (.TIM_PERIOD(40))sitcp(
+    WRAP_SiTCP_GMII_XC6S_16K #(.TIM_PERIOD(40))sitcp(
       .CLK(BUS_CLK)                    ,    // in    : System Clock >129MHz
       .RST(RST)                    ,    // in    : System reset
     // Configuration parameters
@@ -208,7 +208,7 @@ module top (
     #( 
         .BASEADDR(GPIO_BASEADDR), 
         .HIGHADDR(GPIO_HIGHADDR),
-          .ABUSWIDTH(32),
+        .ABUSWIDTH(32),
         .IO_WIDTH(8),
         .IO_DIRECTION(8'h0f)
     ) i_gpio
