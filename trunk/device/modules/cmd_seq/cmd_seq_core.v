@@ -180,7 +180,7 @@ three_stage_synchronizer #(
 
 (* RAM_STYLE="{AUTO | BLOCK | BLOCK_POWER1 | BLOCK_POWER2}" *)
 reg [7:0] cmd_mem [CMD_MEM_SIZE-1:0];
-always @ (negedge BUS_CLK) begin
+always @ (posedge BUS_CLK) begin
     if(BUS_ADD == 1)
         BUS_DATA_OUT <= {7'b0, CONF_FINISH};
     else if(BUS_ADD < 16)

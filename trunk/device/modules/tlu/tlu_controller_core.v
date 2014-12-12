@@ -145,7 +145,7 @@ reg [7:0] LOST_DATA_CNT, LOST_DATA_CNT_BUF; // BUS_ADD==0
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER, CURRENT_TLU_TRIGGER_NUMBER_BUF; // BUS_ADD==4 - 7
 reg [31:0] CURRENT_TRIGGER_NUMBER, CURRENT_TRIGGER_NUMBER_BUF; // BUS_ADD==8 - 11
 
-always @ (negedge BUS_CLK)
+always @ (posedge BUS_CLK)
 begin
     //BUS_DATA_OUT <= 0;
     if (BUS_ADD == 0)
@@ -186,7 +186,7 @@ begin
         BUS_DATA_OUT <= 0;
 end
 
-always @ (negedge BUS_CLK)
+always @ (posedge BUS_CLK)
 begin
     if (RST)
         LOST_DATA_CNT_BUF <= 8'b0;
@@ -464,7 +464,7 @@ begin
     end
 end
 
-always @ (negedge BUS_CLK)
+always @ (posedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TLU_TRIGGER_NUMBER_BUF <= 32'b0;
@@ -500,7 +500,7 @@ begin
     end
 end
 
-always @ (negedge BUS_CLK)
+always @ (posedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TRIGGER_NUMBER_BUF <= 32'b0;

@@ -90,24 +90,22 @@ assign LOST_ERROR = CONF_ERROR_LOST!=0;
 reg CONF_DONE; 
 
 always @(posedge BUS_CLK) begin
-    if (BUS_RD) begin
-        if(BUS_ADD == 1)
-            BUS_DATA_OUT <= {7'b0, CONF_DONE};
-        else if(BUS_ADD == 2)
-            BUS_DATA_OUT <= {6'b0, CONF_EN_EX_TRIGGER, CONF_START_WITH_SYNC}; 
-        else if(BUS_ADD == 3)
-            BUS_DATA_OUT <= CONF_DATA_CNT[23:16];
-        else if(BUS_ADD == 4)
-            BUS_DATA_OUT <= CONF_DATA_CNT[15:8];
-        else if(BUS_ADD == 5)
-            BUS_DATA_OUT <= CONF_DATA_CNT[7:0];
-        else if(BUS_ADD == 6)
-            BUS_DATA_OUT <= CONF_SAMPLE_SKIP; 
-        else if(BUS_ADD == 7)
-            BUS_DATA_OUT <= CONF_SAMPEL_DLY;        
-        else if(BUS_ADD == 15)
-            BUS_DATA_OUT <= CONF_ERROR_LOST;
-    end          
+    if(BUS_ADD == 1)
+        BUS_DATA_OUT <= {7'b0, CONF_DONE};
+    else if(BUS_ADD == 2)
+        BUS_DATA_OUT <= {6'b0, CONF_EN_EX_TRIGGER, CONF_START_WITH_SYNC}; 
+    else if(BUS_ADD == 3)
+        BUS_DATA_OUT <= CONF_DATA_CNT[23:16];
+    else if(BUS_ADD == 4)
+        BUS_DATA_OUT <= CONF_DATA_CNT[15:8];
+    else if(BUS_ADD == 5)
+        BUS_DATA_OUT <= CONF_DATA_CNT[7:0];
+    else if(BUS_ADD == 6)
+        BUS_DATA_OUT <= CONF_SAMPLE_SKIP; 
+    else if(BUS_ADD == 7)
+        BUS_DATA_OUT <= CONF_SAMPEL_DLY;        
+    else if(BUS_ADD == 15)
+        BUS_DATA_OUT <= CONF_ERROR_LOST;        
 end
 
 
