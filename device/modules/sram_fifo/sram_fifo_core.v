@@ -95,6 +95,8 @@ always @ (posedge BUS_CLK) begin //(*) begin
         BUS_DATA_OUT <= CONF_SIZE_BYTE[23:16]; 
     else if(BUS_ADD == 4)
         BUS_DATA_OUT <= CONF_READ_ERROR;
+    else 
+        BUS_DATA_OUT <= 0;
 end
 
 ///
