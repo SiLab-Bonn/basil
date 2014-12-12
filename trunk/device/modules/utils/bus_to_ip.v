@@ -35,7 +35,7 @@ assign CS = (BUS_ADD >= BASEADDR && BUS_ADD <= HIGHADDR);
 assign IP_ADD = CS ? BUS_ADD - BASEADDR : 0;
 assign IP_RD = CS ? BUS_RD : 0;
 assign IP_WR = CS ? BUS_WR: 0;
-assign BUS_DATA = (CS && BUS_RD) ? IP_DATA_OUT : 8'bzzzz_zzzz;
+assign BUS_DATA = (CS && BUS_WR) ?  8'bzzzz_zzzz : IP_DATA_OUT;
 assign IP_DATA_IN =  BUS_DATA;
-
+	 
 endmodule

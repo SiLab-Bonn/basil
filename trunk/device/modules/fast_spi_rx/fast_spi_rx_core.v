@@ -53,12 +53,12 @@ end
 reg [7:0] LOST_DATA_CNT;
 
 always @(posedge BUS_CLK) begin
-    if(BUS_RD) begin
+    //if(BUS_RD) begin
         if(BUS_ADD == 2)
             BUS_DATA_OUT <= {7'b0, CONF_EN};
         else if(BUS_ADD == 3)
             BUS_DATA_OUT <= LOST_DATA_CNT;
-    end
+    //end
 end
 
 wire RST_SYNC;
