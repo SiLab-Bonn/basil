@@ -145,11 +145,13 @@ reg [7:0] LOST_DATA_CNT, LOST_DATA_CNT_BUF; // BUS_ADD==0
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER, CURRENT_TLU_TRIGGER_NUMBER_BUF; // BUS_ADD==4 - 7
 reg [31:0] CURRENT_TRIGGER_NUMBER, CURRENT_TRIGGER_NUMBER_BUF; // BUS_ADD==8 - 11
 
+localparam VERSION = 1;
+
 always @ (posedge BUS_CLK)
 begin
     //BUS_DATA_OUT <= 0;
     if (BUS_ADD == 0)
-        BUS_DATA_OUT <= LOST_DATA_CNT_BUF;
+        BUS_DATA_OUT <= VERSION;
     else if (BUS_ADD == 1)
         BUS_DATA_OUT <= status_regs[1];
     else if (BUS_ADD == 2)
@@ -173,7 +175,7 @@ begin
     else if (BUS_ADD == 11)
         BUS_DATA_OUT <= CURRENT_TRIGGER_NUMBER_BUF[31:24];
     else if (BUS_ADD == 12)
-        BUS_DATA_OUT <= 8'b0;
+        BUS_DATA_OUT <= LOST_DATA_CNT_BUF;
     else if (BUS_ADD == 13)
         BUS_DATA_OUT <= 8'b0;
     else if (BUS_ADD == 14)

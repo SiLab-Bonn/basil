@@ -52,8 +52,12 @@ end
 
 reg [7:0] LOST_DATA_CNT;
 
+localparam VERSION = 0;
+
 always @(posedge BUS_CLK) begin
-    if(BUS_ADD == 2)
+    if(BUS_ADD == 0)
+        BUS_DATA_OUT <= VERSION;
+    else if(BUS_ADD == 2)
         BUS_DATA_OUT <= {7'b0, CONF_EN};
     else if(BUS_ADD == 3)
         BUS_DATA_OUT <= LOST_DATA_CNT;

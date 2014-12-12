@@ -28,7 +28,7 @@ class tlu(RegisterHardwareLayer):
     '''
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
-                  'LOST_DATA_COUNTER': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
+                  'LOST_DATA_COUNTER': {'descr': {'addr': 12, 'size': 8, 'properties': ['ro']}},
                   'TRIGGER_MODE': {'descr': {'addr': 1, 'size': 2, 'offset': 0}},
                   'TRIGGER_DATA_MSB_FIRST': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},
                   'EN_VETO': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},
@@ -52,7 +52,7 @@ class tlu(RegisterHardwareLayer):
         self._intf.write(self._conf['base_addr'], (0,))
 
     def get_lost_data_counter(self):
-        ret = self._intf.read(self._conf['base_addr'], size=1)
+        ret = self._intf.read(self._conf['base_addr'] + 12, size=1)
         return unpack_from('B', ret)[0]
 
     def set_trigger_mode(self, value):

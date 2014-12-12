@@ -37,8 +37,12 @@ reg [15:0] CONF_WIDTH;
 reg [7:0] CONF_REPEAT;
 reg CONF_DONE;
 
+localparam VERSION = 0;
+
 always@(posedge BUS_CLK) begin
-    if(BUS_ADD == 1)
+    if(BUS_ADD == 0)
+        BUS_DATA_OUT <= VERSION;
+    else if(BUS_ADD == 1)
         BUS_DATA_OUT <= {7'b0, CONF_DONE};
     else if(BUS_ADD == 2)
         BUS_DATA_OUT <= {7'b0, CONF_EN};

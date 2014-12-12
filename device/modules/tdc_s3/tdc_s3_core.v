@@ -71,9 +71,11 @@ always @(posedge BUS_CLK) begin
         status_regs[BUS_ADD[0]] <= BUS_DATA_IN;
 end
 
+localparam VERSION = 1;
+
 always @(posedge BUS_CLK) begin
     if (BUS_ADD == 0)
-        BUS_DATA_OUT <= LOST_DATA_CNT_BUF;
+        BUS_DATA_OUT <= VERSION;
     else if(BUS_ADD == 1)
         BUS_DATA_OUT <= status_regs[1];
     else if(BUS_ADD == 2)
@@ -84,6 +86,8 @@ always @(posedge BUS_CLK) begin
         BUS_DATA_OUT <= EVENT_CNT_BUF[23:16];
     else if(BUS_ADD == 5)
         BUS_DATA_OUT <= EVENT_CNT_BUF[31:24];
+    else if(BUS_ADD == 6)
+        BUS_DATA_OUT <= LOST_DATA_CNT_BUF;
     else
         BUS_DATA_OUT <= 0;
 end
