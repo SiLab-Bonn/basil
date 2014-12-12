@@ -3,10 +3,6 @@
  * Copyright (c) SILAB , Physics Institute of Bonn University 
  * ------------------------------------------------------------
  *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
  
  
@@ -15,11 +11,11 @@ module gerneric_fifo ( clk, reset, write, read, data_in,
 
 parameter DATA_SIZE = 32;
 parameter DEPTH = 8;
-input clk, reset, write, read;
-input [DATA_SIZE-1:0] data_in;
+input wire clk, reset, write, read;
+input wire [DATA_SIZE-1:0] data_in;
 
-output full, empty;
-reg empty;
+output wire full;
+output reg empty;
 
 output reg [DATA_SIZE-1:0] data_out;
 `include "../includes/log2func.v"
@@ -37,7 +33,7 @@ wire empty_loc;
 always@(posedge clk) begin
     if(reset)
         rd_ponter <= 0;
-    else if(read && !empty_loc) begin
+    else if(read && !empty) begin
         if(rd_ponter == DEPTH-1)
             rd_ponter <= 0;
         else
@@ -47,7 +43,7 @@ end
 
 always@(*) begin
     rd_tmp = rd_ponter;
-    if(read) begin
+    if(read && !empty) begin
         if(rd_ponter == DEPTH-1)
             rd_tmp = 0;
         else
@@ -67,7 +63,7 @@ always@(posedge clk) begin
 end
 
 always@(posedge clk)
-    if(read && !empty_loc)
+    if(read && !empty)
         if(rd_ponter == DEPTH-1)
             empty <= (wr_pointer == 0);
         else
