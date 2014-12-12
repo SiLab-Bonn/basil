@@ -81,26 +81,24 @@ wire [7:0] BUS_STATUS_OUT;
 assign BUS_STATUS_OUT = status_regs[BUS_ADD];
 
 always@(posedge BUS_CLK) begin
-    if(BUS_RD) begin
-        if(BUS_ADD == 1)
-            BUS_DATA_OUT <= {7'b0,CONF_DONE};
-        else if(BUS_ADD == 3)
-            BUS_DATA_OUT <= CONF_BIT_OUT[7:0];
-        else if(BUS_ADD == 4)
-            BUS_DATA_OUT <= CONF_BIT_OUT[15:8];
-        else if(BUS_ADD == 5)
-            BUS_DATA_OUT <= CONF_WAIT[7:0];
-        else if(BUS_ADD == 6)
-            BUS_DATA_OUT <= CONF_WAIT[15:8]; 
-        else if(BUS_ADD == 7)
-            BUS_DATA_OUT <= CONF_REPEAT;
-        else if(BUS_ADD < 8)
-            BUS_DATA_OUT <= BUS_STATUS_OUT;
-        else if(BUS_ADD < 8+MEM_BYTES )
-            BUS_DATA_OUT <= BUS_IN_MEM;
-        else if(BUS_ADD < 8+MEM_BYTES+ MEM_BYTES)
-            BUS_DATA_OUT <= BUS_OUT_MEM;
-    end
+    if(BUS_ADD == 1)
+        BUS_DATA_OUT <= {7'b0,CONF_DONE};
+    else if(BUS_ADD == 3)
+        BUS_DATA_OUT <= CONF_BIT_OUT[7:0];
+    else if(BUS_ADD == 4)
+        BUS_DATA_OUT <= CONF_BIT_OUT[15:8];
+    else if(BUS_ADD == 5)
+        BUS_DATA_OUT <= CONF_WAIT[7:0];
+    else if(BUS_ADD == 6)
+        BUS_DATA_OUT <= CONF_WAIT[15:8]; 
+    else if(BUS_ADD == 7)
+        BUS_DATA_OUT <= CONF_REPEAT;
+    else if(BUS_ADD < 8)
+        BUS_DATA_OUT <= BUS_STATUS_OUT;
+    else if(BUS_ADD < 8+MEM_BYTES )
+        BUS_DATA_OUT <= BUS_IN_MEM;
+    else if(BUS_ADD < 8+MEM_BYTES+ MEM_BYTES)
+        BUS_DATA_OUT <= BUS_OUT_MEM;
 end
 
 reg [15:0] out_bit_cnt;

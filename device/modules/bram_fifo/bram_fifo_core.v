@@ -74,16 +74,14 @@ wire [31:0] CONF_SIZE; // write data count, 1 - 2 - 3, in units of two bytes (16
 reg [7:0] CONF_READ_ERROR; // read error count (read attempts when FIFO is empty), 4
 
 always @ (posedge BUS_CLK) begin //(*) begin
-    if(BUS_RD) begin
-        if(BUS_ADD == 1)
-            BUS_DATA_OUT <= CONF_SIZE[7:0]; // in units of two bytes (16 bits)
-        else if(BUS_ADD == 2)
-            BUS_DATA_OUT <= CONF_SIZE[15:8];
-        else if(BUS_ADD == 3)
-            BUS_DATA_OUT <= CONF_SIZE[23:16]; 
-        else if(BUS_ADD == 4)
-            BUS_DATA_OUT <= CONF_READ_ERROR;
-    end
+    if(BUS_ADD == 1)
+        BUS_DATA_OUT <= CONF_SIZE[7:0]; // in units of two bytes (16 bits)
+    else if(BUS_ADD == 2)
+        BUS_DATA_OUT <= CONF_SIZE[15:8];
+    else if(BUS_ADD == 3)
+        BUS_DATA_OUT <= CONF_SIZE[23:16]; 
+    else if(BUS_ADD == 4)
+        BUS_DATA_OUT <= CONF_READ_ERROR;
 end
 
 ///

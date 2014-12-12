@@ -93,7 +93,7 @@ always @(posedge BUS_CLK) begin
         status_regs <= BUS_DATA_IN;
 end
 
-always @ (negedge BUS_CLK) begin //(*) begin
+always @ (posedge BUS_CLK) begin //(*) begin
     if(BUS_ADD == 2)
         BUS_DATA_OUT <= {status_regs[7:1], RX_READY};
     else if(BUS_ADD == 3)
@@ -113,7 +113,7 @@ wire [7:0] DATA_HEADER;
 assign DATA_HEADER = DATA_IDENTIFIER;
 assign FIFO_DATA = {DATA_HEADER, FE_DATA};
 
-always @ (negedge BUS_CLK)
+always @ (posedge BUS_CLK)
 begin
     if (RST)
         decoder_err_cnt_buf <= 8'b0;
@@ -126,7 +126,7 @@ begin
     end
 end
 
-always @ (negedge BUS_CLK)
+always @ (posedge BUS_CLK)
 begin
     if (RST)
         lost_err_cnt_buf <= 8'b0;
