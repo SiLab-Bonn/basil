@@ -45,6 +45,7 @@ module rbcp_to_bus (
     assign BUS_DATA = BUS_WR ? RBCP_WD[7:0]: 8'bz;
     assign RBCP_RD[7:0] = BUS_WR ? 8'bz : BUS_DATA;
 
+	/*
     wire [35:0] control_bus;
     chipscope_icon ichipscope_icon
     (
@@ -58,5 +59,6 @@ module rbcp_to_bus (
         .TRIG0({BUS_ADD[7:0], RBCP_ACK, RBCP_WD, RBCP_RD, BUS_RD, BUS_WR})
     
     );
+	 */
 	 
 endmodule
