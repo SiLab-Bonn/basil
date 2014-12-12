@@ -80,16 +80,19 @@ begin
 end
 
 // read reg
-reg [21:0] CONF_SIZE; // write data count, 1 - 2 - 3, in units of bytes
+reg [20:0] CONF_SIZE; // write data count, 1 - 2 - 3, in units of two bytes (16 bits)
 reg [7:0] CONF_READ_ERROR; // read error count (read attempts when FIFO is empty), 4
+
+wire [23:0] CONF_SIZE_BYTE;
+assign CONF_SIZE_BYTE = CONF_SIZE * 2;
 
 always @ (posedge BUS_CLK) begin //(*) begin
     if(BUS_ADD == 1)
-        BUS_DATA_OUT <= CONF_SIZE[7:0]; // in units of bytes
+        BUS_DATA_OUT <= CONF_SIZE_BYTE[7:0]; // in units of bytes
     else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= CONF_SIZE[15:8];
+        BUS_DATA_OUT <= CONF_SIZE_BYTE[15:8];
     else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= {2'b00, CONF_SIZE[21:16]}; 
+        BUS_DATA_OUT <= CONF_SIZE_BYTE[23:16]; 
     else if(BUS_ADD == 4)
         BUS_DATA_OUT <= CONF_READ_ERROR;
 end
@@ -265,11 +268,11 @@ end
 always @ (posedge BUS_CLK) begin //(*) begin
     if(wr_pointer >= rd_ponter)
         if(read_state == READ_NOP_SRAM)
-            CONF_SIZE <= (wr_pointer - rd_ponter + 1) * 2;
+            CONF_SIZE <= wr_pointer - rd_ponter+1;
         else
-            CONF_SIZE <= (wr_pointer - rd_ponter) * 2;
+            CONF_SIZE <= wr_pointer - rd_ponter;
     else
-        CONF_SIZE <= (wr_pointer + (DEPTH - rd_ponter)) * 2;
+        CONF_SIZE <= wr_pointer + (DEPTH-rd_ponter);
 end
 
 assign FIFO_NOT_EMPTY = !empty;
@@ -279,9 +282,9 @@ assign FIFO_READ_ERROR = (CONF_READ_ERROR != 0);
 always @(posedge BUS_CLK) begin
     if(RST)
         FIFO_NEAR_FULL <= 1'b0;
-    else if (((((FIFO_ALMOST_FULL_VALUE+1)*DEPTH*2)>>8) <= CONF_SIZE) || (FIFO_ALMOST_FULL_VALUE == 8'b0 && CONF_SIZE >= 0))
+    else if (((((FIFO_ALMOST_FULL_VALUE+1)*DEPTH)>>8) <= CONF_SIZE) || (FIFO_ALMOST_FULL_VALUE == 8'b0 && CONF_SIZE >= 0))
         FIFO_NEAR_FULL <= 1'b1;
-    else if (((((FIFO_ALMOST_EMPTY_VALUE+1)*DEPTH*2)>>8) >= CONF_SIZE && FIFO_ALMOST_EMPTY_VALUE != 8'b0) || CONF_SIZE == 22'b0)
+    else if (((((FIFO_ALMOST_EMPTY_VALUE+1)*DEPTH)>>8) >= CONF_SIZE && FIFO_ALMOST_EMPTY_VALUE != 8'b0) || CONF_SIZE == 0)
         FIFO_NEAR_FULL <= 1'b0;
 end
 
