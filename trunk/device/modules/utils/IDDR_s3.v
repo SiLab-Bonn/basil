@@ -1,9 +1,3 @@
-/**
- * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
- * ------------------------------------------------------------
- *
- */
 
 module IDDR ( output wire Q1, Q2, 
                        input wire C, CE, D, R, S );
