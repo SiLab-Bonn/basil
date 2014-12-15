@@ -89,8 +89,12 @@ assign LOST_ERROR = CONF_ERROR_LOST!=0;
 
 reg CONF_DONE; 
 
+localparam VERSION = 0;
+
 always @(posedge BUS_CLK) begin
-    if(BUS_ADD == 1)
+    if(BUS_ADD == 0)
+        BUS_DATA_OUT <= VERSION;
+    else if(BUS_ADD == 1)
         BUS_DATA_OUT <= {7'b0, CONF_DONE};
     else if(BUS_ADD == 2)
         BUS_DATA_OUT <= {6'b0, CONF_EN_EX_TRIGGER, CONF_START_WITH_SYNC}; 

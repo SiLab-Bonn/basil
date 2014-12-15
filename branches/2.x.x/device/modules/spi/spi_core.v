@@ -76,12 +76,15 @@ assign CONF_WAIT = {status_regs[6],status_regs[5]};
 wire [7:0] CONF_REPEAT;
 assign CONF_REPEAT = status_regs[7];
 
-
 wire [7:0] BUS_STATUS_OUT;
 assign BUS_STATUS_OUT = status_regs[BUS_ADD];
 
+localparam VERSION = 0;
+
 always@(posedge BUS_CLK) begin
-    if(BUS_ADD == 1)
+    if(BUS_ADD == 0)
+        BUS_DATA_OUT <= VERSION;
+    else if(BUS_ADD == 1)
         BUS_DATA_OUT <= {7'b0,CONF_DONE};
     else if(BUS_ADD == 3)
         BUS_DATA_OUT <= CONF_BIT_OUT[7:0];
