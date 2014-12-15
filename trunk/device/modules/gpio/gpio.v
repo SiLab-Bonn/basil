@@ -9,7 +9,9 @@
  *  $Author::                    $:
  *  $Date::                      $:
  */
- 
+
+`default_nettype wire
+
 module gpio
 #(
     parameter BASEADDR = 0,
