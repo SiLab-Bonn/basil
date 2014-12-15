@@ -13,11 +13,7 @@ module blk_mem_gen_8_to_1_2k (
   input [7 : 0] DINA;
   input [0 : 0] DINB;
   
-  RAMB16_S1_S9 #(
-    .WRITE_MODE_A ( "WRITE_FIRST" ),
-    .WRITE_MODE_B ( "WRITE_FIRST" ),
-    .SIM_COLLISION_CHECK ( "NONE" ))
- dpram  (
+  RAMB16_S1_S9 dpram  (
     .CLKA(CLKB),
     .CLKB(CLKA),
     .ENB(1'b1),
