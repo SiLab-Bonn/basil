@@ -1,3 +1,0 @@
-include *.txt VERSION
-recursive-include docs *
-recursive-include examples *
