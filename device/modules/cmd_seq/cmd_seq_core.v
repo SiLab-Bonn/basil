@@ -14,12 +14,11 @@
 
 module cmd_seq_core
 #(
-    parameter                   ABUSWIDTH = 32,
     parameter                   CMD_MEM_SIZE = 2048
 ) (
     input wire                  BUS_CLK,
     input wire                  BUS_RST,
-    input wire [ABUSWIDTH-1:0]  BUS_ADD,
+    input wire [15:0]           BUS_ADD,
     input wire [7:0]            BUS_DATA_IN,
     input wire                  BUS_RD,
     input wire                  BUS_WR,
@@ -84,7 +83,7 @@ flag_domain_crossing cmd_start_flag_domain_crossing (
     .FLAG_OUT_CLK_B(start_sync)
 );
 
-reg [0:0] CONF_FINISH; // 1
+reg CONF_FINISH; // 1
 wire CONF_EN_EXT_START, CONF_DIS_CLOCK_GATE, CONF_DIS_CMD_PULSE; // 2
 wire [1:0] CONF_OUTPUT_MODE; // 2 Mode == 0: posedge, 1: negedge, 2: Manchester Code according to IEEE 802.3, 3:  Manchester Code according to G.E. Thomas aka Biphase-L or Manchester-II
 wire [15:0] CONF_CMD_SIZE; // 3 - 4
@@ -179,10 +178,14 @@ three_stage_synchronizer #(
     .OUT(CONF_STOP_REPEAT_CMD_CLK)
 );
 
+localparam VERSION = 0;
+
 (* RAM_STYLE="{AUTO | BLOCK | BLOCK_POWER1 | BLOCK_POWER2}" *)
 reg [7:0] cmd_mem [CMD_MEM_SIZE-1:0];
 always @ (posedge BUS_CLK) begin
-    if(BUS_ADD == 1)
+    if(BUS_ADD == 0)
+        BUS_DATA_OUT <= VERSION;
+    else if(BUS_ADD == 1)
         BUS_DATA_OUT <= {7'b0, CONF_FINISH};
     else if(BUS_ADD < 16)
         BUS_DATA_OUT <= status_regs[BUS_ADD[3:0]];
@@ -203,9 +206,9 @@ always @(posedge CMD_CLK_IN)
     CMD_MEM_DATA <= cmd_mem[CMD_MEM_ADD];
 
 wire ext_send_cmd;
-assign ext_send_cmd = (CMD_EXT_START_FLAG & CMD_EXT_START_ENABLE) ;
+assign ext_send_cmd = (CMD_EXT_START_FLAG & CMD_EXT_START_ENABLE);
 wire send_cmd;
-assign send_cmd = ((start_sync | ext_send_cmd) & CMD_READY);
+assign send_cmd = start_sync | ext_send_cmd;
 
 localparam WAIT = 1, SEND = 2;
 
@@ -314,7 +317,7 @@ always @ (negedge CMD_CLK_IN)
 always @ (posedge CMD_CLK_IN)
     cmd_data_pos <= cmd_data_ser;
 
-/*OFDDRRSE MANCHESTER_CODE_INST (
+OFDDRRSE MANCHESTER_CODE_INST (
     .CE(1'b1), 
     .C0(CMD_CLK_IN),
     .C1(~CMD_CLK_IN),
@@ -323,16 +326,6 @@ always @ (posedge CMD_CLK_IN)
     .R(1'b0),
     .S(1'b0),
     .Q(CMD_DATA)
-);*/
-
-ODDR MANCHESTER_CODE_INST (
-    .Q(CMD_DATA),
-    .C(CMD_CLK_IN),
-    .CE(1'b1),
-    .D1((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? ~cmd_data_pos : cmd_data_pos))), 
-    .D2((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? cmd_data_pos : ~cmd_data_pos))),
-    .R(1'b0),
-    .S(1'b0)
 );
 
 // wire CMD_CLK_INV_IN;
@@ -341,7 +334,7 @@ ODDR MANCHESTER_CODE_INST (
     // .O(CMD_CLK_INV_IN)
 // );
 
-/*OFDDRRSE CMD_CLK_FORWARDING_INST (
+OFDDRRSE CMD_CLK_FORWARDING_INST (
     .CE(1'b1), 
     .C0(CMD_CLK_IN),
     .C1(~CMD_CLK_IN),
@@ -350,16 +343,6 @@ ODDR MANCHESTER_CODE_INST (
     .R(CONF_DIS_CLOCK_GATE),
     .S(1'b0),
     .Q(CMD_CLK_OUT)
-);*/
-
-ODDR CMD_CLK_FORWARDING_INST (
-    .Q(CMD_CLK_OUT),
-    .C(CMD_CLK_IN),
-    .CE(1'b1), 
-    .D1(1'b1),
-    .D2(1'b0),
-    .R(CONF_DIS_CLOCK_GATE),
-    .S(1'b0)
 );
 
 // command start flag
@@ -371,44 +354,21 @@ always @ (posedge CMD_CLK_IN)
 
 // ready signal
 always @ (posedge CMD_CLK_IN)
-    if (send_cmd || RST_CMD_CLK)
-        CMD_READY <= 1'b0;
-    else if (state == WAIT)
+    if (state == WAIT)
         CMD_READY <= 1'b1;
     else
         CMD_READY <= 1'b0;
 
+// ready readout sync
 wire DONE_SYNC;
-
-// ready readout sync 
-cdc_pulse_sync done_pulse_sync (.clk_in(CMD_CLK_IN), .pulse_in(CMD_READY), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
-
-//always @ (posedge BUS_CLK)
-//if(RST)
-//    cnt <= 0;
-//else if(DONE_SYNC)
-//    cnt <= 8'b1111_1111;
-//else if(cnt!=0)
-//    cnt <= cnt -1;
-    
+cdc_pulse_sync done_pulse_sync(.clk_in(CMD_CLK_IN), .pulse_in(CMD_READY), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
 
 always @(posedge BUS_CLK)
     if(RST)
-        CONF_FINISH <= 1'b1;
+        CONF_FINISH <= 1;
     else if(START)
-        CONF_FINISH <= 1'b0;
+        CONF_FINISH <= 0;
     else if(DONE_SYNC)
-        CONF_FINISH <= 1'b1;
+        CONF_FINISH <= 1;
 
-/*reg [0:0] ILA;
-*//*wire [7:0] zero;
-assign zero = 8'b0;*//*
-always @(posedge CMD_CLK_IN)
-	ILA <= {cmd_data_pos};
-
-ila_1 ILA1_inst (
-  .clk(CMD_CLK_IN), // input clk
-  .probe0(ILA)
-);*/
-   
 endmodule

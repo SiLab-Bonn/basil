@@ -14,8 +14,7 @@
 module fei4_rx_core
 #(
     parameter           DSIZE = 10,
-    parameter           DATA_IDENTIFIER = 0,
-    parameter           ABUSWIDTH = 32
+    parameter           DATA_IDENTIFIER = 0
 )
 (
     input wire RX_CLK,
@@ -33,7 +32,7 @@ module fei4_rx_core
     output wire RX_FIFO_FULL,
 
     input wire BUS_CLK,
-    input wire [ABUSWIDTH-1:0] BUS_ADD,
+    input wire [15:0] BUS_ADD,
     input wire [7:0] BUS_DATA_IN,
     output reg [7:0] BUS_DATA_OUT,
     input wire BUS_RST,
@@ -94,8 +93,12 @@ always @(posedge BUS_CLK) begin
         status_regs <= BUS_DATA_IN;
 end
 
+localparam VERSION = 0;
+
 always @ (posedge BUS_CLK) begin //(*) begin
-    if(BUS_ADD == 2)
+    if(BUS_ADD == 0)
+        BUS_DATA_OUT <= VERSION;
+    else if(BUS_ADD == 2)
         BUS_DATA_OUT <= {status_regs[7:1], RX_READY};
     else if(BUS_ADD == 3)
         BUS_DATA_OUT <= fifo_size[7:0];
