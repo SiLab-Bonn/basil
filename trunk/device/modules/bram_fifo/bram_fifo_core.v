@@ -70,24 +70,21 @@ begin
 end
 
 // read reg
-wire [31:0] CONF_SIZE; // write data count, 1 - 2 - 3, in units of two bytes (16 bits)
+wire [31:0] CONF_SIZE, CONF_SIZE_BYTE; // write data count, 1 - 2 - 3, in units of two bytes (16 bits)
 reg [7:0] CONF_READ_ERROR; // read error count (read attempts when FIFO is empty), 4
-
-localparam VERSION = 1;
+assign CONF_SIZE_BYTE = CONF_SIZE * 4;
 
 always @ (posedge BUS_CLK) begin //(*) begin
-    if(BUS_ADD == 0)
-        BUS_DATA_OUT <= VERSION;
-    else if(BUS_ADD == 1)
-        BUS_DATA_OUT <= CONF_SIZE[7:0]; // in units of two bytes (16 bits)
-    else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= CONF_SIZE[15:8];
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= CONF_SIZE[23:16]; 
-    else if(BUS_ADD == 4)
-        BUS_DATA_OUT <= CONF_READ_ERROR;
-    else
-        BUS_DATA_OUT <= 0;
+    if(BUS_RD) begin
+        if(BUS_ADD == 1)
+            BUS_DATA_OUT <= CONF_SIZE_BYTE[7:0]; // in units of two bytes (8 bits)
+        else if(BUS_ADD == 2)
+            BUS_DATA_OUT <= CONF_SIZE_BYTE[15:8];
+        else if(BUS_ADD == 3)
+            BUS_DATA_OUT <= CONF_SIZE_BYTE[23:16]; 
+        else if(BUS_ADD == 4)
+            BUS_DATA_OUT <= CONF_READ_ERROR;
+    end
 end
 
 ///
@@ -129,7 +126,7 @@ always @(posedge BUS_CLK) begin
         FIFO_NEAR_FULL <= 1'b0;
     else if (((((FIFO_ALMOST_FULL_VALUE+1)*DEPTH)>>8) <= CONF_SIZE) || (FIFO_ALMOST_FULL_VALUE == 8'b0 && CONF_SIZE >= 0))
         FIFO_NEAR_FULL <= 1'b1;
-    else if (((((FIFO_ALMOST_EMPTY_VALUE+1)*DEPTH)>>8) >= CONF_SIZE && FIFO_ALMOST_EMPTY_VALUE != 8'b0) || CONF_SIZE == 21'b0)
+    else if (((((FIFO_ALMOST_EMPTY_VALUE+1)*DEPTH)>>8) >= CONF_SIZE && FIFO_ALMOST_EMPTY_VALUE != 8'b0) || CONF_SIZE == 0)
         FIFO_NEAR_FULL <= 1'b0;
 end
 
