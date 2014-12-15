@@ -9,6 +9,7 @@
 // notice is preserved.
 
 // per Widmer and Franaszek
+`default_nettype wire
 
 module decode_8b10b (datain, dispin, dataout, dispout, code_err, disp_err) ;
   input [9:0]   datain ;
