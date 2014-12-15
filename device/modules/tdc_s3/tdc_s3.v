@@ -29,9 +29,7 @@ module tdc_s3
     input wire DV_CLK, // clock synchronous to CLK160 division factor can be set by CLKDV parameter
     input wire TDC_IN,
     output wire TDC_OUT,
-    input TRIG_IN,
-    output TRIG_OUT,
-    
+
     input wire FIFO_READ,
     output wire FIFO_EMPTY,
     output wire [31:0] FIFO_DATA,
@@ -79,9 +77,7 @@ tdc_s3_core
     .DV_CLK(DV_CLK),
     .TDC_IN(TDC_IN),
     .TDC_OUT(TDC_OUT),
-    .TRIG_IN(TRIG_IN),
-    .TRIG_OUT(TRIG_OUT),
-    
+
     .FIFO_READ(FIFO_READ),
     .FIFO_EMPTY(FIFO_EMPTY),
     .FIFO_DATA(FIFO_DATA),
