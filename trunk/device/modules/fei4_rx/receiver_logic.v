@@ -232,21 +232,14 @@ gerneric_fifo #(
 ) fifo_i (
     .clk(BUS_CLK),
     .reset(rst_long),
-    .write((!cdc_fifo_empty) /*& (!full)*/),
-    .read((read) /*& (!empty)*/),
+    .write(!cdc_fifo_empty),
+    .read(read),
     .data_in(cdc_data_out),
     .full(full),
     .empty(empty),
     .data_out(data), 
     .size(fifo_size_int)
 );
-
-/*assign data = cdc_data_out;
-assign full = !read;
-assign empty = cdc_fifo_empty;
-assign fifo_size_int = 11'b0;*/
-
-//////
 
 always @(posedge BUS_CLK) begin
     fifo_size <= {5'b0, fifo_size_int};
@@ -266,14 +259,5 @@ chipscope_ila ichipscope_ila
     .TRIG0({dec_k, dec_data, data_to_dec, rec_sync_ready, 1'b0, USEAOUT, USEBOUT, USECOUT, USEDOUT, RX_DATA_SYNC, RX_DATA})
 );
 `endif
-
-/*reg [63:0] ILA;
-always @(posedge BUS_CLK)
-	ILA <= {cdc_data_out[23:0], data[23:0], fifo_size_int[10:0], empty, full, !cdc_fifo_empty, rst_long, read};
-
-ila_1 ILA1_inst (
-  .clk(BUS_CLK), // input clk
-  .probe0(ILA)
-);*/
 
 endmodule
