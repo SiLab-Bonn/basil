@@ -1,0 +1,20 @@
+#
+# ------------------------------------------------------------
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
+# ------------------------------------------------------------
+#
+# SVN revision information:
+#  $Rev:: 261                   $:
+#  $Author:: jejan              $:
+#  $Date:: 2014-06-06 15:16:45 #$:
+#
+---
+
+
+test_register:
+   REG1    : 0
+   REG2    : 1
+   REG3    : 2
+#   REG4_ro : 3
+   REG5_wo : 5
