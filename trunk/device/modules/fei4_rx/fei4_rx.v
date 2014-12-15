@@ -2,11 +2,6 @@
  * ------------------------------------------------------------
  * Copyright (c) SILAB , Physics Institute of Bonn University
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $:
- *  $Date::                      $:
  */
 `timescale 1ps/1ps
 `default_nettype none
@@ -14,10 +9,11 @@
 
 module fei4_rx
 #(
-    parameter   BASEADDR = 16'h0000,
-    parameter   HIGHADDR = 16'h0000,
+    parameter   BASEADDR = 32'h0000,
+    parameter   HIGHADDR = 32'h0000,
     parameter   DSIZE = 10,
-    parameter   DATA_IDENTIFIER = 0
+    parameter   DATA_IDENTIFIER = 0,
+    parameter   ABUSWIDTH = 16
 )
 (
     input wire RX_CLK,
@@ -36,7 +32,7 @@ module fei4_rx
     
     input wire          BUS_CLK,
     input wire          BUS_RST,
-    input wire  [15:0]  BUS_ADD,
+    input wire  [ABUSWIDTH-1:0]  BUS_ADD,
     inout wire  [7:0]   BUS_DATA,
     input wire          BUS_RD,
     input wire          BUS_WR
@@ -44,11 +40,11 @@ module fei4_rx
 
 
 wire IP_RD, IP_WR;
-wire [15:0] IP_ADD;
+wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
 wire [7:0] IP_DATA_OUT;
 
-bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
+bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i_bus_to_ip
 (
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
@@ -65,7 +61,8 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
 fei4_rx_core
 #(
     .DSIZE(DSIZE),
-    .DATA_IDENTIFIER(DATA_IDENTIFIER)
+    .DATA_IDENTIFIER(DATA_IDENTIFIER),
+    .ABUSWIDTH(ABUSWIDTH)
 ) i_fei4_rx_core
 (
     .BUS_CLK(BUS_CLK),

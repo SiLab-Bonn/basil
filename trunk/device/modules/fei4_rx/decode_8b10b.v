@@ -12,11 +12,11 @@
 
 module decode_8b10b (datain, dispin, dataout, dispout, code_err, disp_err) ;
   input [9:0]   datain ;
-  input		dispin ;
+  input	wire	dispin ;
   output [8:0]	dataout ;
   output	dispout ;
-  output	code_err ;
-  output	disp_err ;
+  output wire	code_err ;
+  output wire	disp_err ;
 
   wire ai = datain[0] ;
   wire bi = datain[1] ;
