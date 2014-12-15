@@ -610,7 +610,7 @@ wire fifo_full, cdc_fifo_empty;
 always@(posedge CMD_CLK) begin
     if(RST_CMD_CLK)
         LOST_DATA_CNT <= 0;
-    else if (wfull && cdc_fifo_write && LOST_DATA_CNT != -1)
+    else if (wfull && TLU_FIFO_WRITE && LOST_DATA_CNT != -1)
         LOST_DATA_CNT <= LOST_DATA_CNT + 1;
 end
 
