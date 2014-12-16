@@ -28,6 +28,7 @@ class tlu(RegisterHardwareLayer):
     '''
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
                   'LOST_DATA_COUNTER': {'descr': {'addr': 12, 'size': 8, 'properties': ['ro']}},
                   'TRIGGER_MODE': {'descr': {'addr': 1, 'size': 2, 'offset': 0}},
                   'TRIGGER_DATA_MSB_FIRST': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},

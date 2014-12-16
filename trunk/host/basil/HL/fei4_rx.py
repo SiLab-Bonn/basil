@@ -19,6 +19,7 @@ class fei4_rx(RegisterHardwareLayer):
     '''
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
                   'SOFT_RESET': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'READY': {'descr': {'addr': 2, 'size': 1, 'properties': ['ro']}},
                   'INVERT_RX': {'descr': {'addr': 2, 'size': 1, 'offset': 1}},

@@ -23,6 +23,7 @@ class spi(RegisterHardwareLayer):
     '''
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
                   'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'SIZE': {'descr': {'addr': 3, 'size': 16}},
