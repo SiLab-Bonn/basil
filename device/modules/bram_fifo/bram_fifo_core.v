@@ -22,7 +22,7 @@ module bram_fifo_core
     input wire                  BUS_RD_DATA,
     output reg [31:0]           BUS_DATA_OUT_DATA,
     input wire                  BUS_WR_DATA,
-    input wire [31:0]           BUS_DATA_IN_DATA,    
+    input wire [31:0]           BUS_DATA_IN_DATA,
 
     
     output wire                 FIFO_READ_NEXT_OUT,
@@ -35,9 +35,8 @@ module bram_fifo_core
     output wire                 FIFO_READ_ERROR
 );
 
-/////
 wire SOFT_RST; //0
-assign SOFT_RST = (BUS_ADD==0 && BUS_WR);  
+assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 
 wire RST;
 assign RST = BUS_RST | SOFT_RST;
@@ -54,7 +53,7 @@ always @(posedge BUS_CLK)
 begin
     if(RST)
     begin
-        status_regs[0] <= 0;
+        status_regs[0] <= 8'b0;
         status_regs[1] <= 255*FIFO_ALMOST_FULL_THRESHOLD/100;
         status_regs[2] <= 255*FIFO_ALMOST_EMPTY_THRESHOLD/100;
         status_regs[3] <= 8'b0;
@@ -70,25 +69,34 @@ begin
 end
 
 // read reg
-wire [31:0] CONF_SIZE, CONF_SIZE_BYTE; // write data count, 1 - 2 - 3, in units of two bytes (16 bits)
+wire [31:0] CONF_SIZE_BYTE; // write data count, 1 - 2 - 3, in units of byte
 reg [7:0] CONF_READ_ERROR; // read error count (read attempts when FIFO is empty), 4
+wire [31:0] CONF_SIZE; // in units of int
 assign CONF_SIZE_BYTE = CONF_SIZE * 4;
-localparam VERSION = 3;
+localparam VERSION = 4;
 
 always @ (posedge BUS_CLK) begin //(*) begin
     if(BUS_ADD == 0)
     	BUS_DATA_OUT <= VERSION;
     else if(BUS_ADD == 1)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE[7:0]; // in units of two bytes (8 bits)
+        BUS_DATA_OUT <= FIFO_ALMOST_FULL_VALUE;
     else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE[15:8];
+        BUS_DATA_OUT <= FIFO_ALMOST_EMPTY_VALUE;
     else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE[23:16]; 
-    else if(BUS_ADD == 4)
         BUS_DATA_OUT <= CONF_READ_ERROR;
+    else if(BUS_ADD == 4)
+        BUS_DATA_OUT <= CONF_SIZE_BYTE[7:0]; // in units of bytes
+    else if(BUS_ADD == 5)
+        BUS_DATA_OUT <= CONF_SIZE_BYTE[15:8];
+    else if(BUS_ADD == 6)
+        BUS_DATA_OUT <= CONF_SIZE_BYTE[23:16];
+    else if(BUS_ADD == 7)
+        BUS_DATA_OUT <= CONF_SIZE_BYTE[31:24];
+    else
+        BUS_DATA_OUT <= 8'b0;
 end
 
-///
+
 //reg                   FIFO_READ_NEXT_OUT_BUF;
 wire                  FIFO_EMPTY_IN_BUF;
 wire [31:0]           FIFO_DATA_BUF;
@@ -109,7 +117,6 @@ gerneric_fifo #(.DATA_SIZE(32), .DEPTH(DEPTH))  i_buf_fifo
 
 always@(posedge BUS_CLK)
     BUS_DATA_OUT_DATA <= FIFO_DATA_BUF;
-        
 
 assign FIFO_NOT_EMPTY = !FIFO_EMPTY_IN_BUF;
 assign FIFO_FULL = FULL_BUF;
