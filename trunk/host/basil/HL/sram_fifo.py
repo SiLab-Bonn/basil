@@ -19,10 +19,11 @@ class sram_fifo(RegisterHardwareLayer):
     '''
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
-                  'ALMOST_FULL_THRESHOLD': {'descr': {'addr': 1, 'size': 8, 'properties': ['wo']}},
-                  'ALMOST_EMPTY_THRESHOLD': {'descr': {'addr': 2, 'size': 8, 'properties': ['wo']}},
-                  'FIFO_SIZE': {'descr': {'addr': 1, 'size': 21, 'properties': ['ro']}},
-                  'READ_ERROR_COUNTER': {'descr': {'addr': 4, 'size': 8, 'properties': ['ro']}}
+                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
+                  'ALMOST_FULL_THRESHOLD': {'descr': {'addr': 1, 'size': 8}},
+                  'ALMOST_EMPTY_THRESHOLD': {'descr': {'addr': 2, 'size': 8}},
+                  'READ_ERROR_COUNTER': {'descr': {'addr': 3, 'size': 8, 'properties': ['ro']}},
+                  'FIFO_SIZE': {'descr': {'addr': 4, 'size': 32, 'properties': ['ro']}}
     }
 
     def __init__(self, intf, conf):
@@ -88,7 +89,7 @@ class sram_fifo(RegisterHardwareLayer):
         fifo_size : int
             Read error counter (read attempts when SRAM is empty).
         '''
-        ret = self._intf.read(self._conf['base_addr'] + 4, size=1)
+        ret = self._intf.read(self._conf['base_addr'] + 3, size=1)
         return unpack_from('B', ret)[0]
 
     def get_data(self):

@@ -47,7 +47,7 @@ module sram_fifo_core
 
 /////
 wire SOFT_RST; //0
-assign SOFT_RST = (BUS_ADD==0 && BUS_WR);  
+assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 
 wire RST;
 assign RST = BUS_RST | SOFT_RST;
@@ -80,30 +80,35 @@ begin
 end
 
 // read reg
-reg [20:0] CONF_SIZE; // write data count, 1 - 2 - 3, in units of two bytes (16 bits)
+wire [21:0] CONF_SIZE_BYTE; // write data count, 1 - 2 - 3, in units of bytes
 reg [7:0] CONF_READ_ERROR; // read error count (read attempts when FIFO is empty), 4
-
-wire [23:0] CONF_SIZE_BYTE;
+reg [20:0] CONF_SIZE; // in units of 2 bytes (16 bit)
 assign CONF_SIZE_BYTE = CONF_SIZE * 2;
 
-localparam VERSION = 1;
+localparam VERSION = 2;
 
 always @ (posedge BUS_CLK) begin //(*) begin
     if(BUS_ADD == 0)
-        BUS_DATA_OUT <= VERSION;
+    	BUS_DATA_OUT <= VERSION;
     else if(BUS_ADD == 1)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE[7:0]; // in units of bytes
+        BUS_DATA_OUT <= FIFO_ALMOST_FULL_VALUE;
     else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE[15:8];
+        BUS_DATA_OUT <= FIFO_ALMOST_EMPTY_VALUE;
     else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE[23:16]; 
-    else if(BUS_ADD == 4)
         BUS_DATA_OUT <= CONF_READ_ERROR;
-    else 
-        BUS_DATA_OUT <= 0;
+    else if(BUS_ADD == 4)
+        BUS_DATA_OUT <= CONF_SIZE_BYTE[7:0]; // in units of bytes
+    else if(BUS_ADD == 5)
+        BUS_DATA_OUT <= CONF_SIZE_BYTE[15:8];
+    else if(BUS_ADD == 6)
+        BUS_DATA_OUT <= {2'b0, CONF_SIZE_BYTE[21:16]};
+    else if(BUS_ADD == 7)
+        BUS_DATA_OUT <= 8'b0; // used by BRAM FIFO module
+    else
+        BUS_DATA_OUT <= 8'b0;
 end
 
-///
+
 reg                   FIFO_READ_NEXT_OUT_BUF;
 wire                  FIFO_EMPTY_IN_BUF;
 wire [31:0]           FIFO_DATA_BUF;
@@ -128,7 +133,7 @@ reg [19:0] rd_ponter, next_rd_ponter, wr_pointer, next_wr_pointer;
 reg usb_read_dly;
 always@(posedge BUS_CLK)
     usb_read_dly <= USB_READ;
-    
+
 wire read_sram;
 
 reg byte_to_read;
@@ -184,7 +189,7 @@ always@(posedge BUS_CLK) begin
         CONF_READ_ERROR <= 0;
     else if(empty && USB_READ && CONF_READ_ERROR != 8'hff)
         CONF_READ_ERROR <= CONF_READ_ERROR +1;
-end      
+end
 
 
 reg write_sram;
@@ -221,7 +226,7 @@ OFDDRRSE WE_INST (
 );
 
 
-assign SRAM_IO = write_sram ? DATA_TO_SRAM : 16'hzzzz ;
+assign SRAM_IO = write_sram ? DATA_TO_SRAM : 16'hzzzz;
 assign SRAM_A = (read_sram) ? rd_ponter : wr_pointer;
 assign SRAM_BHE_B = 0;
 assign SRAM_BLE_B = 0;
