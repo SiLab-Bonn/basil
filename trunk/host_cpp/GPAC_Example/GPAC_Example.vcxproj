@@ -65,7 +65,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\GeneratedFiles;$(QT5DIR)\include;$(QT5DIR)\include\QtWidgets;$(QT5DIR)\include\qtmain;$(QT5DIR)\include\QtCore;$(QT5DIR)\include\QtGui;..\gpib\devices;..\gpib\devices\power;..\gpib\interface\;..\gpib\interface\libs;..\inc;..\TL;..\TL\USB;..\HL\GPAC;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\GeneratedFiles;$(QT5DIR)\include;$(QT5DIR)\include\QtWidgets;$(QT5DIR)\include\qtmain;$(QT5DIR)\include\QtCore;$(QT5DIR)\include\QtGui;..\gpib\devices;..\gpib\devices\power;..\gpib\interface\;..\gpib\interface\libs;..\inc;..\TL;..\TL\USB;..\HL;..\HL\GPAC;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;DEBUG;INITGUID;QT_LARGEFILE_SUPPORT;QT_CORE_LIB;QT_GUI_LIB;CALIBRATION_MODE;GPIB_Interface_USB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <StructMemberAlignment>Default</StructMemberAlignment>

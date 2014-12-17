@@ -64,7 +64,7 @@
     <ClCompile>
       <AdditionalOptions>-Zm200 -w34100 -w34189 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.;..\..\TL\;..\..\TL\USB\;$(QWTDIR)\src;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtMain;..\gpib\interface\libs;..\gpib\interface;..\gpib\devices\power;..\gpib\devices;..\..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\TL\;..\..\TL\USB\;..\;$(QWTDIR)\src;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtMain;..\..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;GPIB_Interface_USB;GPAC_DLL_EXPORT;INITGUID;QT_CORE_LIB;QT_LARGEFILE_SUPPORT;QT_DLL;QT_GUI_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
@@ -143,8 +143,8 @@ copy $(ConfigurationName)\$(ProjectName).lib ..\..\lib\$(ProjectName).lib</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\HL_base.cpp" />
     <ClCompile Include="CDataFile.cpp" />
-    <ClCompile Include="HL_base.cpp" />
     <ClCompile Include="HL_GPAC.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -154,8 +154,8 @@ copy $(ConfigurationName)\$(ProjectName).lib ..\..\lib\$(ProjectName).lib</Comma
   <ItemGroup>
     <ClInclude Include="..\..\TL\TL_base.h" />
     <ClInclude Include="..\..\TL\USB\TL_USB.h" />
+    <ClInclude Include="..\HL_base.h" />
     <ClInclude Include="CDataFile.h" />
-    <ClInclude Include="HL_base.h" />
     <ClInclude Include="HL_GPAC.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="ui_MainForm.h" />

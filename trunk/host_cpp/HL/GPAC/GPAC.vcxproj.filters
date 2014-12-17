@@ -21,10 +21,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HL_base.cpp">
+    <ClCompile Include="HL_GPAC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HL_GPAC.cpp">
+    <ClCompile Include="..\HL_base.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,13 +41,13 @@
     <ClInclude Include="..\..\TL\TL_base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HL_base.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="HL_GPAC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\TL\USB\TL_USB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HL_base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
