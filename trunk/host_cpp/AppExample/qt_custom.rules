@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VisualStudioToolFile
+	Name="Custom Build Rules"
+	Version="8,00"
+	>
+	<Rules>
+		<CustomBuildRule
+			Name="UI"
+			DisplayName="Compile QT UserInterface File (*.ui)"
+			CommandLine="$(QTDIR)/bin/uic.exe &quot;$(InputPath)&quot; -o &quot;$(InputDir)mocs\ui_$(InputName).h&quot;"
+			Outputs="$(InputDir)mocs\ui_$(InputName).h"
+			FileExtensions="*.ui"
+			ExecutionDescription="Creating UI File ui\_\$(InputName).h"
+			>
+			<Properties>
+			</Properties>
+		</CustomBuildRule>
+		<CustomBuildRule
+			Name="QT resource Compile"
+			DisplayName="QT qrc compile"
+			CommandLine="$(QTDIR)/bin/rcc.exe -name $(InputName) -no-compress &quot;$(InputPath)&quot; -o &quot;$(InputDir)\mocs\qrc_$(InputName).cpp&quot;"
+			Outputs="$(InputDir)\mocs\qrc_$(InputName).cpp"
+			FileExtensions="*.qrc;*.h"
+			ExecutionDescription="Compiling QT resource file "
+			>
+			<Properties>
+			</Properties>
+		</CustomBuildRule>
+		<CustomBuildRule
+			Name="QT MOC"
+			DisplayName="QT MOC"
+			CommandLine="$(QTDIR)/bin/moc.exe &quot;$(InputPath)&quot; -o &quot;$(InputDir)mocs/moc_$(InputName).cpp&quot;"
+			Outputs="$(InputDir)/mocs/moc_$(InputName).cpp"
+			FileExtensions="*.h"
+			ExecutionDescription="Performing moc on $(InputName).h"
+			ShowOnlyRuleProperties="false"
+			>
+			<Properties>
+			</Properties>
+		</CustomBuildRule>
+	</Rules>
+</VisualStudioToolFile>

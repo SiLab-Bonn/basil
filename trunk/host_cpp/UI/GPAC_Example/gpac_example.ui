@@ -1,0 +1,1492 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GPAC_ExampleClass</class>
+ <widget class="QWidget" name="GPAC_ExampleClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>573</width>
+    <height>748</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>General Purpose Analog Card (GPAC)</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../../../../../Dokumente und Einstellungen/Hans/.designer/res/silab.ico</normaloff>../../../../../../Dokumente und Einstellungen/Hans/.designer/res/silab.ico</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>551</width>
+     <height>721</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="Seite_2">
+    <attribute name="title">
+     <string>Panel</string>
+    </attribute>
+    <widget class="QPushButton" name="refreshDCSButton">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>30</y>
+       <width>131</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Update measurements</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="layoutWidget_5">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>10</y>
+       <width>368</width>
+       <height>671</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_13">
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <item row="0" column="4">
+       <widget class="QLabel" name="label_68">
+        <property name="text">
+         <string>Current [mA]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="4">
+       <widget class="QLCDNumber" name="PWR2CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0">
+       <widget class="QCheckBox" name="PWR3CheckBox">
+        <property name="text">
+         <string>PWR 3</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="label_67">
+        <property name="text">
+         <string>Voltage [mV]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="29" column="0">
+       <widget class="QLabel" name="label_28">
+        <property name="text">
+         <string>ISRC 9</string>
+        </property>
+       </widget>
+      </item>
+      <item row="29" column="2">
+       <widget class="QDoubleSpinBox" name="ISRC9spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="24" column="2">
+       <widget class="QDoubleSpinBox" name="ISRC4spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QCheckBox" name="PWR1CheckBox">
+        <property name="text">
+         <string>PWR 1</string>
+        </property>
+       </widget>
+      </item>
+      <item row="32" column="0">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="10" column="4">
+       <widget class="QLCDNumber" name="PWR3CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="28" column="1">
+       <widget class="QLabel" name="ISRCname_8">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="29" column="4">
+       <widget class="QLCDNumber" name="ISRC9CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="28" column="3">
+       <widget class="QLCDNumber" name="ISRC8VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="29" column="1">
+       <widget class="QLabel" name="ISRCname_9">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="29" column="3">
+       <widget class="QLCDNumber" name="ISRC9VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="25" column="0">
+       <widget class="QLabel" name="label_20">
+        <property name="text">
+         <string>ISRC 5</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2">
+       <widget class="QDoubleSpinBox" name="PWR1spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>800.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>2800.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>1800.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="3">
+       <widget class="QLCDNumber" name="PWR1VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="4">
+       <widget class="QLCDNumber" name="PWR1CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2">
+       <widget class="QDoubleSpinBox" name="PWR0spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>800.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>2800.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>1800.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="3">
+       <widget class="QLCDNumber" name="PWR0VLCD">
+        <property name="mode">
+         <enum>QLCDNumber::Dec</enum>
+        </property>
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+        <property name="value" stdset="0">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="4">
+       <widget class="QLCDNumber" name="PWR0CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QCheckBox" name="PWR2CheckBox">
+        <property name="text">
+         <string>PWR 2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="2">
+       <widget class="QDoubleSpinBox" name="PWR2spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>800.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>2800.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>1800.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="2">
+       <widget class="QDoubleSpinBox" name="PWR3spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>800.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>2800.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>1800.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="3">
+       <widget class="QLCDNumber" name="PWR3VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_26">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Power Supplies</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Current Limit [mA]</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QCheckBox" name="PWR0CheckBox">
+        <property name="text">
+         <string>PWR 0</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Voltage Sources</string>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="2">
+       <widget class="QDoubleSpinBox" name="VSRC0spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>0.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>2000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="0">
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>VSRC 0</string>
+        </property>
+       </widget>
+      </item>
+      <item row="15" column="2">
+       <widget class="QDoubleSpinBox" name="VSRC2spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>0.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>2000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="3">
+       <widget class="QLCDNumber" name="VSRC0VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="21" column="2">
+       <widget class="QDoubleSpinBox" name="ISRC1spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="15" column="0">
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>VSRC 2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="20" column="4">
+       <widget class="QLCDNumber" name="ISRC0CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="19" column="2">
+       <widget class="QLabel" name="label_24">
+        <property name="text">
+         <string>Current set [µA]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="4">
+       <widget class="QLCDNumber" name="VSRC0CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="19" column="0">
+       <widget class="QLabel" name="label_14">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Current Sources</string>
+        </property>
+       </widget>
+      </item>
+      <item row="21" column="0">
+       <widget class="QLabel" name="label_16">
+        <property name="text">
+         <string>ISRC 1</string>
+        </property>
+       </widget>
+      </item>
+      <item row="21" column="4">
+       <widget class="QLCDNumber" name="ISRC1CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="20" column="0">
+       <widget class="QLabel" name="label_15">
+        <property name="text">
+         <string>ISRC 0</string>
+        </property>
+       </widget>
+      </item>
+      <item row="21" column="3">
+       <widget class="QLCDNumber" name="ISRC1VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="17" column="2">
+       <widget class="QDoubleSpinBox" name="VSRC3spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>0.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>2000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="4">
+       <widget class="QLCDNumber" name="VSRC1CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="17" column="4">
+       <widget class="QLCDNumber" name="VSRC3CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="15" column="3">
+       <widget class="QLCDNumber" name="VSRC2VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="17" column="0">
+       <widget class="QLabel" name="label_13">
+        <property name="text">
+         <string>VSRC 3</string>
+        </property>
+       </widget>
+      </item>
+      <item row="20" column="3">
+       <widget class="QLCDNumber" name="ISRC0VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="20" column="2">
+       <widget class="QDoubleSpinBox" name="ISRC0spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="0">
+       <widget class="QLabel" name="label_11">
+        <property name="text">
+         <string>VSRC 1</string>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="3">
+       <widget class="QLCDNumber" name="VSRC1VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="15" column="4">
+       <widget class="QLCDNumber" name="VSRC2CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="17" column="3">
+       <widget class="QLCDNumber" name="VSRC3VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="2">
+       <widget class="QDoubleSpinBox" name="VSRC1spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>0.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>2000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="3">
+       <widget class="QLCDNumber" name="PWR2VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_23">
+        <property name="text">
+         <string>Voltage set [mV]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="22" column="3">
+       <widget class="QLCDNumber" name="ISRC2VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="23" column="2">
+       <widget class="QDoubleSpinBox" name="ISRC3spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="22" column="4">
+       <widget class="QLCDNumber" name="ISRC2CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="23" column="3">
+       <widget class="QLCDNumber" name="ISRC3VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="23" column="0">
+       <widget class="QLabel" name="label_18">
+        <property name="text">
+         <string>ISRC 3</string>
+        </property>
+       </widget>
+      </item>
+      <item row="23" column="4">
+       <widget class="QLCDNumber" name="ISRC3CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="22" column="0">
+       <widget class="QLabel" name="label_17">
+        <property name="text">
+         <string>ISRC 2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="22" column="2">
+       <widget class="QDoubleSpinBox" name="ISRC2spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLabel" name="PWRname_0">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLabel" name="PWRname_1">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QLabel" name="PWRname_2">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="1">
+       <widget class="QLabel" name="PWRname_3">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="1">
+       <widget class="QLabel" name="VSRCname_0">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="1">
+       <widget class="QLabel" name="VSRCname_1">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="15" column="1">
+       <widget class="QLabel" name="VSRCname_2">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="17" column="1">
+       <widget class="QLabel" name="VSRCname_3">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="20" column="1">
+       <widget class="QLabel" name="ISRCname_0">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="21" column="1">
+       <widget class="QLabel" name="ISRCname_1">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="22" column="1">
+       <widget class="QLabel" name="ISRCname_2">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="23" column="1">
+       <widget class="QLabel" name="ISRCname_3">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="4">
+       <widget class="QLabel" name="label_69">
+        <property name="text">
+         <string>Current [µA]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="19" column="4">
+       <widget class="QLabel" name="label_70">
+        <property name="text">
+         <string>Current [µA]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="3">
+       <widget class="QLabel" name="label_71">
+        <property name="text">
+         <string>Voltage [mV]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="19" column="3">
+       <widget class="QLabel" name="label_72">
+        <property name="text">
+         <string>Voltage [mV]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="2">
+       <widget class="QLabel" name="label_25">
+        <property name="text">
+         <string>Voltage set [mV]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="4">
+       <widget class="QDoubleSpinBox" name="CurrLimBox">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <double>200.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>100.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="28" column="4">
+       <widget class="QLCDNumber" name="ISRC8CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="24" column="4">
+       <widget class="QLCDNumber" name="ISRC4CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="24" column="1">
+       <widget class="QLabel" name="ISRCname_4">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="24" column="3">
+       <widget class="QLCDNumber" name="ISRC4VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="24" column="0">
+       <widget class="QLabel" name="label_19">
+        <property name="text">
+         <string>ISRC 4</string>
+        </property>
+       </widget>
+      </item>
+      <item row="26" column="0">
+       <widget class="QLabel" name="label_21">
+        <property name="text">
+         <string>ISRC 6</string>
+        </property>
+       </widget>
+      </item>
+      <item row="26" column="4">
+       <widget class="QLCDNumber" name="ISRC6CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="27" column="2">
+       <widget class="QDoubleSpinBox" name="ISRC7spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="27" column="3">
+       <widget class="QLCDNumber" name="ISRC7VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="26" column="1">
+       <widget class="QLabel" name="ISRCname_6">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="26" column="3">
+       <widget class="QLCDNumber" name="ISRC6VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="26" column="2">
+       <widget class="QDoubleSpinBox" name="ISRC6spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="25" column="4">
+       <widget class="QLCDNumber" name="ISRC5CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="27" column="4">
+       <widget class="QLCDNumber" name="ISRC7CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="25" column="1">
+       <widget class="QLabel" name="ISRCname_5">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="25" column="2">
+       <widget class="QDoubleSpinBox" name="ISRC5spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="27" column="1">
+       <widget class="QLabel" name="ISRCname_7">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="28" column="0">
+       <widget class="QLabel" name="label_27">
+        <property name="text">
+         <string>ISRC 8</string>
+        </property>
+       </widget>
+      </item>
+      <item row="28" column="2">
+       <widget class="QDoubleSpinBox" name="ISRC8spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="27" column="0">
+       <widget class="QLabel" name="label_22">
+        <property name="text">
+         <string>ISRC 7</string>
+        </property>
+       </widget>
+      </item>
+      <item row="25" column="3">
+       <widget class="QLCDNumber" name="ISRC5VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="30" column="1">
+       <widget class="QLabel" name="ISRCname_10">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="30" column="3">
+       <widget class="QLCDNumber" name="ISRC10VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="30" column="2">
+       <widget class="QDoubleSpinBox" name="ISRC10spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="30" column="0">
+       <widget class="QLabel" name="label_29">
+        <property name="text">
+         <string>ISRC 10</string>
+        </property>
+       </widget>
+      </item>
+      <item row="30" column="4">
+       <widget class="QLCDNumber" name="ISRC10CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="31" column="0">
+       <widget class="QLabel" name="label_30">
+        <property name="text">
+         <string>ISRC 11</string>
+        </property>
+       </widget>
+      </item>
+      <item row="31" column="1">
+       <widget class="QLabel" name="ISRCname_11">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="31" column="2">
+       <widget class="QDoubleSpinBox" name="ISRC11spin">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="31" column="3">
+       <widget class="QLCDNumber" name="ISRC11VLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="31" column="4">
+       <widget class="QLCDNumber" name="ISRC11CLCD">
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QCheckBox" name="checkBox">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>90</y>
+       <width>72</width>
+       <height>18</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>continuous</string>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="calibrationBox">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>120</y>
+       <width>131</width>
+       <height>561</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Calibration</string>
+     </property>
+     <widget class="QPushButton" name="CalBtn">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>100</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Calibrate all</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="InitGPIBBtn">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>20</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Init GPIB</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="CardIDspin">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>236</y>
+        <width>51</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>240</y>
+        <width>46</width>
+        <height>13</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Card ID</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="WriteEEPROMBtn">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>280</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save to EEPROM</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="SMUAddrBox">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>60</y>
+        <width>41</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>64</y>
+        <width>46</width>
+        <height>13</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>SMU Addr</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="SaveFileBtn">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>360</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save to file</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="LoadFileBtn">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>400</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Load from file</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="GpioEdit">
+      <property name="geometry">
+       <rect>
+        <x>26</x>
+        <y>530</y>
+        <width>31</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="digitalTestBtn">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>180</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Digital Test</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="confFPGABtn">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>490</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Conf. FPGA</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="wrGpioBtn">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>530</y>
+        <width>31</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>WR</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="CalMuxSpinBox">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>460</y>
+        <width>42</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-1</number>
+      </property>
+      <property name="maximum">
+       <number>21</number>
+      </property>
+      <property name="value">
+       <number>-1</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>440</y>
+        <width>91</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cal MUX selection</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="EraseEEPROMBtn">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>320</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Erase EEPROM</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="analogTestBtn">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>140</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Analog Test</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="statusLabel">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>730</y>
+     <width>491</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
+ </widget>
+ <resources>
+  <include location="gpac_example.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>refreshDCSButton</sender>
+   <signal>clicked()</signal>
+   <receiver>GPAC_ExampleClass</receiver>
+   <slot>updateMeasurements()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>442</x>
+     <y>82</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>398</x>
+     <y>519</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>GPAC_ExampleClass</receiver>
+   <slot>enableTimer(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>468</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>513</x>
+     <y>518</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>openFileDialog()</slot>
+  <slot>confFPGA()</slot>
+  <slot>printPlot1()</slot>
+  <slot>refreshGPIBList()</slot>
+  <slot>sendReceiveGPIB()</slot>
+  <slot>sendGPIB()</slot>
+  <slot>clearGPIB()</slot>
+  <slot>setSMUoff()</slot>
+  <slot>setSMUon()</slot>
+  <slot>setSMUCout()</slot>
+  <slot>setSMUVout()</slot>
+  <slot>getSMUMeas()</slot>
+  <slot>setSMUval()</slot>
+  <slot>calibrate()</slot>
+  <slot>updateMeasurements()</slot>
+  <slot>selectSMU()</slot>
+  <slot>updateEEPROM()</slot>
+  <slot>dumpEEPROM()</slot>
+  <slot>selLoad()</slot>
+  <slot>setLoadCurr()</slot>
+  <slot>setId()</slot>
+  <slot>enableTimer(bool)</slot>
+  <slot>setCurrLim()</slot>
+  <slot>setCH1()</slot>
+  <slot>setCH2()</slot>
+  <slot>setCH3()</slot>
+  <slot>setCH4()</slot>
+ </slots>
+</ui>
