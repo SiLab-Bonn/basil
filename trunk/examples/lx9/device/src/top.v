@@ -17,11 +17,13 @@ module top (
     output wire [3:0] ETH_TX_D,
     output wire ETH_TX_EN,
     
-    output [3:0] GPIO_LED,
-    input [3:0] GPIO_DIP
+    output wire [3:0] GPIO_LED,
+    input wire [3:0] GPIO_DIP
 );
 
-
+	wire CLKFBOUT, CLKOUT0, CLKOUT1, CLKOUT2, CLKFBIN, LOCKED;
+	wire RST, BUS_CLK, BUS_RST, SPI_CLK;
+	
    PLL_BASE #(
       .BANDWIDTH("OPTIMIZED"),             // "HIGH", "LOW" or "OPTIMIZED" 
       .CLKFBOUT_MULT(20),                   // Multiply value for all CLKOUT clock outputs (1-64)
@@ -70,6 +72,7 @@ module top (
       .RST(USER_RESET)            // 1-bit input: Reset input
    );
    
+	 wire ETH_CLK, ETH_RX_CLK_BUFG;
     assign RST = USER_RESET | !LOCKED;
     assign CLKFBIN = CLKFBOUT;//BUFG BUFG_FB (  .O(CLKFBIN),  .I(CLKFBOUT) );
     BUFG BUFG_BUS (  .O(BUS_CLK),  .I(CLKOUT0) );
@@ -131,7 +134,7 @@ module top (
       .GMII_MDIO_OUT(mdio_gem_o)        ,    // out    : Data
       .GMII_MDIO_OE(mdio_gem_t)        ,    // out    : MDIO output enable
     // User I/F
-      .SiTCP_RST(SiTCP_RST)            ,    // out    : Reset for SiTCP and related circuits
+      .SiTCP_RST(BUS_RST)            ,    // out    : Reset for SiTCP and related circuits
       // TCP connection control
       .TCP_OPEN_REQ(1'b0)        ,    // in    : Reserved input, shoud be 0
       .TCP_OPEN_ACK()        ,    // out    : Acknowledge for open (=Socket busy)
@@ -255,7 +258,8 @@ module top (
         .SEQ_CLK(SPI_CLK),
         .SEQ_OUT(SEQ_OUT)
     );
-    
+    wire SR_IN, GLOBAL_SR_EN, GLOBAL_CTR_LD, GLOBAL_DAC_LD, PIXEL_SR_EN, INJECT;
+	 wire GLOBAL_SR_CLK, PIXEL_SR_CLK;
     assign SR_IN                = SEQ_OUT[0];
     assign GLOBAL_SR_EN         = SEQ_OUT[1];   
     assign GLOBAL_CTR_LD        = SEQ_OUT[2];   
