@@ -67,6 +67,9 @@
     <ClInclude Include="GeneratedFiles\ui_gpac_example.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="gpac_example.h">
