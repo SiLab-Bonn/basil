@@ -42,8 +42,8 @@
     <_ProjectFileVersion>11.0.50727.1</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(Configuration)\</IntDir>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
     <TargetExt>.dll</TargetExt>
     <TargetName>$(ProjectName)d</TargetName>
@@ -64,7 +64,7 @@
     <ClCompile>
       <AdditionalOptions>-Zm200 -w34100 -w34189 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.;..\..\TL\;..\..\TL\USB\;$(QWTDIR)\src;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtMain;$(SVN_ROOT)\Common\host\trunk\gpib\interface\libs;$(SVN_ROOT)\Common\host\trunk\gpib\interface;$(SVN_ROOT)\Common\host\trunk\gpib\devices\power;$(SVN_ROOT)\Common\host\trunk\gpib\devices;$(SVN_ROOT)\USB\host\trunk\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\TL\;..\..\TL\USB\;$(QWTDIR)\src;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtMain;..\gpib\interface\libs;..\gpib\interface;..\gpib\devices\power;..\gpib\devices;..\..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;GPIB_Interface_USB;GPAC_DLL_EXPORT;INITGUID;QT_CORE_LIB;QT_LARGEFILE_SUPPORT;QT_DLL;QT_GUI_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
@@ -87,7 +87,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type=%27win32%27 name=%27Microsoft.Windows.Common-Controls%27 version=%276.0.0.0%27 publicKeyToken=%276595b64144ccf1df%27 language=%27*%27 processorArchitecture=%27*%27" "/MANIFESTDEPENDENCY:type=%27win32%27 name=%27Microsoft.Windows.Common-Controls%27 version=%276.0.0.0%27 publicKeyToken=%276595b64144ccf1df%27 language=%27*%27 processorArchitecture=%27*%27" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(QTDIR)\lib\qtmaind.lib;$(QTDIR)\lib\Qt5Guid.lib;$(QTDIR)\lib\Qt5Cored.lib;$(SVN_ROOT)\USB\host\trunk\lib\SiLibUSBd.lib;..\..\lib\TL_USBd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(QTDIR)\lib\qtmaind.lib;$(QTDIR)\lib\Qt5Guid.lib;$(QTDIR)\lib\Qt5Cored.lib;..\..\lib\SiLibUSBd.lib;..\..\lib\TL_USBd.lib;..\..\gpib\interface\libs\GPIB-32.OBJ;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile />
@@ -173,9 +173,6 @@ copy $(ConfigurationName)\$(ProjectName).lib ..\..\lib\$(ProjectName).lib</Comma
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Programme\Qt4.4\bin\uic.exe;MainForm.ui;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_MainForm.h;%(Outputs)</Outputs>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="..\..\..\..\..\Common\host\trunk\gpib\interface\libs\GPIB-32.OBJ" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TL\USB\USB.vcxproj">

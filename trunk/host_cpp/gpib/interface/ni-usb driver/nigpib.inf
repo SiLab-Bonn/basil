@@ -1,0 +1,417 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; File:
+;
+;     NIGPIB.INF
+;
+; Description:
+;
+;     NI-488.2 Hardware information file for Windows Xp/Me/98/2000 and PharLap.
+;
+; Copyright 1999 National Instruments Corporation
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+[Version]
+Signature="$Chicago$"
+Class="GPIB"
+ClassGUID={2DABEAE0-9BDA-11d0-BAC0-00A0247429c2}
+Provider=%NIString%
+DriverVer=04/01/2003,2.1.0.3500
+
+[Manufacturer]
+%NIString%=NIC
+
+[NIC]
+%DevDesc3%=PCI_GPIB,PCI\VEN_1093&DEV_C840
+%DevDesc3%=PCI_GPIB,PCI\VEN_1093&DEV_C801
+%DevDesc3%=PCI_GPIB,PCI\VEN_1093&DEV_C801&SUBSYS_C8011093&REV_02
+%DevDesc4%=PXI_GPIB,PCI\VEN_1093&DEV_C821
+%DevDesc5%=PMC_GPIB,PCI\VEN_1093&DEV_C831
+%DevDesc6%=GPIB_USB_OLD,USB\VID_3923&PID_C910&REV_0100		;old USB
+%DevDesc7%=GPIB_USBA,USB\VID_3923&PID_C920	;new USB-A
+%DevDesc8%=GPIB_USBB,USB\VID_3923&PID_702A	;new USB-B
+%DevDesc9%=GPIB_USBBPRE,USB\VID_3923&PID_702B	;new USB-B
+%DevDesc10%=PCI_GPIB_PLUS,PCI\VEN_1093&DEV_C811&SUBSYS_00000000&REV_01
+%DevDesc11%=PCMCIA_GPIB,PCMCIA\National_Instruments-PCMCIA-GPIB-6927
+%DevDesc11%=PCMCIA_GPIB,PCMCIA\National_Instruments-PCMCIA-GPIB-8B85
+%DevDesc12%=PCMCIA_GPIB_PLUS, PCMCIA\National_Instruments-PCMCIA-GPIB+-F68E
+%DevDesc1%=GPIB_ENET_100			; Placed at end for PharLap
+%DevDesc2%=GPIB_ENET				; Placed at end for PharLap
+
+;=============================================================================
+;	GPIB Devices
+;=============================================================================
+[PCMCIA_GPIB]
+AddReg=GpibControllerAddReg, GpibPcmciaAddReg, GpibPALPcmciaAddReg
+
+[PCMCIA_GPIB_PLUS]
+AddReg=GpibControllerAddReg, GpibPcmciaPlusAddReg, GpibPALPcmciaAddReg
+
+[GPIB_USBA]
+AddReg=GpibControllerAddReg, GpibUSBAAddReg, GpibPALUSBAddReg
+
+[GPIB_USBB]
+AddReg=GpibControllerAddReg, GpibUSBBAddReg, GpibPALUSBAddReg
+
+[GPIB_USBBPRE]
+AddReg=GpibUSBBPreAddReg, GpibPALUSBAddReg
+
+[PCI_GPIB]
+AddReg=GpibControllerAddReg, GpibPciAddReg, GpibPALPciAddReg
+
+[PCI_GPIB_PLUS]
+AddReg=GpibControllerAddReg, GpibPciPlusAddReg, GpibPALPciAddReg
+
+[PXI_GPIB]
+AddReg=GpibControllerAddReg, GpibPxiAddReg, GpibPALPciAddReg
+
+[PMC_GPIB]
+AddReg=GpibControllerAddReg, GpibPmcAddReg, GpibPALPciAddReg
+
+[GPIB_ENET_100]
+AddReg=GpibControllerAddReg, GpibEnet100AddReg
+
+[GPIB_ENET]
+AddReg=GpibControllerAddReg, GpibEnetAddReg
+
+[PCMCIA_GPIB.NT]
+AddReg=GpibControllerAddReg.NT, GpibPcmciaAddReg.NT
+
+[PCMCIA_GPIB_PLUS.NT]
+AddReg=GpibControllerAddReg.NT, GpibPcmciaPlusAddReg.NT
+
+[GPIB_USBA.NT]
+AddReg=GpibControllerAddReg.NT, GpibUSBAAddReg.NT
+
+[GPIB_USBB.NT]
+AddReg=GpibControllerAddReg.NT, GpibUSBBAddReg.NT
+
+[GPIB_USBBPRE.NT]
+AddReg= GpibUSBBPreAddReg.NT
+
+[PCI_GPIB.NT]
+AddReg=GpibControllerAddReg.NT, GpibPciAddReg.NT
+
+[PCI_GPIB_PLUS.NT]
+AddReg=GpibControllerAddReg.NT, GpibPciPlusAddReg.NT
+
+[PXI_GPIB.NT]
+AddReg=GpibControllerAddReg.NT, GpibPxiAddReg.NT
+
+[PMC_GPIB.NT]
+AddReg=GpibControllerAddReg.NT, GpibPmcAddReg.NT
+
+[GPIB_ENET.NT]
+AddReg=GpibControllerAddReg.NT, GpibEnetAddReg.NT
+
+[GPIB_ENET_100.NT]
+AddReg=GpibControllerAddReg.NT, GpibEnet100AddReg.NT
+
+[PCMCIA_GPIB.NT.Services]
+AddService= nipalk, 0x00000002, nipal_Service_Inst
+
+[PCMCIA_GPIB_PLUS.NT.Services]
+AddService= nipalk, 0x00000002, nipal_Service_Inst
+
+[GPIB_USBA.NT.Services]
+AddService= nipalusb, 0x00000003, nipalusb_Service_Inst
+
+[GPIB_USBB.NT.Services]
+AddService= nipalusb, 0x00000003, nipalusb_Service_Inst
+
+[GPIB_USBBPRE.NT.Services]
+AddService= nipalusb, 0x00000003, nipalusb_Service_Inst
+
+[PCI_GPIB.NT.Services]
+AddService=nipalk, 0x00000002, nipal_Service_Inst
+
+[PCI_GPIB_PLUS.NT.Services]
+AddService=nipalk, 0x00000002, nipal_Service_Inst
+
+[PXI_GPIB.NT.Services]
+AddService=nipalk, 0x00000002, nipal_Service_Inst
+
+[PMC_GPIB.NT.Services]
+AddService=nipalk, 0x00000002, nipal_Service_Inst
+
+[GPIB_ENET.NT.Services]
+AddService = ,2
+
+[GPIB_ENET_100.NT.Services]
+AddService = ,2
+
+;=============================================================================
+;	Common Controller
+;=============================================================================
+[GpibControllerAddReg]
+HKR,,GpibController,01,01,00,00,00
+HKR,,BoardNumber,01,FF,FF,FF,FF
+
+[GpibControllerAddReg.NT]
+HKR,,GpibController,%REG_DWORD%,01,00,00,00
+HKR,,BoardNumber,%REG_DWORD%,FF,FF,FF,FF
+
+;=============================================================================
+;	GPIB PCMCIA
+;=============================================================================
+[GpibPcmciaAddReg]
+HKR,,BoardType,01,58,00,00,00
+HKR,,CompatibleType,01,FF,00,00,00
+HKR,,ProductNumber,1,82,48
+HKR,,DeviceClass,1,62,69,70,67
+
+[GpibPcmciaAddReg.NT]
+HKR,,BoardType,%REG_DWORD%,58,00,00,00
+HKR,,CompatibleType,%REG_DWORD%,FF,00,00,00
+HKR,,ProductNumber,1,82,48
+HKR,,DeviceClass,1,62,69,70,67
+HKR,,BridgeType,1,01,00,00,00
+
+[GpibPALPcmciaAddReg]
+HKR,,DevLoader,0,"nipalkd.vxd"
+HKR,,Driver,0,%NI488Driver%
+HKR,,Description,0,%DriverDesc%
+
+;=============================================================================
+;	GPIB PCMCIA+
+;=============================================================================
+[GpibPcmciaPlusAddReg]
+HKR,,BoardType,01,58,00,00,00
+HKR,,CompatibleType,01,FF,00,00,00
+HKR,,ProductNumber,1,71,0C
+HKR,,DeviceClass,1,62,69,70,67
+HKR,,Analyzer,01,01,00,00,00
+
+[GpibPcmciaPlusAddReg.NT]
+HKR,,BoardType,%REG_DWORD%,58,00,00,00
+HKR,,CompatibleType,%REG_DWORD%,FF,00,00,00
+HKR,,ProductNumber,1,71,0C
+HKR,,DeviceClass,1,62,69,70,67
+HKR,,BridgeType,1,01,00,00,00
+HKR,,Analyzer,%REG_DWORD%,01,00,00,00
+
+;=============================================================================
+;	GPIB PCI
+;=============================================================================
+[GpibPciAddReg]
+HKR,,BoardType,01,5B,00,00,00
+HKR,,CompatibleType,01,FF,00,00,00
+HKR,,ProductNumber,1,01,C8
+HKR,,DeviceClass,1,62,69,70,67
+
+[GpibPciAddReg.NT]
+HKR,,BoardType,%REG_DWORD%,5B,00,00,00
+HKR,,CompatibleType,%REG_DWORD%,FF,00,00,00
+HKR,,ProductNumber,1,01,C8
+HKR,,DeviceClass,1,62,69,70,67
+HKR,,BridgeType,1,01,00,00,00
+
+[GpibPciPlusAddReg]
+HKR,,BoardType,01,5B,00,00,00
+HKR,,CompatibleType,01,FF,00,00,00
+HKR,,ProductNumber,1,11,C8
+HKR,,DeviceClass,1,62,69,70,67
+HKR,,Analyzer,01,01,00,00,00
+
+[GpibPciPlusAddReg.NT]
+HKR,,BoardType,%REG_DWORD%,5B,00,00,00
+HKR,,CompatibleType,%REG_DWORD%,FF,00,00,00
+HKR,,ProductNumber,1,11,C8
+HKR,,DeviceClass,1,62,69,70,67
+HKR,,BridgeType,1,01,00,00,00
+HKR,,Analyzer,%REG_DWORD%,01,00,00,00
+
+[GpibPALPciAddReg]
+HKR,,DevLoader,0,"nipalkd.vxd"
+HKR,,Driver,0,%NI488Driver%
+HKR,,Description,0,%DriverDesc%
+
+;=============================================================================
+;	GPIB PCI
+;=============================================================================
+[GpibPciPlusAddReg]
+HKR,,BoardType,01,FF,00,00,00
+HKR,,CompatibleType,01,FF,00,00,00
+HKR,,ProductNumber,1,11,c8
+
+[GpibPciPlugAddReg.NT]
+HKR,,BoardType,%REG_DWORD%,FF,00,00,00
+HKR,,CompatibleType,%REG_DWORD%,FF,00,00,00
+HKR,,ProductNumber,1,11,C8
+;=============================================================================
+;      PXI-GPIB
+;=============================================================================
+[GpibPxiAddReg]
+HKR,,BoardType,01,61,00,00,00
+HKR,,CompatibleType,01,5B,00,00,00
+HKR,,ProductNumber,1,21,C8
+HKR,,DeviceClass,1,62,69,70,67
+
+[GpibPxiAddReg.NT]
+HKR,,BoardType,%REG_DWORD%,61,00,00,00
+HKR,,CompatibleType,%REG_DWORD%,5B,00,00,00
+HKR,,ProductNumber,1,21,C8
+HKR,,DeviceClass,1,62,69,70,67
+HKR,,BridgeType,1,01,00,00,00
+
+;=============================================================================
+;      PMC-GPIB
+;=============================================================================
+[GpibPmcAddReg]
+HKR,,BoardType,01,62,00,00,00
+HKR,,CompatibleType,01,5B,00,00,00
+HKR,,ProductNumber,1,21,C8
+HKR,,DeviceClass,1,62,69,70,67
+
+[GpibPmcAddReg.NT]
+HKR,,BoardType,%REG_DWORD%,62,00,00,00
+HKR,,CompatibleType,%REG_DWORD%,5B,00,00,00
+HKR,,ProductNumber,1,21,C8
+HKR,,DeviceClass,1,62,69,70,67
+HKR,,BridgeType,1,01,00,00,00
+
+;=============================================================================
+;	GPIB USB
+;=============================================================================
+[GpibUsbAAddReg]
+HKR,,BoardType,01,C9,00,00,00
+HKR,,CompatibleType,01,FF,00,00,00
+HKR,,ProductNumber,1,20,C9
+HKR,,DeviceClass,1,62,69,70,67
+
+[GpibUsbBAddReg]
+HKR,,BoardType,01,D2,00,00,00
+HKR,,CompatibleType,01,FF,00,00,00
+HKR,,ProductNumber,1,2A,70
+HKR,,DeviceClass,1,62,69,70,67
+
+[GpibUSBBPreAddReg]
+HKR,,BoardType,01,D1,00,00,00
+HKR,,CompatibleType,01,FF,00,00,00
+HKR,,ProductNumber,1,2B,70
+HKR,,DeviceClass,1,62,69,70,67
+HKR,,BoardNumber,01,FF,FF,FF,FF
+
+[GpibUsbAAddReg.NT]
+HKR,,BoardType,%REG_DWORD%,C9,00,00,00
+HKR,,CompatibleType,%REG_DWORD%,FF,00,00,00
+HKR,,ProductNumber,1,20,C9
+HKR,,DeviceClass,1,62,69,70,67
+HKR,,BridgeType,1,01,00,00,00
+
+[GpibUsbBAddReg.NT]
+HKR,,BoardType,%REG_DWORD%,D2,00,00,00
+HKR,,CompatibleType,%REG_DWORD%,FF,00,00,00
+HKR,,ProductNumber,1,2A,70
+HKR,,DeviceClass,1,62,69,70,67
+HKR,,BridgeType,1,01,00,00,00
+
+[GpibUSBBPreAddReg.NT]
+HKR,,BoardType,%REG_DWORD%,D1,00,00,00
+HKR,,CompatibleType,%REG_DWORD%,FF,00,00,00
+HKR,,ProductNumber,1,2B,70
+HKR,,DeviceClass,1,62,69,70,67
+HKR,,BridgeType,1,01,00,00,00
+HKR,,SurpriseRemoveWithoutWarning,1,01
+HKR,,BoardNumber,%REG_DWORD%,FF,FF,FF,FF
+
+[GpibPALUSBAddReg]
+HKR,,DevLoader,,"*NTKERN"
+HKR,,NTMPDriver,,"nipalusb.sys"
+HKR,,Driver,0,%NI488Driver%
+HKR,,Description,0,%DriverDesc%
+
+;=============================================================================
+;	GPIB ENET & ENET 100
+;=============================================================================
+[GpibEnet100AddReg]
+HKR,,BoardType,01,D0,00,00,00
+HKR,,CompatibleType,01,72,00,00,00
+HKR,,DeviceClass,1,62,69,70,67
+
+[GpibEnetAddReg]
+HKR,,BoardType,01,72,00,00,00
+HKR,,CompatibleType,01,FF,00,00,00
+HKR,,DeviceClass,1,62,69,70,67
+
+[GpibEnet100AddReg.NT]
+HKR,,BoardType,%REG_DWORD%,D0,00,00,00
+HKR,,CompatibleType,%REG_DWORD%,72,00,00,00
+HKR,,DeviceClass,1,62,69,70,67
+
+[GpibEnetAddReg.NT]
+HKR,,BoardType,%REG_DWORD%,72,00,00,00
+HKR,,CompatibleType,%REG_DWORD%,FF,00,00,00
+HKR,,DeviceClass,1,62,69,70,67
+
+;=============================================================================
+;	Services
+;=============================================================================
+[nipal_Service_Inst]
+DisplayName = %nipal.SvcDesc%
+ServiceType    = 1        ; SERVICE_KERNEL_DRIVER
+StartType      = 0        ; SERVICE_BOOT_START
+ErrorControl   = 1        ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\nipalk.sys
+
+[nipalusb_Service_Inst]
+DisplayName    = %nipalusb.SvcDesc%
+ServiceType    = 1        ; SERVICE_KERNEL_DRIVER
+StartType      = 3        ; SERVICE_DEMAND_START
+ErrorControl   = 1        ; SERVICE_ERROR_NORMAL
+Dependencies   = NIPALK
+ServiceBinary  = %12%\nipalusb.sys
+
+;Add an ExcludeFromSelect if it is a PnP Card.  The AGHW depends on this
+;=============================================================================
+[ControlFlags]
+ExcludeFromSelect=USB\VID_3923&PID_C910
+ExcludeFromSelect=PCI_GPIB
+ExcludeFromSelect=GPIB_USBA
+ExcludeFromSelect=GPIB_USBB
+ExcludeFromSelect=GPIB_USBBPRE
+ExcludeFromSelect=PXI_GPIB
+ExcludeFromSelect=PMC_GPIB
+ExcludeFromSelect=PCMCIA_GPIB
+ExcludeFromSelect=PCMCIA_GPIB_PLUS
+
+;=============================================================================
+;	Class Installer
+;=============================================================================
+[ClassInstall32]
+AddReg=GpibClassAddReg
+
+[GpibClassAddReg]
+HKR,,,,%GpibClassName%
+HKR,,Installer,,"GPIBI16.DLL"
+HKR,,Installer32,,"GPIBI32.DLL"
+HKR,,Icon,,"101"
+
+;=============================================================================
+;	Strings
+;=============================================================================
+[Strings]
+NIString="National Instruments"
+DevDesc1="GPIB-ENET/100"
+DevDesc2="GPIB-ENET"
+DevDesc3="PCI-GPIB"
+DevDesc4="PXI-GPIB"
+DevDesc5="PMC-GPIB"
+DevDesc6="GPIB-USB"
+DevDesc7="GPIB-USB-A"
+DevDesc8="GPIB-USB-B"
+DevDesc9="GPIB-USB-B Initialization"
+DevDesc10="PCI-GPIB+"
+DevDesc11="PCMCIA-GPIB"
+DevDesc12="PCMCIA-GPIB+"
+DevDescOld030="PCI-GPIB"
+DevDescOld040="PCI-GPIB"
+DevDescOld050="PCI-GPIB"
+GpibClassName="National Instruments GPIB Interfaces"
+NI488Driver="GpibPrtK.dll"
+NIPALDriver="nipalk.dll"
+DriverDesc="NI-488.2 Driver"
+REG_DWORD="0x00010001"
+nipal.SvcDesc="NI-PAL Driver"
+nipalusb.SvcDesc="NI-PAL USB Driver"

@@ -61,7 +61,4 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
   </ItemGroup>
-  <ItemGroup>
-    <Object Include="..\..\..\..\..\Common\host\trunk\gpib\interface\libs\GPIB-32.OBJ" />
-  </ItemGroup>
 </Project>

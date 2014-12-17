@@ -68,7 +68,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\mocs;.\..\inc;$(QWTDIR)\src;$(QT5DIR)\include;$(QT5DIR)\include\qtwidgets;$(QT5DIR)\include\qtmain;$(QT5DIR)\include\QtCore;$(QT5DIR)\include\QtGui;C:\Qt\qwt\src;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\mocs;.\..\inc;$(QWTDIR)\src;$(QT5DIR)\include;$(QT5DIR)\include\qtwidgets;$(QT5DIR)\include\qtmain;$(QT5DIR)\include\QtCore;$(QT5DIR)\include\QtGui;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;QT_DLL;INITGUID;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>

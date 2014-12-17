@@ -1,0 +1,41 @@
+Interfaces
+------------
+1) HP PCI Interface
+   uses:   - sicl.h
+           - bcsicl32.h
+            
+2) Keithley USB Interface
+   uses:   - National_Instruments_Decl-32.h
+           - borland_gpib-32.obj   (? pragma link ?)
+
+3) Keithley PCI Interface
+   läuft nicht
+
+Devices
+------------
+
+1) Multimeter
+
+- Keithley 2000 Multimeter
+- Keithley 617 Electrometer 
+
+2) Power
+
+- HP E3631A PowerSupply
+
+3) Oszi
+
+- TDS 3034 (und andere ?)
+
+4) Pulser
+
+- HP 33129A ArbitraryWaveformGenerator 
+- Agilent 33250A ArbitraryWaveformGenerator 
+
+5) Misc
+
+- HP 4141B DC Source
+- HP Switch Martix
+
+6) Counter
+- ??

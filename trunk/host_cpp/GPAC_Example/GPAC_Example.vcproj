@@ -39,8 +39,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(SVN_ROOT)\common\host\trunk\gpib\devices&quot;;&quot;$(SVN_ROOT)\common\host\trunk\gpib\devices\power&quot;;&quot;$(SVN_ROOT)\common\host\trunk\gpib\interface&quot;;&quot;$(SVN_ROOT)\common\host\trunk\gpib\interface\libs&quot;;&quot;$(SVN_ROOT)\USB\host\trunk\inc&quot;;&quot;$(SVN_ROOT)\ModularReadoutSystem\host\trunk\TL&quot;;&quot;$(SVN_ROOT)\ModularReadoutSystem\host\trunk\TL\USB&quot;;&quot;$(SVN_ROOT)\ModularReadoutSystem\host\trunk\HL\GPAC&quot;;.\"
-				PreprocessorDefinitions="UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;INITGUID;CALIBRATION_MODE;GPIB_Interface_USB"
+				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(SVN_ROOT)\USB\host\trunk\inc&quot;;&quot;$(SVN_ROOT)\ModularReadoutSystem\host\trunk\TL&quot;;&quot;$(SVN_ROOT)\ModularReadoutSystem\host\trunk\TL\USB&quot;;&quot;$(SVN_ROOT)\ModularReadoutSystem\host\trunk\HL\GPAC&quot;;.\"
+				PreprocessorDefinitions=",UNICODE,WIN32,QT_LARGEFILE_SUPPORT;QT_NO_DEBUG,NDEBUG;QT_CORE_LIB;QT_GUI_LIB"
 				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="false"
 				DebugInformationFormat="0"
@@ -56,7 +56,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib SiLibUSB.lib TL_USB.lib HL_GPAC.lib"
+				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
 				AdditionalLibraryDirectories="&quot;$(SVN_ROOT)\ModularReadoutSystem\host\trunk\lib&quot;;&quot;$(SVN_ROOT)\USB\host\trunk\lib&quot;;&quot;$(QTDIR)\lib&quot;"
 				GenerateDebugInformation="false"
@@ -109,7 +109,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(SVN_ROOT)\common\host\trunk\gpib\devices&quot;;&quot;$(SVN_ROOT)\common\host\trunk\gpib\devices\power&quot;;&quot;$(SVN_ROOT)\common\host\trunk\gpib\interface\&quot;;&quot;$(SVN_ROOT)\common\host\trunk\gpib\interface\libs&quot;;&quot;$(SVN_ROOT)\common\host\trunk\inc&quot;;&quot;$(SVN_ROOT)\USB\host\trunk\inc&quot;;&quot;$(SVN_ROOT)\ModularReadoutSystem\host\trunk\TL&quot;;&quot;$(SVN_ROOT)\ModularReadoutSystem\host\trunk\TL\USB&quot;;&quot;$(SVN_ROOT)\ModularReadoutSystem\host\trunk\HL\GPAC&quot;;.\"
+				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(DAQ_BASE)\USBpixI4dll&quot;;&quot;$(DAQ_BASE)\inc&quot;;.\"
 				PreprocessorDefinitions="WIN32;DEBUG;INITGUID;QT_LARGEFILE_SUPPORT;QT_CORE_LIB;QT_GUI_LIB;CALIBRATION_MODE;GPIB_Interface_USB"
 				RuntimeLibrary="3"
 				StructMemberAlignment="0"
@@ -131,7 +131,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="qtmaind.lib QtCored4.lib QtGuid4.lib SiLibUSBd.lib TL_USBd.lib HL_GPACd.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
-				AdditionalLibraryDirectories="&quot;$(SVN_ROOT)\ModularReadoutSystem\host\trunk\lib&quot;;&quot;$(SVN_ROOT)\USB\host\trunk\lib&quot;;&quot;$(QTDIR)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(DAQ_BASE)\lib&quot;;&quot;$(QTDIR)\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 			/>
@@ -155,7 +155,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(OutDir)\$(ProjectName).exe $(SVN_ROOT)\ModularReadoutSystem\host\trunk\bin\$(ProjectName).exe"
+				CommandLine="copy $(OutDir)\$(ProjectName).exe $(DAQ_BASE)\bin\$(ProjectName).exe"
 			/>
 		</Configuration>
 	</Configurations>
@@ -173,18 +173,6 @@
 			</File>
 			<File
 				RelativePath=".\main.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\..\Common\host\trunk\gpib\devices\Silib_GPIB_Device.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\..\Common\host\trunk\gpib\interface\SILIB_GPIB_Interfaces.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\..\Common\host\trunk\gpib\devices\power\Silib_GPIB_Keithley24xx.cpp"
 				>
 			</File>
 		</Filter>
@@ -213,14 +201,22 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB  &quot;-I.\GeneratedFiles&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I.\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I$(QTDIR)\include\qtmain&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I$(SVN_ROOT)\USB\host\trunk\inc&quot; &quot;-I$(SVN_ROOT)\ModularReadoutSystem\host\trunk\TL&quot; &quot;-I$(SVN_ROOT)\ModularReadoutSystem\host\trunk\TL\USB&quot; &quot;-I$(SVN_ROOT)\ModularReadoutSystem\host\trunk\HL\GPAC&quot; &quot;-I.&quot; &quot;.\gpac_example.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DWIN32 -DDEBUG -DINITGUID -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DCALIBRATION_MODE -DGPIB_Interface_USB -D_MBCS  &quot;-I.\GeneratedFiles&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I.\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I$(QTDIR)\include\qtmain&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I$(DAQ_BASE)\USBpixI4dll&quot; &quot;-I$(DAQ_BASE)\inc&quot; &quot;-I.&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\inc\HL_GPAC.h"
+				>
+			</File>
+			<File
 				RelativePath=".\main.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inc\TL_USB.h"
 				>
 			</File>
 		</Filter>
@@ -356,10 +352,6 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="..\..\..\..\..\..\Common\host\trunk\gpib\interface\libs\GPIB-32.OBJ"
-			>
-		</File>
 	</Files>
 	<Globals>
 		<Global
