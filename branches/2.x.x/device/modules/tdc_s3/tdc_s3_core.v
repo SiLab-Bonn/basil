@@ -321,7 +321,7 @@ assign cdc_data = (CONF_EN_WRITE_TS) ? {DATA_IDENTIFIER, CURR_TIMESTAMP, TDC_VAL
 always@(posedge DV_CLK) begin
     if(RST_SYNC)
         LOST_DATA_CNT <= 0;
-    else if (wfull && cdc_fifo_write && LOST_DATA_CNT != -1)
+    else if (wfull && FINISH && LOST_DATA_CNT != -1)
         LOST_DATA_CNT <= LOST_DATA_CNT + 1;
 end
 

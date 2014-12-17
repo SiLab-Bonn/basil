@@ -17,7 +17,8 @@ class gpio(RegisterHardwareLayer):
     '''GPIO interface
     '''
 
-    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}}
+    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}}
                   # TODO: registers needs to be adjusted to module parameters:
                   # parameter IO_WIDTH = 8,
                   # parameter IO_DIRECTION = 0,

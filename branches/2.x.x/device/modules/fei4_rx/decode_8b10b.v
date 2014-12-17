@@ -12,11 +12,11 @@
 
 module decode_8b10b (datain, dispin, dataout, dispout, code_err, disp_err) ;
   input [9:0]   datain ;
-  input		dispin ;
-  output [8:0]	dataout ;
-  output	dispout ;
-  output	code_err ;
-  output	disp_err ;
+  input wire    dispin ;
+  output [8:0]  dataout ;
+  output        dispout ;
+  output wire   code_err ;
+  output wire   disp_err ;
 
   wire ai = datain[0] ;
   wire bi = datain[1] ;
@@ -43,8 +43,8 @@ module decode_8b10b (datain, dispin, dataout, dispout, code_err, disp_err) ;
   wire p04 = !ai & !bi & !ci & !di ;
 
   wire disp6a = p31 | (p22 & dispin) ; // pos disp if p22 and was pos, or p31.
-   wire disp6a2 = p31 & dispin ;  // disp is ++ after 4 bits
-   wire disp6a0 = p13 & ! dispin ; // -- disp after 4 bits
+  wire disp6a2 = p31 & dispin ;  // disp is ++ after 4 bits
+  wire disp6a0 = p13 & ! dispin ; // -- disp after 4 bits
     
   wire disp6b = (((ei & ii & ! disp6a0) | (disp6a & (ei | ii)) | disp6a2 |
 		  (ei & ii & di)) & (ei | ii | di)) ;

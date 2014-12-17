@@ -28,6 +28,7 @@ class cmd_seq(RegisterHardwareLayer):
     '''
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
                   'EN_EXT_TRIGGER': {'descr': {'addr': 2, 'size': 1, 'offset': 0}},

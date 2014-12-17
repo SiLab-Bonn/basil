@@ -582,7 +582,7 @@ always @ (posedge BUS_CLK)
 wire FIFO_EMPTY_FLAG_BUS_CLK;
 assign FIFO_EMPTY_FLAG_BUS_CLK = ~FIFO_EMPTY_FF & FIFO_EMPTY; // assert flag when FIFO is empty again
 
-always @ (BUS_CLK)
+always @ (posedge BUS_CLK)
     if (RST)
         FIFO_PREEMPT_REQ <= 1'b0;
     else
@@ -610,7 +610,7 @@ wire fifo_full, cdc_fifo_empty;
 always@(posedge CMD_CLK) begin
     if(RST_CMD_CLK)
         LOST_DATA_CNT <= 0;
-    else if (wfull && cdc_fifo_write && LOST_DATA_CNT != -1)
+    else if (wfull && TLU_FIFO_WRITE && LOST_DATA_CNT != -1)
         LOST_DATA_CNT <= LOST_DATA_CNT + 1;
 end
 

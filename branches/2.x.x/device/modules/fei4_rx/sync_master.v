@@ -2,11 +2,6 @@
  * ------------------------------------------------------------
  * Copyright (c) SILAB , Physics Institute of Bonn University
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $:
- *  $Date::                      $:
  */
 `timescale 1 ps / 1ps
 `default_nettype none
@@ -118,15 +113,15 @@ end
 // *** do not touch code below ***
 
 wire [1:0] DDRQ;
-IFDDRRSE IFDDRRSE_inst (
-    .Q0(DDRQ[1]), // Posedge data output
-    .Q1(DDRQ[0]), // Negedge data output
-    .C0(clk_2x), // 0 degree clock input
-    .C1(~clk_2x), // 180 degree clock input
-    .CE(1'b1), // Clock enable input
-    .D(datain), // Data input (connect directly to top-level port)
-    .R(1'b0), // Synchronous reset input
-    .S(1'b0) // Synchronous preset input
+
+IDDR IDDR_inst (
+   .Q1(DDRQ[1]), // 1-bit output for positive edge of clock 
+   .Q2(DDRQ[0]), // 1-bit output for negative edge of clock
+   .C(clk_2x),   // 1-bit clock input
+   .CE(1'b1), // 1-bit clock enable input
+   .D(datain),   // 1-bit DDR data input
+   .R(1'b0),   // 1-bit reset
+   .S(1'b0)    // 1-bit set
 );
 
 reg [1:0] DDRQ_DLY;

@@ -2,11 +2,6 @@
  * ------------------------------------------------------------
  * Copyright (c) SILAB , Physics Institute of Bonn University
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $:
- *  $Date::                      $:
  */
 `timescale 1ps/1ps
 `default_nettype none
@@ -14,7 +9,8 @@
 module fei4_rx_core
 #(
     parameter           DSIZE = 10,
-    parameter           DATA_IDENTIFIER = 0
+    parameter           DATA_IDENTIFIER = 0,
+    parameter           ABUSWIDTH = 32
 )
 (
     input wire RX_CLK,
@@ -32,7 +28,7 @@ module fei4_rx_core
     output wire RX_FIFO_FULL,
 
     input wire BUS_CLK,
-    input wire [15:0] BUS_ADD,
+    input wire [ABUSWIDTH-1:0] BUS_ADD,
     input wire [7:0] BUS_DATA_IN,
     output reg [7:0] BUS_DATA_OUT,
     input wire BUS_RST,

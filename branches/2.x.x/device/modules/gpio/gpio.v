@@ -9,7 +9,9 @@
  *  $Author::                    $:
  *  $Date::                      $:
  */
- 
+
+`default_nettype none
+
 module gpio
 #(
     parameter BASEADDR = 0,
@@ -35,13 +37,13 @@ module gpio
 // 2 - OUTPUT
 // 3 - DIRECTION
 
-input                   BUS_CLK;
-input                   BUS_RST;
-input   [ABUSWIDTH-1:0] BUS_ADD;
-inout   [7:0]           BUS_DATA;
-input                   BUS_RD;
-input                   BUS_WR;
-inout  [IO_WIDTH-1:0]   IO;
+input wire                  BUS_CLK;
+input wire                  BUS_RST;
+input wire [ABUSWIDTH-1:0]  BUS_ADD;
+inout wire [7:0]            BUS_DATA;
+input wire                  BUS_RD;
+input wire                  BUS_WR;
+inout wire [IO_WIDTH-1:0]   IO;
 
 wire IP_RD, IP_WR;
 wire [ABUSWIDTH-1:0] IP_ADD;
@@ -73,15 +75,17 @@ reg [7:0] DIRECTION_DATA [IO_BYTES-1:0]; //3
 
 localparam VERSION = 0;
 
-always@(posedge BUS_CLK) begin
-        if(IP_ADD == 0)
-            IP_DATA_OUT <= VERSION;
-        else if(IP_ADD - 1 < IO_BYTES)
-            IP_DATA_OUT <= INPUT_DATA[IP_ADD - 1];
-        else if(IP_ADD - (IO_BYTES+1) < IO_BYTES)
-            IP_DATA_OUT <= OUTPUT_DATA[IP_ADD - (IO_BYTES+1)];
-        else if(IP_ADD - (IO_BYTES*2+1) < IO_BYTES)
-            IP_DATA_OUT <= DIRECTION_DATA[IP_ADD - (IO_BYTES*2+1)];
+always @ (posedge BUS_CLK) begin
+    if(IP_ADD == 0)
+        IP_DATA_OUT <= VERSION;
+    else if(IP_ADD - 1 < IO_BYTES)
+        IP_DATA_OUT <= INPUT_DATA[IP_ADD - 1];
+    else if(IP_ADD - (IO_BYTES+1) < IO_BYTES)
+        IP_DATA_OUT <= OUTPUT_DATA[IP_ADD - (IO_BYTES+1)];
+    else if(IP_ADD - (IO_BYTES*2+1) < IO_BYTES)
+        IP_DATA_OUT <= DIRECTION_DATA[IP_ADD - (IO_BYTES*2+1)];
+    else
+        IP_DATA_OUT <= 8'b0;
 end
 
 assign SOFT_RST = (IP_ADD==0 && IP_WR);  
@@ -118,7 +122,7 @@ generate
     end
 endgenerate
 
-always@(*)
+always @ (*)
     for(bi = 0; bi < IO_WIDTH; bi = bi + 1)
         INPUT_DATA[bi/8][bi%8] = IO[bi];
 

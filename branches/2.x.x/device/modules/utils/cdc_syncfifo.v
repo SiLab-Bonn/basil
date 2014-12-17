@@ -12,12 +12,12 @@
 
 module cdc_syncfifo #(parameter DSIZE = 34, parameter ASIZE = 2)
     (
-        output [DSIZE-1:0] rdata,
-        output wfull,
-        output rempty,
-        input [DSIZE-1:0] wdata,
-        input winc, wclk, wrst,
-        input rinc, rclk, rrst);
+        output wire [DSIZE-1:0] rdata,
+        output wire wfull,
+        output wire rempty,
+        input wire [DSIZE-1:0] wdata,
+        input wire winc, wclk, wrst,
+        input wire rinc, rclk, rrst);
         
     wire [ASIZE-1:0] waddr, raddr;
     wire [ASIZE:0] wptr, rptr, wq2_rptr, rq2_wptr;
@@ -52,10 +52,10 @@ endmodule
 module cdc_fifomem #(parameter DATASIZE = 34, // Memory data word widt
                  parameter ADDRSIZE = 2) // Number of mem address
     (
-    output [DATASIZE-1:0] rdata,
-    input [DATASIZE-1:0] wdata,
-    input [ADDRSIZE-1:0] waddr, raddr,
-    input wclken, wfull, wclk
+    output wire [DATASIZE-1:0] rdata,
+    input wire [DATASIZE-1:0] wdata,
+    input wire [ADDRSIZE-1:0] waddr, raddr,
+    input wire wclken, wfull, wclk
         );
         
         
@@ -89,10 +89,10 @@ endmodule
 module rptr_empty #(parameter ADDRSIZE = 2)
     (
     output reg rempty,
-    output [ADDRSIZE-1:0] raddr,
+    output wire [ADDRSIZE-1:0] raddr,
     output reg [ADDRSIZE :0] rptr,
-    input [ADDRSIZE :0] rq2_wptr,
-    input rinc, rclk, rrst
+    input wire [ADDRSIZE :0] rq2_wptr,
+    input wire rinc, rclk, rrst
     );
     
     reg [ADDRSIZE:0] rbin;
@@ -124,10 +124,10 @@ endmodule
 module wptr_full #(parameter ADDRSIZE = 2)
     (
     output reg wfull,
-    output [ADDRSIZE-1:0] waddr,
+    output wire [ADDRSIZE-1:0] waddr,
     output reg [ADDRSIZE :0] wptr,
-    input [ADDRSIZE :0] wq2_rptr,
-    input winc, wclk, wrst
+    input wire [ADDRSIZE :0] wq2_rptr,
+    input wire winc, wclk, wrst
     );
     
     reg [ADDRSIZE:0] wbin;
@@ -158,8 +158,8 @@ endmodule
 
 module cdc_sync_r2w #(parameter ADDRSIZE = 2)
     (output reg [ADDRSIZE:0] wq2_rptr,
-    input [ADDRSIZE:0] rptr,
-    input wclk, wrst
+    input wire [ADDRSIZE:0] rptr,
+    input wire wclk, wrst
     );
     
     reg [ADDRSIZE:0] cdc_sync_wq1_rptr;
@@ -173,8 +173,8 @@ endmodule
 module cdc_sync_w2r #(parameter ADDRSIZE = 2)
     (
     output reg [ADDRSIZE:0] rq2_wptr,
-    input [ADDRSIZE:0] wptr,
-    input rclk, rrst
+    input wire [ADDRSIZE:0] wptr,
+    input wire rclk, rrst
     );
         
     reg [ADDRSIZE:0] cdc_sync_rq1_wptr;

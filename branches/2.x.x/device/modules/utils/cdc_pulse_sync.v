@@ -13,7 +13,7 @@
 ///////////////////////
 // Closed loop solution
 /////////////////////
-module cdc_pulse_sync (input clk_in, input pulse_in, input clk_out, output pulse_out);
+module cdc_pulse_sync (input wire clk_in, input wire pulse_in, input wire clk_out, output wire pulse_out);
 
 wire aq_sync;
 
