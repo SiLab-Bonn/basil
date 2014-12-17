@@ -113,7 +113,7 @@ public:
 	bool Close(int devAdd);
 	bool Write(__int64 add, unsigned char *data, int nBytes);
 	bool Read( __int64 add, unsigned char *data, int nBytes);
-	bool Read(__int64 add, unsigned char *data, int nBytes, int *nBytesReceived);  
+	bool Read( __int64 add, unsigned char *data, int nBytes, int *nBytesReceived);  
 	TL_addr mTLAdd;
 	
 protected:

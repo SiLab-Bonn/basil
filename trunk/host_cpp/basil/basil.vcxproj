@@ -49,10 +49,16 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\TL\USB;..\TL;..\HL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;BASIL_DLL_EXPORT;QT_CORE_LIB;QT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(ConfigurationName)\$(ProjectName)d.dll ..\bin\$(ProjectName)d.dll
+copy $(ConfigurationName)\$(ProjectName)d.lib ..\lib\$(ProjectName)d.lib
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -69,6 +75,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\HL\HL_base.cpp" />
     <ClCompile Include="gpio.cpp" />
   </ItemGroup>
   <ItemGroup>
