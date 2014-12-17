@@ -14,7 +14,7 @@ from array import array
 
 from basil.TL.TransferLayer import TransferLayer
 
-class SiUsb (TransferLayer):
+class SiTcp (TransferLayer):
     '''SiTcp
     '''
     
