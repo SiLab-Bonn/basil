@@ -161,20 +161,6 @@ copy $(ConfigurationName)\$(ProjectName).lib ..\..\lib\$(ProjectName).lib</Comma
     <ClInclude Include="ui_MainForm.h" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="MainForm.ui">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">UIC MainForm.ui</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe MainForm.ui -o ui_MainForm.h
-</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;MainForm.ui;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_MainForm.h;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">UIC MainForm.ui</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Programme\Qt4.4\bin\uic.exe MainForm.ui -o ui_MainForm.h
-</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Programme\Qt4.4\bin\uic.exe;MainForm.ui;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_MainForm.h;%(Outputs)</Outputs>
-    </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\TL\USB\USB.vcxproj">
       <Project>{a39e1df0-245f-44aa-b4dd-21d8d2af3b79}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
