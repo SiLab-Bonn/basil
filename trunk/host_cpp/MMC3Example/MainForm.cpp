@@ -71,6 +71,6 @@ void MainForm::writeClicked()
 
 void MainForm::readClicked()
 {
-	ui->readDataLine->setText("0x" + QString::number(GPIO1->Get(), 16));  
+	ui->readDataLine->setText("0x" + QString::number((byte)GPIO1->Get(), 16));  
 }
 

@@ -18,14 +18,14 @@ basil_gpio::~basil_gpio(void)
 
 void basil_gpio::Set(int val)
 {
-	mTLAdd.LocalDeviceAddress = mAddr + GPIO_WRITE_ADD;
+	mTLAdd.LocalAddress = mAddr + GPIO_WRITE_ADD;
 	mTL->Write(mTLAdd.raw , (byte*) &val, mBytes);  
 }
 
 int  basil_gpio::Get()
 {
 	int val;
-	mTLAdd.LocalDeviceAddress = mAddr + GPIO_READ_ADD;
+	mTLAdd.LocalAddress = mAddr + GPIO_READ_ADD;
 	mTL->Read(mTLAdd.raw , (byte*) &val, mBytes);  
 	return val;
 }
