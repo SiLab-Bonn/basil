@@ -14,6 +14,7 @@
     <ProjectGuid>{120BD9E0-2DEC-4AD3-95B9-F89274D0E6D5}</ProjectGuid>
     <RootNamespace>GPAC_Example</RootNamespace>
     <Keyword>Qt4VSv1.0</Keyword>
+    <ProjectName>GPACExample</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

@@ -13,6 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F43039A6-4273-41EA-BB7E-67A4E53AA408}</ProjectGuid>
     <RootNamespace>basil</RootNamespace>
+    <ProjectName>MMC3Example</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
