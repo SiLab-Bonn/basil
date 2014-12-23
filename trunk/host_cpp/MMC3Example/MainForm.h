@@ -11,13 +11,11 @@
 // Qt GUI
 #include "ui_MainForm.h"
 
-// Qwt libs
-#include <qwt_plot.h>
-#include <qwt_plot_curve.h>
-#include <qwt_legend.h>
-
 // USB lib
 #include "SiLibUSB.h"
+#include "TL_USB.h"
+// basil modules
+#include "basil_gpio.h"
 
 namespace Ui {
     class MainForm;
@@ -25,7 +23,6 @@ namespace Ui {
 
 class MainForm : public QMainWindow
 {
-
 Q_OBJECT
 public:
   MainForm(QWidget *parent = 0);
@@ -37,18 +34,17 @@ public:
 public slots:
 	void openFileDialog();
 	void confFPGA();
-	void plotData();
 	void readClicked();
 	void writeClicked();
 ;
 
 private:
   Ui::MainForm *ui;
-	SiUSBDevice *myUSBdev;
+	SiUSBDevice  *myUSBdev;
+	TL_USB       *myTLUSB;
+	basil_gpio   *GPIO1;
 	QString FPGAFileName;
 	void UpdateSystem();
-	QwtPlotCurve *curve1;
-	QwtPlotCurve *curve2;
 
 };
 

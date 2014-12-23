@@ -56,7 +56,7 @@
     </property>
     <widget class="QWidget" name="sysTab">
      <attribute name="title">
-      <string>Multi IO Board</string>
+      <string>Test</string>
      </attribute>
      <widget class="QGroupBox" name="groupBox">
       <property name="geometry">
@@ -112,19 +112,19 @@
        <rect>
         <x>10</x>
         <y>100</y>
-        <width>361</width>
-        <height>80</height>
+        <width>121</width>
+        <height>111</height>
        </rect>
       </property>
       <property name="title">
-       <string>Read/Write FPGA</string>
+       <string>GPIO</string>
       </property>
       <widget class="QLineEdit" name="writeDataLine">
        <property name="geometry">
         <rect>
-         <x>150</x>
-         <y>20</y>
-         <width>113</width>
+         <x>80</x>
+         <y>50</y>
+         <width>31</width>
          <height>20</height>
         </rect>
        </property>
@@ -135,9 +135,9 @@
       <widget class="QLineEdit" name="readDataLine">
        <property name="geometry">
         <rect>
-         <x>150</x>
-         <y>50</y>
-         <width>113</width>
+         <x>80</x>
+         <y>80</y>
+         <width>31</width>
          <height>20</height>
         </rect>
        </property>
@@ -148,22 +148,22 @@
       <widget class="QLineEdit" name="addLine">
        <property name="geometry">
         <rect>
-         <x>80</x>
+         <x>70</x>
          <y>20</y>
          <width>41</width>
          <height>20</height>
         </rect>
        </property>
        <property name="text">
-        <string>0</string>
+        <string>0x0000</string>
        </property>
       </widget>
       <widget class="QPushButton" name="writeBtn">
        <property name="geometry">
         <rect>
-         <x>280</x>
-         <y>19</y>
-         <width>75</width>
+         <x>20</x>
+         <y>50</y>
+         <width>41</width>
          <height>23</height>
         </rect>
        </property>
@@ -174,9 +174,9 @@
       <widget class="QPushButton" name="readBtn">
        <property name="geometry">
         <rect>
-         <x>280</x>
-         <y>50</y>
-         <width>75</width>
+         <x>20</x>
+         <y>80</y>
+         <width>41</width>
          <height>23</height>
         </rect>
        </property>
@@ -197,63 +197,6 @@
         <string>Address</string>
        </property>
       </widget>
-      <widget class="QLabel" name="label_2">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>50</y>
-         <width>46</width>
-         <height>13</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Count</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="spinBox">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>50</y>
-         <width>42</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>16</number>
-       </property>
-      </widget>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="plotTab">
-     <attribute name="title">
-      <string>Plot</string>
-     </attribute>
-     <widget class="QwtPlot" name="qwtPlot1">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>341</width>
-        <height>221</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="plotBtn">
-      <property name="geometry">
-       <rect>
-        <x>50</x>
-        <y>260</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Plot</string>
-      </property>
      </widget>
     </widget>
    </widget>
@@ -276,32 +219,8 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QwtPlot</class>
-   <extends>QFrame</extends>
-   <header>qwt_plot.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>plotBtn</sender>
-   <signal>clicked()</signal>
-   <receiver>MainForm</receiver>
-   <slot>plotData()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>106</x>
-     <y>323</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>115</x>
-     <y>456</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>readBtn</sender>
    <signal>clicked()</signal>

@@ -1,5 +1,5 @@
 #pragma once
-#include "HL_base.h"
+#include "TL_USB.h"
 
 #ifdef WIN32 
   #ifdef BASIL_DLL_EXPORT
@@ -18,16 +18,16 @@
 class BASILDECLDIR basil_gpio 
 {
 public:
-	basil_gpio(HL_base &HL, int address, int nBytes, bool isOutput, bool isTristate);
+	basil_gpio(TL_USB *TL, int address, int nBytes, bool isOutput, bool isTristate);
 	~basil_gpio(void);
-	void Set(int &val);
+	void Set(int val);
 	int  Get();
 	void Reset();
 
 private:
-	HL_addr mHLAdd;
+	HL_addr mTLAdd;
 	int mAddr;
-	HL_base *mHL;
+	TL_USB *mTL;
 	int mBytes;
 };
 
