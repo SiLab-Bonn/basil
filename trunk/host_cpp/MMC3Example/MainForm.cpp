@@ -10,8 +10,9 @@ MainForm::MainForm(QWidget *parent): QMainWindow(parent),ui(new Ui::MainForm)
 	myUSBdev = new SiUSBDevice(NULL);
 	myTLUSB  = new TL_USB(myUSBdev);  // generate USB transfer layer object
 	myTLUSB->Open(-1);       // get next available USB device instance
-	GPIO1 = new basil_gpio(myTLUSB, 0x1000, 1, true, false);
+	GPIO1 = new basil_gpio(myTLUSB, "GPIO_LED", 0x1000, 1, true, false);
 	UpdateSystem();
+	ui->addLine->setText(GPIO1->GetName());
 }
 
 MainForm::~MainForm(void)

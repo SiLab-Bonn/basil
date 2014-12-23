@@ -1,14 +1,15 @@
 #include "basil_gpio.h"
 
 
-basil_gpio::basil_gpio(TL_USB *TL, int address, int nBytes, bool isOutput, bool isTristate)
+basil_gpio::basil_gpio(TL_USB *TL, string name, int address, int nBytes, bool isOutput, bool isTristate)
 {
 	mTL = TL;
 	mAddr = address;
 	mBytes = nBytes;
+	UserName = name;
 	mTLAdd.LocalBusType       = BT_FPGA;
 	//mHLAdd.LocalBusAddress    = busAddress;
-	mTLAdd.LocalDeviceAddress = address;
+	mTLAdd.LocalAddress = address;
 }
 
 
@@ -34,4 +35,9 @@ void basil_gpio::Reset()
 {
 	mTLAdd.LocalDeviceAddress = mAddr + GPIO_RESET_ADD;
 	mTL->Write(mTLAdd.raw , 0, mBytes);  
+}
+
+const char* basil_gpio::GetName(void)
+{
+	return UserName.c_str();
 }

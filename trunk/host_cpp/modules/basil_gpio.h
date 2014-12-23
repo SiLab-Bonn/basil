@@ -18,16 +18,18 @@
 class BASILDECLDIR basil_gpio 
 {
 public:
-	basil_gpio(TL_USB *TL, int address, int nBytes, bool isOutput, bool isTristate);
+	basil_gpio(TL_USB *TL, string name, int address, int nBytes, bool isOutput, bool isTristate);
 	~basil_gpio(void);
 	void Set(int val);
 	int  Get();
 	void Reset();
+	const char* GetName(void);
 
 private:
 	HL_addr mTLAdd;
 	int mAddr;
 	TL_USB *mTL;
 	int mBytes;
+	string UserName;
 };
 

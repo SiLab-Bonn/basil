@@ -122,9 +122,9 @@
       <widget class="QLineEdit" name="writeDataLine">
        <property name="geometry">
         <rect>
-         <x>80</x>
+         <x>70</x>
          <y>50</y>
-         <width>31</width>
+         <width>41</width>
          <height>20</height>
         </rect>
        </property>
@@ -135,9 +135,9 @@
       <widget class="QLineEdit" name="readDataLine">
        <property name="geometry">
         <rect>
-         <x>80</x>
+         <x>70</x>
          <y>80</y>
-         <width>31</width>
+         <width>41</width>
          <height>20</height>
         </rect>
        </property>
@@ -146,22 +146,28 @@
        </property>
       </widget>
       <widget class="QLineEdit" name="addLine">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="geometry">
         <rect>
-         <x>70</x>
+         <x>50</x>
          <y>20</y>
-         <width>41</width>
+         <width>61</width>
          <height>20</height>
         </rect>
        </property>
        <property name="text">
-        <string>0x0000</string>
+        <string/>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
       <widget class="QPushButton" name="writeBtn">
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>10</x>
          <y>50</y>
          <width>41</width>
          <height>23</height>
@@ -174,7 +180,7 @@
       <widget class="QPushButton" name="readBtn">
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>10</x>
          <y>80</y>
          <width>41</width>
          <height>23</height>
@@ -187,14 +193,14 @@
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>10</x>
          <y>20</y>
-         <width>46</width>
-         <height>13</height>
+         <width>31</width>
+         <height>16</height>
         </rect>
        </property>
        <property name="text">
-        <string>Address</string>
+        <string>Name</string>
        </property>
       </widget>
      </widget>
