@@ -14,7 +14,7 @@
     <ProjectGuid>{69EE785F-1D88-3354-82C3-DAE0CC9B244A}</ProjectGuid>
     <RootNamespace>AppExampleQT5</RootNamespace>
     <Keyword>Qt4VSv1.0</Keyword>
-    <ProjectName>AppExample</ProjectName>
+    <ProjectName>MMC3Example</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">

@@ -8,11 +8,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DeviceManager", "DeviceMana
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SiLibUSB", "SiLibUSB\SiLibUSB.vcxproj", "{ED2A9E76-8EA1-4535-B9AA-468A56ECE48F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AppExample", "AppExample\AppExample.vcxproj", "{69EE785F-1D88-3354-82C3-DAE0CC9B244A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{ED2A9E76-8EA1-4535-B9AA-468A56ECE48F} = {ED2A9E76-8EA1-4535-B9AA-468A56ECE48F}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GPACExample", "GPAC_Example\GPAC_Example.vcxproj", "{120BD9E0-2DEC-4AD3-95B9-F89274D0E6D5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{3540EB0D-8516-4618-B95D-0C03F6B0F666} = {3540EB0D-8516-4618-B95D-0C03F6B0F666}
@@ -30,7 +25,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TL_USB", "TL\USB\USB.vcxpro
 		{ED2A9E76-8EA1-4535-B9AA-468A56ECE48F} = {ED2A9E76-8EA1-4535-B9AA-468A56ECE48F}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MMC3Example", "MMC3Example\basil.vcxproj", "{F43039A6-4273-41EA-BB7E-67A4E53AA408}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MMC3Example", "MMC3Example\AppExample.vcxproj", "{69EE785F-1D88-3354-82C3-DAE0CC9B244A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,14 +51,6 @@ Global
 		{ED2A9E76-8EA1-4535-B9AA-468A56ECE48F}.static-debug|Win32.Build.0 = static-debug|Win32
 		{ED2A9E76-8EA1-4535-B9AA-468A56ECE48F}.static-release|Win32.ActiveCfg = static-release|Win32
 		{ED2A9E76-8EA1-4535-B9AA-468A56ECE48F}.static-release|Win32.Build.0 = static-release|Win32
-		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.Debug|Win32.ActiveCfg = Debug|Win32
-		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.Debug|Win32.Build.0 = Debug|Win32
-		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.Release|Win32.ActiveCfg = Release|Win32
-		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.Release|Win32.Build.0 = Release|Win32
-		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.static-debug|Win32.ActiveCfg = Release|Win32
-		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.static-debug|Win32.Build.0 = Release|Win32
-		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.static-release|Win32.ActiveCfg = Release|Win32
-		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.static-release|Win32.Build.0 = Release|Win32
 		{120BD9E0-2DEC-4AD3-95B9-F89274D0E6D5}.Debug|Win32.ActiveCfg = Debug|Win32
 		{120BD9E0-2DEC-4AD3-95B9-F89274D0E6D5}.Debug|Win32.Build.0 = Debug|Win32
 		{120BD9E0-2DEC-4AD3-95B9-F89274D0E6D5}.Release|Win32.ActiveCfg = Release|Win32
@@ -88,14 +75,14 @@ Global
 		{A39E1DF0-245F-44AA-B4DD-21D8D2AF3B79}.static-debug|Win32.Build.0 = Release|Win32
 		{A39E1DF0-245F-44AA-B4DD-21D8D2AF3B79}.static-release|Win32.ActiveCfg = Release|Win32
 		{A39E1DF0-245F-44AA-B4DD-21D8D2AF3B79}.static-release|Win32.Build.0 = Release|Win32
-		{F43039A6-4273-41EA-BB7E-67A4E53AA408}.Debug|Win32.ActiveCfg = Debug|Win32
-		{F43039A6-4273-41EA-BB7E-67A4E53AA408}.Debug|Win32.Build.0 = Debug|Win32
-		{F43039A6-4273-41EA-BB7E-67A4E53AA408}.Release|Win32.ActiveCfg = Release|Win32
-		{F43039A6-4273-41EA-BB7E-67A4E53AA408}.Release|Win32.Build.0 = Release|Win32
-		{F43039A6-4273-41EA-BB7E-67A4E53AA408}.static-debug|Win32.ActiveCfg = Release|Win32
-		{F43039A6-4273-41EA-BB7E-67A4E53AA408}.static-debug|Win32.Build.0 = Release|Win32
-		{F43039A6-4273-41EA-BB7E-67A4E53AA408}.static-release|Win32.ActiveCfg = Release|Win32
-		{F43039A6-4273-41EA-BB7E-67A4E53AA408}.static-release|Win32.Build.0 = Release|Win32
+		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.Debug|Win32.Build.0 = Debug|Win32
+		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.Release|Win32.ActiveCfg = Release|Win32
+		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.Release|Win32.Build.0 = Release|Win32
+		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.static-debug|Win32.ActiveCfg = Release|Win32
+		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.static-debug|Win32.Build.0 = Release|Win32
+		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.static-release|Win32.ActiveCfg = Release|Win32
+		{69EE785F-1D88-3354-82C3-DAE0CC9B244A}.static-release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
