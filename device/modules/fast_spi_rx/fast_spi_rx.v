@@ -16,20 +16,20 @@ module fast_spi_rx
     
     parameter IDENTYFIER = 4'b0001
 )(
-    input BUS_CLK,
-    input [15:0] BUS_ADD,
-    inout [7:0] BUS_DATA,
-    input BUS_RST,
-    input BUS_WR,
-    input BUS_RD,
+    input wire BUS_CLK,
+    input wire [15:0] BUS_ADD,
+    inout wire [7:0] BUS_DATA,
+    input wire BUS_RST,
+    input wire BUS_WR,
+    input wire BUS_RD,
     
-    input SCLK,
-    input SDI,
-    input SEN,
+    input wire SCLK,
+    input wire SDI,
+    input wire SEN,
 
-    input FIFO_READ,
-    output FIFO_EMPTY,
-    output [31:0] FIFO_DATA
+    input wire FIFO_READ,
+    output wire FIFO_EMPTY,
+    output wire [31:0] FIFO_DATA
     
 ); 
 
