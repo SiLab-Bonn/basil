@@ -15,11 +15,11 @@
 #define GPIO_OUTEN_ADD 4
 
 
-class BASILDECLDIR gpio 
+class BASILDECLDIR basil_gpio 
 {
 public:
-	gpio(HL_base &HL, int address, int nBytes, bool isOutput, bool isTristate);
-	~gpio(void);
+	basil_gpio(HL_base &HL, int address, int nBytes, bool isOutput, bool isTristate);
+	~basil_gpio(void);
 	void Set(int &val);
 	int  Get();
 	void Reset();

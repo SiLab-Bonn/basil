@@ -1,7 +1,7 @@
-#include "gpio.h"
+#include "basil_gpio.h"
 
 
-gpio::gpio(HL_base &HL, int address, int nBytes, bool isOutput, bool isTristate)
+basil_gpio::basil_gpio(HL_base &HL, int address, int nBytes, bool isOutput, bool isTristate)
 {
 	mHL = &HL;
 	mAddr = address;
@@ -12,17 +12,17 @@ gpio::gpio(HL_base &HL, int address, int nBytes, bool isOutput, bool isTristate)
 }
 
 
-gpio::~gpio(void)
+basil_gpio::~basil_gpio(void)
 {
 }
 
-void gpio::Set(int &val)
+void basil_gpio::Set(int &val)
 {
 	mHLAdd.LocalDeviceAddress = mAddr + GPIO_WRITE_ADD;
 	mHL->Write(mHLAdd , (byte*) val, mBytes);  
 }
 
-int  gpio::Get()
+int  basil_gpio::Get()
 {
 	int val;
 	mHLAdd.LocalDeviceAddress = mAddr + GPIO_READ_ADD;
@@ -30,7 +30,7 @@ int  gpio::Get()
 	return val;
 }
 
-void gpio::Reset()
+void basil_gpio::Reset()
 {
 	mHLAdd.LocalDeviceAddress = mAddr + GPIO_RESET_ADD;
 	mHL->Write(mHLAdd , 0, mBytes);  
