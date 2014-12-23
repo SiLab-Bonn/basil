@@ -51,9 +51,7 @@ class sram_fifo(RegisterHardwareLayer):
         fifo_size : int
             FIFO size in units of bytes (8 bit).
         '''
-        ret = self._intf.read(self._conf['base_addr'] + 1, size=3)
-        ret.append(0)  # increase to 4 bytes to do the conversion
-        return unpack_from('I', ret)[0]
+        return self.FIFO_SIZE
 
     @property
     def FIFO_INT_SIZE(self):
