@@ -11,8 +11,6 @@ import select
 import struct
 from array import array
 from threading import Thread, Lock
-from collections import deque
-
 from basil.TL.TransferLayer import TransferLayer
 
 class SiTcp (TransferLayer):
@@ -25,22 +23,25 @@ class SiTcp (TransferLayer):
     RBCP_ID = 0xa5
     RBCP_MAX_SIZE = 255
 
-    #swap this?
-    BASE_DATA_TCP =      0x100000000
-    BASE_FAKE_FIFO_TCP = 0x200000000
+    UDP_TIMEOUT = 0.1
+    UDP_RETRANSMIT_CNT = 0 #TODO
     
+    BASE_DATA_TCP =      0x100000000
+    BASE_FAKE_FIFO_TCP = 0x200000000 #above this read will return size of local TCP fifo (4 bytes)
 
     def __init__(self, conf):
         super(SiTcp, self).__init__(conf)
         self._sock_udp = None
         
         self._sock_tcp = None
-        self._data_deque = deque()
         self._tcp_readout_thread = None
+        self.tmp = 0
         
     def init(self, **kwargs):
+        
+        self._udp_lock = Lock()
         self._sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self._sock_udp.setblocking(0)
+        #self._sock_udp.setblocking(0)
         
         self._tcp_lock = Lock()
         self._tcp_read_buff = array('B')
@@ -53,24 +54,24 @@ class SiTcp (TransferLayer):
             self._tcp_readout_thread = Thread(target=self._tcp_readout, name='TcpReadoutThread', kwargs={})
             self._tcp_readout_thread.daemon = True
             self._tcp_readout_thread.start()
-        
-        
 
-
-    def _write_single(self, addr, data):
+    def _write_single(self, addr, data):        
         request = array('B', struct.pack('>BBBBI', self.RBCP_VER, self.RBCP_CMD_WR, self.RBCP_ID, len(data), addr))
         request += data
 
         self._sock_udp.sendto(request,(self._init['ip'], self._init['udp_port']))
-        ready = select.select([self._sock_udp], [], [], 1)
+        ready = select.select([self._sock_udp], [], [], self.UDP_TIMEOUT)
         if not ready[0]:
             raise IOError('SiTcp:Write - Timeout')
         
         ack = self._sock_udp.recv(1024)
-        
+
         if( len(ack) < 8):
             raise IOError('SiTcp:Write - Packet is too short')
         
+        if( array('B',ack)[8:] != data ):
+            raise IOError('SiTcp:Write - Data error')
+            
         if( (0x0f & ord(ack[1])) != 0x8 ):
             raise IOError('SiTcp:Write - Bus error')
         
@@ -79,22 +80,24 @@ class SiTcp (TransferLayer):
         
     def write(self, addr, data):
         if addr < self.BASE_DATA_TCP:
+            self._udp_lock.acquire()
             buff = array('B', data)
             chunks = lambda l, n: [l[x: x + n] for x in xrange(0, len(l), n)]
             new_addr = addr
             for req in chunks(buff, self.RBCP_MAX_SIZE):
                 self._write_single(new_addr, req)
                 new_addr += len(req)
+            self._udp_lock.release()  
         elif addr < self.BASE_FAKE_FIFO_TCP:
             self._sock_tcp.sendall(data) #chunking?
-
-    def read_single(self, addr, size):
-        request = array('B', struct.pack('>BBBBI', self.RBCP_VER, self.RBCP_CMD_WR, self.RBCP_ID, size, addr))
         
+    def _read_single(self, addr, size):
+        request = array('B', struct.pack('>BBBBI', self.RBCP_VER, self.RBCP_CMD_RD, self.RBCP_ID, size, addr))
+
         self._sock_udp.sendto(request,(self._init['ip'], self._init['udp_port']))
-        ready = select.select([self._sock_udp], [], [], 0.5)
+        ready = select.select([self._sock_udp], [], [], self.UDP_TIMEOUT)
         if not ready[0]:
-            raise IOError('SiTcp:Read - Timeout') # Retry?
+            raise IOError('SiTcp:Read - Timeout')
         
         ack =  self._sock_udp.recv(4096)
         
@@ -110,8 +113,10 @@ class SiTcp (TransferLayer):
         return array('B',ack[8:])
 
     def read(self, addr, size):
-
+        
+        
         if addr < self.BASE_DATA_TCP:
+            self._udp_lock.acquire()
             ret = array('B')
             if size > self.RBCP_MAX_SIZE:
                 new_addr = addr
@@ -125,7 +130,9 @@ class SiTcp (TransferLayer):
         
             else:
                 ret += self._read_single(addr, size)
-        
+                
+            self._udp_lock.release()
+            
             return ret
         elif addr < self.BASE_FAKE_FIFO_TCP:
             return self._get_tcp_data(size)
