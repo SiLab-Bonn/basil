@@ -2,11 +2,6 @@
  * ------------------------------------------------------------
  * Copyright (c) SILAB , Physics Institute of Bonn University 
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
  
 module seq_gen_core
@@ -149,7 +144,6 @@ assign WEA = BUS_WR && BUS_ADD >=16 && BUS_ADD < 16+MEM_BYTES;
 
 generate
     if (OUT_BITS==8) begin
-        (* RAM_STYLE="{AUTO | BLOCK |  BLOCK_POWER1 | BLOCK_POWER2}" *)
         reg [7:0] mem [(2**ADDR_SIZEA)-1:0];
         
         // synthesis translate_off
@@ -194,8 +188,12 @@ wire RST_SOFT_SYNC;
 cdc_pulse_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(SEQ_CLK), .pulse_out(RST_SOFT_SYNC));
 assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
 
+wire  START_SYNC_CDC;
 wire START_SYNC;
-cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(SEQ_CLK), .pulse_out(START_SYNC));
+cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(SEQ_CLK), .pulse_out(START_SYNC_CDC));
+
+reg DONE;
+assign START_SYNC = START_SYNC_CDC & DONE; //no START if previous not finished    
 
 wire [15:0] STOP_BIT;
 assign STOP_BIT = CONF_COUNT + CONF_WAIT;
@@ -232,9 +230,11 @@ always @ (posedge SEQ_CLK)
     else if(out_bit_cnt == STOP_BIT && dev_cnt == CONF_CLK_DIV && REPEAT_COUNT <= CONF_REPEAT)
         REPEAT_COUNT <= REPEAT_COUNT + 1;
 
-reg DONE;
+
 always @(posedge SEQ_CLK)
-    if(RST_SYNC | START_SYNC)
+    if(RST_SYNC)
+        DONE <= 1;
+    else if(START_SYNC)
         DONE <= 0;
     else if(REPEAT_COUNT > CONF_REPEAT)
         DONE <= 1;
