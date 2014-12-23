@@ -1125,6 +1125,9 @@ bool TUSBDevice::ReadEEPROM(unsigned short address, unsigned char *Data, unsigne
 
 bool TUSBDevice::WriteExternal(unsigned short address, unsigned char *Data, int Length)
 {
+	if (ControllerType == FX3)
+	  return FastBlockWrite(address, Data, Length);
+	
 	SILAB_USB_REQUEST sur;
 	bool status;
 
@@ -1150,6 +1153,9 @@ bool TUSBDevice::WriteExternal(unsigned short address, unsigned char *Data, int 
 
 bool TUSBDevice::ReadExternal(unsigned short address, unsigned char *Data, int Length)
 {
+	if (ControllerType == FX3)
+	  return FastBlockRead(address, Data, Length);
+
 	SILAB_USB_REQUEST sur;
 	bool status;
 
@@ -2081,6 +2087,9 @@ bool TUSBDevice::XilinxAlreadyLoaded()
 
 bool TUSBDevice::WriteXilinx(unsigned short address, unsigned char *Data, int length)
 {
+	if (ControllerType == FX3)
+	  return FastBlockWrite(address, Data, length);
+
 	SILAB_USB_REQUEST sur;
 	bool status;
 
@@ -2105,6 +2114,9 @@ bool TUSBDevice::WriteXilinx(unsigned short address, unsigned char *Data, int le
 
 bool TUSBDevice::ReadXilinx(unsigned short address, unsigned char *Data, int length)
 {
+	if (ControllerType == FX3)
+	  return FastBlockRead(address, Data, length);
+
 	SILAB_USB_REQUEST sur;
 	bool status;
 

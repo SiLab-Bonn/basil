@@ -23,11 +23,13 @@ module FX3_IF (
     input wire fx3_wr,
     input wire fx3_oe,
     input wire fx3_cs,
-    input wire fx3_clk,  // FX3 generates user clock
+    input wire fx3_rst,  // reset signal form FX3 SM
+    input wire fx3_clk,  // FX3 generated user clock
     output reg fx3_rdy, // will be monitored by FPGA internally during READ
     output reg fx3_ack,
     output reg fx3_rd_finish,		
-    input wire fx3_rst,
+    
+    input wire RST,  // external reset source (switch and/or PLL lock)
     
     output wire         BUS_CLK,  // FX3 generates user clock
     output wire         BUS_RST,
@@ -46,6 +48,7 @@ module FX3_IF (
 wire [31:0] DataOut; // data from FPGA core
 reg [31:0] DataIn;  // data to FPGA core, force IOB register
 assign BUS_DATA = BUS_WR ? DataIn[31:0]: 32'bz;
+assign BUS_RST  = RST | fx3_rst;
 assign DataOut[31:0] = BUS_WR ? 32'bz : BUS_DATA;
 
 genvar gen;
@@ -62,8 +65,6 @@ reg  FLAG2_reg;
 
 reg RD_VALID;
 reg RDY;
-
-assign BUS_RST = fx3_rst;
 
 // clock buffer
 IBUFG #(
@@ -94,7 +95,7 @@ begin
  	
 	fx3_rdy <= RDY;
 	
-	if(BUS_RST)
+	if(RST)
 	   DATA_MISO <= 0;
 	else if(BUS_BYTE_ACCESS) begin
 	   if(BYTE==0)
@@ -158,7 +159,7 @@ parameter WAIT        = 7;
 reg [4:0] state, next_state;
 
 always @ (posedge BUS_CLK)
-    if (BUS_RST)
+    if (RST)
       state <= IDLE;
     else
       state <= next_state;
@@ -216,7 +217,7 @@ end
 
 always @ (posedge BUS_CLK)
 begin
-    if (BUS_RST) 
+    if (RST) 
     begin
         BUS_ADD <= 32'd0;
         ReqCountLimit <= 32'd0;
@@ -360,10 +361,10 @@ generate
 for (gen = 0; gen < 32; gen = gen + 1) 
 	begin : tri_buf // 32 bit databus
 		IOBUF #(
-			.DRIVE(12), // Specify the output drive strength
-			.IBUF_LOW_PWR("FALSE"),  // Low Power - "TRUE", High Performance = "FALSE" 
-			.IOSTANDARD("LVCMOS33"), // Specify the I/O standard
-			.SLEW("FAST") // Specify the output slew rate
+//			.DRIVE(12), // Specify the output drive strength
+//			.IBUF_LOW_PWR("FALSE"),  // Low Power - "TRUE", High Performance = "FALSE" 
+//			.IOSTANDARD("LVCMOS33"), // Specify the I/O standard
+//			.SLEW("FAST") // Specify the output slew rate
 		) IOBUF_inst (
 			.O(DATA_MOSI[gen]),     // Buffer output
 			.IO(fx3_bus[gen]),   // Buffer inout port (connect directly to top-level port)
