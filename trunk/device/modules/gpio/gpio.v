@@ -31,11 +31,14 @@ module gpio
     IO
 );
 
+// --------
 // ORDER:
 // 0 - RESET
-// 1 - INPUT
-// 2 - OUTPUT
-// 3 - DIRECTION
+// 1*B - INPUT
+// 2*B - OUTPUT
+// 3*B - DIRECTION/OUTPUT_ENABLE
+// B = IO_WIDTH/8+1
+//----
 
 input wire                  BUS_CLK;
 input wire                  BUS_RST;
