@@ -4,11 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 #Initial version by Chris Higgs <chris.higgs@potentialventures.com>
 #
 
@@ -26,14 +21,23 @@ import os
 import socket
 import array
 
-from SimSiLibUsbProtocol import WriteExternalRequest, ReadExternalRequest, ReadExternalResponse, ReadFastBlockRequest, ReadFastBlockResponse, PickleInterface
+from Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface 
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 class SiUSBDevice(object):
 
     """Simulation library to emulate SiUSBDevices"""
 
+    BASE_ADDRESS_I2C = 0x00000
+    HIGH_ADDRESS_I2C = BASE_ADDRESS_I2C + 256
+
+    BASE_ADDRESS_EXTERNAL = 0x10000
+    HIGH_ADDRESS_EXTERNAL = 0x10000 + 0x10000
+
+    BASE_ADDRESS_BLOCK = 0x0001000000000000
+    HIGH_ADDRESS_BLOCK = 0xffffffffffffffff
+    
     def __init__(self, device=None, simulation_host='localhost', simulation_port=12345):
         self._sock = None
         self.simulation_host = simulation_host
@@ -56,27 +60,28 @@ class SiUSBDevice(object):
         return True
 
     def WriteExternal(self, address, data):
-        req = WriteExternalRequest(address, data)
+        req = WriteRequest(self.BASE_ADDRESS_EXTERNAL + address, data)
         self._iface.send(req)
 
     def ReadExternal(self, address, size):
-        req = ReadExternalRequest(address, size)
+        req = ReadRequest(self.BASE_ADDRESS_EXTERNAL + address, size)
         self._iface.send(req)
         resp = self._iface.recv()
-        if not isinstance(resp, ReadExternalResponse):
+        if not isinstance(resp, ReadResponse):
             raise ValueError("Communication error with Simulation: got %s" % repr(resp))
         return array.array('B', resp.data)
 
     def FastBlockRead(self, size):
-        req = ReadFastBlockRequest(size)
+        req = ReadRequest(self.BASE_ADDRESS_BLOCK, size)
         self._iface.send(req)
         resp = self._iface.recv()
-        if not isinstance(resp, ReadFastBlockResponse):
+        if not isinstance(resp, ReadResponse):
             raise ValueError("Communication error with Simulation: got %s" % repr(resp))
         return array.array('B', resp.data)
     
     def FastBlockWrite(self, size):
-        raise NotImplementedError("To be implemented.")
+        req = WriteRequest(self.BASE_ADDRESS_BLOCK, data)
+        self._iface.send(req)
         
     def WriteI2C(self, address, data):
         print 'SiUSBDevice:WriteI2C', address, data #raise NotImplementedError("To be implemented.")

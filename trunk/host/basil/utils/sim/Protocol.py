@@ -4,11 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 #Initial version by Chris Higgs <chris.higgs@potentialventures.com>
 #
 
@@ -22,7 +17,7 @@ import socket
 
 class ProtocolBase(object): pass
 
-class WriteExternalRequest(ProtocolBase):
+class WriteRequest(ProtocolBase):
     def __init__(self, address, data):
         self.address = address
         self.data = data
@@ -30,38 +25,18 @@ class WriteExternalRequest(ProtocolBase):
     def __str__(self):
         return "WriteExternalRequest: 0x%04x <- %s" % (self.address, self.data)
 
-class ReadExternalRequest(ProtocolBase):
+class ReadRequest(ProtocolBase):
     def __init__(self, address, size):
         self.address = address
         self.size = size
     def __str__(self):
         return "ReadExternalRequest: 0x%04x (size %d)" % (self.address, self.size)
 
-class ReadExternalResponse(ProtocolBase):
+class ReadResponse(ProtocolBase):
     def __init__(self, data):
         self.data = data
     def __str__(self):
         return "ReadExternalResponse: %s" % str(self.data)
-
-class WriteFastBlockRequest(ProtocolBase):
-    def __init__(self, data):
-        self.address = 0
-        self.data = data
-
-    def __str__(self):
-        return "WriteFastBlockRequest:  %s" % (self.data)
-    
-class ReadFastBlockRequest(ProtocolBase):
-    def __init__(self, size):
-        self.size = size
-    def __str__(self):
-        return "ReadFastBlockRequest: (size %d)" % (self.size)
-
-class ReadFastBlockResponse(ProtocolBase):
-    def __init__(self, data):
-        self.data = data
-    def __str__(self):
-        return "ReadFastBlockResponse: %s" % str(self.data)
         
 class PickleInterface(ProtocolBase):
 
