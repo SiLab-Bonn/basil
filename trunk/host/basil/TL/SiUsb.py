@@ -4,16 +4,11 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
+
 import os
 
 from basil.TL.TransferLayer import TransferLayer
 from SiLibUSB import GetUSBBoards, SiUSBDevice
-
 
 class SiUsb (TransferLayer):
     '''SiLab USB device
