@@ -59,6 +59,9 @@ class Base(object):
     def init(self):
         raise NotImplementedError("init() not implemented")
 
+    def close(self):
+        pass
+        
     def set_configuration(self, conf):
         raise NotImplementedError("set_configuration() not implemented")
 
@@ -109,7 +112,17 @@ class Dut(Base):
         for item in self._registers.itervalues():
             update_init(item)
             catch_exception_on_init(item)
-
+    
+    def close(self):
+        for item in self._transfer_layer.itervalues():
+            item.close()
+        for item in self._hardware_layer.itervalues():
+            item.close()
+        for item in self._user_drivers.itervalues():
+            item.close()
+        for item in self._registers.itervalues():
+            item.close()
+    
     def set_configuration(self, conf):
         conf = self._open_conf(conf)
 
