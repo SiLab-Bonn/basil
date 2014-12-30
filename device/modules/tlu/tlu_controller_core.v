@@ -2,11 +2,6 @@
  * ------------------------------------------------------------
  * Copyright (c) SILAB , Physics Institute of Bonn University
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $:
- *  $Date::                      $:
  */
 
  /*  _____ _   _   _ 
@@ -22,12 +17,13 @@
  
  module tlu_controller_core
 #(
-    parameter                   DIVISOR = 8 // dividing CMD_CLK by DIVISOR for TLU_CLOCK
+    parameter                   DIVISOR = 8, // dividing CMD_CLK by DIVISOR for TLU_CLOCK
+    parameter                   ABUSWIDTH = 16
 )
 (
     input wire                  BUS_CLK,
     input wire                  BUS_RST,
-    input wire      [15:0]      BUS_ADD,
+    input wire  [ABUSWIDTH-1:0] BUS_ADD,
     input wire      [7:0]       BUS_DATA_IN,
     input wire                  BUS_RD,
     input wire                  BUS_WR,
