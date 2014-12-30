@@ -31,7 +31,11 @@ assign CS = (BUS_ADD >= BASEADDR && BUS_ADD <= HIGHADDR);
 assign IP_ADD = CS ? BUS_ADD - BASEADDR : {ABUSWIDTH{1'b0}};
 assign IP_RD = CS ? BUS_RD : 1'b0;
 assign IP_WR = CS ? BUS_WR: 1'b0;
-assign BUS_DATA = (CS && BUS_WR) ? {DBUSWIDTH{1'bz}} : (CS ? IP_DATA_OUT : {DBUSWIDTH{1'bz}});
+
 assign IP_DATA_IN =  BUS_DATA;
+
+//assign BUS_DATA = (CS && BUS_WR) ? {DBUSWIDTH{1'bz}} : (CS ? IP_DATA_OUT : {DBUSWIDTH{1'bz}});
+//This is is same as above but vor Icarus + cocootb makes a diffrence (a bug)
+reg [DBUSWIDTH-1:0] TMP; always@(*) TMP = (CS & BUS_WR) ? {DBUSWIDTH{1'bz}} : (CS ? IP_DATA_OUT : {DBUSWIDTH{1'bz}}); assign BUS_DATA = TMP;
 
 endmodule
