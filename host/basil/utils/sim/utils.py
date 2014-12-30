@@ -5,8 +5,11 @@
 # ------------------------------------------------------------
 #
 
+import subprocess
+import time
+
 def cocotb_makefile(sim_files, top_level = 'tb', test_module='basil.utils.sim.Test' ,sim_host='localhost', sim_port=12345, sim_bus='basil.utils.sim.BasilBusDriver', 
-                    end_on_disconnect=True, include_dirs=['../../../device/modules'] ):
+                    end_on_disconnect=True, include_dirs=['../../../device/modules', '../../../device/modules/includes'] ):
     
     mkfile = "SIMULATION_HOST?=%s\nSIMULATION_PORT?=%d\nSIMULATION_BUS?=%s\n" % (sim_host, sim_port, sim_bus)
     
@@ -32,3 +35,19 @@ include $(COCOTB)/makefiles/Makefile.sim
     """
     
     return mkfile
+
+def cocotb_compile_and_run(verilog_sources):
+    #thiscompile files but will not run simulation -> explicit error
+    file = open('Makefile','w')
+    file.write(cocotb_makefile(verilog_sources, top_level='none'))
+    file.close()
+    subprocess.call("make", shell=True) 
+    
+    #run simulator in background
+    file = open('Makefile','w')
+    file.write(cocotb_makefile(verilog_sources))
+    file.close()
+    subprocess.Popen(['make']) 
+    time.sleep(2)
+    
+    

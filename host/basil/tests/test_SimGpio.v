@@ -40,8 +40,8 @@ module tb (
     );
     
     initial begin
-        $dumpfile("uut.vcd");
-        $dumpvars(0, i_gpio);
+        $dumpfile("gpio.vcd");
+        $dumpvars(0);
     end 
     
 endmodule

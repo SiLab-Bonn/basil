@@ -13,26 +13,17 @@ import yaml
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run
 
-class TestSimGpio(unittest.TestCase):
+class TestSimTlu(unittest.TestCase):
     def setUp(self):
-
-        cocotb_compile_and_run(['test_SimGpio.v'])
+    
+        cocotb_compile_and_run(['test_SimTlu.v'])
         
-        cnfg = yaml.load(open("test_SimGpio.yaml", 'r'))
+        cnfg = yaml.load(open("test_SimTlu.yaml", 'r'))
         self.chip = Dut(cnfg)
         self.chip.init()
         
-    def test_one(self):
-        
-        self.chip['PWR']['EN_VD1'] = 1
-        self.chip['PWR']['EN_VD2'] = 1
-        self.chip['PWR']['EN_VA1'] = 0
-        self.chip['PWR']['EN_VA2'] = 1
-        self.chip['PWR'].write()
-        
-        ret = self.chip['gpio'].get_data()
-        
-        self.assertEqual(0, 1)
+    def test_version(self):
+        self.assertEqual(self.chip['tlu'].VERSION, 1)
     
     def tearDown(self):
         self.chip.close() # let it close connection and stop simulator
