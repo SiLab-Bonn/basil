@@ -2,11 +2,6 @@
  * ------------------------------------------------------------
  * Copyright (c) SILAB , Physics Institute of Bonn University
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $:
- *  $Date::                      $:
  */
 `timescale 1 ps / 1ps
 `default_nettype none
@@ -15,12 +10,13 @@
 #(
     parameter       BASEADDR = 16'h0000,
     parameter       HIGHADDR = 16'h0000, 
+    parameter       ABUSWIDTH = 16,
     parameter       DIVISOR = 8
 )
 (
     input wire                  BUS_CLK,
     input wire                  BUS_RST,
-    input wire      [15:0]      BUS_ADD,
+    input wire  [ABUSWIDTH-1:0] BUS_ADD,
     inout wire      [7:0]       BUS_DATA,
     input wire                  BUS_RD,
     input wire                  BUS_WR,
@@ -53,11 +49,11 @@
 
 
 wire IP_RD, IP_WR;
-wire [15:0] IP_ADD;
+wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
 wire [7:0] IP_DATA_OUT;
 
-bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
+bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) , .ABUSWIDTH(ABUSWIDTH)) i_bus_to_ip
 (
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
@@ -74,7 +70,8 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
 
 tlu_controller_core
 #(
-    .DIVISOR(DIVISOR)
+    .DIVISOR(DIVISOR),
+    .ABUSWIDTH(ABUSWIDTH)
 ) i_tlu_controller_core
 (
     .BUS_CLK(BUS_CLK),                     
