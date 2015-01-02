@@ -48,6 +48,6 @@ def cocotb_compile_and_run(verilog_sources):
     file.write(cocotb_makefile(verilog_sources))
     file.close()
     subprocess.Popen(['make']) 
-    time.sleep(2)
+    time.sleep(3)
     
     

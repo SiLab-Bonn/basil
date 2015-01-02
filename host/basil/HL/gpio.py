@@ -4,46 +4,47 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
-
 
 class gpio(RegisterHardwareLayer):
     '''GPIO interface
     '''
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
-                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}}
-                  # TODO: registers needs to be adjusted to module parameters:
-                  # parameter IO_WIDTH = 8,
-                  # parameter IO_DIRECTION = 0,
-                  # parameter IO_TRI = 0
-    }
+                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}}    
+                 }
 
     def __init__(self, intf, conf):
-        super(gpio, self).__init__(intf, conf)
 
+        io_width = 8
+        if 'size' in conf.keys():
+            io_width = conf['size']
+        
+        io_bytes = ((io_width - 1) / 8) + 1
+        
+        self._registers['INPUT'] = {'descr': {'addr': 1, 'size': io_bytes, 'properties': ['ro', 'byte_array']}}
+        self._registers['OUTPUT'] = {'descr': {'addr': 2+io_bytes-1, 'size': io_bytes, 'properties': ['byte_array']}}
+        self._registers['OUTPUT_EN'] = {'descr': {'addr': 3+2*(io_bytes-1), 'size': io_bytes, 'properties': ['byte_array']}}
+        
+        super(gpio, self).__init__(intf, conf)
+        
     def init(self):
-        if 'direction' in self._init:
-            self.set_direction(0, self._init['direction'])
+        if 'output_en' in self._init:
+            self.OUTPUT_EN = self._init['output_en']
 
     def reset(self):
         '''Soft reset the module.'''
-        self._intf.write(self._conf['base_addr'], [0])
+        self.RESET = 0
 
-    def set_direction(self, addr, value):
-        self._intf.write(self._conf['base_addr'] + 3, value)
+    def set_output_en(self, data):
+        self.OUTPUT_EN = data
 
-    def get_direction(self, addr):
-        return self._intf.read(self._conf['base_addr'] + 3, size=1)
+    def get_output_en(self):
+        return self.OUTPUT_EN
 
-    def set_data(self, data):
-        self._intf.write(self._conf['base_addr'] + 2, data)
+    def set_data(self, data, **kwargs):
+        self.OUTPUT = data
 
-    def get_data(self):
-        return self._intf.read(self._conf['base_addr'] + 1, size=1)
+    def get_data(self, **kwargs):
+        return self.INPUT
