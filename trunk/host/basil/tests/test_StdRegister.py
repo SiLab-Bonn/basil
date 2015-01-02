@@ -4,11 +4,6 @@
 # SiLab , Physics Institute of Bonn University
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 
 import unittest
 
@@ -28,7 +23,7 @@ class TestClass(unittest.TestCase):
     def test_init_simple(self):
         self.dut['TEST1'].write()
         mem = dict()
-        mem[0] = 0  # reset
+        #mem[0] = 0  # reset
         mem[8] = 0  # has an offset of 8 bytes
         mem[9] = 0
         mem[10] = 0
@@ -71,7 +66,7 @@ class TestClass(unittest.TestCase):
     def test_bit_order(self):
         self.dut['TEST2'].write()
         mem = dict()
-        mem[0] = 0  # reset
+        #mem[0] = 0  # reset
         mem[8] = 0
         mem[9] = 0
         mem[10] = 0
@@ -130,7 +125,7 @@ class TestClass(unittest.TestCase):
         self.dut.init()
         
         mem = dict()
-        mem[0] = 0  # reset
+        #mem[0] = 0  # reset
         mem[8] = 0x08
         mem[9] = 0
         mem[10] = 0
