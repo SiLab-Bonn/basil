@@ -4,15 +4,11 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
+
 import logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
 from importlib import import_module
-from inspect import getmembers
+from inspect import getmembers, isclass
 from yaml import safe_load
 
 
@@ -125,13 +121,13 @@ class Dut(Base):
     
     def set_configuration(self, conf):
         conf = self._open_conf(conf)
-
         if conf:
             for item, item_conf in conf.iteritems():
-                try:
-                    self[item].set_configuration(item_conf)
-                except NotImplementedError:
-                    pass
+                if item != 'conf_path':
+                    try:
+                        self[item].set_configuration(item_conf)
+                    except NotImplementedError:
+                        pass
 
     def get_configuration(self):
         conf = {}
@@ -227,17 +223,22 @@ class Dut(Base):
                         raise ValueError('No driver specified for register: %s' % (reg['name'],))
 
     def _factory(self, importname, *args, **kargs):
-        def is_base_class(item):
-            return isinstance(item, Base.__class__) and item.__module__ == importname
+        def is_base_class(item):            
+            return isclass(item) and issubclass(item, Base) and item.__module__ == importname
 
         try:
             mod = import_module(importname)
         except ImportError:
-            mod = import_module(importname.split('.')[-1])
+            if(len(importname) > 9):
+                importname = importname[9:]
+                mod = import_module(importname)   
+            else:
+                raise ImportError("Error importing module %s", importname)
         clsmembers = getmembers(mod, is_base_class)
         if len(clsmembers) > 1:
             raise ValueError('Found more than one matching class in %s.' % importname)
         elif not len(clsmembers):
+            
             raise ValueError('Found no matching class in %s.' % importname)
         cls = clsmembers[0][1]
         return cls(*args, **kargs)

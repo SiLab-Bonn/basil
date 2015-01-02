@@ -4,20 +4,16 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev:: 304                   $:
-#  $Author:: jejan              $:
-#  $Date:: 2014-06-10 17:49:43 #$:
-#
 
 
 from basil.HL.HardwareLayer import HardwareLayer
 
 from copy import deepcopy
-
+import collections
+import array
 read_only = ['read-only', 'readonly', 'ro']
 write_only = ['write-only', 'writeonly', 'wo']
-
+is_byte_array = ['byte_array']
 
 class RegisterHardwareLayer(HardwareLayer, dict):
     '''Register Hardware Layer.
@@ -90,11 +86,16 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             # return nothing to prevent misuse
         else:
             descr.setdefault('offset', 0)
-            ret_val = self.get_value(**descr)
-            curr_val = dict.__getitem__(self, reg)
-#             curr_val = self.setdefault(reg, None)
+            if 'properties' in descr and [i for i in is_byte_array if i in descr['properties']]:
+                ret_val = super(RegisterHardwareLayer, self).get_data(descr['addr'], descr['size'])
+                ret_val = array.array('B', ret_val).tolist() #is this smart?
+                curr_val = dict.__getitem__(self, reg) 
+            else:
+                ret_val = super(RegisterHardwareLayer, self).get_value(**descr)
+                curr_val = dict.__getitem__(self, reg)
+    #             curr_val = self.setdefault(reg, None)
             if curr_val and curr_val != ret_val:
-                raise ValueError('Read value was not expected: read: %d, expected: %d' % (ret_val, curr_val))
+                raise ValueError('Read value was not expected: read: %s, expected: %s' % (str(ret_val), str(curr_val)))
             return ret_val
 
     def _set(self, reg, value):
@@ -102,12 +103,20 @@ class RegisterHardwareLayer(HardwareLayer, dict):
         if 'properties' in descr and [i for i in read_only if i in descr['properties']]:
             raise IOError('Register is read-only')
         descr.setdefault('offset', 0)
-        try:
-            self.set_value(value, **descr)
-        except ValueError:
-            raise
+
+        if 'properties' in descr and [i for i in is_byte_array if i in descr['properties']]: 
+            if not isinstance(value, collections.Iterable):
+                raise ValueError('For array byte_register iterable object is needed')
+            value = array.array('B', value).tolist()
+            super(RegisterHardwareLayer, self).set_data(value, **descr)
+            dict.__setitem__(self, reg, value)
         else:
-            dict.__setitem__(self, reg, value if isinstance(value, (int, long)) else int(value, base=2))
+            try:
+                super(RegisterHardwareLayer, self).set_value(value, **descr)
+            except ValueError:
+                raise
+            else:
+                dict.__setitem__(self, reg, value if isinstance(value, (int, long)) else int(value, base=2))
 
     def __getitem__(self, name):
         return self._get(name)
