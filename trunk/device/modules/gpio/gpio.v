@@ -4,10 +4,6 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $:
- *  $Date::                      $:
  */
 
 `default_nettype none
@@ -34,7 +30,7 @@ module gpio
 // --------
 // ORDER:
 // 0 - RESET
-// 1*B - INPUT
+// 1*B - INPUT (readback)
 // 2*B - OUTPUT
 // 3*B - DIRECTION/OUTPUT_ENABLE
 // B = IO_WIDTH/8+1
@@ -82,11 +78,11 @@ always @ (posedge BUS_CLK) begin
     if(IP_ADD == 0)
         IP_DATA_OUT <= VERSION;
     else if(IP_ADD - 1 < IO_BYTES)
-        IP_DATA_OUT <= INPUT_DATA[IP_ADD - 1];
+        IP_DATA_OUT <= INPUT_DATA[IO_BYTES - IP_ADD];
     else if(IP_ADD - (IO_BYTES+1) < IO_BYTES)
-        IP_DATA_OUT <= OUTPUT_DATA[IP_ADD - (IO_BYTES+1)];
+        IP_DATA_OUT <= OUTPUT_DATA[(IO_BYTES*2) - IP_ADD];
     else if(IP_ADD - (IO_BYTES*2+1) < IO_BYTES)
-        IP_DATA_OUT <= DIRECTION_DATA[IP_ADD - (IO_BYTES*2+1)];
+        IP_DATA_OUT <= DIRECTION_DATA[(IO_BYTES*3) - IP_ADD];
     else
         IP_DATA_OUT <= 8'b0;
 end
@@ -108,9 +104,9 @@ always @(posedge BUS_CLK) begin
         if(IP_ADD - 1 < IO_BYTES)
             ;
         else if(IP_ADD - (IO_BYTES+1) < IO_BYTES)
-            OUTPUT_DATA[IP_ADD - (IO_BYTES+1)] <= IP_DATA_IN;
+            OUTPUT_DATA[(IO_BYTES*2) - IP_ADD] <= IP_DATA_IN;
         else if(IP_ADD - (IO_BYTES*2+1) < IO_BYTES)
-            DIRECTION_DATA[IP_ADD - (IO_BYTES*2+1)] <= IP_DATA_IN;
+            DIRECTION_DATA[(IO_BYTES*3) - IP_ADD] <= IP_DATA_IN;
     end
 end
 

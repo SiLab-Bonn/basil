@@ -77,7 +77,9 @@ def socket_test(dut, debug=True):
                 yield bus.write(req.address, req.data)
             elif isinstance(req, ReadRequest):
                 result = yield bus.read(req.address, req.size)
-                iface.send(ReadResponse(result))
+                resp = ReadResponse(result)
+                dut.log.debug("Send: %s" % str(resp))
+                iface.send(resp)
             else:
                 raise NotImplementedError("Unsupported request type: %s" % str(type(req)))
             

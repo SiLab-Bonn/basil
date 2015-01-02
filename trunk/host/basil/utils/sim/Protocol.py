@@ -23,20 +23,20 @@ class WriteRequest(ProtocolBase):
         self.data = data
 
     def __str__(self):
-        return "WriteExternalRequest: 0x%04x <- %s" % (self.address, self.data)
+        return "WriteRequest: 0x%04x <- %s" % (self.address, self.data)
 
 class ReadRequest(ProtocolBase):
     def __init__(self, address, size):
         self.address = address
         self.size = size
     def __str__(self):
-        return "ReadExternalRequest: 0x%04x (size %d)" % (self.address, self.size)
+        return "ReadRequest: 0x%04x (size %d)" % (self.address, self.size)
 
 class ReadResponse(ProtocolBase):
     def __init__(self, data):
         self.data = data
     def __str__(self):
-        return "ReadExternalResponse: %s" % str(self.data)
+        return "ReadResponse: %s" % str(self.data)
         
 class PickleInterface(ProtocolBase):
 
