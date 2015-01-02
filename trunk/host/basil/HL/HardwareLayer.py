@@ -4,11 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 
 from basil.dut import Base
 from basil.utils.BitLogic import BitLogic
@@ -62,7 +57,7 @@ class HardwareLayer(Base):
         elif isinstance(value, basestring):
             reg[size + offset - 1:offset] = BitLogic(value)
         else:
-            raise ValueError('Type not supported')
+            raise ValueError('Type not supported %s', type(value))
         self._intf.write(self._base_addr + addr, data=array('B', reg.tobytes()))
 
     def get_value(self, addr, size, offset, **kwargs):
