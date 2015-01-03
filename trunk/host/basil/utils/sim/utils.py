@@ -7,6 +7,7 @@
 
 import subprocess
 import time
+import os
 
 def cocotb_makefile(sim_files, top_level = 'tb', test_module='basil.utils.sim.Test' ,sim_host='localhost', sim_port=12345, sim_bus='basil.utils.sim.BasilBusDriver', 
                     end_on_disconnect=True, include_dirs=['../../../device/modules', '../../../device/modules/includes'] ):
@@ -41,13 +42,14 @@ def cocotb_compile_and_run(verilog_sources):
     file = open('Makefile','w')
     file.write(cocotb_makefile(verilog_sources, top_level='none'))
     file.close()
-    subprocess.call("make", shell=True) 
+    FNULL = open(os.devnull, 'w')
+    subprocess.call("make", shell=True, stdout=FNULL, stderr=subprocess.STDOUT) 
     
     #run simulator in background
     file = open('Makefile','w')
     file.write(cocotb_makefile(verilog_sources))
     file.close()
     subprocess.Popen(['make']) 
-    time.sleep(3)
+    time.sleep(2)
     
     
