@@ -31,6 +31,9 @@ export SIMULATION_PORT
 export SIMULATION_BUS
 export SIMULATION_END_ON_DISCONNECT
 
+TOPLEVEL_LANG?=verilog
+export TOPLEVEL_LANG
+
 include $(COCOTB)/makefiles/Makefile.inc
 include $(COCOTB)/makefiles/Makefile.sim
     """
