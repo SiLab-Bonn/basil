@@ -40,19 +40,10 @@ include $(COCOTB)/makefiles/Makefile.sim
     
     return mkfile
 
-def cocotb_compile_and_run(verilog_sources):
-    #thiscompile files but will not run simulation -> explicit error
-    file = open('Makefile','w')
-    file.write(cocotb_makefile(verilog_sources, top_level='none'))
-    file.close()
-    FNULL = open(os.devnull, 'w')
-    subprocess.call("make", shell=True, stdout=FNULL, stderr=subprocess.STDOUT) 
-    
+def cocotb_compile_and_run(verilog_sources):    
     #run simulator in background
     file = open('Makefile','w')
     file.write(cocotb_makefile(verilog_sources))
     file.close()
     subprocess.Popen(['make']) 
-    time.sleep(2)
-    
     

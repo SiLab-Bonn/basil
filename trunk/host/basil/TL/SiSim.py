@@ -9,6 +9,7 @@
 
 import socket
 import array
+import time
 
 from basil.TL.TransferLayer import TransferLayer
 from basil.utils.sim.Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
@@ -29,8 +30,14 @@ class SiSim (TransferLayer):
         port = 12345
         if 'port' in self._init.keys():
             port = self._init['port']
-            
-        self._sock.connect((host, port))
+        
+        # try few times for simulator to setup
+        try_cnt = 60
+        while(self._sock.connect_ex((host, port)) != 0 or try_cnt > 0):
+            time.sleep(1)
+            try_cnt =- 1
+            #print 'WAIT'
+        
         self._iface = PickleInterface(self._sock) #exeption?
 
     def write(self, addr, data):
