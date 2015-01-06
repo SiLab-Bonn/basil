@@ -2,22 +2,18 @@
  * ------------------------------------------------------------
  * Copyright (c) SILAB , Physics Institute of Bonn University 
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
  
 module fast_spi_rx
 #(
     parameter BASEADDR = 16'h0000,
     parameter HIGHADDR = 16'h0000,
+    parameter ABUSWIDTH = 16,
     
     parameter IDENTYFIER = 4'b0001
 )(
     input wire BUS_CLK,
-    input wire [15:0] BUS_ADD,
+    input wire [ABUSWIDTH-1:0] BUS_ADD,
     inout wire [7:0] BUS_DATA,
     input wire BUS_RST,
     input wire BUS_WR,
@@ -34,11 +30,11 @@ module fast_spi_rx
 ); 
 
     wire IP_RD, IP_WR;
-    wire [15:0] IP_ADD;
+    wire [ABUSWIDTH-1:0] IP_ADD;
     wire [7:0] IP_DATA_IN;
     wire [7:0] IP_DATA_OUT;
     
-    bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
+    bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i_bus_to_ip
     (
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
@@ -54,6 +50,7 @@ module fast_spi_rx
     
     fast_spi_rx_core 
     #(
+        .ABUSWIDTH(ABUSWIDTH),
         .IDENTYFIER(IDENTYFIER)
     ) i_fast_spi_rx_core 
     (
