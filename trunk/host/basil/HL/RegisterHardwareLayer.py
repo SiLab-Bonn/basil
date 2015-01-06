@@ -88,13 +88,13 @@ class RegisterHardwareLayer(HardwareLayer, dict):
                 self._set(reg, 0)
             # return nothing to prevent misuse
         else:
-            descr.setdefault('offset', 0)
             if 'properties' in descr and [i for i in is_byte_array if i in descr['properties']]:
-                ret_val = self.get_data(**descr)
+                ret_val = super(RegisterHardwareLayer, self).get_data(**descr)
                 ret_val = array.array('B', ret_val).tolist()
                 curr_val = dict.__getitem__(self, reg)
             else:
-                ret_val = self.get_value(**descr)
+                descr.setdefault('offset', 0)
+                ret_val = super(RegisterHardwareLayer, self).get_value(**descr)
                 curr_val = dict.__getitem__(self, reg)
     #             curr_val = self.setdefault(reg, None)
             if curr_val is not None and curr_val != ret_val:
@@ -105,8 +105,6 @@ class RegisterHardwareLayer(HardwareLayer, dict):
         descr = deepcopy(self._registers[reg]['descr'])
         if 'properties' in descr and [i for i in read_only if i in descr['properties']]:
             raise IOError('Register is read-only')
-        descr.setdefault('offset', 0)
-
         if 'properties' in descr and [i for i in is_byte_array if i in descr['properties']]: 
             if not isinstance(value, collections.Iterable):
                 raise ValueError('For array byte_register iterable object is needed')
@@ -114,6 +112,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             super(RegisterHardwareLayer, self).set_data(value, **descr)
             dict.__setitem__(self, reg, value)
         else:
+            descr.setdefault('offset', 0)
             try:
                 super(RegisterHardwareLayer, self).set_value(value, **descr)
             except ValueError:
