@@ -39,9 +39,14 @@ include $(COCOTB)/makefiles/Makefile.sim
 
     return mkfile
 
-
 def cocotb_compile_and_run(verilog_sources):
     # run simulator in background
     with open('Makefile', 'w') as f:
         f.write(cocotb_makefile(verilog_sources))
     subprocess.Popen(['make'])
+    
+    
+def cocotb_compile_clean():
+    subprocess.call('make clean', shell=True)
+    subprocess.call('rm -f Makefile', shell=True)
+    
