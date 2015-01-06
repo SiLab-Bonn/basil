@@ -18,7 +18,7 @@ class HardwareLayer(Base):
     '''
     def __init__(self, intf, conf):
         super(HardwareLayer, self).__init__(conf)
-        if intf != None:
+        if intf is not None:
             self._intf = intf
             self._base_addr = conf['base_addr']
 
@@ -57,7 +57,7 @@ class HardwareLayer(Base):
         elif isinstance(value, basestring):
             reg[size + offset - 1:offset] = BitLogic(value)
         else:
-            raise ValueError('Type not supported %s', type(value))
+            raise ValueError('Type not supported: %s' % type(value))
         self._intf.write(self._base_addr + addr, data=array('B', reg.tobytes()))
 
     def get_value(self, addr, size, offset, **kwargs):
