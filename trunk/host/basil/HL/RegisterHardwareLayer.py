@@ -42,8 +42,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
 
     def init(self):
         if logging.getLogger().isEnabledFor(logging.DEBUG):
-            if 'VERSION' in self._registers:
-                logging.debug("Initializing %s from module %s (Version %d)" % (self.__class__.__name__, self.__class__.__module__, self.VERSION))
+            logging.debug("Initializing %s from module %s (Version %s)" % (self.__class__.__name__, self.__class__.__module__, str(self.VERSION) if 'VERSION' in self._registers else 'n/a'))
         for reg, value in self._registers.iteritems():
             if reg in self._init:
                 self[reg] = self._init[reg]
