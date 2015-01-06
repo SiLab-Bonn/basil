@@ -1,14 +1,8 @@
 # SiLab , Physics Institute of Bonn University
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
-from struct import pack, unpack_from
 from array import array
 from time import sleep
 import numpy as np
@@ -33,14 +27,14 @@ class sram_fifo(RegisterHardwareLayer):
 #        self.reset()
 
     def reset(self):
-        self._intf.write(self._conf['base_addr'], (0,))
+        self.RESET = 0
         sleep(0.01)  # wait some time for initialization
 
     def set_almost_full_threshold(self, value):
-        self._intf.write(self._conf['base_addr'] + 1, array('B', pack('B', value)))  # no get function possible
+        self.ALMOST_FULL_THRESHOLD = value # no get function possible
 
     def set_almost_empty_threshold(self, value):
-        self._intf.write(self._conf['base_addr'] + 2, array('B', pack('B', value)))  # no get function possible
+        self.ALMOST_EMPTY_THRESHOLD = value # no get function possible
 
     def get_fifo_size(self):
         '''
@@ -87,8 +81,7 @@ class sram_fifo(RegisterHardwareLayer):
         fifo_size : int
             Read error counter (read attempts when SRAM is empty).
         '''
-        ret = self._intf.read(self._conf['base_addr'] + 3, size=1)
-        return unpack_from('B', ret)[0]
+        return self.READ_ERROR_COUNTER
 
     def get_data(self):
         '''
