@@ -4,13 +4,12 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-
-
-from basil.HL.HardwareLayer import HardwareLayer
-
+import logging
 from copy import deepcopy
 import collections
 import array
+
+from basil.HL.HardwareLayer import HardwareLayer
 
 # description attributes
 read_only = ['read_only', 'read-only', 'readonly', 'ro']
@@ -42,6 +41,9 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             dict.__setitem__(self, reg, None)  # set values, but not writing to the interface
 
     def init(self):
+        if logging.getLogger().isEnabledFor(logging.DEBUG):
+            if 'VERSION' in self._registers:
+                logging.debug("Initializing %s from module %s (Version %d)" % (self.__class__.__name__, self.__class__.__module__, self.VERSION))
         for reg, value in self._registers.iteritems():
             if reg in self._init:
                 self[reg] = self._init[reg]
