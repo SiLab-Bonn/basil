@@ -11,9 +11,12 @@ from basil.HL.HardwareLayer import HardwareLayer
 from copy import deepcopy
 import collections
 import array
-read_only = ['read-only', 'readonly', 'ro']
-write_only = ['write-only', 'writeonly', 'wo']
-is_byte_array = ['byte_array']
+
+# description attributes
+read_only = ['read_only', 'read-only', 'readonly', 'ro']
+write_only = ['write_only', 'write-only', 'writeonly', 'wo']
+is_byte_array = ['byte_array', 'byte-array', 'bytearray']
+
 
 class RegisterHardwareLayer(HardwareLayer, dict):
     '''Register Hardware Layer.
@@ -87,14 +90,14 @@ class RegisterHardwareLayer(HardwareLayer, dict):
         else:
             descr.setdefault('offset', 0)
             if 'properties' in descr and [i for i in is_byte_array if i in descr['properties']]:
-                ret_val = super(RegisterHardwareLayer, self).get_data(descr['addr'], descr['size'])
-                ret_val = array.array('B', ret_val).tolist() #is this smart?
-                curr_val = dict.__getitem__(self, reg) 
+                ret_val = self.get_data(**descr)
+                ret_val = array.array('B', ret_val).tolist()
+                curr_val = dict.__getitem__(self, reg)
             else:
-                ret_val = super(RegisterHardwareLayer, self).get_value(**descr)
+                ret_val = self.get_value(**descr)
                 curr_val = dict.__getitem__(self, reg)
     #             curr_val = self.setdefault(reg, None)
-            if curr_val and curr_val != ret_val:
+            if curr_val is not None and curr_val != ret_val:
                 raise ValueError('Read value was not expected: read: %s, expected: %s' % (str(ret_val), str(curr_val)))
             return ret_val
 
