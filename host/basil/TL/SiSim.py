@@ -33,11 +33,12 @@ class SiSim (TransferLayer):
         
         # try few times for simulator to setup
         try_cnt = 60
-        while(self._sock.connect_ex((host, port)) != 0 or try_cnt > 0):
-            time.sleep(1)
-            try_cnt =- 1
-            #print 'WAIT'
-        
+        while(self._sock.connect_ex((host, port)) != 0):
+            time.sleep(0.5)
+            try_cnt -= 1
+            if( try_cnt < 1):
+                raise IOError("No connection to simulation server.")
+                 
         self._iface = PickleInterface(self._sock) #exeption?
 
     def write(self, addr, data):

@@ -28,9 +28,10 @@ module tb (
     input           BUS_CLK,
     input           BUS_RST,
     input   [31:0]  BUS_ADD,
-    inout   [7:0]   BUS_DATA,
+    inout   [31:0]  BUS_DATA,
     input           BUS_RD,
-    input           BUS_WR
+    input           BUS_WR,
+    output wire     BUS_BYTE_ACCESS
 );   
 
     localparam GPIO_BASEADDR = 16'h0000;
@@ -46,7 +47,7 @@ module tb (
     localparam FIFO_HIGHADDR_DATA = 32'h9000_0000;
  
     localparam ABUSWIDTH = 32;
-    
+    assign BUS_BYTE_ACCESS = BUS_ADD < 32'h8000_0000 ? 1'b1 : 1'b0;
     
     wire TLU_CMD_EXT_START_FLAG, CMD_EXT_START_ENABLE;
     
@@ -62,7 +63,7 @@ module tb (
         .BUS_CLK(BUS_CLK),
         .BUS_RST(BUS_RST),
         .BUS_ADD(BUS_ADD),
-        .BUS_DATA(BUS_DATA),
+        .BUS_DATA(BUS_DATA[7:0]),
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
         .IO()
@@ -87,7 +88,7 @@ module tb (
         .BUS_CLK(BUS_CLK),
         .BUS_RST(BUS_RST),
         .BUS_ADD(BUS_ADD),
-        .BUS_DATA(BUS_DATA),
+        .BUS_DATA(BUS_DATA[7:0]),
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
         
@@ -129,7 +130,6 @@ module tb (
     assign FIFO_EMPTY = TLU_FIFO_EMPTY;
     assign TLU_FIFO_READ = FIFO_READ;
     
-    wire [23:0] NO_CON_TODO;
     bram_fifo 
     #(
         .BASEADDR(FIFO_BASEADDR),
@@ -141,7 +141,7 @@ module tb (
         .BUS_CLK(BUS_CLK),
         .BUS_RST(BUS_RST),
         .BUS_ADD(BUS_ADD),
-        .BUS_DATA({NO_CON_TODO, BUS_DATA}),
+        .BUS_DATA(BUS_DATA),
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
 
