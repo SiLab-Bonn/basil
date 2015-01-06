@@ -14,7 +14,7 @@ from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 _test_init = {
     'REG_test_init': 15,
     'REG1': 120,
-    'REG_byte_array': [4,3,2,1]
+    'REG_byte_array': [4, 3, 2, 1]
 }
 
 
@@ -30,7 +30,7 @@ class test_RegisterHardwareLayer(RegisterHardwareLayer):
         'REG4_ro': {'default': 0, 'descr': {'addr': 4, 'size': 8, 'properties': ['readonly']}},
         'REG5_wo': {'default': 0, 'descr': {'addr': 5, 'size': 8, 'properties': ['writeonly']}},
         'REG_test_init': {'descr': {'addr': 6, 'size': 8}},
-        'REG_byte_array': {'default': [1,2,3,4], 'descr': {'addr': 16, 'size': 4, 'properties': ['byte_array']}}
+        'REG_byte_array': {'default': [1, 2, 3, 4], 'descr': {'addr': 16, 'size': 4, 'properties': ['bytearray']}}
     }
 
 
