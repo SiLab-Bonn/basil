@@ -20,7 +20,8 @@ from cocotb.clock import Clock
 class BasilBusDriver(BusDriver):
 
     _signals = ["BUS_CLK", "BUS_RST", "BUS_DATA", "BUS_ADD", "BUS_RD", "BUS_WR"]
-
+    _optional_signals = ["BUS_BYTE_ACCESS"]
+    
     def __init__(self, entity):
         BusDriver.__init__(self, entity, "", entity.BUS_CLK)
 
@@ -31,7 +32,9 @@ class BasilBusDriver(BusDriver):
         # Create an appropriately sized high-impedence value
         self._x = BinaryValue(bits=len(self.bus.BUS_ADD))
         self._x.binstr = "x"*len(self.bus.BUS_ADD)
-
+        
+        self._has_byte_acces = False
+        
         # Kick off a clock generator
         cocotb.fork(Clock(self.clock, 5000).start())
     
@@ -44,7 +47,8 @@ class BasilBusDriver(BusDriver):
         self.bus.BUS_WR   <= 0
         self.bus.BUS_ADD  <= self._x
         self.bus.BUS_DATA <= self._high_impedence
-     
+        
+            
         for i in range(5):
             yield RisingEdge(self.clock)
         
@@ -53,6 +57,14 @@ class BasilBusDriver(BusDriver):
         for i in range(5):
             yield RisingEdge(self.clock)
 
+        # why this does not work? hasattr(self.bus, 'BUS_BYTE_ACCESS'):
+        try:
+            getattr(self.bus, 'BUS_BYTE_ACCESS')
+        except:
+            self._has_byte_acces = False
+        else:
+            self._has_byte_acces = True
+            
     @cocotb.coroutine
     def read(self, address, size):
         result = []
@@ -63,21 +75,30 @@ class BasilBusDriver(BusDriver):
         
         yield RisingEdge(self.clock)
         
-        for byte in xrange(size):
-            #self.bus.BUS_DATA   <= self._high_impedence
-            self.bus.BUS_RD     <= 1
-            self.bus.BUS_ADD    <= address + byte
-            #yield Timer(500) # This is hack for iverilog
-            self.bus.BUS_RD     <= 1
-            self.bus.BUS_ADD    <= address + byte
+        byte = 0;
+        while(byte <= size):            
+            if(byte == size):
+                self.bus.BUS_RD     <= 0
+            else:
+                self.bus.BUS_RD     <= 1
+                self.bus.BUS_ADD    <= address + byte
+
             yield RisingEdge(self.clock)
+            
             if(byte != 0):
-                result.append(self.bus.BUS_DATA.value.integer)
-        
-        self.bus.BUS_RD     <= 0
-        yield RisingEdge(self.clock)
-        result.append(self.bus.BUS_DATA.value.integer)
-        
+                if(self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value.integer == 0):
+                    result.append(self.bus.BUS_DATA.value.integer & 0x000000ff)
+                    result.append((self.bus.BUS_DATA.value.integer & 0x0000ff00) >> 8 )
+                    result.append((self.bus.BUS_DATA.value.integer & 0x00ff0000) >> 16 )
+                    result.append((self.bus.BUS_DATA.value.integer & 0xff000000) >> 24 )
+                else:
+                    result.append(self.bus.BUS_DATA.value.integer & 0xff)
+
+            if(self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value.integer == 0):
+                byte += 4
+            else:
+                byte += 1
+           
         self.bus.BUS_ADD    <= self._x
         self.bus.BUS_DATA   <= self._high_impedence
         yield RisingEdge(self.clock)
@@ -101,7 +122,11 @@ class BasilBusDriver(BusDriver):
             self.bus.BUS_DATA   <= byte
             self.bus.BUS_WR     <= 1
             self.bus.BUS_ADD    <= address + index
+            
             yield RisingEdge(self.clock)
+            
+        if(self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value.integer == 0):
+            raise NotImplementedError("BUS_BYTE_ACCESS for write to be implemented.") 
             
         self.bus.BUS_DATA   <= self._high_impedence
         self.bus.BUS_ADD    <= self._x
@@ -109,6 +134,5 @@ class BasilBusDriver(BusDriver):
         
         yield RisingEdge(self.clock)
         
-
 
 
