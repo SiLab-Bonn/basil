@@ -2,15 +2,11 @@
  * ------------------------------------------------------------
  * Copyright (c) SILAB , Physics Institute of Bonn University 
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
  
 module fast_spi_rx_core
 #(
+    parameter ABUSWIDTH = 16,
     parameter IDENTYFIER = 4'b0001
 )(
     input SCLK,
@@ -22,7 +18,7 @@ module fast_spi_rx_core
     output [31:0] FIFO_DATA,
 
     input BUS_CLK,
-    input [15:0] BUS_ADD,
+    input [ABUSWIDTH-1:0] BUS_ADD,
     input [7:0] BUS_DATA_IN,
     output reg [7:0] BUS_DATA_OUT,
     input BUS_RST,
