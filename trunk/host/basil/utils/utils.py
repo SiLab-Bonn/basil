@@ -16,14 +16,12 @@ from bitarray import bitarray
 
 
 def logging(fn):
-
     def wrapped(*args, **kargs):
         print 'loging:', locals()
-        #if args:
-        #    print("loging: arguments: " + str(args))
-        #if kargs:
-        #    print("loging: kargs: " + str(kargs))
-
+#         if args:
+#             print("loging: arguments: " + str(args))
+#         if kargs:
+#             print("loging: kargs: " + str(kargs))
         return fn(*args, **kargs)
     return wrapped
 
