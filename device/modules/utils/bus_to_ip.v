@@ -35,7 +35,7 @@ assign IP_WR = CS ? BUS_WR: 1'b0;
 assign IP_DATA_IN =  BUS_DATA;
 
 //assign BUS_DATA = (CS && BUS_WR) ? {DBUSWIDTH{1'bz}} : (CS ? IP_DATA_OUT : {DBUSWIDTH{1'bz}});
-//This is is same as above but vor Icarus + cocootb makes a diffrence (a bug)
+// This is same as above but for Icarus + cocotb this change is needed, and yes, in one line, bug?
 reg [DBUSWIDTH-1:0] TMP; always@(*) TMP = (CS & BUS_WR) ? {DBUSWIDTH{1'bz}} : (CS ? IP_DATA_OUT : {DBUSWIDTH{1'bz}}); assign BUS_DATA = TMP;
 
 endmodule
