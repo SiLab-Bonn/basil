@@ -96,7 +96,6 @@ always @ (posedge BUS_CLK) begin //(*) begin
         BUS_DATA_OUT <= 8'b0;
 end
 
-
 //reg                   FIFO_READ_NEXT_OUT_BUF;
 wire                  FIFO_EMPTY_IN_BUF;
 wire [31:0]           FIFO_DATA_BUF;
@@ -104,7 +103,9 @@ wire FULL_BUF;
 
 assign FIFO_READ_NEXT_OUT = !FULL_BUF;
 
-    
+`include "../includes/log2func.v"
+localparam POINTER_SIZE = `CLOG2(DEPTH);
+
 gerneric_fifo #(.DATA_SIZE(32), .DEPTH(DEPTH))  i_buf_fifo
 ( .clk(BUS_CLK), .reset(RST), 
     .write(!FIFO_EMPTY_IN || BUS_WR_DATA),
@@ -112,8 +113,9 @@ gerneric_fifo #(.DATA_SIZE(32), .DEPTH(DEPTH))  i_buf_fifo
     .data_in(BUS_WR_DATA ? BUS_DATA_IN_DATA : FIFO_DATA), 
     .full(FULL_BUF), 
     .empty(FIFO_EMPTY_IN_BUF), 
-    .data_out(FIFO_DATA_BUF[31:0]), .size(CONF_SIZE)
+    .data_out(FIFO_DATA_BUF[31:0]), .size(CONF_SIZE[POINTER_SIZE-1:0])
 );
+assign CONF_SIZE[31:POINTER_SIZE] = 0;
 
 always@(posedge BUS_CLK)
     BUS_DATA_OUT_DATA <= FIFO_DATA_BUF;
