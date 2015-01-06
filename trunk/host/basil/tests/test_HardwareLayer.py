@@ -12,7 +12,7 @@ from basil.dut import Dut
 
 class TestHardwareLayer(unittest.TestCase):
     def setUp(self):
-        self.dut = Dut('test_RegisterHardwareLayer.yaml')
+        self.dut = Dut('test_HardwareLayer.yaml')
 
     def test_write_read_reg(self):
         for val in range(256):
