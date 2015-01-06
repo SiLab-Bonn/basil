@@ -7,28 +7,29 @@
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
+
 class gpio(RegisterHardwareLayer):
     '''GPIO interface
     '''
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
-                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}}    
-                 }
+                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}}
+    }
 
     def __init__(self, intf, conf):
 
         io_width = 8
         if 'size' in conf.keys():
             io_width = conf['size']
-        
+
         io_bytes = ((io_width - 1) / 8) + 1
-        
+
         self._registers['INPUT'] = {'descr': {'addr': 1, 'size': io_bytes, 'properties': ['ro', 'byte_array']}}
-        self._registers['OUTPUT'] = {'descr': {'addr': 2+io_bytes-1, 'size': io_bytes, 'properties': ['byte_array']}}
-        self._registers['OUTPUT_EN'] = {'descr': {'addr': 3+2*(io_bytes-1), 'size': io_bytes, 'properties': ['byte_array']}}
-        
+        self._registers['OUTPUT'] = {'descr': {'addr': 2 + io_bytes - 1, 'size': io_bytes, 'properties': ['byte_array']}}
+        self._registers['OUTPUT_EN'] = {'descr': {'addr': 3 + 2 * (io_bytes - 1), 'size': io_bytes, 'properties': ['byte_array']}}
+
         super(gpio, self).__init__(intf, conf)
-        
+
     def init(self):
         if 'output_en' in self._init:
             self.OUTPUT_EN = self._init['output_en']
