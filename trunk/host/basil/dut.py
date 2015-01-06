@@ -155,7 +155,6 @@ class Dut(Base):
 
     def load_hw_configuration(self, conf, extend_config=False):
         conf = self._open_conf(conf)
-
         if extend_config:
             self._conf.update(conf)
         else:
@@ -229,10 +228,11 @@ class Dut(Base):
             mod = import_module(importname)
         except ImportError:
             exc = sys.exc_info()
-            split_import_names = importname.split('.')
-            if len(split_import_names) > 2:  # give it another try
+            splitted_import_name = importname.split('.')
+            if len(splitted_import_name) > 2:  # give it another try
                 try:
-                    mod = import_module('.'.join(split_import_names[2:]))  # remove "basil.RL." etc.
+                    importname = '.'.join(splitted_import_name[2:])  # remove "basil.RL." etc.
+                    mod = import_module(importname)
                 except ImportError:
                     raise exc[0], exc[1], exc[2]
             else:  # finally raise exception
