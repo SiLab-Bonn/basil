@@ -3,19 +3,16 @@
  * Copyright (c) SILAB , Physics Institute of Bonn University 
  * ------------------------------------------------------------
  *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
  
 module spi_core
 #(
+    parameter ABUSWIDTH = 16,
     parameter MEM_BYTES = 2
 )(
     input                       BUS_CLK,
     input                       BUS_RST,
-    input      [15:0]           BUS_ADD,
+    input      [ABUSWIDTH-1:0]  BUS_ADD,
     input      [7:0]            BUS_DATA_IN,
     input                       BUS_RD,
     input                       BUS_WR,
@@ -30,6 +27,7 @@ module spi_core
     output reg SEN,
     output reg SLD
 );
+
 
 reg [7:0] status_regs [8+MEM_BYTES*2-1:0];
 
@@ -81,53 +79,53 @@ assign BUS_STATUS_OUT = status_regs[BUS_ADD];
 
 localparam VERSION = 0;
 
+reg [7:0] BUS_DATA_OUT_REG;
 always@(posedge BUS_CLK) begin
     if(BUS_ADD == 0)
-        BUS_DATA_OUT <= VERSION;
+        BUS_DATA_OUT_REG <= VERSION;
     else if(BUS_ADD == 1)
-        BUS_DATA_OUT <= {7'b0,CONF_DONE};
+        BUS_DATA_OUT_REG <= {7'b0,CONF_DONE};
     else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= CONF_BIT_OUT[7:0];
+        BUS_DATA_OUT_REG <= CONF_BIT_OUT[7:0];
     else if(BUS_ADD == 4)
-        BUS_DATA_OUT <= CONF_BIT_OUT[15:8];
+        BUS_DATA_OUT_REG <= CONF_BIT_OUT[15:8];
     else if(BUS_ADD == 5)
-        BUS_DATA_OUT <= CONF_WAIT[7:0];
+        BUS_DATA_OUT_REG <= CONF_WAIT[7:0];
     else if(BUS_ADD == 6)
-        BUS_DATA_OUT <= CONF_WAIT[15:8]; 
+        BUS_DATA_OUT_REG <= CONF_WAIT[15:8]; 
     else if(BUS_ADD == 7)
-        BUS_DATA_OUT <= CONF_REPEAT;
+        BUS_DATA_OUT_REG <= CONF_REPEAT;
     else if(BUS_ADD < 8)
-        BUS_DATA_OUT <= BUS_STATUS_OUT;
-    else if(BUS_ADD < 8+MEM_BYTES )
-        BUS_DATA_OUT <= BUS_IN_MEM;
-    else if(BUS_ADD < 8+MEM_BYTES+ MEM_BYTES)
-        BUS_DATA_OUT <= BUS_OUT_MEM;
+        BUS_DATA_OUT_REG <= BUS_STATUS_OUT;     
 end
 
+always @(*) begin
+    if(BUS_ADD < 8)
+        BUS_DATA_OUT = BUS_DATA_OUT_REG;
+    else if(BUS_ADD < 8+MEM_BYTES )
+        BUS_DATA_OUT = BUS_IN_MEM;
+    else if(BUS_ADD < 8+MEM_BYTES+ MEM_BYTES)
+        BUS_DATA_OUT = BUS_OUT_MEM;
+end
+        
 reg [15:0] out_bit_cnt;
+
 
 wire [13:0] memout_addrb;
 assign memout_addrb = out_bit_cnt;
 wire [10:0] memout_addra;
 assign memout_addra =  (BUS_ADD-8);
 
-integer i;
 reg [7:0] BUS_DATA_IN_IB;
-always @(*) begin
-    for(i=0;i<8;i=i+1)
-        BUS_DATA_IN_IB[i] = BUS_DATA_IN[7-i];
-end
-
 wire [7:0] BUS_IN_MEM_IB;
-always @(*) begin
-    for(i=0;i<8;i=i+1)
-        BUS_IN_MEM[i] = BUS_IN_MEM_IB[7-i];
-end
-
 wire [7:0] BUS_OUT_MEM_IB;
+integer i;
 always @(*) begin
-    for(i=0;i<8;i=i+1)
+    for(i=0;i<8;i=i+1) begin
+        BUS_DATA_IN_IB[i] = BUS_DATA_IN[7-i];
+        BUS_IN_MEM[i] = BUS_IN_MEM_IB[7-i];
         BUS_OUT_MEM[i] = BUS_OUT_MEM_IB[7-i];
+    end
 end
 
 wire SDI_MEM;
@@ -136,6 +134,7 @@ blk_mem_gen_8_to_1_2k memout(
     .CLKA(BUS_CLK), .CLKB(SPI_CLK), .DOUTA(BUS_IN_MEM_IB), .DOUTB(SDI_MEM), .WEA(BUS_WR && BUS_ADD >=8 && BUS_ADD < 8+MEM_BYTES), .WEB(1'b0),
     .ADDRA(memout_addra), .ADDRB(memout_addrb), .DINA(BUS_DATA_IN_IB), .DINB(1'b0)
 );
+
 
 wire [10:0] ADDRA_MIN;
 assign ADDRA_MIN = (BUS_ADD-8-MEM_BYTES);
