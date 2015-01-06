@@ -430,7 +430,8 @@ flag_domain_crossing tlu_reset_flag_domain_crossing (
 
 // writing current TLU trigger number to register
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK;
-wire [31:0] TLU_TRIGGER_NUMBER_DATA, TLU_FIFO_WRITE;
+wire [31:0] TLU_TRIGGER_NUMBER_DATA;
+wire TLU_FIFO_WRITE;
 always @ (posedge CMD_CLK)
 begin
     if (RST_CMD_CLK)
