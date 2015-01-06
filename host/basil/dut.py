@@ -10,6 +10,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(leve
 from importlib import import_module
 from inspect import getmembers, isclass
 from yaml import safe_load
+import sys
 
 
 class Base(object):
@@ -57,7 +58,7 @@ class Base(object):
 
     def close(self):
         pass
-        
+
     def set_configuration(self, conf):
         raise NotImplementedError("set_configuration() not implemented")
 
@@ -94,7 +95,6 @@ class Dut(Base):
                 mod.init()
             except NotImplementedError:
                 pass
-#                 print '%s: %s' % (type(mod), e)
 
         for item in self._transfer_layer.itervalues():
             update_init(item)
@@ -108,7 +108,7 @@ class Dut(Base):
         for item in self._registers.itervalues():
             update_init(item)
             catch_exception_on_init(item)
-    
+
     def close(self):
         for item in self._transfer_layer.itervalues():
             item.close()
@@ -118,7 +118,7 @@ class Dut(Base):
             item.close()
         for item in self._registers.itervalues():
             item.close()
-    
+
     def set_configuration(self, conf):
         conf = self._open_conf(conf)
         if conf:
@@ -223,22 +223,24 @@ class Dut(Base):
                         raise ValueError('No driver specified for register: %s' % (reg['name'],))
 
     def _factory(self, importname, *args, **kargs):
-        def is_base_class(item):            
+        def is_base_class(item):
             return isclass(item) and issubclass(item, Base) and item.__module__ == importname
-
         try:
             mod = import_module(importname)
         except ImportError:
-            if(len(importname) > 9):
-                importname = importname[9:]
-                mod = import_module(importname)   
-            else:
-                raise ImportError("Error importing module %s", importname)
+            exc = sys.exc_info()
+            split_import_names = importname.split('.')
+            if len(split_import_names) > 2:  # give it another try
+                try:
+                    mod = import_module('.'.join(split_import_names[2:]))  # remove "basil.RL." etc.
+                except ImportError:
+                    raise exc[0], exc[1], exc[2]
+            else:  # finally raise exception
+                raise
         clsmembers = getmembers(mod, is_base_class)
         if len(clsmembers) > 1:
             raise ValueError('Found more than one matching class in %s.' % importname)
         elif not len(clsmembers):
-            
             raise ValueError('Found no matching class in %s.' % importname)
         cls = clsmembers[0][1]
         return cls(*args, **kargs)
