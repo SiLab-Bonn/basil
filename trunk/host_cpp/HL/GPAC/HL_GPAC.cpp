@@ -13,14 +13,6 @@ void * memcpy_reverse(const void* src, void* dst, int size)
 	return memcpy(dst, src, size);
 }
 
-I2CDevice::I2CDevice(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress)
-{
-	mHL = &HL;
-	mHLAdd.LocalBusType       = BT_I2C;
-	mHLAdd.LocalBusAddress    = busAddress;
-	mHLAdd.LocalDeviceAddress = slaveAddress;
-}
-
 I2C_MUX::I2C_MUX(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress):I2CDevice(HL, busAddress, slaveAddress)
 {
   ;

@@ -145,15 +145,6 @@ typedef struct eepromDataStruct_
 
 class HL_GPAC;
 
-class I2CDevice
-{
-public:
-	I2CDevice::I2CDevice(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress);
-	HL_addr mHLAdd;
-protected:
-	HL_I2CMaster *mHL;
-};
-
 class  I2C_MUX: public I2CDevice
 {
 public:

@@ -44,14 +44,17 @@
 
 #define MAX_MMC3_PWR                4  // number of power channels on MMC3 board
 
+#define I2CBUS_DEFAULT  0
+
+
 
 class  SENSEAMP_INA226: public I2CDevice
 {
 public:
 	SENSEAMP_INA226(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress, double Rsns);
 	~SENSEAMP_INA226(void);
-  double  GetCurrent(bool getRaw = false);
-  double  GetVoltage(bool getRaw = false);
+  double  GetCurrent();
+  double  GetVoltage();
 	bool    SetCurrentLimit(double currentLimit);
   bool    Configure();
 
@@ -66,7 +69,7 @@ protected:
 class MMC3DECLDIR PowerChannel: public SENSEAMP_INA226
 {
 public:
-	PowerChannel(HL_base &HL, const char* name, int address);
+	PowerChannel(HL_base &HL, const char* name, int address, double Rsns);
 	~PowerChannel();
 	void   UpdateMeasurements();
 	double GetVoltage(bool getRaw = false);

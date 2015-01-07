@@ -10,6 +10,7 @@
   #endif
 #endif
 
+
 class HL_I2CMaster
 {
 public:
@@ -22,8 +23,18 @@ protected:
 	TL_base *mTL;
 };
 
+class I2CDevice
+{
+public:
+	I2CDevice::I2CDevice(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress);
+	HL_addr mHLAdd;
+protected:
+	HL_I2CMaster *mHL;
+};
+
 class HL_base:public HL_I2CMaster  // for future extension
 {
 public:
 	HL_base(TL_base &TL);
 };
+
