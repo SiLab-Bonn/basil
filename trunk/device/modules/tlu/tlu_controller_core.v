@@ -541,7 +541,7 @@ always @ (posedge BUS_CLK)
     FIFO_EMPTY_FF <= FIFO_EMPTY;
 
 wire FIFO_EMPTY_FLAG_BUS_CLK;
-assign FIFO_EMPTY_FLAG_BUS_CLK = ~FIFO_EMPTY_FF & FIFO_EMPTY; // assert flag when FIFO is empty again
+assign FIFO_EMPTY_FLAG_BUS_CLK = FIFO_EMPTY_FF & ~FIFO_EMPTY; // assert flag when FIFO is empty again
 
 always @ (posedge BUS_CLK)
     if (RST)
