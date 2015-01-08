@@ -1,8 +1,10 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+
 
  /*  _____ _   _   _ 
  * |_   _| | | | | |
@@ -11,10 +13,12 @@
  *
  * TLU controller supporting EUDET TLU 0.1/0.2
  */
- 
+
+
 `timescale 1 ps / 1ps
 `default_nettype none
- 
+
+
  module tlu_controller_core
 #(
     parameter                   DIVISOR = 8, // dividing CMD_CLK by DIVISOR for TLU_CLOCK
@@ -23,7 +27,7 @@
 (
     input wire                  BUS_CLK,
     input wire                  BUS_RST,
-    input wire  [ABUSWIDTH-1:0] BUS_ADD,
+    input wire [ABUSWIDTH-1:0]  BUS_ADD,
     input wire      [7:0]       BUS_DATA_IN,
     input wire                  BUS_RD,
     input wire                  BUS_WR,
@@ -145,7 +149,6 @@ localparam VERSION = 1;
 
 always @ (posedge BUS_CLK)
 begin
-    //BUS_DATA_OUT <= 0;
     if (BUS_ADD == 0)
         BUS_DATA_OUT <= VERSION;
     else if (BUS_ADD == 1)
@@ -172,14 +175,6 @@ begin
         BUS_DATA_OUT <= CURRENT_TRIGGER_NUMBER_BUF[31:24];
     else if (BUS_ADD == 12)
         BUS_DATA_OUT <= LOST_DATA_CNT_BUF;
-    else if (BUS_ADD == 13)
-        BUS_DATA_OUT <= 8'b0;
-    else if (BUS_ADD == 14)
-        BUS_DATA_OUT <= 8'b0;
-    else if (BUS_ADD == 15)
-        BUS_DATA_OUT <= 8'b0;
-    // else if(BUS_ADD < 4)
-        // BUS_DATA_OUT <= status_regs[BUS_ADD[3:0]]; // BUG AR 20391: use synchronous logic
     else
         BUS_DATA_OUT <= 0;
 end
@@ -194,37 +189,6 @@ begin
             LOST_DATA_CNT_BUF <= LOST_DATA_CNT;
     end
 end
-
-//always @(*)
-//begin
-//    BUS_DATA_OUT = 0;
-//	 
-//    if (BUS_ADD == 4)
-//        BUS_DATA_OUT = CURRENT_TLU_TRIGGER_NUMBER_BUF[7:0];
-//    else if (BUS_ADD == 5)
-//        BUS_DATA_OUT = CURRENT_TLU_TRIGGER_NUMBER_BUF[15:8];
-//    else if (BUS_ADD == 6)
-//        BUS_DATA_OUT = CURRENT_TLU_TRIGGER_NUMBER_BUF[23:16];
-//    else if (BUS_ADD == 7)
-//        BUS_DATA_OUT = CURRENT_TLU_TRIGGER_NUMBER_BUF[31:24];
-//    else if(BUS_ADD < 4)
-//        BUS_DATA_OUT = status_regs[BUS_ADD[2:0]]; // BUG AR 20391
-//    
-////    if(BUS_ADD == 1)
-////        BUS_DATA_OUT = {8'b0};
-////    else if(BUS_ADD == 2)
-////        BUS_DATA_OUT = {8'b0};
-////    else if(BUS_ADD == 3)
-////        BUS_DATA_OUT = {8'b0};
-////    else if(BUS_ADD == 4)
-////        BUS_DATA_OUT = {8'b0};
-////    else if(BUS_ADD == 5)
-////        BUS_DATA_OUT = {8'b0};
-////    else if(BUS_ADD == 6)
-////        BUS_DATA_OUT = {8'b0};
-////    else if(BUS_ADD == 7)
-////        BUS_DATA_OUT = {8'b0};
-//end
 
 //assign some_value = (BUS_ADD==x && BUS_WR);
 //assign some_value = status_regs[x]; // single reg
