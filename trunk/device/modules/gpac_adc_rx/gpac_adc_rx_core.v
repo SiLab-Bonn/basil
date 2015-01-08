@@ -1,14 +1,11 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
- 
+
+
 module gpac_adc_rx_core
 #(
     parameter [1:0] ADC_ID = 0,
@@ -105,11 +102,13 @@ always @(posedge BUS_CLK) begin
     else if(BUS_ADD == 5)
         BUS_DATA_OUT <= CONF_DATA_CNT[7:0];
     else if(BUS_ADD == 6)
-        BUS_DATA_OUT <= CONF_SAMPLE_SKIP; 
+        BUS_DATA_OUT <= CONF_SAMPLE_SKIP;
     else if(BUS_ADD == 7)
-        BUS_DATA_OUT <= CONF_SAMPEL_DLY;        
+        BUS_DATA_OUT <= CONF_SAMPEL_DLY;
     else if(BUS_ADD == 15)
-        BUS_DATA_OUT <= CONF_ERROR_LOST;        
+        BUS_DATA_OUT <= CONF_ERROR_LOST;
+    else
+        BUS_DATA_OUT <= 8'b0;
 end
 
 
@@ -141,7 +140,7 @@ always@(posedge ADC_ENC) begin
     else if(align_cnt == (CONF_SAMPLE_SKIP - 1))
         align_cnt <= 0;
     else
-        align_cnt <= align_cnt + 1; 
+        align_cnt <= align_cnt + 1;
 end
 */
 
@@ -150,9 +149,9 @@ always@(posedge ADC_ENC) begin
     if(rst_adc_sync)
         adc_sync_wait <= 0;
     else if(start_adc_sync)
-        adc_sync_wait <= 1;        
+        adc_sync_wait <= 1;
     else if (adc_sync_pulse)
-        adc_sync_wait <= 0; 
+        adc_sync_wait <= 0;
 end
 
 wire start_data_count;
@@ -261,6 +260,4 @@ always @(posedge BUS_CLK)
     else if(DONE_SYNC)
         CONF_DONE <= 1;
 
-        
-        
 endmodule
