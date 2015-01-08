@@ -3,8 +3,8 @@
 
 basil_gpio::basil_gpio(HL_base *HL, string name, int address, int nBytes, bool isOutput, bool isTristate)
 {
-	mHL = HL;
-	mAddr = address;
+	mHL    = HL;
+	mAddr  = address;
 	mBytes = nBytes;
 	UserName = name;
 	mHLAdd.LocalBusType       = BT_FPGA;

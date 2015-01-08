@@ -148,14 +148,14 @@ class HL_GPAC;
 class  I2C_MUX: public I2CDevice
 {
 public:
-	I2C_MUX(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress);
+	I2C_MUX(HL_base &HL, unsigned char busAddress, unsigned char slaveAddress);
 	void  SelectI2CBus(unsigned char I2Cbus);
 };
 
 class PIXDECLDIR I2CIO_PCA9554: public I2CDevice
 {
 public:
-	I2CIO_PCA9554(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress, unsigned char outputEnableMask);
+	I2CIO_PCA9554(HL_base &HL, unsigned char busAddress, unsigned char slaveAddress, unsigned char outputEnableMask);
 	void OutputEnable(unsigned char bitMask);
 	unsigned char Read(void);
 	void Write(unsigned char val);
@@ -167,7 +167,7 @@ public:
 class  DAC_DAC7578: public I2CDevice
 {
 public:
-	DAC_DAC7578(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress);
+	DAC_DAC7578(HL_base &HL, unsigned char busAddress, unsigned char slaveAddress);
 	~DAC_DAC7578(void);
   bool SetDAC(unsigned char channel, unsigned short val);
   bool SetDAC(int slaveAdd, unsigned char channel, unsigned short  val);
@@ -176,7 +176,7 @@ public:
 class  ADC_MAX11644: public I2CDevice
 {
 public:
-	ADC_MAX11644(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress);
+	ADC_MAX11644(HL_base &HL, unsigned char busAddress, unsigned char slaveAddress);
 	~ADC_MAX11644(void);
   bool ReadADC(double *data_ch_0, double *data_ch_1, int sample = NSAMPLES);
 	void SetupADC(unsigned char flags);

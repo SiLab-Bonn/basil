@@ -11,13 +11,14 @@
 #endif
 
 
-class HL_I2CMaster
+class HL_base
 {
 public:
-	HL_I2CMaster(TL_base &TL);
+	HL_base(TL_base &TL);	
 	virtual bool Write(HL_addr &hAdd, unsigned char *data, int nBytes) = 0;
 	virtual bool  Read(HL_addr &hAdd, unsigned char *data, int nBytes) = 0;
 	void SetTLhandle(TL_base &TL);
+
 protected:
 	int mID;
 	TL_base *mTL;
@@ -26,15 +27,8 @@ protected:
 class I2CDevice
 {
 public:
-	I2CDevice::I2CDevice(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress);
+	I2CDevice::I2CDevice(HL_base &HL, unsigned char busAddress, unsigned char slaveAddress);
 	HL_addr mHLAdd;
 protected:
-	HL_I2CMaster *mHL;
+	HL_base *mHL;
 };
-
-class HL_base:public HL_I2CMaster  // for future extension
-{
-public:
-	HL_base(TL_base &TL);
-};
-

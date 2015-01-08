@@ -13,7 +13,7 @@ void * memcpy_reverse(const void* src, void* dst, int size)
 	return memcpy(dst, src, size);
 }
 
-I2C_MUX::I2C_MUX(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress):I2CDevice(HL, busAddress, slaveAddress)
+I2C_MUX::I2C_MUX(HL_base &HL, unsigned char busAddress, unsigned char slaveAddress):I2CDevice(HL, busAddress, slaveAddress)
 {
   ;
 }
@@ -23,7 +23,7 @@ void I2C_MUX::SelectI2CBus(unsigned char I2Cbus)
 	mHL->Write(mHLAdd , &I2Cbus, 1);  // set output lines
 }
 
-I2CIO_PCA9554::I2CIO_PCA9554(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress, unsigned char outputEnableMask):I2CDevice(HL, busAddress, slaveAddress)
+I2CIO_PCA9554::I2CIO_PCA9554(HL_base &HL, unsigned char busAddress, unsigned char slaveAddress, unsigned char outputEnableMask):I2CDevice(HL, busAddress, slaveAddress)
 {
 	Write(0x00);
 	OutputEnable(outputEnableMask);
@@ -83,7 +83,7 @@ bool I2CIO_PCA9554::GetBit(unsigned char bitVal)
 	return (((iBuffer & bitVal) == bitVal)? true : false);
 }
 
-DAC_DAC7578::DAC_DAC7578(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress):I2CDevice(HL, busAddress, slaveAddress)
+DAC_DAC7578::DAC_DAC7578(HL_base &HL, unsigned char busAddress, unsigned char slaveAddress):I2CDevice(HL, busAddress, slaveAddress)
 {
 }
 
@@ -119,7 +119,7 @@ bool DAC_DAC7578::SetDAC(int slaveAdd, unsigned char channel, unsigned short  va
 
 }
 
-ADC_MAX11644::ADC_MAX11644(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress):I2CDevice(HL, busAddress, slaveAddress)
+ADC_MAX11644::ADC_MAX11644(HL_base &HL, unsigned char busAddress, unsigned char slaveAddress):I2CDevice(HL, busAddress, slaveAddress)
 {
 	nAverage = 8;
 }

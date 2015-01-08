@@ -84,22 +84,22 @@ void MainForm::readClicked()
 
 void MainForm::enablePWRA(bool isEnabled)
 {
-	myMMC3->PWR[0]->Switch(isEnabled);
+	myMMC3->PwrSwitch(PWR_EN_A_BIT, isEnabled);
 }
 
 void MainForm::enablePWRB(bool isEnabled)
 {
-	myMMC3->PWR[1]->Switch(isEnabled);
+	myMMC3->PwrSwitch(PWR_EN_B_BIT, isEnabled);
 }
 
 void MainForm::enablePWRC(bool isEnabled)
 {
-	myMMC3->PWR[2]->Switch(isEnabled);
+	myMMC3->PwrSwitch(PWR_EN_C_BIT, isEnabled);
 }
 
 void MainForm::enablePWRD(bool isEnabled)
 {
-	myMMC3->PWR[3]->Switch(isEnabled);
+	myMMC3->PwrSwitch(PWR_EN_D_BIT, isEnabled);
 }
 
 void MainForm::UpdateMeasurements()

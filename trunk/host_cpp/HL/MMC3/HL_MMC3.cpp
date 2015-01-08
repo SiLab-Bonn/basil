@@ -8,7 +8,7 @@
 
 #include "HL_MMC3.h"
 
-SENSEAMP_INA226::SENSEAMP_INA226(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress, double Rsns): I2CDevice(HL, busAddress, slaveAddress)
+SENSEAMP_INA226::SENSEAMP_INA226(HL_base &HL, unsigned char busAddress, unsigned char slaveAddress, double Rsns): I2CDevice(HL, busAddress, slaveAddress)
 {
 	mRsns = Rsns;
 	Configure();
@@ -44,10 +44,13 @@ bool SENSEAMP_INA226::Configure()
 	status = mHL->Write(mHLAdd, buffer, 3);
 
 	maskReg = 0x8001;  // shunt over voltage allert, latched
+//	maskReg = 0x8002;  // shunt over voltage allert, active high, latched
 	buffer[0] = INA226_MASK;
 	buffer[1] = (byte)(0xff & maskReg >> 8); // MSB first
 	buffer[2] = (byte)(0xff & maskReg);
 	status = mHL->Write(mHLAdd, buffer, 3);
+
+	SetCurrentLimit(INA226_DEFAULT_LIMIT);
 
 	return status;
 }
@@ -58,7 +61,7 @@ bool SENSEAMP_INA226::SetCurrentLimit(double currentLimit)
 	int limitReg;
 	byte buffer[3];
 
-	limitReg = mRsns * currentLimit;  // shunt voltage = Rsns * I_limit
+	limitReg = mRsns * currentLimit / INA_226_SHUNTV_GAIN;  // shunt voltage = Rsns * I_limit
 	buffer[0] = INA226_ALLERT;
 	buffer[1] = (byte)(0xff & limitReg >> 8); // MSB first
 	buffer[2] = (byte)(0xff & limitReg);
@@ -86,7 +89,7 @@ double SENSEAMP_INA226::ReadCurrent()
 	//}
 	status = mHL->Read(mHLAdd, rawData, 2);
 
-	return (double) ((rawData[0] << 8) + rawData[1]);
+	return (double) ((signed short)((rawData[0] << 8) + rawData[1]));
 }
 
 double SENSEAMP_INA226:: ReadVoltage()
@@ -102,7 +105,7 @@ double SENSEAMP_INA226:: ReadVoltage()
 	//}
 	status = mHL->Read(mHLAdd, rawData, 2);
 
-	return (double) ((rawData[0] << 8) + rawData[1]);
+	return (double) (((rawData[0] << 8) + rawData[1]) * INA_226_BUSV_GAIN);
 }
 
 
@@ -143,17 +146,19 @@ HL_MMC3::HL_MMC3(TL_base &TL): HL_base(TL)
 {	
 	Id = -1;
 	//                        ( parent,     name, ch)
-	PWR[0]   = new PowerChannel(  *this,   "PWR0", 0, 0.025);
-	PWR[1]   = new PowerChannel(  *this,   "PWR1", 1, 0.025);
-	PWR[2]   = new PowerChannel(  *this,   "PWR2", 2, 0.025);
-	PWR[3]   = new PowerChannel(  *this,   "PWR3", 3, 0.025);
+	PWR[0]   = new PowerChannel(  *this,   "PWR0", INA226_A_BASEADD, 0.025);
+	PWR[1]   = new PowerChannel(  *this,   "PWR1", INA226_B_BASEADD, 0.025);
+	PWR[2]   = new PowerChannel(  *this,   "PWR2", INA226_C_BASEADD, 0.025);
+	PWR[3]   = new PowerChannel(  *this,   "PWR3", INA226_D_BASEADD, 0.025);
 
+	PWR_EN   = new basil_gpio( (HL_base*)this, "PWR_EN", PWR_EN_REG_ADD, 1, true, false);	
 }
 
 HL_MMC3::~HL_MMC3(void)
 {
 	for (int i = 0; i < MAX_MMC3_PWR; i++)
 		delete PWR[i];
+	delete PWR_EN;
 }
 
 void HL_MMC3::Init(TL_base &TL)
@@ -161,6 +166,19 @@ void HL_MMC3::Init(TL_base &TL)
 	SetTLhandle(TL);
 }
 
+
+void HL_MMC3::PwrSwitch(byte idx, bool on_off)
+{
+	byte buffer;
+	buffer = PWR_EN->Get();
+
+	if (on_off)
+		buffer |= 1 << idx;
+	else
+		buffer &= ~(1 << idx);
+
+	PWR_EN->Set(buffer);
+}
 
 void HL_MMC3::UpdateMeasurements()
 {
@@ -170,42 +188,12 @@ void HL_MMC3::UpdateMeasurements()
 
 bool HL_MMC3::Write(HL_addr &hAddr, unsigned char *data, int nBytes)
 {
-	bool status;
-	//unsigned char LocalBusType       = hAddr.LocalBusType;
-	//unsigned char LocalDeviceAddress = hAddr.LocalDeviceAddress;
-	//unsigned long LocalAddress       = hAddr.LocalAddress;
-
-	switch (hAddr.LocalBusAddress)
-	{
-	case (I2CBUS_DEFAULT): 
-		//	 I2Cmux->SelectI2CBus(I2CBUS_DEFAULT);
-		status = mTL->Write(hAddr.raw, data, nBytes); 
-		break;
-	default:    
-		status = false;
-		break;
-	}
-	return status;
+	return mTL->Write(hAddr.raw, data, nBytes); ;
 }
 
 bool HL_MMC3::Read(HL_addr &hAddr, unsigned char *data, int nBytes)
 {
-	bool status;
-	//unsigned char LocalBusType       = hAddr.LocalBusType;
-	//unsigned char LocalDeviceAddress = hAddr.LocalDeviceAddress;
-	//unsigned long LocalAddress       = hAddr.LocalAddress;
-
-	switch (hAddr.LocalBusAddress)
-	{
-	case (I2CBUS_DEFAULT): 
-		// I2Cmux->SelectI2CBus(I2CBUS_DEFAULT);
-		status = mTL->Read(hAddr.raw, data, nBytes); 
-		break;
-	default:           
-		status = false;
-		break;
-	}
-	return status;
+	return mTL->Read(hAddr.raw, data, nBytes); 
 }
 
 

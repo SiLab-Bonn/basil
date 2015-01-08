@@ -1,6 +1,8 @@
 #pragma once
 #include "HL_base.h"
 
+
+
 #ifdef WIN32 
   #ifdef BASIL_DLL_EXPORT
     #define BASILDECLDIR __declspec(dllexport)

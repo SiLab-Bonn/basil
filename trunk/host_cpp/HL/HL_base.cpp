@@ -1,7 +1,7 @@
 #include "HL_base.h"
 
 
-I2CDevice::I2CDevice(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress)
+I2CDevice::I2CDevice(HL_base &HL, unsigned char busAddress, unsigned char slaveAddress)
 {
 	mHL = &HL;
 	mHLAdd.LocalBusType       = BT_I2C;
@@ -9,17 +9,12 @@ I2CDevice::I2CDevice(HL_I2CMaster &HL, unsigned char busAddress, unsigned char s
 	mHLAdd.LocalDeviceAddress = slaveAddress;
 }
 
-
-HL_I2CMaster::HL_I2CMaster(TL_base &TL)
+HL_base::HL_base(TL_base &TL)
 {
 	mTL = &TL;
 }
 
-void HL_I2CMaster::SetTLhandle(TL_base &TL)
+void HL_base::SetTLhandle(TL_base &TL)
 {
 	mTL = &TL;
-}
-
-HL_base::HL_base(TL_base &TL): HL_I2CMaster(TL)
-{
 }
