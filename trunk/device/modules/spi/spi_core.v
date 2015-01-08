@@ -1,10 +1,11 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
  */
- 
+
+
 module spi_core
 #(
     parameter ABUSWIDTH = 16,
@@ -75,41 +76,36 @@ wire [7:0] CONF_REPEAT;
 assign CONF_REPEAT = status_regs[7];
 
 wire [7:0] BUS_STATUS_OUT;
-assign BUS_STATUS_OUT = status_regs[BUS_ADD];
+assign BUS_STATUS_OUT = status_regs[BUS_ADD[2:0]];
 
 localparam VERSION = 0;
 
-reg [7:0] BUS_DATA_OUT_REG;
 always@(posedge BUS_CLK) begin
     if(BUS_ADD == 0)
-        BUS_DATA_OUT_REG <= VERSION;
+        BUS_DATA_OUT <= VERSION;
     else if(BUS_ADD == 1)
-        BUS_DATA_OUT_REG <= {7'b0,CONF_DONE};
+        BUS_DATA_OUT <= {7'b0,CONF_DONE};
     else if(BUS_ADD == 3)
-        BUS_DATA_OUT_REG <= CONF_BIT_OUT[7:0];
+        BUS_DATA_OUT <= CONF_BIT_OUT[7:0];
     else if(BUS_ADD == 4)
-        BUS_DATA_OUT_REG <= CONF_BIT_OUT[15:8];
+        BUS_DATA_OUT <= CONF_BIT_OUT[15:8];
     else if(BUS_ADD == 5)
-        BUS_DATA_OUT_REG <= CONF_WAIT[7:0];
+        BUS_DATA_OUT <= CONF_WAIT[7:0];
     else if(BUS_ADD == 6)
-        BUS_DATA_OUT_REG <= CONF_WAIT[15:8]; 
+        BUS_DATA_OUT <= CONF_WAIT[15:8];
     else if(BUS_ADD == 7)
-        BUS_DATA_OUT_REG <= CONF_REPEAT;
+        BUS_DATA_OUT <= CONF_REPEAT;
     else if(BUS_ADD < 8)
-        BUS_DATA_OUT_REG <= BUS_STATUS_OUT;     
-end
-
-always @(*) begin
-    if(BUS_ADD < 8)
-        BUS_DATA_OUT = BUS_DATA_OUT_REG;
-    else if(BUS_ADD < 8+MEM_BYTES )
+        BUS_DATA_OUT <= BUS_STATUS_OUT;
+    else if(BUS_ADD < 8+MEM_BYTES)
         BUS_DATA_OUT = BUS_IN_MEM;
     else if(BUS_ADD < 8+MEM_BYTES+ MEM_BYTES)
         BUS_DATA_OUT = BUS_OUT_MEM;
+    else
+        BUS_DATA_OUT <= 8'b0;
 end
-        
-reg [15:0] out_bit_cnt;
 
+reg [15:0] out_bit_cnt;
 
 wire [13:0] memout_addrb;
 assign memout_addrb = out_bit_cnt;
