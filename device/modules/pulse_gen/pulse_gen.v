@@ -1,37 +1,34 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
 
 module pulse_gen
 #(
     parameter BASEADDR = 16'h0000,
-    parameter HIGHADDR = 16'h0000
+    parameter HIGHADDR = 16'h0000,
+    parameter ABUSWIDTH = 16
 )(
-    input          BUS_CLK,
-    input          BUS_RST,
-    input   [15:0] BUS_ADD,
-    inout   [7:0]  BUS_DATA,
-    input          BUS_RD,
-    input          BUS_WR,
+    input wire                  BUS_CLK,
+    input wire                  BUS_RST,
+    input wire  [ABUSWIDTH-1:0] BUS_ADD,
+    inout wire  [7:0]           BUS_DATA,
+    input wire                  BUS_RD,
+    input wire                  BUS_WR,
     
-    input  PULSE_CLK,
-    input  EXT_START,
+    input wire PULSE_CLK,
+    input wire EXT_START,
     output PULSE
 ); 
 
     wire IP_RD, IP_WR;
-    wire [15:0] IP_ADD;
+    wire [ABUSWIDTH-1:0] IP_ADD;
     wire [7:0] IP_DATA_IN;
     wire [7:0] IP_DATA_OUT;
     
-    bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
+    bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i_bus_to_ip
     (
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
@@ -45,7 +42,7 @@ module pulse_gen
         .IP_DATA_OUT(IP_DATA_OUT)
     );
     
-    pulse_gen_core i_pulse_gen_core
+    pulse_gen_core #(.ABUSWIDTH(ABUSWIDTH) ) i_pulse_gen_core
     (
         .BUS_CLK(BUS_CLK),                     
         .BUS_RST(BUS_RST),                  
