@@ -57,6 +57,8 @@ always @(posedge BUS_CLK) begin
         BUS_DATA_OUT <= {7'b0, CONF_EN};
     else if(BUS_ADD == 3)
         BUS_DATA_OUT <= LOST_DATA_CNT;
+    else
+        BUS_DATA_OUT <= 8'b0;
 end
 
 wire RST_SYNC;
