@@ -1,15 +1,10 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
- 
- 
+
 
 module pulse_gen_core
 (
@@ -56,6 +51,8 @@ always@(posedge BUS_CLK) begin
         BUS_DATA_OUT <= CONF_WIDTH[7:0];
     else if(BUS_ADD == 7)
         BUS_DATA_OUT <= CONF_REPEAT[7:0];
+    else
+        BUS_DATA_OUT <= 8'b0;
 end
 
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
