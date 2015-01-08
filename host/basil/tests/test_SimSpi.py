@@ -10,6 +10,7 @@ import yaml
 import array
 import time
 import subprocess
+import os
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 import numpy as np
@@ -62,7 +63,7 @@ registers:
 class TestSimGpio(unittest.TestCase):
     def setUp(self):
         
-        cocotb_compile_and_run(['test_SimSpi.v'])
+        cocotb_compile_and_run([os.getcwd()+'/test_SimSpi.v'])
         
         cnfg = yaml.load(cnfg_yaml)
         self.chip = Dut(cnfg)

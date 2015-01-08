@@ -24,11 +24,14 @@ def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test
 
     mkfile += "EXTRA_ARGS = -D_IVERILOG_ %s \n\n" % (" ".join('-I' + str(e) for e in include_dirs))
 
+    mkfile += "VERILOG_INCLUDE_DIRS=./ %s\n"% (" ".join('+incdir+../' + str(e) for e in include_dirs)) #this is for modelsim better full path?
+    
     mkfile += """
 export SIMULATION_HOST
 export SIMULATION_PORT
 export SIMULATION_BUS
 export SIMULATION_END_ON_DISCONNECT
+
 
 TOPLEVEL_LANG?=verilog
 export TOPLEVEL_LANG

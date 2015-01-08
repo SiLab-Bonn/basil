@@ -1,7 +1,6 @@
 
-module CG_MOD_pos (ck_in, enable, ck_out);
-input ck_in,enable;
-output ck_out;
+module CG_MOD_pos (input wire ck_in, input wire enable, output wire ck_out);
+
 wire ck_inb;
 reg enl;
 

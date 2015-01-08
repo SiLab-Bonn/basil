@@ -3,12 +3,6 @@
 # Copyright (c) All rights reserved
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
-#
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from struct import pack, unpack_from
@@ -28,6 +22,7 @@ class seq_gen(RegisterHardwareLayer):
                   'WAIT': {'descr': {'addr': 5, 'size': 16}},
                   'REPEAT': {'descr': {'addr': 7, 'size': 8}},
                   'REPEAT_START': {'descr': {'addr': 8, 'size': 16}},
+                  'EN_EXT_START': {'descr': {'addr': 10, 'size': 1}},
     }
 
     def __init__(self, intf, conf):
@@ -42,54 +37,57 @@ class seq_gen(RegisterHardwareLayer):
 #        self.reset()
 
     def reset(self):
-        self._intf.write(self._conf['base_addr'], (0,))
+        self.RESET = 0
 
     def start(self):
-        self._intf.write(self._conf['base_addr'] + 1, (0,))
+        self.START = 0
 
     def set_size(self, value):
-        self._intf.write(self._conf['base_addr'] + 3, array('B', pack('H', value)))
+        self.SIZE = value
 
     def get_size(self):
-        ret = self._intf.read(self._conf['base_addr'] + 3, size=2)
-        return unpack_from('H', ret)[0]
+        return self.SIZE
 
     def set_wait(self, value):
-        self._intf.write(self._conf['base_addr'] + 5, array('B', pack('H', value)))
+        self.WAIT = value
 
     def get_wait(self):
-        ret = self._intf.read(self._conf['base_addr'] + 5, size=2)
-        return unpack_from('H', ret)[0]
+        return self.WAIT
 
     def set_clk_divide(self, value):
-        self._intf.write(self._conf['base_addr'] + 2, (value,))
+        self.CLK_DIV = value
 
     def get_clk_divide(self):
-        return self._intf.read(self._conf['base_addr'] + 2, 1)[0]
+        return self.CLK_DIV
 
     def set_repeat_start(self, value):
-        self._intf.write(self._conf['base_addr'] + 8, array('B', pack('H', value)))
+        self.REPEAT_START = value
 
     def get_repeat_start(self):
-        ret = self._intf.read(self._conf['base_addr'] + 8, size=2)
-        return unpack_from('H', ret)[0]
+        return self.REPEAT_START
 
     def set_repeat(self, value):
-        self._intf.write(self._conf['base_addr'] + 7, (value,))
+        self.REPEAT = value
 
     def get_repeat(self):
-        return self._intf.read(self._conf['base_addr'] + 7, 1)[0]
+        return self.REPEAT
 
     def is_done(self):
         return self.is_ready
 
     @property
     def is_ready(self):
-        return (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x01) == 1
+        return self.READY == 1
 
     def get_done(self):
         return self.is_ready
+    
+    def set_en_ext_start(self, value):
+        self.EN_EXT_START = value
 
+    def get_en_ext_start(self):
+        return self.EN_EXT_START
+       
     def set_data(self, data, addr=0):
         if self._seq_mem_size < len(data):
             raise ValueError('Size of data is too big')

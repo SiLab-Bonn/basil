@@ -99,15 +99,23 @@ always@(posedge BUS_CLK) begin
         BUS_DATA_OUT_REG <= BUS_STATUS_OUT;     
 end
 
+// if one has a synchronous memory need this to give data on next clock after read
+// limitation: this module still needs to addresses 
+reg [ABUSWIDTH-1:0]  PREV_BUS_ADD;
+always@(posedge BUS_CLK)
+    PREV_BUS_ADD <= BUS_ADD;
+
 always @(*) begin
-    if(BUS_ADD < 8)
+    if(PREV_BUS_ADD < 8)
         BUS_DATA_OUT = BUS_DATA_OUT_REG;
-    else if(BUS_ADD < 8+MEM_BYTES )
+    else if(PREV_BUS_ADD < 8+MEM_BYTES )
         BUS_DATA_OUT = BUS_IN_MEM;
-    else if(BUS_ADD < 8+MEM_BYTES+ MEM_BYTES)
+    else if(PREV_BUS_ADD < 8+MEM_BYTES+ MEM_BYTES)
         BUS_DATA_OUT = BUS_OUT_MEM;
+    else
+        BUS_DATA_OUT = 8'hxx;
 end
-        
+
 reg [15:0] out_bit_cnt;
 
 
