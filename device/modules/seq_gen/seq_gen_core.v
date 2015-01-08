@@ -1,9 +1,11 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
- 
+
+
 module seq_gen_core
 #(
     parameter ABUSWIDTH = 16,
@@ -118,6 +120,8 @@ always @ (posedge BUS_CLK) begin
         BUS_DATA_OUT <= BUS_STATUS_OUT;
     else if(BUS_ADD < 16 + MEM_BYTES)
         BUS_DATA_OUT <= BUS_IN_MEM;
+    else
+        BUS_DATA_OUT <= 8'b0;
 end
 
 reg [15:0] out_bit_cnt;
