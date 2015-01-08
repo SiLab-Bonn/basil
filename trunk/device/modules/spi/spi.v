@@ -19,14 +19,14 @@ module spi
     input wire          BUS_RD,
     input wire          BUS_WR,
 
-    input SPI_CLK,
+    input wire SPI_CLK,
 
-    output SCLK,
-    input  SDO,
-    output SDI,
+    output wire SCLK,
+    input wire SDO,
+    output wire SDI,
 
-    output SEN, 
-    output SLD
+    output wire SEN, 
+    output wire SLD
 ); 
 
 
