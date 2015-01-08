@@ -25,6 +25,7 @@ module seq_gen
     input           BUS_RD,
     input           BUS_WR,
 
+    input SEQ_EXT_START,
     input SEQ_CLK,
     output [OUT_BITS-1:0] SEQ_OUT
 );
@@ -63,6 +64,7 @@ seq_gen_core
     .BUS_WR(IP_WR),                    
     .BUS_DATA_OUT(IP_DATA_OUT),  
 
+    .SEQ_EXT_START(SEQ_EXT_START),
     .SEQ_CLK(SEQ_CLK),
     .SEQ_OUT(SEQ_OUT)
 ); 

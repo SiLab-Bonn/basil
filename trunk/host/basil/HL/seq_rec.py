@@ -1,20 +1,24 @@
+#
+# ------------------------------------------------------------
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
+# ------------------------------------------------------------
+#
+
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from struct import pack, unpack_from
 from array import array
 
 
 class seq_rec(RegisterHardwareLayer):
-    '''Sequencer generator controller interface for seq_gen FPGA module.
+    '''Sequencer receiver controller interface for seq_rec FPGA module.
     '''
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
                   'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
-                  'CLK_DIV': {'descr': {'addr': 2, 'size': 8}},
+                  'EN_EXT_START': {'descr': {'addr': 2, 'size': 8}},
                   'SIZE': {'descr': {'addr': 3, 'size': 16}},
-                  'WAIT': {'descr': {'addr': 5, 'size': 16}},
-                  'REPEAT': {'descr': {'addr': 7, 'size': 8}},
-                  'REPEAT_START': {'descr': {'addr': 8, 'size': 16}},
     }
 
     def __init__(self, intf, conf):
@@ -29,28 +33,32 @@ class seq_rec(RegisterHardwareLayer):
 #        self.reset()
 
     def reset(self):
-        self._intf.write(self._conf['base_addr'], 0)
+        self.RESET = 0
 
     def start(self):
-        self._intf.write(self._conf['base_addr'] + 1, 0)
+        self.START = 0
 
     def set_size(self, value):
-        self._intf.write(self._conf['base_addr'] + 3, value)
+        self.SIZE = value
 
     def get_size(self):
-        ret = self._intf.read(self._conf['base_addr'] + 3, size=2)
-        return unpack_from('H', ret)[0]
+        return self.SIZE
 
     def set_count(self, value):
-        self._intf.write(self._conf['base_addr'] + 3, (value & 0x00ff) >> 8)
-        self._intf.write(self._conf['base_addr'] + 4, value & 0xFF00)
+        self.SIZE = value
 
+    def set_en_ext_start(self, value):
+        self.EN_EXT_START = value
+
+    def get_en_ext_start(self):
+        return self.EN_EXT_START
+        
     def is_done(self):
         return self.is_ready
 
     @property
     def is_ready(self):
-        return (self._intf.read(self._conf['base_addr'] + 1, 1)[0] & 0x01) == 1
+        return self.READY == 1
 
     def get_done(self):
         return self.is_ready

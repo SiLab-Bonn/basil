@@ -11,12 +11,12 @@
 `include "gpio/gpio.v"
 
 module tb (
-    input           BUS_CLK,
-    input           BUS_RST,
-    input   [15:0]  BUS_ADD,
-    inout   [7:0]   BUS_DATA,
-    input           BUS_RD,
-    input           BUS_WR
+    input wire          BUS_CLK,
+    input wire          BUS_RST,
+    input wire  [15:0]  BUS_ADD,
+    inout wire  [7:0]   BUS_DATA,
+    input wire          BUS_RD,
+    input wire          BUS_WR
 );   
 
     localparam GPIO_BASEADDR = 16'h0000;

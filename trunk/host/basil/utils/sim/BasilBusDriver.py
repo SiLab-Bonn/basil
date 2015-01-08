@@ -81,7 +81,8 @@ class BasilBusDriver(BusDriver):
                 self.bus.BUS_RD     <= 0
             else:
                 self.bus.BUS_RD     <= 1
-                self.bus.BUS_ADD    <= address + byte
+                
+            self.bus.BUS_ADD    <= address + byte
 
             yield RisingEdge(self.clock)
             
