@@ -3,13 +3,9 @@
  * Copyright (c) All rights reserved 
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $:
- *  $Date::                      $:
  */
- 
+
+
 // WARNING! THIS MODULE IS WORK IN PROGRESS! NOT TESTED!
 /*
 Possible extra options:
@@ -17,6 +13,7 @@ Possible extra options:
 - SEQ_TRIGGER selections as pulse or as gate/enable
 - multi window recording (sorted with but multiple times)
 */
+
 
 module seq_rec_core
 #(
@@ -110,6 +107,8 @@ always @ (posedge BUS_CLK) begin
         BUS_DATA_OUT <= BUS_STATUS_OUT;
     else if(BUS_ADD < 16 + MEM_BYTES)
         BUS_DATA_OUT <= BUS_IN_MEM;
+    else
+        BUS_DATA_OUT <= 8'b0;
 end
 
 reg [ABUSWIDTH-1:0] out_bit_cnt;
