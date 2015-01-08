@@ -2,7 +2,7 @@
 
 module ODDR ( input wire D1, D2, 
               input wire C, CE, R, S,
-              output wire Q);
+              output wire Q );
 
 OFDDRRSE OFDDRRSE_INST (
     .CE(CE), 

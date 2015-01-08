@@ -1,6 +1,6 @@
 
 module IDDR ( output wire Q1, Q2, 
-                       input wire C, CE, D, R, S );
+              input wire C, CE, D, R, S );
 
 IFDDRRSE IFDDRRSE_inst (
     .Q0(Q1), 
