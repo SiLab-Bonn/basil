@@ -53,33 +53,34 @@ class  SENSEAMP_INA226: public I2CDevice
 public:
 	SENSEAMP_INA226(HL_I2CMaster &HL, unsigned char busAddress, unsigned char slaveAddress, double Rsns);
 	~SENSEAMP_INA226(void);
-  double  GetCurrent();
-  double  GetVoltage();
+  double  ReadCurrent();
+  double  ReadVoltage();
 	bool    SetCurrentLimit(double currentLimit);
   bool    Configure();
 
 protected:
 	double mRsns;
-	double Voltage;
-	double Current;
-	double VoltageRaw;
-	double CurrentRaw;
+
 };
 
 class MMC3DECLDIR PowerChannel: public SENSEAMP_INA226
 {
 public:
 	PowerChannel(HL_base &HL, const char* name, int address, double Rsns);
-	~PowerChannel();
+	//~PowerChannel();
 	void   UpdateMeasurements();
-	double GetVoltage(bool getRaw = false);
-	double GetCurrent(bool getRaw = false);
+	double GetVoltage();
+	double GetCurrent();
 	void   Switch(bool on_off);
 	const char* GetName(void);
 
 protected:
 	string mName;
 	SENSEAMP_INA226 *SenseAmp;
+	double Voltage;
+	double Current;
+	double VoltageRaw;
+	double CurrentRaw;
 };
 
 

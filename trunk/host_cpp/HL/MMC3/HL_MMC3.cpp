@@ -73,7 +73,7 @@ SENSEAMP_INA226::~SENSEAMP_INA226(void)
 	;
 }
 
-double SENSEAMP_INA226::GetCurrent()
+double SENSEAMP_INA226::ReadCurrent()
 {
 	byte add = INA226_CURR;
 	byte rawData[2];
@@ -89,7 +89,7 @@ double SENSEAMP_INA226::GetCurrent()
 	return (double) ((rawData[0] << 8) + rawData[1]);
 }
 
-double SENSEAMP_INA226:: GetVoltage()
+double SENSEAMP_INA226:: ReadVoltage()
 {
 	byte add = INA226_BUSV;
 	byte rawData[2];
@@ -111,9 +111,31 @@ PowerChannel::PowerChannel(HL_base &HL, const char* name, int address, double Rs
 	mName      = name;
 }
 
+void PowerChannel::Switch(bool on_off)
+{
+	;
+}
+
+
 const char* PowerChannel::GetName(void)
 {
 	return mName.c_str();
+}
+
+void PowerChannel::UpdateMeasurements()
+{
+	Voltage = ReadVoltage();
+	Current = ReadCurrent();
+}
+
+double PowerChannel::GetVoltage()
+{
+	return Voltage;
+}
+
+double PowerChannel::GetCurrent()
+{
+	return Current;
 }
 
 

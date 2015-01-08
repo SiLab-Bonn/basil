@@ -16,9 +16,15 @@
     <ClCompile Include="HL_MMC3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\HL_base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HL_MMC3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HL_base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

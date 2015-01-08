@@ -204,6 +204,135 @@
        </property>
       </widget>
      </widget>
+     <widget class="QGroupBox" name="groupBox_3">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>100</y>
+        <width>231</width>
+        <height>211</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Power Channels</string>
+      </property>
+      <widget class="QWidget" name="gridLayoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>211</width>
+         <height>131</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0" rowminimumheight="0,0,0,0,0,0">
+        <property name="horizontalSpacing">
+         <number>11</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Voltage [V]</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QCheckBox" name="checkBoxEnC">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>C</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QCheckBox" name="checkBoxEnB">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>B</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Enable</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="checkBoxEnA">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>A</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QCheckBox" name="checkBoxEnD">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>D</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Current [A]</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLCDNumber" name="lcdNumberAV"/>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLCDNumber" name="lcdNumberAC"/>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLCDNumber" name="lcdNumberBV"/>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLCDNumber" name="lcdNumberBC"/>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLCDNumber" name="lcdNumberCV"/>
+        </item>
+        <item row="3" column="2">
+         <widget class="QLCDNumber" name="lcdNumberCC"/>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLCDNumber" name="lcdNumberDV"/>
+        </item>
+        <item row="4" column="2">
+         <widget class="QLCDNumber" name="lcdNumberDC"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QPushButton" name="measureBtn">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>162</y>
+         <width>141</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Measure</string>
+       </property>
+      </widget>
+     </widget>
     </widget>
    </widget>
   </widget>

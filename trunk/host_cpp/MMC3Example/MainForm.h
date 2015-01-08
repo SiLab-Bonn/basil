@@ -14,6 +14,7 @@
 // USB lib
 #include "SiLibUSB.h"
 #include "TL_USB.h"
+#include "HL_MMC3.h"
 // basil modules
 #include "basil_gpio.h"
 
@@ -36,12 +37,18 @@ public slots:
 	void confFPGA();
 	void readClicked();
 	void writeClicked();
+	void enablePWRA(bool isEnabled);
+	void enablePWRB(bool isEnabled);
+	void enablePWRC(bool isEnabled);
+	void enablePWRD(bool isEnabled);
+	void UpdateMeasurements();
 ;
 
 private:
   Ui::MainForm *ui;
 	SiUSBDevice  *myUSBdev;
 	TL_USB       *myTLUSB;
+	HL_MMC3      *myMMC3;
 	basil_gpio   *GPIO1;
 	QString FPGAFileName;
 	void UpdateSystem();

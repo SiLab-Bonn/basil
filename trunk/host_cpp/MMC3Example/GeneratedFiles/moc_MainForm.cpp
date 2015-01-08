@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainForm_t {
-    QByteArrayData data[6];
-    char stringdata[60];
+    QByteArrayData data[12];
+    char stringdata[133];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -34,10 +34,18 @@ QT_MOC_LITERAL(1, 9, 14),
 QT_MOC_LITERAL(2, 24, 0),
 QT_MOC_LITERAL(3, 25, 8),
 QT_MOC_LITERAL(4, 34, 11),
-QT_MOC_LITERAL(5, 46, 12)
+QT_MOC_LITERAL(5, 46, 12),
+QT_MOC_LITERAL(6, 59, 10),
+QT_MOC_LITERAL(7, 70, 9),
+QT_MOC_LITERAL(8, 80, 10),
+QT_MOC_LITERAL(9, 91, 10),
+QT_MOC_LITERAL(10, 102, 10),
+QT_MOC_LITERAL(11, 113, 18)
     },
     "MainForm\0openFileDialog\0\0confFPGA\0"
-    "readClicked\0writeClicked\0"
+    "readClicked\0writeClicked\0enablePWRA\0"
+    "isEnabled\0enablePWRB\0enablePWRC\0"
+    "enablePWRD\0UpdateMeasurements\0"
 };
 #undef QT_MOC_LITERAL
 
@@ -47,7 +55,7 @@ static const uint qt_meta_data_MainForm[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       4,   14, // methods
+       9,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -55,15 +63,25 @@ static const uint qt_meta_data_MainForm[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   34,    2, 0x0a,
-       3,    0,   35,    2, 0x0a,
-       4,    0,   36,    2, 0x0a,
-       5,    0,   37,    2, 0x0a,
+       1,    0,   59,    2, 0x0a,
+       3,    0,   60,    2, 0x0a,
+       4,    0,   61,    2, 0x0a,
+       5,    0,   62,    2, 0x0a,
+       6,    1,   63,    2, 0x0a,
+       8,    1,   66,    2, 0x0a,
+       9,    1,   69,    2, 0x0a,
+      10,    1,   72,    2, 0x0a,
+      11,    0,   75,    2, 0x0a,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Bool,    7,
+    QMetaType::Void, QMetaType::Bool,    7,
+    QMetaType::Void, QMetaType::Bool,    7,
+    QMetaType::Void, QMetaType::Bool,    7,
     QMetaType::Void,
 
        0        // eod
@@ -78,10 +96,14 @@ void MainForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 1: _t->confFPGA(); break;
         case 2: _t->readClicked(); break;
         case 3: _t->writeClicked(); break;
+        case 4: _t->enablePWRA((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 5: _t->enablePWRB((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 6: _t->enablePWRC((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 7: _t->enablePWRD((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 8: _t->UpdateMeasurements(); break;
         default: ;
         }
     }
-    Q_UNUSED(_a);
 }
 
 const QMetaObject MainForm::staticMetaObject = {
@@ -109,13 +131,13 @@ int MainForm::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 9)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 9;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 4)
+        if (_id < 9)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 4;
+        _id -= 9;
     }
     return _id;
 }
