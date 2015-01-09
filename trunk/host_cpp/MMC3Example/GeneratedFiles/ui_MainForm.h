@@ -14,10 +14,10 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QCheckBox>
+#include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHeaderView>
-#include <QtWidgets/QLCDNumber>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
@@ -48,25 +48,31 @@ public:
     QPushButton *writeBtn;
     QPushButton *readBtn;
     QLabel *label;
-    QGroupBox *groupBox_3;
+    QWidget *pwrTab;
+    QPushButton *measureBtn;
     QWidget *gridLayoutWidget;
     QGridLayout *gridLayout;
+    QDoubleSpinBox *currLimCSpinBox;
+    QDoubleSpinBox *currLimBSpinBox;
+    QDoubleSpinBox *currLimDSpinBox;
     QLabel *label_3;
     QCheckBox *checkBoxEnC;
     QCheckBox *checkBoxEnB;
     QLabel *label_2;
     QCheckBox *checkBoxEnA;
-    QCheckBox *checkBoxEnD;
     QLabel *label_4;
-    QLCDNumber *lcdNumberAV;
-    QLCDNumber *lcdNumberAC;
-    QLCDNumber *lcdNumberBV;
-    QLCDNumber *lcdNumberBC;
-    QLCDNumber *lcdNumberCV;
-    QLCDNumber *lcdNumberCC;
-    QLCDNumber *lcdNumberDV;
-    QLCDNumber *lcdNumberDC;
-    QPushButton *measureBtn;
+    QLabel *lcdNumberAV;
+    QLabel *lcdNumberBV;
+    QLabel *lcdNumberCV;
+    QLabel *lcdNumberDV;
+    QLabel *lcdNumberAC;
+    QLabel *lcdNumberBC;
+    QLabel *lcdNumberCC;
+    QLabel *lcdNumberDC;
+    QCheckBox *checkBoxEnD;
+    QLabel *label_5;
+    QDoubleSpinBox *currLimASpinBox;
+    QPushButton *rstPwrBtn;
     QMenuBar *menubar;
     QMenu *menuMenu;
     QStatusBar *statusbar;
@@ -131,18 +137,54 @@ public:
         label = new QLabel(groupBox_2);
         label->setObjectName(QStringLiteral("label"));
         label->setGeometry(QRect(10, 20, 31, 16));
-        groupBox_3 = new QGroupBox(sysTab);
-        groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
-        groupBox_3->setGeometry(QRect(140, 100, 231, 211));
-        gridLayoutWidget = new QWidget(groupBox_3);
+        tabWidget->addTab(sysTab, QString());
+        pwrTab = new QWidget();
+        pwrTab->setObjectName(QStringLiteral("pwrTab"));
+        measureBtn = new QPushButton(pwrTab);
+        measureBtn->setObjectName(QStringLiteral("measureBtn"));
+        measureBtn->setGeometry(QRect(90, 170, 121, 31));
+        gridLayoutWidget = new QWidget(pwrTab);
         gridLayoutWidget->setObjectName(QStringLiteral("gridLayoutWidget"));
-        gridLayoutWidget->setGeometry(QRect(10, 20, 211, 131));
+        gridLayoutWidget->setGeometry(QRect(10, 20, 276, 139));
         gridLayout = new QGridLayout(gridLayoutWidget);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setHorizontalSpacing(11);
         gridLayout->setContentsMargins(0, 0, 0, 0);
+        currLimCSpinBox = new QDoubleSpinBox(gridLayoutWidget);
+        currLimCSpinBox->setObjectName(QStringLiteral("currLimCSpinBox"));
+        QFont font;
+        font.setFamily(QStringLiteral("Consolas"));
+        font.setPointSize(12);
+        font.setBold(true);
+        font.setWeight(75);
+        currLimCSpinBox->setFont(font);
+        currLimCSpinBox->setDecimals(3);
+        currLimCSpinBox->setMaximum(3250);
+        currLimCSpinBox->setSingleStep(0.1);
+
+        gridLayout->addWidget(currLimCSpinBox, 3, 3, 1, 1);
+
+        currLimBSpinBox = new QDoubleSpinBox(gridLayoutWidget);
+        currLimBSpinBox->setObjectName(QStringLiteral("currLimBSpinBox"));
+        currLimBSpinBox->setFont(font);
+        currLimBSpinBox->setDecimals(3);
+        currLimBSpinBox->setMaximum(3250);
+        currLimBSpinBox->setSingleStep(0.1);
+
+        gridLayout->addWidget(currLimBSpinBox, 2, 3, 1, 1);
+
+        currLimDSpinBox = new QDoubleSpinBox(gridLayoutWidget);
+        currLimDSpinBox->setObjectName(QStringLiteral("currLimDSpinBox"));
+        currLimDSpinBox->setFont(font);
+        currLimDSpinBox->setDecimals(3);
+        currLimDSpinBox->setMaximum(3250);
+        currLimDSpinBox->setSingleStep(0.1);
+
+        gridLayout->addWidget(currLimDSpinBox, 4, 3, 1, 1);
+
         label_3 = new QLabel(gridLayoutWidget);
         label_3->setObjectName(QStringLiteral("label_3"));
+        label_3->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         gridLayout->addWidget(label_3, 0, 1, 1, 1);
 
@@ -169,61 +211,191 @@ public:
 
         gridLayout->addWidget(checkBoxEnA, 1, 0, 1, 1);
 
+        label_4 = new QLabel(gridLayoutWidget);
+        label_4->setObjectName(QStringLiteral("label_4"));
+        label_4->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        gridLayout->addWidget(label_4, 0, 2, 1, 1);
+
+        lcdNumberAV = new QLabel(gridLayoutWidget);
+        lcdNumberAV->setObjectName(QStringLiteral("lcdNumberAV"));
+        QPalette palette;
+        QBrush brush(QColor(0, 0, 255, 255));
+        brush.setStyle(Qt::SolidPattern);
+        palette.setBrush(QPalette::Active, QPalette::WindowText, brush);
+        QBrush brush1(QColor(255, 255, 255, 255));
+        brush1.setStyle(Qt::SolidPattern);
+        palette.setBrush(QPalette::Active, QPalette::Light, brush1);
+        QBrush brush2(QColor(0, 0, 0, 255));
+        brush2.setStyle(Qt::SolidPattern);
+        palette.setBrush(QPalette::Active, QPalette::Base, brush2);
+        palette.setBrush(QPalette::Inactive, QPalette::WindowText, brush);
+        palette.setBrush(QPalette::Inactive, QPalette::Light, brush1);
+        palette.setBrush(QPalette::Inactive, QPalette::Base, brush2);
+        QBrush brush3(QColor(120, 120, 120, 255));
+        brush3.setStyle(Qt::SolidPattern);
+        palette.setBrush(QPalette::Disabled, QPalette::WindowText, brush3);
+        palette.setBrush(QPalette::Disabled, QPalette::Light, brush1);
+        QBrush brush4(QColor(240, 240, 240, 255));
+        brush4.setStyle(Qt::SolidPattern);
+        palette.setBrush(QPalette::Disabled, QPalette::Base, brush4);
+        lcdNumberAV->setPalette(palette);
+        lcdNumberAV->setFont(font);
+        lcdNumberAV->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        gridLayout->addWidget(lcdNumberAV, 1, 1, 1, 1);
+
+        lcdNumberBV = new QLabel(gridLayoutWidget);
+        lcdNumberBV->setObjectName(QStringLiteral("lcdNumberBV"));
+        QPalette palette1;
+        palette1.setBrush(QPalette::Active, QPalette::WindowText, brush);
+        palette1.setBrush(QPalette::Active, QPalette::Light, brush1);
+        palette1.setBrush(QPalette::Active, QPalette::Base, brush2);
+        palette1.setBrush(QPalette::Inactive, QPalette::WindowText, brush);
+        palette1.setBrush(QPalette::Inactive, QPalette::Light, brush1);
+        palette1.setBrush(QPalette::Inactive, QPalette::Base, brush2);
+        palette1.setBrush(QPalette::Disabled, QPalette::WindowText, brush3);
+        palette1.setBrush(QPalette::Disabled, QPalette::Light, brush1);
+        palette1.setBrush(QPalette::Disabled, QPalette::Base, brush4);
+        lcdNumberBV->setPalette(palette1);
+        lcdNumberBV->setFont(font);
+        lcdNumberBV->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        gridLayout->addWidget(lcdNumberBV, 2, 1, 1, 1);
+
+        lcdNumberCV = new QLabel(gridLayoutWidget);
+        lcdNumberCV->setObjectName(QStringLiteral("lcdNumberCV"));
+        QPalette palette2;
+        palette2.setBrush(QPalette::Active, QPalette::WindowText, brush);
+        palette2.setBrush(QPalette::Active, QPalette::Light, brush1);
+        palette2.setBrush(QPalette::Active, QPalette::Base, brush2);
+        palette2.setBrush(QPalette::Inactive, QPalette::WindowText, brush);
+        palette2.setBrush(QPalette::Inactive, QPalette::Light, brush1);
+        palette2.setBrush(QPalette::Inactive, QPalette::Base, brush2);
+        palette2.setBrush(QPalette::Disabled, QPalette::WindowText, brush3);
+        palette2.setBrush(QPalette::Disabled, QPalette::Light, brush1);
+        palette2.setBrush(QPalette::Disabled, QPalette::Base, brush4);
+        lcdNumberCV->setPalette(palette2);
+        lcdNumberCV->setFont(font);
+        lcdNumberCV->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        gridLayout->addWidget(lcdNumberCV, 3, 1, 1, 1);
+
+        lcdNumberDV = new QLabel(gridLayoutWidget);
+        lcdNumberDV->setObjectName(QStringLiteral("lcdNumberDV"));
+        QPalette palette3;
+        palette3.setBrush(QPalette::Active, QPalette::WindowText, brush);
+        palette3.setBrush(QPalette::Active, QPalette::Light, brush1);
+        palette3.setBrush(QPalette::Active, QPalette::Base, brush2);
+        palette3.setBrush(QPalette::Inactive, QPalette::WindowText, brush);
+        palette3.setBrush(QPalette::Inactive, QPalette::Light, brush1);
+        palette3.setBrush(QPalette::Inactive, QPalette::Base, brush2);
+        palette3.setBrush(QPalette::Disabled, QPalette::WindowText, brush3);
+        palette3.setBrush(QPalette::Disabled, QPalette::Light, brush1);
+        palette3.setBrush(QPalette::Disabled, QPalette::Base, brush4);
+        lcdNumberDV->setPalette(palette3);
+        lcdNumberDV->setFont(font);
+        lcdNumberDV->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        gridLayout->addWidget(lcdNumberDV, 4, 1, 1, 1);
+
+        lcdNumberAC = new QLabel(gridLayoutWidget);
+        lcdNumberAC->setObjectName(QStringLiteral("lcdNumberAC"));
+        QPalette palette4;
+        palette4.setBrush(QPalette::Active, QPalette::WindowText, brush);
+        palette4.setBrush(QPalette::Active, QPalette::Light, brush1);
+        palette4.setBrush(QPalette::Active, QPalette::Base, brush2);
+        palette4.setBrush(QPalette::Inactive, QPalette::WindowText, brush);
+        palette4.setBrush(QPalette::Inactive, QPalette::Light, brush1);
+        palette4.setBrush(QPalette::Inactive, QPalette::Base, brush2);
+        palette4.setBrush(QPalette::Disabled, QPalette::WindowText, brush3);
+        palette4.setBrush(QPalette::Disabled, QPalette::Light, brush1);
+        palette4.setBrush(QPalette::Disabled, QPalette::Base, brush4);
+        lcdNumberAC->setPalette(palette4);
+        lcdNumberAC->setFont(font);
+        lcdNumberAC->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        gridLayout->addWidget(lcdNumberAC, 1, 2, 1, 1);
+
+        lcdNumberBC = new QLabel(gridLayoutWidget);
+        lcdNumberBC->setObjectName(QStringLiteral("lcdNumberBC"));
+        QPalette palette5;
+        palette5.setBrush(QPalette::Active, QPalette::WindowText, brush);
+        palette5.setBrush(QPalette::Active, QPalette::Light, brush1);
+        palette5.setBrush(QPalette::Active, QPalette::Base, brush2);
+        palette5.setBrush(QPalette::Inactive, QPalette::WindowText, brush);
+        palette5.setBrush(QPalette::Inactive, QPalette::Light, brush1);
+        palette5.setBrush(QPalette::Inactive, QPalette::Base, brush2);
+        palette5.setBrush(QPalette::Disabled, QPalette::WindowText, brush3);
+        palette5.setBrush(QPalette::Disabled, QPalette::Light, brush1);
+        palette5.setBrush(QPalette::Disabled, QPalette::Base, brush4);
+        lcdNumberBC->setPalette(palette5);
+        lcdNumberBC->setFont(font);
+        lcdNumberBC->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        gridLayout->addWidget(lcdNumberBC, 2, 2, 1, 1);
+
+        lcdNumberCC = new QLabel(gridLayoutWidget);
+        lcdNumberCC->setObjectName(QStringLiteral("lcdNumberCC"));
+        QPalette palette6;
+        palette6.setBrush(QPalette::Active, QPalette::WindowText, brush);
+        palette6.setBrush(QPalette::Active, QPalette::Light, brush1);
+        palette6.setBrush(QPalette::Active, QPalette::Base, brush2);
+        palette6.setBrush(QPalette::Inactive, QPalette::WindowText, brush);
+        palette6.setBrush(QPalette::Inactive, QPalette::Light, brush1);
+        palette6.setBrush(QPalette::Inactive, QPalette::Base, brush2);
+        palette6.setBrush(QPalette::Disabled, QPalette::WindowText, brush3);
+        palette6.setBrush(QPalette::Disabled, QPalette::Light, brush1);
+        palette6.setBrush(QPalette::Disabled, QPalette::Base, brush4);
+        lcdNumberCC->setPalette(palette6);
+        lcdNumberCC->setFont(font);
+        lcdNumberCC->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        gridLayout->addWidget(lcdNumberCC, 3, 2, 1, 1);
+
+        lcdNumberDC = new QLabel(gridLayoutWidget);
+        lcdNumberDC->setObjectName(QStringLiteral("lcdNumberDC"));
+        QPalette palette7;
+        palette7.setBrush(QPalette::Active, QPalette::WindowText, brush);
+        palette7.setBrush(QPalette::Active, QPalette::Light, brush1);
+        palette7.setBrush(QPalette::Active, QPalette::Base, brush2);
+        palette7.setBrush(QPalette::Inactive, QPalette::WindowText, brush);
+        palette7.setBrush(QPalette::Inactive, QPalette::Light, brush1);
+        palette7.setBrush(QPalette::Inactive, QPalette::Base, brush2);
+        palette7.setBrush(QPalette::Disabled, QPalette::WindowText, brush3);
+        palette7.setBrush(QPalette::Disabled, QPalette::Light, brush1);
+        palette7.setBrush(QPalette::Disabled, QPalette::Base, brush4);
+        lcdNumberDC->setPalette(palette7);
+        lcdNumberDC->setFont(font);
+        lcdNumberDC->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        gridLayout->addWidget(lcdNumberDC, 4, 2, 1, 1);
+
         checkBoxEnD = new QCheckBox(gridLayoutWidget);
         checkBoxEnD->setObjectName(QStringLiteral("checkBoxEnD"));
         checkBoxEnD->setLayoutDirection(Qt::LeftToRight);
 
         gridLayout->addWidget(checkBoxEnD, 4, 0, 1, 1);
 
-        label_4 = new QLabel(gridLayoutWidget);
-        label_4->setObjectName(QStringLiteral("label_4"));
+        label_5 = new QLabel(gridLayoutWidget);
+        label_5->setObjectName(QStringLiteral("label_5"));
 
-        gridLayout->addWidget(label_4, 0, 2, 1, 1);
+        gridLayout->addWidget(label_5, 0, 3, 1, 1);
 
-        lcdNumberAV = new QLCDNumber(gridLayoutWidget);
-        lcdNumberAV->setObjectName(QStringLiteral("lcdNumberAV"));
+        currLimASpinBox = new QDoubleSpinBox(gridLayoutWidget);
+        currLimASpinBox->setObjectName(QStringLiteral("currLimASpinBox"));
+        currLimASpinBox->setMaximumSize(QSize(16777215, 16777215));
+        currLimASpinBox->setFont(font);
+        currLimASpinBox->setDecimals(3);
+        currLimASpinBox->setMaximum(3250);
+        currLimASpinBox->setSingleStep(0.1);
 
-        gridLayout->addWidget(lcdNumberAV, 1, 1, 1, 1);
+        gridLayout->addWidget(currLimASpinBox, 1, 3, 1, 1);
 
-        lcdNumberAC = new QLCDNumber(gridLayoutWidget);
-        lcdNumberAC->setObjectName(QStringLiteral("lcdNumberAC"));
-
-        gridLayout->addWidget(lcdNumberAC, 1, 2, 1, 1);
-
-        lcdNumberBV = new QLCDNumber(gridLayoutWidget);
-        lcdNumberBV->setObjectName(QStringLiteral("lcdNumberBV"));
-
-        gridLayout->addWidget(lcdNumberBV, 2, 1, 1, 1);
-
-        lcdNumberBC = new QLCDNumber(gridLayoutWidget);
-        lcdNumberBC->setObjectName(QStringLiteral("lcdNumberBC"));
-
-        gridLayout->addWidget(lcdNumberBC, 2, 2, 1, 1);
-
-        lcdNumberCV = new QLCDNumber(gridLayoutWidget);
-        lcdNumberCV->setObjectName(QStringLiteral("lcdNumberCV"));
-
-        gridLayout->addWidget(lcdNumberCV, 3, 1, 1, 1);
-
-        lcdNumberCC = new QLCDNumber(gridLayoutWidget);
-        lcdNumberCC->setObjectName(QStringLiteral("lcdNumberCC"));
-
-        gridLayout->addWidget(lcdNumberCC, 3, 2, 1, 1);
-
-        lcdNumberDV = new QLCDNumber(gridLayoutWidget);
-        lcdNumberDV->setObjectName(QStringLiteral("lcdNumberDV"));
-
-        gridLayout->addWidget(lcdNumberDV, 4, 1, 1, 1);
-
-        lcdNumberDC = new QLCDNumber(gridLayoutWidget);
-        lcdNumberDC->setObjectName(QStringLiteral("lcdNumberDC"));
-
-        gridLayout->addWidget(lcdNumberDC, 4, 2, 1, 1);
-
-        measureBtn = new QPushButton(groupBox_3);
-        measureBtn->setObjectName(QStringLiteral("measureBtn"));
-        measureBtn->setGeometry(QRect(80, 162, 141, 31));
-        tabWidget->addTab(sysTab, QString());
+        rstPwrBtn = new QPushButton(pwrTab);
+        rstPwrBtn->setObjectName(QStringLiteral("rstPwrBtn"));
+        rstPwrBtn->setGeometry(QRect(10, 170, 41, 31));
+        tabWidget->addTab(pwrTab, QString());
         MainForm->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainForm);
         menubar->setObjectName(QStringLiteral("menubar"));
@@ -243,7 +415,7 @@ public:
         QObject::connect(confFPGAButton, SIGNAL(clicked()), MainForm, SLOT(confFPGA()));
         QObject::connect(fileDialogButton, SIGNAL(clicked()), MainForm, SLOT(openFileDialog()));
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(MainForm);
@@ -261,16 +433,26 @@ public:
         writeBtn->setText(QApplication::translate("MainForm", "Write", 0));
         readBtn->setText(QApplication::translate("MainForm", "Read", 0));
         label->setText(QApplication::translate("MainForm", "Name", 0));
-        groupBox_3->setTitle(QApplication::translate("MainForm", "Power Channels", 0));
+        tabWidget->setTabText(tabWidget->indexOf(sysTab), QApplication::translate("MainForm", "Test", 0));
+        measureBtn->setText(QApplication::translate("MainForm", "Measure", 0));
         label_3->setText(QApplication::translate("MainForm", "Voltage [V]", 0));
         checkBoxEnC->setText(QApplication::translate("MainForm", "C", 0));
         checkBoxEnB->setText(QApplication::translate("MainForm", "B", 0));
         label_2->setText(QApplication::translate("MainForm", "Enable", 0));
         checkBoxEnA->setText(QApplication::translate("MainForm", "A", 0));
-        checkBoxEnD->setText(QApplication::translate("MainForm", "D", 0));
         label_4->setText(QApplication::translate("MainForm", "Current [A]", 0));
-        measureBtn->setText(QApplication::translate("MainForm", "Measure", 0));
-        tabWidget->setTabText(tabWidget->indexOf(sysTab), QApplication::translate("MainForm", "Test", 0));
+        lcdNumberAV->setText(QApplication::translate("MainForm", "0.000", 0));
+        lcdNumberBV->setText(QApplication::translate("MainForm", "0.000", 0));
+        lcdNumberCV->setText(QApplication::translate("MainForm", "0.000", 0));
+        lcdNumberDV->setText(QApplication::translate("MainForm", "0.000", 0));
+        lcdNumberAC->setText(QApplication::translate("MainForm", "0.000", 0));
+        lcdNumberBC->setText(QApplication::translate("MainForm", "0.000", 0));
+        lcdNumberCC->setText(QApplication::translate("MainForm", "0.000", 0));
+        lcdNumberDC->setText(QApplication::translate("MainForm", "0.000", 0));
+        checkBoxEnD->setText(QApplication::translate("MainForm", "D", 0));
+        label_5->setText(QApplication::translate("MainForm", "Current Limit [A]", 0));
+        rstPwrBtn->setText(QApplication::translate("MainForm", "Reset ", 0));
+        tabWidget->setTabText(tabWidget->indexOf(pwrTab), QApplication::translate("MainForm", "Power Channels", 0));
         menuMenu->setTitle(QApplication::translate("MainForm", "Menu", 0));
     } // retranslateUi
 

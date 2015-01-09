@@ -11,6 +11,16 @@ MainForm::MainForm(QWidget *parent): QMainWindow(parent),ui(new Ui::MainForm)
 	connect(ui->checkBoxEnC, SIGNAL(clicked(bool)), this, SLOT(enablePWRC(bool)));
 	connect(ui->checkBoxEnD, SIGNAL(clicked(bool)), this, SLOT(enablePWRD(bool)));
 	connect(ui->measureBtn, SIGNAL(clicked()), this, SLOT(UpdateMeasurements()));
+	connect(ui->rstPwrBtn,  SIGNAL(clicked()), this, SLOT(ResetPowerAlert()));
+
+	ui->currLimASpinBox->setValue(INA226_DEFAULT_LIMIT);
+	ui->currLimBSpinBox->setValue(INA226_DEFAULT_LIMIT);
+	ui->currLimCSpinBox->setValue(INA226_DEFAULT_LIMIT);
+	ui->currLimDSpinBox->setValue(INA226_DEFAULT_LIMIT);
+	connect(ui->currLimASpinBox, SIGNAL(valueChanged(double)), this, SLOT(SetCurrentLimitA(double)));
+	connect(ui->currLimBSpinBox, SIGNAL(valueChanged(double)), this, SLOT(SetCurrentLimitB(double)));
+	connect(ui->currLimCSpinBox, SIGNAL(valueChanged(double)), this, SLOT(SetCurrentLimitC(double)));
+	connect(ui->currLimDSpinBox, SIGNAL(valueChanged(double)), this, SLOT(SetCurrentLimitD(double)));
 
 	InitUSB();
 	myUSBdev = new SiUSBDevice(NULL);
@@ -24,6 +34,10 @@ MainForm::MainForm(QWidget *parent): QMainWindow(parent),ui(new Ui::MainForm)
 
 MainForm::~MainForm(void)
 {
+	delete GPIO1,
+		delete myMMC3;
+	delete myTLUSB;
+	delete myUSBdev;
 	delete ui;
 }
 
@@ -84,23 +98,52 @@ void MainForm::readClicked()
 
 void MainForm::enablePWRA(bool isEnabled)
 {
-	myMMC3->PwrSwitch(PWR_EN_A_BIT, isEnabled);
+	myMMC3->PWR[0]->Switch(isEnabled);
 }
 
 void MainForm::enablePWRB(bool isEnabled)
 {
-	myMMC3->PwrSwitch(PWR_EN_B_BIT, isEnabled);
+	myMMC3->PWR[1]->Switch(isEnabled);
 }
 
 void MainForm::enablePWRC(bool isEnabled)
 {
-	myMMC3->PwrSwitch(PWR_EN_C_BIT, isEnabled);
+	myMMC3->PWR[2]->Switch(isEnabled);
 }
 
 void MainForm::enablePWRD(bool isEnabled)
 {
-	myMMC3->PwrSwitch(PWR_EN_D_BIT, isEnabled);
+	myMMC3->PWR[3]->Switch(isEnabled);
 }
+
+void MainForm::SetCurrentLimitA(double val)
+{
+	myMMC3->PWR[0]->SetCurrentLimit(val);
+}
+
+void MainForm::SetCurrentLimitB(double val)
+{
+	myMMC3->PWR[1]->SetCurrentLimit(val);
+}
+
+void MainForm::SetCurrentLimitC(double val)
+{
+	myMMC3->PWR[2]->SetCurrentLimit(val);
+}
+
+void MainForm::SetCurrentLimitD(double val)
+{
+	myMMC3->PWR[3]->SetCurrentLimit(val);
+}
+
+void MainForm::ResetPowerAlert()
+{
+	myMMC3->PWR[0]->ClearAlert();
+	myMMC3->PWR[1]->ClearAlert();
+	myMMC3->PWR[2]->ClearAlert();
+	myMMC3->PWR[3]->ClearAlert();
+}
+
 
 void MainForm::UpdateMeasurements()
 {
@@ -109,13 +152,19 @@ void MainForm::UpdateMeasurements()
 	myMMC3->PWR[2]->UpdateMeasurements();
 	myMMC3->PWR[3]->UpdateMeasurements();
 
-	ui->lcdNumberAV->display(myMMC3->PWR[0]->GetVoltage());
-	ui->lcdNumberBV->display(myMMC3->PWR[1]->GetVoltage());
-	ui->lcdNumberCV->display(myMMC3->PWR[2]->GetVoltage());
-	ui->lcdNumberDV->display(myMMC3->PWR[3]->GetVoltage());
 
-	ui->lcdNumberAC->display(myMMC3->PWR[0]->GetCurrent());
-	ui->lcdNumberBC->display(myMMC3->PWR[1]->GetCurrent());
-	ui->lcdNumberCC->display(myMMC3->PWR[2]->GetCurrent());
-	ui->lcdNumberDC->display(myMMC3->PWR[3]->GetCurrent());
+	ui->lcdNumberAV->setText(QString::number(myMMC3->PWR[0]->GetVoltage(), 'f', 3));
+	ui->lcdNumberBV->setText(QString::number(myMMC3->PWR[1]->GetVoltage(), 'f', 3));
+	ui->lcdNumberCV->setText(QString::number(myMMC3->PWR[2]->GetVoltage(), 'f', 3));
+	ui->lcdNumberDV->setText(QString::number(myMMC3->PWR[3]->GetVoltage(), 'f', 3));
+
+	ui->lcdNumberAC->setText(QString::number(myMMC3->PWR[0]->GetCurrent(), 'f', 3));
+	ui->lcdNumberBC->setText(QString::number(myMMC3->PWR[1]->GetCurrent(), 'f', 3));
+	ui->lcdNumberCC->setText(QString::number(myMMC3->PWR[2]->GetCurrent(), 'f', 3));
+	ui->lcdNumberDC->setText(QString::number(myMMC3->PWR[3]->GetCurrent(), 'f', 3));
+
+	//ui->lcdNumberAC->display(QString::number(myMMC3->PWR[0]->GetCurrent(), 'g', 5));
+	//ui->lcdNumberBC->display(myMMC3->PWR[1]->GetCurrent());
+	//ui->lcdNumberCC->display(myMMC3->PWR[2]->GetCurrent());
+	//ui->lcdNumberDC->display(myMMC3->PWR[3]->GetCurrent());
 }

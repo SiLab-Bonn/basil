@@ -34,11 +34,12 @@
 #define INA226_CONFREG_RESET       15
 
 #define INA226_DEFAULT_LIMIT       1 // ampere
-#define INA_226_BUSV_GAIN          0.00125   // VBUS_ADC_LSB = 1.25mV 
-#define INA_226_SHUNTV_GAIN        0.0000025 // VSHUNT_ADC_LSB = 2.5µV 
+#define INA226_CURRENT_LSB        0.0001 // Imax = 3.2516A (81.92 mV @ Rsns=25mOhm) --> LSB = 99µA --> 100µA
+#define INA226_BUSV_GAIN          0.00125   // VBUS_ADC_LSB = 1.25mV 
+#define INA226_SHUNTV_GAIN        0.0000025 // VSHUNT_ADC_LSB = 2.5µV 
 
 
-// INA226 maske/enable register bits location
+// INA226 mask/enable register bits location
 #define INA226_MASK_LEN        0
 #define INA226_MASK_APOL       1
 #define INA226_MASK_OVF        2
@@ -61,6 +62,9 @@
 #define PWR_EN_C_BIT    2
 #define PWR_EN_D_BIT    3
 
+#define ON  true
+#define OFF false
+
 
 
 class  SENSEAMP_INA226: public I2CDevice
@@ -70,7 +74,7 @@ public:
 	~SENSEAMP_INA226(void);
   double  ReadCurrent();
   double  ReadVoltage();
-	bool    SetCurrentLimit(double currentLimit);
+	int     ReadMaskReg();
   bool    Configure();
 
 protected:
@@ -81,17 +85,21 @@ protected:
 class MMC3DECLDIR PowerChannel: public SENSEAMP_INA226
 {
 public:
-	PowerChannel(HL_base &HL, const char* name, int address, double Rsns);
+	PowerChannel(HL_base &HL, const char* name, int address, int regAdd, int regBit, double Rsns);
 	//~PowerChannel();
 	void   UpdateMeasurements();
 	double GetVoltage();
 	double GetCurrent();
+	bool   ClearAlert();
+	bool   SetCurrentLimit(double currentLimit);
 	void   Switch(bool on_off);
 	const char* GetName(void);
 
 protected:
 	string mName;
+	int mRegBit;
 	SENSEAMP_INA226 *SenseAmp;
+	basil_gpio *PWR_EN;
 	double Voltage;
 	double Current;
 	double VoltageRaw;
@@ -108,12 +116,10 @@ public:
 	bool Write(HL_addr &hAdd, unsigned char *data, int nBytes);
 	bool Read(HL_addr &hAdd, unsigned char *data, int nBytes);
 	void UpdateMeasurements();
-	void PwrSwitch(byte idx, bool on_off);
 	PowerChannel  *PWR[MAX_MMC3_PWR];
 
 private:
 	void InitChannels();
-	basil_gpio *PWR_EN;
 	unsigned short Id;
 };
 

@@ -785,6 +785,7 @@ bool TUSBDevice::FastBlockWrite(unsigned char *data, int length)
 	int ptr = 0;
 	int blocksize;          /* data size in current transfer */
 	int nPad_bytes;
+	int padded_length;
 	byte *padded_buffer;
 	byte *data_buffer;
 	//int prev_blocksize; //!!!!!!!!!!!!!!!!!
@@ -792,13 +793,13 @@ bool TUSBDevice::FastBlockWrite(unsigned char *data, int length)
 	bool status = true;
 
 	nPad_bytes = -length & 3;  // number of padding bytes
+	padded_length = length + nPad_bytes; 
 
 	if ((ControllerType == FX3) && (nPad_bytes != 0))  // do padding for FX3 32-bit word access
 	{
-		padded_buffer = new byte [length + nPad_bytes];
+		padded_buffer = new byte [padded_length];
  		memcpy(padded_buffer, data, length);
 		data_buffer = padded_buffer;
-		length += nPad_bytes;
 	}
 	else 
 		data_buffer = data;
@@ -822,7 +823,7 @@ bool TUSBDevice::FastBlockWrite(unsigned char *data, int length)
 		return false;
 	}
 	
-	dataleft = length;
+	dataleft = padded_length;
 	while (dataleft > 0) 
 	{
 		blocksize = min(dataleft, pPipe[SUR_DATA_FASTOUT_PIPE].MaximumTransferSize);
@@ -852,19 +853,20 @@ bool TUSBDevice::FastBlockWrite(long long Baddress, unsigned char *data, int len
 	int ptr = 0;
 	int blocksize;          /* data size in current transfer */
 	int nPad_bytes;
+	int padded_length;
 	byte *padded_buffer = NULL;
 	byte *data_buffer;
 	unsigned long dataleft;  /* initial requested data size */
 	bool status = true;
 
-	nPad_bytes = -length & 3;  // number of padding bytes
+  nPad_bytes = -length & 3;  // number of padding bytes
+	padded_length = length + nPad_bytes; 
 
 	if ((ControllerType == FX3) && (nPad_bytes != 0))  // do padding for FX3 32-bit word access
 	{
-		padded_buffer = new byte [length + nPad_bytes];
+		padded_buffer = new byte [padded_length];
  		memcpy(padded_buffer, data, length);
 		data_buffer = padded_buffer;
-		length += nPad_bytes;
 	}
 	else 
 		data_buffer = data;
@@ -888,7 +890,7 @@ bool TUSBDevice::FastBlockWrite(long long Baddress, unsigned char *data, int len
 		return false;
 	}
 
-	dataleft = length;
+	dataleft = padded_length;
 	while (dataleft > 0) 
 	{
 		blocksize = min(dataleft, pPipe[SUR_DATA_FASTOUT_PIPE].MaximumTransferSize);

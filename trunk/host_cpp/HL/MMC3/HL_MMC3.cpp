@@ -37,7 +37,7 @@ bool SENSEAMP_INA226::Configure()
 	//  
 	//  Imax = 3.2516A (@ Rsns=25mOhm) --> LSB = 99µA --> 100µA
 	//  
-	calReg = 0.00512/(0.0001 * mRsns);
+	calReg = 0.00512/(INA226_CURRENT_LSB * mRsns);
 	buffer[0] = INA226_CAL;
 	buffer[1] = (byte)(0xff & calReg >> 8); // MSB first
 	buffer[2] = (byte)(0xff & calReg);
@@ -50,24 +50,20 @@ bool SENSEAMP_INA226::Configure()
 	buffer[2] = (byte)(0xff & maskReg);
 	status = mHL->Write(mHLAdd, buffer, 3);
 
-	SetCurrentLimit(INA226_DEFAULT_LIMIT);
-
 	return status;
 }
 
-bool SENSEAMP_INA226::SetCurrentLimit(double currentLimit)
+int SENSEAMP_INA226::ReadMaskReg()
 {
+	int maskReg;
 	bool status = false;
-	int limitReg;
 	byte buffer[3];
 
-	limitReg = mRsns * currentLimit / INA_226_SHUNTV_GAIN;  // shunt voltage = Rsns * I_limit
-	buffer[0] = INA226_ALLERT;
-	buffer[1] = (byte)(0xff & limitReg >> 8); // MSB first
-	buffer[2] = (byte)(0xff & limitReg);
-	status = mHL->Write(mHLAdd, buffer, 3);
+	buffer[0] = INA226_MASK;
+	status = mHL->Write(mHLAdd, buffer, 1);
+	status = mHL->Read(mHLAdd, buffer, 2);
 
-	return status;
+	return (int)((buffer[0] << 8) + buffer[1]) ;
 }
 
 
@@ -89,7 +85,7 @@ double SENSEAMP_INA226::ReadCurrent()
 	//}
 	status = mHL->Read(mHLAdd, rawData, 2);
 
-	return (double) ((signed short)((rawData[0] << 8) + rawData[1]));
+	return (double) (signed short)(((rawData[0] << 8) + rawData[1]))* INA226_CURRENT_LSB;
 }
 
 double SENSEAMP_INA226:: ReadVoltage()
@@ -105,18 +101,30 @@ double SENSEAMP_INA226:: ReadVoltage()
 	//}
 	status = mHL->Read(mHLAdd, rawData, 2);
 
-	return (double) (((rawData[0] << 8) + rawData[1]) * INA_226_BUSV_GAIN);
+	return (double) (((rawData[0] << 8) + rawData[1]) * INA226_BUSV_GAIN);
 }
 
 
-PowerChannel::PowerChannel(HL_base &HL, const char* name, int address, double Rsns): SENSEAMP_INA226(HL, 0, address, Rsns)
+PowerChannel::PowerChannel(HL_base &HL, const char* name, int I2Caddress, int regAdd, int regBit, double Rsns): SENSEAMP_INA226(HL, 0, I2Caddress, Rsns)
 {
-	mName      = name;
+	mName   = name;
+	mRegBit = regBit;
+	PWR_EN  = new basil_gpio( &HL, name, regAdd, 1, true, false);	
+	SetCurrentLimit(INA226_DEFAULT_LIMIT);
+	ClearAlert();
 }
 
 void PowerChannel::Switch(bool on_off)
 {
-	;
+	byte buffer;
+	buffer = PWR_EN->Get();
+
+	if (on_off)
+		buffer |= 1 << mRegBit;
+	else
+		buffer &= ~(1 << mRegBit);
+
+	PWR_EN->Set(buffer);
 }
 
 
@@ -142,42 +150,50 @@ double PowerChannel::GetCurrent()
 }
 
 
+bool PowerChannel::ClearAlert()
+{
+	return ((ReadMaskReg() & (1 << INA226_MASK_AFF)) == (1 << INA226_MASK_AFF));
+}
+
+
+bool PowerChannel::SetCurrentLimit(double currentLimit)
+{
+	bool status = false;
+	int limitReg;
+	byte buffer[3];
+
+	limitReg = mRsns * currentLimit / INA226_SHUNTV_GAIN;  // shunt voltage = Rsns * I_limit
+	buffer[0] = INA226_ALLERT;
+	buffer[1] = (byte)(0xff & limitReg >> 8); // MSB first
+	buffer[2] = (byte)(0xff & limitReg);
+	status = mHL->Write(mHLAdd, buffer, 3);
+
+	return status;
+}
+
+
 HL_MMC3::HL_MMC3(TL_base &TL): HL_base(TL)
 {	
 	Id = -1;
 	//                        ( parent,     name, ch)
-	PWR[0]   = new PowerChannel(  *this,   "PWR0", INA226_A_BASEADD, 0.025);
-	PWR[1]   = new PowerChannel(  *this,   "PWR1", INA226_B_BASEADD, 0.025);
-	PWR[2]   = new PowerChannel(  *this,   "PWR2", INA226_C_BASEADD, 0.025);
-	PWR[3]   = new PowerChannel(  *this,   "PWR3", INA226_D_BASEADD, 0.025);
-
-	PWR_EN   = new basil_gpio( (HL_base*)this, "PWR_EN", PWR_EN_REG_ADD, 1, true, false);	
+	PWR[0]   = new PowerChannel(  *this,   "PWR_A", INA226_A_BASEADD, PWR_EN_REG_ADD, PWR_EN_A_BIT, 0.025);
+	PWR[1]   = new PowerChannel(  *this,   "PWR_B", INA226_B_BASEADD, PWR_EN_REG_ADD, PWR_EN_B_BIT, 0.025);
+	PWR[2]   = new PowerChannel(  *this,   "PWR_C", INA226_C_BASEADD, PWR_EN_REG_ADD, PWR_EN_C_BIT, 0.025);
+	PWR[3]   = new PowerChannel(  *this,   "PWR_C", INA226_D_BASEADD, PWR_EN_REG_ADD, PWR_EN_D_BIT, 0.025);
 }
 
 HL_MMC3::~HL_MMC3(void)
 {
 	for (int i = 0; i < MAX_MMC3_PWR; i++)
+	{
+		PWR[i]->Switch(OFF);
 		delete PWR[i];
-	delete PWR_EN;
+	}
 }
 
 void HL_MMC3::Init(TL_base &TL)
 {
 	SetTLhandle(TL);
-}
-
-
-void HL_MMC3::PwrSwitch(byte idx, bool on_off)
-{
-	byte buffer;
-	buffer = PWR_EN->Get();
-
-	if (on_off)
-		buffer |= 1 << idx;
-	else
-		buffer &= ~(1 << idx);
-
-	PWR_EN->Set(buffer);
 }
 
 void HL_MMC3::UpdateMeasurements()

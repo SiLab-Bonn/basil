@@ -41,7 +41,12 @@ public slots:
 	void enablePWRB(bool isEnabled);
 	void enablePWRC(bool isEnabled);
 	void enablePWRD(bool isEnabled);
+	void SetCurrentLimitA(double val);
+	void SetCurrentLimitB(double val);
+	void SetCurrentLimitC(double val);
+	void SetCurrentLimitD(double val);
 	void UpdateMeasurements();
+	void ResetPowerAlert();
 ;
 
 private:
