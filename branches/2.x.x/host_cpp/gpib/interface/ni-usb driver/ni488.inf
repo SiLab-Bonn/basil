@@ -1,0 +1,220 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; File:
+;
+;     ni488.inf
+;
+; Description:
+;
+;     NI-488.2 hardware information file
+;
+; Copyright 2006 National Instruments Corporation
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+[Version]
+Signature                  =  "$Windows NT$"
+Class                      =  GPIB
+ClassGUID                  =  {7A24B9F6-5E21-4f79-B35C-3BFCC8A1B36A}
+Provider                   =  %NIString%
+DriverPackageDisplayName   =  "NI-488.2 GPIB Interface Driver"
+CatalogFile.NT             =  ni488.cat
+DriverVer                  =  03/01/2007,2.5.2.1
+
+;=============================================================================
+;  Files
+;=============================================================================
+[SourceDisksNames]
+1 = %DriverDesc%
+
+[SourceDisksFiles]
+gpibprtk.sys   = 1
+ni488ci.dll    = 1
+ni488cip.dll   = 1
+
+[DestinationDirs]
+DefaultDestDir       = 11     ; system32
+InstallerCopyFiles   = 11     ; system32
+DriverCopyFiles      = 12     ; system32\drivers
+
+[InstallerCopyFiles]
+ni488ci.dll,,,0x00000004      ; Class installer shell
+ni488cip.dll,,,0x00000004     ; Class installer core
+
+[DriverCopyFiles]
+gpibprtk.sys,,,0x00000004     ; Driver
+
+;=============================================================================
+;  Class Installer
+;=============================================================================
+[ClassInstall32]
+AddReg=GpibClassAddReg
+CopyFiles=InstallerCopyFiles
+
+[GpibClassAddReg]
+HKR,,,,%GpibClassName%
+HKR,,Installer32,,"ni488ci.dll,ClassInstall"
+HKR,,Icon,,"101"
+
+;=============================================================================
+;  Hardware
+;=============================================================================
+[Manufacturer]
+%NIString%=NIC
+
+[NIC]
+%PciDesc%         =  PCI_INTERFACE,PCI\VEN_1093&DEV_C840
+%PciDesc%         =  PCI_INTERFACE,PCI\VEN_1093&DEV_C801
+%PciDesc%         =  PCI_INTERFACE,PCI\VEN_1093&DEV_C801&SUBSYS_C8011093&REV_02
+%PciEDesc%        =  PCI_INTERFACE,PCI\VEN_1093&DEV_70CF&SUBSYS_70CF1093
+%PciEDesc%        =  PCI_INTERFACE,PCI\VEN_1093&DEV_710E&SUBSYS_710E1093
+%PmcDesc%         =  PCI_INTERFACE,PCI\VEN_1093&DEV_C831
+%PxiDesc%         =  PCI_INTERFACE,PCI\VEN_1093&DEV_C821
+%PciPlusDesc%     =  PCI_PLUS_INTERFACE,PCI\VEN_1093&DEV_C811&SUBSYS_00000000&REV_01
+%PciPlusDesc%     =  PCI_PLUS_INTERFACE,PCI\VEN_1093&DEV_71AD&SUBSYS_71AD1093&REV_00
+%UsbBInitDesc%    =  GPIB_USBBPRE,USB\VID_3923&PID_702B
+%UsbBDesc%        =  USB_INTERFACE,USB\VID_3923&PID_702A
+%UsbHSDesc%       =  USB_INTERFACE,USB\VID_3923&PID_709B
+%UsbKDesc%       =  USB_INTERFACE,USB\VID_3923&PID_725C
+%ExpressCardDesc% =  USB_INTERFACE,USB\VID_3923&PID_7169
+%PcmciaDesc%      =  PCMCIA_GPIB,PCMCIA\National_Instruments-PCMCIA-GPIB-6927
+%PcmciaDesc%      =  PCMCIA_GPIB,PCMCIA\National_Instruments-PCMCIA-GPIB-8B85
+%PcmciaDesc%      =  PCMCIA_GPIB,PCMCIA\National_Instruments-PCMCIA-GPIB-8DE7
+%PcmciaPlusDesc%  =  PCMCIA_GPIB_PLUS, PCMCIA\National_Instruments-PCMCIA-GPIB+-F68E
+%AtPnpDesc%       =  AT_GPIB_TNT_PNP,*NICC600
+%AtPnpDesc%       =  AT_GPIB_TNT_PNP,*NICC601
+
+;=============================================================================
+;  GPIB Devices
+;=============================================================================
+[PCI_INTERFACE.NT]
+AddReg=GpibControllerAddReg.NT
+CopyFiles=DriverCopyFiles
+
+[PCI_INTERFACE.NT.Services]
+AddService=gpibprtk, 0x00000002, gpibprtk_Service_Inst
+
+[PCI_PLUS_INTERFACE.NT]
+AddReg=GpibControllerAddReg.NT, GpibPciPlusAddReg.NT
+CopyFiles=DriverCopyFiles
+
+[PCI_PLUS_INTERFACE.NT.Services]
+AddService=gpibprtk, 0x00000002, gpibprtk_Service_Inst
+
+[GPIB_USBBPRE.NT]
+AddReg=GpibUsbAddReg.NT, GpibUsbBPreAddReg.NT
+CopyFiles=DriverCopyFiles
+
+[GPIB_USBBPRE.NT.Services]
+AddService= gpibprtk, 0x00000002, gpibprtk_Service_Inst
+
+[USB_INTERFACE.NT]
+AddReg=GpibControllerAddReg.NT, GpibUsbAddReg.NT
+CopyFiles=DriverCopyFiles
+
+[USB_INTERFACE.NT.Services]
+AddService= gpibprtk, 0x00000002, gpibprtk_Service_Inst
+
+[PCMCIA_GPIB.NT]
+AddReg=GpibControllerAddReg.NT, GpibPcmciaAddReg.NT
+CopyFiles=DriverCopyFiles
+
+[PCMCIA_GPIB.NT.Services]
+AddService= gpibprtk, 0x00000002, gpibprtk_Service_Inst
+
+[PCMCIA_GPIB_PLUS.NT]
+AddReg=GpibControllerAddReg.NT, GpibPcmciaPlusAddReg.NT
+CopyFiles=DriverCopyFiles
+
+[PCMCIA_GPIB_PLUS.NT.Services]
+AddService= gpibprtk, 0x00000002, gpibprtk_Service_Inst
+
+[AT_GPIB_TNT_PNP.NT]
+AddReg=GpibControllerAddReg.NT, GpibAtTntPnPAddReg.NT
+CopyFiles=DriverCopyFiles
+
+[AT_GPIB_TNT_PNP.NT.Services]
+AddService=gpibprtk, 0x00000002, gpibprtk_Service_Inst
+
+;=============================================================================
+;  Common Controller
+;=============================================================================
+[GpibControllerAddReg.NT]
+HKR,,DeviceClass,1,62,69,70,67
+HKR,,BridgeType,1,01,00,00,00
+
+;=============================================================================
+;  GPIB PCMCIA
+;=============================================================================
+[GpibPcmciaAddReg.NT]
+HKR,,ProductNumber,1,82,48
+HKR,,SurpriseRemoveWithoutWarning,1,01
+
+;=============================================================================
+;  GPIB PCMCIA+
+;=============================================================================
+[GpibPcmciaPlusAddReg.NT]
+HKR,,ProductNumber,1,71,0C
+HKR,,SurpriseRemoveWithoutWarning,1,01
+HKR,,Analyzer,%REG_DWORD%,01,00,00,00
+
+;=============================================================================
+;  GPIB AT-GPIB/TNT (Plug and Play)
+;=============================================================================
+[GpibAtTntPnPAddReg.NT]
+HKR,,ProductNumber,1,60,0C
+
+;=============================================================================
+;  PCI-GPIB
+;=============================================================================
+[GpibPciPlusAddReg.NT]
+HKR,,Analyzer,%REG_DWORD%,01,00,00,00
+HKR,,MITERetry,1,00,00,00,00
+
+;=============================================================================
+;  GPIB-USB
+;=============================================================================
+[GpibUsbAddReg.NT]
+HKR,,Protocol,1,10,00,00,00
+HKR,,SurpriseRemoveWithoutWarning,1,01
+
+[GpibUsbBPreAddReg.NT]
+HKR,,DeviceClass,1,62,69,70,67
+HKR,,SurpriseRemoveWithoutWarning,1,01
+
+;=============================================================================
+;  Services
+;=============================================================================
+[gpibprtk_Service_Inst]
+ServiceType    = 1        ; SERVICE_KERNEL_DRIVER
+StartType      = 3        ; SERVICE_MANUAL_START
+ErrorControl   = 1        ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\gpibprtk.sys
+
+;=============================================================================
+; Do not list these drivers in some UIs
+;=============================================================================
+[ControlFlags]
+ExcludeFromSelect =  *
+
+;=============================================================================
+;  Strings
+;=============================================================================
+[Strings]
+NIString="National Instruments"
+PciDesc="PCI-GPIB"
+PxiDesc="PXI-GPIB"
+PmcDesc="PMC-GPIB"
+UsbBInitDesc="GPIB-USB-B Initialization"
+UsbBDesc="GPIB-USB-B"
+UsbKDesc="GPIB-USB-Keithley"
+UsbHSDesc="GPIB-USB-HS"
+PciPlusDesc="PCI-GPIB+"
+PcmciaDesc="PCMCIA-GPIB"
+PcmciaPlusDesc="PCMCIA-GPIB+"
+AtPnpDesc="AT-GPIB/TNT (Plug and Play)"
+PciEDesc="NI PCIe-GPIB"
+ExpressCardDesc="NI ExpressCard-GPIB"
+GpibClassName="National Instruments GPIB Interfaces"
+DriverDesc="NI-488.2 Driver"
+REG_DWORD="0x00010001"

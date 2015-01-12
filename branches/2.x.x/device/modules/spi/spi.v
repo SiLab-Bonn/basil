@@ -2,44 +2,40 @@
  * ------------------------------------------------------------
  * Copyright (c) SILAB , Physics Institute of Bonn University 
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
  
 module spi
 #(
     parameter BASEADDR = 16'h0000,
     parameter HIGHADDR = 16'h0000,
+    parameter ABUSWIDTH = 16,
     parameter MEM_BYTES = 2
 )
 (
-    input           BUS_CLK,
-    input           BUS_RST,
-    input   [15:0]  BUS_ADD,
-    inout   [7:0]   BUS_DATA,
-    input           BUS_RD,
-    input           BUS_WR, 
+    input wire          BUS_CLK,
+    input wire          BUS_RST,
+    input wire  [ABUSWIDTH-1:0]  BUS_ADD,
+    inout wire  [7:0]   BUS_DATA,
+    input wire          BUS_RD,
+    input wire          BUS_WR,
 
-    input SPI_CLK,
+    input wire SPI_CLK,
 
-    output SCLK,
-    input  SDO,
-    output SDI,
+    output wire SCLK,
+    input wire SDO,
+    output wire SDI,
 
-    output SEN, 
-    output SLD
+    output wire SEN, 
+    output wire SLD
 ); 
 
 
 wire IP_RD, IP_WR;
-wire [15:0] IP_ADD;
+wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
 wire [7:0] IP_DATA_OUT;
 
-bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
+bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH)) i_bus_to_ip
 (
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
@@ -53,8 +49,10 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
     .IP_DATA_OUT(IP_DATA_OUT)
 );
 
+
 spi_core
 #(
+    .ABUSWIDTH(ABUSWIDTH),
     .MEM_BYTES(MEM_BYTES)
 ) i_spi_core 
 (
@@ -75,5 +73,6 @@ spi_core
     .SEN(SEN),
     .SLD(SLD)
 );
+
 
 endmodule

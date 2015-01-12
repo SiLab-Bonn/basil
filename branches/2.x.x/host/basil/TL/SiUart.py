@@ -1,5 +1,6 @@
 import serial
 from basil.TL.TransferLayer import TransferLayer
+import time
 
 CMD_W = 'w'  # Command to write
 CMD_R = 'r'  # Command to read
@@ -77,56 +78,57 @@ class SiUart (TransferLayer):
         except AttributeError as a:
             print("Error Message @ __del__(self):"), a
 
-    def send_cmd(self, cmd, data):
+    def send_cmd(self, cmd, data, explicit_size=False):
+        num_to_read = data
         if not isinstance(data,str):
             data = hex(data)
         else:
             pass
-        byteData = '0x00000000'
-        data = byteData[:len(byteData)+2-len(data)] + data[2:]
-        print(byteData)
-        print('SiUART\tCMD: %s\tDATA: %s'%(cmd,data))
+        
         dataOut = ""
-        explicit_size = False
-        if '0x' in str(data):
-            data = data[2:]
-        else:
-            explicit_size = True
         done = False
+   
         self._ser.write(cmd)
-        if(cmd == CMD_W or cmd == CMD_A):
-            self._ser.write(data)
+        if '0x' in data:
+            data = data[2:]    
+        if len(data)%2 == 0:
+            pass
+        else:
+            data = "0"+ data
+        if(cmd == CMD_W):
+            self._ser.write(data.decode("hex"))
+        if(cmd == CMD_A):
+            byteData = '00000000'
+            data = byteData[:8-len(data)] + data
+            # ### Revert byte order #### START
+            n = 2
+            dlist = [data[i:i + n] for i in range(0, len(data), n)]
+            d = "".join(dlist[::-1])
+            # ### Revert byte order #### END
+            
+            self._ser.write(d.decode("hex"))
         if(cmd == CMD_L):
             if(explicit_size):
-                # tmp = "{0:08d}".format(int(data))
                 nbytes = len(data)
                 tmp = "00000000"
                 tmp = tmp[:8 - nbytes] + data
-                # print tmp
             else:
-                # tmp = "{0:08d}".format(len(data)/2)
-                nbytes = str(len(data) / 2)
+                nbytes = len(data) / 2
                 tmp = "00000000"
-                tmp = tmp[:8 - len(nbytes)] + nbytes
-                # print tmp
-
+                tmp = tmp[:8 - len(str(nbytes))] + hex(nbytes)[2:]
+                #print tmp
             # ### Revert byte order #### START
             n = 2
             dlist = [tmp[i:i + n] for i in range(0, len(tmp), n)]
             d = "".join(dlist[::-1])
             # ### Revert byte order #### END
-
             self._ser.write(d.decode("hex"))
         if(cmd == CMD_R):
-            # while(self._ser.inWaiting() > 0):
-            dataOut = self._ser.read(int(data))
-        # time.sleep(0.1)
-        # respond = ""
-        # while(self._ser.inWaiting() > 0):
+            dataOut = self._ser.read(int(num_to_read))  
+       
         respond = self._ser.readall()
         if "OK" in respond:
             done = True
-            print respond
         return done, dataOut
 
     def write(self, to_address, this_data):
@@ -134,11 +136,11 @@ class SiUart (TransferLayer):
         try:
             done = False
             if(self.send_cmd(cmd=CMD_A, data=to_address)[0]):
-                print("Send address")
+                #print("Send address")
                 if(self.send_cmd(cmd=CMD_L, data=this_data)[0]):
-                    print("Send length")
+                    #print("Send length")
                     if(self.send_cmd(cmd=CMD_W, data=this_data)[0]):
-                        print("Send data")
+                        #print("Send data")
                         done = True
                 else:
                     print "Write failed"
@@ -152,11 +154,11 @@ class SiUart (TransferLayer):
         try:
             dataOut = ''
             if(self.send_cmd(cmd=CMD_A, data=from_address)[0]):
-                print("Send address")
-                if(self.send_cmd(cmd=CMD_L, data=num_of_bytes)[0]):
-                    print("Send length")
+                #print("Send address")
+                if(self.send_cmd(cmd=CMD_L, data=num_of_bytes, explicit_size=True)[0]):
+                    #print("Send length")
                     done, dataOut = self.send_cmd(cmd=CMD_R, data=num_of_bytes)
-                    print("Send read")
+                    #print("Send read")
                     if(done):
                         print("Read data")
                         done = True

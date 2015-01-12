@@ -1,13 +1,8 @@
 #
 # ------------------------------------------------------------
 # Copyright (c) All rights reserved
-# SiLab , Physics Institute of Bonn University
+# SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
-#
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
 #
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
@@ -25,6 +20,8 @@ class tdc_s3(RegisterHardwareLayer):
                   'ENABLE_EXTERN': {'descr': {'addr': 1, 'size': 1, 'offset': 1}},
                   'EN_ARMING': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},
                   'EN_WRITE_TIMESTAMP': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},
+                  'EN_TRIGGER_DIST': {'descr': {'addr': 1, 'size': 1, 'offset': 4}},
+                  'EN_NO_WRITE_TRIG_ERR': {'descr': {'addr': 1, 'size': 1, 'offset': 5}},
                   'EVENT_COUNTER': {'descr': {'addr': 2, 'size': 32, 'properties': ['ro']}}
     }
 

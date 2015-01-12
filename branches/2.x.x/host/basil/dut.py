@@ -4,16 +4,13 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
+
 import logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
 from importlib import import_module
-from inspect import getmembers
+from inspect import getmembers, isclass
 from yaml import safe_load
+import sys
 
 
 class Base(object):
@@ -59,6 +56,9 @@ class Base(object):
     def init(self):
         raise NotImplementedError("init() not implemented")
 
+    def close(self):
+        pass
+
     def set_configuration(self, conf):
         raise NotImplementedError("set_configuration() not implemented")
 
@@ -95,7 +95,6 @@ class Dut(Base):
                 mod.init()
             except NotImplementedError:
                 pass
-#                 print '%s: %s' % (type(mod), e)
 
         for item in self._transfer_layer.itervalues():
             update_init(item)
@@ -110,15 +109,25 @@ class Dut(Base):
             update_init(item)
             catch_exception_on_init(item)
 
+    def close(self):
+        for item in self._transfer_layer.itervalues():
+            item.close()
+        for item in self._hardware_layer.itervalues():
+            item.close()
+        for item in self._user_drivers.itervalues():
+            item.close()
+        for item in self._registers.itervalues():
+            item.close()
+
     def set_configuration(self, conf):
         conf = self._open_conf(conf)
-
         if conf:
             for item, item_conf in conf.iteritems():
-                try:
-                    self[item].set_configuration(item_conf)
-                except NotImplementedError:
-                    pass
+                if item != 'conf_path':
+                    try:
+                        self[item].set_configuration(item_conf)
+                    except NotImplementedError:
+                        pass
 
     def get_configuration(self):
         conf = {}
@@ -146,7 +155,6 @@ class Dut(Base):
 
     def load_hw_configuration(self, conf, extend_config=False):
         conf = self._open_conf(conf)
-
         if extend_config:
             self._conf.update(conf)
         else:
@@ -215,12 +223,20 @@ class Dut(Base):
 
     def _factory(self, importname, *args, **kargs):
         def is_base_class(item):
-            return isinstance(item, Base.__class__) and item.__module__ == importname
-
+            return isclass(item) and issubclass(item, Base) and item.__module__ == importname
         try:
             mod = import_module(importname)
         except ImportError:
-            mod = import_module(importname.split('.')[-1])
+            exc = sys.exc_info()
+            splitted_import_name = importname.split('.')
+            if len(splitted_import_name) > 2:  # give it another try
+                try:
+                    importname = '.'.join(splitted_import_name[2:])  # remove "basil.RL." etc.
+                    mod = import_module(importname)
+                except ImportError:
+                    raise exc[0], exc[1], exc[2]
+            else:  # finally raise exception
+                raise
         clsmembers = getmembers(mod, is_base_class)
         if len(clsmembers) > 1:
             raise ValueError('Found more than one matching class in %s.' % importname)

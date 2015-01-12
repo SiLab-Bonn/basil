@@ -3,20 +3,17 @@
  * Copyright (c) All rights reserved 
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $:
- *  $Date::                      $:
  */
- 
+
+
 // WARNING! THIS MODULE IS WORK IN PROGRESS! NOT TESTED!
 /*
 Possible extra options:
-- delay block that allow SEQ_TRIGGER in past (enabled by parameter - for speed needed applications a simple memory circular buffer)
-- SEQ_TRIGGER selections as pulse or as gate/enable
+- delay block that allow SEQ_EXT_START in past (enabled by parameter - for speed needed applications a simple memory circular buffer)
+- SEQ_EXT_START selections as pulse or as gate/enable
 - multi window recording (sorted with but multiple times)
 */
+
 
 module seq_rec_core
 #(
@@ -35,20 +32,20 @@ module seq_rec_core
 
     SEQ_CLK,
     SEQ_IN,
-    SEQ_TRIGGER
+    SEQ_EXT_START
 ); 
 
-input                       BUS_CLK;
-input                       BUS_RST;
-input      [ABUSWIDTH-1:0]  BUS_ADD;
-input      [7:0]            BUS_DATA_IN;
-input                       BUS_RD;
-input                       BUS_WR;
-output reg [7:0]            BUS_DATA_OUT;
+input wire                      BUS_CLK;
+input wire                      BUS_RST;
+input wire     [ABUSWIDTH-1:0]  BUS_ADD;
+input wire     [7:0]            BUS_DATA_IN;
+input wire                      BUS_RD;
+input wire                      BUS_WR;
+output reg     [7:0]            BUS_DATA_OUT;
 
-input SEQ_CLK;
-input [IN_BITS-1:0] SEQ_IN;
-input SEQ_TRIGGER;
+input wire SEQ_CLK;
+input wire [IN_BITS-1:0] SEQ_IN;
+input wire SEQ_EXT_START;
 
 `include "../includes/log2func.v"
 
@@ -68,7 +65,7 @@ always @(posedge BUS_CLK) begin
     if(RST) begin
         status_regs[0] <= 0;
         status_regs[1] <= 0;
-        status_regs[2] <= 1;
+        status_regs[2] <= 0;
         status_regs[3] <= DEF_BIT_OUT[7:0]; //bits
         status_regs[4] <= DEF_BIT_OUT[15:8]; //bits
     end
@@ -88,8 +85,9 @@ assign START = (BUS_ADD==1 && BUS_WR);
 wire [15:0] CONF_COUNT;
 assign CONF_COUNT = {status_regs[4], status_regs[3]};
 
-wire [7:0] CONF_EN_SEQ_TRIGGER;
-assign CONF_CLK_DIV = status_regs[2][0];
+wire CONF_EN_SEQ_EXT_START;
+assign CONF_EN_SEQ_EXT_START = status_regs[2][0];
+
 reg CONF_DONE;
 
 wire [7:0] BUS_STATUS_OUT;
@@ -97,19 +95,33 @@ assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
 
 localparam VERSION = 0;
 
+reg [7:0] BUS_DATA_OUT_REG;
 always @ (posedge BUS_CLK) begin
     if(BUS_ADD == 0)
-        BUS_DATA_OUT <= VERSION;
+        BUS_DATA_OUT_REG <= VERSION;
     else if(BUS_ADD == 1)
-        BUS_DATA_OUT <= {7'b0,CONF_DONE};
+        BUS_DATA_OUT_REG <= {7'b0,CONF_DONE};
+    else if(BUS_ADD == 2)
+        BUS_DATA_OUT_REG <= {7'b0,CONF_EN_SEQ_EXT_START};
     else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= CONF_COUNT[7:0];
+        BUS_DATA_OUT_REG <= CONF_COUNT[7:0];
     else if(BUS_ADD == 4)
-        BUS_DATA_OUT <= CONF_COUNT[15:8];
+        BUS_DATA_OUT_REG <= CONF_COUNT[15:8];
     else if(BUS_ADD < 16)
-        BUS_DATA_OUT <= BUS_STATUS_OUT;
-    else if(BUS_ADD < 16 + MEM_BYTES)
-        BUS_DATA_OUT <= BUS_IN_MEM;
+        BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
+end
+
+reg [ABUSWIDTH-1:0]  PREV_BUS_ADD;
+always@(posedge BUS_CLK)
+    PREV_BUS_ADD <= BUS_ADD;
+    
+always @(*) begin
+    if(PREV_BUS_ADD < 16)
+        BUS_DATA_OUT = BUS_DATA_OUT_REG;
+    else if(PREV_BUS_ADD < 16 + MEM_BYTES )
+        BUS_DATA_OUT = BUS_IN_MEM;
+    else
+        BUS_DATA_OUT = 8'hxx;
 end
 
 reg [ABUSWIDTH-1:0] out_bit_cnt;
@@ -160,8 +172,8 @@ generate
                 mem[memout_addrb] <= SEQ_IN;
                                          
     end else begin
-	     wire [7:0] douta;
-		  
+         wire [7:0] douta;
+          
         seq_rec_blk_mem memout(
             .clka(BUS_CLK), .clkb(SEQ_CLK), .douta(douta), .doutb(), 
             .wea(WEA), .web(WEB), .addra(memout_addra), .addrb(memout_addrb), 
@@ -170,7 +182,7 @@ generate
         always@(*) begin
             BUS_IN_MEM = douta;
         end
-		  
+          
     end
 endgenerate
 
@@ -188,7 +200,7 @@ wire [ADDR_SIZEB:0] STOP_BIT;
 assign STOP_BIT = CONF_COUNT;
 
 wire START_SYNC_OR_TRIG;
-assign START_SYNC_OR_TRIG = START_SYNC || (CONF_EN_SEQ_TRIGGER && SEQ_TRIGGER);
+assign START_SYNC_OR_TRIG = START_SYNC | (CONF_EN_SEQ_EXT_START & SEQ_EXT_START);
 
 always @ (posedge SEQ_CLK)
     if (RST_SYNC)

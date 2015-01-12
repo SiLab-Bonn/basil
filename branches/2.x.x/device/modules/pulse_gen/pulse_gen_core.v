@@ -1,28 +1,25 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
- 
- 
 
 module pulse_gen_core
+#(
+    parameter ABUSWIDTH = 16
+)
 (
-    input                       BUS_CLK,
-    input                       BUS_RST,
-    input      [15:0]           BUS_ADD,
-    input      [7:0]            BUS_DATA_IN,
-    input                       BUS_RD,
-    input                       BUS_WR,
-    output     reg [7:0]        BUS_DATA_OUT,
+    input wire                      BUS_CLK,
+    input wire                      BUS_RST,
+    input wire     [ABUSWIDTH-1:0]  BUS_ADD,
+    input wire     [7:0]            BUS_DATA_IN,
+    input wire                      BUS_RD,
+    input wire                      BUS_WR,
+    output reg         [7:0]        BUS_DATA_OUT,
     
-    input PULSE_CLK,
-    input EXT_START,
+    input wire PULSE_CLK,
+    input wire EXT_START,
     output reg PULSE
 ); 
 
@@ -56,6 +53,8 @@ always@(posedge BUS_CLK) begin
         BUS_DATA_OUT <= CONF_WIDTH[7:0];
     else if(BUS_ADD == 7)
         BUS_DATA_OUT <= CONF_REPEAT[7:0];
+    else
+        BUS_DATA_OUT <= 8'b0;
 end
 
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
@@ -162,5 +161,4 @@ always @(posedge BUS_CLK)
     else if(DONE_SYNC)
         CONF_DONE <= 1;
         
-
 endmodule

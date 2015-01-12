@@ -2,32 +2,28 @@
  * ------------------------------------------------------------
  * Copyright (c) SILAB , Physics Institute of Bonn University 
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
  
 module fast_spi_rx_core
 #(
+    parameter ABUSWIDTH = 16,
     parameter IDENTYFIER = 4'b0001
 )(
-    input SCLK,
-    input SDI,
-    input SEN,
+    input wire SCLK,
+    input wire SDI,
+    input wire SEN,
 
-    input FIFO_READ,
-    output FIFO_EMPTY,
-    output [31:0] FIFO_DATA,
+    input wire FIFO_READ,
+    output wire FIFO_EMPTY,
+    output wire [31:0] FIFO_DATA,
 
-    input BUS_CLK,
-    input [15:0] BUS_ADD,
-    input [7:0] BUS_DATA_IN,
+    input wire BUS_CLK,
+    input wire [ABUSWIDTH-1:0] BUS_ADD,
+    input wire [7:0] BUS_DATA_IN,
     output reg [7:0] BUS_DATA_OUT,
-    input BUS_RST,
-    input BUS_WR,
-    input BUS_RD
+    input wire BUS_RST,
+    input wire BUS_WR,
+    input wire BUS_RD
 ); 
 
 //output format #ID (as parameter IDENTYFIER + 12 id-frame + 16 bit data) 
@@ -61,6 +57,8 @@ always @(posedge BUS_CLK) begin
         BUS_DATA_OUT <= {7'b0, CONF_EN};
     else if(BUS_ADD == 3)
         BUS_DATA_OUT <= LOST_DATA_CNT;
+    else
+        BUS_DATA_OUT <= 8'b0;
 end
 
 wire RST_SYNC;

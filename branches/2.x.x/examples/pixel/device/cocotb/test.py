@@ -2,7 +2,7 @@ import os
 import time
 
 if os.getenv("SIMULATION_HOST"):
-    import basil.utils.SimSiLibUSB as SiLibUSB
+    import basil.utils.sim.SiLibUsb as SiLibUSB
 else:
     import SiLibUSB
 sidev = SiLibUSB.SiUSBDevice()
@@ -53,9 +53,9 @@ while not (sidev.ReadExternal( SEQ_GEN_BASEADDR + 1,  1)[0] & 0x01):
     
 print "DONE!"
     
-ret = sidev.ReadExternal( FIFO_BASE_ADD + 1,  3); 
-print ret
+ret = sidev.ReadExternal( FIFO_BASE_ADD + 3,  4);
 fifo_size =  ret[0] + ret[1] * 256 + ret[2] * 65536    
+print 'fifo_size:', ret, fifo_size
 
 print "Read Fast: size=", fifo_size , sidev.FastBlockRead((fifo_size/2)*4)
 

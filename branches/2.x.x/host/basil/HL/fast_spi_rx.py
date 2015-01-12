@@ -4,33 +4,34 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 
-from basil.HL.HardwareLayer import HardwareLayer
+from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
-
-class fast_spi_rx(HardwareLayer):
+class fast_spi_rx(RegisterHardwareLayer):
     '''Fast SPI interface
     '''
+    
+    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
+                  'EN': {'descr': {'addr': 2, 'size': 1, 'offset': 0}},
+                  'LOST_COUNT': {'descr': {'addr': 3, 'size': 8, 'properties': ['ro']}},
+    }
+    
     def __init__(self, intf, conf):
         super(fast_spi_rx, self).__init__(intf, conf)
 
     def init(self):
-        self.reset()
+        pass
 
     def reset(self):
-        self._intf.write(self._conf['base_addr'], [0])
+        '''Soft reset the module.'''
+        self.RESET = 0
 
     def set_en(self, value=True):
-        current = self._intf.read(self._conf['base_addr'] + 2, 1)[0]
-        self._intf.write(self._conf['base_addr'] + 2, [(current & 0xfe) | value])
+        self.EN = value
 
     def get_en(self):
-        return True if (self._intf.read(self._conf['base_addr'] + 2, 1)[0] & 0x01) else False
+        return True if self.EN else False
 
     def get_lost_count(self):
-        return self._intf.read(self._conf['base_addr'] + 3, 1)[0]
+        return self.LOST_COUNT

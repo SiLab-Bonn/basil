@@ -3,10 +3,6 @@
  * Copyright (c) SILAB , Physics Institute of Bonn University 
  * ------------------------------------------------------------
  *
- * SVN revision information:
- *  $Rev:: 34                    $:
- *  $Author:: themperek          $: 
- *  $Date:: 2013-09-12 12:07:54 #$:
  */
  
 module seq_rec
@@ -18,16 +14,16 @@ module seq_rec
     parameter MEM_BYTES = 8*1024,
     parameter IN_BITS = 8
 )(
-    input           BUS_CLK,
-    input           BUS_RST,
-    input   [ABUSWIDTH-1:0]  BUS_ADD,
-    inout   [7:0]   BUS_DATA,
-    input           BUS_RD,
-    input           BUS_WR,
+    input wire                   BUS_CLK,
+    input wire                   BUS_RST,
+    input wire  [ABUSWIDTH-1:0]  BUS_ADD,
+    inout wire  [7:0]            BUS_DATA,
+    input wire                   BUS_RD,
+    input wire                   BUS_WR,
 
-    input                SEQ_CLK,
-    input [IN_BITS-1:0]  SEQ_IN,
-    input SEQ_TRIGGER
+    input wire                SEQ_CLK,
+    input wire [IN_BITS-1:0]  SEQ_IN,
+    input wire                SEQ_EXT_START
 );
 
 wire IP_RD, IP_WR;
@@ -66,7 +62,7 @@ seq_rec_core
 
     .SEQ_CLK(SEQ_CLK),
     .SEQ_IN(SEQ_IN),
-    .SEQ_TRIGGER(SEQ_TRIGGER)
+    .SEQ_EXT_START(SEQ_EXT_START)
 ); 
 
 endmodule  

@@ -4,14 +4,8 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev:: 261                   $:
-#  $Author:: jejan              $:
-#  $Date:: 2014-06-06 15:16:45 #$:
-#
 
 import unittest
-
 
 from basil.dut import Dut
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
@@ -19,7 +13,8 @@ from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 _test_init = {
     'REG_test_init': 15,
-    'REG1': 120
+    'REG1': 120,
+    'REG_byte_array': [4, 3, 2, 1]
 }
 
 
@@ -34,7 +29,8 @@ class test_RegisterHardwareLayer(RegisterHardwareLayer):
         'REG3': {'default': 2 ** 16 - 1, 'descr': {'addr': 2, 'size': 16, 'offset': 0}},
         'REG4_ro': {'default': 0, 'descr': {'addr': 4, 'size': 8, 'properties': ['readonly']}},
         'REG5_wo': {'default': 0, 'descr': {'addr': 5, 'size': 8, 'properties': ['writeonly']}},
-        'REG_test_init': {'descr': {'addr': 6, 'size': 8}}
+        'REG_test_init': {'descr': {'addr': 6, 'size': 8}},
+        'REG_byte_array': {'default': [1, 2, 3, 4], 'descr': {'addr': 16, 'size': 4, 'properties': ['bytearray']}}
     }
 
 
@@ -45,20 +41,20 @@ class TestRegisterHardwareLayer(unittest.TestCase):
 
     def test_lazy_programming(self):
         self.dut['test_register'].set_default()
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0}, self.dut['dummy_tl'].mem)
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut['dummy_tl'].mem)
         self.dut['test_register'].REG5_wo = 255
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 255}, self.dut['dummy_tl'].mem)
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 255, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut['dummy_tl'].mem)
         self.dut['test_register'].REG5_wo  # get value from write-only register, but this will write zero instead
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0}, self.dut['dummy_tl'].mem)
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut['dummy_tl'].mem)
 
     def test_get_configuration(self):
         self.dut.set_configuration('test_RegisterHardwareLayer_configuration.yaml')
         conf = self.dut['test_register'].get_configuration()
-        self.assertDictEqual({'REG1': 0, 'REG2': 1, 'REG3': 2, 'REG_test_init': 0}, conf)
+        self.assertDictEqual({'REG1': 0, 'REG2': 1, 'REG3': 2, 'REG_test_init': 0, 'REG_byte_array': [1, 2, 3, 4]}, conf)
 
     def test_set_configuration(self):
         self.dut.set_configuration('test_RegisterHardwareLayer_configuration.yaml')
-        self.assertDictEqual({0: 0, 1: 128, 2: 2, 3: 0, 5: 5}, self.dut['dummy_tl'].mem)
+        self.assertDictEqual({0: 0, 1: 128, 2: 2, 3: 0, 5: 5, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut['dummy_tl'].mem)
 
     def test_read_only(self):
         self.assertRaises(IOError, self.dut['test_register']._set, 'REG4_ro', value=0)
@@ -68,16 +64,16 @@ class TestRegisterHardwareLayer(unittest.TestCase):
 
     def test_write_only_lazy_programming(self):
         self.dut['test_register'].set_default()
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0}, self.dut['dummy_tl'].mem)
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut['dummy_tl'].mem)
         self.dut['test_register'].REG5_wo = 20
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 20}, self.dut['dummy_tl'].mem)
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 20, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut['dummy_tl'].mem)
         self.dut['test_register'].REG5_wo
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0}, self.dut['dummy_tl'].mem)
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut['dummy_tl'].mem)
         self.assertIs(None, self.dut['test_register']._get('REG5_wo'))
 
     def test_set_default(self):
         self.dut['test_register'].set_default()
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0}, self.dut['dummy_tl'].mem)
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut['dummy_tl'].mem)
 
     def test_set_attribute_add(self):
         val = self.dut['test_register']._registers['REG1']['default']
@@ -93,11 +89,11 @@ class TestRegisterHardwareLayer(unittest.TestCase):
             self.dut['test_register']._set(reg, val)
             ret_val = self.dut['test_register']._get(reg)
             self.assertEqual(ret_val, val)
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0}, self.dut['dummy_tl'].mem)
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut['dummy_tl'].mem)
 
     def test_set_attribute_by_value(self):
         self.dut['test_register'].set_default()
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0}, self.dut['dummy_tl'].mem)
+        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut['dummy_tl'].mem)
         self.dut['test_register'].REG2 = 0
         mem = self.dut['dummy_tl'].mem.copy()
         mem[1] = 0
@@ -139,12 +135,12 @@ class TestRegisterHardwareLayer(unittest.TestCase):
         self.dut['test_register'].set_default()
         self.dut.init({'test_register': _test_init})
         conf = self.dut.get_configuration()
-        self.assertDictEqual({'test_register': {'REG1': 120, 'REG2': 1, 'REG3': 65535, 'REG_test_init': 15}, 'dummy_tl': {}}, conf)
+        self.assertDictEqual({'test_register': {'REG1': 120, 'REG2': 1, 'REG3': 65535, 'REG_test_init': 15, 'REG_byte_array': [4, 3, 2, 1]}, 'dummy_tl': {}}, conf)
 
     def test_get_dut_configuration(self):
         self.dut['test_register'].set_default()
         conf = self.dut.get_configuration()
-        self.assertDictEqual({'test_register': {'REG1': 12, 'REG2': 1, 'REG3': 65535, 'REG_test_init': 0}, 'dummy_tl': {}}, conf)
+        self.assertDictEqual({'test_register': {'REG1': 12, 'REG2': 1, 'REG3': 65535, 'REG_test_init': 0, 'REG_byte_array': [1, 2, 3, 4]}, 'dummy_tl': {}}, conf)
 
 if __name__ == '__main__':
     unittest.main()

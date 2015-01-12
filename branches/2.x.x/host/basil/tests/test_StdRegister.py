@@ -4,11 +4,6 @@
 # SiLab , Physics Institute of Bonn University
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 
 import unittest
 
@@ -28,7 +23,7 @@ class TestClass(unittest.TestCase):
     def test_init_simple(self):
         self.dut['TEST1'].write()
         mem = dict()
-        mem[0] = 0  # reset
+#         mem[0] = 0  # reset
         mem[8] = 0  # has an offset of 8 bytes
         mem[9] = 0
         mem[10] = 0
@@ -71,7 +66,7 @@ class TestClass(unittest.TestCase):
     def test_bit_order(self):
         self.dut['TEST2'].write()
         mem = dict()
-        mem[0] = 0  # reset
+#         mem[0] = 0  # reset
         mem[8] = 0
         mem[9] = 0
         mem[10] = 0
@@ -105,7 +100,7 @@ class TestClass(unittest.TestCase):
 
     def test_repeat(self):
         self.dut['dummy_tl'].mem = dict()
-        #self.dut['TEST2'] = 0
+#         self.dut['TEST2'] = 0
         self.dut['TEST2']['VINJECT'] = 0
         self.dut['TEST2'].write()
         mem = dict()
@@ -125,18 +120,17 @@ class TestClass(unittest.TestCase):
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
     def test_default(self):
-        self.cnfg['registers'][1]['fields'][0]['default'] = 0x01#VINJECT
+        self.cnfg['registers'][1]['fields'][0]['default'] = 0x01  # VINJECT
         self.dut = Dut(self.cnfg)
         self.dut.init()
-        
         mem = dict()
-        mem[0] = 0  # reset
+#         mem[0] = 0  # reset
         mem[8] = 0x08
         mem[9] = 0
         mem[10] = 0
         self.dut['TEST2'].write()
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
-        
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestClass)

@@ -1,24 +1,19 @@
 /**
  * ------------------------------------------------------------
  * Copyright (c) All rights reserved 
- * SILAB , Physics Institute of Bonn University , All Right 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $:
- *  $Date::                      $:
  */
 
-module tdc_s3
-#(
+module tdc_s3 #(
     parameter BASEADDR = 16'h0000,
     parameter HIGHADDR = 16'h0000,
-	parameter CLKDV = 4,
-    parameter DATA_IDENTIFIER = 4'b0100
+    parameter CLKDV = 4,
+    parameter DATA_IDENTIFIER = 4'b0100,
+    parameter ABUSWIDTH = 16
 )(
     input wire BUS_CLK,
-    input wire [15:0] BUS_ADD,
+    input wire [ABUSWIDTH-1:0] BUS_ADD,
     inout [7:0] BUS_DATA,
     input wire BUS_RST,
     input BUS_WR,
@@ -29,6 +24,8 @@ module tdc_s3
     input wire DV_CLK, // clock synchronous to CLK160 division factor can be set by CLKDV parameter
     input wire TDC_IN,
     output wire TDC_OUT,
+    input TRIG_IN,
+    output TRIG_OUT,
 
     input wire FIFO_READ,
     output wire FIFO_EMPTY,
@@ -41,12 +38,15 @@ module tdc_s3
 );
 
 wire IP_RD, IP_WR;
-wire [15:0] IP_ADD;
+wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
 wire [7:0] IP_DATA_OUT;
 
-bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
-(
+bus_to_ip #(
+    .BASEADDR(BASEADDR),
+    .HIGHADDR(HIGHADDR),
+    .ABUSWIDTH(ABUSWIDTH)
+) i_bus_to_ip (
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
     .BUS_ADD(BUS_ADD),
@@ -59,11 +59,11 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
     .IP_DATA_OUT(IP_DATA_OUT)
 );
 
-tdc_s3_core 
-#(
-    .DATA_IDENTIFIER(DATA_IDENTIFIER), .CLKDV(CLKDV) 
-) i_tdc_s3_core
-(
+tdc_s3_core #(
+    .DATA_IDENTIFIER(DATA_IDENTIFIER),
+    .CLKDV(CLKDV),
+    .ABUSWIDTH(ABUSWIDTH)
+) i_tdc_s3_core (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(IP_ADD),
@@ -77,6 +77,8 @@ tdc_s3_core
     .DV_CLK(DV_CLK),
     .TDC_IN(TDC_IN),
     .TDC_OUT(TDC_OUT),
+    .TRIG_IN(TRIG_IN),
+    .TRIG_OUT(TRIG_OUT),
 
     .FIFO_READ(FIFO_READ),
     .FIFO_EMPTY(FIFO_EMPTY),

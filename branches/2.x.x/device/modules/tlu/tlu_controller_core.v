@@ -1,13 +1,10 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $:
- *  $Date::                      $:
  */
+
 
  /*  _____ _   _   _ 
  * |_   _| | | | | |
@@ -16,18 +13,21 @@
  *
  * TLU controller supporting EUDET TLU 0.1/0.2
  */
- 
+
+
 `timescale 1 ps / 1ps
 `default_nettype none
- 
+
+
  module tlu_controller_core
 #(
-    parameter                   DIVISOR = 8 // dividing CMD_CLK by DIVISOR for TLU_CLOCK
+    parameter                   DIVISOR = 8, // dividing CMD_CLK by DIVISOR for TLU_CLOCK
+    parameter                   ABUSWIDTH = 16
 )
 (
     input wire                  BUS_CLK,
     input wire                  BUS_RST,
-    input wire      [15:0]      BUS_ADD,
+    input wire [ABUSWIDTH-1:0]  BUS_ADD,
     input wire      [7:0]       BUS_DATA_IN,
     input wire                  BUS_RD,
     input wire                  BUS_WR,
@@ -149,7 +149,6 @@ localparam VERSION = 1;
 
 always @ (posedge BUS_CLK)
 begin
-    //BUS_DATA_OUT <= 0;
     if (BUS_ADD == 0)
         BUS_DATA_OUT <= VERSION;
     else if (BUS_ADD == 1)
@@ -176,14 +175,6 @@ begin
         BUS_DATA_OUT <= CURRENT_TRIGGER_NUMBER_BUF[31:24];
     else if (BUS_ADD == 12)
         BUS_DATA_OUT <= LOST_DATA_CNT_BUF;
-    else if (BUS_ADD == 13)
-        BUS_DATA_OUT <= 8'b0;
-    else if (BUS_ADD == 14)
-        BUS_DATA_OUT <= 8'b0;
-    else if (BUS_ADD == 15)
-        BUS_DATA_OUT <= 8'b0;
-    // else if(BUS_ADD < 4)
-        // BUS_DATA_OUT <= status_regs[BUS_ADD[3:0]]; // BUG AR 20391: use synchronous logic
     else
         BUS_DATA_OUT <= 0;
 end
@@ -198,37 +189,6 @@ begin
             LOST_DATA_CNT_BUF <= LOST_DATA_CNT;
     end
 end
-
-//always @(*)
-//begin
-//    BUS_DATA_OUT = 0;
-//	 
-//    if (BUS_ADD == 4)
-//        BUS_DATA_OUT = CURRENT_TLU_TRIGGER_NUMBER_BUF[7:0];
-//    else if (BUS_ADD == 5)
-//        BUS_DATA_OUT = CURRENT_TLU_TRIGGER_NUMBER_BUF[15:8];
-//    else if (BUS_ADD == 6)
-//        BUS_DATA_OUT = CURRENT_TLU_TRIGGER_NUMBER_BUF[23:16];
-//    else if (BUS_ADD == 7)
-//        BUS_DATA_OUT = CURRENT_TLU_TRIGGER_NUMBER_BUF[31:24];
-//    else if(BUS_ADD < 4)
-//        BUS_DATA_OUT = status_regs[BUS_ADD[2:0]]; // BUG AR 20391
-//    
-////    if(BUS_ADD == 1)
-////        BUS_DATA_OUT = {8'b0};
-////    else if(BUS_ADD == 2)
-////        BUS_DATA_OUT = {8'b0};
-////    else if(BUS_ADD == 3)
-////        BUS_DATA_OUT = {8'b0};
-////    else if(BUS_ADD == 4)
-////        BUS_DATA_OUT = {8'b0};
-////    else if(BUS_ADD == 5)
-////        BUS_DATA_OUT = {8'b0};
-////    else if(BUS_ADD == 6)
-////        BUS_DATA_OUT = {8'b0};
-////    else if(BUS_ADD == 7)
-////        BUS_DATA_OUT = {8'b0};
-//end
 
 //assign some_value = (BUS_ADD==x && BUS_WR);
 //assign some_value = status_regs[x]; // single reg
@@ -434,16 +394,14 @@ flag_domain_crossing tlu_reset_flag_domain_crossing (
 
 // writing current TLU trigger number to register
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK;
-wire [31:0] TLU_TRIGGER_NUMBER_DATA, TLU_FIFO_WRITE;
+wire [31:0] TLU_TRIGGER_NUMBER_DATA;
+wire TLU_FIFO_WRITE;
 always @ (posedge CMD_CLK)
 begin
     if (RST_CMD_CLK)
         CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK <= 32'b0;
-    else
-    begin
-        if (TLU_FIFO_WRITE == 1'b1)
-            CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK <= TLU_TRIGGER_NUMBER_DATA;
-    end
+    else if (TLU_FIFO_WRITE == 1'b1)
+        CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK <= TLU_TRIGGER_NUMBER_DATA;
 end
 
 wire TLU_FIFO_WRITE_BUS_CLK;
@@ -459,22 +417,16 @@ always @ (posedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK <= 32'b0;
-    else
-    begin
-        if (TLU_FIFO_WRITE_BUS_CLK == 1'b1)
-            CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK <= CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK;
-    end
+    else if (TLU_FIFO_WRITE_BUS_CLK == 1'b1)
+        CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK <= CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK;
 end
 
-always @ (posedge BUS_CLK)
+always @ (*)
 begin
     if (RST)
         CURRENT_TLU_TRIGGER_NUMBER_BUF <= 32'b0;
-    else
-    begin
-        if (BUS_ADD == 4)
-            CURRENT_TLU_TRIGGER_NUMBER_BUF <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK;
-    end
+    else if (BUS_ADD == 4)
+        CURRENT_TLU_TRIGGER_NUMBER_BUF <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK;
 end
 
 wire CMD_EXT_START_FLAG_BUS_CLK;
@@ -489,37 +441,29 @@ always @ (posedge BUS_CLK)
 begin
     if (RST | TLU_RESET_FLAG_BUS_CLK == 1'b1)
         CURRENT_TRIGGER_NUMBER <= 32'b0;
-    else
-    begin
-        if (BUS_ADD == 11 && BUS_WR)
-            CURRENT_TRIGGER_NUMBER <= SET_TRIGGER_NUMBER;
-        else if (CMD_EXT_START_FLAG_BUS_CLK == 1'b1 && CMD_EXT_START_ENABLE_BUS_CLK == 1'b1 && CURRENT_TRIGGER_NUMBER != 32'b1111_1111_1111_1111_1111_1111_1111_1111)
-            CURRENT_TRIGGER_NUMBER <= CURRENT_TRIGGER_NUMBER + 1;
-        //else if (CMD_EXT_START_ENABLE_FLAG_BUS_CLK == 1'b1)
-        //    CURRENT_TRIGGER_NUMBER <= 32'b0;
-        else
-            CURRENT_TRIGGER_NUMBER <= CURRENT_TRIGGER_NUMBER;
-    end
+    //else if (BUS_ADD == 11 && BUS_WR)
+    //    CURRENT_TRIGGER_NUMBER <= SET_TRIGGER_NUMBER;
+    else if (CMD_EXT_START_FLAG_BUS_CLK == 1'b1 && CMD_EXT_START_ENABLE_BUS_CLK == 1'b1 && CURRENT_TRIGGER_NUMBER != 32'b1111_1111_1111_1111_1111_1111_1111_1111)
+        CURRENT_TRIGGER_NUMBER <= CURRENT_TRIGGER_NUMBER + 1;
+    //else if (CMD_EXT_START_ENABLE_FLAG_BUS_CLK == 1'b1)
+    //    CURRENT_TRIGGER_NUMBER <= 32'b0;
 end
 
-always @ (posedge BUS_CLK)
+always @ (*)
 begin
     if (RST)
         CURRENT_TRIGGER_NUMBER_BUF <= 32'b0;
-    else
-    begin
-        if (BUS_ADD == 8)
-            CURRENT_TRIGGER_NUMBER_BUF <= CURRENT_TRIGGER_NUMBER;
-        else
-            CURRENT_TRIGGER_NUMBER_BUF <= CURRENT_TRIGGER_NUMBER_BUF;
-    end
+    else if (BUS_ADD == 8)
+        CURRENT_TRIGGER_NUMBER_BUF <= CURRENT_TRIGGER_NUMBER;
 end
 
 // 40 MHz time stamp
 always @ (posedge CMD_CLK)
 begin
-    if (RST_CMD_CLK | TLU_RESET_FLAG_CMD_CLK) TIMESTAMP <= 32'b0;
-    else TIMESTAMP <= TIMESTAMP + 1;
+    if (RST_CMD_CLK | TLU_RESET_FLAG_CMD_CLK)
+        TIMESTAMP <= 32'b0;
+    else
+        TIMESTAMP <= TIMESTAMP + 1;
 end
 
 // TLU FSM
@@ -580,7 +524,7 @@ always @ (posedge BUS_CLK)
     FIFO_EMPTY_FF <= FIFO_EMPTY;
 
 wire FIFO_EMPTY_FLAG_BUS_CLK;
-assign FIFO_EMPTY_FLAG_BUS_CLK = ~FIFO_EMPTY_FF & FIFO_EMPTY; // assert flag when FIFO is empty again
+assign FIFO_EMPTY_FLAG_BUS_CLK = FIFO_EMPTY_FF & ~FIFO_EMPTY; // assert flag when FIFO is empty again
 
 always @ (posedge BUS_CLK)
     if (RST)
