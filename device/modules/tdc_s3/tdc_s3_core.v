@@ -143,7 +143,7 @@ end
  * TDC value:
  *  - Default: 0
  *  - Error: 0 (ambiguities)
- *  - Overflow: 255
+ *  - Overflow: 0xFFF
  */
 reg [4:0] ALL_ONES_TDC, ONES_TDC, LENGTH_TDC;
 reg FOUND_TDC_EDGE;
@@ -344,7 +344,7 @@ end
  *
  * Trigger distance:
  *  - Default: 255
- *  - Error: 255 (no trigger, ambiguities)
+ *  - Error: 255 (no trigger, ambiguities, TDC Error)
  *  - Overflow: 254
  */
 reg [4:0] ALL_ONES_TRIG, ONES_TRIG, LENGTH_TRIG;
@@ -431,7 +431,7 @@ end
 
 wire wfull;
 wire cdc_fifo_write;
-assign cdc_fifo_write = !wfull && FINISH && !(CONF_EN_NO_WRITE_TRIG_ERR && TRIG_DIST==255);
+assign cdc_fifo_write = !wfull && FINISH==1 && !(CONF_EN_TRIG_DIST==1 && CONF_EN_NO_WRITE_TRIG_ERR==1 && TRIG_DIST==255);
 
 reg [31:0] cdc_data;
 always @ (*) begin
