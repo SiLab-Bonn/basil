@@ -400,11 +400,8 @@ always @ (posedge CMD_CLK)
 begin
     if (RST_CMD_CLK)
         CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK <= 32'b0;
-    else
-    begin
-        if (TLU_FIFO_WRITE == 1'b1)
-            CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK <= TLU_TRIGGER_NUMBER_DATA;
-    end
+    else if (TLU_FIFO_WRITE == 1'b1)
+        CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK <= TLU_TRIGGER_NUMBER_DATA;
 end
 
 wire TLU_FIFO_WRITE_BUS_CLK;
@@ -420,22 +417,16 @@ always @ (posedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK <= 32'b0;
-    else
-    begin
-        if (TLU_FIFO_WRITE_BUS_CLK == 1'b1)
-            CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK <= CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK;
-    end
+    else if (TLU_FIFO_WRITE_BUS_CLK == 1'b1)
+        CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK <= CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK;
 end
 
-always @ (posedge BUS_CLK)
+always @ (*)
 begin
     if (RST)
         CURRENT_TLU_TRIGGER_NUMBER_BUF <= 32'b0;
-    else
-    begin
-        if (BUS_ADD == 4)
-            CURRENT_TLU_TRIGGER_NUMBER_BUF <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK;
-    end
+    else if (BUS_ADD == 4)
+        CURRENT_TLU_TRIGGER_NUMBER_BUF <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK;
 end
 
 wire CMD_EXT_START_FLAG_BUS_CLK;
@@ -450,37 +441,29 @@ always @ (posedge BUS_CLK)
 begin
     if (RST | TLU_RESET_FLAG_BUS_CLK == 1'b1)
         CURRENT_TRIGGER_NUMBER <= 32'b0;
-    else
-    begin
-        if (BUS_ADD == 11 && BUS_WR)
-            CURRENT_TRIGGER_NUMBER <= SET_TRIGGER_NUMBER;
-        else if (CMD_EXT_START_FLAG_BUS_CLK == 1'b1 && CMD_EXT_START_ENABLE_BUS_CLK == 1'b1 && CURRENT_TRIGGER_NUMBER != 32'b1111_1111_1111_1111_1111_1111_1111_1111)
-            CURRENT_TRIGGER_NUMBER <= CURRENT_TRIGGER_NUMBER + 1;
-        //else if (CMD_EXT_START_ENABLE_FLAG_BUS_CLK == 1'b1)
-        //    CURRENT_TRIGGER_NUMBER <= 32'b0;
-        else
-            CURRENT_TRIGGER_NUMBER <= CURRENT_TRIGGER_NUMBER;
-    end
+    //else if (BUS_ADD == 11 && BUS_WR)
+    //    CURRENT_TRIGGER_NUMBER <= SET_TRIGGER_NUMBER;
+    else if (CMD_EXT_START_FLAG_BUS_CLK == 1'b1 && CMD_EXT_START_ENABLE_BUS_CLK == 1'b1 && CURRENT_TRIGGER_NUMBER != 32'b1111_1111_1111_1111_1111_1111_1111_1111)
+        CURRENT_TRIGGER_NUMBER <= CURRENT_TRIGGER_NUMBER + 1;
+    //else if (CMD_EXT_START_ENABLE_FLAG_BUS_CLK == 1'b1)
+    //    CURRENT_TRIGGER_NUMBER <= 32'b0;
 end
 
-always @ (posedge BUS_CLK)
+always @ (*)
 begin
     if (RST)
         CURRENT_TRIGGER_NUMBER_BUF <= 32'b0;
-    else
-    begin
-        if (BUS_ADD == 8)
-            CURRENT_TRIGGER_NUMBER_BUF <= CURRENT_TRIGGER_NUMBER;
-        else
-            CURRENT_TRIGGER_NUMBER_BUF <= CURRENT_TRIGGER_NUMBER_BUF;
-    end
+    else if (BUS_ADD == 8)
+        CURRENT_TRIGGER_NUMBER_BUF <= CURRENT_TRIGGER_NUMBER;
 end
 
 // 40 MHz time stamp
 always @ (posedge CMD_CLK)
 begin
-    if (RST_CMD_CLK | TLU_RESET_FLAG_CMD_CLK) TIMESTAMP <= 32'b0;
-    else TIMESTAMP <= TIMESTAMP + 1;
+    if (RST_CMD_CLK | TLU_RESET_FLAG_CMD_CLK)
+        TIMESTAMP <= 32'b0;
+    else
+        TIMESTAMP <= TIMESTAMP + 1;
 end
 
 // TLU FSM
