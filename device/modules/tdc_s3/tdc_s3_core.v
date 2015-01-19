@@ -5,6 +5,9 @@
  * ------------------------------------------------------------
  */
 
+`timescale 1ps / 1ps
+`default_nettype none
+
 module tdc_s3_core
 #(
     parameter DATA_IDENTIFIER = 4'b0100,
