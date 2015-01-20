@@ -388,12 +388,11 @@ end
 
 reg TRIG_ERR;
 always @ (*)
-    if(ALL_ONES_TRIG!=ONES_TRIG || (LENGTH_TDC>LENGTH_TRIG && NEW_TRIG && NEW_TDC))
+    if(ALL_ONES_TRIG!=ONES_TRIG || (LENGTH_TDC>LENGTH_TRIG && NEW_TRIG && NEW_TDC) || (state==COUNT && NEW_TRIG))
         TRIG_ERR <= 1;
     else
         TRIG_ERR <= 0;
 
-    
 reg CNT_TRIG;
 initial CNT_TRIG = 0;
 always @ (posedge DV_CLK)
