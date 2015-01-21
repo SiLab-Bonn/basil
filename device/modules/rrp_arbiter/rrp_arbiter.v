@@ -16,17 +16,17 @@ module rrp_arbiter
     parameter WIDTH = 4
 )
 (
-    input RST,
-    input CLK,
+    input wire RST,
+    input wire CLK,
     
-    input [WIDTH-1:0] WRITE_REQ, // round robin
-    input [WIDTH-1:0] HOLD_REQ, // lower channels have higher priority, has to be high until read was granted
-    input [WIDTH*32-1:0] DATA_IN,
-    output [WIDTH-1:0] READ_GRANT,
+    input wire [WIDTH-1:0] WRITE_REQ, // round robin
+    input wire [WIDTH-1:0] HOLD_REQ, // lower channels have higher priority, has to be high until read was granted
+    input wire [WIDTH*32-1:0] DATA_IN,
+    output wire[WIDTH-1:0] READ_GRANT,
 
-    input READY_OUT,
-    output WRITE_OUT,
-    output [31:0] DATA_OUT
+    input wire READY_OUT,
+    output wire WRITE_OUT,
+    output wire [31:0] DATA_OUT
     
 );
 
