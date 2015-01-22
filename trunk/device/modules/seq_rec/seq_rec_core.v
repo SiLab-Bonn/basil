@@ -133,11 +133,14 @@ wire [ADDR_SIZEA-1:0] memout_addra;
 wire [ABUSWIDTH-1:0] BUS_ADD_MEM;
 assign BUS_ADD_MEM = BUS_ADD-16;
 
+localparam IN_BYTES = IN_BITS/8;
+localparam IN_BYTES_WIDTH = `CLOG2(IN_BYTES);
+
 generate
     if (IN_BITS<=8) begin
         assign memout_addra = BUS_ADD_MEM; 
     end else begin
-        assign memout_addra = {BUS_ADD_MEM[ABUSWIDTH-1:IN_BITS/8-1], {(IN_BITS/8-1){1'b0}}} + (IN_BITS/8-1) - (BUS_ADD_MEM % (IN_BITS/8)); //Byte order
+        assign memout_addra = {BUS_ADD_MEM[ADDR_SIZEA:IN_BYTES_WIDTH], {(IN_BYTES-1){1'b0}}} + (IN_BYTES-1) - (BUS_ADD_MEM % IN_BYTES); //Byte order
     end
 endgenerate
 
