@@ -110,8 +110,8 @@ wire CONF_EN_WRITE_TS;
 assign CONF_EN_WRITE_TS = status_regs[2][7];
 wire [7:0] TLU_TRIGGER_LOW_TIME_OUT;
 assign TLU_TRIGGER_LOW_TIME_OUT = status_regs[3];
-wire [31:0] SET_TRIGGER_NUMBER;
-assign SET_TRIGGER_NUMBER = {status_regs[11], status_regs[10], status_regs[9], status_regs[8]};
+//wire [31:0] SET_TRIGGER_NUMBER;
+//assign SET_TRIGGER_NUMBER = {status_regs[11], status_regs[10], status_regs[9], status_regs[8]};
 
 always @(posedge BUS_CLK)
 begin
@@ -141,8 +141,8 @@ begin
 end
 
 // read reg
-reg [7:0] LOST_DATA_CNT, LOST_DATA_CNT_BUF; // BUS_ADD==0
-reg [31:0] CURRENT_TLU_TRIGGER_NUMBER, CURRENT_TLU_TRIGGER_NUMBER_BUF; // BUS_ADD==4 - 7
+reg [7:0] LOST_DATA_CNT; // BUS_ADD==0
+reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_BUF; // BUS_ADD==4 - 7
 reg [31:0] CURRENT_TRIGGER_NUMBER, CURRENT_TRIGGER_NUMBER_BUF; // BUS_ADD==8 - 11
 
 localparam VERSION = 1;
@@ -174,20 +174,9 @@ begin
     else if (BUS_ADD == 11)
         BUS_DATA_OUT <= CURRENT_TRIGGER_NUMBER_BUF[31:24];
     else if (BUS_ADD == 12)
-        BUS_DATA_OUT <= LOST_DATA_CNT_BUF;
+        BUS_DATA_OUT <= LOST_DATA_CNT;
     else
         BUS_DATA_OUT <= 0;
-end
-
-always @ (posedge BUS_CLK)
-begin
-    if (RST)
-        LOST_DATA_CNT_BUF <= 8'b0;
-    else
-    begin
-        if (BUS_ADD == 0)
-            LOST_DATA_CNT_BUF <= LOST_DATA_CNT;
-    end
 end
 
 //assign some_value = (BUS_ADD==x && BUS_WR);
@@ -421,7 +410,7 @@ begin
         CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK <= CURRENT_TLU_TRIGGER_NUMBER_CMD_CLK;
 end
 
-always @ (*)
+always @ (posedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TLU_TRIGGER_NUMBER_BUF <= 32'b0;
@@ -449,7 +438,7 @@ begin
     //    CURRENT_TRIGGER_NUMBER <= 32'b0;
 end
 
-always @ (*)
+always @ (posedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TRIGGER_NUMBER_BUF <= 32'b0;

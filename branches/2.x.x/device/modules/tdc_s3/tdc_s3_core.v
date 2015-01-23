@@ -5,6 +5,9 @@
  * ------------------------------------------------------------
  */
 
+`timescale 1ps / 1ps
+`default_nettype none
+
 module tdc_s3_core
 #(
     parameter DATA_IDENTIFIER = 4'b0100,
@@ -61,6 +64,10 @@ wire CONF_EN_TRIG_DIST; // BUS_ADD==1 BIT==4
 assign CONF_EN_TRIG_DIST = status_regs[1][4];
 wire CONF_EN_NO_WRITE_TRIG_ERR; // BUS_ADD==1 BIT==5
 assign CONF_EN_NO_WRITE_TRIG_ERR = status_regs[1][5];
+wire CONF_EN_INVERT_TDC; // BUS_ADD==1 BIT==6
+assign CONF_EN_INVERT_TDC = status_regs[1][6];
+wire CONF_EN_INVERT_TRIGGER; // BUS_ADD==1 BIT==7
+assign CONF_EN_INVERT_TRIGGER = status_regs[1][7];
 reg [7:0] LOST_DATA_CNT; // BUS_ADD==0
 reg [31:0] EVENT_CNT, EVENT_CNT_BUF; // BUS_ADD==2 - 3
 
@@ -110,25 +117,27 @@ flag_domain_crossing cmd_rst_flag_domain_crossing (
 );
 
 // de-serialize
-wire [CLKDV*4-1:0] TDC;
+wire [CLKDV*4-1:0] TDC, TDC_DES;
 ddr_des #(.CLKDV(CLKDV)) iddr_des_data(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TDC_IN), .OUT(TDC));
 
-assign TDC_OUT = |TDC;
+assign TDC_DES = CONF_EN_INVERT_TDC ? ~TDC : TDC;
+assign TDC_OUT = |TDC_DES;
 
 wire ZERO_DETECTED_TDC;
-assign ZERO_DETECTED_TDC = |(~TDC); // asserted when one or more 0 occur
+assign ZERO_DETECTED_TDC = |(~TDC_DES); // asserted when one or more 0 occur
 
-reg TDC_0_BUF;
+reg TDC_DES_BUF_0;
 always @ (posedge DV_CLK)
-    TDC_0_BUF <= TDC[0];
+    TDC_DES_BUF_0 <= TDC_DES[0];
 
-reg [CLKDV*4+1:0] TDC_WFIX;
+// fix width for for loop
+reg [CLKDV*4+1:0] TDC_DES_WFIX;
 integer h;
 always @ (*) begin
-    TDC_WFIX[CLKDV*4] = TDC_0_BUF;
-    TDC_WFIX[CLKDV*4+1] = 0;
+    TDC_DES_WFIX[CLKDV*4] = TDC_DES_BUF_0;
+    TDC_DES_WFIX[CLKDV*4+1] = 0;
     for(h=0; h<CLKDV*4; h=h+1) begin
-        TDC_WFIX[h] = TDC[h];
+        TDC_DES_WFIX[h] = TDC_DES[h];
     end
 end
 
@@ -155,11 +164,11 @@ always @ (*) begin
     FOUND_TDC_EDGE = 0;
     i = 0;
     for (i=0; i<CLKDV*4; i=i+1) begin
-        ALL_ONES_TDC = ALL_ONES_TDC + TDC_WFIX[i];
+        ALL_ONES_TDC = ALL_ONES_TDC + TDC_DES_WFIX[i];
         if (!FOUND_TDC_EDGE) begin
-            ONES_TDC = ONES_TDC + TDC_WFIX[i];
+            ONES_TDC = ONES_TDC + TDC_DES_WFIX[i];
         end
-        if ((TDC_WFIX[i] == 1) && (TDC_WFIX[i+1]==0) && !FOUND_TDC_EDGE) begin
+        if ((TDC_DES_WFIX[i] == 1) && (TDC_DES_WFIX[i+1]==0) && !FOUND_TDC_EDGE) begin
             LENGTH_TDC = i + 1;
             FOUND_TDC_EDGE = 1; // exit the loop
         end
@@ -315,22 +324,24 @@ always @ (posedge DV_CLK)
 */
 
 // de-serialize
-wire [CLKDV*4-1:0] TRIG;
+wire [CLKDV*4-1:0] TRIG, TRIG_DES;
 ddr_des #(.CLKDV(CLKDV)) iddr_des_trig(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TRIG_IN), .OUT(TRIG));
 
-assign TRIG_OUT = |TRIG;
+assign TRIG_DES = CONF_EN_INVERT_TRIGGER ? ~TRIG : TRIG;
+assign TRIG_OUT = |TRIG_DES;
 
-reg TRIG_0_BUF;
+reg TRIG_DES_BUF_0;
 always @ (posedge DV_CLK)
-    TRIG_0_BUF <= TRIG[0];
-    
-reg [CLKDV*4+1:0] TRIG_WFIX;
+    TRIG_DES_BUF_0 <= TRIG_DES[0];
+
+// fix width for for loop
+reg [CLKDV*4+1:0] TRIG_DES_WFIX;
 integer j;
 always@(*) begin
-    TRIG_WFIX[CLKDV*4] = TRIG_0_BUF;
-    TRIG_WFIX[CLKDV*4+1] = 0;
+    TRIG_DES_WFIX[CLKDV*4] = TRIG_DES_BUF_0;
+    TRIG_DES_WFIX[CLKDV*4+1] = 0;
     for(j=0; j<CLKDV*4; j=j+1) begin
-        TRIG_WFIX[j] = TRIG[j];
+        TRIG_DES_WFIX[j] = TRIG_DES[j];
     end
 end
 
@@ -357,11 +368,11 @@ always @ (*) begin
     FOUND_TRIG_EDGE = 0;
     k = 0;
     for (k=0; k<CLKDV*4; k=k+1) begin
-        ALL_ONES_TRIG = ALL_ONES_TRIG + TRIG_WFIX[k];
+        ALL_ONES_TRIG = ALL_ONES_TRIG + TRIG_DES_WFIX[k];
         if (!FOUND_TRIG_EDGE) begin
-            ONES_TRIG = ONES_TRIG + TRIG_WFIX[k];
+            ONES_TRIG = ONES_TRIG + TRIG_DES_WFIX[k];
         end
-        if ((TRIG_WFIX[k] == 1) && (TRIG_WFIX[k+1]==0) && !FOUND_TRIG_EDGE) begin
+        if ((TRIG_DES_WFIX[k] == 1) && (TRIG_DES_WFIX[k+1]==0) && !FOUND_TRIG_EDGE) begin
             LENGTH_TRIG = k + 1;
             FOUND_TRIG_EDGE = 1; // exit the loop
         end
@@ -377,12 +388,11 @@ end
 
 reg TRIG_ERR;
 always @ (*)
-    if(ALL_ONES_TRIG!=ONES_TRIG || (LENGTH_TDC>LENGTH_TRIG && NEW_TRIG && NEW_TDC))
+    if(ALL_ONES_TRIG!=ONES_TRIG || (LENGTH_TDC>LENGTH_TRIG && NEW_TRIG && NEW_TDC) || (state==COUNT && NEW_TRIG))
         TRIG_ERR <= 1;
     else
         TRIG_ERR <= 0;
 
-    
 reg CNT_TRIG;
 initial CNT_TRIG = 0;
 always @ (posedge DV_CLK)
