@@ -104,9 +104,9 @@ always @ (posedge BUS_CLK) begin
     else if(BUS_ADD == 2)
         BUS_DATA_OUT_REG <= {7'b0,CONF_EN_SEQ_EXT_START};
     else if(BUS_ADD == 3)
-        BUS_DATA_OUT_REG <= CONF_COUNT[7:0];
-    else if(BUS_ADD == 4)
         BUS_DATA_OUT_REG <= CONF_COUNT[15:8];
+    else if(BUS_ADD == 4)
+        BUS_DATA_OUT_REG <= CONF_COUNT[7:0];
     else if(BUS_ADD < 16)
         BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
 end
@@ -140,7 +140,7 @@ generate
     if (IN_BITS<=8) begin
         assign memout_addra = BUS_ADD_MEM; 
     end else begin
-        assign memout_addra = {BUS_ADD_MEM[ADDR_SIZEA:IN_BYTES_WIDTH], {(IN_BYTES_WIDTH-1){1'b0}}} + (IN_BYTES-1) - BUS_ADD_MEM[IN_BYTES_WIDTH-1:0]; //Byte order
+        assign memout_addra = {BUS_ADD_MEM[ADDR_SIZEA:IN_BYTES_WIDTH], {(IN_BYTES_WIDTH){1'b0}}} + (IN_BYTES-1) - BUS_ADD_MEM[IN_BYTES_WIDTH-1:0]; //Byte order
     end
 endgenerate
 
