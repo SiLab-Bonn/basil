@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="icons">
+      <file>resources/silab_usb.ico</file>
+      <file>resources/silab.ico</file>
+      <file>resources/usb.ico</file>
+      <file>resources/usbs.ico</file>      
+    </qresource>
+</RCC>

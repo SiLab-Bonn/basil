@@ -1,0 +1,167 @@
+#
+# ------------------------------------------------------------
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
+# ------------------------------------------------------------
+#
+
+name    : ExampleLx9Design 
+version : 0.01
+
+transfer_layer:
+  - name  : inf
+    type  : SiTcp
+    init:      
+        ip : "192.168.10.16"
+        udp_port : 4660
+        tcp_port : 24
+        tcp_connection : True
+    
+hw_drivers:    
+  - name      : gpio
+    type      : gpio
+    interface : inf
+    base_addr : 0x0
+    size      : 8
+  
+  - name      : SEQ_GEN
+    type      : seq_gen
+    interface : inf
+    mem_size  : 8192
+    base_addr : 0x1000
+   
+  - name      : PIXEL_RX
+    type      : fast_spi_rx
+    interface : inf
+    base_addr : 0x0100
+   
+  - name      : DATA
+    type      : sram_fifo
+    interface : inf
+    base_addr : 0x200000000
+    base_data_addr: 0x100000000
+          
+registers:
+  - name        : GPIO
+    type        : StdRegister
+    hw_driver   : gpio
+    size        : 8
+    fields:
+      - name    : DIP
+        size    : 4
+        offset  : 7
+      - name    : LED4
+        size    : 1
+        offset  : 3
+      - name    : LED3
+        size    : 1
+        offset  : 2
+      - name    : LED2
+        size    : 1
+        offset  : 1
+      - name    : LED1
+        size    : 1
+        offset  : 0
+
+  - name        : GLOBAL_REG
+    type        : StdRegister
+    driver      : None
+    size        : 144
+    fields  : 
+          - name     : global_readout_enable 
+            size     : 1         
+            offset   : 143
+          - name     : SRDO_load 
+            size     : 1         
+            offset   : 142
+          - name     : NCout2 
+            size     : 1         
+            offset   : 141
+          - name     : count_hits_not
+            size     : 1
+            offset   : 140
+          - name     : count_enable
+            size     : 1
+            offset   : 139
+          - name     : count_clear_not
+            size     : 1
+            offset   : 138
+          - name     : S0
+            size     : 1
+            offset   : 137
+          - name     : S1
+            size     : 1
+            offset   : 136
+          - name     : config_mode
+            size     : 2
+            offset   : 135
+          - name     : LD_IN0_7
+            size     : 8
+            offset   : 133
+          - name     : LDENABLE_SEL
+            size     : 1
+            offset   : 125
+          - name     : SRCLR_SEL
+            size     : 1
+            offset   : 124
+          - name     : HITLD_IN
+            size     : 1
+            offset   : 123
+          - name     : NCout21_25
+            size     : 5
+            offset   : 122
+          - name     : column_address
+            size     : 6
+            offset   : 117
+          - name     : DisVbn
+            size     : 8
+            offset   : 111
+          - name     : EMPTY_0
+            size     : 48
+            offset   : 103
+          - name     : VbpThStep
+            size     : 8
+            offset   : 55
+          - name     : PrmpVbp
+            size     : 8
+            offset   : 47
+          - name     : PrmpVbnFol
+            size     : 8
+            offset   : 39
+          - name     : vth
+            size     : 8
+            offset   : 31
+          - name     : PrmpVbf
+            size     : 8
+            offset   : 23
+          - name     : EMPTY_1
+            size     : 16
+            offset   : 15
+
+  - name        : PIXEL_REG
+    type        : StdRegister
+    driver      : None
+    size        : 128
+
+  - name        : SEQ
+    type        : TrackRegister
+    hw_driver   : SEQ_GEN
+    seq_width   : 8
+    seq_size    : 8192
+    tracks  : 
+      - name     : SHIFT_IN
+        position : 0
+      - name     : GLOBAL_SHIFT_EN
+        position : 1  
+      - name     : GLOBAL_CTR_LD
+        position : 2
+      - name     : GLOBAL_DAC_LD
+        position : 3
+      - name     : PIXEL_SHIFT_EN
+        position : 4
+      - name     : INJECTION
+        position : 5
+      - name     : NOT_USED_0
+        position : 6
+      - name     : NOT_USED_1
+        position : 7

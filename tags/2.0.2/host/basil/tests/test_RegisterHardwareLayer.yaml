@@ -1,0 +1,20 @@
+#
+# ------------------------------------------------------------
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
+# ------------------------------------------------------------
+#
+
+---
+name    : RegisterHardwareLayer 
+version : 0.01
+
+transfer_layer:
+    - name  : dummy_tl
+      type  : Dummy
+    
+hw_drivers:
+  - name      : test_register
+    type      : test_RegisterHardwareLayer
+    interface : dummy_tl
+    base_addr : 0x0
