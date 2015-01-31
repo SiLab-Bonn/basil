@@ -69,7 +69,8 @@ class SiLibUsbBusDriver(BusDriver):
     def read(self, address, size):
         result = []
         if(address >= self.BASE_ADDRESS_I2C and address < self.HIGH_ADDRESS_I2C):
-            pass
+            for byte in xrange(size):
+                result.append(0)
         elif(address >= self.BASE_ADDRESS_EXTERNAL and address < self.HIGH_ADDRESS_EXTERNAL):
             for byte in xrange(size):
                 val = yield self.read_external(address  - self.BASE_ADDRESS_EXTERNAL + byte)
