@@ -4,8 +4,7 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-
-`timescale 1ps / 1ps
+`timescale 1ps/1ps
 `default_nettype none
 
 module tdc_s3_core
@@ -40,6 +39,8 @@ module tdc_s3_core
     input wire [15:0] TIMESTAMP
 );
 
+localparam VERSION = 2;
+
 // output format: 4-bit DATA_IDENTIFIER (parameter) + 16 bit event counter + 12 bit TDC data
 // the TDC counter has a overflow bin: TDC value is 0 when an overflow occurs
 
@@ -48,7 +49,6 @@ assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 
 wire RST;
 assign RST = BUS_RST | SOFT_RST; 
-
 
 reg [7:0] status_regs[1:0];
 
@@ -79,8 +79,6 @@ always @(posedge BUS_CLK) begin
     else if(BUS_WR && BUS_ADD < 2)
         status_regs[BUS_ADD[0]] <= BUS_DATA_IN;
 end
-
-localparam VERSION = 2;
 
 always @(posedge BUS_CLK) begin
     if (BUS_ADD == 0)

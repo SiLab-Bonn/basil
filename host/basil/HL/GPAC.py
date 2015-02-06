@@ -7,17 +7,19 @@
 # SVN revision information:
 #  $Rev::                       $:
 #  $Author::                    $:
-#  $Date::                      $:
+# $Date::                      $:
 #
 
 from basil.HL.HardwareLayer import HardwareLayer
 from basil.utils.BitLogic import BitLogic
 
+
 class GPAC(HardwareLayer):
+
     '''GPAC interface
     '''
 
-    #DACS
+    # DACS
     DAC7578_1_ADD = 0x90  # slave addresses
     DAC7578_2_ADD = 0x94
     DAC7578_3_ADD = 0x98
@@ -35,7 +37,7 @@ class GPAC(HardwareLayer):
     ADCMUX_GPIO_ADD = PCA9554_ADD
     ADCMUX_GPIO_CFG = 0x00  # all outputs
 
-    #I2C BUS MUX
+    # I2C BUS MUX
     PCA9540B_ADD = 0xE0  # slave address
     PCA9540B_SEL_CH0 = 0x04  # select channel 0
     PCA9540B_SEL_CH1 = 0x05  # select channel 1
@@ -45,7 +47,7 @@ class GPAC(HardwareLayer):
     I2CBUS_DAC = PCA9540B_SEL_CH0
     I2CBUS_DEFAULT = PCA9540B_SEL_NONE
 
-    #ADC
+    # ADC
     MAX11644_ADD = 0x6C  # slave address
     # setup register
     MAX11644_SETUP = 0x80  # defines setup register access
@@ -65,267 +67,267 @@ class GPAC(HardwareLayer):
     CURRENT_LIMIT_DAC_SLAVE_ADD = DAC7578_1_ADD
 
     _cal = {'PWR0': {
-                      'DACV': {'offset': 2815.0, 'gain': -0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 20},
-                    },
-            'PWR1': {
-                      'DACV': {'offset': 2821.0, 'gain': -0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 20},
-                    },
-            'PWR2': {
-                      'DACV': {'offset': 2831.0, 'gain': -0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 20},
-                    },
-            'PWR3': {
-                      'DACV': {'offset': 2831.0, 'gain': -0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 20},
-                    },
+        'DACV': {'offset': 2815.0, 'gain': -0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 20},
+    },
+        'PWR1': {
+        'DACV': {'offset': 2821.0, 'gain': -0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 20},
+    },
+        'PWR2': {
+        'DACV': {'offset': 2831.0, 'gain': -0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 20},
+    },
+        'PWR3': {
+        'DACV': {'offset': 2831.0, 'gain': -0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 20},
+    },
 
-            'ISRC0': {
-                      'DACI': {'offset': -1024, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
+        'ISRC0': {
+        'DACI': {'offset': -1024, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
 
-            'ISRC1': {
-                      'DACI': {'offset': -1024, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
+        'ISRC1': {
+        'DACI': {'offset': -1024, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
 
-            'ISRC2': {
-                      'DACI': {'offset': -1024, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
+        'ISRC2': {
+        'DACI': {'offset': -1024, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
 
-            'ISRC3': {
-                      'DACI': {'offset': -1024, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
+        'ISRC3': {
+        'DACI': {'offset': -1024, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
 
-            'ISRC4': {
-                      'DACI': {'offset': -1024, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
+        'ISRC4': {
+        'DACI': {'offset': -1024, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
 
-            'ISRC5': {
-                      'DACI': {'offset': -1024, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
+        'ISRC5': {
+        'DACI': {'offset': -1024, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
 
-            'ISRC6': {
-                      'DACI': {'offset': -1024, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
-            'ISRC7': {
-                      'DACI': {'offset': -1024, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
-            'ISRC8': {
-                      'DACI': {'offset': -1024, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    }, 
-            'ISRC9': {
-                      'DACI': {'offset': -1024, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
-            'ISRC10': {
-                      'DACI': {'offset': -1024, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
-            'ISRC11': {
-                      'DACI': {'offset': -1024, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
-            'VSRC0': {
-                      'DACV': {'offset': 0, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
-            'VSRC1': {
-                      'DACV': {'offset': 0, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
-            'VSRC2': {
-                      'DACV': {'offset': 0, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
-            'VSRC3': {
-                      'DACV': {'offset': 0, 'gain': 0.5},
-                      'ADCV': {'offset': 0, 'gain': 2},
-                      'ADCI': {'offset': 0, 'gain': 2},
-                    },
-            'VREF': {
-                      'ADCV': {'offset': 0, 'gain': 2},
-                    },
-            'AUX0': {
-                      'ADCV': {'offset': 0, 'gain': 2},
-                    },
-            'INJ0': {
-                      'DACV': {'offset': 0, 'gain': 0.5},
-                    },
-            'INJ1': {
-                      'DACV': {'offset': 0, 'gain': 0.5},
-                    },
-            }
+        'ISRC6': {
+        'DACI': {'offset': -1024, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
+        'ISRC7': {
+        'DACI': {'offset': -1024, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
+        'ISRC8': {
+        'DACI': {'offset': -1024, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
+        'ISRC9': {
+        'DACI': {'offset': -1024, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
+        'ISRC10': {
+        'DACI': {'offset': -1024, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
+        'ISRC11': {
+        'DACI': {'offset': -1024, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
+        'VSRC0': {
+        'DACV': {'offset': 0, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
+        'VSRC1': {
+        'DACV': {'offset': 0, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
+        'VSRC2': {
+        'DACV': {'offset': 0, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
+        'VSRC3': {
+        'DACV': {'offset': 0, 'gain': 0.5},
+        'ADCV': {'offset': 0, 'gain': 2},
+        'ADCI': {'offset': 0, 'gain': 2},
+    },
+        'VREF': {
+        'ADCV': {'offset': 0, 'gain': 2},
+    },
+        'AUX0': {
+        'ADCV': {'offset': 0, 'gain': 2},
+    },
+        'INJ0': {
+        'DACV': {'offset': 0, 'gain': 0.5},
+    },
+        'INJ1': {
+        'DACV': {'offset': 0, 'gain': 0.5},
+    },
+    }
 
     _map = {'PWR0': {
-                      'DACV': {'addr': DAC7578_1_ADD, 'channel': 1},
-                      'ADCV': {'mux_ch': 16, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 16, 'adc_ch': 1},
-                      'GPIOEN': {'bit': 0},
-                      'GPIOOC': {'bit': 4},
-                    },
-            'PWR1': {
-                      'DACV': {'addr': DAC7578_1_ADD, 'channel': 2},
-                      'ADCV': {'mux_ch': 17, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 17, 'adc_ch': 1},
-                      'GPIOEN': {'bit': 1},
-                      'GPIOOC': {'bit': 5},
-                    },
-            'PWR2': {
-                      'DACV': {'addr': DAC7578_1_ADD, 'channel': 3},
-                      'ADCV': {'mux_ch': 18, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 18, 'adc_ch': 1},
-                      'GPIOEN': {'bit': 2},
-                      'GPIOOC': {'bit': 6},
-                    },
-            'PWR3': {
-                      'DACV': {'addr': DAC7578_1_ADD, 'channel': 4},
-                      'ADCV': {'mux_ch': 19, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 19, 'adc_ch': 1},
-                      'GPIOEN': {'bit': 3},
-                      'GPIOOC': {'bit': 7},
-                    },
-            'ISRC0': {
-                      'DACI': {'addr': DAC7578_1_ADD, 'channel': 5},
-                      'ADCV': {'mux_ch': 20, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 20, 'adc_ch': 1},
-                    },
-            'ISRC1': {
-                      'DACI': {'addr': DAC7578_1_ADD, 'channel': 6},
-                      'ADCV': {'mux_ch': 21, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 21, 'adc_ch': 1},
-                    },
-            'ISRC2': {
-                      'DACI': {'addr': DAC7578_1_ADD, 'channel': 7},
-                      'ADCV': {'mux_ch': 22, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 22, 'adc_ch': 1},
-                    },
-            'ISRC3': {
-                      'DACI': {'addr': DAC7578_2_ADD, 'channel': 0},
-                      'ADCV': {'mux_ch': 23, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 23, 'adc_ch': 1},
-                    },
-            'ISRC4': {
-                      'DACI': {'addr': DAC7578_2_ADD, 'channel': 1},
-                      'ADCV': {'mux_ch': 24, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 24, 'adc_ch': 1},
-                    },
-            'ISRC5': {
-                      'DACI': {'addr': DAC7578_2_ADD, 'channel': 2},
-                      'ADCV': {'mux_ch': 25, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 25, 'adc_ch': 1},
-                    },
+        'DACV': {'addr': DAC7578_1_ADD, 'channel': 1},
+        'ADCV': {'mux_ch': 16, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 16, 'adc_ch': 1},
+        'GPIOEN': {'bit': 0},
+        'GPIOOC': {'bit': 4},
+    },
+        'PWR1': {
+        'DACV': {'addr': DAC7578_1_ADD, 'channel': 2},
+        'ADCV': {'mux_ch': 17, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 17, 'adc_ch': 1},
+        'GPIOEN': {'bit': 1},
+        'GPIOOC': {'bit': 5},
+    },
+        'PWR2': {
+        'DACV': {'addr': DAC7578_1_ADD, 'channel': 3},
+        'ADCV': {'mux_ch': 18, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 18, 'adc_ch': 1},
+        'GPIOEN': {'bit': 2},
+        'GPIOOC': {'bit': 6},
+    },
+        'PWR3': {
+        'DACV': {'addr': DAC7578_1_ADD, 'channel': 4},
+        'ADCV': {'mux_ch': 19, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 19, 'adc_ch': 1},
+        'GPIOEN': {'bit': 3},
+        'GPIOOC': {'bit': 7},
+    },
+        'ISRC0': {
+        'DACI': {'addr': DAC7578_1_ADD, 'channel': 5},
+        'ADCV': {'mux_ch': 20, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 20, 'adc_ch': 1},
+    },
+        'ISRC1': {
+        'DACI': {'addr': DAC7578_1_ADD, 'channel': 6},
+        'ADCV': {'mux_ch': 21, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 21, 'adc_ch': 1},
+    },
+        'ISRC2': {
+        'DACI': {'addr': DAC7578_1_ADD, 'channel': 7},
+        'ADCV': {'mux_ch': 22, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 22, 'adc_ch': 1},
+    },
+        'ISRC3': {
+        'DACI': {'addr': DAC7578_2_ADD, 'channel': 0},
+        'ADCV': {'mux_ch': 23, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 23, 'adc_ch': 1},
+    },
+        'ISRC4': {
+        'DACI': {'addr': DAC7578_2_ADD, 'channel': 1},
+        'ADCV': {'mux_ch': 24, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 24, 'adc_ch': 1},
+    },
+        'ISRC5': {
+        'DACI': {'addr': DAC7578_2_ADD, 'channel': 2},
+        'ADCV': {'mux_ch': 25, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 25, 'adc_ch': 1},
+    },
 
-            'ISRC6': {
-                      'DACI': {'addr': DAC7578_2_ADD, 'channel': 3},
-                      'ADCV': {'mux_ch': 26, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 26, 'adc_ch': 1},
-                    },
-            'ISRC7': {
-                      'DACI': {'addr': DAC7578_2_ADD, 'channel': 4},
-                      'ADCV': {'mux_ch': 27, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 27, 'adc_ch': 1},
-                    },
-            'ISRC8': {
-                      'DACI': {'addr': DAC7578_2_ADD, 'channel': 5},
-                      'ADCV': {'mux_ch': 28, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 28, 'adc_ch': 1},
-                    },
-            'ISRC9': {
-                      'DACI': {'addr': DAC7578_2_ADD, 'channel': 6},
-                      'ADCV': {'mux_ch': 29, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 29, 'adc_ch': 1},
-                    },
-            'ISRC10': {
-                      'DACI': {'addr': DAC7578_2_ADD, 'channel': 7},
-                      'ADCV': {'mux_ch': 30, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 30, 'adc_ch': 1},
-                    },
-            'ISRC11': {
-                      'DACI': {'addr': DAC7578_3_ADD, 'channel': 0},
-                      'ADCV': {'mux_ch': 31, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 31, 'adc_ch': 1},
-                    },
-            'VSRC0': {
-                      'DACV': {'addr': DAC7578_3_ADD, 'channel': 1},
-                      'ADCV': {'mux_ch': 15, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 15, 'adc_ch': 1},
-                    },
+        'ISRC6': {
+        'DACI': {'addr': DAC7578_2_ADD, 'channel': 3},
+        'ADCV': {'mux_ch': 26, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 26, 'adc_ch': 1},
+    },
+        'ISRC7': {
+        'DACI': {'addr': DAC7578_2_ADD, 'channel': 4},
+        'ADCV': {'mux_ch': 27, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 27, 'adc_ch': 1},
+    },
+        'ISRC8': {
+        'DACI': {'addr': DAC7578_2_ADD, 'channel': 5},
+        'ADCV': {'mux_ch': 28, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 28, 'adc_ch': 1},
+    },
+        'ISRC9': {
+        'DACI': {'addr': DAC7578_2_ADD, 'channel': 6},
+        'ADCV': {'mux_ch': 29, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 29, 'adc_ch': 1},
+    },
+        'ISRC10': {
+        'DACI': {'addr': DAC7578_2_ADD, 'channel': 7},
+        'ADCV': {'mux_ch': 30, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 30, 'adc_ch': 1},
+    },
+        'ISRC11': {
+        'DACI': {'addr': DAC7578_3_ADD, 'channel': 0},
+        'ADCV': {'mux_ch': 31, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 31, 'adc_ch': 1},
+    },
+        'VSRC0': {
+        'DACV': {'addr': DAC7578_3_ADD, 'channel': 1},
+        'ADCV': {'mux_ch': 15, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 15, 'adc_ch': 1},
+    },
 
-            'VSRC1': {
-                      'DACV': {'addr': DAC7578_3_ADD, 'channel': 2},
-                      'ADCV': {'mux_ch': 14, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 14, 'adc_ch': 1},
-                    },
+        'VSRC1': {
+        'DACV': {'addr': DAC7578_3_ADD, 'channel': 2},
+        'ADCV': {'mux_ch': 14, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 14, 'adc_ch': 1},
+    },
 
-            'VSRC2': {
-                      'DACV': {'addr': DAC7578_3_ADD, 'channel': 3},
-                      'ADCV': {'mux_ch': 13, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 13, 'adc_ch': 1},
-                    },
+        'VSRC2': {
+        'DACV': {'addr': DAC7578_3_ADD, 'channel': 3},
+        'ADCV': {'mux_ch': 13, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 13, 'adc_ch': 1},
+    },
 
-            'VSRC3': {
-                      'DACV': {'addr': DAC7578_3_ADD, 'channel': 4},
-                      'ADCV': {'mux_ch': 12, 'adc_ch': 0},
-                      'ADCI': {'mux_ch': 12, 'adc_ch': 1},
-                    },
-            'VREF': {
-                      'ADCV': {'mux_ch': 0, 'adc_ch': 0},
-                    },
-            'AUX0': {
-                      'ADCV': {'mux_ch': 9, 'adc_ch': 0},
-                    },
-            'INJ0': {
-                      'DACV': {'addr': DAC7578_3_ADD, 'channel': 5},
-                    },
-            'INJ1': {
-                      'DACV': {'addr': DAC7578_3_ADD, 'channel': 6},
-                    },
-            }
+        'VSRC3': {
+        'DACV': {'addr': DAC7578_3_ADD, 'channel': 4},
+        'ADCV': {'mux_ch': 12, 'adc_ch': 0},
+        'ADCI': {'mux_ch': 12, 'adc_ch': 1},
+    },
+        'VREF': {
+        'ADCV': {'mux_ch': 0, 'adc_ch': 0},
+    },
+        'AUX0': {
+        'ADCV': {'mux_ch': 9, 'adc_ch': 0},
+    },
+        'INJ0': {
+        'DACV': {'addr': DAC7578_3_ADD, 'channel': 5},
+    },
+        'INJ1': {
+        'DACV': {'addr': DAC7578_3_ADD, 'channel': 6},
+    },
+    }
 
     def __init__(self, intf, conf):
         super(GPAC, self).__init__(intf, conf)
 
     def init(self):
-        #PWR GPIO
+        # PWR GPIO
         self._set_i2c_mux(self.I2CBUS_DAC)
         self._intf.write(self._base_addr + self.POWER_GPIO_ADD, (self.PCA9554_CFG, self.POWER_GPIO_CFG))
         self._intf.write(self._base_addr + self.POWER_GPIO_ADD, (self.PCA9554_OUT, 0x00))
 
-        #ADC GPIO
+        # ADC GPIO
         self._set_i2c_mux(self.I2CBUS_ADC)
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_CFG, 0x00))
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_OUT, 0x00))
 
-        #ADC
+        # ADC
         adc_setup = self.MAX11644_EXT_REF | self.MAX11644_SETUP
         self._intf.write(self._base_addr + self.MAX11644_ADD, [adc_setup])
 
@@ -347,7 +349,6 @@ class GPAC(HardwareLayer):
             raise TypeError("Invalid unit type.")
 
         karg = self._map[channel]['DACV']
-        #print 'DACval', DACval
         karg['value'] = (2 ** 12 - 1) if DACval > (2 ** 12) else DACval
         karg['value'] = 0 if DACval < 0 else DACval
         self.SetDACValue(**karg)
@@ -357,14 +358,14 @@ class GPAC(HardwareLayer):
         karg = self._map[channel]['ADCV']
         raw = self._get_adc_value(**karg)
 
-        #VADCOffset = 0
-        #VADCGain = 2
+#         VADCOffset = 0
+#         VADCGain = 2
 
         VADCOffset = self._cal[channel]['ADCV']['offset']
         VADCGain = self._cal[channel]['ADCV']['gain']
 
-        #DACOffset = self._cal[channel]['ADCV']['offset']
-        #DACGain = self._cal[channel]['ADCV']['gain']
+#         DACOffset = self._cal[channel]['ADCV']['offset']
+#         DACGain = self._cal[channel]['ADCV']['gain']
 
         mV = (float)((raw - VADCOffset) / VADCGain)
 
@@ -382,8 +383,8 @@ class GPAC(HardwareLayer):
         karg = self._map[channel]['ADCI']
         raw = self._get_adc_value(**karg)
 
-        #IADCOffset =    0.0;
-        #IADCGain   =   20.0;
+#         IADCOffset =    0.0;
+#         IADCGain   =   20.0;
 
         IADCOffset = self._cal[channel]['ADCI']['offset']
         IADCGain = self._cal[channel]['ADCI']['gain']
@@ -417,19 +418,17 @@ class GPAC(HardwareLayer):
 
     def set_current_limit(self, channel, value, unit='mA'):
 
-        #TODO: add units / calibration
+        # TODO: add units / calibration
         CURRENT_LIMIT_GAIN = 20
         raw = value * CURRENT_LIMIT_GAIN
 
         self.SetDACValue(self.CURRENT_LIMIT_DAC_SLAVE_ADD, self.CURRENT_LIMIT_DAC_CH, raw)
 
     def set_current(self, channel, value, unit='mA'):
-
-        #DACOffset  = -1024.0;
-        #DACGain    = 0.5;
-
         DACOffset = self._cal[channel]['DACI']['offset']
         DACGain = self._cal[channel]['DACI']['gain']
+#         DACOffset  = -1024.0;
+#         DACGain    = 0.5;
 
         DACval = 0
         if unit == 'raw':

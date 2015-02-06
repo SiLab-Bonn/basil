@@ -1,13 +1,11 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
+`timescale 1ps/1ps
+`default_nettype none
  
 module sram_fifo_core
 #(
@@ -45,7 +43,8 @@ module sram_fifo_core
     output wire                 FIFO_READ_ERROR
 );
 
-/////
+localparam VERSION = 2;
+
 wire SOFT_RST; //0
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 
@@ -84,8 +83,6 @@ wire [21:0] CONF_SIZE_BYTE; // write data count, 1 - 2 - 3, in units of bytes
 reg [7:0] CONF_READ_ERROR; // read error count (read attempts when FIFO is empty), 4
 reg [20:0] CONF_SIZE; // in units of 2 bytes (16 bit)
 assign CONF_SIZE_BYTE = CONF_SIZE * 2;
-
-localparam VERSION = 2;
 
 always @ (posedge BUS_CLK) begin //(*) begin
     if(BUS_ADD == 0)

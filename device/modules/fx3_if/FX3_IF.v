@@ -1,23 +1,12 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company:        SILAB , Physics Institute of Bonn University
-// Engineer:       Viacheslav Filimonov
-// 
-// Create Date:    16:00:53 01/21/2014 
-// Design Name: 
-// Module Name:    FX3_IF 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
-//
-//////////////////////////////////////////////////////////////////////////////////
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
+ * ------------------------------------------------------------
+ */
+`timescale 1ps/1ps
+`default_nettype none
+
 module FX3_IF (
     inout wire [31:0] fx3_bus,
     input wire fx3_wr,
@@ -40,7 +29,7 @@ module FX3_IF (
     input wire FLAG1,
     input wire FLAG2
 
-   );
+);
 
 
 wire [31:0] DataOut; // data from FPGA core

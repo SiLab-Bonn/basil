@@ -4,10 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-
-
-`timescale 1ns / 1ps
-
+`timescale 1ps/1ps
+`default_nettype none
 
 module i2c_core #(
     parameter ABUSWIDTH = 16
@@ -25,6 +23,8 @@ module i2c_core #(
     output wire busy,
     output wire error 
 );
+
+localparam VERSION = 0;
 
 reg [7:0] status_regs [3:0];
 
@@ -82,7 +82,9 @@ assign I2C_CLK_RST = i2c_rst_flag;//status_regs[3];
 
 
 always @ (posedge BUS_CLK) begin
-    if(BUS_ADD == 1)
+    if(BUS_ADD == 0)
+        BUS_DATA_OUT <= VERSION;
+    else if(BUS_ADD == 1)
         BUS_DATA_OUT <= I2C_ADD;
     else if(BUS_ADD == 2)
         BUS_DATA_OUT <= I2C_DATA;

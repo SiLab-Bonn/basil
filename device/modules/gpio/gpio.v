@@ -3,9 +3,8 @@
  * Copyright (c) All rights reserved 
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
  */
-
+`timescale 1ps/1ps
 `default_nettype none
 
 module gpio
@@ -26,6 +25,8 @@ module gpio
 
     IO
 );
+
+localparam VERSION = 0;
 
 // --------
 // ORDER:
@@ -71,8 +72,6 @@ localparam IO_BYTES = ((IO_WIDTH-1)/8)+1;
 reg [7:0] INPUT_DATA [IO_BYTES-1:0];
 reg [7:0] OUTPUT_DATA [IO_BYTES-1:0]; //2
 reg [7:0] DIRECTION_DATA [IO_BYTES-1:0]; //3
-
-localparam VERSION = 0;
 
 always @ (posedge BUS_CLK) begin
     if(IP_ADD == 0)

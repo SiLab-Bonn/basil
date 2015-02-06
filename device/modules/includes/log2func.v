@@ -1,4 +1,9 @@
-
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
+ * ------------------------------------------------------------
+ */
 
 `ifdef _IVERILOG_
 	`define CLOG2 $clog2

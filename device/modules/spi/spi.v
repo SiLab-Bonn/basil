@@ -1,8 +1,11 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`timescale 1ps/1ps
+`default_nettype none
  
 module spi
 #(
@@ -50,22 +53,20 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH)) i_
 );
 
 
-spi_core
-#(
+spi_core #(
     .ABUSWIDTH(ABUSWIDTH),
     .MEM_BYTES(MEM_BYTES)
-) i_spi_core 
-(
-    .BUS_CLK(BUS_CLK),                     
-    .BUS_RST(BUS_RST),                  
-    .BUS_ADD(IP_ADD),                    
-    .BUS_DATA_IN(IP_DATA_IN),                    
-    .BUS_RD(IP_RD),                    
-    .BUS_WR(IP_WR),                    
-    .BUS_DATA_OUT(IP_DATA_OUT),  
-        
+) i_spi_core (
+    .BUS_CLK(BUS_CLK),
+    .BUS_RST(BUS_RST),
+    .BUS_ADD(IP_ADD),
+    .BUS_DATA_IN(IP_DATA_IN),
+    .BUS_RD(IP_RD),
+    .BUS_WR(IP_WR),
+    .BUS_DATA_OUT(IP_DATA_OUT),
+     
     .SPI_CLK(SPI_CLK),
-        
+     
     .SCLK(SCLK),
     .SDO(SDO),
     .SDI(SDI),

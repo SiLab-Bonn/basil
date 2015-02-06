@@ -1,14 +1,22 @@
-// Chuck Benz, Hollis, NH   Copyright (c)2002
-//
-// The information and description contained herein is the
-// property of Chuck Benz.
-//
-// Permission is granted for any reuse of this information
-// and description as long as this copyright notice is
-// preserved.  Modifications may be made as long as this
-// notice is preserved.
-
-// per Widmer and Franaszek
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
+ * ------------------------------------------------------------
+ *
+ * Chuck Benz, Hollis, NH   Copyright (c)2002
+ * 
+ * The information and description contained herein is the
+ * property of Chuck Benz.
+ * 
+ * Permission is granted for any reuse of this information
+ * and description as long as this copyright notice is
+ * preserved.  Modifications may be made as long as this
+ * notice is preserved.
+ * per Widmer and Franaszek
+ */
+`timescale 1ps/1ps
+`default_nettype none
 
 module decode_8b10b (datain, dispin, dataout, dispout, code_err, disp_err) ;
   input [9:0]   datain ;

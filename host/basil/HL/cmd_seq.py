@@ -4,11 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from struct import pack, unpack_from
@@ -38,8 +33,8 @@ class cmd_seq(RegisterHardwareLayer):
                   'CMD_SIZE': {'descr': {'addr': 3, 'size': 16}},
                   'CMD_REPEAT': {'descr': {'addr': 5, 'size': 32}},
                   'START_SEQUENCE_LENGTH': {'descr': {'addr': 9, 'size': 16}},
-                  'STOP_SEQUENCE_LENGTH': {'descr': {'addr': 11, 'size': 16}},
-    }
+                  'STOP_SEQUENCE_LENGTH': {'descr': {'addr': 11, 'size': 16}}}
+    _require_version = "==0"
 
     def __init__(self, intf, conf):
         super(cmd_seq, self).__init__(intf, conf)

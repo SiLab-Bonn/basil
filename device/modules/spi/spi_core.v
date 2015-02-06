@@ -1,9 +1,11 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
  */
+`timescale 1ps/1ps
+`default_nettype none
  
 module spi_core
 #(
@@ -28,6 +30,7 @@ module spi_core
     output reg SLD
 );
 
+localparam VERSION = 0;
 
 reg [7:0] status_regs [8+MEM_BYTES*2-1:0];
 
@@ -76,8 +79,6 @@ assign CONF_REPEAT = status_regs[7];
 
 wire [7:0] BUS_STATUS_OUT;
 assign BUS_STATUS_OUT = status_regs[BUS_ADD];
-
-localparam VERSION = 0;
 
 reg [7:0] BUS_DATA_OUT_REG;
 always@(posedge BUS_CLK) begin

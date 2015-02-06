@@ -4,7 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-
+`timescale 1ps/1ps
+`default_nettype none
 
 module gpac_adc_rx_core
 #(
@@ -31,7 +32,9 @@ module gpac_adc_rx_core
     input BUS_RD,
 
     output LOST_ERROR
-); 
+);
+
+localparam VERSION = 0;
 
 // 0 - soft reset
 // 1 - start/status
@@ -84,9 +87,7 @@ wire [7:0] CONF_SAMPEL_DLY = status_regs[7];
 reg [7:0] CONF_ERROR_LOST;
 assign LOST_ERROR = CONF_ERROR_LOST!=0;
 
-reg CONF_DONE; 
-
-localparam VERSION = 0;
+reg CONF_DONE;
 
 always @(posedge BUS_CLK) begin
     if(BUS_ADD == 0)

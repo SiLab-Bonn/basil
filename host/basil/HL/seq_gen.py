@@ -3,10 +3,9 @@
 # Copyright (c) All rights reserved
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
+#
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
-from struct import pack, unpack_from
-from array import array
 
 
 class seq_gen(RegisterHardwareLayer):
@@ -22,8 +21,8 @@ class seq_gen(RegisterHardwareLayer):
                   'WAIT': {'descr': {'addr': 5, 'size': 16}},
                   'REPEAT': {'descr': {'addr': 7, 'size': 8}},
                   'REPEAT_START': {'descr': {'addr': 8, 'size': 16}},
-                  'EN_EXT_START': {'descr': {'addr': 10, 'size': 1}},
-    }
+                  'EN_EXT_START': {'descr': {'addr': 10, 'size': 1}}}
+    _require_version = "==0"
 
     def __init__(self, intf, conf):
         super(seq_gen, self).__init__(intf, conf)
@@ -81,13 +80,13 @@ class seq_gen(RegisterHardwareLayer):
 
     def get_done(self):
         return self.is_ready
-    
+
     def set_en_ext_start(self, value):
         self.EN_EXT_START = value
 
     def get_en_ext_start(self):
         return self.EN_EXT_START
-       
+
     def set_data(self, data, addr=0):
         if self._seq_mem_size < len(data):
             raise ValueError('Size of data is too big')

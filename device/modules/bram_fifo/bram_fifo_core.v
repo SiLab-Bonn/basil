@@ -1,8 +1,11 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`timescale 1ps/1ps
+`default_nettype none
  
 module bram_fifo_core
 #(
@@ -34,6 +37,8 @@ module bram_fifo_core
     output reg                  FIFO_NEAR_FULL,
     output wire                 FIFO_READ_ERROR
 );
+
+localparam VERSION = 2;
 
 wire SOFT_RST; //0
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
@@ -73,7 +78,6 @@ wire [31:0] CONF_SIZE_BYTE; // write data count, 1 - 2 - 3, in units of byte
 reg [7:0] CONF_READ_ERROR; // read error count (read attempts when FIFO is empty), 4
 wire [31:0] CONF_SIZE; // in units of int
 assign CONF_SIZE_BYTE = CONF_SIZE * 4;
-localparam VERSION = 4;
 
 always @ (posedge BUS_CLK) begin //(*) begin
     if(BUS_ADD == 0)

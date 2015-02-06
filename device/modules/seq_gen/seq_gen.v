@@ -1,13 +1,11 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
+`timescale 1ps/1ps
+`default_nettype none
  
 module seq_gen
 #(
@@ -49,24 +47,23 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH)) i_
     .IP_DATA_OUT(IP_DATA_OUT)
 );
 
-seq_gen_core 
+seq_gen_core
 #(
     .ABUSWIDTH(ABUSWIDTH),
     .MEM_BYTES(MEM_BYTES),
     .OUT_BITS(OUT_BITS)
-) i_seq_gen_core 
-(
-    .BUS_CLK(BUS_CLK),                     
-    .BUS_RST(BUS_RST),                  
-    .BUS_ADD(IP_ADD),                    
-    .BUS_DATA_IN(IP_DATA_IN),                    
-    .BUS_RD(IP_RD),                    
-    .BUS_WR(IP_WR),                    
-    .BUS_DATA_OUT(IP_DATA_OUT),  
+) i_seq_gen_core (
+    .BUS_CLK(BUS_CLK),
+    .BUS_RST(BUS_RST),
+    .BUS_ADD(IP_ADD),
+    .BUS_DATA_IN(IP_DATA_IN),
+    .BUS_RD(IP_RD),
+    .BUS_WR(IP_WR),
+    .BUS_DATA_OUT(IP_DATA_OUT),
 
     .SEQ_EXT_START(SEQ_EXT_START),
     .SEQ_CLK(SEQ_CLK),
     .SEQ_OUT(SEQ_OUT)
-); 
+);
 
-endmodule  
+endmodule

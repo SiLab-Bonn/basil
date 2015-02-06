@@ -4,10 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-
-
-`timescale 1ns / 1ps
-
+`timescale 1ps/1ps
+`default_nettype none
 
 /*
 HOW TO USE
@@ -25,7 +23,6 @@ Program registers in the following way:
 The module will send then the 7bit addr value to the device. After receiving the ack bit the data is transmitted. If something
 goes wrong the error flag will show you that!
 */
-
 
 module i2c #(
     parameter BASEADDR = 16'h0000,

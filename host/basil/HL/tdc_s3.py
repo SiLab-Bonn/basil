@@ -24,8 +24,8 @@ class tdc_s3(RegisterHardwareLayer):
                   'EN_NO_WRITE_TRIG_ERR': {'descr': {'addr': 1, 'size': 1, 'offset': 5}},
                   'EN_INVERT_TDC': {'descr': {'addr': 1, 'size': 1, 'offset': 6}},
                   'EN_INVERT_TRIGGER': {'descr': {'addr': 1, 'size': 1, 'offset': 7}},
-                  'EVENT_COUNTER': {'descr': {'addr': 2, 'size': 32, 'properties': ['ro']}}
-    }
+                  'EVENT_COUNTER': {'descr': {'addr': 2, 'size': 32, 'properties': ['ro']}}}
+    _require_version = "==2"
 
     def __init__(self, intf, conf):
         super(tdc_s3, self).__init__(intf, conf)

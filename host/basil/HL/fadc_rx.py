@@ -4,11 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 
 from basil.HL.HardwareLayer import HardwareLayer
 from struct import pack, unpack
@@ -41,7 +36,7 @@ class fadc_rx(HardwareLayer):
         '''
         current = self._intf.read(self._conf['base_addr'] + 2, 1)[0]
         self._intf.write(self._conf['base_addr'] + 2, [(current & 0xfb) | ((value & 0x01) << 2)])
-        
+
     def get_align_to_sync(self):
         return True if (self._intf.read(self._conf['base_addr'] + 2, 1)[0] & 0x01) else False
 

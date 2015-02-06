@@ -4,8 +4,7 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-
-`timescale 1 ps / 1ps
+`timescale 1ps/1ps
 `default_nettype none
 
 module cmd_seq_core
@@ -29,6 +28,8 @@ module cmd_seq_core
     output reg                  CMD_READY,
     output reg                  CMD_START_FLAG
 );
+
+localparam VERSION = 0;
 
 wire SOFT_RST; //0
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
@@ -174,8 +175,6 @@ three_stage_synchronizer #(
     .IN(CONF_STOP_REPEAT),
     .OUT(CONF_STOP_REPEAT_CMD_CLK)
 );
-
-localparam VERSION = 0;
 
 (* RAM_STYLE="{AUTO | BLOCK | BLOCK_POWER1 | BLOCK_POWER2}" *)
 reg [7:0] cmd_mem [CMD_MEM_SIZE-1:0];

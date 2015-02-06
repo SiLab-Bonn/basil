@@ -7,16 +7,17 @@
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
+
 class fast_spi_rx(RegisterHardwareLayer):
     '''Fast SPI interface
     '''
-    
+
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
                   'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
                   'EN': {'descr': {'addr': 2, 'size': 1, 'offset': 0}},
-                  'LOST_COUNT': {'descr': {'addr': 3, 'size': 8, 'properties': ['ro']}},
-    }
-    
+                  'LOST_COUNT': {'descr': {'addr': 3, 'size': 8, 'properties': ['ro']}}}
+    _require_version = "==0"
+
     def __init__(self, intf, conf):
         super(fast_spi_rx, self).__init__(intf, conf)
 
