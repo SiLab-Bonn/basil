@@ -64,6 +64,12 @@ always @(posedge BUS_CLK) begin
         status_regs[8] <= 0; //repeat start
         status_regs[9] <= 0; //repeat start
         status_regs[10] <= 0; //control
+        status_regs[11] <= 0; // nested loop start
+        status_regs[12] <= 0; // -||-
+        status_regs[13] <= 0; // nested loop stop
+        status_regs[14] <= 0; // -||-
+        status_regs[15] <= 0; // nested loop repat count
+        status_regs[16] <= 0; // -||-
     end
     else if(BUS_WR && BUS_ADD < 16)
         status_regs[BUS_ADD[3:0]] <= BUS_DATA_IN;
@@ -100,6 +106,15 @@ assign CONF_REP_START = {status_regs[9], status_regs[8]};
 wire [7:0] BUS_STATUS_OUT;
 assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
 
+wire [15:0] CONF_NESTED_START;
+assign CONF_NESTED_START = {status_regs[12], status_regs[11]};
+
+wire [15:0] CONF_NESTED_STOP;
+assign CONF_NESTED_STOP = {status_regs[14], status_regs[13]};
+
+wire [15:0] CONF_NESTED_REPEAT;
+assign CONF_NESTED_REPEAT = {status_regs[16], status_regs[15]};
+
 localparam VERSION = 0;
 
 reg [7:0] BUS_DATA_OUT_REG;
@@ -124,6 +139,18 @@ always @ (posedge BUS_CLK) begin
         BUS_DATA_OUT_REG <= CONF_REP_START[15:8];    
     else if(BUS_ADD == 10)
         BUS_DATA_OUT_REG <= {7'b0,CONF_EN_EXT_START};
+    else if(BUS_ADD == 11)
+        BUS_DATA_OUT_REG <= CONF_NESTED_START[7:0];
+    else if(BUS_ADD == 12)
+        BUS_DATA_OUT_REG <= CONF_NESTED_START[15:8];     
+    else if(BUS_ADD == 13)
+        BUS_DATA_OUT_REG <= CONF_NESTED_STOP[7:0];
+    else if(BUS_ADD == 14)
+        BUS_DATA_OUT_REG <= CONF_NESTED_STOP[15:8]; 
+    else if(BUS_ADD == 15)
+        BUS_DATA_OUT_REG <= CONF_NESTED_REPEAT[7:0];
+    else if(BUS_ADD == 16)
+        BUS_DATA_OUT_REG <= CONF_NESTED_REPEAT[15:8]; 
     else if(BUS_ADD < 16)
         BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
 end
