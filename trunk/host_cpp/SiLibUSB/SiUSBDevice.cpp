@@ -171,7 +171,7 @@ void TUSBDevice::Init()
 	}
 	
 	// If we got a FX3 device
-	if ((ProductId & 0x0300) || (ProductId == 0x5312)) {
+	if ((ProductId >= 0x0300) && (ProductId < 0x0400))  {
 		sur_control_pipe  = SUR_CONTROL_PIPE_FX;
 		sur_data_out_pipe = SUR_DATA_OUT_PIPE_FX;
 		sur_data_in_pipe  = SUR_DATA_IN_PIPE_FX;
@@ -188,7 +188,7 @@ void TUSBDevice::Init()
 		ControllerType = FX3;
 	} 
 	// If we got a FX2LP device
-	else if ((ProductId & 0x0200) || (ProductId == 0x8613)) {
+	if ((ProductId >= 0x0200) || (ProductId == 0x8613)) {
 		sur_control_pipe  = SUR_CONTROL_PIPE_FX;
 		sur_data_out_pipe = SUR_DATA_OUT_PIPE_FX;
 		sur_data_in_pipe  = SUR_DATA_IN_PIPE_FX;
