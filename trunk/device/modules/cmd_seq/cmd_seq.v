@@ -1,12 +1,10 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
  */
-
- 
-`timescale 1 ps / 1ps
+`timescale 1ps/1ps
 `default_nettype none
 
 module cmd_seq
@@ -52,19 +50,19 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i
 );
 
 
-cmd_seq_core 
+cmd_seq_core
 #(
     .CMD_MEM_SIZE(CMD_MEM_SIZE),
     .ABUSWIDTH(ABUSWIDTH)
 ) i_cmd_seq_core
 (
-    .BUS_CLK(BUS_CLK),                     
-    .BUS_RST(BUS_RST),                  
-    .BUS_ADD(IP_ADD),                    
-    .BUS_DATA_IN(IP_DATA_IN),                    
-    .BUS_RD(IP_RD),                    
-    .BUS_WR(IP_WR),                    
-    .BUS_DATA_OUT(IP_DATA_OUT),  
+    .BUS_CLK(BUS_CLK),
+    .BUS_RST(BUS_RST),
+    .BUS_ADD(IP_ADD),
+    .BUS_DATA_IN(IP_DATA_IN),
+    .BUS_RD(IP_RD),
+    .BUS_WR(IP_WR),
+    .BUS_DATA_OUT(IP_DATA_OUT),
     
     .CMD_CLK_OUT(CMD_CLK_OUT),
     .CMD_CLK_IN(CMD_CLK_IN),
@@ -73,7 +71,6 @@ cmd_seq_core
     .CMD_DATA(CMD_DATA),
     .CMD_READY(CMD_READY),
     .CMD_START_FLAG(CMD_START_FLAG)
-    
-); 
+);
 
 endmodule

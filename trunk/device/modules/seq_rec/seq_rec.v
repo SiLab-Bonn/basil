@@ -1,9 +1,11 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
  */
+`timescale 1ps/1ps
+`default_nettype none
  
 module seq_rec
 #(
@@ -45,24 +47,22 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i
     .IP_DATA_OUT(IP_DATA_OUT)
 );
 
-seq_rec_core 
+seq_rec_core
 #(
     .MEM_BYTES(MEM_BYTES),
     .IN_BITS(IN_BITS),
     .ABUSWIDTH(ABUSWIDTH)
-) i_scope_core 
-(
-    .BUS_CLK(BUS_CLK),                     
-    .BUS_RST(BUS_RST),                  
-    .BUS_ADD(IP_ADD),                    
-    .BUS_DATA_IN(IP_DATA_IN),                    
-    .BUS_RD(IP_RD),                    
-    .BUS_WR(IP_WR),                    
-    .BUS_DATA_OUT(IP_DATA_OUT),  
-
+) i_scope_core (
+    .BUS_CLK(BUS_CLK),
+    .BUS_RST(BUS_RST),
+    .BUS_ADD(IP_ADD),
+    .BUS_DATA_IN(IP_DATA_IN),
+    .BUS_RD(IP_RD),
+    .BUS_WR(IP_WR),
+    .BUS_DATA_OUT(IP_DATA_OUT),
     .SEQ_CLK(SEQ_CLK),
     .SEQ_IN(SEQ_IN),
     .SEQ_EXT_START(SEQ_EXT_START)
-); 
+);
 
-endmodule  
+endmodule

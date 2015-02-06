@@ -13,8 +13,8 @@ class gpio(RegisterHardwareLayer):
     '''
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
-                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}}
-    }
+                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}}}
+    _require_version = "==0"
 
     def __init__(self, intf, conf):
 

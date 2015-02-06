@@ -1,13 +1,11 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
+`timescale 1ps/1ps
+`default_nettype none
  
 module sram_fifo
 #(
@@ -67,22 +65,18 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
 );
 
 
-sram_fifo_core 
-#(
+sram_fifo_core #(
     .DEPTH(DEPTH),
     .FIFO_ALMOST_FULL_THRESHOLD(FIFO_ALMOST_FULL_THRESHOLD),
     .FIFO_ALMOST_EMPTY_THRESHOLD(FIFO_ALMOST_EMPTY_THRESHOLD)
-) i_sram_fifo 
-(
-    .BUS_CLK(BUS_CLK),                     
-    .BUS_RST(BUS_RST),                  
-    .BUS_ADD(IP_ADD),                    
-    .BUS_DATA_IN(IP_DATA_IN),                    
-    .BUS_RD(IP_RD),                    
-    .BUS_WR(IP_WR),                    
-    .BUS_DATA_OUT(IP_DATA_OUT),  
- 
-//    .BUS_CLK270(BUS_CLK270),
+) i_sram_fifo (
+    .BUS_CLK(BUS_CLK),
+    .BUS_RST(BUS_RST),
+    .BUS_ADD(IP_ADD),
+    .BUS_DATA_IN(IP_DATA_IN),
+    .BUS_RD(IP_RD),
+    .BUS_WR(IP_WR),
+    .BUS_DATA_OUT(IP_DATA_OUT),
     
     .SRAM_A(SRAM_A),
     .SRAM_IO(SRAM_IO),
@@ -91,18 +85,18 @@ sram_fifo_core
     .SRAM_CE1_B(SRAM_CE1_B),
     .SRAM_OE_B(SRAM_OE_B),
     .SRAM_WE_B(SRAM_WE_B),
-        
-     .USB_READ(USB_READ),
-     .USB_DATA(USB_DATA),
-        
-     .FIFO_READ_NEXT_OUT(FIFO_READ_NEXT_OUT),
-     .FIFO_EMPTY_IN(FIFO_EMPTY_IN),
-     .FIFO_DATA(FIFO_DATA),
     
-     .FIFO_NOT_EMPTY(FIFO_NOT_EMPTY),
-     .FIFO_FULL(FIFO_FULL),
-     .FIFO_NEAR_FULL(FIFO_NEAR_FULL),
-     .FIFO_READ_ERROR(FIFO_READ_ERROR)        
- );
+    .USB_READ(USB_READ),
+    .USB_DATA(USB_DATA),
+    
+    .FIFO_READ_NEXT_OUT(FIFO_READ_NEXT_OUT),
+    .FIFO_EMPTY_IN(FIFO_EMPTY_IN),
+    .FIFO_DATA(FIFO_DATA),
+    
+    .FIFO_NOT_EMPTY(FIFO_NOT_EMPTY),
+    .FIFO_FULL(FIFO_FULL),
+    .FIFO_NEAR_FULL(FIFO_NEAR_FULL),
+    .FIFO_READ_ERROR(FIFO_READ_ERROR)
+);
 
 endmodule

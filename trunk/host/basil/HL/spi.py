@@ -6,8 +6,6 @@
 #
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
-from struct import pack, unpack_from
-from array import array
 
 
 class spi(RegisterHardwareLayer):
@@ -20,8 +18,8 @@ class spi(RegisterHardwareLayer):
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'SIZE': {'descr': {'addr': 3, 'size': 16}},
                   'WAIT': {'descr': {'addr': 5, 'size': 16}},
-                  'REPEAT': {'descr': {'addr': 7, 'size': 8}},
-    }
+                  'REPEAT': {'descr': {'addr': 7, 'size': 8}}}
+    _require_version = "==0"
 
     def __init__(self, intf, conf):
         super(spi, self).__init__(intf, conf)
@@ -31,11 +29,11 @@ class spi(RegisterHardwareLayer):
             self._mem_bytes = conf['mem_bytes']
         except KeyError:
             raise KeyError("No mem_bytes property set - required!")
-            
+
     def reset(self):
         '''Soft reset the module.'''
         self.RESET = 0
-        
+
 #    def init(self):
 #        self.reset()
 
@@ -94,20 +92,18 @@ class spi(RegisterHardwareLayer):
     def set_data(self, data, addr=0):
         '''
         Sets data for outgoing stream
-        '''    
+        '''
         if self._mem_bytes < len(data):
             raise ValueError('Size of data is too big')
         self._intf.write(self._conf['base_addr'] + self._spi_mem_offset + addr, data)
 
-    #This needs to be changed to return written value
+    # This needs to be changed to return written value
     def get_data(self, size=None, addr=None):
         '''
         Gets data for incoming stream
         '''
-        
         if addr is None:
             addr = self._mem_bytes
-        
         if size and self._mem_bytes < size:
             raise ValueError('Size is too big')
         if not size:

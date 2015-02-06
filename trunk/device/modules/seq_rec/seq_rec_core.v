@@ -4,16 +4,16 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-
+`timescale 1ps/1ps
+`default_nettype none
 
 // WARNING! THIS MODULE IS WORK IN PROGRESS! NOT TESTED!
 /*
-Possible extra options:
-- delay block that allow SEQ_EXT_START in past (enabled by parameter - for speed needed applications a simple memory circular buffer)
-- SEQ_EXT_START selections as pulse or as gate/enable
-- multi window recording (sorted with but multiple times)
-*/
-
+ * Possible extra options:
+ * - delay block that allow SEQ_EXT_START in past (enabled by parameter - for speed needed applications a simple memory circular buffer)
+ * - SEQ_EXT_START selections as pulse or as gate/enable
+ * - multi window recording (sorted with but multiple times)
+ */
 
 module seq_rec_core
 #(
@@ -34,6 +34,8 @@ module seq_rec_core
     SEQ_IN,
     SEQ_EXT_START
 ); 
+
+localparam VERSION = 0;
 
 input wire                      BUS_CLK;
 input wire                      BUS_RST;
@@ -92,8 +94,6 @@ reg CONF_DONE;
 
 wire [7:0] BUS_STATUS_OUT;
 assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
-
-localparam VERSION = 0;
 
 reg [7:0] BUS_DATA_OUT_REG;
 always @ (posedge BUS_CLK) begin

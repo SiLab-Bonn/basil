@@ -1,8 +1,11 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`timescale 1ps/1ps
+`default_nettype none
  
 module fast_spi_rx_core
 #(
@@ -26,6 +29,8 @@ module fast_spi_rx_core
     input wire BUS_RD
 ); 
 
+localparam VERSION = 0;
+
 //output format #ID (as parameter IDENTYFIER + 12 id-frame + 16 bit data) 
 
 wire SOFT_RST;
@@ -47,8 +52,6 @@ always @(posedge BUS_CLK) begin
 end
 
 reg [7:0] LOST_DATA_CNT;
-
-localparam VERSION = 0;
 
 always @(posedge BUS_CLK) begin
     if(BUS_ADD == 0)

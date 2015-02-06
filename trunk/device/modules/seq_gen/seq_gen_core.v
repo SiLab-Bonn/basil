@@ -4,7 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-
+`timescale 1ps/1ps
+`default_nettype none
 
 module seq_gen_core
 #(
@@ -23,7 +24,9 @@ module seq_gen_core
     SEQ_EXT_START,
     SEQ_CLK,
     SEQ_OUT
-); 
+);
+
+localparam VERSION = 0;
 
 input                       BUS_CLK;
 input                       BUS_RST;
@@ -114,8 +117,6 @@ assign CONF_NESTED_STOP = {status_regs[14], status_regs[13]};
 
 wire [15:0] CONF_NESTED_REPEAT;
 assign CONF_NESTED_REPEAT = {status_regs[16], status_regs[15]};
-
-localparam VERSION = 0;
 
 reg [7:0] BUS_DATA_OUT_REG;
 always @ (posedge BUS_CLK) begin

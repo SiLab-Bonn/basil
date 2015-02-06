@@ -1,9 +1,11 @@
-# SiLab , Physics Institute of Bonn University
+#
+# ------------------------------------------------------------
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
-from array import array
 from time import sleep
 import numpy as np
 
@@ -17,8 +19,8 @@ class sram_fifo(RegisterHardwareLayer):
                   'ALMOST_FULL_THRESHOLD': {'descr': {'addr': 1, 'size': 8}},
                   'ALMOST_EMPTY_THRESHOLD': {'descr': {'addr': 2, 'size': 8}},
                   'READ_ERROR_COUNTER': {'descr': {'addr': 3, 'size': 8, 'properties': ['ro']}},
-                  'FIFO_SIZE': {'descr': {'addr': 4, 'size': 32, 'properties': ['ro']}}
-    }
+                  'FIFO_SIZE': {'descr': {'addr': 4, 'size': 32, 'properties': ['ro']}}}
+    _require_version = "==2"  # make sure to keep BRAM FIFO and SRAM FIFO synchronized
 
     def __init__(self, intf, conf):
         super(sram_fifo, self).__init__(intf, conf)
@@ -31,10 +33,10 @@ class sram_fifo(RegisterHardwareLayer):
         sleep(0.01)  # wait some time for initialization
 
     def set_almost_full_threshold(self, value):
-        self.ALMOST_FULL_THRESHOLD = value # no get function possible
+        self.ALMOST_FULL_THRESHOLD = value  # no get function possible
 
     def set_almost_empty_threshold(self, value):
-        self.ALMOST_EMPTY_THRESHOLD = value # no get function possible
+        self.ALMOST_EMPTY_THRESHOLD = value  # no get function possible
 
     def get_fifo_size(self):
         '''

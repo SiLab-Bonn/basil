@@ -4,7 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-
+`timescale 1ps/1ps
+`default_nettype none
 
  /*  _____ _   _   _ 
  * |_   _| | | | | |
@@ -14,12 +15,7 @@
  * TLU controller supporting EUDET TLU 0.1/0.2
  */
 
-
-`timescale 1 ps / 1ps
-`default_nettype none
-
-
- module tlu_controller_core
+module tlu_controller_core
 #(
     parameter                   DIVISOR = 8, // dividing CMD_CLK by DIVISOR for TLU_CLOCK
     parameter                   ABUSWIDTH = 16
@@ -57,6 +53,8 @@
     
     output reg      [31:0]      TIMESTAMP
 );
+
+localparam VERSION = 1;
 
 // Registers
 wire SOFT_RST; // Address: 0
@@ -144,8 +142,6 @@ end
 reg [7:0] LOST_DATA_CNT; // BUS_ADD==0
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_BUF; // BUS_ADD==4 - 7
 reg [31:0] CURRENT_TRIGGER_NUMBER, CURRENT_TRIGGER_NUMBER_BUF; // BUS_ADD==8 - 11
-
-localparam VERSION = 1;
 
 always @ (posedge BUS_CLK)
 begin

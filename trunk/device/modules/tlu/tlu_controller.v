@@ -1,12 +1,13 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`timescale 1 ps / 1ps
+`timescale 1ps/1ps
 `default_nettype none
- 
- module tlu_controller
+
+module tlu_controller
 #(
     parameter       BASEADDR = 16'h0000,
     parameter       HIGHADDR = 16'h0000, 

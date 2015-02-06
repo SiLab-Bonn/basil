@@ -4,11 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from struct import pack, unpack_from
@@ -40,8 +35,8 @@ class tlu(RegisterHardwareLayer):
                   'EN_WRITE_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 7}},
                   'TRIGGER_LOW_TIMEOUT': {'descr': {'addr': 3, 'size': 8}},
                   'CURRENT_TLU_TRIGGER_NUMBER': {'descr': {'addr': 4, 'size': 32, 'properties': ['ro']}},
-                  'TRIGGER_COUNTER': {'descr': {'addr': 8, 'size': 32, 'properties': ['ro']}},  # to reset trigger counter use RESET
-    }
+                  'TRIGGER_COUNTER': {'descr': {'addr': 8, 'size': 32, 'properties': ['ro']}}}  # to reset trigger counter use RESET
+    _require_version = "==1"
 
     def __init__(self, intf, conf):
         super(tlu, self).__init__(intf, conf)

@@ -6,8 +6,6 @@
 #
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
-from struct import pack, unpack_from
-from array import array
 
 
 class seq_rec(RegisterHardwareLayer):
@@ -18,8 +16,8 @@ class seq_rec(RegisterHardwareLayer):
                   'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'EN_EXT_START': {'descr': {'addr': 2, 'size': 8}},
-                  'SIZE': {'descr': {'addr': 3, 'size': 16}},
-    }
+                  'SIZE': {'descr': {'addr': 3, 'size': 16}}}
+    _require_version = "==0"
 
     def __init__(self, intf, conf):
         super(seq_rec, self).__init__(intf, conf)
@@ -52,7 +50,7 @@ class seq_rec(RegisterHardwareLayer):
 
     def get_en_ext_start(self):
         return self.EN_EXT_START
-        
+
     def is_done(self):
         return self.is_ready
 

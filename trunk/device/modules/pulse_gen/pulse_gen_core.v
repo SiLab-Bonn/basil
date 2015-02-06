@@ -4,6 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`timescale 1ps/1ps
+`default_nettype none
 
 module pulse_gen_core
 #(
@@ -23,9 +25,8 @@ module pulse_gen_core
     output reg PULSE
 ); 
 
+localparam VERSION = 0;
 
-
-/////
 wire SOFT_RST; 
 wire START;
 reg CONF_EN;
@@ -33,8 +34,6 @@ reg [15:0] CONF_DELAY;
 reg [15:0] CONF_WIDTH;
 reg [7:0] CONF_REPEAT;
 reg CONF_DONE;
-
-localparam VERSION = 0;
 
 always@(posedge BUS_CLK) begin
     if(BUS_ADD == 0)

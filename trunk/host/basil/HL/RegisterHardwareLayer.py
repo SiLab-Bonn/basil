@@ -4,6 +4,7 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
+
 import logging
 from copy import deepcopy
 import collections
@@ -33,6 +34,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
 
     '''
     _registers = {}
+    _require_version = None
 
     def __init__(self, intf, conf):
         super(RegisterHardwareLayer, self).__init__(intf, conf)
@@ -43,6 +45,9 @@ class RegisterHardwareLayer(HardwareLayer, dict):
     def init(self):
         if logging.getLogger().isEnabledFor(logging.DEBUG):
             logging.debug("Initializing %s from module %s (Version %s)" % (self.__class__.__name__, self.__class__.__module__, str(self.VERSION) if 'VERSION' in self._registers else 'n/a'))
+        if 'VERSION' in self._registers and self._require_version:
+            if not eval(str(self.VERSION) + self._require_version):
+                raise Exception("FPGA module does not satisfy version requirements")
         for reg, value in self._registers.iteritems():
             if reg in self._init:
                 self[reg] = self._init[reg]
