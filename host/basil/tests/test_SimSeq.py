@@ -79,6 +79,7 @@ class TestSimGpio(unittest.TestCase):
     
     def test_io(self):
        
+       
         self.chip['SEQ']['S0'][0] = 1
         self.chip['SEQ']['S1'][1] = 1
         self.chip['SEQ']['S2'][2] = 1
@@ -171,6 +172,32 @@ class TestSimGpio(unittest.TestCase):
             fm += [i,i,i]
         self.assertEqual(ret.tolist(), [0x80]*2 + fm + [0x80]*(94+4*3*3))
         
+        
+        #nested loop test
+        pattern = [1,2,3,4, 5,6,7,8, 9,10,11,12, 13,14,15,16]
+        self.chip['SEQ'].set_data(pattern)
+        self.chip['SEQ'].set_repeat(4)
+        self.chip['SEQ'].set_repeat_start(2)
+        self.chip['SEQ'].set_nested_start(8)
+        self.chip['SEQ'].set_nested_stop(12)
+        self.chip['SEQ'].set_nested_repeat(3)
+        self.chip['SEQ'].set_clk_divide(1)
+        self.chip['PULSE_GEN'].start()
+        
+        while(not self.chip['SEQ'].is_done()):
+            pass
+        
+        exp_pattern = [0x10,0x10]
+        exp_pattern +=  pattern[0:2]
+        rep = pattern[2:8]
+        rep += pattern[8:12]*3
+        rep += pattern[12:16]
+        exp_pattern += rep*4
+        exp_pattern += [16]*124
+        
+        ret = self.chip['SEQ_REC'].get_data(size=rec_size)
+        self.assertEqual(ret.tolist(), exp_pattern)
+
         
     def tearDown(self):
         self.chip.close() # let it close connection and stop simulator
