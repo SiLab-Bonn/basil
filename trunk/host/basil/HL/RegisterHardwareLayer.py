@@ -47,7 +47,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             logging.debug("Initializing %s from module %s (Version %s)" % (self.__class__.__name__, self.__class__.__module__, str(self.VERSION) if 'VERSION' in self._registers else 'n/a'))
         if 'VERSION' in self._registers and self._require_version:
             if not eval(str(self.VERSION) + self._require_version):
-                raise Exception("FPGA module does not satisfy version requirements")
+                raise Exception("FPGA module %s does not satisfy version requirements"%self.__class__.__module__)
         for reg, value in self._registers.iteritems():
             if reg in self._init:
                 self[reg] = self._init[reg]
