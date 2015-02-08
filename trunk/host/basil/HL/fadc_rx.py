@@ -5,51 +5,62 @@
 # ------------------------------------------------------------
 #
 
-from basil.HL.HardwareLayer import HardwareLayer
+from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from struct import pack, unpack
 
 
-class fadc_rx(HardwareLayer):
+class fadc_rx(RegisterHardwareLayer):
     '''Fast ADC channel receiver
     '''
+    
+    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
+                  'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
+                  'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
+                  'ALIGN_TO_SYNC': {'descr': {'addr': 2, 'size': 1}},
+                  'SINGLE_DATA': {'descr': {'addr': 2, 'size': 1, 'offset': 2}},
+                  'COUNT': {'descr':{'addr': 3, 'size': 24}},
+                  }
+    _require_version = "==1"
+    
     def __init__(self, intf, conf):
         super(fadc_rx, self).__init__(intf, conf)
 
-    def init(self):
-        self.reset()
+    #def init(self):
+    #    self.reset()
 
     def reset(self):
-        self._intf.write(self._conf['base_addr'], [0])
+        self.RESET = 0
 
     def start(self):
-        self._intf.write(self._conf['base_addr'] + 1, [0])
+        self.START = 0
 
     def set_align_to_sync(self, value=False):
         '''
         Align data taking to a synchronization signal, reset signal is the synchronization signal (hard coded connection in Verilog source code)
         '''
-        current = self._intf.read(self._conf['base_addr'] + 2, 1)[0]
-        self._intf.write(self._conf['base_addr'] + 2, [(current & 0xfe) | value])
+        self.ALIGN_TO_SYNC = value
 
     def set_single_data(self, value=False):
         '''
         '''
-        current = self._intf.read(self._conf['base_addr'] + 2, 1)[0]
-        self._intf.write(self._conf['base_addr'] + 2, [(current & 0xfb) | ((value & 0x01) << 2)])
+        self.SINGLE_DATA = value
 
     def get_align_to_sync(self):
-        return True if (self._intf.read(self._conf['base_addr'] + 2, 1)[0] & 0x01) else False
+        return self.ALIGN_TO_SYNC
 
     def set_data_count(self, count):
-        self._intf.write(self._conf['base_addr'] + 3, unpack('BBBB', pack('>L', count))[1:4])
+        self.COUNT = count
 
     def get_data_count(self):
-        ret = self._intf.read(self._conf['base_addr'] + 3, 3)
-        return ret[0] * (2 ** 16) + ret[1] * (2 ** 8) + ret[2]
+        return self.COUNT
 
     def is_done(self):
         return self.is_ready
 
     @property
     def is_ready(self):
-        return (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x01) == 1
+        return self.READY == 1
+
+    def get_done(self):
+        return self.is_ready

@@ -9,6 +9,7 @@
 
 module gpac_adc_rx_core
 #(
+    parameter   ABUSWIDTH = 16,
     parameter [1:0] ADC_ID = 0,
     parameter [0:0] HEADER_ID = 0
 )
@@ -24,7 +25,7 @@ module gpac_adc_rx_core
     output [31:0] FIFO_DATA,
 
     input BUS_CLK,
-    input [15:0] BUS_ADD,
+    input [ABUSWIDTH-1:0] BUS_ADD,
     input [7:0] BUS_DATA_IN,
     output reg [7:0] BUS_DATA_OUT,
     input BUS_RST,
@@ -34,7 +35,7 @@ module gpac_adc_rx_core
     output LOST_ERROR
 );
 
-localparam VERSION = 0;
+localparam VERSION = 1;
 
 // 0 - soft reset
 // 1 - start/status
@@ -79,7 +80,7 @@ wire CONF_SINGLE_DATA;
 assign CONF_SINGLE_DATA = status_regs[2][2];
 
 wire [23:0] CONF_DATA_CNT;
-assign CONF_DATA_CNT = {status_regs[3], status_regs[4], status_regs[5]};
+assign CONF_DATA_CNT = {status_regs[5], status_regs[4], status_regs[3]};
 
 wire [7:0] CONF_SAMPLE_SKIP = status_regs[6];
 wire [7:0] CONF_SAMPEL_DLY = status_regs[7];
@@ -89,29 +90,19 @@ assign LOST_ERROR = CONF_ERROR_LOST!=0;
 
 reg CONF_DONE;
 
+wire [7:0] BUS_STATUS_OUT;
+assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
+    
 always @(posedge BUS_CLK) begin
-    if(BUS_ADD == 0)
-        BUS_DATA_OUT <= VERSION;
-    else if(BUS_ADD == 1)
-        BUS_DATA_OUT <= {7'b0, CONF_DONE};
-    else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= {6'b0, CONF_EN_EX_TRIGGER, CONF_START_WITH_SYNC}; 
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= CONF_DATA_CNT[23:16];
-    else if(BUS_ADD == 4)
-        BUS_DATA_OUT <= CONF_DATA_CNT[15:8];
-    else if(BUS_ADD == 5)
-        BUS_DATA_OUT <= CONF_DATA_CNT[7:0];
-    else if(BUS_ADD == 6)
-        BUS_DATA_OUT <= CONF_SAMPLE_SKIP;
-    else if(BUS_ADD == 7)
-        BUS_DATA_OUT <= CONF_SAMPEL_DLY;
-    else if(BUS_ADD == 15)
-        BUS_DATA_OUT <= CONF_ERROR_LOST;
-    else
-        BUS_DATA_OUT <= 8'b0;
+    if(BUS_RD) begin
+        if(BUS_ADD == 0)
+            BUS_DATA_OUT <= VERSION;
+        else if(BUS_ADD == 1)
+            BUS_DATA_OUT <= {7'b0, CONF_DONE};
+        else if(BUS_ADD < 16)
+            BUS_DATA_OUT <= BUS_STATUS_OUT;
+    end
 end
-
 
 wire rst_adc_sync;
 cdc_pulse_sync_cnt isync_rst (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(ADC_ENC), .pulse_out(rst_adc_sync));
