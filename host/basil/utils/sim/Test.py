@@ -27,7 +27,7 @@ def get_bus():
 
 
 @cocotb.test(skip=False)
-def socket_test(dut, debug=True):
+def socket_test(dut, debug=False):
     """Testcase that uses a socket to drive the DUT"""
 
     host = os.getenv("SIMULATION_HOST", 'localhost')
