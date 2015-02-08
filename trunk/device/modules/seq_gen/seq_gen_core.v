@@ -26,7 +26,7 @@ module seq_gen_core
     SEQ_OUT
 );
 
-localparam VERSION = 0;
+localparam VERSION = 1;
 
 input                       BUS_CLK;
 input                       BUS_RST;
@@ -45,7 +45,7 @@ output reg [OUT_BITS-1:0] SEQ_OUT;
 localparam ADDR_SIZEA = `CLOG2(MEM_BYTES);
 localparam ADDR_SIZEB = (OUT_BITS > 8) ? `CLOG2(MEM_BYTES/(OUT_BITS/8)) : `CLOG2(MEM_BYTES*(8/OUT_BITS));
 
-reg [7:0] status_regs [15:0];
+reg [7:0] status_regs [31:0];
 
 wire RST;
 wire SOFT_RST;
@@ -58,24 +58,28 @@ always @(posedge BUS_CLK) begin
     if(RST) begin
         status_regs[0] <= 0;
         status_regs[1] <= 0;
-        status_regs[2] <= 1;
-        status_regs[3] <= DEF_BIT_OUT[7:0]; //bits
-        status_regs[4] <= DEF_BIT_OUT[15:8]; //bits
-        status_regs[5] <= 0; //wait
+        status_regs[2] <= 0;
+        
+        status_regs[3] <= 1;
+        
+        status_regs[4] <= DEF_BIT_OUT[7:0]; //bits
+        status_regs[5] <= DEF_BIT_OUT[15:8]; //bits
+        
         status_regs[6] <= 0; //wait
-        status_regs[7] <= 0; // 7  repeat
-        status_regs[8] <= 0; //repeat start
-        status_regs[9] <= 0; //repeat start
-        status_regs[10] <= 0; //control
-        status_regs[11] <= 0; // nested loop start
-        status_regs[12] <= 0; // -||-
-        status_regs[13] <= 0; // nested loop stop
-        status_regs[14] <= 0; // -||-
-        status_regs[15] <= 0; // nested loop repat count
-        status_regs[16] <= 0; // -||-
+        status_regs[7] <= 0; //wait
+        status_regs[8] <= 0; // 7  repeat
+        status_regs[9] <= 0; // 7  repeat
+        status_regs[10] <= 0; //repeat start
+        status_regs[11] <= 0; //repeat start
+        status_regs[12] <= 0; // nested loop start
+        status_regs[13] <= 0; // -||-
+        status_regs[14] <= 0; // nested loop stop
+        status_regs[15] <= 0; // -||-
+        status_regs[16] <= 0; // nested loop repat count
+        status_regs[17] <= 0; // -||-
     end
-    else if(BUS_WR && BUS_ADD < 16)
-        status_regs[BUS_ADD[3:0]] <= BUS_DATA_IN;
+    else if(BUS_WR && BUS_ADD < 32)
+        status_regs[BUS_ADD[4:0]] <= BUS_DATA_IN;
 end
 
 reg [7:0] BUS_IN_MEM;
@@ -88,35 +92,35 @@ assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 assign START = (BUS_ADD==1 && BUS_WR);
 
 wire CONF_EN_EXT_START;
-assign CONF_EN_EXT_START = status_regs[10][0];
-
-wire [15:0] CONF_COUNT;
-assign CONF_COUNT = {status_regs[4], status_regs[3]};
+assign CONF_EN_EXT_START = status_regs[2][0];
 
 wire [7:0] CONF_CLK_DIV;
-assign CONF_CLK_DIV = status_regs[2] - 1;
+assign CONF_CLK_DIV = status_regs[3] - 1;
 reg CONF_DONE;
 
-wire [15:0] CONF_WAIT;
-assign CONF_WAIT = {status_regs[6], status_regs[5]};
+wire [15:0] CONF_COUNT;
+assign CONF_COUNT = {status_regs[5], status_regs[4]};
 
-wire [7:0] CONF_REPEAT;
-assign CONF_REPEAT = status_regs[7];
+wire [15:0] CONF_WAIT;
+assign CONF_WAIT = {status_regs[7], status_regs[6]};
+
+wire [15:0] CONF_REPEAT;
+assign CONF_REPEAT = {status_regs[9], status_regs[8]};
 
 wire [15:0] CONF_REP_START;
-assign CONF_REP_START = {status_regs[9], status_regs[8]};
-
-wire [7:0] BUS_STATUS_OUT;
-assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
+assign CONF_REP_START = {status_regs[11], status_regs[10]};
 
 wire [15:0] CONF_NESTED_START;
-assign CONF_NESTED_START = {status_regs[12], status_regs[11]};
+assign CONF_NESTED_START = {status_regs[13], status_regs[12]};
 
 wire [15:0] CONF_NESTED_STOP;
-assign CONF_NESTED_STOP = {status_regs[14], status_regs[13]};
+assign CONF_NESTED_STOP = {status_regs[15], status_regs[14]};
 
 wire [15:0] CONF_NESTED_REPEAT;
-assign CONF_NESTED_REPEAT = {status_regs[16], status_regs[15]};
+assign CONF_NESTED_REPEAT = {status_regs[17], status_regs[16]};
+
+wire [7:0] BUS_STATUS_OUT;
+assign BUS_STATUS_OUT = status_regs[BUS_ADD[4:0]];
 
 reg [7:0] BUS_DATA_OUT_REG;
 always @ (posedge BUS_CLK) begin
@@ -124,35 +128,7 @@ always @ (posedge BUS_CLK) begin
         BUS_DATA_OUT_REG <= VERSION;
     else if(BUS_ADD == 1)
         BUS_DATA_OUT_REG <= {7'b0, CONF_DONE};
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT_REG <= CONF_COUNT[7:0];
-    else if(BUS_ADD == 4)
-        BUS_DATA_OUT_REG <= CONF_COUNT[15:8];
-    else if(BUS_ADD == 5)
-        BUS_DATA_OUT_REG <= CONF_WAIT[7:0];
-    else if(BUS_ADD == 6)
-        BUS_DATA_OUT_REG <= CONF_WAIT[15:8];
-    else if(BUS_ADD == 7)
-        BUS_DATA_OUT_REG <= CONF_REPEAT;
-    else if(BUS_ADD == 8)
-        BUS_DATA_OUT_REG <= CONF_REP_START[7:0];
-    else if(BUS_ADD == 9)
-        BUS_DATA_OUT_REG <= CONF_REP_START[15:8];    
-    else if(BUS_ADD == 10)
-        BUS_DATA_OUT_REG <= {7'b0,CONF_EN_EXT_START};
-    else if(BUS_ADD == 11)
-        BUS_DATA_OUT_REG <= CONF_NESTED_START[7:0];
-    else if(BUS_ADD == 12)
-        BUS_DATA_OUT_REG <= CONF_NESTED_START[15:8];     
-    else if(BUS_ADD == 13)
-        BUS_DATA_OUT_REG <= CONF_NESTED_STOP[7:0];
-    else if(BUS_ADD == 14)
-        BUS_DATA_OUT_REG <= CONF_NESTED_STOP[15:8]; 
-    else if(BUS_ADD == 15)
-        BUS_DATA_OUT_REG <= CONF_NESTED_REPEAT[7:0];
-    else if(BUS_ADD == 16)
-        BUS_DATA_OUT_REG <= CONF_NESTED_REPEAT[15:8]; 
-    else if(BUS_ADD < 16)
+    else if(BUS_ADD < 32)
         BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
 end
 
@@ -163,9 +139,9 @@ always@(posedge BUS_CLK)
     PREV_BUS_ADD <= BUS_ADD;
     
 always @(*) begin
-    if(PREV_BUS_ADD < 16)
+    if(PREV_BUS_ADD < 32)
         BUS_DATA_OUT = BUS_DATA_OUT_REG;
-    else if(PREV_BUS_ADD < 16 + MEM_BYTES )
+    else if(PREV_BUS_ADD < 32 + MEM_BYTES )
         BUS_DATA_OUT = BUS_IN_MEM;
     else
         BUS_DATA_OUT = 8'hxx;
@@ -179,7 +155,7 @@ assign memout_addrb = out_bit_cnt < CONF_COUNT ? out_bit_cnt-1 : CONF_COUNT-1; /
 
 wire [ADDR_SIZEA-1:0] memout_addra;
 wire [ABUSWIDTH-1:0] BUS_ADD_MEM;
-assign BUS_ADD_MEM = BUS_ADD-16;
+assign BUS_ADD_MEM = BUS_ADD-32;
 
 generate
     if (OUT_BITS<=8) begin
@@ -192,7 +168,7 @@ endgenerate
 reg [OUT_BITS-1:0] SEQ_OUT_MEM;
 
 wire WEA;
-assign WEA = BUS_WR && BUS_ADD >=16 && BUS_ADD < 16+MEM_BYTES;
+assign WEA = BUS_WR && BUS_ADD >=32 && BUS_ADD < 32+MEM_BYTES;
 
 generate
     if (OUT_BITS==8) begin
@@ -249,12 +225,18 @@ assign START_SYNC =  START_SYNC_PRE & DONE; //no START if previous not finished
 
 wire [15:0] STOP_BIT;
 assign STOP_BIT = CONF_COUNT + CONF_WAIT;
-reg [7:0] REPEAT_COUNT;
+reg [15:0] REPEAT_COUNT;
+reg [15:0] REPEAT_NESTED_COUNT;
 
 reg [7:0] dev_cnt;
 
+
 wire REP_START;
 assign REP_START = (out_bit_cnt == STOP_BIT && dev_cnt == CONF_CLK_DIV && (CONF_REPEAT==0 || REPEAT_COUNT < CONF_REPEAT));
+
+wire REP_NESTED_START;
+assign REP_NESTED_START = (out_bit_cnt == CONF_NESTED_STOP && dev_cnt == CONF_CLK_DIV && (REPEAT_NESTED_COUNT < CONF_NESTED_REPEAT));
+
 
 always @ (posedge SEQ_CLK)
     if (RST_SYNC)
@@ -263,13 +245,15 @@ always @ (posedge SEQ_CLK)
         out_bit_cnt <= 1;
     else if(REP_START)
         out_bit_cnt <= CONF_REP_START+1;
+    else if(REP_NESTED_START)
+        out_bit_cnt <= CONF_NESTED_START+1;
     else if(out_bit_cnt == STOP_BIT && dev_cnt == CONF_CLK_DIV)
         out_bit_cnt <= out_bit_cnt;
     else if(out_bit_cnt != 0 && dev_cnt == CONF_CLK_DIV)
         out_bit_cnt <= out_bit_cnt + 1;
 
 always @ (posedge SEQ_CLK)
-    if (RST_SYNC || START_SYNC || REP_START)
+    if (RST_SYNC | START_SYNC | REP_START)
         dev_cnt <= 0;
     else if(out_bit_cnt != 0 && dev_cnt == CONF_CLK_DIV)
         dev_cnt <= 0;
@@ -277,10 +261,16 @@ always @ (posedge SEQ_CLK)
         dev_cnt <= dev_cnt + 1;
         
 always @ (posedge SEQ_CLK)
-    if (RST_SYNC || START_SYNC)
+    if (RST_SYNC | START_SYNC)
         REPEAT_COUNT <= 1;
     else if(out_bit_cnt == STOP_BIT && dev_cnt == CONF_CLK_DIV && REPEAT_COUNT <= CONF_REPEAT)
         REPEAT_COUNT <= REPEAT_COUNT + 1;
+
+always @ (posedge SEQ_CLK)
+    if (RST_SYNC | START_SYNC | REP_START)
+        REPEAT_NESTED_COUNT <= 1;
+    else if(REP_NESTED_START)
+        REPEAT_NESTED_COUNT <= REPEAT_NESTED_COUNT + 1;
 
 
 always @(posedge SEQ_CLK)

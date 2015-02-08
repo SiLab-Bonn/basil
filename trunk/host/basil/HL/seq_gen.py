@@ -16,17 +16,21 @@ class seq_gen(RegisterHardwareLayer):
                   'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
                   'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
-                  'CLK_DIV': {'descr': {'addr': 2, 'size': 8}},
-                  'SIZE': {'descr': {'addr': 3, 'size': 16}},
-                  'WAIT': {'descr': {'addr': 5, 'size': 16}},
-                  'REPEAT': {'descr': {'addr': 7, 'size': 8}},
-                  'REPEAT_START': {'descr': {'addr': 8, 'size': 16}},
-                  'EN_EXT_START': {'descr': {'addr': 10, 'size': 1}}}
-    _require_version = "==0"
+                  'EN_EXT_START': {'descr': {'addr': 2, 'size': 1}},
+                  'CLK_DIV': {'descr': {'addr': 3, 'size': 8}},
+                  'SIZE': {'descr': {'addr': 4, 'size': 16}},
+                  'WAIT': {'descr': {'addr': 6, 'size': 16}},
+                  'REPEAT': {'descr': {'addr': 8, 'size': 16}},
+                  'REPEAT_START': {'descr': {'addr': 10, 'size': 16}},
+                  'NESTED_START': {'descr': {'addr': 12, 'size': 16}},
+                  'NESTED_STOP': {'descr': {'addr': 14, 'size': 16}},
+                  'NESTED_REPEAT': {'descr': {'addr': 16, 'size': 16}},
+                  }
+    _require_version = "==1"
 
     def __init__(self, intf, conf):
         super(seq_gen, self).__init__(intf, conf)
-        self._seq_mem_offset = 16  # in bytes
+        self._seq_mem_offset = 32  # in bytes
         try:
             self._seq_mem_size = conf['mem_size']  # in bytes
         except KeyError:
@@ -87,6 +91,24 @@ class seq_gen(RegisterHardwareLayer):
     def get_en_ext_start(self):
         return self.EN_EXT_START
 
+    def set_nested_start(self, value):
+        self.NESTED_START = value
+
+    def get_nested_start(self):
+        return self.NESTED_START
+
+    def set_nested_stop(self, value):
+        self.NESTED_STOP = value
+
+    def get_nested_stop(self):
+        return self.NESTED_STOP
+
+    def set_nested_repeat(self, value):
+        self.NESTED_REPEAT = value
+
+    def get_nested_repeat(self):
+        return self.NESTED_REPEAT
+        
     def set_data(self, data, addr=0):
         if self._seq_mem_size < len(data):
             raise ValueError('Size of data is too big')
