@@ -9,7 +9,7 @@ import subprocess
 
 
 def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test', sim_host='localhost', sim_port=12345, sim_bus='basil.utils.sim.BasilBusDriver',
-                    end_on_disconnect=True, include_dirs=['../../../device/modules', '../../../device/modules/includes']):
+                    end_on_disconnect=True, include_dirs=['../../device/modules', '../../device/modules/includes']):
 
     mkfile = "SIMULATION_HOST?=%s\nSIMULATION_PORT?=%d\nSIMULATION_BUS?=%s\n" % (sim_host, sim_port, sim_bus)
 
