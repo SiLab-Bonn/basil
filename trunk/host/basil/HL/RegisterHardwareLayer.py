@@ -47,7 +47,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             logging.debug("Initializing %s from module %s (Version %s)" % (self.__class__.__name__, self.__class__.__module__, str(self.VERSION) if 'VERSION' in self._registers else 'n/a'))
         if 'VERSION' in self._registers and self._require_version:
             if not eval(str(self.VERSION) + self._require_version):
-                raise Exception("FPGA module %s does not satisfy version requirements"%self.__class__.__module__)
+                raise Exception("FPGA module %s does not satisfy version requirements" % self.__class__.__module__)
         for reg, value in self._registers.iteritems():
             if reg in self._init:
                 self[reg] = self._init[reg]
@@ -86,13 +86,15 @@ class RegisterHardwareLayer(HardwareLayer, dict):
     def _get(self, reg):
         descr = deepcopy(self._registers[reg]['descr'])
         if 'properties' in descr and [i for i in write_only if i in descr['properties']]:
-#             raise IOError('Register is write-only')
             # allows a lazy-style of programming
             if 'default' in self._registers[reg]:
                 self._set(reg, self._registers[reg]['default'])
             else:
                 self._set(reg, 0)
-            # return nothing to prevent misuse
+            # raise error when doing read on write-only register
+#             raise IOError('Register is write-only')
+            # return None to prevent misuse
+            return None
         else:
             if 'properties' in descr and [i for i in is_byte_array if i in descr['properties']]:
                 ret_val = super(RegisterHardwareLayer, self).get_data(**descr)
