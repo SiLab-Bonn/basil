@@ -6,27 +6,26 @@
 #
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
-from struct import pack, unpack
 
 
 class fadc_rx(RegisterHardwareLayer):
+
     '''Fast ADC channel receiver
     '''
-    
+
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
                   'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
                   'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'ALIGN_TO_SYNC': {'descr': {'addr': 2, 'size': 1}},
                   'SINGLE_DATA': {'descr': {'addr': 2, 'size': 1, 'offset': 2}},
-                  'COUNT': {'descr':{'addr': 3, 'size': 24}},
-                  }
+                  'COUNT': {'descr': {'addr': 3, 'size': 24}}}
     _require_version = "==1"
-    
+
     def __init__(self, intf, conf):
         super(fadc_rx, self).__init__(intf, conf)
 
-    #def init(self):
+    # def init(self):
     #    self.reset()
 
     def reset(self):
