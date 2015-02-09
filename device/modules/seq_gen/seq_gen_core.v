@@ -26,7 +26,7 @@ module seq_gen_core
     SEQ_OUT
 );
 
-localparam VERSION = 1;
+localparam VERSION = 2;
 
 input                       BUS_CLK;
 input                       BUS_RST;
@@ -128,6 +128,10 @@ always @ (posedge BUS_CLK) begin
         BUS_DATA_OUT_REG <= VERSION;
     else if(BUS_ADD == 1)
         BUS_DATA_OUT_REG <= {7'b0, CONF_DONE};
+    else if(BUS_ADD == 18)
+        BUS_DATA_OUT_REG <= DEF_BIT_OUT[7:0];
+    else if(BUS_ADD == 19)
+        BUS_DATA_OUT_REG <= DEF_BIT_OUT[15:8];
     else if(BUS_ADD < 32)
         BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
 end

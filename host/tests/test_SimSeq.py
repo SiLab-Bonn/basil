@@ -67,7 +67,7 @@ registers:
         position : 7
     
 """
-class TestSimGpio(unittest.TestCase):
+class TestSimSeq(unittest.TestCase):
     def setUp(self):
         
         cocotb_compile_and_run([os.getcwd()+'/test_SimSeq.v'])
@@ -79,6 +79,8 @@ class TestSimGpio(unittest.TestCase):
     
     def test_io(self):
        
+
+        self.assertEqual(self.chip['SEQ_GEN'].get_mem_size(),8*1024)
        
         self.chip['SEQ']['S0'][0] = 1
         self.chip['SEQ']['S1'][1] = 1
