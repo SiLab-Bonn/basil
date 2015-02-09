@@ -7,7 +7,6 @@
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
-
 class seq_gen(RegisterHardwareLayer):
     '''Sequencer generator controller interface for seq_gen FPGA module.
     '''
@@ -25,17 +24,15 @@ class seq_gen(RegisterHardwareLayer):
                   'NESTED_START': {'descr': {'addr': 12, 'size': 16}},
                   'NESTED_STOP': {'descr': {'addr': 14, 'size': 16}},
                   'NESTED_REPEAT': {'descr': {'addr': 16, 'size': 16}},
+                  'MEM_BYTES': {'descr': {'addr': 18, 'size': 16, 'properties': ['ro']}},
                   }
-    _require_version = "==1"
+    _require_version = "==2"
 
     def __init__(self, intf, conf):
         super(seq_gen, self).__init__(intf, conf)
         self._seq_mem_offset = 32  # in bytes
-        try:
-            self._seq_mem_size = conf['mem_size']  # in bytes
-        except KeyError:
-            self._seq_mem_size = 2048  # default is 2048 bytes, user should be aware of address ranges in FPGA
-
+        self._seq_mem_size = self.get_mem_size()
+        
 #    def init(self):
 #        self.reset()
 
@@ -108,6 +105,9 @@ class seq_gen(RegisterHardwareLayer):
 
     def get_nested_repeat(self):
         return self.NESTED_REPEAT
+    
+    def get_mem_size(self):
+        return self.MEM_BYTES
         
     def set_data(self, data, addr=0):
         if self._seq_mem_size < len(data):
