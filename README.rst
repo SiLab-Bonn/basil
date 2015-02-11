@@ -14,6 +14,8 @@ Some documenttion can be found here: https://silab-redmine.physik.uni-bonn.de/pr
 License
 ============
 
+If not stated otherwise.
+
 Host Software:
   The host software is distributed under the BSD 3-Clause (“BSD New” or “BSD Simplified”) License.
 
