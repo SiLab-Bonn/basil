@@ -12,6 +12,11 @@ TBD.
 
 Some documenttion can be found here: https://silab-redmine.physik.uni-bonn.de/projects/basil/wiki 
 
+Support
+=======
+
+Basil mailing list: `subscribe <https://e-groups.cern.ch/e-groups/EgroupsSubscription.do?egroupName=basil-devel>`_
+
 License
 ============
 
