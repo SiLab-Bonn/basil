@@ -10,6 +10,9 @@ before_install:
   - sudo apt-get update -qq
 
 install:
+  - pip install bitarray
+  - pip install yaml
+  
   - wget -O cocotb-master.zip https://github.com/potentialventures/cocotb/archive/master.zip 
   - unzip cocotb-master.zip
   - export COCOTB=$(pwd)/cocotb-master
