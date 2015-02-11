@@ -11,7 +11,7 @@ before_install:
 
 install:
   - pip install bitarray
-  - pip install yaml
+  - pip install pyyaml
   
   - wget -O cocotb-master.zip https://github.com/potentialventures/cocotb/archive/master.zip 
   - unzip cocotb-master.zip
