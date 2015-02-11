@@ -11,11 +11,12 @@
 
 `include "pulse_gen/pulse_gen.v"
 `include "pulse_gen/pulse_gen_core.v"
+`include "utils/cdc_pulse_sync.v"
 
 `include "seq_gen/seq_gen.v"
 `include "seq_gen/seq_gen_core.v"
-`include "seq_gen/seq_gen_blk_mem_16x8196.v"
 `include "utils/RAMB16_S1_S2_sim.v"
+`include "seq_gen/seq_gen_blk_mem_16x8196.v"
 
 `include "gpac_adc_rx/gpac_adc_rx_core.v"
 `include "gpac_adc_rx/gpac_adc_rx.v"
@@ -24,7 +25,6 @@
 `include "bram_fifo/bram_fifo.v"
 
 `include "utils/generic_fifo.v"
-`include "utils/cdc_pulse_sync.v"
 `include "utils/cdc_pulse_sync_cnt.v"
 `include "utils/cdc_syncfifo.v"
 `include "utils/pulse_gen_rising.v"
