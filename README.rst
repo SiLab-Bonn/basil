@@ -30,7 +30,7 @@ Software:
   - layer structure following hardware
   - generation based on yaml file
   - register abstract layer (RAL)
-  - simulator interface allows software test against simulated RTL
+  - simulator interface allows software test against simulated RTL (thanks to `cocotb <https://github.com/potentialventures/cocotb>`_ )
 
 License
 ============
