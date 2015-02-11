@@ -8,7 +8,8 @@ It consists of different hardware components, FPGA firmware modulus and a Python
 Documentation
 =============
 
-TBD
+TBD.
+
 Some documenttion can be found here: https://silab-redmine.physik.uni-bonn.de/projects/basil/wiki 
 
 License
