@@ -1,0 +1,27 @@
+language: python
+python:
+  - 2.7
+notifications:
+  email:
+    - hemperek@uni-bonn.de
+ 
+before_install:
+  - sudo apt-get update -qq
+
+install:
+  - wget -O cocotb-master.zip https://github.com/potentialventures/cocotb/archive/master.zip 
+  - unzip cocotb-master.zip
+  - export COCOTB=$(pwd)/cocotb-master
+  
+#  Build iverilog from source
+  - sudo apt-get install gperf
+  - wget -O iverilog-master.zip  https://github.com/steveicarus/iverilog/archive/master.zip
+  - unzip iverilog-master.zip
+  - cd iverilog-master && autoconf && ./configure && make && sudo make install && cd ..
+  
+  # Install basil
+  - cd host
+  - python setup.py develop
+
+script:
+  - cd tests; nosetests test_*.py
