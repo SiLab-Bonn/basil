@@ -8,10 +8,10 @@
 `timescale 1ps / 1ps
 
 `include "utils/bus_to_ip.v"
+`include "utils/cdc_pulse_sync.v"
 
 `include "pulse_gen/pulse_gen.v"
 `include "pulse_gen/pulse_gen_core.v"
-`include "utils/cdc_pulse_sync.v"
 
 `include "seq_gen/seq_gen.v"
 `include "seq_gen/seq_gen_core.v"
