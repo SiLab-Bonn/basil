@@ -11,9 +11,7 @@ It consists of different hardware components, FPGA firmware modulus and a Python
 Documentation
 =============
 
-TBD.
-
-Some documenttion can be found here: https://silab-redmine.physik.uni-bonn.de/projects/basil/wiki 
+Documenttion can be found under: basil.rtfd.org
 
 Support
 =======
