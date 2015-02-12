@@ -2,9 +2,16 @@
 basil
 ===============================================
 
-.. image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=master
+|travis-status|  |rtd-status| 
+
+.. |travis-status| image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=master
     :target: https://travis-ci.org/SiLab-Bonn/basil
-    
+    :alt: Build status
+
+.. |rtd-status| image:: https://readthedocs.org/projects/basil/badge/?version=latest
+    :target: https://readthedocs.org/projects/basil/?badge=latest
+    :alt: Documentation Status
+ 
 Basil is a modular readout framework intended to allow simple and fast data acquisition systems (DAQ) design. 
 It consists of different hardware components, FPGA firmware modulus and a Python based contol software.
 
