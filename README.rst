@@ -11,7 +11,7 @@ It consists of different hardware components, FPGA firmware modulus and a Python
 Documentation
 =============
 
-Documenttion can be found under: basil.rtfd.org
+Documenttion can be found under: https://basil.rtfd.org
 
 Support
 =======
