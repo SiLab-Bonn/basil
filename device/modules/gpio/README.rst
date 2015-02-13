@@ -3,7 +3,11 @@
 gpio
 ===============
 
-General purpose input output (gpio) is a generic pin whose behavior, including whether it is an input or output pin, can be controlled by the user at run time.  
+General purpose input output (gpio) is a generic pins whose behavior, including whether it is an input or output pin, can be controlled by the user at run time.  
+
+**Unit test/Example:** 
+`test_SimGpio.v <https://github.com/SiLab-Bonn/basil/blob/master/host/tests/test_SimGpio.v>`_ 
+`test_SimGpio.py <https://github.com/SiLab-Bonn/basil/blob/master/host/tests/test_SimGpio.py>`_
 
 Parameters
     +--------------+---------------------+-----------------------------------------------------------------+ 
@@ -17,10 +21,10 @@ Parameters
     +--------------+---------------------+-----------------------------------------------------------------+ 
 
 Pins
-    +--------------+---------------------+-----------------------------------------------------------------+ 
-    | Name         | Size                | Description                                                     | 
+    +--------------+---------------------+-----------------------+-----------------------------------------+ 
+    | Name         | Size                | Direction             | Description                              | 
     +==============+=====================+=================================================================+ 
-    | IO           | IO_WIDTH            | General purpose pins                                            | 
+    | IO           | IO_WIDTH            |  IO_DIRECTION/IO_TRI  | General purpose pins                    | 
     +--------------+---------------------+-----------------------------------------------------------------+ 
 
 Registers
