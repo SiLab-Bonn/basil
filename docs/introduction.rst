@@ -8,19 +8,27 @@ Features
 ===========================
 
 Firmware:
-  - very simple single master bus definition
-  - multiple basic modules (SPI, SEQ)
-  - multiple interfaces (UART, USB2, USB3, Ethernet)
+  - very simple single master `bus definition`_
+  - multiple `basic modules <https://github.com/SiLab-Bonn/basil/tree/master/device/modules>`_ (ex. SPI, SEQ)
+  - multiple `interfaces <https://github.com/SiLab-Bonn/basil/tree/master/host/basil/TL>`_ (UART, USB2, USB3, Ethernet)
 Software:
   - layer structure following hardware
   - generation based on yaml file
   - register abstract layer (RAL)
   - simulator interface allows software test against simulated RTL (thanks to `cocotb <https://github.com/potentialventures/cocotb>`_ )
 
+
+.. _`bus definition`: firmware.html#basil-bus
+
 Installation
 ========================
 
-TBD.
+From host folder run:
+
+.. code-block:: bash
+
+  python setup.py install
+
 
 Simulation
 ========================

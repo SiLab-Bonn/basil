@@ -21,7 +21,7 @@ Typical firmware consists of basil bus connecting all modules. Control modules w
 
     Arbiter -> FIFO [folded];
    }
-   
+
 basil bus
 =========
 

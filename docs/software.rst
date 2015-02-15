@@ -6,6 +6,11 @@ The software framework has a modular structure that reflects the firmware and ad
 
 .. image:: _static/basil_layers.png
 
+Yaml configuration file
+====================
+
+TBD
+
 Transfer Layer (TL)
 ====================
 
