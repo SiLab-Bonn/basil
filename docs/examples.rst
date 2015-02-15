@@ -2,6 +2,10 @@
 Examples
 ############
 
+Example of project can be found in `examples folder <https://github.com/SiLab-Bonn/basil/tree/master/examples>`_.
+
+For more usecases check also `host/tests folder <https://github.com/SiLab-Bonn/basil/tree/master/host/tests>`_.
+
 spi
 -------
 

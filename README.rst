@@ -9,8 +9,8 @@ basil
     :alt: Build status
 
 .. |rtd-status| image:: https://readthedocs.org/projects/basil/badge/?version=latest
-    :target: https://readthedocs.org/projects/basil/?badge=latest
-    :alt: Documentation Status
+    :target: http://basil.rtfd.org
+    :alt: Documentation
  
 Basil is a modular readout framework intended to allow simple and fast data acquisition systems (DAQ) design. 
 It consists of different hardware components, FPGA firmware modulus and a Python based contol software.
