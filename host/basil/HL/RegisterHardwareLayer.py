@@ -138,7 +138,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
         '''called only on last resort if there are no attributes in the instance that match the name
         '''
         def method(*args, **kwargs):
-            nsplit = name.split('_')
+            nsplit = name.split('_', 1)
             if len(nsplit) == 2 and nsplit[0] == 'set' and len(args) == 1 and not kwargs:
                 self[nsplit[1]] = args[0]  # returns None
             elif len(nsplit) == 2 and nsplit[0] == 'get' and not args and not kwargs:
