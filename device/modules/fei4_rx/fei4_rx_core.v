@@ -37,7 +37,7 @@ module fei4_rx_core
     input wire BUS_RD
 );
 
-localparam VERSION = 1;
+localparam VERSION = 2;
 
 // 0 - soft reset
 // 1 - status
@@ -45,10 +45,10 @@ localparam VERSION = 1;
 // 4 - decoder_err_cnt
 // 5 - lost_err_cnt
 
+// reset sync and registers
+// when write to addr = 0 then reset
 wire SOFT_RST;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
-// reset sync
-// when write to addr = 0 then reset
 reg RST_FF, RST_FF2;
 always @(posedge BUS_CLK) begin
     RST_FF <= SOFT_RST;
@@ -61,12 +61,23 @@ always @(posedge BUS_CLK) begin
     BUS_RST_FF2 <= BUS_RST_FF;
 end
 
+// reset sync only
+wire RX_RST;
+assign RX_RST = (BUS_ADD==1 && BUS_WR);
+reg RX_RST_FF, RX_RST_FF2;
+always @(posedge BUS_CLK) begin
+    RX_RST_FF <= RX_RST;
+    RX_RST_FF2 <= RX_RST_FF;
+end
+
 wire SOFT_RST_FLAG;
 assign SOFT_RST_FLAG = ~RST_FF2 & RST_FF;
 wire BUS_RST_FLAG;
 assign BUS_RST_FLAG = BUS_RST_FF2 & ~BUS_RST_FF; // trailing edge
 wire RST;
 assign RST = BUS_RST_FLAG | SOFT_RST_FLAG;
+wire RX_RST_FLAG;
+assign RX_RST_FLAG = ~RX_RST_FF2 & RX_RST_FF;
 
 wire ready_rec;
 wire [15:0] fifo_size; // BUS_ADD==3, 4
@@ -85,7 +96,7 @@ assign CONF_EN_INVERT_RX_DATA = status_regs[1];
 
 always @(posedge BUS_CLK) begin
     if(RST)
-        status_regs <= 8'b0;
+        status_regs <= 8'b0000_0010;
     else if(BUS_WR && BUS_ADD == 2)
         status_regs <= BUS_DATA_IN;
 end
@@ -114,34 +125,24 @@ assign FIFO_DATA = {DATA_HEADER, FE_DATA};
 
 always @ (posedge BUS_CLK)
 begin
-    if (RST)
+    if (RST | RX_RST_FLAG)
         decoder_err_cnt_buf <= 8'b0;
-    else
-    begin
-        if (BUS_ADD == 4)
-            decoder_err_cnt_buf <= decoder_err_cnt;
-        else
-            decoder_err_cnt_buf <= decoder_err_cnt_buf;
-    end
+    else if (BUS_ADD == 4)
+        decoder_err_cnt_buf <= decoder_err_cnt;
 end
 
 always @ (posedge BUS_CLK)
 begin
-    if (RST)
+    if (RST | RX_RST_FLAG)
         lost_err_cnt_buf <= 8'b0;
-    else
-    begin
-        if (BUS_ADD == 5)
-            lost_err_cnt_buf <= lost_err_cnt;
-        else
-            lost_err_cnt_buf <= lost_err_cnt_buf;
-    end
+    else if (BUS_ADD == 5)
+        lost_err_cnt_buf <= lost_err_cnt;
 end
 
 receiver_logic #(
     .DSIZE(DSIZE)
 ) ireceiver_logic (
-    .RESET(RST),
+    .RESET(RST | RX_RST_FLAG),
     .WCLK(DATA_CLK),
     .FCLK(RX_CLK),
     .FCLK2X(RX_CLK2X),
@@ -157,7 +158,5 @@ receiver_logic #(
     .fifo_size(fifo_size),
     .invert_rx_data(CONF_EN_INVERT_RX_DATA)
 );
-
-//assign fei4_rx_d = {11'b0};
 
 endmodule
