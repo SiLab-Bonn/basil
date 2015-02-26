@@ -16,6 +16,6 @@ setup(
     long_description='',
     requires=['bitarray (>=0.8.1)','pyyaml', 'numpy'],
     packages=find_packages(exclude=['*.tests', '*.test']),  # ['basil', 'basil.HL', 'basil.RL', 'basil.TL', 'basil.UL', 'basil.utils']
-#    package_data={'': ['*.txt', 'VERSION'], 'docs': ['*'], 'examples': ['*']},  #  you do not need to use this option if you are using include_package_data
+#    package_data={'': ['README.*', 'VERSION'], 'docs': ['*'], 'examples': ['*']},  #  you do not need to use this option if you are using include_package_data
     include_package_data=True,  # accept all data files and directories matched by MANIFEST.in or found in source control
 )
