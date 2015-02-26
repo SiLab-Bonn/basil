@@ -11,7 +11,7 @@ setup(
     name='Basil',
     version=basil_version,
     description='Basil: SILAB modular readout framework',
-    url='https://silab-redmine.physik.uni-bonn.de/projects/basil',
+    url='https://github.com/SiLab-Bonn/basil',
     license='BSD 3-Clause ("BSD New" or "BSD Simplified") License',
     long_description='',
     requires=['bitarray (>=0.8.1)','pyyaml', 'numpy'],
