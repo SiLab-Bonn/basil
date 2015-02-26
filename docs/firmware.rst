@@ -52,13 +52,3 @@ single read
     ]}
     </script>
 
-
-.. raw:: html
-
-    <script src="http://wavedrom.com/skins/default.js" type="text/javascript"></script>
-    <script src="http://wavedrom.com/WaveDrom.js" type="text/javascript"></script>  
-    <script type="text/javascript">
-        var body = document.getElementsByTagName("body")[0];
-        body.addEventListener("load", WaveDrom.ProcessAll(), false);
-    </script>
-
