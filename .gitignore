@@ -29,3 +29,5 @@ host/tests/Makefile
 
 #docs
 docs/_build
+*.vcd
+host/tests/results.xml
