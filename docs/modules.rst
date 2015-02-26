@@ -31,3 +31,16 @@ Driver
 
 .. autoclass:: spi
     :members:
+
+
+.. SEQ_GET
+
+.. include:: ../device/modules/seq_gen/README.rst
+
+Driver
+-------
+
+.. automodule:: basil.HL.seq_gen
+
+.. autoclass:: seq_gen
+    :members:
