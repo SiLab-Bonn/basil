@@ -4,7 +4,7 @@ seq_gen - pattern generator
 ===========================
 
 Module implements a simple sequencer/pattern generator base on block ram. Supports 2 levels of internal loops and external start.
-For OUT_BITS != 8 used need to provide block memory module (seq_gen_blk_mem) with proper size.
+For OUT_BITS != 8 user need to provide block memory module (seq_gen_blk_mem) with proper size.
 
 **Unit test/Example:** 
 `test_SimSeq.v <https://github.com/SiLab-Bonn/basil/blob/master/host/tests/test_SimSeq.v>`_ 
@@ -38,7 +38,7 @@ Registers
     +---------------+----------------------------------+--------+-------+-------------+--------------------------------------------------------------------------------------------+ 
     | DONE          | 1                                | [0]    | ro    | 0           | indicate transfer finish                                                                   | 
     +---------------+----------------------------------+--------+-------+-------------+--------------------------------------------------------------------------------------------+ 
-    | EN_EXT_START  | 2                                | [0]    | r/w    | 0          | enable external start                                                                      | 
+    | EN_EXT_START  | 2                                | [0]    | r/w   | 0          | enable external start                                                                       | 
     +---------------+----------------------------------+--------+-------+-------------+--------------------------------------------------------------------------------------------+ 
     | CLK_DIV       | 3                                | [7:0]  | r/w   | 1           | internal division factor for SEQ_CLK                                                       | 
     +---------------+----------------------------------+--------+-------+-------------+--------------------------------------------------------------------------------------------+ 

@@ -103,8 +103,12 @@ class TestSimSeq(unittest.TestCase):
         self.chip['SEQ_REC'].set_en_ext_start(True)
         self.chip['SEQ_REC'].set_size(rec_size)
         
-        self.chip['PULSE_GEN'].set_delay(1);
-        self.chip['PULSE_GEN'].set_width(1);
+        self.chip['PULSE_GEN'].set_delay(1)
+        self.chip['PULSE_GEN'].set_width(1)
+        
+        self.assertEqual(self.chip['PULSE_GEN'].get_delay(),1)
+        self.assertEqual(self.chip['PULSE_GEN'].get_width(),1)
+
         
         self.chip['SEQ'].set_repeat(4)
         self.chip['SEQ'].set_en_ext_start(True)

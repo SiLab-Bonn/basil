@@ -25,7 +25,7 @@ module pulse_gen_core
     output reg PULSE
 ); 
 
-localparam VERSION = 0;
+localparam VERSION = 1;
 
 wire SOFT_RST; 
 wire START;
@@ -43,13 +43,13 @@ always@(posedge BUS_CLK) begin
     else if(BUS_ADD == 2)
         BUS_DATA_OUT <= {7'b0, CONF_EN};
     else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= CONF_DELAY[15:8];
-    else if(BUS_ADD == 4)
         BUS_DATA_OUT <= CONF_DELAY[7:0];
+    else if(BUS_ADD == 4)
+        BUS_DATA_OUT <= CONF_DELAY[15:8];
     else if(BUS_ADD == 5)
-        BUS_DATA_OUT <= CONF_WIDTH[15:8];
-    else if(BUS_ADD == 6)
         BUS_DATA_OUT <= CONF_WIDTH[7:0];
+    else if(BUS_ADD == 6)
+        BUS_DATA_OUT <= CONF_WIDTH[15:8];
     else if(BUS_ADD == 7)
         BUS_DATA_OUT <= CONF_REPEAT[7:0];
     else
@@ -62,6 +62,7 @@ assign START = (BUS_ADD==1 && BUS_WR);
 wire RST;
 assign RST = BUS_RST | SOFT_RST;
 
+
 always @(posedge BUS_CLK) begin
     if(RST) begin
         CONF_EN <= 0;
@@ -73,13 +74,13 @@ always @(posedge BUS_CLK) begin
         if(BUS_ADD == 2)
             CONF_EN <= BUS_DATA_IN[0];
         else if(BUS_ADD == 3)
-            CONF_DELAY[15:8] <= BUS_DATA_IN;
-        else if(BUS_ADD == 4)
             CONF_DELAY[7:0] <= BUS_DATA_IN;
+        else if(BUS_ADD == 4)
+            CONF_DELAY[15:8] <= BUS_DATA_IN;
         else if(BUS_ADD == 5)
-            CONF_WIDTH[15:8] <= BUS_DATA_IN;
-        else if(BUS_ADD == 6)
             CONF_WIDTH[7:0] <= BUS_DATA_IN;
+        else if(BUS_ADD == 6)
+            CONF_WIDTH[15:8] <= BUS_DATA_IN;
         else if(BUS_ADD == 7)
             CONF_REPEAT[7:0] <= BUS_DATA_IN;
     end

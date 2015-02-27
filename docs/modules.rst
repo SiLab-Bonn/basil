@@ -44,3 +44,16 @@ Driver
 
 .. autoclass:: seq_gen
     :members:
+    
+
+.. PULSE_GEN
+
+.. include:: ../device/modules/pulse_gen/README.rst
+
+Driver
+-------
+
+.. automodule:: basil.HL.pulse_gen
+
+.. autoclass:: pulse_gen
+    :members:
