@@ -6,7 +6,7 @@ Modules
     :start-after: begin-include
 
     
-.. GPIO
+.. !GPIO!
 
 .. include:: ../device/modules/gpio/README.rst
 
@@ -20,7 +20,7 @@ Driver
 
 
 
-.. SPI
+.. !SPI!
 
 .. include:: ../device/modules/spi/README.rst
 
@@ -33,7 +33,7 @@ Driver
     :members:
 
 
-.. SEQ_GET
+.. !SEQ_GET!
 
 .. include:: ../device/modules/seq_gen/README.rst
 
@@ -46,7 +46,7 @@ Driver
     :members:
     
 
-.. PULSE_GEN
+.. !PULSE_GEN!
 
 .. include:: ../device/modules/pulse_gen/README.rst
 
@@ -56,4 +56,20 @@ Driver
 .. automodule:: basil.HL.pulse_gen
 
 .. autoclass:: pulse_gen
+    :members:
+
+.. !RRP_ARBITER!
+
+.. include:: ../device/modules/rrp_arbiter/README.rst
+
+.. !SEQ_REC!
+
+.. include:: ../device/modules/seq_rec/README.rst
+
+Driver
+-------
+
+.. automodule:: basil.HL.seq_rec
+
+.. autoclass:: seq_rec
     :members:

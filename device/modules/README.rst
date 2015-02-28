@@ -7,7 +7,7 @@ Basil modules
 Modules use simple bus single master interconnection bus.
 Every module has same/similar set of parameters and pins that allow to properly connect to bus.
 
-List of modules can be found in `device/modules folder <https://github.com/SiLab-Bonn/basil/tree/master/device/modules>`_.
+Full list of modules can be found in `device/modules folder <https://github.com/SiLab-Bonn/basil/tree/master/device/modules>`_.
 
 Software drivers for modules can be found in `host/basil/HL folder <https://github.com/SiLab-Bonn/basil/tree/master/host/basil/HL>`_.
 

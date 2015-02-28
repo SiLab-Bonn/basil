@@ -1,7 +1,7 @@
 
-===============
-spi
-===============
+======================================
+**spi** - serial peripheral interface
+======================================
 
 Module implements master serial peripheral interface. Supports simple internal loops.
 

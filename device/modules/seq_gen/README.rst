@@ -1,7 +1,7 @@
 
-===========================
-seq_gen - pattern generator
-===========================
+================================
+**seq_gen** - pattern generator
+================================
 
 Module implements a simple sequencer/pattern generator base on block ram. Supports 2 levels of internal loops and external start.
 For OUT_BITS != 8 user need to provide block memory module (seq_gen_blk_mem) with proper size.

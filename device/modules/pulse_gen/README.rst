@@ -1,7 +1,7 @@
 
-===========================
-pulse_gen - pulse generator
-===========================
+===============================
+**pulse_gen** - pulse generator
+===============================
 
 Simple pulse generator with configurable delay and . 
 

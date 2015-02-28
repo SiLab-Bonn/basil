@@ -1,7 +1,7 @@
 
-===============
-gpio
-===============
+=============================
+**gpio** - general purpose io
+=============================
 
 General purpose input output (gpio) is a generic pins whose behavior, including whether it is an input or output pin, can be controlled by the user at run time.  
 
