@@ -7,12 +7,14 @@
 #Initial version by Chris Higgs <chris.higgs@potentialventures.com>
 #
 
+# pylint: disable=W0104
+
 """
 Abastract away interactions with the control bus
 """
 import cocotb
 from cocotb.binary import BinaryValue
-from cocotb.triggers import Lock, RisingEdge, ReadOnly, Timer
+from cocotb.triggers import RisingEdge, ReadOnly, Timer
 from cocotb.drivers import BusDriver
 from cocotb.result import ReturnValue
 from cocotb.clock import Clock
@@ -49,7 +51,7 @@ class BasilBusDriver(BusDriver):
         self.bus.BUS_DATA <= self._high_impedence
         
             
-        for i in range(5):
+        for _ in range(5):
             yield RisingEdge(self.clock)
         
         self.bus.BUS_RST  <= 0

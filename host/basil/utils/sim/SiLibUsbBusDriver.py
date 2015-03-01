@@ -7,12 +7,14 @@
 #Initial version by Chris Higgs <chris.higgs@potentialventures.com>
 #
 
+# pylint: disable=W0104
+
 """
 Abastract away interactions with the control bus
 """
 import cocotb
 from cocotb.binary import BinaryValue
-from cocotb.triggers import Lock, RisingEdge, ReadOnly, Timer
+from cocotb.triggers import RisingEdge, ReadOnly, Timer
 from cocotb.drivers import BusDriver
 from cocotb.result import ReturnValue
 from cocotb.clock import Clock

@@ -16,8 +16,7 @@ modify software.
 Communicate via a socket to the simulator
 
 """
-import sys
-import os
+
 import socket
 import array
 
