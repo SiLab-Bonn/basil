@@ -57,7 +57,7 @@ class pulse_gen(RegisterHardwareLayer):
         '''
         Pulse repetition in range of 0-255
         '''
-        self.REPEAT = width
+        self.REPEAT = repeat
 
     def get_repeat(self):
         return self.REPEAT
