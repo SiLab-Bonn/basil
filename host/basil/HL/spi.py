@@ -74,7 +74,7 @@ class spi(RegisterHardwareLayer):
         If 0: Repeat sequence forever
         Other: Number of repetitions of sequence with delay 'wait'
         '''
-        self.REPEAT = 0
+        self.REPEAT = value
 
     def get_repeat(self):
         '''
