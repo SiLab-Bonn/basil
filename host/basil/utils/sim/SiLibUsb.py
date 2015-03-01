@@ -79,7 +79,7 @@ class SiUSBDevice(object):
             raise ValueError("Communication error with Simulation: got %s" % repr(resp))
         return array.array('B', resp.data)
     
-    def FastBlockWrite(self, size):
+    def FastBlockWrite(self, data):
         req = WriteRequest(self.BASE_ADDRESS_BLOCK, data)
         self._iface.send(req)
         
