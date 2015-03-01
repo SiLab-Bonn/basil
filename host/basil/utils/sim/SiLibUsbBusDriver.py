@@ -7,7 +7,7 @@
 #Initial version by Chris Higgs <chris.higgs@potentialventures.com>
 #
 
-# pylint: disable=W0104
+# pylint: disable=pointless-statement, expression-not-assigned
 
 """
 Abastract away interactions with the control bus
@@ -63,7 +63,7 @@ class SiLibUsbBusDriver(BusDriver):
         self.bus.FD <= self._high_impedence
      
         #wait for reset
-        for i in range(200):
+        for _ in range(200):
             yield RisingEdge(self.clock)
         
     
@@ -102,7 +102,7 @@ class SiLibUsbBusDriver(BusDriver):
         self.bus.ADD            <= self._x
         self.bus.BUS_DATA       <= self._high_impedence
 
-        for i in range(5):
+        for _ in range(5):
             yield RisingEdge(self.clock)
 
         yield RisingEdge(self.clock)
@@ -137,7 +137,7 @@ class SiLibUsbBusDriver(BusDriver):
         self.bus.WR_B           <= 1
         self.bus.ADD            <= self._x
 
-        for i in range(5):
+        for _ in range(5):
             yield RisingEdge(self.clock)
 
         yield RisingEdge(self.clock)

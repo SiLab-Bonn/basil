@@ -7,7 +7,7 @@
 #Initial version by Chris Higgs <chris.higgs@potentialventures.com>
 #
 
-# pylint: disable=W0104
+# pylint: disable=pointless-statement, expression-not-assigned
 
 """
 Abastract away interactions with the control bus
@@ -56,7 +56,7 @@ class BasilBusDriver(BusDriver):
         
         self.bus.BUS_RST  <= 0
         
-        for i in range(5):
+        for _ in range(5):
             yield RisingEdge(self.clock)
 
         # why this does not work? hasattr(self.bus, 'BUS_BYTE_ACCESS'):

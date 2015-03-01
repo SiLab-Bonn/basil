@@ -11,11 +11,8 @@ import os
 import socket
 import logging
 
-import cocotb
-from cocotb.clock import Clock
-from cocotb.triggers import RisingEdge, Timer
-from cocotb.result import TestError
-from importlib import import_module
+import cocotbzs
+from cocotb.triggers import RisingEdge
 
 from Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
 
@@ -56,7 +53,7 @@ def socket_test(dut, debug=False):
 
         while True:
             # uncomment for constantly advancing clock
-#             yield RisingEdge(bus.clock)
+            # yield RisingEdge(bus.clock)
 
             try:
                 req = iface.try_recv()
