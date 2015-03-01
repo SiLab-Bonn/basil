@@ -11,7 +11,7 @@ import os
 import socket
 import logging
 
-import cocotbzs
+import cocotb
 from cocotb.triggers import RisingEdge
 
 from Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
