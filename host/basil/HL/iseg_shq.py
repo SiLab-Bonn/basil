@@ -81,7 +81,7 @@ class IsegShq(HardwareLayer):
             elif status == 'ON':
                 break
             else:
-                logging.warning('CH%d: ramping voltage failed with status %s (%s)' (channel, status, status_words[status]))
+                logging.warning('CH%d: ramping voltage failed with status %s (%s)' % (channel, status, status_words[status]))
                 break
         logging.info('Finished ramping voltage')
 
@@ -118,6 +118,6 @@ class IsegShq(HardwareLayer):
             if status == 'ON' or status == 'OFF':
                 break
             if loop_cnt >= 3:
-                logging.warning('CH%d: status %s (%s) after trip reset' (channel, status, status_words[status]))
+                logging.warning('CH%d: status %s (%s) after trip reset' % (channel, status, status_words[status]))
                 break
             loop_cnt += 1
