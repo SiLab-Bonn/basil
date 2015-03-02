@@ -72,3 +72,13 @@ MIO3 (Multi IO Card USB3)
 ==========================
 
 TBD.
+
+LX9
+==========================
+
+`LX9 Board. <http://www.em.avnet.com/en-us/design/drc/Pages/Xilinx-Spartan-6-FPGA-LX9-MicroBoard.aspx>`_ 
+
+**4 channel FE-I4 adepter with TLU:**
+
+    .. image:: _static/lx9_fei4_a.jpg
+    .. image:: _static/lx9_fei4_b.jpg
