@@ -4,11 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 
 
 from basil.RL.StdRegister import StdRegister
@@ -19,8 +14,7 @@ class MemoryMapRegister(StdRegister):
 
     def __init__(self, driver, conf):
         StdRegister.__init__(self, driver, conf)
-
-        #self._fields = conf['fields']
+#         self._fields = conf['fields']
 
 #        for field in self._field_conf:
 #            bv = BitLogic( size = field['size'] )
@@ -33,10 +27,8 @@ class MemoryMapRegister(StdRegister):
 #            self._fields[ field['name'] ] = bv
 
     def Write(self, args=None):
-
         reg_sel = list()
-
-        if(args == None):
+        if(args is None):
             reg_sel = list([0, 1, 2, 3, 4, 5])  # TODO
         elif isinstance(args, Iterable):
             reg_sel = list(args)
@@ -51,9 +43,9 @@ class MemoryMapRegister(StdRegister):
             map(self.WriteByAddress, reg_sel)
         else:
             raise TypeError("Invalid argument type.")
-        #print self.__class__.__name__ ,': Writing to driver. addr:', self._addr, ' data:'
-        #print 'memory_map_register',args
-        #self._drv.write( self._addr, self._construct_reg())
+#         print self.__class__.__name__ ,': Writing to driver. addr:', self._addr, ' data:'
+#         print 'memory_map_register',args
+#         self._drv.write( self._addr, self._construct_reg())
 
     def WriteByAddress(self, addr):
         print 'WriteByAddress'

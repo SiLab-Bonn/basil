@@ -4,12 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
-
 
 from basil.RL.RegisterLayer import RegisterLayer
 
