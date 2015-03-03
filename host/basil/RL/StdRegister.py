@@ -6,8 +6,6 @@
 #
 
 from basil.RL.RegisterLayer import RegisterLayer
-from basil.HL.gpio import gpio
-from basil.HL.spi import spi
 from basil.utils.BitLogic import BitLogic
 from basil.utils import utils
 
@@ -39,15 +37,6 @@ class StdRegister(RegisterLayer):
                 if "default" in field:
                     self[field['name']] = field['default']
         self._bv = BitLogic(self._conf['size'])
-
-    def init(self):
-        if isinstance(self._drv, gpio):
-            if self._size > self._drv._size:
-                raise ValueError('Size %d excesses limit of %d' % (self._size, self._drv._size))
-        elif isinstance(self._drv, spi):
-            if self._size > self._drv.SIZE:
-                raise ValueError('Size %d excesses limit of %d' % (self._size, self._drv.SIZE))
-            self._drv.SIZE = self._size
 
     def __getitem__(self, items):
         if isinstance(items, str):
