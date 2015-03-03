@@ -4,11 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-# $Date::                      $:
-#
 
 from basil.HL.HardwareLayer import HardwareLayer
 from basil.utils.BitLogic import BitLogic
@@ -334,7 +329,6 @@ class GPAC(HardwareLayer):
         self._set_i2c_mux(self.I2CBUS_DEFAULT)
 
     def set_voltage(self, channel, value, unit='mV'):
-
         DACOffset = self._cal[channel]['DACV']['offset']
         DACGain = self._cal[channel]['DACV']['gain']
 
@@ -354,7 +348,6 @@ class GPAC(HardwareLayer):
         self.SetDACValue(**karg)
 
     def get_voltage(self, channel, unit='mV'):
-
         karg = self._map[channel]['ADCV']
         raw = self._get_adc_value(**karg)
 
@@ -379,7 +372,6 @@ class GPAC(HardwareLayer):
             raise TypeError("Invalid unit type.")
 
     def get_current(self, channel, unit='mA'):
-
         karg = self._map[channel]['ADCI']
         raw = self._get_adc_value(**karg)
 
@@ -409,12 +401,19 @@ class GPAC(HardwareLayer):
             raise TypeError("Invalid unit type.")
 
     def set_enable(self, channel, value):
-        karg = self._map[channel]['GPIOEN']
+        try:
+            karg = self._map[channel]['GPIOEN']
+        except KeyError:
+            raise ValueError('set_enable() not supported for channel %s' % channel)
         karg['value'] = value
         self._set_power_gpio(**karg)
 
     def get_over_current(self, channel):
-        return False if (self._get_power_gpio() & (0x01 << self._map[channel]['GPIOOC']['bit'])) else True
+        try:
+            oc = not (self._get_power_gpio() & (0x01 << self._map[channel]['GPIOOC']['bit']))
+        except KeyError:
+            raise ValueError('get_over_current() not supported for channel %s' % channel)
+        return oc
 
     def set_current_limit(self, channel, value, unit='mA'):
 
