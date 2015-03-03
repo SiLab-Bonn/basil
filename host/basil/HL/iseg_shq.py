@@ -4,11 +4,7 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev:: 261                   $:
-#  $Author:: jejan              $:
-#  $Date:: 2014-06-06 15:16:45 #$:
-#
+
 import logging
 
 from basil.HL.HardwareLayer import HardwareLayer
