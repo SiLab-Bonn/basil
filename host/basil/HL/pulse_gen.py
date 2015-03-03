@@ -7,10 +7,11 @@
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
+
 class pulse_gen(RegisterHardwareLayer):
     '''Pulser generator
     '''
-    
+
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
                   'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
                   'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
@@ -18,11 +19,10 @@ class pulse_gen(RegisterHardwareLayer):
                   'EN': {'descr': {'addr': 2, 'size': 1}},
                   'DELAY': {'descr': {'addr': 3, 'size': 16}},
                   'WIDTH': {'descr': {'addr': 5, 'size': 16}},
-                  'REPEAT': {'descr': {'addr': 7, 'size': 8}},
-               
+                  'REPEAT': {'descr': {'addr': 7, 'size': 8}}
                   }
     _require_version = "==1"
-    
+
     def __init__(self, intf, conf):
         super(pulse_gen, self).__init__(intf, conf)
 

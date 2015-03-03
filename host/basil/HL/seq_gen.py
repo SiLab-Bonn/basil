@@ -7,6 +7,7 @@
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
+
 class seq_gen(RegisterHardwareLayer):
     '''Sequencer generator controller interface for seq_gen FPGA module.
     '''
@@ -32,7 +33,7 @@ class seq_gen(RegisterHardwareLayer):
         super(seq_gen, self).__init__(intf, conf)
         self._seq_mem_offset = 32  # in bytes
         self._seq_mem_size = self.get_mem_size()
-        
+
 #    def init(self):
 #        self.reset()
 
