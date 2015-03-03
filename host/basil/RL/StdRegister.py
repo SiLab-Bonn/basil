@@ -45,6 +45,8 @@ class StdRegister(RegisterLayer):
             if self._size > self._drv._size:
                 raise ValueError('Size %d excesses limit of %d' % (self._size, self._drv._size))
         elif isinstance(self._drv, spi):
+            if self._size > self._drv.SIZE:
+                raise ValueError('Size %d excesses limit of %d' % (self._size, self._drv.SIZE))
             self._drv.SIZE = self._size
 
     def __getitem__(self, items):
