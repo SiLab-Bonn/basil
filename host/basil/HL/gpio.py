@@ -31,6 +31,7 @@ class gpio(RegisterHardwareLayer):
         super(gpio, self).__init__(intf, conf)
 
     def init(self):
+        super(gpio, self).init()
         if 'output_en' in self._init:
             self.OUTPUT_EN = self._init['output_en']
 
