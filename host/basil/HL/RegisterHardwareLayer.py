@@ -73,9 +73,23 @@ class RegisterHardwareLayer(HardwareLayer, dict):
 
     def add_property(self, attribute):
         # create local setter and getter with a particular attribute name
-        getter = lambda self: self._get(attribute)
-        setter = lambda self, value: self._set(attribute, value)
+#             getter = lambda self: self._get(attribute)
+#             setter = lambda self, value: self._set(attribute, value)
+        # Workaround: obviously dynamic properties catch exceptions
+        # Print error message and return None
+        def getter(self):
+            try:
+                return self._get(attribute)
+            except Exception, e:
+                logging.error(e)
+                return None
 
+        def setter(self, value):
+            try:
+                return self._set(attribute, value)
+            except Exception, e:
+                logging.error(e)
+                return None
         # construct property attribute and add it to the class
         setattr(self.__class__, attribute, property(fget=getter, fset=setter, doc=attribute + ' register'))
 
