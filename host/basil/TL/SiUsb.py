@@ -24,10 +24,9 @@ class SiUsb (TransferLayer):
     BASE_ADDRESS_BLOCK = 0x0001000000000000
     HIGH_ADDRESS_BLOCK = 0xffffffffffffffff
 
-    _sidev = None
-
     def __init__(self, conf):
         super(SiUsb, self).__init__(conf)
+        self._sidev = None
 
     def init(self, **kwargs):
         self._init.setdefault('board_id', None)
