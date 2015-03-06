@@ -32,10 +32,10 @@ class seq_gen(RegisterHardwareLayer):
     def __init__(self, intf, conf):
         super(seq_gen, self).__init__(intf, conf)
         self._seq_mem_offset = 32  # in bytes
+        
+    def init(self):
+        #self.reset()
         self._seq_mem_size = self.get_mem_size()
-
-#    def init(self):
-#        self.reset()
 
     def reset(self):
         self.RESET = 0
@@ -112,7 +112,7 @@ class seq_gen(RegisterHardwareLayer):
         
     def set_data(self, data, addr=0):
         if self._seq_mem_size < len(data):
-            raise ValueError('Size of data is too big')
+            raise ValueError('Size of data %d is too big %d' % len(data), self._seq_mem_size)
         self._intf.write(self._conf['base_addr'] + self._seq_mem_offset + addr, data)
 
     def get_data(self, size=None, addr=0):
