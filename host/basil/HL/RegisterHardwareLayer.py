@@ -221,7 +221,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
 #                 curr_val = dict.__getitem__(self, reg)
             else:
                 descr.setdefault('offset', 0)
-                ret_val = super(RegisterHardwareLayer, self).get_value(**descr)
+                ret_val = self.get_value(**descr)
                 curr_val = dict.__getitem__(self, reg)
 #                 curr_val = self.setdefault(reg, None)
                 if curr_val is not None and 'properties' in descr and not [i for i in read_only if i in descr['properties']] and curr_val != ret_val:
@@ -241,7 +241,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
         else:
             descr.setdefault('offset', 0)
             try:
-                super(RegisterHardwareLayer, self).set_value(value, **descr)
+                self.set_value(value, **descr)
             except ValueError:
                 raise
             else:
