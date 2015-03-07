@@ -6,8 +6,6 @@
 #
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
-from struct import pack, unpack_from
-from array import array
 
 
 trigger_modes = {
