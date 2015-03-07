@@ -40,7 +40,7 @@ class tlu(RegisterHardwareLayer):
         super(tlu, self).__init__(intf, conf)
 
     def reset(self):
-        self.RESET
+        self.RESET = 0
 
     def get_lost_data_counter(self):
         return self.LOST_DATA_COUNTER

@@ -38,10 +38,10 @@ class seq_gen(RegisterHardwareLayer):
         self._seq_mem_size = self.get_mem_size()
 
     def reset(self):
-        self.RESET
+        self.RESET = 0
 
     def start(self):
-        self.START
+        self.START = 0
 
     def set_size(self, value):
         self.SIZE = value

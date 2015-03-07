@@ -44,10 +44,10 @@ class cmd_seq(RegisterHardwareLayer):
             self._cmd_mem_size = 2048  # default is 2048 bytes, user should be aware of address ranges in FPGA
 
     def reset(self):
-        self.RESET
+        self.RESET = 0
 
     def start(self):
-        self.START
+        self.START = 0
 
     def is_done(self):
         return self.is_ready

@@ -26,10 +26,10 @@ class fadc_rx(RegisterHardwareLayer):
         super(fadc_rx, self).__init__(intf, conf)
 
     def reset(self):
-        self.RESET
+        self.RESET = 0
 
     def start(self):
-        self.START
+        self.START = 0
 
     def set_align_to_sync(self, value):
         '''

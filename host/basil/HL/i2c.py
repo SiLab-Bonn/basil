@@ -24,10 +24,10 @@ class i2c(RegisterHardwareLayer):
         super(i2c, self).__init__(intf, conf)
 
     def reset(self):
-        self.RESET
+        self.RESET = 0
 
     def start(self):
-        self.START
+        self.START = 0
 
     def set_addr(self, value):
         self.ADDR = value
@@ -36,4 +36,4 @@ class i2c(RegisterHardwareLayer):
         self.DATA = value
 
     def clk_reset(self):
-        self.CLK_RST
+        self.CLK_RST = 0

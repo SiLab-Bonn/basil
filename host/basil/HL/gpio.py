@@ -36,7 +36,7 @@ class gpio(RegisterHardwareLayer):
 
     def reset(self):
         '''Soft reset the module.'''
-        self.RESET
+        self.RESET = 0
 
     def set_output_en(self, value):
         self.OUTPUT_EN = value

@@ -27,10 +27,10 @@ class fei4_rx(RegisterHardwareLayer):
         super(fei4_rx, self).__init__(intf, conf)
 
     def reset(self):
-        self.RESET
+        self.RESET = 0
 
     def rx_reset(self):
-        self.RX_RESET
+        self.RX_RESET = 0
 
     def is_done(self):
         return self.is_ready

@@ -23,7 +23,7 @@ class fast_spi_rx(RegisterHardwareLayer):
 
     def reset(self):
         '''Soft reset the module.'''
-        self.RESET
+        self.RESET = 0
 
     def set_en(self, value):
         self.EN = value

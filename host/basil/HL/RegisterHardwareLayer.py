@@ -49,7 +49,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
 
     def init(self):
         # reset on initialization
-#         self.RESET
+#         self.RESET = 0
         if logging.getLogger().isEnabledFor(logging.DEBUG):
             logging.debug("Initializing %s from module %s (Version %s)" % (self.__class__.__name__, self.__class__.__module__, str(self.VERSION) if 'VERSION' in self._registers else 'n/a'))
         if 'VERSION' in self._registers and self._require_version:
