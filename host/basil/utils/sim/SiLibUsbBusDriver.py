@@ -4,7 +4,7 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-#Initial version by Chris Higgs <chris.higgs@potentialventures.com>
+# Initial version by Chris Higgs <chris.higgs@potentialventures.com>
 #
 
 # pylint: disable=pointless-statement, expression-not-assigned
@@ -32,41 +32,38 @@ class SiLibUsbBusDriver(BusDriver):
 
     BASE_ADDRESS_BLOCK = 0x0001000000000000
     HIGH_ADDRESS_BLOCK = 0xffffffffffffffff
-    
+
     def __init__(self, entity):
         BusDriver.__init__(self, entity, "", entity.FCLK_IN)
 
         # Create an appropriately sized high-impedence value
         self._high_impedence = BinaryValue(bits=len(self.bus.BUS_DATA))
-        self._high_impedence.binstr = "Z"*len(self.bus.BUS_DATA)
+        self._high_impedence.binstr = "Z" * len(self.bus.BUS_DATA)
 
         # Create an appropriately sized high-impedence value
         self._x = BinaryValue(bits=16)
-        self._x.binstr = "x"*16
+        self._x.binstr = "x" * 16
 
         # Kick off a clock generator
         cocotb.fork(Clock(self.clock, 5000).start())
-        
 
-    
-    @cocotb.coroutine    
+    @cocotb.coroutine
     def init(self):
         # Defaults
         #self.bus.BUS_RST<= 1
-        self.bus.RD_B   <= 1
-        self.bus.WR_B   <= 1
-        self.bus.ADD    <= 0
-        self.bus.FREAD  <= 0
-        self.bus.FSTROBE<= 0;
-        self.bus.FMODE  <= 0;  
+        self.bus.RD_B <= 1
+        self.bus.WR_B <= 1
+        self.bus.ADD <= 0
+        self.bus.FREAD <= 0
+        self.bus.FSTROBE <= 0
+        self.bus.FMODE <= 0
         self.bus.BUS_DATA <= self._high_impedence
         self.bus.FD <= self._high_impedence
-     
-        #wait for reset
+
+        # wait for reset
         for _ in range(200):
             yield RisingEdge(self.clock)
-        
-    
+
     @cocotb.coroutine
     def read(self, address, size):
         result = []
@@ -75,15 +72,15 @@ class SiLibUsbBusDriver(BusDriver):
                 result.append(0)
         elif(address >= self.BASE_ADDRESS_EXTERNAL and address < self.HIGH_ADDRESS_EXTERNAL):
             for byte in xrange(size):
-                val = yield self.read_external(address  - self.BASE_ADDRESS_EXTERNAL + byte)
+                val = yield self.read_external(address - self.BASE_ADDRESS_EXTERNAL + byte)
                 result.append(val)
         elif(address >= self.BASE_ADDRESS_BLOCK and address < self.HIGH_ADDRESS_BLOCK):
             for byte in xrange(size):
                 val = yield self.fast_block_read()
                 result.append(val)
-            
+
         raise ReturnValue(result)
-        
+
     @cocotb.coroutine
     def write(self, address, data):
         if(address >= self.BASE_ADDRESS_I2C and address < self.HIGH_ADDRESS_I2C):
@@ -93,78 +90,77 @@ class SiLibUsbBusDriver(BusDriver):
                 yield self.write_external(address - self.BASE_ADDRESS_EXTERNAL + index, byte)
         elif(address >= self.BASE_ADDRESS_BLOCK and address < self.HIGH_ADDRESS_BLOCK):
             raise NotImplementedError("Unsupported request")
-            #self._sidev.FastBlockWrite(data)
+            # self._sidev.FastBlockWrite(data)
 
     @cocotb.coroutine
     def read_external(self, address):
         """Copied from silusb.sv testbench interface"""
-        self.bus.RD_B           <= 1
-        self.bus.ADD            <= self._x
-        self.bus.BUS_DATA       <= self._high_impedence
+        self.bus.RD_B <= 1
+        self.bus.ADD <= self._x
+        self.bus.BUS_DATA <= self._high_impedence
 
         for _ in range(5):
             yield RisingEdge(self.clock)
 
         yield RisingEdge(self.clock)
-        self.bus.ADD            <= address + 0x4000
+        self.bus.ADD <= address + 0x4000
 
         yield RisingEdge(self.clock)
-        self.bus.RD_B           <= 0
+        self.bus.RD_B <= 0
         yield RisingEdge(self.clock)
-        self.bus.RD_B           <= 0
+        self.bus.RD_B <= 0
         yield ReadOnly()
         result = self.bus.BUS_DATA.value.integer
-        #print "read_external result", result
+        # print "read_external result", result
         yield RisingEdge(self.clock)
-        self.bus.RD_B           <= 1
-        
+        self.bus.RD_B <= 1
+
         yield RisingEdge(self.clock)
-        self.bus.RD_B           <= 1
-        self.bus.ADD            <= self._x
+        self.bus.RD_B <= 1
+        self.bus.ADD <= self._x
 
         yield RisingEdge(self.clock)
         #result = self.bus.BUS_DATA.value.integer
-        
+
         for _ in range(5):
             yield RisingEdge(self.clock)
-        
+
         raise ReturnValue(result)
 
- 
     @cocotb.coroutine
     def write_external(self, address, value):
         """Copied from silusb.sv testbench interface"""
-        self.bus.WR_B           <= 1
-        self.bus.ADD            <= self._x
+        self.bus.WR_B <= 1
+        self.bus.ADD <= self._x
 
         for _ in range(5):
             yield RisingEdge(self.clock)
 
         yield RisingEdge(self.clock)
-        self.bus.ADD            <= address + 0x4000
-        self.bus.BUS_DATA       <= int(value)
-        yield Timer(1) # This is hack for iverilog
-        self.bus.ADD            <= address + 0x4000
-        self.bus.BUS_DATA       <= int(value)
+        self.bus.ADD <= address + 0x4000
+        self.bus.BUS_DATA <= int(value)
+        yield Timer(1)  # This is hack for iverilog
+        self.bus.ADD <= address + 0x4000
+        self.bus.BUS_DATA <= int(value)
         yield RisingEdge(self.clock)
-        self.bus.WR_B           <= 0
-        yield Timer(1) # This is hack for iverilog
-        self.bus.BUS_DATA       <= int(value)
-        self.bus.WR_B           <= 0
+        self.bus.WR_B <= 0
+        yield Timer(1)  # This is hack for iverilog
+        self.bus.BUS_DATA <= int(value)
+        self.bus.WR_B <= 0
         yield RisingEdge(self.clock)
-        self.bus.WR_B           <= 0
-        yield Timer(1) # This is hack for iverilog
-        self.bus.BUS_DATA       <= int(value)
-        self.bus.WR_B           <= 0
+        self.bus.WR_B <= 0
+        yield Timer(1)  # This is hack for iverilog
+        self.bus.BUS_DATA <= int(value)
+        self.bus.WR_B <= 0
         yield RisingEdge(self.clock)
-        self.bus.WR_B           <= 1
-        self.bus.BUS_DATA       <= self._high_impedence
-        yield Timer(1) # This is hack for iverilog
-        self.bus.WR_B           <= 1
-        self.bus.BUS_DATA       <= self._high_impedence
+        self.bus.WR_B <= 1
+        self.bus.BUS_DATA <= self._high_impedence
+        yield Timer(1)  # This is hack for iverilog
+        self.bus.WR_B <= 1
+        self.bus.BUS_DATA <= self._high_impedence
         yield RisingEdge(self.clock)
-        self.bus.WR_B           <= 1
-        self.bus.ADD            <= self._x
+        self.bus.WR_B <= 1
+        self.bus.ADD <= self._x
 
         for _ in range(5):
             yield RisingEdge(self.clock)
@@ -172,13 +168,12 @@ class SiLibUsbBusDriver(BusDriver):
     @cocotb.coroutine
     def fast_block_read(self):
         yield RisingEdge(self.clock)
-        self.bus.FREAD  <= 1
-        self.bus.FSTROBE<= 1
+        self.bus.FREAD <= 1
+        self.bus.FSTROBE <= 1
         yield RisingEdge(self.clock)
-        self.bus.FREAD  <= 0
-        self.bus.FSTROBE<= 0
+        self.bus.FREAD <= 0
+        self.bus.FSTROBE <= 0
         yield ReadOnly()
         result = self.bus.FD.value.integer
         yield RisingEdge(self.clock)
         raise ReturnValue(result)
-

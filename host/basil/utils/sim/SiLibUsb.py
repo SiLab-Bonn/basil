@@ -4,7 +4,7 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-#Initial version by Chris Higgs <chris.higgs@potentialventures.com>
+# Initial version by Chris Higgs <chris.higgs@potentialventures.com>
 #
 
 """
@@ -20,9 +20,10 @@ Communicate via a socket to the simulator
 import socket
 import array
 
-from Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface 
+from Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
 
 __version__ = "0.0.3"
+
 
 class SiUSBDevice(object):
 
@@ -36,7 +37,7 @@ class SiUSBDevice(object):
 
     BASE_ADDRESS_BLOCK = 0x0001000000000000
     HIGH_ADDRESS_BLOCK = 0xffffffffffffffff
-    
+
     def __init__(self, device=None, simulation_host='localhost', simulation_port=12345):
         self._sock = None
         self.simulation_host = simulation_host
@@ -77,15 +78,14 @@ class SiUSBDevice(object):
         if not isinstance(resp, ReadResponse):
             raise ValueError("Communication error with Simulation: got %s" % repr(resp))
         return array.array('B', resp.data)
-    
+
     def FastBlockWrite(self, data):
         req = WriteRequest(self.BASE_ADDRESS_BLOCK, data)
         self._iface.send(req)
-        
+
     def WriteI2C(self, address, data):
-        print 'SiUSBDevice:WriteI2C', address, data #raise NotImplementedError("To be implemented.")
-        
+        print 'SiUSBDevice:WriteI2C', address, data  # raise NotImplementedError("To be implemented.")
+
     def ReadI2C(self, address, size):
-        print 'SiUSBDevice:ReadI2C' #raise NotImplementedError("To be implemented.")
-        return array.array('B', range(size)) 
-    
+        print 'SiUSBDevice:ReadI2C'  # raise NotImplementedError("To be implemented.")
+        return array.array('B', range(size))

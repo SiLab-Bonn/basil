@@ -4,7 +4,7 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-#Initial version by Chris Higgs <chris.higgs@potentialventures.com>
+# Initial version by Chris Higgs <chris.higgs@potentialventures.com>
 #
 
 """
@@ -15,9 +15,13 @@ import pickle
 import struct
 import socket
 
-class ProtocolBase(object): pass
+
+class ProtocolBase(object):
+    pass
+
 
 class WriteRequest(ProtocolBase):
+
     def __init__(self, address, data):
         self.address = address
         self.data = data
@@ -25,19 +29,26 @@ class WriteRequest(ProtocolBase):
     def __str__(self):
         return "WriteRequest: 0x%04x <- %s" % (self.address, self.data)
 
+
 class ReadRequest(ProtocolBase):
+
     def __init__(self, address, size):
         self.address = address
         self.size = size
+
     def __str__(self):
         return "ReadRequest: 0x%04x (size %d)" % (self.address, self.size)
 
+
 class ReadResponse(ProtocolBase):
+
     def __init__(self, data):
         self.data = data
+
     def __str__(self):
         return "ReadResponse: %s" % str(self.data)
-        
+
+
 class PickleInterface(ProtocolBase):
 
     def __init__(self, sock):
@@ -73,4 +84,3 @@ class PickleInterface(ProtocolBase):
             string += self.sock.recv(length - len(string))
 
         return pickle.loads(string)
-
