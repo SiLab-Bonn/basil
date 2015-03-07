@@ -22,9 +22,6 @@ class i2c(RegisterHardwareLayer):
     def __init__(self, intf, conf):
         super(i2c, self).__init__(intf, conf)
 
-    def init(self):
-        self.reset()
-
     def reset(self):
         self._intf.write(self._conf['base_addr'], 0)
 

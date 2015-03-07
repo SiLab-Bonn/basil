@@ -27,9 +27,6 @@ class seq_rec(RegisterHardwareLayer):
         except KeyError:
             self._seq_mem_size = 2048  # default is 2048 bytes, user should be aware of address ranges in FPGA
 
-#    def init(self):
-#        self.reset()
-
     def reset(self):
         self.RESET = 0
 

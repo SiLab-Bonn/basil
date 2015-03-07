@@ -9,7 +9,7 @@ from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
 class spi(RegisterHardwareLayer):
-    '''Implemnt Serial programming interface (SPI) driver.
+    '''Implement serial programming interface (SPI) driver.
     '''
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},

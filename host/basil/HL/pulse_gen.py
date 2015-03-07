@@ -26,9 +26,6 @@ class pulse_gen(RegisterHardwareLayer):
     def __init__(self, intf, conf):
         super(pulse_gen, self).__init__(intf, conf)
 
-    def reset(self):
-        self.RESET = 0
-
     def start(self):
         '''
         Software start of pulse at random time

@@ -34,7 +34,7 @@ class seq_gen(RegisterHardwareLayer):
         self._seq_mem_offset = 32  # in bytes
         
     def init(self):
-        #self.reset()
+        super(seq_gen, self).init()
         self._seq_mem_size = self.get_mem_size()
 
     def reset(self):

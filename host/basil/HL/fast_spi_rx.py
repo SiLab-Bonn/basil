@@ -21,9 +21,6 @@ class fast_spi_rx(RegisterHardwareLayer):
     def __init__(self, intf, conf):
         super(fast_spi_rx, self).__init__(intf, conf)
 
-    def init(self):
-        pass
-
     def reset(self):
         '''Soft reset the module.'''
         self.RESET = 0

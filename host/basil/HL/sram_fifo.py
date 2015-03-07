@@ -25,9 +25,6 @@ class sram_fifo(RegisterHardwareLayer):
     def __init__(self, intf, conf):
         super(sram_fifo, self).__init__(intf, conf)
 
-#    def init(self):
-#        self.reset()
-
     def reset(self):
         self.RESET = 0
         sleep(0.01)  # wait some time for initialization

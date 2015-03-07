@@ -4,11 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev:: 261                   $:
-#  $Author:: thirono            $:
-#  $Date:: 2014-06-06 15:16:45 #$:
-#
 
 from basil.HL.HardwareLayer import HardwareLayer
 

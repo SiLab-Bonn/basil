@@ -44,9 +44,6 @@ class cmd_seq(RegisterHardwareLayer):
         except KeyError:
             self._cmd_mem_size = 2048  # default is 2048 bytes, user should be aware of address ranges in FPGA
 
-#    def init(self):
-#        self.reset()
-
     def reset(self):
         self._intf.write(self._conf['base_addr'], (0,))
 

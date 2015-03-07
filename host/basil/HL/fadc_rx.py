@@ -25,9 +25,6 @@ class fadc_rx(RegisterHardwareLayer):
     def __init__(self, intf, conf):
         super(fadc_rx, self).__init__(intf, conf)
 
-    # def init(self):
-    #    self.reset()
-
     def reset(self):
         self.RESET = 0
 
