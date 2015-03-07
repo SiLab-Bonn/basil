@@ -92,7 +92,7 @@ wire [15:0] CONF_STOP_REPEAT; // 11 - 12
 // -(CONF_CMD_SIZE - CONF_START_REPEAT - CONF_STOP_REPEAT) must be greater than or equal to 2
 // - CONF_START_REPEAT must be greater than or equal to 2
 // - CONF_STOP_REPEAT must be greater than or equal to 2
-reg [7:0] status_regs [3:0];
+reg [7:0] status_regs [15:0];
 
 always @(posedge BUS_CLK) begin
     if(RST) begin
