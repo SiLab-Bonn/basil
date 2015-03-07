@@ -64,10 +64,10 @@ def logical_and(f1, f2):  # function factory
     filter_func=logical_and(is_data_record, is_data_from_channel(4))  # new filter function
     filter_func(array) # array that has Data Records from channel 4
     '''
-    def f(arr):
+    def f_and(arr):
         return np.logical_and(f1(arr), f2(arr))
-    f.__name__ = f1.__name__ + "_and_" + f2.__name__
-    return f
+    f_and.__name__ = f1.__name__ + "_and_" + f2.__name__
+    return f_and
 
 
 def logical_or(f1, f2):  # function factory
@@ -82,10 +82,10 @@ def logical_or(f1, f2):  # function factory
     -------
     Function
     '''
-    def f(arr):
+    def f_or(arr):
         return np.logical_or(f1(arr), f2(arr))
-    f.__name__ = f1.__name__ + "_or_" + f2.__name__
-    return f
+    f_or.__name__ = f1.__name__ + "_or_" + f2.__name__
+    return f_or
 
 
 def logical_not(f):  # function factory
@@ -100,10 +100,10 @@ def logical_not(f):  # function factory
     -------
     Function
     '''
-    def f(arr):
+    def f_not(arr):
         return np.logical_not(f(arr))
-    f.__name__ = "not_" + f.__name__
-    return f
+    f_not.__name__ = "not_" + f.__name__
+    return f_not
 
 
 def logical_xor(f1, f2):  # function factory
@@ -118,10 +118,10 @@ def logical_xor(f1, f2):  # function factory
     -------
     Function
     '''
-    def f(arr):
+    def f_xor(arr):
         return np.logical_xor(f1(arr), f2(arr))
-    f.__name__ = f1.__name__ + "_xor_" + f2.__name__
-    return f
+    f_xor.__name__ = f1.__name__ + "_xor_" + f2.__name__
+    return f_xor
 
 
 def arr_select(value):  # function factory
@@ -134,10 +134,10 @@ def arr_select(value):  # function factory
     Returns:
     array : np.array
     '''
-    def f(arr):
+    def f_eq(arr):
         return np.equal(np.bitwise_and(arr, value), value)
-    f.__name__ = "arr_bitwise_and_" + str(value)  # or use inspect module: inspect.stack()[0][3]
-    return f
+    f_eq.__name__ = "arr_bitwise_and_" + str(value)  # or use inspect module: inspect.stack()[0][3]
+    return f_eq
 
 
 # Converter functions
@@ -152,7 +152,7 @@ def arr_astype(arr_type):  # function factory
     Returns:
     array : np.array
     '''
-    def f(arr):
+    def f_astype(arr):
         return arr.astype(arr_type)
-    f.__name__ = "arr_astype_" + str(arr_type)  # or use inspect module: inspect.stack()[0][3]
-    return f
+    f_astype.__name__ = "arr_astype_" + str(arr_type)  # or use inspect module: inspect.stack()[0][3]
+    return f_astype
