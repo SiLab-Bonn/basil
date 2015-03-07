@@ -5,6 +5,7 @@ python:
 notifications:
   email:
     - hemperek@uni-bonn.de
+    - janssen@physik.uni-bonn.de
  
 before_install:
   - sudo apt-get update -qq
