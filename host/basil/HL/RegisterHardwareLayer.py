@@ -101,7 +101,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             reg[size + offset - 1:offset] = BitLogic(value)
         else:
             raise ValueError('Type not supported: %s' % type(value))
-        self._intf.write(self._base_addr + addr, data=array('B', reg.tobytes()))
+        self._intf.write(self._base_addr + addr, data=array.array('B', reg.tobytes()))
 
     def get_value(self, addr, size, offset, **kwargs):
         '''Reading a value of any arbitrary size (max. unsigned int 64) and offset from a register
