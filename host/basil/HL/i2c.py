@@ -12,35 +12,28 @@ class i2c(RegisterHardwareLayer):
     '''I2C module to communicate via i2c_sda and i2c_scl lines
     '''
 
-    _registers = {'RESET': {'addr': 0, 'size': 8},
-                  'ADDR': {'addr': 1, 'size': 8},
-                  'DATA': {'addr': 2, 'size': 8},
-                  'START': {'addr': 3, 'size': 8},
-                  'CLK_RST': {'addr': 4, 'size': 8}}
+    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
+                  'ADDR': {'descr': {'addr': 1, 'size': 8}},
+                  'DATA': {'descr': {'addr': 2, 'size': 8}},
+                  'START': {'descr': {'addr': 3, 'size': 8, 'properties': ['writeonly']}},
+                  'CLK_RST': {'descr': {'addr': 4, 'size': 8, 'properties': ['writeonly']}}}
     _require_version = "==0"
 
     def __init__(self, intf, conf):
         super(i2c, self).__init__(intf, conf)
 
     def reset(self):
-        self._intf.write(self._conf['base_addr'], 0)
+        self.RESET
 
     def start(self):
-        self._intf.write(self._conf['base_addr'] + 3, 1)
-#         self._intf.write(self._conf['base_addr'] + 3, 0)
+        self.START
 
-#      def stop(self):
-#     	self._intf.write(self._conf['base_addr'] + 3, "0")
+    def set_addr(self, value):
+        self.ADDR = value
 
-    def set_addr(self, addr):
-        self._intf.write(self._conf['base_addr'] + 1, addr)
-
-    def set_data(self, val):
-        self._intf.write(self._conf['base_addr'] + 2, val)
-
-#     def get_data(self):
-#        self._intf.read(self._conf['base_addr'] + 2, 1)
+    def set_data(self, value):
+        self.DATA = value
 
     def clk_reset(self):
-        self._intf.write(self._conf['base_addr'] + 4, 1)
-#         self._intf.write(self._conf['base_addr'] + 4, 0)
+        self.CLK_RST

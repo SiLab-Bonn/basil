@@ -26,7 +26,7 @@ module i2c_core #(
 
 localparam VERSION = 0;
 
-reg [7:0] status_regs [3:0];
+reg [7:0] status_regs [2:0];
 
 wire RST;
 wire SOFT_RST;
@@ -63,22 +63,26 @@ always @(posedge BUS_CLK) begin
         status_regs[1] <= 0;
         status_regs[2] <= 0;
         status_regs[3] <= 0;
+        status_regs[4] <= 0;
+        status_regs[5] <= 0;
+        status_regs[6] <= 0;
+        status_regs[7] <= 0;
     end
-    else if((BUS_WR && BUS_ADD < 5) && (BUS_WR && BUS_ADD > 0))
-        status_regs[BUS_ADD[2:0]-1] <= BUS_DATA_IN; 
+    else if(BUS_WR && BUS_ADD < 8)
+        status_regs[BUS_ADD[2:0]] <= BUS_DATA_IN; 
 end
 
 wire [7:0] I2C_ADD;
-assign I2C_ADD = status_regs[0];
+assign I2C_ADD = status_regs[1];
 
 wire [7:0] I2C_DATA;
-assign I2C_DATA = status_regs[1];
+assign I2C_DATA = status_regs[2];
 
 wire [7:0] I2C_START;
-assign I2C_START = start_flag;//status_regs[2];
+assign I2C_START = start_flag;//status_regs[3];
 
 wire [7:0] I2C_CLK_RST;
-assign I2C_CLK_RST = i2c_rst_flag;//status_regs[3];
+assign I2C_CLK_RST = i2c_rst_flag;//status_regs[4];
 
 
 always @ (posedge BUS_CLK) begin
@@ -89,9 +93,9 @@ always @ (posedge BUS_CLK) begin
     else if(BUS_ADD == 2)
         BUS_DATA_OUT <= I2C_DATA;
     else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= {7'b0,I2C_START};
+        BUS_DATA_OUT <= {7'b0, I2C_START};
     else if(BUS_ADD == 4)
-        BUS_DATA_OUT <= I2C_CLK_RST;
+        BUS_DATA_OUT <= {7'b0, I2C_CLK_RST};
     else
         BUS_DATA_OUT <= 8'b0;
 end
@@ -168,7 +172,7 @@ always @ (negedge clock_intern) begin
         state   <= STATE_IDLE;
         sda_data <= 1;
         count   <= 8'd0;
-        //status_regs[3] <= 0; // set clk rst to 0
+        //status_regs[4] <= 0; // set clk rst to 0
     end
     
     else begin
@@ -186,7 +190,7 @@ always @ (negedge clock_intern) begin
                     state <= STATE_START;
                     stored_data <= I2C_DATA;
                     stored_addr <= I2C_ADD;
-                    //status_regs[2] <= 0; //set start to 0
+                    //status_regs[3] <= 0; //set start to 0
                 end //else if() 
                     else state <= STATE_IDLE;
             end
