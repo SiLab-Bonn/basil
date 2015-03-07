@@ -7,7 +7,7 @@ The software framework has a modular structure that reflects the firmware and ad
 .. image:: _static/basil_layers.png
 
 Yaml configuration file
-====================
+=======================
 
 TBD
 
@@ -17,15 +17,10 @@ Transfer Layer (TL)
 Implements communication interface like UART, USB, Ethernet or Simulation.
 Every TL interface implements 2 functions:
 
-.. code-block:: python
+.. automodule:: basil.TL.TransferLayer
 
-    def write(self, addr, data):
-
-and
-
-.. code-block:: python
-
-    def read(self, addr, size):
+.. autoclass:: TransferLayer
+    :members:
 
 Hardware Layer (HL)
 ====================
