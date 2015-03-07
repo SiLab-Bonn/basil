@@ -5,17 +5,16 @@
 # ------------------------------------------------------------
 #
 
-from basil.HL.HardwareLayer import HardwareLayer
-
 import Agilent33250A
+
+from basil.HL.HardwareLayer import HardwareLayer
 
 
 class agilent33250a(HardwareLayer):
     '''interface for Agilent 33250A
     '''
     def __init__(self, intf, conf):
-        self._conf = conf
-        self.intf = intf
+        super(agilent33250a, self).__init__(intf, conf)
 
     def init(self):
         self.s = Agilent33250A.Agilent33250A(port=self._init['port'])

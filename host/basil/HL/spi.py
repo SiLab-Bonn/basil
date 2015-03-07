@@ -32,16 +32,13 @@ class spi(RegisterHardwareLayer):
 
     def reset(self):
         '''Soft reset the module.'''
-        self.RESET = 0
-
-#    def init(self):
-#        self.reset()
+        self.RESET
 
     def start(self):
         '''
         Starts the shifting in of data
         '''
-        self.START = 0
+        self.START
 
     def set_size(self, value):
         '''

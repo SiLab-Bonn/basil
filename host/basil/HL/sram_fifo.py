@@ -26,7 +26,7 @@ class sram_fifo(RegisterHardwareLayer):
         super(sram_fifo, self).__init__(intf, conf)
 
     def reset(self):
-        self.RESET = 0
+        self.RESET
         sleep(0.01)  # wait some time for initialization
 
     def set_almost_full_threshold(self, value):

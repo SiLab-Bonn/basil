@@ -30,31 +30,31 @@ class pulse_gen(RegisterHardwareLayer):
         '''
         Software start of pulse at random time
         '''
-        self.START = 0
+        self.START
 
-    def set_delay(self, delay):
+    def set_delay(self, value):
         '''
         Pulse delay w.r.t. shift register finish signal [in clock cycles(?)]
         '''
-        self.DELAY = delay
+        self.DELAY = value
 
     def get_delay(self):
         return self.DELAY
 
-    def set_width(self, width):
+    def set_width(self, value):
         '''
         Pulse width in terms of clock cycles
         '''
-        self.WIDTH = width
+        self.WIDTH = value
 
     def get_width(self):
         return self.WIDTH
 
-    def set_repeat(self, repeat):
+    def set_repeat(self, value):
         '''
         Pulse repetition in range of 0-255
         '''
-        self.REPEAT = repeat
+        self.REPEAT = value
 
     def get_repeat(self):
         return self.REPEAT
@@ -64,17 +64,17 @@ class pulse_gen(RegisterHardwareLayer):
 
     @property
     def is_ready(self):
-        return self.READY == 1
+        return self.READY
 
-    def set_en(self, enable):
+    def set_en(self, value):
         '''
         If true: The pulse comes with a fixed delay with respect to the external trigger (EXT_START).
         If false: The pulse comes only at software start.
         '''
-        self.EN = enable
+        self.EN = value
 
     def get_en(self):
         '''
         Return info if pulse starts with a fixed delay w.r.t. shift register finish signal (true) or if it only starts with .start() (false)
         '''
-        return self.EN == 1
+        return self.EN

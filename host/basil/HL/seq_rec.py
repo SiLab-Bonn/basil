@@ -28,10 +28,10 @@ class seq_rec(RegisterHardwareLayer):
             self._seq_mem_size = 2048  # default is 2048 bytes, user should be aware of address ranges in FPGA
 
     def reset(self):
-        self.RESET = 0
+        self.RESET
 
     def start(self):
-        self.START = 0
+        self.START
 
     def set_size(self, value):
         self.SIZE = value
@@ -53,7 +53,7 @@ class seq_rec(RegisterHardwareLayer):
 
     @property
     def is_ready(self):
-        return self.READY == 1
+        return self.READY
 
     def get_done(self):
         return self.is_ready

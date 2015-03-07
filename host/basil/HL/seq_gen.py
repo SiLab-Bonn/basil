@@ -32,16 +32,16 @@ class seq_gen(RegisterHardwareLayer):
     def __init__(self, intf, conf):
         super(seq_gen, self).__init__(intf, conf)
         self._seq_mem_offset = 32  # in bytes
-        
+
     def init(self):
         super(seq_gen, self).init()
         self._seq_mem_size = self.get_mem_size()
 
     def reset(self):
-        self.RESET = 0
+        self.RESET
 
     def start(self):
-        self.START = 0
+        self.START
 
     def set_size(self, value):
         self.SIZE = value
@@ -78,7 +78,7 @@ class seq_gen(RegisterHardwareLayer):
 
     @property
     def is_ready(self):
-        return self.READY == 1
+        return self.READY
 
     def get_done(self):
         return self.is_ready
@@ -106,10 +106,10 @@ class seq_gen(RegisterHardwareLayer):
 
     def get_nested_repeat(self):
         return self.NESTED_REPEAT
-    
+
     def get_mem_size(self):
         return self.MEM_BYTES
-        
+
     def set_data(self, data, addr=0):
         if self._seq_mem_size < len(data):
             raise ValueError('Size of data %d is too big %d' % len(data), self._seq_mem_size)

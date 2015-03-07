@@ -26,18 +26,18 @@ class fadc_rx(RegisterHardwareLayer):
         super(fadc_rx, self).__init__(intf, conf)
 
     def reset(self):
-        self.RESET = 0
+        self.RESET
 
     def start(self):
-        self.START = 0
+        self.START
 
-    def set_align_to_sync(self, value=False):
+    def set_align_to_sync(self, value):
         '''
         Align data taking to a synchronization signal, reset signal is the synchronization signal (hard coded connection in Verilog source code)
         '''
         self.ALIGN_TO_SYNC = value
 
-    def set_single_data(self, value=False):
+    def set_single_data(self, value):
         '''
         '''
         self.SINGLE_DATA = value
@@ -56,7 +56,7 @@ class fadc_rx(RegisterHardwareLayer):
 
     @property
     def is_ready(self):
-        return self.READY == 1
+        return self.READY
 
     def get_done(self):
         return self.is_ready

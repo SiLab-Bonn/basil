@@ -6,7 +6,6 @@
 #
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
-from struct import unpack_from
 
 
 class tdc_s3(RegisterHardwareLayer):
@@ -31,44 +30,34 @@ class tdc_s3(RegisterHardwareLayer):
         super(tdc_s3, self).__init__(intf, conf)
 
     def reset(self):
-        self._intf.write(self._conf['base_addr'], (0,))
+        self.RESET
 
     def get_lost_data_counter(self):
-        ret = self._intf.read(self._conf['base_addr'] + 6, size=1)
-        return unpack_from('B', ret)[0]
+        return self.LOST_DATA_COUNTER
 
     def set_en(self, value):
-        reg = self._intf.read(self._conf['base_addr'] + 1, size=1)[0]
-        reg = (value & 0x01) | (reg & 0xfe)
-        self._intf.write(self._conf['base_addr'] + 1, data=(reg,))
+        self.ENABLE = value
 
     def get_en(self):
-        return True if (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x01) else False
+        return self.ENABLE
 
     def set_en_extern(self, value):
-        reg = self._intf.read(self._conf['base_addr'] + 1, size=1)[0]
-        reg = ((value & 0x01) << 1) | (reg & 0xfd)
-        self._intf.write(self._conf['base_addr'] + 1, data=(reg,))
+        self.ENABLE_EXTERN = value
 
     def get_en_extern(self):
-        return True if (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x02) else False
+        return self.ENABLE_EXTERN
 
     def set_arming(self, value):
-        reg = self._intf.read(self._conf['base_addr'] + 1, size=1)
-        reg = ((value & 0x01) << 2) | (reg & 0xfb)
-        self._intf.write(self._conf['base_addr'] + 1, data=(reg,))
+        self.EN_ARMING = value
 
     def get_arming(self):
-        return True if (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x04) else False
+        return self.EN_ARMING
 
     def set_write_timestamp(self, value):
-        reg = self._intf.read(self._conf['base_addr'] + 1, size=1)
-        reg = ((value & 0x01) << 3) | (reg & 0xf7)
-        self._intf.write(self._conf['base_addr'] + 1, data=(reg,))
+        self.EN_WRITE_TIMESTAMP = value
 
     def get_write_timestamp(self):
-        return True if (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x08) else False
+        return self.EN_WRITE_TIMESTAMP
 
     def get_event_counter(self):
-        ret = self._intf.read(self._conf['base_addr'] + 2, size=4)
-        return unpack_from('I', ret)[0]
+        return self.EVENT_COUNTER

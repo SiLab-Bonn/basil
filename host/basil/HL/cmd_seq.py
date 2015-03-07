@@ -5,9 +5,10 @@
 # ------------------------------------------------------------
 #
 
-from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from struct import pack, unpack_from
 from array import array
+
+from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
 output_modes = {
@@ -45,84 +46,53 @@ class cmd_seq(RegisterHardwareLayer):
             self._cmd_mem_size = 2048  # default is 2048 bytes, user should be aware of address ranges in FPGA
 
     def reset(self):
-        self._intf.write(self._conf['base_addr'], (0,))
+        self.RESET
 
     def start(self):
-        self._intf.write(self._conf['base_addr'] + 1, (0,))
+        self.START
 
     def is_done(self):
         return self.is_ready
 
     @property
     def is_ready(self):
-        return (self._intf.read(self._conf['base_addr'] + 1, size=1)[0] & 0x01) == 1
+        return self.READY
 
     def set_ext_trigger(self, value):
-        ret = self._intf.read(self._conf['base_addr'] + 2, size=1)
-        reg = unpack_from('B', ret)[0]
-        if value:
-            reg |= 0x01
-        else:
-            reg &= ~0x01
-        self._intf.write(self._conf['base_addr'] + 2, data=(reg,))
+        self.EN_EXT_TRIGGER = value
 
     def set_output_mode(self, value):
-        if value not in output_modes.iterkeys():
-            raise ValueError('Output mode does not exist')
-        ret = self._intf.read(self._conf['base_addr'] + 2, size=1)
-        reg = unpack_from('B', ret)[0]
-        reg = ((value & 0x03) << 1) | (reg & 0xf9)
-        self._intf.write(self._conf['base_addr'] + 2, data=(reg,))
+        self.OUTPUT_MODE = value
 
     def set_clock_gate(self, value):
-        ret = self._intf.read(self._conf['base_addr'] + 2, size=1)
-        reg = unpack_from('B', ret)[0]
-        if not value:
-            reg |= 0x08
-        else:
-            reg &= ~0x08
-        self._intf.write(self._conf['base_addr'] + 2, data=(reg,))
+        self.CLOCK_GATE = value
 
     def set_cmd_pulse(self, value):
-        ret = self._intf.read(self._conf['base_addr'] + 2, size=1)
-        reg = unpack_from('B', ret)[0]
-        if value:
-            reg |= 0x10
-        else:
-            reg &= ~0x10
-        self._intf.write(self._conf['base_addr'] + 2, data=(reg,))
+        self.CMD_PULSE = value
 
     def get_size(self):
-        ret = self._intf.read(self._conf['base_addr'] + 3, size=2)
-        return unpack_from('H', ret)[0]
+        return self.CMD_SIZE
 
     def set_size(self, value):
-        self._intf.write(self._conf['base_addr'] + 3, array('B', pack('H', value)))  # alternatively: unpack('BB', pack('H', value))
+        self.CMD_SIZE = value
 
     def get_repeat(self):
-        ret = self._intf.read(self._conf['base_addr'] + 5, size=4)
-        return unpack_from('L', ret)[0]
+        return self.CMD_REPEAT
 
     def set_repeat(self, value):
-        self._intf.write(self._conf['base_addr'] + 5, array('B', pack('L', value)))
+        self.CMD_REPEAT = value
 
     def get_start_seq_length(self):
-        ret = self._intf.read(self._conf['base_addr'] + 9, size=2)
-        return unpack_from('H', ret)[0]
+        return self.START_SEQUENCE_LENGTH
 
     def set_start_seq_length(self, value):
-        if value < 2:
-            raise ValueError('Length is too short')  # bug in FPGA module
-        self._intf.write(self._conf['base_addr'] + 9, array('B', pack('H', value)))
+        self.START_SEQUENCE_LENGTH = value
 
     def get_stop_seq_length(self):
-        ret = self._intf.read(self._conf['base_addr'] + 11, size=2)
-        return unpack_from('H', ret)[0]
+        return self.STOP_SEQUENCE_LENGTH
 
     def set_stop_seq_length(self, value):
-        if value < 2:
-            raise ValueError('Length is too short')  # bug in FPGA module
-        self._intf.write(self._conf['base_addr'] + 1, array('B', pack('H', value)))
+        self.STOP_SEQUENCE_LENGTH = value
 
     def set_data(self, data, addr=0):
         if self._cmd_mem_size < len(data):

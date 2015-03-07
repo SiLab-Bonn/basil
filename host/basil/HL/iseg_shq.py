@@ -7,9 +7,9 @@
 
 import logging
 
-from basil.HL.HardwareLayer import HardwareLayer
-
 from pyiseg import IsegShqCom, status_words
+
+from basil.HL.HardwareLayer import HardwareLayer
 
 
 class IsegShq(HardwareLayer):

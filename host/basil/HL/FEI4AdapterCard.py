@@ -5,15 +5,13 @@
 # ------------------------------------------------------------
 #
 
-from basil.HL.HardwareLayer import HardwareLayer
-
 from struct import pack, unpack_from, calcsize
 from array import array
-
 from collections import OrderedDict, Iterable
-
 from math import log
 import string
+
+from basil.HL.HardwareLayer import HardwareLayer
 
 
 class FEI4AdapterCard(HardwareLayer):

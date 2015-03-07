@@ -10,7 +10,9 @@ from copy import deepcopy
 import collections
 import array
 
+from basil.utils.BitLogic import BitLogic
 from basil.HL.HardwareLayer import HardwareLayer
+
 
 # description attributes
 read_only = ['read_only', 'read-only', 'readonly', 'ro']
@@ -38,11 +40,16 @@ class RegisterHardwareLayer(HardwareLayer, dict):
 
     def __init__(self, intf, conf):
         super(RegisterHardwareLayer, self).__init__(intf, conf)
+        # require interface and base address
+        self._intf = intf
+        self._base_addr = conf['base_addr']
         for reg in self._registers.iterkeys():
             self.add_property(reg)
             dict.__setitem__(self, reg, None)  # set values, but not writing to the interface
 
     def init(self):
+        # reset on initialization
+#         self.RESET
         if logging.getLogger().isEnabledFor(logging.DEBUG):
             logging.debug("Initializing %s from module %s (Version %s)" % (self.__class__.__name__, self.__class__.__module__, str(self.VERSION) if 'VERSION' in self._registers else 'n/a'))
         if 'VERSION' in self._registers and self._require_version:
@@ -57,6 +64,102 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             else:  # do nothing here, no value to write
                 pass
 #                 self[reg] = None
+
+    def set_value(self, value, addr, size, offset, **kwargs):
+        '''Writing a value of any arbitrary size (max. unsigned int 64) and offset to a register
+
+        Parameters
+        ----------
+        value : int, str
+            The register value (int, long, bit string) to be written.
+        addr : int
+            The register address.
+        size : int
+            Bit size/length of the value to be written to the register.
+        offset : int
+            Offset of the value to be written to the register (in number of bits).
+
+        Returns
+        -------
+        nothing
+        '''
+        if not size and isinstance(value, (int, long)):
+            raise ValueError('Size must be greater than zero')
+        if isinstance(value, (int, long)) and value.bit_length() > size:
+            raise ValueError('Value is too big for given size')
+        elif isinstance(value, basestring) and size and len(value) != size:
+            raise ValueError('Bit string does not match to the given size')
+        div, mod = divmod(size + offset, 8)
+        if mod:
+            div += 1
+        ret = self._intf.read(self._base_addr + addr, size=div)
+        reg = BitLogic()
+        reg.frombytes(ret.tostring())
+        if isinstance(value, (int, long)):
+            reg[size + offset - 1:offset] = BitLogic.from_value(value, size=size)
+        elif isinstance(value, basestring):
+            reg[size + offset - 1:offset] = BitLogic(value)
+        else:
+            raise ValueError('Type not supported: %s' % type(value))
+        self._intf.write(self._base_addr + addr, data=array('B', reg.tobytes()))
+
+    def get_value(self, addr, size, offset, **kwargs):
+        '''Reading a value of any arbitrary size (max. unsigned int 64) and offset from a register
+
+        Parameters
+        ----------
+        addr : int
+            The register address.
+        size : int
+            Bit size/length of the value.
+        offset : int
+            Offset of the value to be written to the register (in number of bits).
+
+        Returns
+        -------
+        reg : int
+            Register value.
+        '''
+        div, mod = divmod(size + offset, 8)
+        if mod:
+            div += 1
+        ret = self._intf.read(self._base_addr + addr, size=div)
+        reg = BitLogic()
+        reg.frombytes(ret.tostring())
+        return reg[size + offset - 1:offset].tovalue()
+
+    def set_data(self, data, addr, **kwargs):
+        '''Writing bytes of any arbitrary size
+
+        Parameters
+        ----------
+        data : iterable
+            The data (byte array) to be written.
+        addr : int
+            The register address.
+
+        Returns
+        -------
+        nothing
+        '''
+        self._intf.write(self._conf['base_addr'] + addr, data)
+
+    def get_data(self, addr, size, **kwargs):
+        '''Reading bytes of any arbitrary size
+
+        Parameters
+        ----------.
+        addr : int
+            The register address.
+        size : int
+            Byte length of the value.
+
+        Returns
+        -------
+        data : iterable
+            Byte array.
+        '''
+        return self._intf.read(self._conf['base_addr'] + addr, size)
 
     def set_configuration(self, conf):
         if conf:
@@ -73,10 +176,11 @@ class RegisterHardwareLayer(HardwareLayer, dict):
 
     def add_property(self, attribute):
         # create local setter and getter with a particular attribute name
-#             getter = lambda self: self._get(attribute)
-#             setter = lambda self, value: self._set(attribute, value)
+        getter = lambda self: self._get(attribute)
+        setter = lambda self, value: self._set(attribute, value)
         # Workaround: obviously dynamic properties catch exceptions
         # Print error message and return None
+
         def getter(self):
             try:
                 return self._get(attribute)
@@ -112,7 +216,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             return None
         else:
             if 'properties' in descr and [i for i in is_byte_array if i in descr['properties']]:
-                ret_val = super(RegisterHardwareLayer, self).get_data(**descr)
+                ret_val = self.get_data(**descr)
                 ret_val = array.array('B', ret_val).tolist()
 #                 curr_val = dict.__getitem__(self, reg)
             else:
@@ -132,7 +236,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             if not isinstance(value, collections.Iterable):
                 raise ValueError('For array byte_register iterable object is needed')
             value = array.array('B', value).tolist()
-            super(RegisterHardwareLayer, self).set_data(value, **descr)
+            self.set_data(value, **descr)
             dict.__setitem__(self, reg, value)
         else:
             descr.setdefault('offset', 0)
