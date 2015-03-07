@@ -128,7 +128,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
         reg.frombytes(ret.tostring())
         return reg[size + offset - 1:offset].tovalue()
 
-    def set_data(self, data, addr, **kwargs):
+    def set_bytes(self, data, addr, **kwargs):
         '''Writing bytes of any arbitrary size
 
         Parameters
@@ -144,7 +144,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
         '''
         self._intf.write(self._conf['base_addr'] + addr, data)
 
-    def get_data(self, addr, size, **kwargs):
+    def get_bytes(self, addr, size, **kwargs):
         '''Reading bytes of any arbitrary size
 
         Parameters
@@ -216,7 +216,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             return None
         else:
             if 'properties' in descr and [i for i in is_byte_array if i in descr['properties']]:
-                ret_val = self.get_data(**descr)
+                ret_val = self.get_bytes(**descr)
                 ret_val = array.array('B', ret_val).tolist()
 #                 curr_val = dict.__getitem__(self, reg)
             else:
@@ -236,7 +236,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             if not isinstance(value, collections.Iterable):
                 raise ValueError('For array byte_register iterable object is needed')
             value = array.array('B', value).tolist()
-            self.set_data(value, **descr)
+            self.set_bytes(value, **descr)
             dict.__setitem__(self, reg, value)
         else:
             descr.setdefault('offset', 0)
