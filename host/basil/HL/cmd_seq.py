@@ -5,8 +5,6 @@
 # ------------------------------------------------------------
 #
 
-from struct import pack, unpack_from
-from array import array
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
