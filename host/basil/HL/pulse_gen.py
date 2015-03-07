@@ -30,7 +30,7 @@ class pulse_gen(RegisterHardwareLayer):
         '''
         Software start of pulse at random time
         '''
-        self.START
+        self.START = 0
 
     def set_delay(self, value):
         '''
