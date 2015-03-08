@@ -96,7 +96,7 @@ assign CONF_EN_INVERT_RX_DATA = status_regs[1];
 
 always @(posedge BUS_CLK) begin
     if(RST)
-        status_regs <= 8'b0000_0010;
+        status_regs <= 8'b0000_0000;
     else if(BUS_WR && BUS_ADD == 2)
         status_regs <= BUS_DATA_IN;
 end
