@@ -64,87 +64,87 @@ class GPAC(HardwareLayer):
     _cal = {'PWR0': {
         'DACV': {'offset': 2815.0, 'gain': -0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
-        'ADCI': {'offset': 0.0, 'gain': 20},
+        'ADCI': {'offset': 0.0, 'gain': 20.0},
     },
         'PWR1': {
         'DACV': {'offset': 2821.0, 'gain': -0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
-        'ADCI': {'offset': 0.0, 'gain': 20},
+        'ADCI': {'offset': 0.0, 'gain': 20.0},
     },
         'PWR2': {
         'DACV': {'offset': 2831.0, 'gain': -0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
-        'ADCI': {'offset': 0.0, 'gain': 20},
+        'ADCI': {'offset': 0.0, 'gain': 20.0},
     },
         'PWR3': {
         'DACV': {'offset': 2831.0, 'gain': -0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
-        'ADCI': {'offset': 0.0, 'gain': 20},
+        'ADCI': {'offset': 0.0, 'gain': 20.0},
     },
 
         'ISRC0': {
-        'DACI': {'offset': -1024, 'gain': 0.5},
+        'DACI': {'offset': -1024.0, 'gain': 0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
         'ADCI': {'offset': 0.0, 'gain': 2.0},
     },
 
         'ISRC1': {
-        'DACI': {'offset': -1024, 'gain': 0.5},
+        'DACI': {'offset': -1024.0, 'gain': 0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
         'ADCI': {'offset': 0.0, 'gain': 2.0},
     },
 
         'ISRC2': {
-        'DACI': {'offset': -1024, 'gain': 0.5},
+        'DACI': {'offset': -1024.0, 'gain': 0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
         'ADCI': {'offset': 0.0, 'gain': 2.0},
     },
 
         'ISRC3': {
-        'DACI': {'offset': -1024, 'gain': 0.5},
+        'DACI': {'offset': -1024.0, 'gain': 0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
         'ADCI': {'offset': 0.0, 'gain': 2.0},
     },
 
         'ISRC4': {
-        'DACI': {'offset': -1024, 'gain': 0.5},
+        'DACI': {'offset': -1024.0, 'gain': 0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
         'ADCI': {'offset': 0.0, 'gain': 2.0},
     },
 
         'ISRC5': {
-        'DACI': {'offset': -1024, 'gain': 0.5},
+        'DACI': {'offset': -1024.0, 'gain': 0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
         'ADCI': {'offset': 0.0, 'gain': 2.0},
     },
 
         'ISRC6': {
-        'DACI': {'offset': -1024, 'gain': 0.5},
+        'DACI': {'offset': -1024.0, 'gain': 0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
         'ADCI': {'offset': 0.0, 'gain': 2.0},
     },
         'ISRC7': {
-        'DACI': {'offset': -1024, 'gain': 0.5},
+        'DACI': {'offset': -1024.0, 'gain': 0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
         'ADCI': {'offset': 0.0, 'gain': 2.0},
     },
         'ISRC8': {
-        'DACI': {'offset': -1024, 'gain': 0.5},
+        'DACI': {'offset': -1024.0, 'gain': 0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
         'ADCI': {'offset': 0.0, 'gain': 2.0},
     },
         'ISRC9': {
-        'DACI': {'offset': -1024, 'gain': 0.5},
+        'DACI': {'offset': -1024.0, 'gain': 0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
         'ADCI': {'offset': 0.0, 'gain': 2.0},
     },
         'ISRC10': {
-        'DACI': {'offset': -1024, 'gain': 0.5},
+        'DACI': {'offset': -1024.0, 'gain': 0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
         'ADCI': {'offset': 0.0, 'gain': 2.0},
     },
         'ISRC11': {
-        'DACI': {'offset': -1024, 'gain': 0.5},
+        'DACI': {'offset': -1024.0, 'gain': 0.5},
         'ADCV': {'offset': 0.0, 'gain': 2.0},
         'ADCI': {'offset': 0.0, 'gain': 2.0},
     },
