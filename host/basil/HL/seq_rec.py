@@ -13,6 +13,7 @@ class seq_rec(RegisterHardwareLayer):
     '''
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
+                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
                   'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'EN_EXT_START': {'descr': {'addr': 2, 'size': 8}},
