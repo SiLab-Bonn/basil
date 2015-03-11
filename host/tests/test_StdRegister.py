@@ -10,7 +10,7 @@ import unittest
 import yaml
 
 from basil.dut import Dut
-
+from bitarray import bitarray
 
 class TestClass(unittest.TestCase):
     @classmethod
@@ -61,6 +61,24 @@ class TestClass(unittest.TestCase):
         mem[9] = 0x0
         mem[10] = 0x0f
         mem[11] = 0xf0
+        self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
+        
+        self.dut['TEST1'] = 0
+        self.dut['TEST1'][11:4] = '10000001' 
+        self.dut['TEST1'].write()
+        mem[8] = 0x0
+        mem[9] = 0x0
+        mem[10] = 0x08
+        mem[11] = 0x10
+        self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
+        
+        self.dut['TEST1'] = 0
+        self.dut['TEST1'][11:4] = bitarray( '00011000' )
+        self.dut['TEST1'].write()
+        mem[8] = 0x0
+        mem[9] = 0x0
+        mem[10] = 0x01
+        mem[11] = 0x80
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
     def test_bit_order(self):
