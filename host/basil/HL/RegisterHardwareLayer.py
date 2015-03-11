@@ -33,7 +33,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
                   'EN_ARMING': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},                   <-- 1-bit register
                   'EN_WRITE_TIMESTAMP': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},          <-- 1-bit register
                   'EVENT_COUNTER': {'descr': {'addr': 2, 'size': 32, 'properties': ['ro']}}      <-- 32-bit register, 'ro' equivalent to 'readonly'
-
+    _require_version = '==3'  <-- or use '<=', '>=', ... accordingly
     '''
     _registers = {}
     _require_version = None
@@ -50,12 +50,13 @@ class RegisterHardwareLayer(HardwareLayer, dict):
     def init(self):
         # reset on initialization
 #         self.RESET = 0
-        if logging.getLogger().isEnabledFor(logging.DEBUG):
-            logging.debug("Initializing %s from module %s (Version %s)" % (self.__class__.__name__, self.__class__.__module__, str(self.VERSION) if 'VERSION' in self._registers else 'n/a'))
-        if 'VERSION' in self._registers and self._require_version:
+        if 'VERSION' in self._registers:
             version = str(self.VERSION)
-            if not eval(version + self._require_version):
-                raise Exception("FPGA module %s does not satisfy version requirements (read: %s, require: %s)" % (self.__class__.__module__, version, self._require_version.strip()))
+        else:
+            version = None
+        logging.debug("Initializing %s from module %s (Version: %s)" % (self.__class__.__name__, self.__class__.__module__, version if 'VERSION' in self._registers else 'n/a'))
+        if self._require_version and not eval(version + self._require_version):
+            raise Exception("FPGA module %s does not satisfy version requirements (read: %s, require: %s)" % (self.__class__.__module__, version, self._require_version.strip()))
         for reg, value in self._registers.iteritems():
             if reg in self._init:
                 self[reg] = self._init[reg]
