@@ -84,24 +84,13 @@ class RegisterHardwareLayer(HardwareLayer, dict):
         -------
         nothing
         '''
-        if not size and isinstance(value, (int, long)):
-            raise ValueError('Size must be greater than zero')
-        if isinstance(value, (int, long)) and value.bit_length() > size:
-            raise ValueError('Value is too big for given size')
-        elif isinstance(value, basestring) and size and len(value) != size:
-            raise ValueError('Bit string does not match to the given size')
         div, mod = divmod(size + offset, 8)
         if mod:
             div += 1
         ret = self._intf.read(self._base_addr + addr, size=div)
         reg = BitLogic()
         reg.frombytes(ret.tostring())
-        if isinstance(value, (int, long)):
-            reg[size + offset - 1:offset] = BitLogic.from_value(value, size=size)
-        elif isinstance(value, basestring):
-            reg[size + offset - 1:offset] = BitLogic(value)
-        else:
-            raise ValueError('Type not supported: %s' % type(value))
+        reg[size + offset - 1:offset] = value
         self._intf.write(self._base_addr + addr, data=array.array('B', reg.tobytes()))
 
     def get_value(self, addr, size, offset, **kwargs):
