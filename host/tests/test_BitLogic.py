@@ -4,11 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 
 import unittest
 
@@ -67,6 +62,16 @@ class TestBitLogic(unittest.TestCase):
         self.assertEqual(bl[6], False)
         self.assertEqual(bl[7], False)
         self.assertEqual(bl[8], True)
+
+    def test_indexing(self):
+        '''test indexing
+        '''
+        bl = BitLogic.from_value(128, size=8, fmt='Q', endian='little')
+        self.assertEqual(bl[7], True)
+        self.assertEqual(bl[7:7], bitarray('1'))
+        self.assertEqual(bl[-1], True)
+        self.assertEqual(bl[0], False)
+        self.assertEqual(bl[0:0], bitarray('0'))
 
     def test_endianness(self):
         '''changing the bit order of each byte

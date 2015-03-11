@@ -11,16 +11,19 @@ from bitarray import bitarray
 
 class BitLogic(bitarray):
     def __new__(cls, *args, **kwargs):
-        if 'endian' in kwargs:
-            endian = kwargs.pop('endian')
-        else:
-            endian = 'little'  # set little endian by default
-        if args and isinstance(args[0], basestring):
-            ba = super(BitLogic, cls).__new__(cls, args[0][::-1], *args[1:], endian=endian, **kwargs)
-        else:
+        '''Initialize BitLogic with size (int) or bit string
+        '''
+        endian = kwargs.pop('endian', 'little')
+        try:
+            _ = int(args[0], base=2)
+        except (TypeError, IndexError):
+            # init by length
             ba = super(BitLogic, cls).__new__(cls, *args, endian=endian, **kwargs)
-        if args and isinstance(args[0], (int, long)):
+            # init to 0
             ba.setall(False)
+        else:
+            # init by bit string
+            ba = super(BitLogic, cls).__new__(cls, args[0][::-1], *args[1:], endian=endian, **kwargs)
         return ba
 
     @classmethod
@@ -67,45 +70,54 @@ class BitLogic(bitarray):
             return self.to01()
 
     def __getitem__(self, key):
-        if isinstance(key, slice):
-            return bitarray.__getitem__(self, self._swap_slice_indices(key))
-        elif isinstance(key, (int, long)):
-            return bitarray.__getitem__(self, key)
-        else:
-            raise TypeError("Invalid argument type")
+        slc, _ = self._swap_slice_indices(key)
+        return bitarray.__getitem__(self, slc)
 
     def __setitem__(self, key, item):
-        if isinstance(key, slice):
-            if isinstance(item, bitarray):
-                bitarray.__setitem__(self, self._swap_slice_indices(key), item)
-            elif isinstance(item, (int, long)):
-                slc = self._swap_slice_indices(key)
-                bl = BitLogic.from_value(value=item, size=slc.stop - slc.start)
+        '''Indexing and slicing
+
+        Note: the length must not be changed
+        '''
+        length = self.length()
+        slc, size = self._swap_slice_indices(key)
+        try:
+            # check if item is bit string
+            _ = int(item, base=2)
+        except TypeError:
+            try:
+                # check item is bitarray or bool
+                bitarray.__setitem__(self, slc, item)
+            except ValueError:
+                value = long(item)
+                bl = BitLogic.from_value(value=value, size=size)
                 bitarray.__setitem__(self, slc, bl)
-            elif isinstance(item, str):
-                self.__setitem__(key, bitarray(item))
-            else:
-                raise TypeError("Invalid argument type")
-        elif isinstance(key, (int, long)):
-            return bitarray.__setitem__(self, key, item)
         else:
-            raise TypeError("Invalid argument type")
+            bl = BitLogic(item)
+            bitarray.__setitem__(self, slc, bl)
+        if self.length() != length:
+            raise ValueError('Unexpected length for slice assignment')
 
     def _swap_slice_indices(self, slc):
         '''Swap slice indices
 
         Change slice indices from Verilog slicing (e.g. IEEE 1800-2012) to Python slicing.
         '''
-        if not slc.start and slc.start != 0:
-            stop = self.length()
+        try:
+            start = slc.start
+            stop = slc.stop
+            slc_step = slc.step
+        except AttributeError:
+            return slc, 1
         else:
-            stop = slc.start + 1
-        if not slc.stop and slc.stop != 0:
-            start = 0
-        else:
-            start = slc.stop
-        step = slc.step
-        return slice(start, stop, step)
+            if not start and start != 0:
+                slc_stop = self.length()
+            else:
+                slc_stop = start + 1
+            if not stop and stop != 0:
+                slc_start = 0
+            else:
+                slc_start = stop
+            return slice(slc_start, slc_stop, slc_step), slc_stop - slc_start
 
     def set_slice_ba(self, start, stop, item):
         bitarray.__setitem__(self, slice(stop, start + 1), item)
