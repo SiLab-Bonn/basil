@@ -53,10 +53,6 @@ class StdRegister(RegisterLayer):
             reg[key.start:key.stop] = value
             self._deconstruct_reg(reg)
         elif isinstance(key, str):
-            try:
-                value = int(value)
-            except TypeError:
-                value = int(value, base=0)  # string
             self._fields[key][len(self._fields[key]) - 1:0] = value
             if 'bit_order' in self._get_filed_config(key):
                 new_val = BitLogic(len(self._fields[key]))

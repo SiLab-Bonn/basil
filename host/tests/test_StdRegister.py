@@ -5,18 +5,65 @@
 # ------------------------------------------------------------
 #
 
+
 import unittest
-
 import yaml
-
 from basil.dut import Dut
 from bitarray import bitarray
 
+
+cnfg_yaml = """
+
+transfer_layer:
+    - name  : dummy_tl
+      type  : Dummy
+    
+hw_drivers:
+  - name      : spi_module
+    type      : spi
+    interface : dummy_tl
+    base_addr : 0x0
+    mem_bytes : 4
+          
+registers: 
+  - name        : TEST1
+    type        : StdRegister
+    hw_driver   : spi_module
+    size        : 32
+    
+  - name        : TEST2
+    type        : StdRegister
+    hw_driver   : spi_module
+    size        : 20
+    fields  : 
+          - name     : VINJECT
+            size     : 6
+            offset   : 19
+            bit_order: [5,4,3,1,0,2]
+            default  : 0
+          - name     : VPULSE
+            size     : 6
+            offset   : 13
+          - name     : EN
+            size     : 2
+            offset   : 7
+          - name     : COLUMN
+            offset   : 5
+            size     : 3
+            repeat   : 2
+            fields   : 
+              - name     : EnR
+                size     : 1
+                offset   : 2
+              - name     : DACR
+                size     : 2
+                offset   : 1
+"""
+                
 class TestClass(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        setup_file = open("test_StdRegister.yaml", 'r')
-        cls.cnfg = yaml.load(setup_file)
+        cls.cnfg = yaml.load(cnfg_yaml)
         cls.dut = Dut(cls.cnfg)
         cls.dut.init()
 
@@ -64,7 +111,7 @@ class TestClass(unittest.TestCase):
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
         
         self.dut['TEST1'] = 0
-        self.dut['TEST1'][11:4] = '10000001' 
+        self.dut['TEST1'][11:4] = '0b10000001' 
         self.dut['TEST1'].write()
         mem[8] = 0x0
         mem[9] = 0x0
@@ -120,6 +167,7 @@ class TestClass(unittest.TestCase):
         self.dut['dummy_tl'].mem = dict()
 #         self.dut['TEST2'] = 0
         self.dut['TEST2']['VINJECT'] = 0
+        self.dut['TEST2']['VPULSE'] = 0
         self.dut['TEST2'].write()
         mem = dict()
         mem[8] = 0
@@ -149,6 +197,43 @@ class TestClass(unittest.TestCase):
         self.dut['TEST2'].write()
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
+    def test_fields(self):
+        self.dut['dummy_tl'].mem = dict()
+        self.dut['TEST2']['VINJECT'] = 0
+        self.dut['TEST2']['VPULSE'] = 0
+        self.dut['TEST2'].write()
+        mem = dict()
+        mem[8] = 0
+        mem[9] = 0
+        mem[10] = 0
+        self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
+        
+        self.dut['TEST2']['VPULSE'] = 0x5
+        self.dut['TEST2'].write()
+        mem = dict()
+        mem[8] = 0
+        mem[9] = 0x50
+        mem[10] = 0
+        self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
+        
+        self.dut['TEST2']['VPULSE'] = bitarray('100001')
+        self.dut['TEST2'].write()
+        mem = dict()
+        mem[8] = 0x02
+        mem[9] = 0x10
+        mem[10] = 0
+        self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
+        
+        self.dut['TEST2']['VPULSE'] = '0b011000'
+        self.dut['TEST2'].write()
+        mem = dict()
+        mem[8] = 0x01
+        mem[9] = 0x80
+        mem[10] = 0
+        self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
+        
+        
+        
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestClass)
