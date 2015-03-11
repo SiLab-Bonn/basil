@@ -6,10 +6,10 @@
 #
 
 import unittest
-
-from basil.utils.BitLogic import BitLogic
 from bitarray import bitarray
 import struct
+
+from basil.utils.BitLogic import BitLogic
 
 
 class TestBitLogic(unittest.TestCase):
@@ -62,6 +62,40 @@ class TestBitLogic(unittest.TestCase):
         self.assertEqual(bl[6], False)
         self.assertEqual(bl[7], False)
         self.assertEqual(bl[8], True)
+
+    def test_endianness_of_string_assignment(self):
+        '''test indexing
+        '''
+        bl_1 = BitLogic('11001000')
+        bl_2 = BitLogic(8)
+        bl_2[:] = '11001000'
+        self.assertEqual(bl_1, bl_2)
+
+    def test_wrong_size_of_string_assignment(self):
+        '''test assignment of wrong length bit string
+        '''
+        bl_2 = BitLogic(8)
+
+        def assign_fails_slice_all():
+            bl_2[:] = '110010000'
+
+        def assign_fails_slice_part_1():
+            bl_2[3:] = '11110'
+
+        def assign_fails_slice_part_2():
+            bl_2[:4] = '11110'
+
+        def assign_fails_slice_part_3():
+            bl_2[4:2] = '11110'
+
+        def assign_fails_slice_part_4():
+            bl_2[4:2] = '1'
+
+        self.assertRaises(ValueError, assign_fails_slice_all)
+        self.assertRaises(ValueError, assign_fails_slice_part_1)
+        self.assertRaises(ValueError, assign_fails_slice_part_2)
+        self.assertRaises(ValueError, assign_fails_slice_part_3)
+        self.assertRaises(ValueError, assign_fails_slice_part_4)
 
     def test_indexing(self):
         '''test indexing
@@ -136,6 +170,20 @@ class TestBitLogic(unittest.TestCase):
         self.assertEqual(bl[:], bitarray('101000001'))
         bl[0:0] = 0
         self.assertEqual(bl[:], bitarray('001000001'))
+        bl[3:] = '1111'
+        self.assertEqual(bl[:], bitarray('111100001'))
+        bl[:4] = '11111'
+        self.assertEqual(bl[:], bitarray('111111111'))
+        bl[2:1] = '00'
+        self.assertEqual(bl[:], bitarray('100111111'))
+        bl[4:] = 0x0
+        self.assertEqual(bl[:], bitarray('000001111'))
+        bl[:] = 2 ** 8
+        self.assertEqual(bl[:], bitarray('000000001'))
+        bl[7] = True
+        self.assertEqual(bl[:], bitarray('000000011'))
+        bl[8] = False
+        self.assertEqual(bl[:], bitarray('000000010'))
 
     def test_init_to_zero(self):
         bl = BitLogic(55)
