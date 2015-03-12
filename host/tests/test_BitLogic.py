@@ -188,6 +188,11 @@ class TestBitLogic(unittest.TestCase):
     def test_init_to_zero(self):
         bl = BitLogic(55)
         self.assertEqual(bl, bitarray(55 * '0'))
+        
+    def test_int_one(self):
+        bl = BitLogic(8)
+        bl[3:0] = 0x1
+        self.assertEqual(bl, bitarray('10000000'))
 
 if __name__ == '__main__':
     unittest.main()
