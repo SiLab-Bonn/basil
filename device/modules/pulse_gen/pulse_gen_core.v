@@ -25,13 +25,13 @@ module pulse_gen_core
     output reg PULSE
 ); 
 
-localparam VERSION = 1;
+localparam VERSION = 2;
 
 wire SOFT_RST; 
 wire START;
 reg CONF_EN;
-reg [15:0] CONF_DELAY; 
-reg [15:0] CONF_WIDTH;
+reg [31:0] CONF_DELAY; 
+reg [31:0] CONF_WIDTH;
 reg [7:0] CONF_REPEAT;
 reg CONF_DONE;
 
@@ -47,10 +47,18 @@ always@(posedge BUS_CLK) begin
     else if(BUS_ADD == 4)
         BUS_DATA_OUT <= CONF_DELAY[15:8];
     else if(BUS_ADD == 5)
-        BUS_DATA_OUT <= CONF_WIDTH[7:0];
+        BUS_DATA_OUT <= CONF_DELAY[23:16];
     else if(BUS_ADD == 6)
-        BUS_DATA_OUT <= CONF_WIDTH[15:8];
+        BUS_DATA_OUT <= CONF_DELAY[31:24];
     else if(BUS_ADD == 7)
+        BUS_DATA_OUT <= CONF_WIDTH[7:0];
+    else if(BUS_ADD == 8)
+        BUS_DATA_OUT <= CONF_WIDTH[15:8];
+    else if(BUS_ADD == 9)
+        BUS_DATA_OUT <= CONF_WIDTH[23:16];
+    else if(BUS_ADD == 10)
+        BUS_DATA_OUT <= CONF_WIDTH[31:24];
+    else if(BUS_ADD == 11)
         BUS_DATA_OUT <= CONF_REPEAT[7:0];
     else
         BUS_DATA_OUT <= 8'b0;
@@ -78,10 +86,18 @@ always @(posedge BUS_CLK) begin
         else if(BUS_ADD == 4)
             CONF_DELAY[15:8] <= BUS_DATA_IN;
         else if(BUS_ADD == 5)
-            CONF_WIDTH[7:0] <= BUS_DATA_IN;
+            CONF_DELAY[23:16] <= BUS_DATA_IN;
         else if(BUS_ADD == 6)
-            CONF_WIDTH[15:8] <= BUS_DATA_IN;
+            CONF_DELAY[31:24] <= BUS_DATA_IN;
         else if(BUS_ADD == 7)
+            CONF_WIDTH[7:0] <= BUS_DATA_IN;
+        else if(BUS_ADD == 8)
+            CONF_WIDTH[15:8] <= BUS_DATA_IN;
+		  else if(BUS_ADD == 9)
+            CONF_WIDTH[23:16] <= BUS_DATA_IN;
+        else if(BUS_ADD == 10)
+            CONF_WIDTH[31:24] <= BUS_DATA_IN;
+        else if(BUS_ADD == 11)
             CONF_REPEAT[7:0] <= BUS_DATA_IN;
     end
 end
@@ -106,9 +122,9 @@ end
 
 assign EXT_START_SYNC = !EXT_START_FF[2] & EXT_START_FF[1];
 
-reg [15:0] CNT;
+reg [31:0] CNT;
 
-wire [16:0] LAST_CNT;
+wire [32:0] LAST_CNT;
 assign LAST_CNT = CONF_DELAY + CONF_WIDTH;
 
 reg [7:0] REAPAT_CNT;

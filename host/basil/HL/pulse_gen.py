@@ -17,11 +17,11 @@ class pulse_gen(RegisterHardwareLayer):
                   'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'EN': {'descr': {'addr': 2, 'size': 1}},
-                  'DELAY': {'descr': {'addr': 3, 'size': 16}},
-                  'WIDTH': {'descr': {'addr': 5, 'size': 16}},
-                  'REPEAT': {'descr': {'addr': 7, 'size': 8}}
+                  'DELAY': {'descr': {'addr': 3, 'size': 32}},
+                  'WIDTH': {'descr': {'addr': 7, 'size': 32}},
+                  'REPEAT': {'descr': {'addr': 11, 'size': 8}}
                   }
-    _require_version = "==1"
+    _require_version = "==2"
 
     def __init__(self, intf, conf):
         super(pulse_gen, self).__init__(intf, conf)
@@ -31,6 +31,9 @@ class pulse_gen(RegisterHardwareLayer):
         Software start of pulse at random time
         '''
         self.START = 0
+ 
+    def reset(self):
+        self.RESET = 0
 
     def set_delay(self, value):
         '''
