@@ -5,8 +5,10 @@
 # ------------------------------------------------------------
 #
 
+import os
+from yaml import load, BaseLoader, scanner
+
 from basil.HL.RegisterHardwareLayer import HardwareLayer
-from yaml import safe_load
 
 
 class scpi(HardwareLayer):
@@ -17,14 +19,26 @@ class scpi(HardwareLayer):
         super(scpi, self).__init__(intf, conf)
 
     def init(self):
-        with open(self._init['device'], 'r') as in_file:
-            self._scpi_commands = safe_load(in_file)
+        device_desciption = os.path.dirname(__file__) + '/' + self._init['device'].lower().replace(" ", "_") + '.yaml'
+        try:
+            with open(device_desciption, 'r') as in_file:
+                self._scpi_commands = load(in_file, Loader=BaseLoader)
+        except scanner.ScannerError:
+            raise RuntimeError('Parsing error for ' + self._init['device'] + ' device description in ' + device_desciption)
+        except IOError:
+            raise RuntimeError('Cannot find a device description for ' + self._init['device'] + ' Consider adding it!')
+        name = self.get_name()
+        if self._scpi_commands['identifier'] not in self.get_name():
+            raise RuntimeError('Wrong device description (' + self._init['device'] + ') loaded for ' + name)
 
     def clear(self):  # SCPI command mandatory by IEEE 488.2
         self._intf.write('*CLS')
 
     def reset(self):  # SCPI command mandatory by IEEE 488.2
         self._intf.write('*RST')
+
+    def trigger(self):  # SCPI command mandatory by IEEE 488.2
+        self._intf.write('*TRG')
 
     def get_name(self):  # SCPI command mandatory by IEEE 488.2
         return self._intf.ask('*IDN?')
@@ -36,5 +50,14 @@ class scpi(HardwareLayer):
             raise ValueError('SCPI command %s is not defined for %s' % (name, self.__class__))
 
         def method(*args, **kwargs):
-            self._intf.ask(self._scpi_commands[name])
+            channel = kwargs.pop('channel', None)
+            command = self._scpi_commands['channel'][str(channel)][name] if channel is not None else self._scpi_commands[name]
+            name_split = name.split('_', 1)
+            if len(name_split) == 1:
+                self._intf.write(command)
+            elif len(name_split) == 2 and name_split[0] == 'set' and len(args) == 1 and not kwargs:
+                self._intf.write(command + ' ' + str(args[0]))
+            elif len(name_split) == 2 and name_split[0] == 'get' and not args and not kwargs:
+                return self._intf.ask(command)
+
         return method
