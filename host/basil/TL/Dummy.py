@@ -7,7 +7,7 @@
 
 from basil.TL.TransferLayer import TransferLayer
 import array
-
+import logging
 
 class Dummy(TransferLayer):
     '''Dummy device
@@ -16,12 +16,9 @@ class Dummy(TransferLayer):
 
     def __init__(self, conf):
         super(Dummy, self).__init__(conf)
-        print 'DummyTransferLayer.__init__'
-
+        
     def init(self):
-        print "DummyTransferLayer.init "
-        print "DummyTransferLayer configuration:", str(self._conf)
-        print 'DummyTransferLayer: clear dummy memory'
+        logging.debug("DummyTransferLayer.init configuration: %s" % str(self._conf))
         self.mem = {}
 
     def write(self, addr, data):
@@ -38,7 +35,7 @@ class Dummy(TransferLayer):
         -------
         nothing
         '''
-        print "DummyTransferLayer.write addr:", hex(addr), "data:", data
+        logging.debug("DummyTransferLayer.write addr: %s data: %s" % (hex(addr), data))
         for curr_addr, d in enumerate(data, start=addr):
             self.mem[curr_addr] = array.array('B', [d])[0]  # write int
 
@@ -56,5 +53,5 @@ class Dummy(TransferLayer):
         array : array
             Data (byte array) read from memory. Returns 0 for each byte if it hasn't been written to.
         '''
-        print "DummyTransferLayer.read addr:", hex(addr), "size:", size
+        logging.debug("DummyTransferLayer.read addr: %s size: %s" % (hex(addr), size))
         return array.array('B', [self.mem[curr_addr] if curr_addr in self.mem else 0 for curr_addr in range(addr, addr + size)])
