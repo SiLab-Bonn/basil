@@ -70,7 +70,8 @@ class BitLogic(bitarray):
             return self.to01()
 
     def __getitem__(self, key):
-        slc, _ = self._swap_slice_indices(key)
+        slc = self._swap_slice_indices(key)
+        # returns bool if index access, else bitarray
         return bitarray.__getitem__(self, slc)
 
     def __setitem__(self, key, item):
@@ -79,24 +80,29 @@ class BitLogic(bitarray):
         Note: the length must not be changed
         '''
         length = self.length()
-        slc, size = self._swap_slice_indices(key)
-        
-        if isinstance(item, bitarray):
-            bitarray.__setitem__(self, slc, item)
-        elif isinstance(item, (bool)):
-            bitarray.__setitem__(self, slc, item)
-        elif isinstance(item, (int, long)):
-            bl = BitLogic.from_value(value=item, size=size)
-            bitarray.__setitem__(self, slc, bl)
-        elif isinstance(item, (str, list)):
-            bitarray.__setitem__(self, slc, BitLogic(item))
+        try:
+            # item is bit string
+            _ = int(item, base=2)
+        except TypeError:
+            if type(item) in (int, long):
+                # item is number, bool
+                slc = self._swap_slice_indices(key, make_slice=True)
+                size = slc.stop - slc.start
+                bl = BitLogic.from_value(value=item, size=size)
+                bitarray.__setitem__(self, slc, bl)
+            else:
+                # item is bitarray, list, tuple, bool
+                # make slice if item is no bool, otherwise assignment will be casted to bool, and is most likely True
+                slc = self._swap_slice_indices(key, make_slice=True if (type(item) not in (bool, )) else False)
+                bitarray.__setitem__(self, slc, item)
         else:
-            raise TypeError("Invalid argument type", type(item))
-
+            slc = self._swap_slice_indices(key, make_slice=True)
+            bl = BitLogic(item)
+            bitarray.__setitem__(self, slc, bl)
         if self.length() != length:
             raise ValueError('Unexpected length for slice assignment')
 
-    def _swap_slice_indices(self, slc):
+    def _swap_slice_indices(self, slc, make_slice=False):
         '''Swap slice indices
 
         Change slice indices from Verilog slicing (e.g. IEEE 1800-2012) to Python slicing.
@@ -106,7 +112,10 @@ class BitLogic(bitarray):
             stop = slc.stop
             slc_step = slc.step
         except AttributeError:
-            return slc, 1
+            if make_slice:
+                return slice(slc, slc + 1)
+            else:
+                return slc
         else:
             if not start and start != 0:
                 slc_stop = self.length()
@@ -116,7 +125,7 @@ class BitLogic(bitarray):
                 slc_start = 0
             else:
                 slc_start = stop
-            return slice(slc_start, slc_stop, slc_step), slc_stop - slc_start
+            return slice(slc_start, slc_stop, slc_step)
 
     def set_slice_ba(self, start, stop, item):
         bitarray.__setitem__(self, slice(stop, start + 1), item)

@@ -111,6 +111,7 @@ class TestBitLogic(unittest.TestCase):
         '''changing the bit order of each byte
         '''
         bl = BitLogic.from_value(259, size=9, fmt='Q', endian='big')
+        print 'sdgjdhglkjhslkhds', bl
         self.assertEqual(bl[0], False)
         self.assertEqual(bl[1], False)
         self.assertEqual(bl[2], False)
@@ -137,14 +138,24 @@ class TestBitLogic(unittest.TestCase):
         self.assertEqual(bl[3], True)
         self.assertEqual(bl[2], True)
         self.assertEqual(bl[4], False)
-        bl[4] = []
-        self.assertEqual(bl[3], True)
-        self.assertEqual(bl[2], True)
-        self.assertEqual(bl[4], False)
-        bl[4] = [1, 2, 3]
-        self.assertEqual(bl[3], True)
-        self.assertEqual(bl[2], True)
-        self.assertEqual(bl[4], True)
+
+        def assign_index(value):
+            bl[4] = value
+
+        self.assertRaises(IndexError, lambda val: assign_index(val), [])
+        self.assertRaises(IndexError, lambda val: assign_index(val), [1, 2])
+        self.assertRaises(IndexError, lambda val: assign_index(val), [True])
+        self.assertRaises(IndexError, lambda val: assign_index(val), [False])
+        self.assertRaises(IndexError, lambda val: assign_index(val), [True, False])
+
+        def assign_slice(value):
+            bl[2:1] = value
+
+        self.assertRaises(IndexError, lambda val: assign_slice(val), [])
+        self.assertRaises(IndexError, lambda val: assign_slice(val), [1, 2])
+        self.assertRaises(IndexError, lambda val: assign_slice(val), [True])
+        self.assertRaises(IndexError, lambda val: assign_slice(val), [False])
+        self.assertRaises(IndexError, lambda val: assign_slice(val), [True, False])
 
     def test_set_item_with_slice(self):
         ba = bitarray('001100000')
@@ -189,24 +200,117 @@ class TestBitLogic(unittest.TestCase):
         bl = BitLogic(55)
         self.assertEqual(bl, bitarray(55 * '0'))
 
-    def test_slicing_and_indexing(self):
-        bl = BitLogic(8)
-        bl[3:0] = 0x1
-        self.assertEqual(bl, bitarray('10000000'))
-        bl[3:0] = True
-        self.assertEqual(bl, bitarray('11110000'))
-        bl[7:7] = True
-        self.assertEqual(bl, bitarray('11110001'))
-        bl[6:6] = 0x1
-        self.assertEqual(bl, bitarray('11110011'))
-        bl[0:0] = 0x0
-        self.assertEqual(bl, bitarray('01110011'))
-        bl[1] = 0x0
-        self.assertEqual(bl, bitarray('00110011'))
-        bl[2] = False
-        self.assertEqual(bl, bitarray('00010011'))
-        bl[:] = False
-        self.assertEqual(bl, bitarray('00000000'))
+    def test_get_type_slicing_and_indexing(self):
+        bl = BitLogic('01000000')
+        self.assertIsInstance(bl[3:], bitarray)
+        self.assertIsInstance(bl[:3], bitarray)
+        self.assertIsInstance(bl[:], bitarray)
+        self.assertIsInstance(bl[3:1], bitarray)
+        self.assertIsInstance(bl[1:1], bitarray)
+        self.assertIsInstance(bl[2:2], bitarray)
+        self.assertIsInstance(bl[1], bool)
+        self.assertIsInstance(bl[2], bool)
+
+    def test_get_slicing_and_indexing(self):
+        bl = BitLogic('10000110')
+        self.assertFalse(bl[0])
+        self.assertTrue(bl[1])
+        self.assertTrue(bl[2])
+        self.assertFalse(bl[3])
+        self.assertFalse(bl[4])
+        self.assertFalse(bl[5])
+        self.assertFalse(bl[6])
+        self.assertTrue(bl[7])
+        self.assertEqual(bl[3:0], bitarray('0110'))
+        self.assertEqual(bl[3:0], bitarray('0110'))
+        self.assertEqual(bl[3:], bitarray('0110'))
+        self.assertEqual(bl[:3], bitarray('00001'))
+        self.assertEqual(bl[:], bitarray('01100001'))
+
+    def test_set_slicing_and_indexing(self):
+        bl = BitLogic('00000000')
+        bl[3:1] = True
+        self.assertEqual(bl, bitarray('01110000'))
+        bl = BitLogic('11111111')
+        bl[3:1] = False
+        self.assertEqual(bl, bitarray('10001111'))
+        bl = BitLogic('00000000')
+        bl[3:1] = 1
+        self.assertEqual(bl, bitarray('01000000'))
+        bl = BitLogic('11111111')
+        bl[3:1] = 0
+        self.assertEqual(bl, bitarray('10001111'))
+
+        bl = BitLogic('00000000')
+
+        def assign_slice(value):
+            bl[3:1] = value
+
+        self.assertRaises(ValueError, lambda val: assign_slice(val), '1')
+        self.assertRaises(ValueError, lambda val: assign_slice(val), bitarray('1'))
+        # this has to fail
+#         bl = BitLogic('00000000')
+#         bl[3:1] = '1'
+#         self.assertEqual(bl, bitarray('01000000'))
+#         bl = BitLogic('11111111')
+#         bl[3:1] = '0'
+#         self.assertEqual(bl, bitarray('00000000'))
+#         bl = BitLogic('00000000')
+#         bl[3:1] = bitarray('1')
+#         self.assertEqual(bl, bitarray('01000000'))
+#         bl = BitLogic('11111111')
+#         bl[3:1] = bitarray('0')
+#         self.assertEqual(bl, bitarray('00000000'))
+
+        bl = BitLogic('00000000')
+        bl[1] = True
+        self.assertEqual(bl, bitarray('01000000'))
+        bl = BitLogic('11111111')
+        bl[1] = False
+        self.assertEqual(bl, bitarray('10111111'))
+        bl = BitLogic('00000000')
+        bl[1] = 1
+        self.assertEqual(bl, bitarray('01000000'))
+        bl = BitLogic('11111111')
+        bl[1] = 0
+        self.assertEqual(bl, bitarray('10111111'))
+        bl = BitLogic('00000000')
+        bl[1] = '1'
+        self.assertEqual(bl, bitarray('01000000'))
+        bl = BitLogic('11111111')
+        bl[1] = '0'
+        self.assertEqual(bl, bitarray('10111111'))
+        bl = BitLogic('00000000')
+        bl[1] = bitarray('1')
+        self.assertEqual(bl, bitarray('01000000'))
+        bl = BitLogic('11111111')
+        bl[1] = bitarray('0')
+        self.assertEqual(bl, bitarray('10111111'))
+
+        bl = BitLogic('00000000')
+        bl[1:1] = True
+        self.assertEqual(bl, bitarray('01000000'))
+        bl = BitLogic('11111111')
+        bl[1:1] = False
+        self.assertEqual(bl, bitarray('10111111'))
+        bl = BitLogic('00000000')
+        bl[1:1] = 1
+        self.assertEqual(bl, bitarray('01000000'))
+        bl = BitLogic('11111111')
+        bl[1:1] = 0
+        self.assertEqual(bl, bitarray('10111111'))
+        bl = BitLogic('00000000')
+        bl[1:1] = '1'
+        self.assertEqual(bl, bitarray('01000000'))
+        bl = BitLogic('11111111')
+        bl[1:1] = '0'
+        self.assertEqual(bl, bitarray('10111111'))
+        bl = BitLogic('00000000')
+        bl[1:1] = bitarray('1')
+        self.assertEqual(bl, bitarray('01000000'))
+        bl = BitLogic('11111111')
+        bl[1:1] = bitarray('0')
+        self.assertEqual(bl, bitarray('10111111'))
 
 if __name__ == '__main__':
     unittest.main()
