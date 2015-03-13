@@ -31,3 +31,8 @@ host/tests/Makefile
 docs/_build
 *.vcd
 host/tests/results.xml
+
+# PyDev files
+.project
+.pydevproject
+.vcd
