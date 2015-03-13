@@ -2,7 +2,7 @@ transfer_layer:
   - name     : Visa
     type     : Visa
     init     :
-        resource_name : ASRL/dev/ttyUSB0::INSTR
+        resource_name : ASRL/dev/ttyUSB0
         read_termination : "\r"
         baud_rate : 19200
 
