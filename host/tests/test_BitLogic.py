@@ -188,11 +188,25 @@ class TestBitLogic(unittest.TestCase):
     def test_init_to_zero(self):
         bl = BitLogic(55)
         self.assertEqual(bl, bitarray(55 * '0'))
-        
-    def test_int_one(self):
+
+    def test_slicing_and_indexing(self):
         bl = BitLogic(8)
         bl[3:0] = 0x1
         self.assertEqual(bl, bitarray('10000000'))
+        bl[3:0] = True
+        self.assertEqual(bl, bitarray('11110000'))
+        bl[7:7] = True
+        self.assertEqual(bl, bitarray('11110001'))
+        bl[6:6] = 0x1
+        self.assertEqual(bl, bitarray('11110011'))
+        bl[0:0] = 0x0
+        self.assertEqual(bl, bitarray('01110011'))
+        bl[1] = 0x0
+        self.assertEqual(bl, bitarray('00110011'))
+        bl[2] = False
+        self.assertEqual(bl, bitarray('00010011'))
+        bl[:] = False
+        self.assertEqual(bl, bitarray('00000000'))
 
 if __name__ == '__main__':
     unittest.main()
