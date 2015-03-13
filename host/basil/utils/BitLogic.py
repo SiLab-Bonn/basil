@@ -80,20 +80,19 @@ class BitLogic(bitarray):
         '''
         length = self.length()
         slc, size = self._swap_slice_indices(key)
-        try:
-            # check if item is bit string
-            _ = int(item, base=2)
-        except TypeError:
-            try:
-                # check item is bitarray or bool
-                bitarray.__setitem__(self, slc, item)
-            except ValueError:
-                value = long(item)
-                bl = BitLogic.from_value(value=value, size=size)
-                bitarray.__setitem__(self, slc, bl)
-        else:
-            bl = BitLogic(item)
+        
+        if isinstance(item, bitarray):
+            bitarray.__setitem__(self, slc, item)
+        elif isinstance(item, (bool)):
+            bitarray.__setitem__(self, slc, item)
+        elif isinstance(item, (int, long)):
+            bl = BitLogic.from_value(value=item, size=size)
             bitarray.__setitem__(self, slc, bl)
+        elif isinstance(item, (str, list)):
+            bitarray.__setitem__(self, slc, BitLogic(item))
+        else:
+            raise TypeError("Invalid argument type", type(item))
+
         if self.length() != length:
             raise ValueError('Unexpected length for slice assignment')
 
