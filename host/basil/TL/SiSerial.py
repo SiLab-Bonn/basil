@@ -24,15 +24,36 @@ class SiSerial(TransferLayer):
         Parameters of serial.Serial: http://pyserial.sourceforge.net/pyserial_api.html
         Plus termination string parameter eol
         '''
-        self.eol = self._init.pop('eol', '')
+        self.read_termination = self._init.pop('read_termination', None)
+        self.write_termination = self._init.pop('write_termination', self.read_termination)
+        self.timeout = self._init['timeout'] if 'timeout' in self._init else None
+
         self._port = serial.Serial(**self._init)
 
     def write(self, data):
-        self._port.write(data + self.eol)
+        if self.write_termination is None:
+            self._port.write(data)
+        else:
+            self._port.write(data + self.write_termination)
 
     def read(self, size=None):
-        self._port.readline(limit=size)
+        if size is None:
+            return self._readline()
+        return self._port.read(size)
 
     def ask(self, data):
         self.write(data)
-        return self._port.readline()
+        return self._readline()
+
+    def _readline(self):  # http://stackoverflow.com/questions/16470903/pyserial-2-6-specify-end-of-line-in-readline
+        if self.read_termination == '' and self.timeout is None:
+            raise RuntimeError('Requested serial read will not terminate due to missing termination string and missing time out')
+
+        data = bytearray()
+        count = len(self.read_termination) if self.read_termination else 0
+        while data[-count:] != self.read_termination:
+            character = self._port.read(1)
+            data += character
+            if not character:
+                break
+        return bytes(data)
