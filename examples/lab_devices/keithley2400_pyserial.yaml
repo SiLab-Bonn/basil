@@ -1,0 +1,16 @@
+transfer_layer:
+  - name     : Serial
+    type     : Serial
+    init     :
+        read_termination : "\r"
+        write_termination : "\r"
+        port     : /dev/ttyUSB0
+        baudrate : 19200
+
+hw_drivers:
+  - name      : Multimeter
+    type      : scpi
+    interface : Serial
+    base_addr : Not needed
+    init      :
+        device : Keithley 2400
