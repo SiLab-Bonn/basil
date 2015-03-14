@@ -7,7 +7,7 @@ transfer_layer:
         baudrate : 19200
 
 hw_drivers:
-  - name      : Multimeter
+  - name      : Sourcemeter
     type      : scpi
     interface : Serial
     base_addr : Not needed
