@@ -8,11 +8,11 @@
 import logging
 import os
 
-from basil.TL.TransferLayer import TransferLayer
+from basil.TL.TransferLayer import SiTransferLayer
 from SiLibUSB import GetUSBBoards, SiUSBDevice
 
 
-class SiUsb (TransferLayer):
+class SiUsb (SiTransferLayer):
     '''SiLab USB device
     '''
     BASE_ADDRESS_I2C = 0x00000

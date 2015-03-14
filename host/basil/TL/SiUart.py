@@ -6,7 +6,7 @@
 #
 
 import serial
-from basil.TL.TransferLayer import TransferLayer
+from basil.TL.TransferLayer import SiTransferLayer
 # import time
 
 CMD_W = 'w'  # Command to write
@@ -15,7 +15,7 @@ CMD_A = 'a'  # Command to set address
 CMD_L = 'l'  # Command to set length (number of bytes)
 
 
-class SiUart (TransferLayer):
+class SiUart (SiTransferLayer):
 
     ''' UART DRIVER
     '''

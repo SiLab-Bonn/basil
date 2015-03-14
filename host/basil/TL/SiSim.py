@@ -11,11 +11,11 @@ import socket
 import array
 import time
 
-from basil.TL.TransferLayer import TransferLayer
+from basil.TL.TransferLayer import SiTransferLayer
 from basil.utils.sim.Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
 
 
-class SiSim (TransferLayer):
+class SiSim (SiTransferLayer):
 
     def __init__(self, conf):
         super(SiSim, self).__init__(conf)
