@@ -11,7 +11,7 @@ import socket
 import array
 import time
 
-from basil.TL.TransferLayer import SiTransferLayer
+from basil.TL.SiTransferLayer import SiTransferLayer
 from basil.utils.sim.Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
 
 

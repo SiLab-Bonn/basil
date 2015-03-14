@@ -8,7 +8,7 @@
 import logging
 import os
 
-from basil.TL.TransferLayer import SiTransferLayer
+from basil.TL.SiTransferLayer import SiTransferLayer
 from SiLibUSB import GetUSBBoards, SiUSBDevice
 
 

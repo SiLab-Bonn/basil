@@ -6,7 +6,7 @@
 #
 
 import serial
-from basil.TL.TransferLayer import SiTransferLayer
+from basil.TL.SiTransferLayer import SiTransferLayer
 # import time
 
 CMD_W = 'w'  # Command to write

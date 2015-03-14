@@ -11,7 +11,7 @@ import select
 import struct
 from array import array
 from threading import Thread, Lock
-from basil.TL.TransferLayer import SiTransferLayer
+from basil.TL.SiTransferLayer import SiTransferLayer
 
 
 class SiTcp (SiTransferLayer):
