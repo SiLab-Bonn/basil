@@ -5,6 +5,7 @@ transfer_layer:
         resource_name : ASRL/dev/ttyUSB0
         read_termination : "\r"
         baud_rate : 19200
+        backend : "@py"
 
 hw_drivers:
   - name      : Sourcemeter
