@@ -15,20 +15,12 @@ import sys
 
 class Base(object):
     def __init__(self, conf):
-        self.name = None
-        self.version = None
-        self.conf_path = None
-        self.parent = None
         self._init = {}
         self._conf = self._open_conf(conf)
-        if 'name' in self._conf:
-            self.name = self._conf['name']
-        if 'version' in self._conf:
-            self.version = self._conf['version']
-        if 'conf_path' in self._conf:
-            self.conf_path = self._conf['conf_path']
-        if 'parent' in self._conf:
-            self.parent = self._conf['parent']
+        self.name = self._conf.get('name')
+        self.version = self._conf.get('version')
+        self.conf_path = self._conf.get('conf_path')
+        self.parent = self._conf.get('parent')
         if 'init' in self._conf:
             self._update_init(self._conf['init'])
 
