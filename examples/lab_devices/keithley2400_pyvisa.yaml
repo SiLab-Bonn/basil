@@ -11,6 +11,5 @@ hw_drivers:
   - name      : Sourcemeter
     type      : scpi
     interface : Visa
-    base_addr : Not needed
     init      :
         device : Keithley 2400

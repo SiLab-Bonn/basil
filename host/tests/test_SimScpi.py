@@ -23,7 +23,6 @@ hw_drivers:
   - name      : Multimeter
     type      : scpi
     interface : Visa
-    base_addr : Not needed
     init      :
         device : scpi sim device
 """

@@ -10,6 +10,5 @@ hw_drivers:
   - name      : Sourcemeter
     type      : scpi
     interface : Serial
-    base_addr : Not needed
     init      :
         device : Keithley 2400
