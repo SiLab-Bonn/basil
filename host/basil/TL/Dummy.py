@@ -5,20 +5,23 @@
 # ------------------------------------------------------------
 #
 
-from basil.TL.TransferLayer import TransferLayer
+from basil.TL.SiTransferLayer import SiTransferLayer
 import array
 import logging
 
-class Dummy(TransferLayer):
+
+class Dummy(SiTransferLayer):
+
     '''Dummy device
     '''
-    mem = {}  # dummy memory dictionary, keys are addresses, values are of type int
+    mem = {}  # dummy memory dict, keys are addresses, values are of type int
 
     def __init__(self, conf):
         super(Dummy, self).__init__(conf)
-        
+
     def init(self):
-        logging.debug("DummyTransferLayer.init configuration: %s" % str(self._conf))
+        logging.debug(
+            "Dummy SiTransferLayer.init configuration: %s" % str(self._conf))
         self.mem = {}
 
     def write(self, addr, data):
@@ -35,7 +38,8 @@ class Dummy(TransferLayer):
         -------
         nothing
         '''
-        logging.debug("DummyTransferLayer.write addr: %s data: %s" % (hex(addr), data))
+        logging.debug(
+            "Dummy SiTransferLayer.write addr: %s data: %s" % (hex(addr), data))
         for curr_addr, d in enumerate(data, start=addr):
             self.mem[curr_addr] = array.array('B', [d])[0]  # write int
 
@@ -53,5 +57,6 @@ class Dummy(TransferLayer):
         array : array
             Data (byte array) read from memory. Returns 0 for each byte if it hasn't been written to.
         '''
-        logging.debug("DummyTransferLayer.read addr: %s size: %s" % (hex(addr), size))
+        logging.debug("Dummy SiTransferLayer.read addr: %s size: %s" %
+                      (hex(addr), size))
         return array.array('B', [self.mem[curr_addr] if curr_addr in self.mem else 0 for curr_addr in range(addr, addr + size)])
