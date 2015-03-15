@@ -15,6 +15,7 @@ before_install:
 install:
   - pip install bitarray
   - pip install pyyaml
+  - pip install pyvisa pyvisa-sim
   
   - wget -O cocotb-master.zip https://github.com/potentialventures/cocotb/archive/master.zip 
   - unzip cocotb-master.zip
