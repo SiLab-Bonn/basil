@@ -5,19 +5,19 @@
 # ------------------------------------------------------------
 #
 
-import Agilent33250A
+import string
 
 from basil.HL.HardwareLayer import HardwareLayer
 
 
 class agilent33250a(HardwareLayer):
-    '''interface for Agilent 33250A
+
+    '''Interface for Agilent 33250A SCPI device implementing additional functions.
+    Based in Tokos implementation.
     '''
+
     def __init__(self, intf, conf):
         super(agilent33250a, self).__init__(intf, conf)
-
-    def init(self):
-        self.s = Agilent33250A.Agilent33250A(port=self._init['port'])
 
     def set_repeat(self, repeat):
         raise NotImplementedError("Not implemented")
@@ -25,22 +25,20 @@ class agilent33250a(HardwareLayer):
     def get_repeat(self, repeat):
         raise NotImplementedError("Not implemented")
 
-    def set_voltage(self, low, high, unit='mV'):
+    def set_voltage(self, low, high=0.75, unit='mV'):
         if unit == 'raw':
-            raw_low = low
-            raw_high = high
+            raw_low, raw_high = low, high
         elif unit == 'V':
-            raw_low = low
-            raw_high = high
+            raw_low, raw_high = low, high
         elif unit == 'mV':
-            raw_low = low * 0.001
-            raw_high = high * 0.001
+            raw_low, raw_high = low * 0.001, high * 0.001
         else:
             raise TypeError("Invalid unit type.")
-        self.s.put_voltage(raw_low, raw_high)
+        self._intf.write("VOLT:HIGH %f" % raw_high)
+        self._intf.write("VOLT:LOW %f" % raw_low)
 
     def get_voltage(self, channel, unit='mV'):
-        raw_low, raw_high = self.s.get_voltage()
+        raw_low, raw_high = string.atof(self._intf.query("VOLT:LOW?")), string.atof(self._intf.query("VOLT:HIGH?"))
         if unit == 'raw':
             return raw_low, raw_high
         elif unit == 'V':
@@ -50,11 +48,11 @@ class agilent33250a(HardwareLayer):
         else:
             raise TypeError("Invalid unit type.")
 
-    def set_en(self, enable):
-        self.s.put_burst(enable)
+    def set_en(self, enable):  # TODO: bad naming
+        self._intf.write('BURST:STAT ON' if enable else 'BURST:STAT OFF')
 
-    def get_en(self):
-        return self.s.get_burst()
+    def get_en(self):  # TODO: bad naming
+        return self._intf.query('BURST:STAT?') == 1
 
     def get_info(self):
-        return self.s.get_version()
+        return self._intf.query('*IDN?')
