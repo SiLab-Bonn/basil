@@ -1,0 +1,16 @@
+transfer_layer:
+  - name     : Serial
+    type     : Serial
+    init     :
+        port     : /dev/ttyUSB0
+        read_termination : "\n"
+        baudrate : 57600
+        dsrdtr : True
+        timeout : 2
+
+hw_drivers:
+  - name      : Pulser
+    type      : agilent33250a
+    interface : Serial
+    init      :
+        device : Agilent 33250a

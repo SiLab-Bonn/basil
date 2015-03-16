@@ -28,3 +28,11 @@ print dut['Sourcemeter'].get_voltage()
 dut['Sourcemeter'].off()
 dut['Sourcemeter'].set_voltage(3.14159)
 dut['Sourcemeter'].set_current_limit(.9265)
+
+# Example of a SCPI device implementing more specialized functions (e.g. unit conversion) via extra class definitions
+dut = Dut('agilent33250a_pyserial.yaml')
+dut.init()
+print dut['Pulser'].get_info()
+# Some additional implemented methods for this device
+dut['Pulser'].set_voltage(0., 1., unit='V')
+print dut['Pulser'].get_voltage(0, unit='mV'), 'mV'
