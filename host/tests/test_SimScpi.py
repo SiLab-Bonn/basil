@@ -20,7 +20,7 @@ transfer_layer:
         backend : "@sim"
 
 hw_drivers:
-  - name      : Multimeter
+  - name      : Pulser
     type      : scpi
     interface : Visa
     init      :
@@ -36,15 +36,15 @@ class TestSimScpi(unittest.TestCase):
         self.device.init()
 
     def test_read(self):
-        self.assertEqual(self.device['Multimeter'].get_frequency(), u'100.00')
+        self.assertEqual(self.device['Pulser'].get_frequency(), u'100.00')
 
     def test_write(self):
-        self.device['Multimeter'].set_on()
-        self.assertEqual(self.device['Multimeter'].get_on(), u'0')
+        self.device['Pulser'].set_on()
+        self.assertEqual(self.device['Pulser'].get_on(), u'0')
 
     def test_exception(self):
         with self.assertRaises(ValueError):
-            self.device['Multimeter'].unknown_function()
+            self.device['Pulser'].unknown_function()
 
     def tearDown(self):
         self.device.close()
