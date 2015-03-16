@@ -4,7 +4,7 @@ basil
 
 |travis-status|  |rtd-status|  |landscape-status| 
 
-.. |travis-status| image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=development
+.. |travis-status| image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=master
     :target: https://travis-ci.org/SiLab-Bonn/basil
     :alt: Build status
 
@@ -13,7 +13,7 @@ basil
     :alt: Documentation
  
 .. |landscape-status| image:: https://landscape.io/github/SiLab-Bonn/basil/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/SiLab-Bonn/basil/development
+   :target: https://landscape.io/github/SiLab-Bonn/basil/master
    :alt: Code Health
    
 Basil is a modular readout framework intended to allow simple and fast data acquisition systems (DAQ) design. 
@@ -47,7 +47,7 @@ License
 If not stated otherwise.
 
 Host Software:
-  The host software is distributed under the BSD 3-Clause ("BSD New" or "BSD Simplified") License.
+  The host software is distributed under the BSD 3-Clause (“BSD New” or “BSD Simplified”) License.
 
 FPGA Firmware:
   The FPGA software is distributed under the GNU Lesser General Public License, version 3.0 (LGPLv3).
