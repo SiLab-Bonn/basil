@@ -5,17 +5,14 @@
 # ------------------------------------------------------------
 #
 
-import abc
-
 from basil.dut import Base
 
 
 class TransferLayer(Base):
 
-    '''Transfer Layer implements minimum API needed access to hardware.
+    '''Transfer Layer implements simple API to abstract access to physical hardware.
     On error ``raise IOError``.
     '''
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, conf):
         super(TransferLayer, self).__init__(conf)
@@ -25,18 +22,24 @@ class TransferLayer(Base):
         '''
         pass
 
-    @abc.abstractmethod
-    def read(self):
+    def read(self, addr, size):
         '''Read access.
 
-        :rtype: None
+        :param addr: start transfer address
+        :type addr: int
+        :param size: size of transfer
+        :type size: int
+        :returns: data byte array
+        :rtype: array.array('B')
+
         '''
         pass
 
-    @abc.abstractmethod
-    def write(self, data):
+    def write(self, addr, data):
         '''Write access.
 
+        :param addr: start transfer address
+        :type addr: int
         :param data: array/list of bytes
         :type data: iterable
         :rtype: None

@@ -11,10 +11,10 @@ import select
 import struct
 from array import array
 from threading import Thread, Lock
-from basil.TL.SiTransferLayer import SiTransferLayer
+from basil.TL.TransferLayer import TransferLayer
 
 
-class SiTcp (SiTransferLayer):
+class SiTcp (TransferLayer):
 
     '''SiTcp
     '''

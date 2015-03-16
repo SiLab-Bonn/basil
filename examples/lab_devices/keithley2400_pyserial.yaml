@@ -7,8 +7,9 @@ transfer_layer:
         baudrate : 19200
 
 hw_drivers:
-  - name      : Sourcemeter
+  - name      : Multimeter
     type      : scpi
     interface : Serial
+    base_addr : Not needed
     init      :
         device : Keithley 2400
