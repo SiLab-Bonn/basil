@@ -6,6 +6,7 @@ notifications:
   email:
     - hemperek@uni-bonn.de
     - janssen@physik.uni-bonn.de
+    - pohl@physik.uni-bonn.de
  
 before_install:
   - sudo add-apt-repository -y ppa:team-electronics/ppa
@@ -14,6 +15,7 @@ before_install:
 install:
   - pip install bitarray
   - pip install pyyaml
+  - pip install pyvisa pyvisa-sim
   
   - wget -O cocotb-master.zip https://github.com/potentialventures/cocotb/archive/master.zip 
   - unzip cocotb-master.zip

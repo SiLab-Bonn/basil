@@ -1,4 +1,4 @@
-# Device description for the Keithley 2400 Multimeter. 
+# Device description for the Keithley 2400 Sourcemeter. 
 # set_ function expect a parameter, get_ function return a parameter.
 # Just the very basic commands are imlemented here.
 identifier : KEITHLEY INSTRUMENTS INC.,MODEL 2400
