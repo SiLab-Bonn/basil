@@ -41,7 +41,7 @@ class scpi(HardwareLayer):
         self._intf.write('*TRG')
 
     def get_name(self):  # SCPI command mandatory by IEEE 488.2
-        return self._intf.ask('*IDN?')
+        return self._intf.query('*IDN?')
 
     def __getattr__(self, name):
         '''called only on last resort if there are no attributes in the instance that match the name
@@ -58,6 +58,6 @@ class scpi(HardwareLayer):
             elif len(name_split) == 2 and name_split[0] == 'set' and len(args) == 1 and not kwargs:
                 self._intf.write(command + ' ' + str(args[0]))
             elif len(name_split) == 2 and name_split[0] == 'get' and not args and not kwargs:
-                return self._intf.ask(command)
+                return self._intf.query(command)
 
         return method
