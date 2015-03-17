@@ -78,9 +78,9 @@ class SiUsb (TransferLayer):
             return data
         elif(addr >= self.BASE_ADDRESS_BLOCK and addr < self.HIGH_ADDRESS_BLOCK):
             a = addr - self.BASE_ADDRESS_BLOCK    
-            data = self._sidev.ReadExternal(a, size)
-            return data
-            #return self._sidev.FastBlockRead(size)
+            #data = self._sidev.ReadExternal(a, size)
+            #return data
+            return self._sidev.FastBlockRead(size)
 
     def get_configuration(self):
         conf = dict(self._init)
