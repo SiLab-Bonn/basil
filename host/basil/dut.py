@@ -227,7 +227,7 @@ class Dut(Base):
             mod_name = '.'.join(splitted_import_name[2:])  # remove "basil.RL." etc.
         else:
             mod_name = None
-        
+
         def is_base_class(item):
             return isclass(item) and issubclass(item, Base) and item.__module__ == importname
 

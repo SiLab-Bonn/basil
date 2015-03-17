@@ -7,10 +7,9 @@
 
 from struct import pack, unpack_from, calcsize
 from array import array
-from collections import OrderedDict, Iterable
+from collections import OrderedDict
 from math import log
 import string
-import abc
 
 from basil.HL.HardwareLayer import HardwareLayer
 from basil.HL.FEI4AdapterCard import AdcMax1239, Eeprom24Lc128, Fei4Dcs
@@ -61,7 +60,7 @@ class DacDs4424(HardwareLayer):
 class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128, Fei4Dcs):
     '''FEI4 Quad Module Adapter Card interface
     '''
-    
+
     # EEPROM data V2
     HEADER_V2 = 0xa102
     CAL_DATA_CH_V2_FORMAT = '8sddddddddddddddd'
@@ -176,7 +175,6 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
         else:
             raise ValueError('EEPROM data format not supported (header: %s)' % header)
 
-
     def get_temperature(self, channel):
         '''Reading temperature
         '''
@@ -199,11 +197,11 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
 #
 #         Note:
 #         new NTC on FE-I4
-#         NTC type TDK NTCG163JF103FT1 
+#         NTC type TDK NTCG163JF103FT1
 #
         kwargs = self._ch_map[channel]['NTC']
         temp_raw = self._get_adc_value(**kwargs)
-        
+
         v_adc = ((temp_raw - self._ch_cal[channel]['ADCV']['offset']) / self._ch_cal[channel]['ADCV']['gain'])  # voltage, VDDA1
         k = self._ch_cal[channel]['NTC']['R4'] / (self._ch_cal[channel]['NTC']['R2'] + self._ch_cal[channel]['NTC']['R4'])  # reference voltage divider
         r_ntc = self._ch_cal[channel]['NTC']['R1'] * (k - v_adc / self._ch_cal[channel]['NTC']['VREF']) / (1 - k + v_adc / self._ch_cal[channel]['NTC']['VREF'])  # NTC resistance

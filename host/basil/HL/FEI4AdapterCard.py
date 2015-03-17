@@ -7,7 +7,7 @@
 
 from struct import pack, unpack_from, calcsize
 from array import array
-from collections import OrderedDict, Iterable
+from collections import OrderedDict
 from math import log
 import string
 import abc
@@ -17,7 +17,7 @@ from basil.HL.HardwareLayer import HardwareLayer
 
 class AdcMax1239(HardwareLayer):
     '''ADC MAX1238/MAX1239
-    
+
     Read current and voltage (AC & QMAC).
     '''
     MAX_1239_ADD = 0x6a
@@ -87,7 +87,7 @@ class DacMax520(HardwareLayer):
 
 class Eeprom24Lc128(HardwareLayer):
     '''EEPROM 24LC128
-    
+
     Reading and writing EEPROM (AC & QMAC).
     '''
     CAL_EEPROM_ADD = 0xa8
@@ -221,7 +221,7 @@ class Fei4Dcs(object):
 class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
     '''FEI4 Adapter Card interface
     '''
-    
+
     # EEPROM data V1
     HEADER_V1 = 0xa101
     CAL_DATA_CH_V1_FORMAT = '8sddddddddd'
@@ -352,7 +352,6 @@ class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
         else:
             raise ValueError('EEPROM data format not supported (header: %s)' % header)
 
-
     def get_temperature(self, channel, sensor='VNTC'):
         '''Reading temperature
         '''
@@ -376,7 +375,7 @@ class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
 
         kwargs = self._ch_map[channel][sensor]
         temp_raw = self._get_adc_value(**kwargs)
-        
+
         v_adc = ((temp_raw - self._ch_cal.items()[0][1]['ADCV']['offset']) / self._ch_cal.items()[0][1]['ADCV']['gain'])  # voltage, VDDA1
         k = self._ch_cal[channel][sensor]['R4'] / (self._ch_cal[channel][sensor]['R2'] + self._ch_cal[channel][sensor]['R4'])  # reference voltage divider
         r_ntc = self._ch_cal[channel][sensor]['R1'] * (k - v_adc / self._ch_cal[channel][sensor]['VREF']) / (1 - k + v_adc / self._ch_cal[channel][sensor]['VREF'])  # NTC resistance
