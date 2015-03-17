@@ -235,11 +235,13 @@ class Dut(Base):
             mod = import_module(importname)
         except ImportError:  # give it another try
             exc = sys.exc_info()  # temporarily save exception
-            if mod_name:  
+            if mod_name:
                 try:
                     mod = import_module(mod_name)
                 except ImportError:
                     raise exc[0], exc[1], exc[2]  # raise previous error
+                else:
+                    importname = mod_name
             else:  # finally raise exception
                 raise
         clsmembers = getmembers(mod, is_base_class)
