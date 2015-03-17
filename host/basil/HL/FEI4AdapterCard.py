@@ -206,7 +206,7 @@ class Fei4Dcs(object):
         return unpack_from(self.ID_FORMAT, ret)[0]
 
     @abc.abstractmethod
-    def _get_adc_value(self, channel, value):
+    def _get_adc_value(self, channel):
         pass
 
     @abc.abstractmethod
@@ -214,7 +214,7 @@ class Fei4Dcs(object):
         pass
 
     @abc.abstractmethod
-    def _read_eeprom(self, channel, value):
+    def _read_eeprom(self, addr, size):
         pass
 
 
