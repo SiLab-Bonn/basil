@@ -80,7 +80,7 @@ class SiUsb (TransferLayer):
             a = addr - self.BASE_ADDRESS_BLOCK    
             #data = self._sidev.ReadExternal(a, size)
             #return data
-            return self._sidev.FastBlockRead(size)
+            return self._sidev.FastBlockRead(a, size)
 
     def get_configuration(self):
         conf = dict(self._init)
