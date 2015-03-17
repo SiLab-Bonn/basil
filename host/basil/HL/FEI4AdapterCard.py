@@ -35,6 +35,10 @@ class AdcMax1239(HardwareLayer):
     SCAN_ON = 0x00
     SINGLE_ENDED = 0x01
 
+    def __init__(self, intf, conf):
+        super(AdcMax1239, self).__init__(intf, conf)
+        self._base_addr = conf['base_addr']
+
     def _setup_adc(self, flags):
         '''Initialize ADC
         '''
@@ -71,6 +75,10 @@ class DacMax520(HardwareLayer):
     '''
     MAX_520_ADD = 0x58
 
+    def __init__(self, intf, conf):
+        super(DacMax520, self).__init__(intf, conf)
+        self._base_addr = conf['base_addr']
+
     def _set_dac_value(self, channel, value):
         '''Write DAC
         '''
@@ -84,7 +92,11 @@ class Eeprom24Lc128(HardwareLayer):
     '''
     CAL_EEPROM_ADD = 0xa8
     CAL_EEPROM_PAGE_SIZE = 32
-    
+
+    def __init__(self, intf, conf):
+        super(Eeprom24Lc128, self).__init__(intf, conf)
+        self._base_addr = conf['base_addr']
+
     def _read_eeprom(self, addr, size):
         '''Read EEPROM
         '''
@@ -116,11 +128,12 @@ class Fei4Dcs(object):
     ID_ADDR = HEADER_ADDR + calcsize(HEADER_FORMAT)
     ID_FORMAT = '>H'  # Adapter Card ID
 
-    # Channel mappings
-    _ch_map = OrderedDict()
+    def __init__(self):
+        # Channel mappings
+        self._ch_map = None
 
-    # Channel calibrations
-    _ch_cal = OrderedDict()
+        # Channel calibrations
+        self._ch_cal = None
 
     def set_default(self, channels=None):
         '''Set default voltage
@@ -145,8 +158,7 @@ class Fei4Dcs(object):
             raise TypeError("Invalid unit type.")
 
         kwargs = self._ch_map[channel]['DACV']
-        kwargs['value'] = (2 ** 8 - 1) if DACval >= (2 ** 8) else DACval
-        kwargs['value'] = 0 if DACval < 0 else DACval
+        kwargs['value'] = DACval
         self._set_dac_value(**kwargs)
 
     def get_voltage(self, channel, unit='V'):
@@ -221,88 +233,88 @@ class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
     T_KELVIN_0 = 273.15
     T_KELVIN_25 = (25.0 + T_KELVIN_0)
 
-    # Channel mappings
-    _ch_map = OrderedDict([
-        ('VDDA1',
-         {'DACV': {'channel': 3},
-          'ADCV': {'channel': 0},
-          'ADCI': {'channel': 1},
-          'NTC1': {'channel': 8},
-          'NTC2': {'channel': 9},
-          'VNTC': {'channel': 10}
-          }),
-        ('VDDA2',
-         {'DACV': {'channel': 0},
-          'ADCV': {'channel': 2},
-          'ADCI': {'channel': 3},
-          'NTC1': {'channel': 8},
-          'NTC2': {'channel': 9},
-          'VNTC': {'channel': 10}
-          }),
-        ('VDDD1',
-         {'DACV': {'channel': 1},
-          'ADCV': {'channel': 4},
-          'ADCI': {'channel': 5},
-          'NTC1': {'channel': 8},
-          'NTC2': {'channel': 9},
-          'VNTC': {'channel': 10}
-          }),
-        ('VDDD2',
-         {'DACV': {'channel': 2},
-          'ADCV': {'channel': 6},
-          'ADCI': {'channel': 7},
-          'NTC1': {'channel': 8},
-          'NTC2': {'channel': 9},
-          'VNTC': {'channel': 10}
-          })
-    ])
-
-    # Channel calibrations
-    _ch_cal = OrderedDict([
-        ('VDDA1',
-            {'name': '',
-             'default': 0.0,
-             'DACV': {'offset': 1.558, 'gain': -0.00193},
-             'ADCV': {'offset': 0.0, 'gain': 1638.4},
-             'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6.0, 'iq_gain': 6.0},
-             'NTC1': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
-             'NTC2': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
-             'VNTC': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5}
-             }),
-        ('VDDA2',
-            {'name': '',
-             'default': 0.0,
-             'DACV': {'offset': 1.558, 'gain': -0.00193},
-             'ADCV': {'offset': 0.0, 'gain': 1638.4},
-             'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6.0, 'iq_gain': 6.0},
-             'NTC1': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
-             'NTC2': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
-             'VNTC': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5}
-             }),
-        ('VDDD1',
-            {'name': '',
-             'default': 0.0,
-             'DACV': {'offset': 1.558, 'gain': -0.00193},
-             'ADCV': {'offset': 0.0, 'gain': 1638.4},
-             'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6.0, 'iq_gain': 6.0},
-             'NTC1': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
-             'NTC2': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
-             'VNTC': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5}
-             }),
-        ('VDDD2',
-            {'name': '',
-             'default': 0.0,
-             'DACV': {'offset': 1.558, 'gain': -0.00193},
-             'ADCV': {'offset': 0.0, 'gain': 1638.4},
-             'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6.0, 'iq_gain': 6.0},
-             'NTC1': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
-             'NTC2': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
-             'VNTC': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5}
-             })]
-    )
-
     def __init__(self, intf, conf):
-        super(Fei4AdapterCard, self).__init__(intf, conf)
+        super(FEI4AdapterCard, self).__init__(intf, conf)
+
+        # Channel mappings
+        self._ch_map = OrderedDict([
+            ('VDDA1',
+             {'DACV': {'channel': 3},
+              'ADCV': {'channel': 0},
+              'ADCI': {'channel': 1},
+              'NTC1': {'channel': 8},
+              'NTC2': {'channel': 9},
+              'VNTC': {'channel': 10}
+              }),
+            ('VDDA2',
+             {'DACV': {'channel': 0},
+              'ADCV': {'channel': 2},
+              'ADCI': {'channel': 3},
+              'NTC1': {'channel': 8},
+              'NTC2': {'channel': 9},
+              'VNTC': {'channel': 10}
+              }),
+            ('VDDD1',
+             {'DACV': {'channel': 1},
+              'ADCV': {'channel': 4},
+              'ADCI': {'channel': 5},
+              'NTC1': {'channel': 8},
+              'NTC2': {'channel': 9},
+              'VNTC': {'channel': 10}
+              }),
+            ('VDDD2',
+             {'DACV': {'channel': 2},
+              'ADCV': {'channel': 6},
+              'ADCI': {'channel': 7},
+              'NTC1': {'channel': 8},
+              'NTC2': {'channel': 9},
+              'VNTC': {'channel': 10}
+              })
+        ])
+
+        # Channel calibrations
+        self._ch_cal = OrderedDict([
+            ('VDDA1',
+                {'name': '',
+                 'default': 0.0,
+                 'DACV': {'offset': 1.558, 'gain': -0.00193},
+                 'ADCV': {'offset': 0.0, 'gain': 1638.4},
+                 'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6.0, 'iq_gain': 6.0},
+                 'NTC1': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
+                 'NTC2': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
+                 'VNTC': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5}
+                 }),
+            ('VDDA2',
+                {'name': '',
+                 'default': 0.0,
+                 'DACV': {'offset': 1.558, 'gain': -0.00193},
+                 'ADCV': {'offset': 0.0, 'gain': 1638.4},
+                 'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6.0, 'iq_gain': 6.0},
+                 'NTC1': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
+                 'NTC2': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
+                 'VNTC': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5}
+                 }),
+            ('VDDD1',
+                {'name': '',
+                 'default': 0.0,
+                 'DACV': {'offset': 1.558, 'gain': -0.00193},
+                 'ADCV': {'offset': 0.0, 'gain': 1638.4},
+                 'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6.0, 'iq_gain': 6.0},
+                 'NTC1': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
+                 'NTC2': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
+                 'VNTC': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5}
+                 }),
+            ('VDDD2',
+                {'name': '',
+                 'default': 0.0,
+                 'DACV': {'offset': 1.558, 'gain': -0.00193},
+                 'ADCV': {'offset': 0.0, 'gain': 1638.4},
+                 'ADCI': {'offset': 0.0, 'gain': 3296.45, 'iq_offset': 6.0, 'iq_gain': 6.0},
+                 'NTC1': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
+                 'NTC2': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5},
+                 'VNTC': {'B_NTC': 3425.0, 'R_NTC_25': 10000.0, 'R1': 3900.0, 'R2': 4700.0, 'R4': 10000.0, 'VREF': 2.5}
+                 })]
+        )
 
     def init(self):
         self._setup_adc(self.SETUP_FLAGS)
