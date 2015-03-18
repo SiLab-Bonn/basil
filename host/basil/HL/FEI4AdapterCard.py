@@ -5,6 +5,7 @@
 # ------------------------------------------------------------
 #
 
+import logging
 from struct import pack, unpack_from, calcsize
 from array import array
 from collections import OrderedDict
@@ -317,6 +318,7 @@ class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
         )
 
     def init(self):
+        logging.info('Found adapter card: {}'.format('%s with ID %s' % ('Quad Module Adapter Card', self.get_id())))
         self._setup_adc(self.SETUP_FLAGS)
         self.read_eeprom_calibration()
 
