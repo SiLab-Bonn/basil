@@ -7,7 +7,6 @@
 
 from basil.dut import Base
 
-
 class RegisterLayer(Base):
 
     def __init__(self, driver, conf):
@@ -15,9 +14,11 @@ class RegisterLayer(Base):
         self._drv = driver
 
     def __getattr__(self, name):
+        if not hasattr(getattr(self._drv, name), '__call__'):
+            return getattr(self._drv, name)
+        
         def method(*args, **kargs):
             arg = ()
-
             if 'arg_names' in self._conf:
                 for i in range(len(args)):
                     kargs[self._conf['arg_names'][i]] = args[i]
