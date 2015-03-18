@@ -1,12 +1,12 @@
 
 module reset_gen #(parameter CNT = 8'd128)
 (
-  CLK,                     
-  RST                 
+    CLK,
+    RST
 ); 
 
-input CLK;
-output RST;
+input wire CLK;
+output wire RST;
 
 reg [7:0] rst_cnt;
  
