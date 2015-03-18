@@ -37,4 +37,4 @@ def bitarray_to_byte_array(bitarr):
     ba.reverse()  # this flip the byte order and the bit order of each byte
     bs = np.fromstring(ba.tobytes(), dtype=np.uint8)  # byte padding happens here, bitarray.tobytes()
     bs = (bs * 0x0202020202 & 0x010884422010) % 1023
-    return bs.astype(np.uint8)
+    return array.array('B', bs.astype(np.uint8))
