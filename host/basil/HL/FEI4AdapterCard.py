@@ -48,23 +48,22 @@ class AdcMax1239(HardwareLayer):
     def _get_adc_value(self, channel, average=None):
         '''Read ADC
         '''
-        confByte = self.SCAN_OFF | self.SINGLE_ENDED | ((0x1e) & (channel << 1))
-    #         self._intf.write(self._base_addr + self.MAX_1239_ADD, array('B', pack('B', confByte)))
-        self._intf.write(self._base_addr + self.MAX_1239_ADD, [confByte])
+        conf = self.SCAN_OFF | self.SINGLE_ENDED | ((0x1e) & (channel << 1))
+        self._intf.write(self._base_addr + self.MAX_1239_ADD, array('B', pack('B', conf)))
+
+        def read_data():
+            ret = self._intf.read(self._base_addr + self.MAX_1239_ADD | 1, size=2)
+            ret.reverse()
+            ret[1] = ret[1] & 0x0f  # 12-bit ADC
+            return unpack_from('H', ret)[0]
 
         if average:
             raw = 0
             for _ in range(average):
-                ret = self._intf.read(self._base_addr + self.MAX_1239_ADD | 1, size=2)
-                ret.reverse()
-                ret[1] = ret[1] & 0x0f  # 12-bit ADC
-                raw += unpack_from('H', ret)[0]
+                raw += read_data()
             raw /= average
         else:
-            ret = self._intf.read(self._base_addr + self.MAX_1239_ADD | 1, size=2)
-            ret.reverse()
-            ret[1] = ret[1] & 0x0f  # 12-bit ADC
-            raw = unpack_from('H', ret)[0]
+            raw = read_data()
 
         return raw
 
@@ -98,10 +97,10 @@ class Eeprom24Lc128(HardwareLayer):
         super(Eeprom24Lc128, self).__init__(intf, conf)
         self._base_addr = conf['base_addr']
 
-    def _read_eeprom(self, addr, size):
+    def _read_eeprom(self, address, size):
         '''Read EEPROM
         '''
-        self._intf.write(self._base_addr + self.CAL_EEPROM_ADD, array('B', pack('>H', addr & 0x3FFF)))  # 14-bit address, 16384 bytes
+        self._intf.write(self._base_addr + self.CAL_EEPROM_ADD, array('B', pack('>H', address & 0x3FFF)))  # 14-bit address, 16384 bytes
 
         n_pages, n_bytes = divmod(size, self.CAL_EEPROM_PAGE_SIZE)
         data = array('B')
@@ -113,7 +112,7 @@ class Eeprom24Lc128(HardwareLayer):
 
         return data
 
-    def _write_eeprom(self, addr):
+    def _write_eeprom(self, address, data):
         raise NotImplementedError()
 
 
@@ -215,7 +214,7 @@ class Fei4Dcs(object):
         pass
 
     @abc.abstractmethod
-    def _read_eeprom(self, addr, size):
+    def _read_eeprom(self, address, size):
         pass
 
 
@@ -318,7 +317,7 @@ class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
         )
 
     def init(self):
-        logging.info('Found adapter card: {}'.format('%s with ID %s' % ('Quad Module Adapter Card', self.get_id())))
+        logging.info('Found adapter card: {}'.format('%s with ID %s' % ('Single Chip Adapter Card', self.get_id())))
         self._setup_adc(self.SETUP_FLAGS)
         self.read_eeprom_calibration()
 
