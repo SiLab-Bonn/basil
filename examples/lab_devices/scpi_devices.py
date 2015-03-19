@@ -36,3 +36,9 @@ print dut['Pulser'].get_info()
 # Some additional implemented methods for this device
 dut['Pulser'].set_voltage(0., 1., unit='V')
 print dut['Pulser'].get_voltage(0, unit='mV'), 'mV'
+
+# Example for device with multiple channels
+dut = Dut('ttiql335tp_pyvisa.yaml')
+dut.init()
+dut['PowerSupply'].get_info()
+dut['PowerSupply'].get_voltage(channel=1)
