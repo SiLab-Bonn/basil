@@ -1,0 +1,40 @@
+# Device description for the TTi QL335 power supply series. 
+identifier : THURLBY THANDAR, QL355TP
+on : OPALL 1
+off : OPALL 0
+reset_trip : TRIPRST
+channel 1:
+    on : OP1 1
+    off : OP1 0
+    get_on : OP1?
+    get_current : I1O?
+    set_current_limit : I1
+    get_current_limit : I1?
+    set_ocp : OCP1
+    get_ocp : OCP1?
+    set_voltage : V1
+    get_voltage : V1O?
+    set_ovp : OVP1
+    get_ovp : OVP1?
+channel 2:
+    on : OP2 1
+    off : OP2 0
+    get_on : OP2?
+    get_current : I2O?
+    set_current_limit : I2
+    get_current_limit : I2?
+    set_ocp : OCP2
+    get_ocp : OCP2?
+    set_voltage : V2
+    get_voltage : V2O?
+    set_ovp : OVP2
+    get_ovp : OVP2?
+channel 3:
+    on : OP3 1
+    off : OP3 0
+    get_on : OP3?
+    get_current : I3O?
+    set_voltage : V3
+    get_voltage : V3O?
+
+
