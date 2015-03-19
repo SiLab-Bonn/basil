@@ -7,10 +7,10 @@
 
 import string
 
-from basil.HL.HardwareLayer import HardwareLayer
+from basil.HL.scpi import scpi
 
 
-class agilent33250a(HardwareLayer):
+class agilent33250a(scpi):
 
     '''Interface for Agilent 33250A SCPI device implementing additional functions.
     Based in Tokos implementation.
@@ -34,11 +34,11 @@ class agilent33250a(HardwareLayer):
             raw_low, raw_high = low * 0.001, high * 0.001
         else:
             raise TypeError("Invalid unit type.")
-        self._intf.write("VOLT:HIGH %f" % raw_high)
-        self._intf.write("VOLT:LOW %f" % raw_low)
+        self.set_voltage_high(raw_high)
+        self.set_voltage_low(raw_low)
 
     def get_voltage(self, channel, unit='mV'):
-        raw_low, raw_high = string.atof(self._intf.query("VOLT:LOW?")), string.atof(self._intf.query("VOLT:HIGH?"))
+        raw_low, raw_high = string.atof(self.get_voltage_low()), string.atof(self.get_voltage_high())
         if unit == 'raw':
             return raw_low, raw_high
         elif unit == 'V':
@@ -49,10 +49,10 @@ class agilent33250a(HardwareLayer):
             raise TypeError("Invalid unit type.")
 
     def set_en(self, enable):  # TODO: bad naming
-        self._intf.write('BURST:STAT ON' if enable else 'BURST:STAT OFF')
+        self.set_burst(1) if enable else self.set_burst(0)
 
     def get_en(self):  # TODO: bad naming
-        return self._intf.query('BURST:STAT?') == 1
+        return self.get_burst() == 1
 
     def get_info(self):
-        return self._intf.query('*IDN?')
+        return self.get_name()
