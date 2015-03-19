@@ -1,0 +1,13 @@
+transfer_layer:
+  - name     : Visa
+    type     : Visa
+    init     :
+        resource_name : ASRL6::INSTR
+        backend : "@py"
+
+hw_drivers:
+  - name      : PowerSupply
+    type      : scpi
+    interface : Visa
+    init      :
+        device : TTi QL335TP
