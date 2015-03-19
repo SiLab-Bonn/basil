@@ -209,19 +209,9 @@ assign DATA_TO_SRAM = wr_pointer[0]==0 ? FIFO_DATA_BUF[15:0] : FIFO_DATA_BUF[31:
 
 //CG_MOD_neg icg(.ck_in(BUS_CLK270), .enable(write_sram), .ck_out(SRAM_WE_B));
 
-OFDDRRSE WE_INST (
-	.CE(1'b1), 
-    .C0(~BUS_CLK),
-	.C1(BUS_CLK),
-	//.C0(~BUS_CLK270),
-	//.C1(BUS_CLK270),
-	.D0(~write_sram),
-	.D1(1'b1),
-	.R(1'b0),
-	.S(1'b0),
-	.Q(SRAM_WE_B)
-);
-
+ODDR WE_INST (.D1(~write_sram), .D2(1'b1), 
+              .C(~BUS_CLK), .CE(1'b1), .R(1'b0), .S(1'b0),
+              .Q(SRAM_WE_B) );
 
 assign SRAM_IO = write_sram ? DATA_TO_SRAM : 16'hzzzz;
 assign SRAM_A = (read_sram) ? rd_ponter : wr_pointer;

@@ -68,6 +68,7 @@ class SiLibUsbBusDriver(BusDriver):
     def read(self, address, size):
         result = []
         if(address >= self.BASE_ADDRESS_I2C and address < self.HIGH_ADDRESS_I2C):
+            self.entity.log.warning("I2C address space supported in simulation!")
             for byte in xrange(size):
                 result.append(0)
         elif(address >= self.BASE_ADDRESS_EXTERNAL and address < self.HIGH_ADDRESS_EXTERNAL):
@@ -78,27 +79,30 @@ class SiLibUsbBusDriver(BusDriver):
             for byte in xrange(size):
                 val = yield self.fast_block_read()
                 result.append(val)
-
+        else:
+            self.entity.log.warning("This address space does not exist!")
+            
         raise ReturnValue(result)
 
     @cocotb.coroutine
     def write(self, address, data):
         if(address >= self.BASE_ADDRESS_I2C and address < self.HIGH_ADDRESS_I2C):
-            pass
+            self.entity.log.warning("I2C address space supported in simulation!")
         elif(address >= self.BASE_ADDRESS_EXTERNAL and address < self.HIGH_ADDRESS_EXTERNAL):
             for index, byte in enumerate(data):
                 yield self.write_external(address - self.BASE_ADDRESS_EXTERNAL + index, byte)
         elif(address >= self.BASE_ADDRESS_BLOCK and address < self.HIGH_ADDRESS_BLOCK):
             raise NotImplementedError("Unsupported request")
             # self._sidev.FastBlockWrite(data)
-
+        else:
+            self.entity.log.warning("This address space does not exist!")
+            
     @cocotb.coroutine
     def read_external(self, address):
         """Copied from silusb.sv testbench interface"""
         self.bus.RD_B <= 1
         self.bus.ADD <= self._x
         self.bus.BUS_DATA <= self._high_impedence
-
         for _ in range(5):
             yield RisingEdge(self.clock)
 
