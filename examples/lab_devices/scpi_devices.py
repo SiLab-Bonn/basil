@@ -18,7 +18,7 @@ from basil.dut import Dut
 dut = Dut('keithley2400_pyserial.yaml')
 dut.init()
 print dut['Sourcemeter'].get_name()
-
+  
 # Talk to a Keithley device via serial port using VISA with Serial interface
 dut = Dut('keithley2400_pyvisa.yaml')
 dut.init()
