@@ -46,12 +46,12 @@ class scpi(HardwareLayer):
     def __getattr__(self, name):
         '''called only on last resort if there are no attributes in the instance that match the name
         '''
-        if name not in self._scpi_commands:
-            raise ValueError('SCPI command %s is not defined for %s' % (name, self.__class__))
-
         def method(*args, **kwargs):
             channel = kwargs.pop('channel', None)
-            command = self._scpi_commands['channel'][str(channel)][name] if channel is not None else self._scpi_commands[name]
+            try:
+                command = self._scpi_commands['channel %s' % channel][name] if channel is not None else self._scpi_commands[name]
+            except:
+                raise ValueError('SCPI command %s is not defined for %s' % (name, self.__class__))
             name_split = name.split('_', 1)
             if len(name_split) == 1:
                 self._intf.write(command)
