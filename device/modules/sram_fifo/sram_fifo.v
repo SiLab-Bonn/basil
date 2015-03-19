@@ -17,32 +17,32 @@ module sram_fifo
 ) (
 //    input                   BUS_CLK270,
     
-    input                   BUS_CLK,
-    input                   BUS_RST,
-    input  [15:0]           BUS_ADD,
-    inout  [7:0]            BUS_DATA,
-    input                   BUS_RD,
-    input                   BUS_WR,
+    input wire                  BUS_CLK,
+    input wire                  BUS_RST,
+    input wire [15:0]           BUS_ADD,
+    inout wire [7:0]            BUS_DATA,
+    input wire                  BUS_RD,
+    input wire                  BUS_WR,
     
-    output  [19:0]          SRAM_A,
-    inout  [15:0]           SRAM_IO,
-    output                  SRAM_BHE_B,
-    output                  SRAM_BLE_B,
-    output                  SRAM_CE1_B,
-    output                  SRAM_OE_B,
-    output                  SRAM_WE_B,
+    output wire [19:0]          SRAM_A,
+    inout wire [15:0]           SRAM_IO,
+    output wire                 SRAM_BHE_B,
+    output wire                 SRAM_BLE_B,
+    output wire                 SRAM_CE1_B,
+    output wire                 SRAM_OE_B,
+    output wire                 SRAM_WE_B,
     
-    input                   USB_READ,
-    output  [7:0]           USB_DATA,
+    input wire                  USB_READ,
+    output wire [7:0]           USB_DATA,
     
-    output                  FIFO_READ_NEXT_OUT,
-    input                   FIFO_EMPTY_IN,
-    input  [31:0]           FIFO_DATA,
+    output wire                 FIFO_READ_NEXT_OUT,
+    input wire                  FIFO_EMPTY_IN,
+    input wire [31:0]           FIFO_DATA,
     
-    output                  FIFO_NOT_EMPTY,
-    output                  FIFO_FULL,
-    output                  FIFO_NEAR_FULL,
-    output                  FIFO_READ_ERROR
+    output wire                 FIFO_NOT_EMPTY,
+    output wire                 FIFO_FULL,
+    output wire                 FIFO_NEAR_FULL,
+    output wire                 FIFO_READ_ERROR
 );
 
 wire IP_RD, IP_WR;

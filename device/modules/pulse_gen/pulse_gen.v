@@ -20,9 +20,9 @@ module pulse_gen
     input wire                  BUS_RD,
     input wire                  BUS_WR,
     
-    input wire PULSE_CLK,
-    input wire EXT_START,
-    output PULSE
+    input wire  PULSE_CLK,
+    input wire  EXT_START,
+    output wire PULSE
 ); 
 
 wire IP_RD, IP_WR;

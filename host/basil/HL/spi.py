@@ -101,9 +101,11 @@ class spi(RegisterHardwareLayer):
         '''
         if addr is None:
             addr = self._mem_bytes
+
         if size and self._mem_bytes < size:
             raise ValueError('Size is too big')
-        if not size:
+
+        if size is None:
             return self._intf.read(self._conf['base_addr'] + self._spi_mem_offset + addr, self._mem_bytes)
         else:
             return self._intf.read(self._conf['base_addr'] + self._spi_mem_offset + addr, size)
