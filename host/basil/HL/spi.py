@@ -17,9 +17,9 @@ class spi(RegisterHardwareLayer):
                   'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'SIZE': {'descr': {'addr': 3, 'size': 16}},
-                  'WAIT': {'descr': {'addr': 5, 'size': 16}},
-                  'REPEAT': {'descr': {'addr': 7, 'size': 8}}}
-    _require_version = "==0"
+                  'WAIT': {'descr': {'addr': 5, 'size': 32}},
+                  'REPEAT': {'descr': {'addr': 9, 'size': 32}}}
+    _require_version = "==1"
 
     def __init__(self, intf, conf):
         super(spi, self).__init__(intf, conf)
