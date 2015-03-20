@@ -127,7 +127,7 @@ always @ (posedge BUS_CLK)
 begin
     if (RST | RX_RST_FLAG)
         decoder_err_cnt_buf <= 8'b0;
-    else if (BUS_ADD == 4)
+    else if (BUS_ADD == 5)
         decoder_err_cnt_buf <= decoder_err_cnt;
 end
 
@@ -135,7 +135,7 @@ always @ (posedge BUS_CLK)
 begin
     if (RST | RX_RST_FLAG)
         lost_err_cnt_buf <= 8'b0;
-    else if (BUS_ADD == 5)
+    else if (BUS_ADD == 6)
         lost_err_cnt_buf <= lost_err_cnt;
 end
 
