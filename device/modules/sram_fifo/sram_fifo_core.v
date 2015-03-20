@@ -79,7 +79,7 @@ begin
 end
 
 // read reg
-wire [21:0] CONF_SIZE_BYTE; // write data count, 1 - 2 - 3, in units of bytes
+wire [21:0] CONF_SIZE_BYTE, CONF_SIZE_BYTE_BUF; // write data count, 1 - 2 - 3, in units of bytes
 reg [7:0] CONF_READ_ERROR; // read error count (read attempts when FIFO is empty), 4
 reg [20:0] CONF_SIZE; // in units of 2 bytes (16 bit)
 assign CONF_SIZE_BYTE = CONF_SIZE * 2;
@@ -96,15 +96,20 @@ always @ (posedge BUS_CLK) begin //(*) begin
     else if(BUS_ADD == 4)
         BUS_DATA_OUT <= CONF_SIZE_BYTE[7:0]; // in units of bytes
     else if(BUS_ADD == 5)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE[15:8];
+        BUS_DATA_OUT <= CONF_SIZE_BYTE_BUF[15:8];
     else if(BUS_ADD == 6)
-        BUS_DATA_OUT <= {2'b0, CONF_SIZE_BYTE[21:16]};
+        BUS_DATA_OUT <= {2'b0, CONF_SIZE_BYTE_BUF[21:16]};
     else if(BUS_ADD == 7)
         BUS_DATA_OUT <= 8'b0; // used by BRAM FIFO module
     else
         BUS_DATA_OUT <= 8'b0;
 end
 
+always @ (posedge BUS_CLK)
+begin
+    if (BUS_ADD == 4 && BUS_RD)
+        CONF_SIZE_BYTE_BUF <= CONF_SIZE_BYTE;
+end
 
 reg                   FIFO_READ_NEXT_OUT_BUF;
 wire                  FIFO_EMPTY_IN_BUF;
