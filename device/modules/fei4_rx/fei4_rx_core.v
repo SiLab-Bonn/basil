@@ -80,9 +80,12 @@ wire RX_RST_FLAG;
 assign RX_RST_FLAG = ~RX_RST_FF2 & RX_RST_FF;
 
 wire ready_rec;
-wire [15:0] fifo_size, fifo_size_buf; // BUS_ADD==3, 4
-reg [7:0] decoder_err_cnt, decoder_err_cnt_buf; // BUS_ADD==5
-reg [7:0] lost_err_cnt, lost_err_cnt_buf; // BUS_ADD==6
+wire [15:0] fifo_size; // BUS_ADD==3, 4
+reg [15:0] fifo_size_buf;
+wire [7:0] decoder_err_cnt; // BUS_ADD==5
+reg [7:0] decoder_err_cnt_buf;
+wire [7:0] lost_err_cnt; // BUS_ADD==6
+reg [7:0] lost_err_cnt_buf;
 
 assign RX_READY = (ready_rec==1'b1) ? 1'b1 : 1'b0;
 assign RX_8B10B_DECODER_ERR = (decoder_err_cnt!=8'b0);

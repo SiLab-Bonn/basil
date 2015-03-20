@@ -74,7 +74,8 @@ begin
 end
 
 // read reg
-wire [31:0] CONF_SIZE_BYTE, CONF_SIZE_BYTE_BUF; // write data count, 1 - 2 - 3, in units of byte
+wire [31:0] CONF_SIZE_BYTE; // write data count, 1 - 2 - 3, in units of byte
+reg [31:0] CONF_SIZE_BYTE_BUF;
 reg [7:0] CONF_READ_ERROR; // read error count (read attempts when FIFO is empty), 4
 wire [31:0] CONF_SIZE; // in units of int
 assign CONF_SIZE_BYTE = CONF_SIZE * 4;
