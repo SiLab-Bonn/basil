@@ -189,6 +189,8 @@ always @ (posedge SPI_CLK)
         out_bit_cnt <= 1;
     else if(out_bit_cnt == STOP_BIT)
         out_bit_cnt <= 0;
+    else if(out_bit_cnt == CONF_BIT_OUT & REPEAT_COUNT == CONF_REPEAT & CONF_REPEAT!=0)
+        out_bit_cnt <= 0;
     else if(REP_START_DLY)
         out_bit_cnt <= 1;
     else if(out_bit_cnt != 0)
