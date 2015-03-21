@@ -103,7 +103,7 @@ class StdRegister(RegisterLayer):
             auto_start  : True  <------ add this
             fields: ......
         """
-        self._drv.set_data(self.to_bytes())
+        self._drv.set_data(self.tobytes())
         if "auto_start" in self._conf:
             if self._conf["auto_start"]:
                 self._drv.start()
@@ -147,6 +147,13 @@ class StdRegister(RegisterLayer):
     def _get_filed_config(self, field):
         return self._fields_conf[field]
 
-    def to_bytes(self):
+    def tobytes(self):
         reg = self._construct_reg()
         return utils.bitarray_to_byte_array(reg)
+    
+    def setall(self, value):
+        reg = self._construct_reg()
+        reg.setall(value)
+        self._deconstruct_reg(reg)
+
+        
