@@ -23,7 +23,7 @@ class spi(RegisterHardwareLayer):
 
     def __init__(self, intf, conf):
         super(spi, self).__init__(intf, conf)
-        self._spi_mem_offset = 8  # in bytes
+        self._spi_mem_offset = 16  # in bytes
 
         try:
             self._mem_bytes = conf['mem_bytes']

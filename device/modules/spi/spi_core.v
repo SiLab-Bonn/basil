@@ -32,7 +32,7 @@ module spi_core
 
 localparam VERSION = 1;
 
-reg [7:0] status_regs [16-1:0];
+reg [7:0] status_regs [15:0];
 
 wire RST;
 wire SOFT_RST;
@@ -82,8 +82,6 @@ assign CONF_WAIT = {status_regs[8], status_regs[7], status_regs[6], status_regs[
 wire [31:0] CONF_REPEAT;
 assign CONF_REPEAT = {status_regs[12], status_regs[11], status_regs[10], status_regs[9]};
 
-wire [7:0] BUS_STATUS_OUT;
-assign BUS_STATUS_OUT = status_regs[BUS_ADD];
 
 reg [7:0] BUS_DATA_OUT_REG;
 always@(posedge BUS_CLK) begin
@@ -91,28 +89,8 @@ always@(posedge BUS_CLK) begin
         BUS_DATA_OUT_REG <= VERSION;
     else if(BUS_ADD == 1)
         BUS_DATA_OUT_REG <= {7'b0,CONF_DONE};
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT_REG <= CONF_BIT_OUT[7:0];
-    else if(BUS_ADD == 4)
-        BUS_DATA_OUT_REG <= CONF_BIT_OUT[15:8];
-    else if(BUS_ADD == 5)
-        BUS_DATA_OUT_REG <= CONF_WAIT[7:0];
-    else if(BUS_ADD == 6)
-        BUS_DATA_OUT_REG <= CONF_WAIT[15:8];
-    else if(BUS_ADD == 7)
-        BUS_DATA_OUT_REG <= CONF_WAIT[23:16];
-    else if(BUS_ADD == 8)
-        BUS_DATA_OUT_REG <= CONF_WAIT[31:24];
-    else if(BUS_ADD == 9)
-        BUS_DATA_OUT_REG <= CONF_REPEAT[7:0];
-    else if(BUS_ADD == 10)
-        BUS_DATA_OUT_REG <= CONF_REPEAT[15:8];
-    else if(BUS_ADD == 11)
-        BUS_DATA_OUT_REG <= CONF_REPEAT[23:16];
-    else if(BUS_ADD == 12)
-        BUS_DATA_OUT_REG <= CONF_REPEAT[31:24];
     else if (BUS_ADD < 16)
-        BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
+        BUS_DATA_OUT_REG <= status_regs[BUS_ADD[3:0]];
 end
 
 // if one has a synchronous memory need this to give data on next clock after read
@@ -220,9 +198,11 @@ always @ (posedge SPI_CLK)
     else if(START_SYNC)
         out_bit_cnt <= 1;
     else if(out_bit_cnt == STOP_BIT)
+         out_bit_cnt <= 0;
+    else if(out_bit_cnt == CONF_BIT_OUT & REPEAT_COUNT == CONF_REPEAT & CONF_REPEAT!=0)
         out_bit_cnt <= 0;
-    else if(REP_START_DLY)
-        out_bit_cnt <= 1;
+     else if(REP_START_DLY)
+         out_bit_cnt <= 1;
     else if(out_bit_cnt != 0)
         out_bit_cnt <= out_bit_cnt + 1;
 
