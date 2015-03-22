@@ -17,6 +17,8 @@ cnfg_yaml = """
 transfer_layer:
     - name  : dummy_tl
       type  : Dummy
+      init:
+          mem : [1] # module version for init of spi
 
 hw_drivers:
   - name      : spi_module
@@ -73,96 +75,98 @@ class TestClass(unittest.TestCase):
         self.dut['TEST1'].write()
         mem = dict()
 # mem[0] = 0  # reset
-        mem[8] = 0  # has an offset of 8 bytes
-        mem[9] = 0
-        mem[10] = 0
-        mem[11] = 0
+#         mem[0] = 1
+        mem[16] = 0  # has an offset of 16 bytes
+        mem[17] = 0
+        mem[18] = 0
+        mem[19] = 0
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST1'][0] = 1
         self.dut['TEST1'].write()
-        mem[11] = 1
+        mem[19] = 1
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST1'][31] = 1
         self.dut['TEST1'].write()
-        mem[8] = 0x80
+        mem[16] = 0x80
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST1'] = 0
         self.dut['TEST1'].write()
-        mem[8] = 0
-        mem[11] = 0
+        mem[16] = 0
+        mem[19] = 0
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST1'] = 0xa55a8001
         self.dut['TEST1'].write()
-        mem[8] = 0xa5
-        mem[9] = 0x5a
-        mem[10] = 0x80
-        mem[11] = 0x01
+        mem[16] = 0xa5
+        mem[17] = 0x5a
+        mem[18] = 0x80
+        mem[19] = 0x01
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST1'] = 0
         self.dut['TEST1'][11:4] = 0xff
         self.dut['TEST1'].write()
-        mem[8] = 0x0
-        mem[9] = 0x0
-        mem[10] = 0x0f
-        mem[11] = 0xf0
+        mem[16] = 0x0
+        mem[17] = 0x0
+        mem[18] = 0x0f
+        mem[19] = 0xf0
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST1'] = 0
         self.dut['TEST1'][11:4] = '10000001'
         self.dut['TEST1'].write()
-        mem[8] = 0x0
-        mem[9] = 0x0
-        mem[10] = 0x08
-        mem[11] = 0x10
+        mem[16] = 0x0
+        mem[17] = 0x0
+        mem[18] = 0x08
+        mem[19] = 0x10
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST1'] = 0
         self.dut['TEST1'][11:4] = bitarray('00011000')
         self.dut['TEST1'].write()
-        mem[8] = 0x0
-        mem[9] = 0x0
-        mem[10] = 0x01
-        mem[11] = 0x80
+        mem[16] = 0x0
+        mem[17] = 0x0
+        mem[18] = 0x01
+        mem[19] = 0x80
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
     def test_bit_order(self):
         self.dut['TEST2'].write()
         mem = dict()
 # mem[0] = 0  # reset
-        mem[8] = 0
-        mem[9] = 0
-        mem[10] = 0
+        mem[0] = 1
+        mem[16] = 0
+        mem[17] = 0
+        mem[18] = 0
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST2']['VINJECT'] = 0x01
         self.dut['TEST2'].write()
-        mem[8] = 0x08
+        mem[16] = 0x08
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST2']['VINJECT'] = 0x02
         self.dut['TEST2'].write()
-        mem[8] = 0x10
+        mem[16] = 0x10
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST2']['VINJECT'] = 0x04
         self.dut['TEST2'].write()
-        mem[8] = 0x04
+        mem[16] = 0x04
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST2']['VINJECT'] = 0x08
         self.dut['TEST2'].write()
-        mem[8] = 0x20
+        mem[16] = 0x20
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST2']['VINJECT'] = 0
         self.dut['TEST2']['VINJECT'][0] = 1
         self.dut['TEST2'].write()
-        mem[8] = 0x04
+        mem[16] = 0x04
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
     def test_repeat(self):
@@ -172,19 +176,20 @@ class TestClass(unittest.TestCase):
         self.dut['TEST2']['VPULSE'] = 0
         self.dut['TEST2'].write()
         mem = dict()
-        mem[8] = 0
-        mem[9] = 0
-        mem[10] = 0
+#         mem[0] = 1
+        mem[16] = 0
+        mem[17] = 0
+        mem[18] = 0
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST2']['COLUMN'][0]['EnR'] = 1
         self.dut['TEST2'].write()
-        mem[9] = 0x02
+        mem[17] = 0x02
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST2']['COLUMN'][1]['DACR'] = 1
         self.dut['TEST2'].write()
-        mem[10] = 0x10
+        mem[18] = 0x10
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
     def test_default(self):
@@ -193,9 +198,10 @@ class TestClass(unittest.TestCase):
         self.dut.init()
         mem = dict()
 # mem[0] = 0  # reset
-        mem[8] = 0x08
-        mem[9] = 0
-        mem[10] = 0
+        mem[0] = 1
+        mem[16] = 0x08
+        mem[17] = 0
+        mem[18] = 0
         self.dut['TEST2'].write()
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
@@ -205,41 +211,42 @@ class TestClass(unittest.TestCase):
         self.dut['TEST2']['VPULSE'] = 0
         self.dut['TEST2'].write()
         mem = dict()
-        mem[8] = 0
-        mem[9] = 0
-        mem[10] = 0
+#         mem[0] = 1
+        mem[16] = 0
+        mem[17] = 0
+        mem[18] = 0
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST2']['VPULSE'] = 0x5
         self.dut['TEST2'].write()
         mem = dict()
-        mem[8] = 0
-        mem[9] = 0x50
-        mem[10] = 0
+        mem[16] = 0
+        mem[17] = 0x50
+        mem[18] = 0
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST2']['VPULSE'] = bitarray('100001')
         self.dut['TEST2'].write()
         mem = dict()
-        mem[8] = 0x02
-        mem[9] = 0x10
-        mem[10] = 0
+        mem[16] = 0x02
+        mem[17] = 0x10
+        mem[18] = 0
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST2']['VPULSE'] = '100001'
         self.dut['TEST2'].write()
         mem = dict()
-        mem[8] = 0x02
-        mem[9] = 0x10
-        mem[10] = 0
+        mem[16] = 0x02
+        mem[17] = 0x10
+        mem[18] = 0
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST2']['VPULSE'] = 0b100011
         self.dut['TEST2'].write()
         mem = dict()
-        mem[8] = 0x02
-        mem[9] = 0x30
-        mem[10] = 0
+        mem[16] = 0x02
+        mem[17] = 0x30
+        mem[18] = 0
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
 
