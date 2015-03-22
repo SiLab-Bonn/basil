@@ -13,11 +13,11 @@ Parameters
     +--------------+---------------------+-----------------------------------------------------------------+ 
     | Name         | Default             | Description                                                     | 
     +==============+=====================+=================================================================+ 
-    | IO_WIDTH     | 0                   | Defines io width in bits                                        | 
+    | IO_WIDTH     | 8                   | Defines io width in bits                                        | 
     +--------------+---------------------+-----------------------------------------------------------------+ 
-    | IO_DIRECTION | 8'h00               | Defines direction for every pin separate, 0 - input, 1 - output |
+    | IO_DIRECTION | 0                   | Defines direction for every pin separate, 0 - input, 1 - output |
     +--------------+---------------------+-----------------------------------------------------------------+ 
-    | IO_TRI       | 8h00                | instantiate tri-state buffer for given pin                      |
+    | IO_TRI       | 0                   | instantiate tri-state buffer for given pin                      |
     +--------------+---------------------+-----------------------------------------------------------------+ 
 
 Pins

@@ -77,8 +77,6 @@ assign CONF_WAIT = {status_regs[6],status_regs[5]};
 wire [7:0] CONF_REPEAT;
 assign CONF_REPEAT = status_regs[7];
 
-wire [7:0] BUS_STATUS_OUT;
-assign BUS_STATUS_OUT = status_regs[BUS_ADD];
 
 reg [7:0] BUS_DATA_OUT_REG;
 always@(posedge BUS_CLK) begin
@@ -97,7 +95,7 @@ always@(posedge BUS_CLK) begin
     else if(BUS_ADD == 7)
         BUS_DATA_OUT_REG <= CONF_REPEAT;
     else if(BUS_ADD < 8)
-        BUS_DATA_OUT_REG <= BUS_STATUS_OUT;     
+        BUS_DATA_OUT_REG <= status_regs[BUS_ADD[2:0]];     
 end
 
 // if one has a synchronous memory need this to give data on next clock after read
@@ -188,6 +186,8 @@ always @ (posedge SPI_CLK)
     else if(START_SYNC)
         out_bit_cnt <= 1;
     else if(out_bit_cnt == STOP_BIT)
+        out_bit_cnt <= 0;
+    else if(out_bit_cnt == CONF_BIT_OUT & REPEAT_COUNT == CONF_REPEAT & CONF_REPEAT!=0)
         out_bit_cnt <= 0;
     else if(REP_START_DLY)
         out_bit_cnt <= 1;
