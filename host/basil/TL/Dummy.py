@@ -22,8 +22,13 @@ class Dummy(SiTransferLayer):
     def init(self):
         logging.debug(
             "Dummy SiTransferLayer.init configuration: %s" % str(self._conf))
-        self.mem = {}
-
+        if 'mem' in self._init:
+            if isinstance(self._init['mem'], dict):
+                self.mem = self._init['mem']
+            else:
+                self.mem = {i: j for i, j in enumerate(self._init['mem'])}
+        else:
+            self.mem = {}
     def write(self, addr, data):
         '''Write to dummy memory
 
