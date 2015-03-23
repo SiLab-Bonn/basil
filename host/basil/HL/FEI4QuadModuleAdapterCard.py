@@ -211,5 +211,16 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
         return (self._ch_cal[channel]['NTC']['B_NTC'] * self.T_KELVIN_25) / (self._ch_cal[channel]['NTC']['B_NTC'] + self.T_KELVIN_25 * log(r_ntc / self._ch_cal[channel]['NTC']['R_NTC_25'])) - self.T_KELVIN_0  # NTC temperature
 
     def set_current_limit(self, channel, value, unit='A'):
-        value = ((value - self._ch_cal[channel]['DACI']['offset']) / self._ch_cal[channel]['DACI']['gain'])
+        dac_offset = self._ch_cal[channel]['DACI']['offset']
+        dac_gain = self._ch_cal[channel]['DACI']['gain']
+
+        if unit == 'raw':
+            value = value
+        elif unit == 'A':
+            value = int((value - dac_offset) / dac_gain)
+        elif unit == 'mA':
+            value = int((value / 1000 - dac_offset) / dac_gain)
+        else:
+            raise TypeError("Invalid unit type.")
+
         DacMax5380._set_dac_value(self, channel, value)
