@@ -96,3 +96,7 @@ class sram_fifo(RegisterHardwareLayer):
             return np.fromstring(self._intf.read(self._conf['base_data_addr'], size=4 * fifo_int_size).tostring(), dtype=np.dtype('<u4'))  # size in number of bytes
         else:
             return np.array([], dtype=np.dtype('<u4'))
+
+    def get_size(self):
+        return self.FIFO_SIZE
+        
