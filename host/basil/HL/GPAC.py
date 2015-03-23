@@ -310,6 +310,7 @@ class GPAC(HardwareLayer):
 
     def __init__(self, intf, conf):
         super(GPAC, self).__init__(intf, conf)
+        self._base_addr = conf['base_addr']
 
     def init(self):
         # PWR GPIO
@@ -418,8 +419,8 @@ class GPAC(HardwareLayer):
     def set_current_limit(self, channel, value, unit='mA'):
 
         # TODO: add units / calibration
-        CURRENT_LIMIT_GAIN = 20
-        raw = value * CURRENT_LIMIT_GAIN
+        CURRENT_LIMIT_GAIN = 20.0
+        raw = int(value * CURRENT_LIMIT_GAIN)
 
         self.SetDACValue(self.CURRENT_LIMIT_DAC_SLAVE_ADD, self.CURRENT_LIMIT_DAC_CH, raw)
 
