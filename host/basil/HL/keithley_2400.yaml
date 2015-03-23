@@ -8,6 +8,3 @@ get_current : MEAS:CURR?
 set_current_limit : SENS:CURR:PROT
 set_voltage : SOUR:VOLT
 get_voltage : MEAS:VOLT?
-
-
-

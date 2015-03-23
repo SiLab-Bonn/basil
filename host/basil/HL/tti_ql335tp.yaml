@@ -36,5 +36,3 @@ channel 3:
     get_current : I3O?
     set_voltage : V3
     get_voltage : V3O?
-
-

@@ -201,11 +201,11 @@ always @ (posedge SPI_CLK)
     else if(START_SYNC)
         out_bit_cnt <= 1;
     else if(out_bit_cnt == STOP_BIT)
-         out_bit_cnt <= 0;
-    else if(out_bit_cnt == CONF_BIT_OUT & REPEAT_COUNT == CONF_REPEAT & CONF_REPEAT!=0)
         out_bit_cnt <= 0;
-     else if(REP_START_DLY)
-         out_bit_cnt <= 1;
+    //else if(out_bit_cnt == CONF_BIT_OUT & REPEAT_COUNT == CONF_REPEAT & CONF_REPEAT!=0)
+    //    out_bit_cnt <= 0;
+    else if(REP_START_DLY)
+        out_bit_cnt <= 1;
     else if(out_bit_cnt != 0)
         out_bit_cnt <= out_bit_cnt + 1;
 
@@ -225,7 +225,7 @@ end
 always @(posedge SPI_CLK)
     SLD <= (sync_ld[1]==1 && sync_ld[0]==0);
 
-wire DONE = SLD && REPEAT_COUNT >= CONF_REPEAT;
+wire DONE = out_bit_cnt == STOP_BIT && REPEAT_COUNT >= CONF_REPEAT;
 wire DONE_SYNC;
 cdc_pulse_sync done_pulse_sync (.clk_in(SPI_CLK), .pulse_in(DONE), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
 

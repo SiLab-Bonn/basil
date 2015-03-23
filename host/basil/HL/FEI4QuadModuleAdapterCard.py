@@ -72,36 +72,36 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
     T_KELVIN_0 = 273.15
     T_KELVIN_25 = (25.0 + T_KELVIN_0)
 
+    # Channel mappings
+    _ch_map = {
+        'CH1':
+            {'DACV': {'channel': 0xf8},
+             'ADCV': {'channel': 0},
+             'ADCI': {'channel': 1},
+             'NTC': {'channel': 8}
+             },
+        'CH2':
+            {'DACV': {'channel': 0xf9},
+             'ADCV': {'channel': 2},
+             'ADCI': {'channel': 3},
+             'NTC': {'channel': 9}
+             },
+        'CH3':
+            {'DACV': {'channel': 0xfa},
+             'ADCV': {'channel': 4},
+             'ADCI': {'channel': 5},
+             'NTC': {'channel': 10}
+             },
+        'CH4':
+            {'DACV': {'channel': 0xfb},
+             'ADCV': {'channel': 6},
+             'ADCI': {'channel': 7},
+             'NTC': {'channel': 11}
+             }
+    }
+
     def __init__(self, intf, conf):
         super(FEI4QuadModuleAdapterCard, self).__init__(intf, conf)
-
-        # Channel mappings
-        self._ch_map = OrderedDict([
-            ('CH1',
-             {'DACV': {'channel': 0xf8},
-              'ADCV': {'channel': 0},
-              'ADCI': {'channel': 1},
-              'NTC': {'channel': 8}
-              }),
-            ('CH2',
-             {'DACV': {'channel': 0xf9},
-              'ADCV': {'channel': 2},
-              'ADCI': {'channel': 3},
-              'NTC': {'channel': 9}
-              }),
-            ('CH3',
-             {'DACV': {'channel': 0xfa},
-              'ADCV': {'channel': 4},
-              'ADCI': {'channel': 5},
-              'NTC': {'channel': 10}
-              }),
-            ('CH4',
-             {'DACV': {'channel': 0xfb},
-              'ADCV': {'channel': 6},
-              'ADCI': {'channel': 7},
-              'NTC': {'channel': 11}
-              })
-        ])
 
         # Channel calibrations
         self._ch_cal = OrderedDict([
@@ -147,6 +147,7 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
         logging.info('Found adapter card: {}'.format('%s with ID %s' % ('Quad Module Adapter Card', self.get_id())))
         self._setup_adc(self.SETUP_FLAGS_BI)
         self.read_eeprom_calibration()
+        self.set_current_limit('CH0', 1.0)
 
     def read_eeprom_calibration(self, temperature=False):  # use default values for temperature, EEPROM values are usually not calibrated and random
         '''Reading EEPROM calibration for power regulators and temperature
@@ -157,7 +158,7 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
             for idx, channel in enumerate(self._ch_cal.iterkeys()):
                 ch_data = data[idx * calcsize(self.CAL_DATA_CH_V2_FORMAT):(idx + 1) * calcsize(self.CAL_DATA_CH_V2_FORMAT)]
                 values = unpack_from(self.CAL_DATA_CH_V2_FORMAT, ch_data)
-                self._ch_cal[channel]['name'] = "".join([c for c in values[0] if c in string.letters or c in string.whitespace])  # values[0].strip()
+                self._ch_cal[channel]['name'] = "".join([c for c in values[0] if (c in string.printable)])  # values[0].strip()
                 self._ch_cal[channel]['default'] = values[1]
                 self._ch_cal[channel]['ADCI']['gain'] = values[2]
                 self._ch_cal[channel]['ADCI']['offset'] = values[3]
@@ -180,27 +181,27 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
     def get_temperature(self, channel):
         '''Reading temperature
         '''
-#         NTC type SEMITEC 103KT1608 http://www.semitec.co.jp/english/products/pdf/KT_Thermistor.pdf
-#
-#         R_NTC = R_25 * exp(B_NTC * (1/T - 1/T_25))
-#
-#         R_NTC       measured NTC resistance
-#         R_NTC_25    resistance @ 25C
-#         B_NTC       temperature coefficient
-#         Temperature current temperature (Kelvin)
-#         T_25        298,15 K (25C)
-#
-#         B_NTC       NTC 'b' coefficient, NTC Semitec 103KT1608-1P
-#         R_NTC_25    NTC 25C resistance, NTC Semitec 103KT1608-1P
-#         R1          resistor value for NTC voltage divider
-#         R2          value of R2 in the reference voltage divider
-#         R4          value of R4 in the reference voltage divider
-#         VREF        supply voltage of the resistor bridge
-#
-#         Note:
-#         new NTC on FE-I4
-#         NTC type TDK NTCG163JF103FT1
-#
+        #         NTC type SEMITEC 103KT1608 http://www.semitec.co.jp/english/products/pdf/KT_Thermistor.pdf
+        #
+        #         R_NTC = R_25 * exp(B_NTC * (1/T - 1/T_25))
+        #
+        #         R_NTC       measured NTC resistance
+        #         R_NTC_25    resistance @ 25C
+        #         B_NTC       temperature coefficient
+        #         Temperature current temperature (Kelvin)
+        #         T_25        298,15 K (25C)
+        #
+        #         B_NTC       NTC 'b' coefficient, NTC Semitec 103KT1608-1P
+        #         R_NTC_25    NTC 25C resistance, NTC Semitec 103KT1608-1P
+        #         R1          resistor value for NTC voltage divider
+        #         R2          value of R2 in the reference voltage divider
+        #         R4          value of R4 in the reference voltage divider
+        #         VREF        supply voltage of the resistor bridge
+        #
+        #         Note:
+        #         new NTC on FE-I4
+        #         NTC type TDK NTCG163JF103FT1
+        #
         kwargs = self._ch_map[channel]['NTC']
         temp_raw = self._get_adc_value(**kwargs)
 
@@ -211,5 +212,20 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
         return (self._ch_cal[channel]['NTC']['B_NTC'] * self.T_KELVIN_25) / (self._ch_cal[channel]['NTC']['B_NTC'] + self.T_KELVIN_25 * log(r_ntc / self._ch_cal[channel]['NTC']['R_NTC_25'])) - self.T_KELVIN_0  # NTC temperature
 
     def set_current_limit(self, channel, value, unit='A'):
-        value = ((value - self._ch_cal[channel]['DACI']['offset']) / self._ch_cal[channel]['DACI']['gain'])
+        '''Setting current limit
+
+        Note: same limit for all channels.
+        '''
+        dac_offset = self._ch_cal[channel]['DACI']['offset']
+        dac_gain = self._ch_cal[channel]['DACI']['gain']
+
+        if unit == 'raw':
+            value = value
+        elif unit == 'A':
+            value = int((value - dac_offset) / dac_gain)
+        elif unit == 'mA':
+            value = int((value / 1000 - dac_offset) / dac_gain)
+        else:
+            raise TypeError("Invalid unit type.")
+
         DacMax5380._set_dac_value(self, channel, value)

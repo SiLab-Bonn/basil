@@ -3,6 +3,3 @@ identifier : ERROR
 set_on : "!OUT"
 get_on : "?OUT"
 get_frequency : "?FREQ"
-
-
-
