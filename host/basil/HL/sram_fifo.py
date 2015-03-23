@@ -91,7 +91,7 @@ class sram_fifo(RegisterHardwareLayer):
         array : numpy.ndarray
             Array of unsigned integers (32 bit).
         '''
-        fifo_int_size = self.get_fifo_int_size()
+        fifo_int_size = self.FIFO_INT_SIZE
         if fifo_int_size:
             return np.fromstring(self._intf.read(self._conf['base_data_addr'], size=4 * fifo_int_size).tostring(), dtype=np.dtype('<u4'))  # size in number of bytes
         else:
