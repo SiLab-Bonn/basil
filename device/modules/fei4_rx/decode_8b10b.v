@@ -19,10 +19,10 @@
 `default_nettype none
 
 module decode_8b10b (datain, dispin, dataout, dispout, code_err, disp_err) ;
-  input [9:0]   datain ;
+  input wire [9:0]   datain ;
   input wire    dispin ;
-  output [8:0]  dataout ;
-  output        dispout ;
+  output wire [8:0]  dataout ;
+  output wire       dispout ;
   output wire   code_err ;
   output wire   disp_err ;
 
@@ -108,7 +108,7 @@ module decode_8b10b (datain, dispin, dataout, dispout, code_err, disp_err) ;
   wire fghjp31 = ( (!feqg) & hi & ji) |
 		 ( !heqj & fi & gi) ;
 
-  wire dispout = (fghjp31 | (disp6b & fghj22) | (hi & ji)) & (hi | ji) ;
+  assign dispout = (fghjp31 | (disp6b & fghj22) | (hi & ji)) & (hi | ji) ;
 
   wire ko = ( (ci & di & ei & ii) | ( !ci & !di & !ei & !ii) |
 		(p13 & !ei & ii & gi & hi & ji) |
