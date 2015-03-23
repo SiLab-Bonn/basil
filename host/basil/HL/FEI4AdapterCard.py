@@ -128,10 +128,10 @@ class Fei4Dcs(object):
     ID_ADDR = HEADER_ADDR + calcsize(HEADER_FORMAT)
     ID_FORMAT = '>H'  # Adapter Card ID
 
-    def __init__(self):
-        # Channel mappings
-        self._ch_map = None
+    # Channel mappings
+    _ch_map = None
 
+    def __init__(self):
         # Channel calibrations
         self._ch_cal = None
 
@@ -144,22 +144,19 @@ class Fei4Dcs(object):
             self.set_voltage(channel, self._ch_cal[channel]['default'], unit='V')
 
     def set_voltage(self, channel, value, unit='V'):
-        DACOffset = self._ch_cal[channel]['DACV']['offset']
-        DACGain = self._ch_cal[channel]['DACV']['gain']
+        dac_offset = self._ch_cal[channel]['DACV']['offset']
+        dac_gain = self._ch_cal[channel]['DACV']['gain']
 
-        DACval = 0
         if unit == 'raw':
-            DACval = value
+            value = value
         elif unit == 'V':
-            DACval = int((value - DACOffset) / DACGain)
+            value = int((value - dac_offset) / dac_gain)
         elif unit == 'mV':
-            DACval = int((value / 1000 - DACOffset) / DACGain)
+            value = int((value / 1000 - dac_offset) / dac_gain)
         else:
             raise TypeError("Invalid unit type.")
 
-        kwargs = self._ch_map[channel]['DACV']
-        kwargs['value'] = DACval
-        self._set_dac_value(**kwargs)
+        self._set_dac_value(value=value, **self._ch_map[channel]['DACV'])
 
     def get_voltage(self, channel, unit='V'):
         kwargs = self._ch_map[channel]['ADCV']
@@ -233,44 +230,44 @@ class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
     T_KELVIN_0 = 273.15
     T_KELVIN_25 = (25.0 + T_KELVIN_0)
 
+    # Channel mappings
+    _ch_map = {
+        'VDDA1':
+            {'DACV': {'channel': 3},
+             'ADCV': {'channel': 0},
+             'ADCI': {'channel': 1},
+             'NTC1': {'channel': 8},
+             'NTC2': {'channel': 9},
+             'VNTC': {'channel': 10}
+             },
+        'VDDA2':
+            {'DACV': {'channel': 0},
+             'ADCV': {'channel': 2},
+             'ADCI': {'channel': 3},
+             'NTC1': {'channel': 8},
+             'NTC2': {'channel': 9},
+             'VNTC': {'channel': 10}
+             },
+        'VDDD1':
+            {'DACV': {'channel': 1},
+             'ADCV': {'channel': 4},
+             'ADCI': {'channel': 5},
+             'NTC1': {'channel': 8},
+             'NTC2': {'channel': 9},
+             'VNTC': {'channel': 10}
+             },
+        'VDDD2':
+            {'DACV': {'channel': 2},
+             'ADCV': {'channel': 6},
+             'ADCI': {'channel': 7},
+             'NTC1': {'channel': 8},
+             'NTC2': {'channel': 9},
+             'VNTC': {'channel': 10}
+             }
+    }
+
     def __init__(self, intf, conf):
         super(FEI4AdapterCard, self).__init__(intf, conf)
-
-        # Channel mappings
-        self._ch_map = OrderedDict([
-            ('VDDA1',
-             {'DACV': {'channel': 3},
-              'ADCV': {'channel': 0},
-              'ADCI': {'channel': 1},
-              'NTC1': {'channel': 8},
-              'NTC2': {'channel': 9},
-              'VNTC': {'channel': 10}
-              }),
-            ('VDDA2',
-             {'DACV': {'channel': 0},
-              'ADCV': {'channel': 2},
-              'ADCI': {'channel': 3},
-              'NTC1': {'channel': 8},
-              'NTC2': {'channel': 9},
-              'VNTC': {'channel': 10}
-              }),
-            ('VDDD1',
-             {'DACV': {'channel': 1},
-              'ADCV': {'channel': 4},
-              'ADCI': {'channel': 5},
-              'NTC1': {'channel': 8},
-              'NTC2': {'channel': 9},
-              'VNTC': {'channel': 10}
-              }),
-            ('VDDD2',
-             {'DACV': {'channel': 2},
-              'ADCV': {'channel': 6},
-              'ADCI': {'channel': 7},
-              'NTC1': {'channel': 8},
-              'NTC2': {'channel': 9},
-              'VNTC': {'channel': 10}
-              })
-        ])
 
         # Channel calibrations
         self._ch_cal = OrderedDict([
