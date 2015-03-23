@@ -18,14 +18,13 @@ transfer_layer:
     - name  : dummy_tl
       type  : Dummy
       init:
-          mem : [1] # module version for init of spi
+          mem : {0: 1, 13: 4} # module version for init of spi and mem bytes
 
 hw_drivers:
   - name      : spi_module
     type      : spi
     interface : dummy_tl
     base_addr : 0x0
-    mem_bytes : 4
 
 registers:
   - name        : TEST1
@@ -70,6 +69,11 @@ class TestClass(unittest.TestCase):
         cls.cnfg = yaml.load(cnfg_yaml)
         cls.dut = Dut(cls.cnfg)
         cls.dut.init()
+
+    def test_mem_bytes(self):
+        self.dut.init()
+        self.assertEqual(4, self.dut['spi_module'].MEM_BYTES)
+        self.assertRaises(ValueError, self.dut['spi_module'].set_data, [1, 2, 3, 4, 5])
 
     def test_init_simple(self):
         self.dut['TEST1'].write()
@@ -138,6 +142,7 @@ class TestClass(unittest.TestCase):
         mem = dict()
 # mem[0] = 0  # reset
         mem[0] = 1
+        mem[13] = 4
         mem[16] = 0
         mem[17] = 0
         mem[18] = 0
@@ -199,6 +204,7 @@ class TestClass(unittest.TestCase):
         mem = dict()
 # mem[0] = 0  # reset
         mem[0] = 1
+        mem[13] = 4
         mem[16] = 0x08
         mem[17] = 0
         mem[18] = 0
@@ -248,6 +254,7 @@ class TestClass(unittest.TestCase):
         mem[17] = 0x30
         mem[18] = 0
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
+
 
 
 if __name__ == '__main__':

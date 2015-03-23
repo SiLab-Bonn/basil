@@ -18,17 +18,17 @@ class spi(RegisterHardwareLayer):
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'SIZE': {'descr': {'addr': 3, 'size': 16}},
                   'WAIT': {'descr': {'addr': 5, 'size': 32}},
-                  'REPEAT': {'descr': {'addr': 9, 'size': 32}}}
+                  'REPEAT': {'descr': {'addr': 9, 'size': 32}},
+                  'MEM_BYTES': {'descr': {'addr': 13, 'size': 16, 'properties': ['ro']}}}
     _require_version = "==1"
 
     def __init__(self, intf, conf):
         super(spi, self).__init__(intf, conf)
         self._spi_mem_offset = 16  # in bytes
 
-        try:
-            self._mem_bytes = conf['mem_bytes']
-        except KeyError:
-            raise KeyError("No mem_bytes property set - required!")
+    def init(self):
+        super(spi, self).init()
+        self._mem_bytes = self.MEM_BYTES
 
     def reset(self):
         '''Soft reset the module.'''
@@ -84,7 +84,10 @@ class spi(RegisterHardwareLayer):
 
     @property
     def is_ready(self):
-        return self.READY == 1
+        return self.READY
+
+    def get_mem_size(self):
+        return self.MEM_BYTES
 
     def set_data(self, data, addr=0):
         '''
@@ -99,8 +102,11 @@ class spi(RegisterHardwareLayer):
         '''
         Gets data for incoming stream
         '''
+        # readback memory offset
         if addr is None:
             addr = self._mem_bytes
+        else:
+            addr = self._mem_bytes + addr
 
         if size and self._mem_bytes < size:
             raise ValueError('Size is too big')

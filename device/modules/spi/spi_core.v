@@ -10,7 +10,7 @@
 module spi_core
 #(
     parameter ABUSWIDTH = 16,
-    parameter MEM_BYTES = 2
+    parameter MEM_BYTES = 16
 )(
     input wire                      BUS_CLK,
     input wire                      BUS_RST,
@@ -18,7 +18,7 @@ module spi_core
     input wire     [7:0]            BUS_DATA_IN,
     input wire                      BUS_RD,
     input wire                      BUS_WR,
-    output reg [7:0]            BUS_DATA_OUT,
+    output reg [7:0]                BUS_DATA_OUT,
     
     input wire SPI_CLK,
     
@@ -82,13 +82,16 @@ assign CONF_WAIT = {status_regs[8], status_regs[7], status_regs[6], status_regs[
 wire [31:0] CONF_REPEAT;
 assign CONF_REPEAT = {status_regs[12], status_regs[11], status_regs[10], status_regs[9]};
 
-
 reg [7:0] BUS_DATA_OUT_REG;
 always@(posedge BUS_CLK) begin
     if(BUS_ADD == 0)
         BUS_DATA_OUT_REG <= VERSION;
     else if(BUS_ADD == 1)
-        BUS_DATA_OUT_REG <= {7'b0,CONF_DONE};
+        BUS_DATA_OUT_REG <= {7'b0, CONF_DONE};
+    else if(BUS_ADD == 13)
+        BUS_DATA_OUT_REG <= MEM_BYTES[7:0];
+    else if(BUS_ADD == 14)
+        BUS_DATA_OUT_REG <= MEM_BYTES[15:8];
     else if (BUS_ADD < 16)
         BUS_DATA_OUT_REG <= status_regs[BUS_ADD[3:0]];
 end
