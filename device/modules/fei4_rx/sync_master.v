@@ -55,10 +55,30 @@ assign sdatab = {(bb0 && usebint)} ;
 assign sdatac = {(cc0 && usecint)} ;
 assign sdatad = {(dd0 && usedint)} ;
 
-SRL16 saa0(.D(az2), .CLK(clk), .A0(ctrlint[0]), .A1(ctrlint[1]), .A2(1'b0), .A3(1'b0), .Q(aa0));
-SRL16 sbb0(.D(bz2), .CLK(clk), .A0(ctrlint[0]), .A1(ctrlint[1]), .A2(1'b0), .A3(1'b0), .Q(bb0));
-SRL16 scc0(.D(cz2), .CLK(clk), .A0(ctrlint[0]), .A1(ctrlint[1]), .A2(1'b0), .A3(1'b0), .Q(cc0));
-SRL16 sdd0(.D(dz2), .CLK(clk), .A0(ctrlint[0]), .A1(ctrlint[1]), .A2(1'b0), .A3(1'b0), .Q(dd0));
+//SRL16 saa0(.D(az2), .CLK(clk), .A0(ctrlint[0]), .A1(ctrlint[1]), .A2(1'b0), .A3(1'b0), .Q(aa0));
+//SRL16 sbb0(.D(bz2), .CLK(clk), .A0(ctrlint[0]), .A1(ctrlint[1]), .A2(1'b0), .A3(1'b0), .Q(bb0));
+//SRL16 scc0(.D(cz2), .CLK(clk), .A0(ctrlint[0]), .A1(ctrlint[1]), .A2(1'b0), .A3(1'b0), .Q(cc0));
+//SRL16 sdd0(.D(dz2), .CLK(clk), .A0(ctrlint[0]), .A1(ctrlint[1]), .A2(1'b0), .A3(1'b0), .Q(dd0));
+
+reg data_az2[3:0];
+always@(posedge clk) 
+    data_az2[3:0] <= {data_az2[2:0], az2};
+assign aa0 = data_az2[ctrlint];
+
+reg data_bz2[3:0];
+always@(posedge clk) 
+    data_bz2[3:0] <= {data_bz2[2:0], bz2};
+assign bb0 = data_bz2[ctrlint];
+
+reg data_cz2[3:0];
+always@(posedge clk) 
+    data_cz2[3:0] <= {data_cz2[2:0], cz2};
+assign cc0 = data_cz2[ctrlint];
+
+reg data_dz2[3:0];
+always@(posedge clk) 
+    data_dz2[3:0] <= {data_dz2[2:0], dz2};
+assign dd0 = data_dz2[ctrlint];
 
 always @ (posedge clk or posedge rst) begin
     if (rst) begin
