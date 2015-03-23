@@ -136,7 +136,7 @@ class Fei4Dcs(object):
         self._ch_cal = None
 
     def set_default(self, channels=None):
-        '''Set default voltage
+        '''Setting default voltage
         '''
         if not channels:
             channels = self._ch_cal.keys()
@@ -144,6 +144,8 @@ class Fei4Dcs(object):
             self.set_voltage(channel, self._ch_cal[channel]['default'], unit='V')
 
     def set_voltage(self, channel, value, unit='V'):
+        '''Setting voltage
+        '''
         dac_offset = self._ch_cal[channel]['DACV']['offset']
         dac_gain = self._ch_cal[channel]['DACV']['gain']
 
@@ -159,6 +161,8 @@ class Fei4Dcs(object):
         self._set_dac_value(value=value, **self._ch_map[channel]['DACV'])
 
     def get_voltage(self, channel, unit='V'):
+        '''Reading voltage
+        '''
         kwargs = self._ch_map[channel]['ADCV']
         voltage_raw = self._get_adc_value(**kwargs)
 
@@ -174,6 +178,8 @@ class Fei4Dcs(object):
             raise TypeError("Invalid unit type.")
 
     def get_current(self, channel, unit='A'):
+        '''Reading current
+        '''
         kwargs = self._ch_map[channel]['ADCI']
         current_raw = self._get_adc_value(**kwargs)
         voltage = self.get_voltage(channel)
