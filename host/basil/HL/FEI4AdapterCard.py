@@ -333,7 +333,7 @@ class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
             for idx, channel in enumerate(self._ch_cal.iterkeys()):
                 ch_data = data[idx * calcsize(self.CAL_DATA_CH_V1_FORMAT):(idx + 1) * calcsize(self.CAL_DATA_CH_V1_FORMAT)]
                 values = unpack_from(self.CAL_DATA_CH_V1_FORMAT, ch_data)
-                self._ch_cal[channel]['name'] = "".join([c for c in values[0] if c in string.letters or c in string.whitespace])  # values[0].strip()
+                self._ch_cal[channel]['name'] = "".join([c for c in values[0] if (c in string.printable)])  # values[0].strip()
                 self._ch_cal[channel]['default'] = values[1]
                 self._ch_cal[channel]['ADCI']['gain'] = values[2]
                 self._ch_cal[channel]['ADCI']['offset'] = values[3]
