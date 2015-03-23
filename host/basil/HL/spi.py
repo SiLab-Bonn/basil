@@ -105,8 +105,6 @@ class spi(RegisterHardwareLayer):
         # readback memory offset
         if addr is None:
             addr = self._mem_bytes
-        else:
-            addr = self._mem_bytes + addr
 
         if size and self._mem_bytes < size:
             raise ValueError('Size is too big')
