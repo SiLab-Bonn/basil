@@ -9,6 +9,7 @@ from basil.RL.RegisterLayer import RegisterLayer
 from basil.utils.BitLogic import BitLogic
 from basil.utils import utils
 
+
 class StdRegister(RegisterLayer):
 
     _bv = None
@@ -36,9 +37,8 @@ class StdRegister(RegisterLayer):
                 if "default" in field:
                     self[field['name']] = field['default']
         self._bv = BitLogic(self._conf['size'])
-        
-        #TODO: check if offsets sizes are right!
-        
+        # TODO: check if offsets sizes are right!
+
     def __getitem__(self, items):
         if isinstance(items, str):
             return self._fields[items]
@@ -128,7 +128,7 @@ class StdRegister(RegisterLayer):
 #                     self._bv[bvstart:bvstop] = sub_filed._construct_reg()
                     self._bv.set_slice_ba(bvstart, bvstop, sub_filed._construct_reg())
             else:
-                
+
                 bvsize = len(self._fields[field])
                 bvstart = offs
                 bvstop = offs - bvsize + 1
@@ -154,10 +154,8 @@ class StdRegister(RegisterLayer):
     def tobytes(self):
         reg = self._construct_reg()
         return utils.bitarray_to_byte_array(reg)
-    
+
     def setall(self, value):
         reg = self._construct_reg()
         reg.setall(value)
         self._deconstruct_reg(reg)
-
-        

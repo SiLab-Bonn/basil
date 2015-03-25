@@ -41,7 +41,7 @@ class SiSerial(TransferLayer):
             return self._readline()
         return self._port.read(size)
 
-    def ask(self, data):
+    def query(self, data):
         self.write(data)
         return self._readline()
 

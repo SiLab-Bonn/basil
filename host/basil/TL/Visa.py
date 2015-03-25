@@ -25,9 +25,10 @@ class SiVisa(TransferLayer):
     def init(self):
         '''
         Initialize the device.
-        Parameters of visa.ResourceManager('@py').open_resource()
+        Parameters of visa.ResourceManager().open_resource()
         '''
-        rm = visa.ResourceManager('@py')
+        backend = self._init.pop('backend', '')
+        rm = visa.ResourceManager(backend)
         self._resource = rm.open_resource(**self._init)
 
     def write(self, data):

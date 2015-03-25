@@ -140,7 +140,7 @@ end
 
 // read reg
 reg [7:0] LOST_DATA_CNT; // BUS_ADD==0
-reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_BUF; // BUS_ADD==4 - 7
+reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK, CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF; // BUS_ADD==4 - 7
 reg [31:0] CURRENT_TRIGGER_NUMBER, CURRENT_TRIGGER_NUMBER_BUF; // BUS_ADD==8 - 11
 
 always @ (posedge BUS_CLK)
@@ -154,15 +154,15 @@ begin
     else if (BUS_ADD == 3)
         BUS_DATA_OUT <= status_regs[3];
     else if (BUS_ADD == 4)
-        BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUF[7:0];
+        BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK[7:0];
     else if (BUS_ADD == 5)
-        BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUF[15:8];
+        BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF[15:8];
     else if (BUS_ADD == 6)
-        BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUF[23:16];
+        BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF[23:16];
     else if (BUS_ADD == 7)
-        BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUF[31:24];
+        BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF[31:24];
     else if (BUS_ADD == 8)
-        BUS_DATA_OUT <= CURRENT_TRIGGER_NUMBER_BUF[7:0];
+        BUS_DATA_OUT <= CURRENT_TRIGGER_NUMBER[7:0];
     else if (BUS_ADD == 9)
         BUS_DATA_OUT <= CURRENT_TRIGGER_NUMBER_BUF[15:8];
     else if (BUS_ADD == 10)
@@ -397,7 +397,6 @@ flag_domain_crossing tlu_fifo_write_flag_domain_crossing (
     .FLAG_OUT_CLK_B(TLU_FIFO_WRITE_BUS_CLK)
 );
 
-reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK;
 always @ (posedge BUS_CLK)
 begin
     if (RST)
@@ -409,9 +408,9 @@ end
 always @ (posedge BUS_CLK)
 begin
     if (RST)
-        CURRENT_TLU_TRIGGER_NUMBER_BUF <= 32'b0;
-    else if (BUS_ADD == 4)
-        CURRENT_TLU_TRIGGER_NUMBER_BUF <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK;
+        CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF <= 32'b0;
+    else if (BUS_ADD == 4 && BUS_RD)
+        CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK;
 end
 
 wire CMD_EXT_START_FLAG_BUS_CLK;
@@ -438,7 +437,7 @@ always @ (posedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TRIGGER_NUMBER_BUF <= 32'b0;
-    else if (BUS_ADD == 8)
+    else if (BUS_ADD == 8 && BUS_RD)
         CURRENT_TRIGGER_NUMBER_BUF <= CURRENT_TRIGGER_NUMBER;
 end
 

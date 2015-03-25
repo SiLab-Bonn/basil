@@ -1,0 +1,5 @@
+# Device description for a simulated device for SCPI HL + VISA TL test.
+identifier : ERROR
+set_on : "!OUT"
+get_on : "?OUT"
+get_frequency : "?FREQ"

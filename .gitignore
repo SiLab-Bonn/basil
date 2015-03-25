@@ -36,3 +36,6 @@ host/tests/results.xml
 .project
 .pydevproject
 .vcd
+
+# Mac
+.DS_Store

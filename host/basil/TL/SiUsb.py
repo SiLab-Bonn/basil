@@ -8,11 +8,11 @@
 import logging
 import os
 
-from basil.TL.TransferLayer import TransferLayer
+from basil.TL.SiTransferLayer import SiTransferLayer
 from SiLibUSB import GetUSBBoards, SiUSBDevice
 
 
-class SiUsb (TransferLayer):
+class SiUsb (SiTransferLayer):
     '''SiLab USB device
     '''
     BASE_ADDRESS_I2C = 0x00000
@@ -43,24 +43,24 @@ class SiUsb (TransferLayer):
                 if len(devices) > 1:
                     raise ValueError('Please specify ID of USB board')
                 self._sidev = devices[0]
-#         if 'bit_file' in self._init.keys():
-#             if 'avoid_download' in self._init.keys() and self._init['avoid_download'] is True and self._sidev.XilinxAlreadyLoaded():
-#                 logging.info("FPGA already programmed, skipping download")
-#             else:
-#                 if os.path.exists(self._init['bit_file']):
-#                     bit_file = self._init['bit_file']
-#                 elif os.path.exists(os.path.join(os.path.dirname(self.parent.conf_path), self._init['bit_file'])):
-#                     bit_file = os.path.join(os.path.dirname(self.parent.conf_path), self._init['bit_file'])
-#                 else:
-#                     raise ValueError('No such bit file: %s' % self._init['bit_file'])
-#                 logging.info("Programming FPGA: %s..." % (self._init['bit_file']))
-#                 status = self._sidev.DownloadXilinx(bit_file)
-#                 logging.log(logging.INFO if status else logging.ERROR, 'Success!' if status else 'Failed!')
-#         else:
-#             if not self._sidev.XilinxAlreadyLoaded():
-#                 raise ValueError('FPGA not initialized, bit_file not specified')
-#             else:
-#                 logging.info("Programming FPGA: bit_file not specified")
+        if 'bit_file' in self._init.keys():
+            if 'avoid_download' in self._init.keys() and self._init['avoid_download'] is True and self._sidev.XilinxAlreadyLoaded():
+                logging.info("FPGA already programmed, skipping download")
+            else:
+                if os.path.exists(self._init['bit_file']):
+                    bit_file = self._init['bit_file']
+                elif os.path.exists(os.path.join(os.path.dirname(self.parent.conf_path), self._init['bit_file'])):
+                    bit_file = os.path.join(os.path.dirname(self.parent.conf_path), self._init['bit_file'])
+                else:
+                    raise ValueError('No such bit file: %s' % self._init['bit_file'])
+                logging.info("Programming FPGA: %s..." % (self._init['bit_file']))
+                status = self._sidev.DownloadXilinx(bit_file)
+                logging.log(logging.INFO if status else logging.ERROR, 'Success!' if status else 'Failed!')
+        else:
+            if not self._sidev.XilinxAlreadyLoaded():
+                raise ValueError('FPGA not initialized, bit_file not specified')
+            else:
+                logging.info("Programming FPGA: bit_file not specified")
 
     def write(self, addr, data):
         if(addr >= self.BASE_ADDRESS_I2C and addr < self.HIGH_ADDRESS_I2C):
@@ -77,10 +77,7 @@ class SiUsb (TransferLayer):
             data = self._sidev.ReadExternal(addr - self.BASE_ADDRESS_EXTERNAL, size)
             return data
         elif(addr >= self.BASE_ADDRESS_BLOCK and addr < self.HIGH_ADDRESS_BLOCK):
-            a = addr - self.BASE_ADDRESS_BLOCK    
-            #data = self._sidev.ReadExternal(a, size)
-            #return data
-            return self._sidev.FastBlockRead(a, size)
+            return self._sidev.FastBlockRead(size)
 
     def get_configuration(self):
         conf = dict(self._init)

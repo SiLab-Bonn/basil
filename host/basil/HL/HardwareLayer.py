@@ -18,4 +18,3 @@ class HardwareLayer(Base):
         # interface not required
         if intf is not None:
             self._intf = intf
-            self._base_addr = conf['base_addr']

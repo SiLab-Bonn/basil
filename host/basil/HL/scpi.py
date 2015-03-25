@@ -41,23 +41,23 @@ class scpi(HardwareLayer):
         self._intf.write('*TRG')
 
     def get_name(self):  # SCPI command mandatory by IEEE 488.2
-        return self._intf.ask('*IDN?')
+        return self._intf.query('*IDN?')
 
     def __getattr__(self, name):
         '''called only on last resort if there are no attributes in the instance that match the name
         '''
-        if name not in self._scpi_commands:
-            raise ValueError('SCPI command %s is not defined for %s' % (name, self.__class__))
-
         def method(*args, **kwargs):
             channel = kwargs.pop('channel', None)
-            command = self._scpi_commands['channel'][str(channel)][name] if channel is not None else self._scpi_commands[name]
+            try:
+                command = self._scpi_commands['channel %s' % channel][name] if channel is not None else self._scpi_commands[name]
+            except:
+                raise ValueError('SCPI command %s is not defined for %s' % (name, self.__class__))
             name_split = name.split('_', 1)
             if len(name_split) == 1:
                 self._intf.write(command)
             elif len(name_split) == 2 and name_split[0] == 'set' and len(args) == 1 and not kwargs:
                 self._intf.write(command + ' ' + str(args[0]))
             elif len(name_split) == 2 and name_split[0] == 'get' and not args and not kwargs:
-                return self._intf.ask(command)
+                return self._intf.query(command)
 
         return method

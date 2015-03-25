@@ -86,7 +86,7 @@ always @(posedge BUS_CLK) begin
     else if(BUS_ADD == 1)
         BUS_DATA_OUT <= status_regs[1];
     else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= EVENT_CNT_BUF[7:0];
+        BUS_DATA_OUT <= EVENT_CNT[7:0];
     else if(BUS_ADD == 3)
         BUS_DATA_OUT <= EVENT_CNT_BUF[15:8];
     else if(BUS_ADD == 4)
@@ -102,7 +102,7 @@ end
 always @ (posedge BUS_CLK) begin
     if (RST)
         EVENT_CNT_BUF <= 32'b0;
-    else if (BUS_ADD == 2)
+    else if (BUS_ADD == 2 && BUS_RD)
             EVENT_CNT_BUF <= EVENT_CNT;
 end
 

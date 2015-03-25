@@ -35,7 +35,6 @@ hw_drivers:
     type      : spi
     interface : intf
     base_addr : 0x1000
-    mem_bytes : 16
 
   - name      : spi_rx
     type      : fast_spi_rx
