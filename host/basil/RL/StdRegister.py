@@ -92,7 +92,7 @@ class StdRegister(RegisterLayer):
     def set(self, value):
         self[:] = value
 
-    def write(self):
+    def write(self, size=None):
         """
         to call start() automatically, set yaml file as follows:
         registers:
@@ -103,7 +103,11 @@ class StdRegister(RegisterLayer):
             auto_start  : True  <------ add this
             fields: ......
         """
-        self._drv.set_data(self.to_bytes())
+        if size is None:
+            self._drv.set_data(self.tobytes())
+        else:
+            self._drv.set_data(self.tobytes()[:size])
+
         if "auto_start" in self._conf:
             if self._conf["auto_start"]:
                 self._drv.start()
@@ -147,6 +151,13 @@ class StdRegister(RegisterLayer):
     def _get_filed_config(self, field):
         return self._fields_conf[field]
 
-    def to_bytes(self):
+    def tobytes(self):
         reg = self._construct_reg()
         return utils.bitarray_to_byte_array(reg)
+    
+    def setall(self, value):
+        reg = self._construct_reg()
+        reg.setall(value)
+        self._deconstruct_reg(reg)
+
+        
