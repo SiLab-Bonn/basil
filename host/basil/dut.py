@@ -15,12 +15,20 @@ import sys
 
 class Base(object):
     def __init__(self, conf):
+        self.name = None
+        self.version = None
+        self.conf_path = None
+        self.parent = None
         self._init = {}
         self._conf = self._open_conf(conf)
-        self.name = self._conf.get('name')
-        self.version = self._conf.get('version')
-        self.conf_path = self._conf.get('conf_path')
-        self.parent = self._conf.get('parent')
+        if 'name' in self._conf:
+            self.name = self._conf['name']
+        if 'version' in self._conf:
+            self.version = self._conf['version']
+        if 'conf_path' in self._conf:
+            self.conf_path = self._conf['conf_path']
+        if 'parent' in self._conf:
+            self.parent = self._conf['parent']
         if 'init' in self._conf:
             self._update_init(self._conf['init'])
 
@@ -214,27 +222,42 @@ class Dut(Base):
                         raise ValueError('No driver specified for register: %s' % (reg['name'],))
 
     def _factory(self, importname, *args, **kargs):
+        splitted_import_name = importname.split('.')
+        if len(splitted_import_name) > 2:
+            mod_name = '.'.join(splitted_import_name[2:])  # remove "basil.RL." etc.
+        else:
+            mod_name = None
+
         def is_base_class(item):
             return isclass(item) and issubclass(item, Base) and item.__module__ == importname
+
         try:
             mod = import_module(importname)
-        except ImportError:
-            exc = sys.exc_info()
-            splitted_import_name = importname.split('.')
-            if len(splitted_import_name) > 2:  # give it another try
+        except ImportError:  # give it another try
+            exc = sys.exc_info()  # temporarily save exception
+            if mod_name:
                 try:
-                    importname = '.'.join(splitted_import_name[2:])  # remove "basil.RL." etc.
-                    mod = import_module(importname)
+                    mod = import_module(mod_name)
                 except ImportError:
-                    raise exc[0], exc[1], exc[2]
+                    raise exc[0], exc[1], exc[2]  # raise previous error
+                else:
+                    importname = mod_name
             else:  # finally raise exception
                 raise
         clsmembers = getmembers(mod, is_base_class)
         if len(clsmembers) > 1:
-            raise ValueError('Found more than one matching class in %s.' % importname)
+            for clsmember in clsmembers:
+                if mod_name == clsmember[0]:
+                    cls = clsmember[1]
+                    break
+                else:
+                    cls = None
+            if cls is None:
+                raise ValueError('Found more than one matching class in %s.' % importname)
         elif not len(clsmembers):
             raise ValueError('Found no matching class in %s.' % importname)
-        cls = clsmembers[0][1]
+        else:
+            cls = clsmembers[0][1]
         return cls(*args, **kargs)
 
     def __getitem__(self, item):

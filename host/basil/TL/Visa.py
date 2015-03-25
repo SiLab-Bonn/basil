@@ -37,5 +37,5 @@ class SiVisa(TransferLayer):
     def read(self):
         self._resource.read()
 
-    def ask(self, data):
+    def query(self, data):
         return self._resource.query(data)
