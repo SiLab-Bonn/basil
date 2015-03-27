@@ -20,7 +20,7 @@ basil
    :target: https://gitter.im/SiLab-Bonn/basil?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
    :alt: Gitter
   
-Basil is a modular readout framework intended to allow simple and fast data acquisition systems (DAQ) design. 
+Basil is a modular Rapid Data Acquisition System Design and Testing Framwork. 
 It consists of different hardware components, FPGA firmware modulus and a Python based contol software.
 
 Documentation
