@@ -18,6 +18,13 @@
 `include "utils/RAMB16_S1_S2_sim.v"
 `include "seq_gen/seq_gen_blk_mem_16x8196.v"
 
+`include "spi/spi.v"
+`include "spi/spi_core.v"
+`include "spi/blk_mem_gen_8_to_1_2k.v"
+`include "utils/RAMB16_S1_S9_sim.v"
+
+`include "utils/CG_MOD_pos.v"
+
 `include "gpac_adc_rx/gpac_adc_rx_core.v"
 `include "gpac_adc_rx/gpac_adc_rx.v"
 
@@ -49,6 +56,9 @@ module tb (
     
     localparam ADC_RX_BASEADDR = 32'h3000;
     localparam ADC_RX_HIGHADDR = 32'h5000 - 1;
+    
+    localparam SPI_ADC_BASEADDR = 32'h5000; 
+    localparam SPI_ADC_HIGHADDR = 32'h6000-1;
     
     localparam FIFO_BASEADDR = 32'h8000;
     localparam FIFO_HIGHADDR = 32'h9000-1;
@@ -111,6 +121,32 @@ module tb (
         .SEQ_EXT_START(EX_START_PULSE),
         .SEQ_CLK(DIV_CLK),
         .SEQ_OUT(SEQ_OUT)
+    );
+    
+    wire SDI;
+    
+    spi 
+    #( 
+        .BASEADDR(SPI_ADC_BASEADDR), 
+        .HIGHADDR(SPI_ADC_HIGHADDR),
+        .ABUSWIDTH(ABUSWIDTH),
+        .MEM_BYTES(2) 
+    )  i_spi
+    (
+        .BUS_CLK(BUS_CLK),
+        .BUS_RST(BUS_RST),
+        .BUS_ADD(BUS_ADD),
+        .BUS_DATA(BUS_DATA[7:0]),
+        .BUS_RD(BUS_RD),
+        .BUS_WR(BUS_WR),
+    
+        .SPI_CLK(DIV_CLK),
+    
+        .SCLK(),
+        .SDI(SDI),
+        .SDO(SDI),
+        .SEN(),
+        .SLD()
     );
     
     wire FIFO_READ_ADC;

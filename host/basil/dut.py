@@ -11,7 +11,8 @@ from importlib import import_module
 from inspect import getmembers, isclass
 from yaml import safe_load
 import sys
-
+import warnings
+from collections import OrderedDict
 
 class Base(object):
     def __init__(self, conf):
@@ -73,10 +74,9 @@ class Dut(Base):
         super(Dut, self).__init__(conf)
         self._transfer_layer = None
         self._hardware_layer = None
-        self._user_drivers = None
         self._registers = None
         self.load_hw_configuration(self._conf)
-
+        
     def init(self, init_conf=None, **kwargs):
         init_conf = self._open_conf(init_conf)
 
@@ -102,9 +102,6 @@ class Dut(Base):
         for item in self._hardware_layer.itervalues():
             update_init(item)
             catch_exception_on_init(item)
-        for item in self._user_drivers.itervalues():
-            update_init(item)
-            catch_exception_on_init(item)
         for item in self._registers.itervalues():
             update_init(item)
             catch_exception_on_init(item)
@@ -113,8 +110,6 @@ class Dut(Base):
         for item in self._transfer_layer.itervalues():
             item.close()
         for item in self._hardware_layer.itervalues():
-            item.close()
-        for item in self._user_drivers.itervalues():
             item.close()
         for item in self._registers.itervalues():
             item.close()
@@ -132,11 +127,6 @@ class Dut(Base):
     def get_configuration(self):
         conf = {}
         for key, value in self._registers.iteritems():
-            try:
-                conf[key] = value.get_configuration()
-            except NotImplementedError:
-                conf[key] = {}
-        for key, value in self._user_drivers.iteritems():
             try:
                 conf[key] = value.get_configuration()
             except NotImplementedError:
@@ -169,10 +159,9 @@ class Dut(Base):
                 self.version = self._conf['version']
             else:
                 self.version = None
-            self._transfer_layer = {}
-            self._hardware_layer = {}
-            self._user_drivers = {}
-            self._registers = {}
+            self._transfer_layer = OrderedDict()
+            self._hardware_layer = OrderedDict()
+            self._registers = OrderedDict()
 
         if 'transfer_layer' in conf:
             for intf in conf['transfer_layer']:
@@ -186,21 +175,28 @@ class Dut(Base):
                 for hwdrv in conf['hw_drivers']:
                     hwdrv['parent'] = self
                     kargs = {}
-                    if not hwdrv['interface'] or hwdrv['interface'].lower() == 'none':
-                        kargs['intf'] = None
+                    if 'interface' in hwdrv:
+                        if hwdrv['interface'].lower() == 'none':
+                            kargs['intf'] = None
+                        else:
+                            kargs['intf'] = self._transfer_layer[hwdrv['interface']]
+                    elif 'hw_driver' in hwdrv:
+                        kargs['intf'] = self._hardware_layer[hwdrv['hw_driver']]
                     else:
-                        kargs['intf'] = self._transfer_layer[hwdrv['interface']]
+                        kargs['intf'] = None
+                    
                     kargs['conf'] = hwdrv
                     self._hardware_layer[hwdrv['name']] = self._factory('basil.HL.' + hwdrv['type'], *(), **kargs)
-
+                        
         if 'user_drivers' in conf:
+            warnings.warn( "Deprecated: user_drivers move modules to hw_drivers", DeprecationWarning )
             if conf['user_drivers']:
                 for userdrv in conf['user_drivers']:
                     userdrv['parent'] = self
                     kargs = {}
-                    kargs['hw_driver'] = self._hardware_layer[userdrv['hw_driver']]
+                    kargs['intf'] = self._hardware_layer[userdrv['hw_driver']]
                     kargs['conf'] = userdrv
-                    self._user_drivers[userdrv['name']] = self._factory('basil.UL.' + userdrv['type'], *(), **kargs)
+                    self._hardware_layer[userdrv['name']] = self._factory('basil.HL.' + userdrv['type'], *(), **kargs)
 
         if 'registers' in conf:
             if conf['registers']:
@@ -211,7 +207,7 @@ class Dut(Base):
                         if not reg['driver'] or reg['driver'].lower() == 'none':
                             kargs['driver'] = None
                         else:
-                            kargs['driver'] = self._user_drivers[reg['driver']]
+                            kargs['driver'] = self._hardware_layer[reg['driver']]
                         kargs['conf'] = reg
                         self._registers[reg['name']] = self._factory('basil.RL.' + reg['type'], *(), **kargs)
                     elif 'hw_driver' in reg:
@@ -263,8 +259,6 @@ class Dut(Base):
     def __getitem__(self, item):
         if item in self._registers:
             return self._registers[item]
-        elif item in self._user_drivers:
-            return self._user_drivers[item]
         elif item in self._hardware_layer:
             return self._hardware_layer[item]
         elif item in self._transfer_layer:
