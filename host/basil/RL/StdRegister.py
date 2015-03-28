@@ -92,7 +92,7 @@ class StdRegister(RegisterLayer):
     def set(self, value):
         self[:] = value
 
-    def write(self, bytes=None):
+    def write(self, size=None):
         """
         to call start() automatically, set yaml file as follows:
         registers:
@@ -103,11 +103,11 @@ class StdRegister(RegisterLayer):
             auto_start  : True  <------ add this
             fields: ......
         """
-        if bytes is None:
+        if size is None:
             self._drv.set_data(self.tobytes())
         else:
-            self._drv.set_data(self.tobytes()[:bytes])
-        
+            self._drv.set_data(self.tobytes()[:size])
+
         if "auto_start" in self._conf:
             if self._conf["auto_start"]:
                 self._drv.start()
