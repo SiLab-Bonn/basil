@@ -60,22 +60,22 @@ assign sdatad = {(dd0 && usedint)} ;
 //SRL16 scc0(.D(cz2), .CLK(clk), .A0(ctrlint[0]), .A1(ctrlint[1]), .A2(1'b0), .A3(1'b0), .Q(cc0));
 //SRL16 sdd0(.D(dz2), .CLK(clk), .A0(ctrlint[0]), .A1(ctrlint[1]), .A2(1'b0), .A3(1'b0), .Q(dd0));
 
-reg data_az2[3:0];
+reg [3:0] data_az2;
 always@(posedge clk) 
     data_az2[3:0] <= {data_az2[2:0], az2};
 assign aa0 = data_az2[ctrlint];
 
-reg data_bz2[3:0];
+reg [3:0] data_bz2;
 always@(posedge clk) 
     data_bz2[3:0] <= {data_bz2[2:0], bz2};
 assign bb0 = data_bz2[ctrlint];
 
-reg data_cz2[3:0];
+reg [3:0] data_cz2;
 always@(posedge clk) 
     data_cz2[3:0] <= {data_cz2[2:0], cz2};
 assign cc0 = data_cz2[ctrlint];
 
-reg data_dz2[3:0];
+reg [3:0] data_dz2;
 always@(posedge clk) 
     data_dz2[3:0] <= {data_dz2[2:0], dz2};
 assign dd0 = data_dz2[ctrlint];
