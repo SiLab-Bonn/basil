@@ -1,9 +1,11 @@
 import collections
-import yaml 
+import yaml
 
-#Have OrderedDict
+
+# Have OrderedDict
 def dict_representer(dumper, data):
     return dumper.represent_dict(data.iteritems())
+
 
 def dict_constructor(loader, node):
     return collections.OrderedDict(loader.construct_pairs(node))

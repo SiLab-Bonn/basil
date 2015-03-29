@@ -14,6 +14,7 @@ import sys
 import warnings
 from collections import OrderedDict
 
+
 class Base(object):
     def __init__(self, conf):
         self.name = None
@@ -76,7 +77,7 @@ class Dut(Base):
         self._hardware_layer = None
         self._registers = None
         self.load_hw_configuration(self._conf)
-        
+
     def init(self, init_conf=None, **kwargs):
         init_conf = self._open_conf(init_conf)
 
@@ -184,12 +185,11 @@ class Dut(Base):
                         kargs['intf'] = self._hardware_layer[hwdrv['hw_driver']]
                     else:
                         kargs['intf'] = None
-                    
                     kargs['conf'] = hwdrv
                     self._hardware_layer[hwdrv['name']] = self._factory('basil.HL.' + hwdrv['type'], *(), **kargs)
-                        
+
         if 'user_drivers' in conf:
-            warnings.warn( "Deprecated: user_drivers move modules to hw_drivers", DeprecationWarning )
+            warnings.warn("Deprecated: user_drivers move modules to hw_drivers", DeprecationWarning)
             if conf['user_drivers']:
                 for userdrv in conf['user_drivers']:
                     userdrv['parent'] = self
