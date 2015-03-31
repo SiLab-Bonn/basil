@@ -45,7 +45,7 @@ class SiLibUsbBusDriver(BusDriver):
         self._x.binstr = "x" * 16
 
         # Kick off a clock generator
-        cocotb.fork(Clock(self.clock, 5000).start())
+        cocotb.fork(Clock(self.clock, 20833).start())
 
     @cocotb.coroutine
     def init(self):
@@ -174,10 +174,11 @@ class SiLibUsbBusDriver(BusDriver):
         yield RisingEdge(self.clock)
         self.bus.FREAD <= 1
         self.bus.FSTROBE <= 1
+        yield ReadOnly()
+        result = self.bus.FD.value.integer
+        #print "fast_block_read result", result
         yield RisingEdge(self.clock)
         self.bus.FREAD <= 0
         self.bus.FSTROBE <= 0
-        yield ReadOnly()
-        result = self.bus.FD.value.integer
         yield RisingEdge(self.clock)
         raise ReturnValue(result)
