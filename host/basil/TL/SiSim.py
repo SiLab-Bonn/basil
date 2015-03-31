@@ -10,6 +10,7 @@
 import socket
 import array
 import time
+import logging
 
 from basil.TL.SiTransferLayer import SiTransferLayer
 from basil.utils.sim.Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
@@ -38,6 +39,7 @@ class SiSim (SiTransferLayer):
             try_cnt = self._init['timeout']
         
         while(self._sock.connect_ex((host, port)) != 0):
+            logging.debug("Trying to connect to simulator.")
             time.sleep(1)
             try_cnt -= 1
             if(try_cnt < 1):
