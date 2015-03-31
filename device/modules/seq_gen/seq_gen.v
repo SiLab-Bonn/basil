@@ -16,16 +16,16 @@ module seq_gen
     parameter MEM_BYTES = 16384,
     parameter OUT_BITS = 16
 )(
-    input           BUS_CLK,
-    input           BUS_RST,
-    input   [ABUSWIDTH-1:0]  BUS_ADD,
-    inout   [7:0]   BUS_DATA,
-    input           BUS_RD,
-    input           BUS_WR,
+    input wire          BUS_CLK,
+    input wire          BUS_RST,
+    input wire  [ABUSWIDTH-1:0]  BUS_ADD,
+    inout wire  [7:0]   BUS_DATA,
+    input wire          BUS_RD,
+    input wire          BUS_WR,
 
-    input SEQ_EXT_START,
-    input SEQ_CLK,
-    output [OUT_BITS-1:0] SEQ_OUT
+    input wire SEQ_EXT_START,
+    input wire SEQ_CLK,
+    output wire [OUT_BITS-1:0] SEQ_OUT
 );
 
 wire IP_RD, IP_WR;

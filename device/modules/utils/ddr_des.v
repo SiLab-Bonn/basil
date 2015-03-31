@@ -8,10 +8,10 @@ module ddr_des
 #(
     parameter CLKDV = 4
 )(
-    input CLK2X, 
-    input CLK, 
-    input WCLK,
-    input IN,
+    input wire CLK2X, 
+    input wire CLK, 
+    input wire WCLK,
+    input wire IN,
     output reg [CLKDV*4-1:0] OUT
 );
 
