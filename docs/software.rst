@@ -25,12 +25,7 @@ Every TL interface implements 2 functions:
 Hardware Layer (HL)
 ====================
 
-Implements drivers for basil modules and external devices.
-
-User Layer (UL)
-===============
-
-Implements drivers which make use of HL. Example ADC control with spi module.
+Implements drivers for basil modules and external devices. Drivers can reference other drivers within HL.
 
 
 Register Layer (RL)

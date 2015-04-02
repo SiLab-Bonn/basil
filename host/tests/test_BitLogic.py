@@ -111,7 +111,6 @@ class TestBitLogic(unittest.TestCase):
         '''changing the bit order of each byte
         '''
         bl = BitLogic.from_value(259, size=9, fmt='Q', endian='big')
-        print 'sdgjdhglkjhslkhds', bl
         self.assertEqual(bl[0], False)
         self.assertEqual(bl[1], False)
         self.assertEqual(bl[2], False)
@@ -312,5 +311,14 @@ class TestBitLogic(unittest.TestCase):
         bl[1:1] = bitarray('0')
         self.assertEqual(bl, bitarray('10111111'))
 
+    def test_set_item_negative(self):
+        bl = BitLogic('00000000')
+        bl[-1] = True
+        self.assertEqual(bl, bitarray('00000001'))
+        bl[-3] = True
+        self.assertEqual(bl, bitarray('00000101'))
+        #bl[-2:-1] = 2
+        #self.assertEqual(bl, bitarray('00000111'))
+        
 if __name__ == '__main__':
     unittest.main()

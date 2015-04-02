@@ -15,6 +15,9 @@ from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 import numpy as np
 
+import logging
+logging.getLogger().setLevel(logging.DEBUG)
+
 cnfg_yaml = """
 
 transfer_layer:
@@ -46,7 +49,16 @@ hw_drivers:
     interface : intf
     base_addr : 0x8000
     base_data_addr: 0x80000000
-    
+  
+  - name      : SPI_FADC
+    type      : spi
+    interface : intf
+    base_addr : 0x5000
+
+  - name      : fadc_conf
+    type      : FadcConf
+    hw_driver : SPI_FADC
+
 """
 class TestSimGpio(unittest.TestCase):
     def setUp(self):
