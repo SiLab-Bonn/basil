@@ -143,7 +143,7 @@ initial SDAR = 1;
 always @ (negedge SCL)
     SDAR <= SDA_PRE;
 
-assign SDA = SDAR;
+assign SDA = SDAR ? 1'bz : 1'b0;
     
 endmodule
 
@@ -177,10 +177,10 @@ module tb (
         .CLOCK(I2C_CLK)
     );
 
-    wand SDA, SCL;
+    wire SDA, SCL;
     
-    //pullup  isda (SDA); 
-    //pullup  iscl (SCL); 
+    pullup  isda (SDA); 
+    pullup  iscl (SCL); 
     
     i2c 
     #( 

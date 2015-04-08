@@ -290,7 +290,7 @@ always@(posedge I2C_CLK)
     if(div_cnt == 0)
         SDA <= SDA_D0;
 
-assign I2C_SDA = SDA;
+assign I2C_SDA = SDA ? 1'bz : 1'b0;
 
 reg SCL;
 always@(posedge I2C_CLK)
@@ -299,7 +299,7 @@ always@(posedge I2C_CLK)
     else if(div_cnt == 1)
         SCL <= 1;
 
-assign I2C_SCL = SCL;
+assign I2C_SCL = SCL ? 1'bz : 1'b0;
 
 always@(posedge I2C_CLK)
     if(div_cnt == 1)

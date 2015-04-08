@@ -47,16 +47,16 @@ class i2c(RegisterHardwareLayer):
     def set_address(self, value):
         self.ADDR = value
    
-    def get_addr(self, value):
+    def get_addr(self):
         return self.ADDR
     
-    def get_address(self, value):
+    def get_address(self):
         return self.ADDR
      
     def set_size(self, value):
         self.SIZE = value
     
-    def get_size(self, value):
+    def get_size(self):
         return self.SIZE
     
     def is_done(self):
@@ -65,7 +65,7 @@ class i2c(RegisterHardwareLayer):
     @property
     def is_ready(self):
         if(self.NO_ACK):
-             raise IOError('i2c:Transfer not acknowledged')
+            raise IOError('i2c:Transfer not acknowledged')
         return self.READY
 
     def get_done(self):
