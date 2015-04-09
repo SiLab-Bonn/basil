@@ -28,8 +28,14 @@ From host folder run:
 .. code-block:: bash
 
   python setup.py install
+  
+or
+  
+.. code-block:: bash
 
-
+  pip install -e "git+https://github.com/SiLab-Bonn/basil.git#egg=basil&subdirectory=host"
+  
+  
 Simulation
 ========================
 
