@@ -40,3 +40,5 @@ examples/lx9/device/src/SiTCP
 
 # Mac
 .DS_Store
+host/tests/qverilog.log
+host/tests/work

@@ -181,7 +181,22 @@ Driver
 .. autoclass:: fadc_rx
     :members:
 
+.. !!!!!!!!!!!!!
+.. !I2C!
+.. !!!!!!!!!!!!!
 
+.. include:: ../device/modules/i2c/README.rst
+
+Driver
+-------
+
+.. automodule:: basil.HL.i2c
+
+.. autoclass:: i2c
+    :members:
+
+    
+    
 .. !!!!!!!!!!!!!
 .. !UART!
 .. !!!!!!!!!!!!!

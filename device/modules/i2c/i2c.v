@@ -7,39 +7,22 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-/*
-HOW TO USE
-
-Program registers in the following way:
-    1. Define the ADDR of the device you want to talk with via i2c by writing the ADDR to 
-        BASEADDR + 1
-    2. Define the Data you want to send to the device via i2c by writing the Data to
-        BASEADDR + 2
-    3. Reset the i2c clock via i2c_rst_clk flag to
-        BASEADDR + 4	
-    4. Start sending to device via start flag to	
-        BASEADDR + 3
-
-The module will send then the 7bit addr value to the device. After receiving the ack bit the data is transmitted. If something
-goes wrong the error flag will show you that!
-*/
-
 module i2c #(
     parameter BASEADDR = 16'h0000,
     parameter HIGHADDR = 16'h0000,
-    parameter ABUSWIDTH = 32
+    parameter ABUSWIDTH = 16,
+    parameter MEM_BYTES = 1
 )(
-    input                 BUS_CLK,
-    input                 BUS_RST,
-    input [ABUSWIDTH-1:0] BUS_ADD,
-    inout [7:0]           BUS_DATA,
-    input                 BUS_RD,
-    input                 BUS_WR,
+    input wire                 BUS_CLK,
+    input wire                 BUS_RST,
+    input wire [ABUSWIDTH-1:0] BUS_ADD,
+    inout wire [7:0]           BUS_DATA,
+    input wire                 BUS_RD,
+    input wire                 BUS_WR,
 
-    inout i2c_sda,
-    inout i2c_scl,
-    output busy,
-    output error
+    input wire I2C_CLK,
+    inout wire I2C_SDA,
+    inout wire I2C_SCL
 );
      
 wire IP_RD, IP_WR;
@@ -65,8 +48,13 @@ bus_to_ip #(
 );
 
 
-i2c_core i2c_dut (
-     .BUS_CLK(BUS_CLK),
+i2c_core 
+#(
+    .ABUSWIDTH(ABUSWIDTH),
+    .MEM_BYTES(MEM_BYTES)
+)
+i_i2c_core (
+    .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(IP_ADD),
     .BUS_DATA_IN(IP_DATA_IN),
@@ -74,10 +62,9 @@ i2c_core i2c_dut (
     .BUS_WR(IP_WR),
     .BUS_DATA_OUT(IP_DATA_OUT),
 
-    .i2c_sda(i2c_sda),
-    .i2c_scl(i2c_scl),
-    .busy(busy),
-    .error(error)
+    .I2C_CLK(I2C_CLK),
+    .I2C_SDA(I2C_SDA),
+    .I2C_SCL(I2C_SCL)
 );
 
 
