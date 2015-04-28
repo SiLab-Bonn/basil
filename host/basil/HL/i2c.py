@@ -9,7 +9,7 @@ from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
 class i2c(RegisterHardwareLayer):
-    '''I2C module to communicate via i2c_sda and i2c_scl lines
+    '''Implement master i2c programming interface driver.
     '''
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
@@ -64,6 +64,10 @@ class i2c(RegisterHardwareLayer):
 
     @property
     def is_ready(self):
+        '''
+         :raises ExceptionType: IOError
+        Transfer not acknowledged.
+        '''
         if(self.NO_ACK):
             raise IOError('i2c:Transfer not acknowledged')
         return self.READY
@@ -85,6 +89,15 @@ class i2c(RegisterHardwareLayer):
             return self._intf.read(self._conf['base_addr'] + self._seq_mem_offset + addr, size)
         
     def write(self, addr, data):
+        '''Write access.
+
+        :param addr: i2c slave address
+        :type addr: char
+        :param data: array/list of bytes
+        :type data: iterable
+        :rtype: None
+
+        '''
         self.set_addr(addr & 0xfe)
         self.set_data(data)
         self.set_size(len(data))
@@ -93,6 +106,16 @@ class i2c(RegisterHardwareLayer):
             pass
     
     def read(self, addr, size):
+        '''Read access.
+
+        :param addr: i2c slave address
+        :type addr: char
+        :param size: size of transfer
+        :type size: int
+        :returns: data byte array
+        :rtype: array.array('B')
+
+        '''
         self.set_addr(addr | 0x01)
         self.set_size(size)
         self.start()
