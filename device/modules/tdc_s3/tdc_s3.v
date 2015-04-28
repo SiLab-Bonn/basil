@@ -12,7 +12,9 @@ module tdc_s3 #(
     parameter HIGHADDR = 16'h0000,
     parameter CLKDV = 4,
     parameter DATA_IDENTIFIER = 4'b0100,
-    parameter ABUSWIDTH = 16
+    parameter ABUSWIDTH = 16,
+    parameter FAST_TDC = 1,
+    parameter FAST_TRIGGER = 1
 )(
     input wire BUS_CLK,
     input wire [ABUSWIDTH-1:0] BUS_ADD,
@@ -64,7 +66,9 @@ bus_to_ip #(
 tdc_s3_core #(
     .DATA_IDENTIFIER(DATA_IDENTIFIER),
     .CLKDV(CLKDV),
-    .ABUSWIDTH(ABUSWIDTH)
+    .ABUSWIDTH(ABUSWIDTH),
+    .FAST_TDC(FAST_TDC),
+    .FAST_TRIGGER(FAST_TRIGGER)
 ) i_tdc_s3_core (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
