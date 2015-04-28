@@ -96,41 +96,41 @@ always @(*) begin
         BUS_DATA_OUT = 8'hxx;
 end
 
+wire BUS_MEM_EN;
+wire [ABUSWIDTH-1:0] BUS_MEM_ADD; 
 
-always @ (posedge BUS_CLK) begin
-    if(BUS_ADD == 0)
-        BUS_DATA_OUT <= VERSION;
-    else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= I2C_ADD;
-    else
-        BUS_DATA_OUT <= 8'b0;
-end
+assign BUS_MEM_EN = (BUS_WR | BUS_RD) & BUS_ADD >= 8;
+assign BUS_MEM_ADD = BUS_ADD-8;
 
+(* RAM_STYLE="{BLOCK_POWER2}" *)
 reg [7:0] mem [MEM_BYTES-1:0];
 
 reg [7:0] OUT_MEM;
 always @(posedge BUS_CLK)
-    if ( (BUS_WR | BUS_RD) & BUS_ADD >= 8 ) begin
+    if (BUS_MEM_EN) begin
         if (BUS_WR)
-            mem[BUS_ADD-8] <= BUS_DATA_IN;
-        OUT_MEM <= mem[BUS_ADD-8];
+            mem[BUS_MEM_ADD] <= BUS_DATA_IN;
+        OUT_MEM <= mem[BUS_MEM_ADD];
     end
 
-    
 wire EN_MEM_I2C;
 wire WE_MEM_I2C;
 
 reg [2:0] bit_count;
-reg [15:0] byte_count;
+reg [3:0] byte_count;
+wire [15:0] MEM_I2_WR; 
 reg [1:0] div_cnt;
 
 reg [7:0] DATA_BYTE;
 reg [7:0] DATA_BYTE_READBCK;
+
+assign MEM_I2_WR = WE_MEM_I2C ? byte_count-1: byte_count;
+
 always @(posedge I2C_CLK)
     if (EN_MEM_I2C) begin
         if (WE_MEM_I2C)
-            mem[byte_count-1] <= DATA_BYTE_READBCK;
-        DATA_BYTE <= mem[byte_count];
+            mem[MEM_I2_WR] <= DATA_BYTE_READBCK;
+        DATA_BYTE <= mem[MEM_I2_WR];
     end
 
 wire RST_SYNC;
