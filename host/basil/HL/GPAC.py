@@ -20,7 +20,7 @@ class MuxPca9540B(HardwareLayer):
 
     I2C Bus Multiplexer (GPAC).
     '''
-    PCA9540B_ADD = 0xE0  # slave address
+    PCA9540B_BASE_ADD = 0xE0  # generic slave address
     PCA9540B_SEL_CH0 = 0x04  # select channel 0
     PCA9540B_SEL_CH1 = 0x05  # select channel 1
     PCA9540B_SEL_NONE = 0x00  # de-select channels
@@ -28,6 +28,7 @@ class MuxPca9540B(HardwareLayer):
     def __init__(self, intf, conf):
         super(MuxPca9540B, self).__init__(intf, conf)
         self._base_addr = conf['base_addr']
+        self.PCA9540B_ADD = self.PCA9540B_BASE_ADD
 
     def _set_i2c_mux(self, bus):
         self._intf.write(self._base_addr + self.PCA9540B_ADD, array('B', pack('B', bus)))
@@ -41,7 +42,7 @@ class GpioPca9554(HardwareLayer):
 
     GPIO extension (GPAC).
     '''
-    PCA9554_ADD = 0x40  # generic slave address
+    PCA9554_BASE_ADD = 0x40 # generic slave address
     PCA9554_CFG = 0x03  # configuration register: 1 -> input (default), 0 -> output
     PCA9554_POL = 0x02  # polarity inversion register
     PCA9554_OUT = 0x01  # output port register
@@ -50,6 +51,12 @@ class GpioPca9554(HardwareLayer):
     def __init__(self, intf, conf):
         super(GpioPca9554, self).__init__(intf, conf)
         self._base_addr = conf['base_addr']
+        self.PCA9554_ADD = self.PCA9554_BASE_ADD
+        self.GPIO_CFG = 0x00
+
+    def init(self):
+        self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_CFG, self.GPIO_CFG))
+        self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_OUT, 0x00))
 
     def _write_output_port_select(self, value):
         self._intf.write(self._base_addr + self.PCA9554_ADD, array('B', pack('BB', self.PCA9554_CFG, value)))  # configure output lines
@@ -78,27 +85,38 @@ class GpioPca9554(HardwareLayer):
 class PowerGpio(GpioPca9554):
     '''Power GPIO
     '''
-    POWER_GPIO_ADD = GpioPca9554.PCA9554_ADD | 0x02
+    POWER_GPIO_ADD = GpioPca9554.PCA9554_BASE_ADD | 0x02
     POWER_GPIO_CFG = 0xf0  # LSB -> ON, MSB -> OC (over current read back)
-    PCA9554_ADD = POWER_GPIO_ADD
+
+    def __init__(self, intf, conf):
+        super(PowerGpio, self).__init__(intf, conf)
+        self.PCA9554_ADD = self.POWER_GPIO_ADD
+        self.GPIO_CFG = self.POWER_GPIO_CFG
 
 
 class AdcMuxGpio(GpioPca9554):
     '''ADC NUX GPIO
     '''
-    ADCMUX_GPIO_ADD = GpioPca9554.PCA9554_ADD
+    ADCMUX_GPIO_ADD = GpioPca9554.PCA9554_BASE_ADD
     ADCMUX_GPIO_CFG = 0x00  # all outputs
 
+    def __init__(self, intf, conf):
+        super(AdcMuxGpio, self).__init__(intf, conf)
+        self.PCA9554_ADD = self.ADCMUX_GPIO_ADD
+        self.GPIO_CFG = self.ADCMUX_GPIO_CFG
 
 class CalMuxGpio(GpioPca9554):
     '''CAL MUX GPIO
     '''
-    CALMUX_GPIO_ADD = GpioPca9554.PCA9554_ADD | 0x08
+    CALMUX_GPIO_ADD = GpioPca9554.PCA9554_BASE_ADD | 0x08
     CALMUX_GPIO_CFG = 0x00  # all outputs
     CALMUX_GPIO_SEL = 0x20
     CALMUX_GPIO_INHB = 0x40
-    PCA9554_ADD = CALMUX_GPIO_ADD
 
+    def __init__(self, intf, conf):
+        super(CalMuxGpio, self).__init__(intf, conf)
+        self.PCA9554_ADD = self.CALMUX_GPIO_ADD
+        self.GPIO_CFG = self.CALMUX_GPIO_CFG
 
 class DacDac7578(HardwareLayer):
     '''DAC 7578
@@ -115,11 +133,11 @@ class DacDac7578(HardwareLayer):
         super(DacDac7578, self).__init__(intf, conf)
         self._base_addr = conf['base_addr']
 
-    def _set_dac_value(self, address, channel, value):
+    def _set_dac_value(self, address, dac_ch, value):
         msb = (value >> 4)  # MSB first
         lsb = (value << 4) & 0xff  # LSB left aligned
 
-        data = array('B', pack('BBB', self.DAC7578_CMD_WRITE_UPDATE_CH | channel, msb, lsb))
+        data = array('B', pack('BBB', self.DAC7578_CMD_WRITE_UPDATE_CH | dac_ch, msb, lsb))
         self._intf.write(self._base_addr + address, data)
 
 
@@ -177,39 +195,60 @@ class AdcMax11644(HardwareLayer):
         return raw_ch0, raw_ch1
 
 
-class I2cAnalogChannel(AdcMax11644, DacDac7578, MuxPca9540B, PowerGpio, AdcMuxGpio):
+class I2cAnalogChannel(AdcMax11644, DacDac7578, MuxPca9540B):
     I2CBUS_ADC = MuxPca9540B.PCA9540B_SEL_CH1
     I2CBUS_DAC = MuxPca9540B.PCA9540B_SEL_CH0
     I2CBUS_DEFAULT = MuxPca9540B.PCA9540B_SEL_NONE
 
-    def _set_dac_value(self, address, channel, value):
+    def __init__(self, intf, conf):
+        super(I2cAnalogChannel, self).__init__(intf, conf)
+        self._base_addr = conf['base_addr']
+        self.adc_mux_gpio = AdcMuxGpio(intf, conf)
+        self.power_gpio = PowerGpio(intf, conf)
+
+    def init(self):
+        # setup PWR GPIO
         MuxPca9540B._set_i2c_mux(self, self.I2CBUS_DAC)
-        DacDac7578._set_dac_value(self, address=address, channel=channel, value=value)
+        self.power_gpio.init()
+
+        # setup ADC GPIO
+        MuxPca9540B._set_i2c_mux(self, self.I2CBUS_ADC)
+        self.adc_mux_gpio.init()
+
+        # setup ADC
+        AdcMax11644._setup_adc(self, self.MAX11644_EXT_REF)
+
+        # setup I2C Mux default
         MuxPca9540B._set_i2c_mux(self, self.I2CBUS_DEFAULT)
 
-    def _get_adc_value(self, channel):
+    def _set_dac_value(self, address, dac_ch, value):
+        MuxPca9540B._set_i2c_mux(self, self.I2CBUS_DAC)
+        DacDac7578._set_dac_value(self, address=address, dac_ch=dac_ch, value=value)
+        MuxPca9540B._set_i2c_mux(self, self.I2CBUS_DEFAULT)
+
+    def _get_adc_value(self, address):
         MuxPca9540B._set_i2c_mux(self, self.I2CBUS_ADC)
-        AdcMuxGpio._write_output_port(self, value=channel)
-        if 15 < channel < 20:
+        self.adc_mux_gpio._write_output_port(value=address)
+        if 15 < address < 20:
             AdcMax11644._setup_adc(self, self.MAX11644_INT_REF)
             sleep(0.010)
-        raw_ch0, raw_ch1 = AdcMax11644._get_adc_value(self)
-        if 15 < channel < 20:
+        adc_ch0, adc_ch1 = AdcMax11644._get_adc_value(self)
+        if 15 < address < 20:
             AdcMax11644._setup_adc(self, self.MAX11644_EXT_REF)
         MuxPca9540B._set_i2c_mux(self, self.I2CBUS_DEFAULT)
-        return raw_ch0, raw_ch1
+        return adc_ch0, adc_ch1
 
     def _set_power_gpio_value(self, bit, value):
         MuxPca9540B._set_i2c_mux(self, self.I2CBUS_DAC)
         if value:
-            PowerGpio._set_output_port(self, bit)
+            self.power_gpio._set_output_port(bit)
         else:
-            PowerGpio._clear_output_port(self, bit)
+            self.power_gpio._clear_output_port(bit)
         MuxPca9540B._set_i2c_mux(self, self.I2CBUS_DEFAULT)
 
     def _get_power_gpio_value(self, bit):
         MuxPca9540B._set_i2c_mux(self, self.I2CBUS_DAC)
-        value = PowerGpio._get_input_port(self, bit)
+        value = self.power_gpio._get_input_port(bit)
         MuxPca9540B._set_i2c_mux(self, self.I2CBUS_DEFAULT)
         return value
 
@@ -233,6 +272,8 @@ class I2cEeprom(Eeprom24Lc128, MuxPca9540B):
 
 class GPAC(I2cAnalogChannel, I2cEeprom):
     '''GPAC interface
+    
+    TODO: reading current of voltage source
     '''
     # EEPROM data V1
     HEADER_GPAC = 0xa101
@@ -257,141 +298,141 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
     # Channel mappings
     _ch_map = {
         'PWR0': {
-            'DACV': {'address': DAC7578_1_ADD, 'channel': 1},
-            'ADCV': {'channel': 16, 'adc_ch': 0},
-            'ADCI': {'channel': 16, 'adc_ch': 1},
+            'DACV': {'address': DAC7578_1_ADD, 'dac_ch': 1},
+            'ADCV': {'address': 16, 'adc_ch': 0},
+            'ADCI': {'address': 16, 'adc_ch': 1},
             'GPIOEN': {'bit': 1},
             'GPIOOC': {'bit': 16},
         },
         'PWR1': {
-            'DACV': {'address': DAC7578_1_ADD, 'channel': 2},
-            'ADCV': {'channel': 17, 'adc_ch': 0},
-            'ADCI': {'channel': 17, 'adc_ch': 1},
+            'DACV': {'address': DAC7578_1_ADD, 'dac_ch': 2},
+            'ADCV': {'address': 17, 'adc_ch': 0},
+            'ADCI': {'address': 17, 'adc_ch': 1},
             'GPIOEN': {'bit': 2},
             'GPIOOC': {'bit': 32},
         },
         'PWR2': {
-            'DACV': {'address': DAC7578_1_ADD, 'channel': 3},
-            'ADCV': {'channel': 18, 'adc_ch': 0},
-            'ADCI': {'channel': 18, 'adc_ch': 1},
+            'DACV': {'address': DAC7578_1_ADD, 'dac_ch': 3},
+            'ADCV': {'address': 18, 'adc_ch': 0},
+            'ADCI': {'address': 18, 'adc_ch': 1},
             'GPIOEN': {'bit': 4},
             'GPIOOC': {'bit': 64},
         },
         'PWR3': {
-            'DACV': {'address': DAC7578_1_ADD, 'channel': 4},
-            'ADCV': {'channel': 19, 'adc_ch': 0},
-            'ADCI': {'channel': 19, 'adc_ch': 1},
+            'DACV': {'address': DAC7578_1_ADD, 'dac_ch': 4},
+            'ADCV': {'address': 19, 'adc_ch': 0},
+            'ADCI': {'address': 19, 'adc_ch': 1},
             'GPIOEN': {'bit': 8},
             'GPIOOC': {'bit': 128},
         },
         'VSRC0': {
-            'DACV': {'address': DAC7578_3_ADD, 'channel': 1},
-            'ADCV': {'channel': 15, 'adc_ch': 0},
-            'ADCI': {'channel': 15, 'adc_ch': 1},
+            'DACV': {'address': DAC7578_3_ADD, 'dac_ch': 1},
+            'ADCV': {'address': 15, 'adc_ch': 0},
+            'ADCI': {'address': 15, 'adc_ch': 1},
         },
 
         'VSRC1': {
-            'DACV': {'address': DAC7578_3_ADD, 'channel': 2},
-            'ADCV': {'channel': 14, 'adc_ch': 0},
-            'ADCI': {'channel': 14, 'adc_ch': 1},
+            'DACV': {'address': DAC7578_3_ADD, 'dac_ch': 2},
+            'ADCV': {'address': 14, 'adc_ch': 0},
+            'ADCI': {'address': 14, 'adc_ch': 1},
         },
 
         'VSRC2': {
-            'DACV': {'address': DAC7578_3_ADD, 'channel': 3},
-            'ADCV': {'channel': 13, 'adc_ch': 0},
-            'ADCI': {'channel': 13, 'adc_ch': 1},
+            'DACV': {'address': DAC7578_3_ADD, 'dac_ch': 3},
+            'ADCV': {'address': 13, 'adc_ch': 0},
+            'ADCI': {'address': 13, 'adc_ch': 1},
         },
 
         'VSRC3': {
-            'DACV': {'address': DAC7578_3_ADD, 'channel': 4},
-            'ADCV': {'channel': 12, 'adc_ch': 0},
-            'ADCI': {'channel': 12, 'adc_ch': 1},
+            'DACV': {'address': DAC7578_3_ADD, 'dac_ch': 4},
+            'ADCV': {'address': 12, 'adc_ch': 0},
+            'ADCI': {'address': 12, 'adc_ch': 1},
         },
         'INJ0': {
-            'DACV': {'address': DAC7578_3_ADD, 'channel': 5},
+            'DACV': {'address': DAC7578_3_ADD, 'dac_ch': 5},
         },
         'INJ1': {
-            'DACV': {'address': DAC7578_3_ADD, 'channel': 6},
+            'DACV': {'address': DAC7578_3_ADD, 'dac_ch': 6},
         },
         'ISRC0': {
-            'DACI': {'address': DAC7578_1_ADD, 'channel': 5},
-            'ADCV': {'channel': 20, 'adc_ch': 0},
-            'ADCI': {'channel': 20, 'adc_ch': 1},
+            'DACI': {'address': DAC7578_1_ADD, 'dac_ch': 5},
+            'ADCV': {'address': 20, 'adc_ch': 0},
+            'ADCI': {'address': 20, 'adc_ch': 1},
         },
         'ISRC1': {
-            'DACI': {'address': DAC7578_1_ADD, 'channel': 6},
-            'ADCV': {'channel': 21, 'adc_ch': 0},
-            'ADCI': {'channel': 21, 'adc_ch': 1},
+            'DACI': {'address': DAC7578_1_ADD, 'dac_ch': 6},
+            'ADCV': {'address': 21, 'adc_ch': 0},
+            'ADCI': {'address': 21, 'adc_ch': 1},
         },
         'ISRC2': {
-            'DACI': {'address': DAC7578_1_ADD, 'channel': 7},
-            'ADCV': {'channel': 22, 'adc_ch': 0},
-            'ADCI': {'channel': 22, 'adc_ch': 1},
+            'DACI': {'address': DAC7578_1_ADD, 'dac_ch': 7},
+            'ADCV': {'address': 22, 'adc_ch': 0},
+            'ADCI': {'address': 22, 'adc_ch': 1},
         },
         'ISRC3': {
-            'DACI': {'address': DAC7578_2_ADD, 'channel': 0},
-            'ADCV': {'channel': 23, 'adc_ch': 0},
-            'ADCI': {'channel': 23, 'adc_ch': 1},
+            'DACI': {'address': DAC7578_2_ADD, 'dac_ch': 0},
+            'ADCV': {'address': 23, 'adc_ch': 0},
+            'ADCI': {'address': 23, 'adc_ch': 1},
         },
         'ISRC4': {
-            'DACI': {'address': DAC7578_2_ADD, 'channel': 1},
-            'ADCV': {'channel': 24, 'adc_ch': 0},
-            'ADCI': {'channel': 24, 'adc_ch': 1},
+            'DACI': {'address': DAC7578_2_ADD, 'dac_ch': 1},
+            'ADCV': {'address': 24, 'adc_ch': 0},
+            'ADCI': {'address': 24, 'adc_ch': 1},
         },
         'ISRC5': {
-            'DACI': {'address': DAC7578_2_ADD, 'channel': 2},
-            'ADCV': {'channel': 25, 'adc_ch': 0},
-            'ADCI': {'channel': 25, 'adc_ch': 1},
+            'DACI': {'address': DAC7578_2_ADD, 'dac_ch': 2},
+            'ADCV': {'address': 25, 'adc_ch': 0},
+            'ADCI': {'address': 25, 'adc_ch': 1},
         },
 
         'ISRC6': {
-            'DACI': {'address': DAC7578_2_ADD, 'channel': 3},
-            'ADCV': {'channel': 26, 'adc_ch': 0},
-            'ADCI': {'channel': 26, 'adc_ch': 1},
+            'DACI': {'address': DAC7578_2_ADD, 'dac_ch': 3},
+            'ADCV': {'address': 26, 'adc_ch': 0},
+            'ADCI': {'address': 26, 'adc_ch': 1},
         },
         'ISRC7': {
-            'DACI': {'address': DAC7578_2_ADD, 'channel': 4},
-            'ADCV': {'channel': 27, 'adc_ch': 0},
-            'ADCI': {'channel': 27, 'adc_ch': 1},
+            'DACI': {'address': DAC7578_2_ADD, 'dac_ch': 4},
+            'ADCV': {'address': 27, 'adc_ch': 0},
+            'ADCI': {'address': 27, 'adc_ch': 1},
         },
         'ISRC8': {
-            'DACI': {'address': DAC7578_2_ADD, 'channel': 5},
-            'ADCV': {'channel': 28, 'adc_ch': 0},
-            'ADCI': {'channel': 28, 'adc_ch': 1},
+            'DACI': {'address': DAC7578_2_ADD, 'dac_ch': 5},
+            'ADCV': {'address': 28, 'adc_ch': 0},
+            'ADCI': {'address': 28, 'adc_ch': 1},
         },
         'ISRC9': {
-            'DACI': {'address': DAC7578_2_ADD, 'channel': 6},
-            'ADCV': {'channel': 29, 'adc_ch': 0},
-            'ADCI': {'channel': 29, 'adc_ch': 1},
+            'DACI': {'address': DAC7578_2_ADD, 'dac_ch': 6},
+            'ADCV': {'address': 29, 'adc_ch': 0},
+            'ADCI': {'address': 29, 'adc_ch': 1},
         },
         'ISRC10': {
-            'DACI': {'address': DAC7578_2_ADD, 'channel': 7},
-            'ADCV': {'channel': 30, 'adc_ch': 0},
-            'ADCI': {'channel': 30, 'adc_ch': 1},
+            'DACI': {'address': DAC7578_2_ADD, 'dac_ch': 7},
+            'ADCV': {'address': 30, 'adc_ch': 0},
+            'ADCI': {'address': 30, 'adc_ch': 1},
         },
         'ISRC11': {
-            'DACI': {'address': DAC7578_3_ADD, 'channel': 0},
-            'ADCV': {'channel': 31, 'adc_ch': 0},
-            'ADCI': {'channel': 31, 'adc_ch': 1},
+            'DACI': {'address': DAC7578_3_ADD, 'dac_ch': 0},
+            'ADCV': {'address': 31, 'adc_ch': 0},
+            'ADCI': {'address': 31, 'adc_ch': 1},
         },
         # reead-only
         'VREF': {
-            'ADCV': {'channel': 0, 'adc_ch': 0},
+            'ADCV': {'address': 0, 'adc_ch': 0},
         },
         'VREF/2': {
-            'ADCV': {'channel': 1, 'adc_ch': 0},
+            'ADCV': {'address': 1, 'adc_ch': 0},
         },
         'AUX0': {
-            'ADCV': {'channel': 11, 'adc_ch': 0},
+            'ADCV': {'address': 11, 'adc_ch': 0},
         },
         'AUX1': {
-            'ADCV': {'channel': 10, 'adc_ch': 0},
+            'ADCV': {'address': 10, 'adc_ch': 0},
         },
         'AUX2': {
-            'ADCV': {'channel': 9, 'adc_ch': 0},
+            'ADCV': {'address': 9, 'adc_ch': 0},
         },
         'AUX3': {
-            'ADCV': {'channel': 8, 'adc_ch': 0},
+            'ADCV': {'address': 8, 'adc_ch': 0},
         },
     }
 
@@ -646,22 +687,10 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
         ])
 
     def init(self):
-        # setup PWR GPIO
-        self._set_i2c_mux(self.I2CBUS_DAC)
-        self._intf.write(self._base_addr + self.POWER_GPIO_ADD, (self.PCA9554_CFG, self.POWER_GPIO_CFG))
-        self._intf.write(self._base_addr + self.POWER_GPIO_ADD, (self.PCA9554_OUT, 0x00))
+        # init DACs and ADCs
+        super(GPAC, self).init()
 
-        # setup ADC GPIO
-        self._set_i2c_mux(self.I2CBUS_ADC)
-        self._intf.write(self._base_addr + self.ADCMUX_GPIO_ADD, (self.PCA9554_CFG, self.ADCMUX_GPIO_CFG))
-        self._intf.write(self._base_addr + self.ADCMUX_GPIO_ADD, (self.PCA9554_OUT, 0x00))
-
-        # setup ADC
-        self._setup_adc(self.MAX11644_EXT_REF)
-
-        # setup I2C Mux default
-        self._set_i2c_mux(self.I2CBUS_DEFAULT)
-
+        # read calibration
         self.read_eeprom_calibration()
 
         # setup current limit and current source
@@ -720,7 +749,9 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
     def get_voltage(self, channel, unit='V'):
         '''Reading voltage
         '''
-        raw = self._get_adc_value(**self._ch_map[channel]['ADCV'])
+        adc_ch = self._ch_map[channel]['ADCV']['adc_ch']
+        address = self._ch_map[channel]['ADCV']['address']
+        raw = self._get_adc_value(address = address)[adc_ch]
 
         dac_offset = self._ch_cal[channel]['ADCV']['offset']
         dac_gain = self._ch_cal[channel]['ADCV']['gain']
@@ -739,27 +770,39 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
     def get_current(self, channel, unit='A'):
         '''Reading current
         '''
-        raw = self._get_adc_value(**self._ch_map[channel]['ADCI'])
+        values = self._get_adc_value(address=self._ch_map[channel]['ADCI']['address'])
+        raw = values[self._ch_map[channel]['ADCI']['adc_ch']]
 
         dac_offset = self._ch_cal[channel]['ADCI']['offset']
         dac_gain = self._ch_cal[channel]['ADCI']['gain']
 
-        if 'SRC' in channel:
-            voltage = self._get_adc_value(**self._ch_map[channel]['ADCV'])
-            current = (((raw - voltage) - dac_offset) / dac_gain)
-        else:
+        if 'PWR' in channel:            
             current = ((raw - dac_offset) / dac_gain)
 
-        if unit == 'raw':
-            return raw
-        elif unit == 'A':
-            return current / 1000000
-        elif unit == 'mA':
-            return current / 1000
-        elif unit == 'uA':
-            return current
+            if unit == 'raw':
+                return raw
+            elif unit == 'A':
+                return current / 1000
+            elif unit == 'mA':
+                return current
+            elif unit == 'uA':
+                return current * 1000
+            else:
+                raise TypeError("Invalid unit type.")
         else:
-            raise TypeError("Invalid unit type.")
+            voltage = values[self._ch_map[channel]['ADCV']['adc_ch']]
+            current = (((raw - voltage) - dac_offset) / dac_gain)
+
+            if unit == 'raw':
+                return raw
+            elif unit == 'A':
+                return current / 1000000
+            elif unit == 'mA':
+                return current / 1000
+            elif unit == 'uA':
+                return current
+            else:
+                raise TypeError("Invalid unit type.")
 
     def set_enable(self, channel, value):
         '''Enable/Disable output of power channel
@@ -797,7 +840,7 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
         else:
             raise TypeError("Invalid unit type.")
 
-        self._set_dac_value(address=self.CURRENT_LIMIT_DAC_SLAVE_ADD, channel=self.CURRENT_LIMIT_DAC_CH, value=value)
+        self._set_dac_value(address=self.CURRENT_LIMIT_DAC_SLAVE_ADD, dac_ch=self.CURRENT_LIMIT_DAC_CH, value=value)
 
     def set_current(self, channel, value, unit='A'):
         '''Setting current of current source
@@ -818,6 +861,6 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
 
         self._set_dac_value(value=value, **self._ch_map[channel]['DACI'])
 
-    def _get_adc_value(self, channel, adc_ch):
-        raw_ch0, raw_ch1 = I2cAnalogChannel._get_adc_value(self, channel)
-        return raw_ch0 if adc_ch == 0 else raw_ch1
+    def _get_adc_value(self, address):
+        raw_ch0, raw_ch1 = I2cAnalogChannel._get_adc_value(self, address=address)
+        return raw_ch0, raw_ch1
