@@ -153,7 +153,7 @@ generate
 endgenerate
 
 assign TDC_DES = CONF_EN_INVERT_TDC ? ~TDC : TDC;
-assign TDC_OUT = |TDC_DES;
+assign TDC_OUT = |TDC;
 
 wire ZERO_DETECTED_TDC;
 assign ZERO_DETECTED_TDC = |(~TDC_DES); // asserted when one or more 0 occur
@@ -392,7 +392,7 @@ generate
 endgenerate
 
 assign TRIG_DES = CONF_EN_INVERT_TRIGGER ? ~TRIG : TRIG;
-assign TRIG_OUT = |TRIG_DES;
+assign TRIG_OUT = |TRIG;
 
 reg TRIG_DES_BUF_0;
 always @ (posedge DV_CLK)
