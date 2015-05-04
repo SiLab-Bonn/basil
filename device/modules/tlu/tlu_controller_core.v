@@ -266,7 +266,8 @@ three_stage_synchronizer three_stage_rj45_trigger_synchronizer_cmd_clk (
     .OUT(TLU_TRIGGER_SYNC)
 );
 
-wire TRIGGER_XOR_INVERT, TRIGGER_OR;
+wire [7:0] TRIGGER_XOR_INVERT;
+wire TRIGGER_OR;
 assign TRIGGER_XOR_INVERT = TRIGGER ^ TRIGGER_INVERT;
 assign TRIGGER_OR = |(TRIGGER_XOR_INVERT & TRIGGER_SELECT);
 
