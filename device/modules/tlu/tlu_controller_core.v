@@ -120,7 +120,7 @@ begin
         status_regs[0] <= 8'b0;
         status_regs[1] <= 8'b0;
         status_regs[2] <= 8'b0; // 0: 32 clock cycles
-        status_regs[3] <= 8'b0;
+        status_regs[3] <= 8'b1111_1111;
         status_regs[4] <= 8'b0; // TLU trigger number
         status_regs[5] <= 8'b0;
         status_regs[6] <= 8'b0;
