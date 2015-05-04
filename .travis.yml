@@ -2,19 +2,23 @@ language: python
 python:
   - 2.7
   
-addons:
-  apt:
-    sources:
-    - ppa:team-electronics/ppa
-    packages:
-    - iverilog-daily
-sudo: false
+#addons:
+#  apt:
+#    sources:
+#    - ppa:team-electronics/ppa
+#    packages:
+#    - iverilog-daily
+#sudo: false
 
 notifications:
   email:
     - hemperek@uni-bonn.de
     - janssen@physik.uni-bonn.de
     - pohl@physik.uni-bonn.de
+- 
+-before_install:
+-  - sudo add-apt-repository -y ppa:team-electronics/ppa
+-  - sudo apt-get update
 
 install:
   - pip install bitarray
@@ -24,7 +28,8 @@ install:
   - wget -O cocotb-master.zip https://github.com/potentialventures/cocotb/archive/master.zip 
   - unzip cocotb-master.zip
   - export COCOTB=$(pwd)/cocotb-master
-  
+
+  - sudo apt-get install -qq iverilog-daily  
 #  Build iverilog from source
   #- sudo apt-get install gperf
   #- wget -O iverilog-master.zip  https://github.com/steveicarus/iverilog/archive/master.zip
