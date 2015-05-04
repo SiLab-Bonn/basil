@@ -48,6 +48,9 @@ module tlu_controller_fsm
     output reg                  TLU_TRIGGER_ACCEPT_ERROR
 );
 
+// Workaround for TLU bug where short szintillator trigger pulses lead to glitches on TLU trigger
+localparam TLU_WAIT_CYCLES = 5;
+
 // reg TLU_TRIGGER_ACCEPT_ERROR;
 // reg TLU_TRIGGER_LOW_TIMEOUT_ERROR;
 assign TLU_FIFO_DATA[31:0] = (TLU_MODE==2'b11 && WRITE_TIMESTAMP==1'b0) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : {1'b1, TIMESTAMP_DATA[30:0]};
@@ -100,9 +103,9 @@ begin
         begin
             if (WRITE_TIMESTAMP == 1'b0 && (TLU_MODE == 2'b00 || TLU_MODE == 2'b01)) next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY; // do not wait for trigger low
             else if (WRITE_TIMESTAMP == 1'b1 && (TLU_MODE == 2'b00 || TLU_MODE == 2'b01)) next = LATCH_DATA; // do not wait for trigger low
-            else if (WRITE_TIMESTAMP == 1'b0 && TLU_MODE == 2'b10 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1)) next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY;
-            else if (WRITE_TIMESTAMP == 1'b1 && TLU_MODE == 2'b10 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1)) next = LATCH_DATA;
-            else if (TLU_MODE == 2'b11 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1)) next = SEND_TLU_CLOCK;
+            else if (WRITE_TIMESTAMP == 1'b0 && TLU_MODE == 2'b10 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1) && (counter_trigger_low_time_out >= TLU_WAIT_CYCLES)) next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY;
+            else if (WRITE_TIMESTAMP == 1'b1 && TLU_MODE == 2'b10 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1) && (counter_trigger_low_time_out >= TLU_WAIT_CYCLES)) next = LATCH_DATA;
+            else if (TLU_MODE == 2'b11 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1) && (counter_trigger_low_time_out >= TLU_WAIT_CYCLES)) next = SEND_TLU_CLOCK;
             else next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
         end
         
