@@ -150,14 +150,14 @@ module tb (
     wire [31:0] TLU_FIFO_DATA;
     wire FIFO_FULL;
     
-    wire RJ45_TRIGGER, LEMO_TRIGGER, RJ45_RESET, LEMO_RESET, TRIGGER_ENABLE, TLU_BUSY, TLU_CLOCK;
+    wire TLU_TRIGGER, LEMO_TRIGGER, TLU_RESET, LEMO_RESET, TRIGGER_ENABLE, TLU_BUSY, TLU_CLOCK;
     wire ACKNOWLEDGE;
     
     assign TRIGGER_ENABLE = 1'b1;
     
     tlu_model itlu_model ( 
         .SYS_CLK(BUS_CLK), .SYS_RST(BUS_RST), .ENABLE(TRIGGER_ENABLE), .TLU_CLOCK(TLU_CLOCK), .TLU_BUSY(TLU_BUSY), 
-        .TLU_TRIGGER(RJ45_TRIGGER), .TLU_RESET(RJ45_RESET)
+        .TLU_TRIGGER(TLU_TRIGGER), .TLU_RESET(TLU_RESET)
     );
     
     tlu_controller #(
@@ -184,8 +184,8 @@ module tb (
         .TRIGGER(8'b0),
         .TRIGGER_VETO(8'b0),
         
-        .TLU_TRIGGER(RJ45_TRIGGER),
-        .TLU_RESET(RJ45_RESET),
+        .TLU_TRIGGER(TLU_TRIGGER),
+        .TLU_RESET(TLU_RESET),
         .TLU_BUSY(TLU_BUSY),
         .TLU_CLOCK(TLU_CLOCK),
         
@@ -197,9 +197,9 @@ module tb (
     );
     
     
-    //assign RJ45_TRIGGER = 1'b0;
+    //assign TLU_TRIGGER = 1'b0;
     assign LEMO_TRIGGER = 1'b0;
-    //assign RJ45_RESET = 1'b0;
+    //assign TLU_RESET = 1'b0;
     assign LEMO_RESET = 1'b0;
     //assign TRIGGER_ENABLE = 1'b0;
     
