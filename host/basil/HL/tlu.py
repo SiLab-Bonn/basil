@@ -33,8 +33,8 @@ class tlu(RegisterHardwareLayer):
                   'EN_WRITE_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 7}},
                   'TRIGGER_LOW_TIMEOUT': {'descr': {'addr': 3, 'size': 8}},
                   'CURRENT_TLU_TRIGGER_NUMBER': {'descr': {'addr': 4, 'size': 32, 'properties': ['ro']}},
-                  'TRIGGER_COUNTER': {'descr': {'addr': 8, 'size': 32, 'properties': ['ro']}}}  # to reset trigger counter use RESET
-    _require_version = "==1"
+                  'TRIGGER_COUNTER': {'descr': {'addr': 8, 'size': 32}}}
+    _require_version = "==2"
 
     def __init__(self, intf, conf):
         super(tlu, self).__init__(intf, conf)
