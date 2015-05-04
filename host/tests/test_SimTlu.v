@@ -123,10 +123,14 @@ module tb (
     assign BUS_BYTE_ACCESS = BUS_ADD < 32'h8000_0000 ? 1'b1 : 1'b0;
     
     wire TLU_CMD_EXT_START_FLAG, CMD_EXT_START_ENABLE;
+    wire TLU_TRIGGER, TLU_RESET, TRIGGER_ENABLE, TLU_BUSY, TLU_CLOCK;
+    wire [6:0] NOT_CONNECTED;
+    wire [7:0] GPIO_IO;
+    assign GPIO_IO = {NOT_CONNECTED, TRIGGER_ENABLE};
     
     gpio 
     #( 
-        .BASEADDR(GPIO_BASEADDR), 
+        .BASEADDR(GPIO_BASEADDR),
         .HIGHADDR(GPIO_HIGHADDR),
         .ABUSWIDTH(ABUSWIDTH),
         .IO_WIDTH(8),
@@ -139,7 +143,7 @@ module tb (
         .BUS_DATA(BUS_DATA[7:0]),
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
-        .IO()
+        .IO(GPIO_IO)
     );
     
     assign TLU_CMD_EXT_START_FLAG = 0;
@@ -149,11 +153,9 @@ module tb (
     wire TLU_FIFO_EMPTY;
     wire [31:0] TLU_FIFO_DATA;
     wire FIFO_FULL;
-    
-    wire TLU_TRIGGER, LEMO_TRIGGER, TLU_RESET, LEMO_RESET, TRIGGER_ENABLE, TLU_BUSY, TLU_CLOCK;
     wire ACKNOWLEDGE;
     
-    assign TRIGGER_ENABLE = 1'b1;
+    //assign TRIGGER_ENABLE = 1'b1;
     
     tlu_model itlu_model ( 
         .SYS_CLK(BUS_CLK), .SYS_RST(BUS_RST), .ENABLE(TRIGGER_ENABLE), .TLU_CLOCK(TLU_CLOCK), .TLU_BUSY(TLU_BUSY), 
@@ -196,14 +198,6 @@ module tb (
         .TIMESTAMP()
     );
     
-    
-    //assign TLU_TRIGGER = 1'b0;
-    assign LEMO_TRIGGER = 1'b0;
-    //assign TLU_RESET = 1'b0;
-    assign LEMO_RESET = 1'b0;
-    //assign TRIGGER_ENABLE = 1'b0;
-    
-
     wire FIFO_READ, FIFO_EMPTY;
     wire [31:0] FIFO_DATA;
     assign FIFO_DATA = TLU_FIFO_DATA;

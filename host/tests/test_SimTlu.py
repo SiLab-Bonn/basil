@@ -46,6 +46,10 @@ registers:
     type        : StdRegister
     hw_driver   : gpio
     size        : 8
+    fields:
+      - name    : ENABLE
+        size    : 1
+        offset  : 0
 
 """
 
@@ -60,16 +64,18 @@ class TestSimTlu(unittest.TestCase):
         
     def test_version(self):
     
-        self.chip['tlu'].set_trigger_mode(3)
+        self.chip['tlu'].TRIGGER_MODE = 3
+        self.chip['CONTROL']['ENABLE'] = 1
 
         i = 0;
-        while(self.chip['sram'].get_fifo_int_size() < 4 and i < 100 ):
+        while(self.chip['sram'].get_fifo_int_size() < 4 and i < 200):
             i += 1
         
-        self.assertEqual(self.chip['sram'].get_fifo_int_size() >= 4, True)
+        self.chip['CONTROL']['ENABLE'] = 0
+        
+        self.assertGreaterEqual(self.chip['sram'].get_fifo_int_size(), 4)
         
         data = self.chip['sram'].get_data()[:4]
-        
         self.assertEqual(data[0], 0x80000000)
         self.assertEqual(data[1], 0x80000001)
         self.assertEqual(data[2], 0x80000002)
