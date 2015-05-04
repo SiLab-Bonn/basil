@@ -89,7 +89,7 @@ begin
 end
 
 // combinational always block, blocking assignments
-always @ (state or TRIGGER_ACKNOWLEDGE or ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_FLAG or TRIGGER or TLU_MODE or WRITE_TIMESTAMP or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock or TLU_TRIGGER_CLOCK_CYCLES or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO) //or TLU_TRIGGER_BUSY)
+always @ (state or TRIGGER_ACKNOWLEDGE or ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_FLAG or TRIGGER or TLU_MODE or WRITE_TIMESTAMP or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock or TLU_TRIGGER_CLOCK_CYCLES or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or counter_trigger_low_time_out) //or TLU_TRIGGER_BUSY)
 begin
     case (state)
     
