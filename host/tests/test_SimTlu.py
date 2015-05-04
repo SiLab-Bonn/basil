@@ -59,8 +59,22 @@ class TestSimTlu(unittest.TestCase):
         self.chip.init()
         
     def test_version(self):
-        self.assertEqual(self.chip['tlu'].VERSION, 1)
     
+        self.chip['tlu'].set_trigger_mode(3)
+
+        i = 0;
+        while(self.chip['sram'].get_fifo_int_size() < 4 and i < 100 ):
+            i += 1
+        
+        self.assertEqual(self.chip['sram'].get_fifo_int_size() >= 4, True)
+        
+        data = self.chip['sram'].get_data()[:4]
+        
+        self.assertEqual(data[0], 0x80000000)
+        self.assertEqual(data[1], 0x80000001)
+        self.assertEqual(data[2], 0x80000002)
+        self.assertEqual(data[3], 0x80000003)
+        
     def tearDown(self):
         self.chip.close() # let it close connection and stop simulator
         time.sleep(1)

@@ -24,6 +24,79 @@
 `include "utils/generic_fifo.v"
 `include "utils/3_stage_synchronizer.v"
 
+
+module tlu_model ( 
+    input wire SYS_CLK, SYS_RST, TLU_CLOCK, TLU_BUSY, ENABLE, 
+    output wire TLU_TRIGGER, TLU_RESET
+);
+    
+reg [14:0] TRIG_ID;
+reg TRIG;
+wire VETO;
+integer seed;
+
+initial 
+    seed = 0;
+
+    
+always@(posedge SYS_CLK) begin
+    if(SYS_RST)
+        TRIG <= 0;
+    else if( $random(seed) % 100 == 10 && !VETO && ENABLE)
+        TRIG <= 1;
+    else
+        TRIG <= 0;
+end
+    
+always@(posedge SYS_CLK) begin
+    if(SYS_RST)
+        TRIG_ID <= 0;
+    else if(TRIG)
+        TRIG_ID <= TRIG_ID + 1;
+end
+
+localparam WAIT_STATE = 0, TRIG_STATE = 1, READ_ID_STATE = 2;
+
+reg [1:0] state, state_next;
+always@(posedge SYS_CLK)
+    if(SYS_RST)
+        state <= WAIT_STATE;
+    else
+        state <= state_next;
+
+always@(*) begin
+    state_next = state;
+    
+    case(state)
+        WAIT_STATE: 
+            if(TRIG)
+                state_next = TRIG_STATE;
+        TRIG_STATE:
+            if(TLU_BUSY)
+                state_next = READ_ID_STATE;
+        READ_ID_STATE:
+            if(!TLU_BUSY)
+                state_next = WAIT_STATE;
+        default : state_next = WAIT_STATE;
+    endcase
+end
+
+assign VETO = (state != WAIT_STATE);
+
+reg [15:0] TRIG_ID_SR;
+always@(posedge TLU_CLOCK or posedge TRIG)
+    if(TRIG)
+        TRIG_ID_SR <= {TRIG_ID, 1'b0};
+    else
+        TRIG_ID_SR <= {1'b0, TRIG_ID_SR[15:1]};
+        
+assign TLU_TRIGGER = (state == TRIG_STATE) | (TRIG_ID_SR[0] & TLU_BUSY) ;
+
+assign TLU_RESET = 0;
+
+endmodule
+
+
 module tb (
     input           BUS_CLK,
     input           BUS_RST,
@@ -70,7 +143,7 @@ module tb (
     );
     
     assign TLU_CMD_EXT_START_FLAG = 0;
-    assign CMD_EXT_START_ENABLE = 0;
+    assign CMD_EXT_START_ENABLE = 1'b1;
     
     wire TLU_FIFO_READ;
     wire TLU_FIFO_EMPTY;
@@ -78,6 +151,12 @@ module tb (
     wire FIFO_FULL;
     
     wire RJ45_TRIGGER, LEMO_TRIGGER, RJ45_RESET, LEMO_RESET, RJ45_ENABLED, TLU_BUSY, TLU_CLOCK;
+    
+    
+    tlu_model itlu_model ( 
+        .SYS_CLK(BUS_CLK), .SYS_RST(BUS_RST), .ENABLE(RJ45_ENABLED), .TLU_CLOCK(TLU_CLOCK), .TLU_BUSY(TLU_BUSY), 
+        .TLU_TRIGGER(RJ45_TRIGGER), .TLU_RESET(RJ45_RESET)
+    );
     
     tlu_controller #(
         .BASEADDR(TLU_BASEADDR),
@@ -117,11 +196,12 @@ module tb (
         .TIMESTAMP()
     );
     
-    assign RJ45_TRIGGER = 1'b0;
+    
+    //assign RJ45_TRIGGER = 1'b0;
     assign LEMO_TRIGGER = 1'b0;
-    assign RJ45_RESET = 1'b0;
+    //assign RJ45_RESET = 1'b0;
     assign LEMO_RESET = 1'b0;
-    assign RJ45_ENABLED = 1'b0;
+    //assign RJ45_ENABLED = 1'b0;
     
 
     wire FIFO_READ, FIFO_EMPTY;
