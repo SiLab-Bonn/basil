@@ -26,19 +26,19 @@
 
 
 module tlu_model ( 
-    input wire SYS_CLK, SYS_RST, TLU_CLOCK, TLU_BUSY, ENABLE, 
+    input wire SYS_CLK, SYS_RST, TLU_CLOCK, TLU_BUSY, ENABLE,
     output wire TLU_TRIGGER, TLU_RESET
 );
-    
+
 reg [14:0] TRIG_ID;
 reg TRIG;
 wire VETO;
 integer seed;
 
-initial 
+initial
     seed = 0;
 
-    
+
 always@(posedge SYS_CLK) begin
     if(SYS_RST)
         TRIG <= 0;
@@ -47,7 +47,7 @@ always@(posedge SYS_CLK) begin
     else
         TRIG <= 0;
 end
-    
+
 always@(posedge SYS_CLK) begin
     if(SYS_RST)
         TRIG_ID <= 0;
@@ -90,7 +90,7 @@ always@(posedge TLU_CLOCK or posedge TRIG)
     else
         TRIG_ID_SR <= {1'b0, TRIG_ID_SR[15:1]};
         
-assign TLU_TRIGGER = (state == TRIG_STATE) | (TRIG_ID_SR[0] & TLU_BUSY) ;
+assign TLU_TRIGGER = (state == TRIG_STATE) | (TRIG_ID_SR[0] & TLU_BUSY);
 
 assign TLU_RESET = 0;
 
@@ -150,12 +150,13 @@ module tb (
     wire [31:0] TLU_FIFO_DATA;
     wire FIFO_FULL;
     
-    wire RJ45_TRIGGER, LEMO_TRIGGER, RJ45_RESET, LEMO_RESET, RJ45_ENABLED, TLU_BUSY, TLU_CLOCK;
+    wire RJ45_TRIGGER, LEMO_TRIGGER, RJ45_RESET, LEMO_RESET, TRIGGER_ENABLE, TLU_BUSY, TLU_CLOCK;
+    wire ACKNOWLEDGE;
     
-    assign RJ45_ENABLED = 1'b1;
+    assign TRIGGER_ENABLE = 1'b1;
     
     tlu_model itlu_model ( 
-        .SYS_CLK(BUS_CLK), .SYS_RST(BUS_RST), .ENABLE(RJ45_ENABLED), .TLU_CLOCK(TLU_CLOCK), .TLU_BUSY(TLU_BUSY), 
+        .SYS_CLK(BUS_CLK), .SYS_RST(BUS_RST), .ENABLE(TRIGGER_ENABLE), .TLU_CLOCK(TLU_CLOCK), .TLU_BUSY(TLU_BUSY), 
         .TLU_TRIGGER(RJ45_TRIGGER), .TLU_RESET(RJ45_RESET)
     );
     
@@ -188,9 +189,9 @@ module tb (
         .TLU_BUSY(TLU_BUSY),
         .TLU_CLOCK(TLU_CLOCK),
         
-        .TRIGGER_ENABLE(RJ45_ENABLED),       
-        .TRIGGER_ACKNOWLEDGE(1'b1),
-        .TRIGGER_ACCEPTED_FLAG(),
+        .TRIGGER_ENABLE(TRIGGER_ENABLE),
+        .TRIGGER_ACKNOWLEDGE(ACKNOWLEDGE),
+        .TRIGGER_ACCEPTED_FLAG(ACKNOWLEDGE),
 
         .TIMESTAMP()
     );
@@ -200,7 +201,7 @@ module tb (
     assign LEMO_TRIGGER = 1'b0;
     //assign RJ45_RESET = 1'b0;
     assign LEMO_RESET = 1'b0;
-    //assign RJ45_ENABLED = 1'b0;
+    //assign TRIGGER_ENABLE = 1'b0;
     
 
     wire FIFO_READ, FIFO_EMPTY;
