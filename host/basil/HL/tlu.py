@@ -29,11 +29,14 @@ class tlu(RegisterHardwareLayer):
                   'TRIGGER_DATA_DELAY': {'descr': {'addr': 1, 'size': 4, 'offset': 4}},
                   'TRIGGER_CLOCK_CYCLES': {'descr': {'addr': 2, 'size': 5, 'offset': 0}},
                   'EN_TLU_RESET': {'descr': {'addr': 2, 'size': 1, 'offset': 5}},
-                  'EN_INVERT_TRIGGER': {'descr': {'addr': 2, 'size': 1, 'offset': 6}},
+                  'EN_INVERT_LEMO_TRIGGER': {'descr': {'addr': 2, 'size': 1, 'offset': 6}},
                   'EN_WRITE_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 7}},
                   'TRIGGER_LOW_TIMEOUT': {'descr': {'addr': 3, 'size': 8}},
                   'CURRENT_TLU_TRIGGER_NUMBER': {'descr': {'addr': 4, 'size': 32, 'properties': ['ro']}},
-                  'TRIGGER_COUNTER': {'descr': {'addr': 8, 'size': 32}}}
+                  'TRIGGER_COUNTER': {'descr': {'addr': 8, 'size': 32}},
+                  'TRIGGER_SELECT': {'descr': {'addr': 12, 'size': 8}},
+                  'TRIGGER_VETO_SELECT': {'descr': {'addr': 13, 'size': 8}},
+                  'TRIGGER_INVERT': {'descr': {'addr': 14, 'size': 8}}}
     _require_version = "==2"
 
     def __init__(self, intf, conf):
