@@ -152,6 +152,7 @@ module tb (
     
     wire RJ45_TRIGGER, LEMO_TRIGGER, RJ45_RESET, LEMO_RESET, RJ45_ENABLED, TLU_BUSY, TLU_CLOCK;
     
+    assign RJ45_ENABLED = 1'b1;
     
     tlu_model itlu_model ( 
         .SYS_CLK(BUS_CLK), .SYS_RST(BUS_RST), .ENABLE(RJ45_ENABLED), .TLU_CLOCK(TLU_CLOCK), .TLU_BUSY(TLU_BUSY), 
@@ -171,7 +172,7 @@ module tb (
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
         
-        .CMD_CLK(BUS_CLK),
+        .TRIGGER_CLK(BUS_CLK),
         
         .FIFO_READ(TLU_FIFO_READ),
         .FIFO_EMPTY(TLU_FIFO_EMPTY),
@@ -179,20 +180,18 @@ module tb (
         
         .FIFO_PREEMPT_REQ(),
         
-        .RJ45_TRIGGER(RJ45_TRIGGER),
-        .LEMO_TRIGGER(LEMO_TRIGGER),
-        .RJ45_RESET(RJ45_RESET),
-        .LEMO_RESET(LEMO_RESET),
-        .RJ45_ENABLED(RJ45_ENABLED),
+        .TRIGGER(8'b0),
+        .TRIGGER_VETO(8'b0),
+        
+        .TLU_TRIGGER(RJ45_TRIGGER),
+        .TLU_RESET(RJ45_RESET),
         .TLU_BUSY(TLU_BUSY),
         .TLU_CLOCK(TLU_CLOCK),
         
-        .EXT_VETO(FIFO_FULL),
-        
-        .CMD_READY(1'b1),
-        .CMD_EXT_START_FLAG(TLU_CMD_EXT_START_FLAG),
-        .CMD_EXT_START_ENABLE(CMD_EXT_START_ENABLE),
-        
+        .TRIGGER_ENABLE(RJ45_ENABLED),       
+        .TRIGGER_ACKNOWLEDGE(1'b1),
+        .TRIGGER_ACCEPTED_FLAG(),
+
         .TIMESTAMP()
     );
     
