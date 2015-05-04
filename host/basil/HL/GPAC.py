@@ -275,7 +275,10 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
     '''GPAC interface
 
     Note:
-    - Solder 50Ohm resistor parallel to C55
+    - Solder 100 Ohm resistor parallel to C55
+    - Replace R14 by 50 Ohm resistor (0 Ohm on some cards)
+    - Close JP2 (2-3, SENSE-GND)
+    - Close JP3 (2-3, REF_2.048V-VREF_1)
     - Outputs are clamped to potential of PWR0, keep potential of PWR0 close to supply voltage
     '''
     # EEPROM data V1
