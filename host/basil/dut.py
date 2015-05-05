@@ -6,6 +6,7 @@
 #
 
 import logging
+import os
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
 from importlib import import_module
 from inspect import getmembers, isclass
@@ -39,9 +40,12 @@ class Base(object):
         if not conf:
             pass
         elif isinstance(conf, basestring):  # parse the first YAML document in a stream
-            with open(conf, 'r') as f:
-                conf_dict.update(safe_load(f))
-                conf_dict.update(conf_path=f.name)
+            if os.path.isfile(conf):
+                with open(conf, 'r') as f:
+                    conf_dict.update(safe_load(f))
+                    conf_dict.update(conf_path=f.name)
+            else:
+                conf_dict.update(safe_load(conf))
         elif isinstance(conf, file):  # parse the first YAML document in a stream
             conf_dict.update(safe_load(conf))
             conf_dict.update(conf_path=conf.name)
