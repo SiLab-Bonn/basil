@@ -60,7 +60,7 @@ class TestSimTlu(unittest.TestCase):
         self.chip['gpio'].set_data([0x01])
 
         readings = 0
-        while(self.chip['sram'].get_fifo_int_size() < 4 or readings < 1000):
+        while(self.chip['sram'].get_fifo_int_size() < 4 and readings < 1000):
             readings += 1
 
 #         self.chip['CONTROL']['ENABLE'] = 0
