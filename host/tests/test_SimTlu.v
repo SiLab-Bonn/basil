@@ -126,7 +126,8 @@ module tb (
     wire TLU_TRIGGER, TLU_RESET, TRIGGER_ENABLE, TLU_BUSY, TLU_CLOCK;
     wire [6:0] NOT_CONNECTED;
     wire [7:0] GPIO_IO;
-    assign GPIO_IO = {NOT_CONNECTED, TRIGGER_ENABLE};
+    assign NOT_CONNECTED = GPIO_IO[7:1];
+    assign TRIGGER_ENABLE = GPIO_IO[0];
     
     gpio 
     #( 

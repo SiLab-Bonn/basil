@@ -6,11 +6,11 @@
 #
 
 import unittest
+from time import time
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
 cnfg_yaml = """
-
 transfer_layer:
   - name  : intf
     type  : SiSim
@@ -59,9 +59,10 @@ class TestSimTlu(unittest.TestCase):
         self.chip['tlu'].TRIGGER_MODE = 3
         self.chip['CONTROL']['ENABLE'] = 1
 
-        i = 0
-        while(self.chip['sram'].get_fifo_int_size() < 4 and i < 200):
-            i += 1
+        start = time()
+        while(self.chip['sram'].get_fifo_int_size() < 4):
+            if time() - start > 1:
+                break
 
         self.chip['CONTROL']['ENABLE'] = 0
 
