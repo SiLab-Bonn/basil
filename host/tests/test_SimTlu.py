@@ -6,7 +6,6 @@
 #
 
 import unittest
-from time import time
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
@@ -60,15 +59,14 @@ class TestSimTlu(unittest.TestCase):
 #         self.chip['CONTROL']['ENABLE'] = 1
         self.chip['gpio'].set_data([0x01])
 
-        start = time()
-        while(self.chip['sram'].get_fifo_int_size() < 4):
-            if time() - start > 5:
-                break
+        readings = 0
+        while(self.chip['sram'].get_fifo_int_size() < 4 or readings < 1000):
+            readings += 1
 
 #         self.chip['CONTROL']['ENABLE'] = 0
         self.chip['gpio'].set_data([0x00])
 
-        self.assertEqual(self.chip['sram'].get_fifo_int_size(), 4)
+        self.assertGreaterEqual(self.chip['sram'].get_fifo_int_size(), 4)
 
         data = self.chip['sram'].get_data()[:4]
         self.assertEqual(data[0], 0x80000000)
