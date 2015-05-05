@@ -317,8 +317,8 @@ class TestBitLogic(unittest.TestCase):
         self.assertEqual(bl, bitarray('00000001'))
         bl[-3] = True
         self.assertEqual(bl, bitarray('00000101'))
-        #bl[-2:-1] = 2
-        #self.assertEqual(bl, bitarray('00000111'))
-        
+#         bl[-2:-1] = 2
+#         self.assertEqual(bl, bitarray('00000111'))
+
 if __name__ == '__main__':
     unittest.main()

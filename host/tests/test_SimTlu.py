@@ -6,23 +6,19 @@
 #
 
 import unittest
-import subprocess
-import os
-import time
-import yaml
 from basil.dut import Dut
-from basil.utils.sim.utils import cocotb_compile_and_run
+from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
 cnfg_yaml = """
 
 transfer_layer:
   - name  : intf
     type  : SiSim
-    init:      
+    init:
         host : localhost
         port  : 12345
 
-hw_drivers:    
+hw_drivers:
   - name      : gpio
     type      : gpio
     interface : intf
@@ -41,7 +37,6 @@ hw_drivers:
     base_data_addr : 0x80000000
 
 registers:
-
   - name        : CONTROL
     type        : StdRegister
     hw_driver   : gpio
@@ -50,42 +45,37 @@ registers:
       - name    : ENABLE
         size    : 1
         offset  : 0
-
 """
+
 
 class TestSimTlu(unittest.TestCase):
     def setUp(self):
-    
         cocotb_compile_and_run(['test_SimTlu.v'])
-        
-        cnfg = yaml.load(cnfg_yaml)
-        self.chip = Dut(cnfg)
+
+        self.chip = Dut(cnfg_yaml)
         self.chip.init()
-        
+
     def test_version(self):
-    
         self.chip['tlu'].TRIGGER_MODE = 3
         self.chip['CONTROL']['ENABLE'] = 1
 
-        i = 0;
+        i = 0
         while(self.chip['sram'].get_fifo_int_size() < 4 and i < 200):
             i += 1
-        
+
         self.chip['CONTROL']['ENABLE'] = 0
-        
+
         self.assertGreaterEqual(self.chip['sram'].get_fifo_int_size(), 4)
-        
+
         data = self.chip['sram'].get_data()[:4]
         self.assertEqual(data[0], 0x80000000)
         self.assertEqual(data[1], 0x80000001)
         self.assertEqual(data[2], 0x80000002)
         self.assertEqual(data[3], 0x80000003)
-        
+
     def tearDown(self):
-        self.chip.close() # let it close connection and stop simulator
-        time.sleep(1)
-        subprocess.call('make clean', shell=True)
-        subprocess.call('rm -f Makefile', shell=True)
+        self.chip.close()  # let it close connection and stop simulator
+        cocotb_compile_clean()
 
 if __name__ == '__main__':
     unittest.main()

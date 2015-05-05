@@ -78,7 +78,7 @@ class TestClass(unittest.TestCase):
     def test_init_simple(self):
         self.dut['TEST1'].write()
         mem = dict()
-# mem[0] = 0  # reset
+#         mem[0] = 0  # reset
 #         mem[0] = 1
         mem[16] = 0  # has an offset of 16 bytes
         mem[17] = 0
@@ -140,7 +140,7 @@ class TestClass(unittest.TestCase):
     def test_bit_order(self):
         self.dut['TEST2'].write()
         mem = dict()
-# mem[0] = 0  # reset
+#         mem[0] = 0  # reset
         mem[0] = 1
         mem[13] = 4
         mem[16] = 0
@@ -202,7 +202,7 @@ class TestClass(unittest.TestCase):
         self.dut = Dut(self.cnfg)
         self.dut.init()
         mem = dict()
-# mem[0] = 0  # reset
+#         mem[0] = 0  # reset
         mem[0] = 1
         mem[13] = 4
         mem[16] = 0x08
@@ -254,7 +254,6 @@ class TestClass(unittest.TestCase):
         mem[17] = 0x30
         mem[18] = 0
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
-
 
 
 if __name__ == '__main__':
