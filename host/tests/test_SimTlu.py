@@ -62,7 +62,7 @@ class TestSimTlu(unittest.TestCase):
 
         start = time()
         while(self.chip['sram'].get_fifo_int_size() < 4):
-            if time() - start > 1:
+            if time() - start > 5:
                 break
 
 #         self.chip['CONTROL']['ENABLE'] = 0
