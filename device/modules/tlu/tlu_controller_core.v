@@ -49,7 +49,7 @@ module tlu_controller_core
     output wire                 TLU_BUSY,
     output reg                  TLU_CLOCK,
     
-    output reg      [31:0]      TIMESTAMP
+    output wire     [31:0]      TIMESTAMP
 );
 
 localparam VERSION = 2;
@@ -143,7 +143,7 @@ end
 // read reg
 reg [7:0] LOST_DATA_CNT; // BUS_ADD==0
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK, CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF; // BUS_ADD==4 - 7
-reg [31:0] CURRENT_TRIGGER_NUMBER, CURRENT_TRIGGER_NUMBER_BUF; // BUS_ADD==8 - 11
+reg [31:0] TRIGGER_COUNTER, TRIGGER_COUNTER_BUF; // BUS_ADD==8 - 11
 
 always @ (posedge BUS_CLK)
 begin
@@ -164,13 +164,13 @@ begin
     else if (BUS_ADD == 7)
         BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF[31:24];
     else if (BUS_ADD == 8)
-        BUS_DATA_OUT <= CURRENT_TRIGGER_NUMBER[7:0];
+        BUS_DATA_OUT <= TRIGGER_COUNTER[7:0];
     else if (BUS_ADD == 9)
-        BUS_DATA_OUT <= CURRENT_TRIGGER_NUMBER_BUF[15:8];
+        BUS_DATA_OUT <= TRIGGER_COUNTER_BUF[15:8];
     else if (BUS_ADD == 10)
-        BUS_DATA_OUT <= CURRENT_TRIGGER_NUMBER_BUF[23:16];
+        BUS_DATA_OUT <= TRIGGER_COUNTER_BUF[23:16];
     else if (BUS_ADD == 11)
-        BUS_DATA_OUT <= CURRENT_TRIGGER_NUMBER_BUF[31:24];
+        BUS_DATA_OUT <= TRIGGER_COUNTER_BUF[31:24];
     else if (BUS_ADD == 12)
         BUS_DATA_OUT <= LOST_DATA_CNT;
     else
@@ -405,33 +405,43 @@ flag_domain_crossing trigger_accepted_flag_domain_crossing (
     .FLAG_OUT_CLK_B(TRIGGER_ACCEPTED_FLAG_BUS_CLK)
 );
 
+wire TRIGGER_COUNTER_SET;
+assign TRIGGER_COUNTER_SET = (BUS_ADD == 11 & BUS_WR);
+reg TRIGGER_COUNTER_SET_FF;
+always @ (posedge BUS_CLK)
+begin
+    TRIGGER_COUNTER_SET_FF <= TRIGGER_COUNTER_SET;
+end
+wire TRIGGER_COUNTER_SET_FLAG;
+assign TRIGGER_COUNTER_SET_FLAG = ~TRIGGER_COUNTER_SET_FF & TRIGGER_COUNTER_SET;
+
+wire TRIGGER_COUNTER_SET_FLAG_SYNC;
+flag_domain_crossing trigger_counter_set_flag_domain_crossing (
+    .CLK_A(BUS_CLK),
+    .CLK_B(TRIGGER_CLK),
+    .FLAG_IN_CLK_A(TRIGGER_COUNTER_SET_FLAG),
+    .FLAG_OUT_CLK_B(TRIGGER_COUNTER_SET_FLAG_SYNC)
+);
+
+wire [31:0] TRIGGER_COUNTER_DATA;
 always @ (posedge BUS_CLK)
 begin
     if (RST | TLU_RESET_FLAG_BUS_CLK == 1'b1)
-        CURRENT_TRIGGER_NUMBER <= 32'b0;
+        TRIGGER_COUNTER <= 32'b0;
     else if (BUS_ADD == 11 && BUS_WR)
-        CURRENT_TRIGGER_NUMBER <= {BUS_DATA_IN, status_regs[10], status_regs[9], status_regs[8]};
-    else if (TRIGGER_ACCEPTED_FLAG_BUS_CLK == 1'b1 && TRIGGER_ENABLE_BUS_CLK == 1'b1 && CURRENT_TRIGGER_NUMBER != 32'b1111_1111_1111_1111_1111_1111_1111_1111)
-        CURRENT_TRIGGER_NUMBER <= CURRENT_TRIGGER_NUMBER + 1;
+        TRIGGER_COUNTER <= {BUS_DATA_IN, status_regs[10], status_regs[9], status_regs[8]};
+    else if (TRIGGER_ACCEPTED_FLAG_BUS_CLK == 1'b1 && TRIGGER_ENABLE_BUS_CLK == 1'b1)
+        TRIGGER_COUNTER <= TRIGGER_COUNTER_DATA;
     //else if (ENABLE_TLU_FLAG_BUS_CLK == 1'b1)
-    //    CURRENT_TRIGGER_NUMBER <= 32'b0;
+    //    TRIGGER_COUNTER <= 32'b0;
 end
 
 always @ (posedge BUS_CLK)
 begin
     if (RST)
-        CURRENT_TRIGGER_NUMBER_BUF <= 32'b0;
+        TRIGGER_COUNTER_BUF <= 32'b0;
     else if (BUS_ADD == 8 && BUS_RD)
-        CURRENT_TRIGGER_NUMBER_BUF <= CURRENT_TRIGGER_NUMBER;
-end
-
-// 40 MHz time stamp
-always @ (posedge TRIGGER_CLK)
-begin
-    if (RST_SYNC)
-        TIMESTAMP <= 32'b0;
-    else
-        TIMESTAMP <= TIMESTAMP + 1;
+        TRIGGER_COUNTER_BUF <= TRIGGER_COUNTER;
 end
 
 // TLU FSM
@@ -451,6 +461,10 @@ tlu_controller_fsm #(
     .TIMESTAMP(TIMESTAMP),
     .TIMESTAMP_DATA(),
     .TLU_TRIGGER_NUMBER_DATA(TLU_TRIGGER_NUMBER_DATA),
+
+    .TRIGGER_COUNTER_DATA(TRIGGER_COUNTER_DATA),
+    .TRIGGER_COUNTER_SET(TRIGGER_COUNTER_SET_FLAG_SYNC),
+    .TRIGGER_COUNTER_SET_VALUE(TRIGGER_COUNTER),
 
     .TRIGGER(TRIGGER_FSM),
     .TRIGGER_FLAG(TRIGGER_FSM_FLAG),

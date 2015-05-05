@@ -54,7 +54,31 @@ class TestSimTlu(unittest.TestCase):
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
 
-    def test_version(self):
+    def test_simple_trigger(self):
+        self.chip['tlu'].TRIGGER_COUNTER = 10
+        self.chip['tlu'].TRIGGER_MODE = 0
+        self.chip['tlu'].TRIGGER_SELECT = 1
+#         self.chip['CONTROL']['ENABLE'] = 1
+        self.chip['gpio'].set_data([0x01])
+
+        readings = 0
+        while(self.chip['sram'].get_fifo_int_size() < 4 and readings < 1000):
+            readings += 1
+
+#         self.chip['CONTROL']['ENABLE'] = 0
+        self.chip['gpio'].set_data([0x00])
+
+        self.assertGreaterEqual(self.chip['sram'].get_fifo_int_size(), 4)
+        self.assertGreaterEqual(self.chip['tlu'].TRIGGER_COUNTER, 13)
+
+        data = self.chip['sram'].get_data()[:4]
+        self.assertEqual(data[0], 0x80000000 + 10)
+        self.assertEqual(data[1], 0x80000000 + 11)
+        self.assertEqual(data[2], 0x80000000 + 12)
+        self.assertEqual(data[3], 0x80000000 + 13)
+
+    def test_tlu_trigger_handshake(self):
+        self.chip['tlu'].TRIGGER_COUNTER = 0
         self.chip['tlu'].TRIGGER_MODE = 3
 #         self.chip['CONTROL']['ENABLE'] = 1
         self.chip['gpio'].set_data([0x01])
@@ -67,6 +91,8 @@ class TestSimTlu(unittest.TestCase):
         self.chip['gpio'].set_data([0x00])
 
         self.assertGreaterEqual(self.chip['sram'].get_fifo_int_size(), 4)
+        self.assertGreaterEqual(self.chip['tlu'].TRIGGER_COUNTER, 4)
+        self.assertGreaterEqual(self.chip['tlu'].CURRENT_TLU_TRIGGER_NUMBER, 4)
 
         data = self.chip['sram'].get_data()[:4]
         self.assertEqual(data[0], 0x80000000)

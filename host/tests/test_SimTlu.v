@@ -42,7 +42,7 @@ initial
 always@(posedge SYS_CLK) begin
     if(SYS_RST)
         TRIG <= 0;
-    else if( $random(seed) % 100 == 10 && !VETO && ENABLE)
+    else if($random(seed) % 100 == 10 && !VETO && ENABLE)
         TRIG <= 1;
     else
         TRIG <= 0;
@@ -184,7 +184,7 @@ module tb (
         
         .FIFO_PREEMPT_REQ(),
         
-        .TRIGGER(8'b0),
+        .TRIGGER({7'b0, TLU_TRIGGER}),
         .TRIGGER_VETO(8'b0),
         
         .TLU_TRIGGER(TLU_TRIGGER),

@@ -18,15 +18,19 @@ module tlu_controller_fsm
     output wire     [31:0]      TLU_FIFO_DATA,
     
     output reg                  FIFO_PREEMPT_REQ_FLAG,
-
-    input wire      [31:0]      TIMESTAMP,
+    
+    output reg      [31:0]      TIMESTAMP,
     output reg      [31:0]      TIMESTAMP_DATA,
     output reg      [31:0]      TLU_TRIGGER_NUMBER_DATA,
+    
+    output reg      [31:0]      TRIGGER_COUNTER_DATA,
+    input wire                  TRIGGER_COUNTER_SET,
+    input wire      [31:0]      TRIGGER_COUNTER_SET_VALUE,
     
     input wire                  TRIGGER,
     input wire                  TRIGGER_FLAG,
     input wire                  TRIGGER_VETO,
-    input wire                  TRIGGER_ENABLE,    
+    input wire                  TRIGGER_ENABLE,
     input wire                  TRIGGER_ACKNOWLEDGE,
     output reg                  TRIGGER_ACCEPTED_FLAG,
     
@@ -53,10 +57,10 @@ localparam TLU_WAIT_CYCLES = 5;
 
 // reg TLU_TRIGGER_ACCEPT_ERROR;
 // reg TLU_TRIGGER_LOW_TIMEOUT_ERROR;
-assign TLU_FIFO_DATA[31:0] = (TLU_MODE==2'b11 && WRITE_TIMESTAMP==1'b0) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : {1'b1, TIMESTAMP_DATA[30:0]};
+assign TLU_FIFO_DATA[31:0] = (WRITE_TIMESTAMP==1'b1) ? {1'b1, TIMESTAMP_DATA[30:0]} : ((TLU_MODE==2'b11) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : ({1'b1, TRIGGER_COUNTER_DATA[30:0]}));
 
 // shift register, serial to parallel, 32 FF
-reg     [(32*DIVISOR)-1:0]      tlu_data_sr;
+reg [(32*DIVISOR)-1:0] tlu_data_sr;
 always @ (posedge TRIGGER_CLK)
 begin
     tlu_data_sr[(32*DIVISOR)-1:0] <= {tlu_data_sr[(32*DIVISOR)-2:0], TRIGGER};
@@ -68,6 +72,7 @@ integer counter_tlu_clock;
 integer counter_sr_wait_cycles;
 integer n; // for for-loop
 reg ACKNOWLEDGED;
+reg [31:0] TRIGGER_COUNTER;
 
 // standard state encoding
 reg     [2:0]   state;
@@ -89,7 +94,7 @@ begin
 end
 
 // combinational always block, blocking assignments
-always @ (state or TRIGGER_ACKNOWLEDGE or ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_FLAG or TRIGGER or TLU_MODE or WRITE_TIMESTAMP or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock or TLU_TRIGGER_CLOCK_CYCLES or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or counter_trigger_low_time_out) //or TLU_TRIGGER_BUSY)
+always @ (state or TRIGGER_ACKNOWLEDGE or ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_FLAG or TRIGGER or TLU_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock or TLU_TRIGGER_CLOCK_CYCLES or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or counter_trigger_low_time_out) //or TLU_TRIGGER_BUSY)
 begin
     case (state)
     
@@ -101,11 +106,10 @@ begin
         
         SEND_COMMAND_WAIT_FOR_TRIGGER_LOW:
         begin
-            if (WRITE_TIMESTAMP == 1'b0 && (TLU_MODE == 2'b00 || TLU_MODE == 2'b01)) next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY; // do not wait for trigger low
-            else if (WRITE_TIMESTAMP == 1'b1 && (TLU_MODE == 2'b00 || TLU_MODE == 2'b01)) next = LATCH_DATA; // do not wait for trigger low
-            else if (WRITE_TIMESTAMP == 1'b0 && TLU_MODE == 2'b10 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1) && (counter_trigger_low_time_out >= TLU_WAIT_CYCLES)) next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY;
-            else if (WRITE_TIMESTAMP == 1'b1 && TLU_MODE == 2'b10 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1) && (counter_trigger_low_time_out >= TLU_WAIT_CYCLES)) next = LATCH_DATA;
-            else if (TLU_MODE == 2'b11 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1) && (counter_trigger_low_time_out >= TLU_WAIT_CYCLES)) next = SEND_TLU_CLOCK;
+            //if (TLU_MODE == 2'b00) next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY; // do not save data and do not wait for trigger low
+            if (TLU_MODE == 2'b00 || TLU_MODE == 2'b01) next = LATCH_DATA; // do not wait for trigger low
+            else if (TLU_MODE == 2'b10 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1) && (counter_trigger_low_time_out >= TLU_WAIT_CYCLES)) next = LATCH_DATA; // wait for trigger low
+            else if (TLU_MODE == 2'b11 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1) && (counter_trigger_low_time_out >= TLU_WAIT_CYCLES)) next = SEND_TLU_CLOCK; // wait for trigger low, TLU clock
             else next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
         end
         
@@ -154,6 +158,7 @@ begin
         TLU_FIFO_WRITE <= 1'b0;
         TLU_TRIGGER_NUMBER_DATA <= 32'b0000_0000_0000_0000_0000_0000_0000_0000;
         TIMESTAMP_DATA <= 32'b0000_0000_0000_0000_0000_0000_0000_0000;
+        TRIGGER_COUNTER_DATA <= 32'b0000_0000_0000_0000_0000_0000_0000_0000;
         TLU_ASSERT_VETO <= 1'b0;
         TLU_BUSY <= 1'b0;
         TLU_CLOCK_ENABLE <= 1'b0;
@@ -171,6 +176,7 @@ begin
         TLU_FIFO_WRITE <= 1'b0;
         TLU_TRIGGER_NUMBER_DATA <= TLU_TRIGGER_NUMBER_DATA;
         TIMESTAMP_DATA <= TIMESTAMP_DATA;
+        TRIGGER_COUNTER_DATA <= TRIGGER_COUNTER_DATA;
         TLU_ASSERT_VETO <= 1'b0;
         TLU_BUSY <= 1'b0;
         TLU_CLOCK_ENABLE <= 1'b0;
@@ -213,14 +219,16 @@ begin
             SEND_COMMAND_WAIT_FOR_TRIGGER_LOW:
             begin
                 // send flag at beginning of state
-                if (state != next && (TLU_MODE == 2'b11 || WRITE_TIMESTAMP == 1'b1))
+                if (state != next)
                     FIFO_PREEMPT_REQ_FLAG <= 1'b1;
                 else
                     FIFO_PREEMPT_REQ_FLAG <= 1'b0;
                 TLU_FIFO_WRITE <= 1'b0;
                 // get timestamp closest to the trigger
-                if (state != next)
+                if (state != next) begin
                     TIMESTAMP_DATA <= TIMESTAMP;
+                    TRIGGER_COUNTER_DATA <= TRIGGER_COUNTER;
+                end
                 TLU_ASSERT_VETO <= TLU_ASSERT_VETO;
                 TLU_BUSY <= 1'b1;
                 TLU_CLOCK_ENABLE <= 1'b0;
@@ -361,6 +369,26 @@ begin
 
         endcase
     end
+end
+
+// time stamp
+always @ (posedge TRIGGER_CLK)
+begin
+    if (RESET)
+        TIMESTAMP <= 32'b0;
+    else
+        TIMESTAMP <= TIMESTAMP + 1;
+end
+
+// trigger counter
+always @ (posedge TRIGGER_CLK)
+begin
+    if (RESET)
+        TRIGGER_COUNTER <= 32'b0;
+    else if(TRIGGER_COUNTER_SET==1'b1)
+        TRIGGER_COUNTER <= TRIGGER_COUNTER_SET_VALUE;
+    else if(state==IDLE && next==SEND_COMMAND_WAIT_FOR_TRIGGER_LOW)
+        TRIGGER_COUNTER <= TRIGGER_COUNTER + 1;
 end
 
 // Chipscope
