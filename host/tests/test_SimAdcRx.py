@@ -14,7 +14,6 @@ import logging
 logging.getLogger().setLevel(logging.DEBUG)
 
 cnfg_yaml = """
-
 transfer_layer:
   - name  : intf
     type  : SiSim
@@ -37,7 +36,7 @@ hw_drivers:
   - name      : FADC
     type      : fadc_rx
     interface : intf
-    base_addr : 0x3000 
+    base_addr : 0x3000
 
   - name      : fifo
     type      : sram_fifo
@@ -53,7 +52,6 @@ hw_drivers:
   - name      : fadc_conf
     type      : FadcConf
     hw_driver : SPI_FADC
-
 """
 
 

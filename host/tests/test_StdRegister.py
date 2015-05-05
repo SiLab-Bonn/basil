@@ -13,7 +13,6 @@ from basil.dut import Dut
 
 
 cnfg_yaml = """
-
 transfer_layer:
     - name  : dummy_tl
       type  : Dummy

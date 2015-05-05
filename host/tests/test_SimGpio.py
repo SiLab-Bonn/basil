@@ -12,7 +12,6 @@ from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
 
 cnfg_yaml = """
-
 transfer_layer:
   - name  : intf
     type  : SiSim
@@ -45,7 +44,6 @@ registers:
       - name    : TRI_OUT
         size    : 4
         offset  : 23
-
 """
 
 

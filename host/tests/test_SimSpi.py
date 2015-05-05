@@ -52,7 +52,6 @@ registers:
       - name    : OUT
         size    : 8
         offset  : 7
-
 """
 
 
