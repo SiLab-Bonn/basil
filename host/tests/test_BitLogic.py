@@ -194,6 +194,10 @@ class TestBitLogic(unittest.TestCase):
         self.assertEqual(bl[:], bitarray('000000011'))
         bl[8] = False
         self.assertEqual(bl[:], bitarray('000000010'))
+        bl[8:8] = True
+        self.assertEqual(bl[:], bitarray('000000011'))
+        bl[0:0] = True
+        self.assertEqual(bl[:], bitarray('100000011'))
 
     def test_init_to_zero(self):
         bl = BitLogic(55)
@@ -313,12 +317,87 @@ class TestBitLogic(unittest.TestCase):
 
     def test_set_item_negative(self):
         bl = BitLogic('00000000')
+        bl[-3] = True
+        self.assertEqual(bl, bitarray('00000100'))
+        bl[-3] = False
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-3:-3] = True
+        self.assertEqual(bl, bitarray('00000100'))
+        bl[-3:-3] = False
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-3] = 1
+        self.assertEqual(bl, bitarray('00000100'))
+        bl[-3] = 0
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-3:-3] = 1
+        self.assertEqual(bl, bitarray('00000100'))
+        bl[-3:-3] = 0
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-3] = '1'
+        self.assertEqual(bl, bitarray('00000100'))
+        bl[-3] = '0'
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-3:-3] = '1'
+        self.assertEqual(bl, bitarray('00000100'))
+        bl[-3:-3] = '0'
+        self.assertEqual(bl, bitarray('00000000'))
+
         bl[-1] = True
         self.assertEqual(bl, bitarray('00000001'))
-        bl[-3] = True
-        self.assertEqual(bl, bitarray('00000101'))
-#         bl[-2:-1] = 2
-#         self.assertEqual(bl, bitarray('00000111'))
+        bl[-1] = False
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-1:-1] = True
+        self.assertEqual(bl, bitarray('00000001'))
+        bl[-1:-1] = False
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-1] = 1
+        self.assertEqual(bl, bitarray('00000001'))
+        bl[-1] = 0
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-1:-1] = 1
+        self.assertEqual(bl, bitarray('00000001'))
+        bl[-1:-1] = 0
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-1] = '1'
+        self.assertEqual(bl, bitarray('00000001'))
+        bl[-1] = '0'
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-1:-1] = '1'
+        self.assertEqual(bl, bitarray('00000001'))
+        bl[-1:-1] = '0'
+        self.assertEqual(bl, bitarray('00000000'))
+
+        bl[-8] = True
+        self.assertEqual(bl, bitarray('10000000'))
+        bl[-8] = False
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-8:-8] = True
+        self.assertEqual(bl, bitarray('10000000'))
+        bl[-8:-8] = False
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-8] = 1
+        self.assertEqual(bl, bitarray('10000000'))
+        bl[-8] = 0
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-8:-8] = 1
+        self.assertEqual(bl, bitarray('10000000'))
+        bl[-8:-8] = 0
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-8] = '1'
+        self.assertEqual(bl, bitarray('10000000'))
+        bl[-8] = '0'
+        self.assertEqual(bl, bitarray('00000000'))
+        bl[-8:-8] = '1'
+        self.assertEqual(bl, bitarray('10000000'))
+        bl[-8:-8] = '0'
+        self.assertEqual(bl, bitarray('00000000'))
+
+        bl[-7:-8] = 2
+        self.assertEqual(bl, bitarray('01000000'))
+        bl[-2:-3] = 2
+        self.assertEqual(bl, bitarray('01000010'))
+        bl[-1:-2] = 2
+        self.assertEqual(bl, bitarray('01000001'))
 
 if __name__ == '__main__':
     unittest.main()
