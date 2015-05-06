@@ -719,7 +719,7 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
                 self._ch_cal[channel]['default'] = values[1]
                 self._ch_cal[channel]['min'] = values[2]
                 self._ch_cal[channel]['max'] = values[3]
-                self._ch_cal[channel]['ADCI']['gain'] = values[4]
+                self._ch_cal[channel]['ADCI']['gain'] = -values[4]  # fix gain sign
                 self._ch_cal[channel]['ADCI']['offset'] = values[5]
                 self._ch_cal[channel]['ADCV']['gain'] = values[6]
                 self._ch_cal[channel]['ADCV']['offset'] = values[7]
@@ -784,7 +784,7 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
         dac_gain = self._ch_cal[channel]['ADCI']['gain']
 
         if 'PWR' in channel:
-            current = -((raw - dac_offset) / dac_gain)  # fix current sign
+            current = ((raw - dac_offset) / dac_gain)
 
             if unit == 'raw':
                 return raw
@@ -798,7 +798,7 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
                 raise TypeError("Invalid unit type.")
         else:
             voltage = values[self._ch_map[channel]['ADCV']['adc_ch']]
-            current = -(((raw - voltage) - dac_offset) / dac_gain)  # fix current sign
+            current = (((raw - voltage) - dac_offset) / dac_gain)
 
             if unit == 'raw':
                 return raw
@@ -856,11 +856,11 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
         if unit == 'raw':
             value = value
         elif unit == 'A':
-            value = int((-value * 1000000 - dac_offset) / dac_gain)  # fix value sign
+            value = int((-value * 1000000 - dac_offset) / dac_gain)  # fix sign of output
         elif unit == 'mA':
-            value = int((-value * 1000 - dac_offset) / dac_gain)  # fix value sign
+            value = int((-value * 1000 - dac_offset) / dac_gain)  # fix sign of output
         elif unit == 'uA':
-            value = int((-value - dac_offset) / dac_gain)  # fix value sign
+            value = int((-value - dac_offset) / dac_gain)  # fix sign of output
         else:
             raise TypeError("Invalid unit type.")
 
