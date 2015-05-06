@@ -13,16 +13,20 @@ import logging
 
 import cocotb
 from cocotb.triggers import RisingEdge
-
 from Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
+from cocotb.binary import BinaryValue
 
+import yaml
 
 def get_bus():
     bus_name_path = os.getenv("SIMULATION_BUS", "basil.utils.sim.BasilBusDriver")
     bus_name = bus_name_path.split('.')[-1]
     return getattr(__import__(bus_name_path, fromlist=[bus_name]), bus_name)
 
-
+def import_driver(path):
+    name = path.split('.')[-1]
+    return getattr(__import__(path, fromlist=[name]), name)
+    
 @cocotb.test(skip=False)
 def socket_test(dut, debug=False):
     """Testcase that uses a socket to drive the DUT"""
@@ -33,18 +37,31 @@ def socket_test(dut, debug=False):
     if debug:
         dut.log.setLevel(logging.DEBUG)
 
-    # get bus
     bus = get_bus()(dut)
 
     dut.log.info("Using bus driver : %s" % (type(bus).__name__))
-
+    
+    sim_modules = []
+    sim_modules_data = os.getenv("SIMULATION_MODULES", "")
+    if sim_modules_data:
+        sim_modules_yml = yaml.load(sim_modules_data)
+        for mod in sim_modules_yml:
+            mod_import  = import_driver(mod)
+            kargs = dict(sim_modules_yml[mod])
+            sim_modules.append(mod_import(dut, **kargs))
+            dut.log.info("Using simulation modules : %s  arguments: %s" % (mod, kargs))
+    
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((host, int(port)))
     s.listen(1)
 
+    #start sim_modules
+    for mod in sim_modules:
+        cocotb.fork(mod.run())
+        
     yield bus.init()
-
+    
     while True:
         dut.log.info("Waiting for incoming connection on %s:%d" % (host, int(port)))
         client, sockname = s.accept()
