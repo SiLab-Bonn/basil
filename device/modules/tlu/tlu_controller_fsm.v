@@ -39,7 +39,7 @@ module tlu_controller_fsm
     input wire      [4:0]       TLU_TRIGGER_CLOCK_CYCLES,
     input wire      [3:0]       TLU_TRIGGER_DATA_DELAY,
     input wire                  TLU_TRIGGER_DATA_MSB_FIRST,
-    input wire                  TLU_DISABLE_VETO,
+    input wire                  TLU_ENABLE_VETO,
     input wire                  TLU_RESET_FLAG,
 
     input wire                  WRITE_TIMESTAMP,
@@ -100,7 +100,7 @@ begin
     
         IDLE:
         begin
-            if ((TRIGGER_ACKNOWLEDGE == 1'b0) && (TRIGGER_ENABLE == 1'b1) && (TRIGGER_FLAG == 1'b1 || (TRIGGER == 1'b1 && (TLU_MODE == 2'b11 || TLU_MODE == 2'b10))) && (TRIGGER_VETO == 1'b0 || (TLU_MODE == 2'b11 || TLU_MODE == 2'b10))) next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
+            if ((TRIGGER_ACKNOWLEDGE == 1'b0) && (TRIGGER_ENABLE == 1'b1) && (TRIGGER_FLAG == 1'b1 || (TRIGGER == 1'b1 && (TLU_MODE == 2'b11 || TLU_MODE == 2'b10))) && (TRIGGER_VETO == 1'b0 || TLU_MODE == 2'b11 || TLU_MODE == 2'b10)) next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
             else next = IDLE;
         end
         
@@ -194,7 +194,7 @@ begin
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
                 TLU_FIFO_WRITE <= 1'b0;
-                if ((TRIGGER_ENABLE == 1'b0) || (TRIGGER_VETO == 1'b1 && TLU_DISABLE_VETO == 1'b0))
+                if ((TRIGGER_ENABLE == 1'b0) || (TRIGGER_VETO == 1'b1 && TLU_ENABLE_VETO == 1'b1))
                     TLU_ASSERT_VETO <= 1'b1;
                 else
                     TLU_ASSERT_VETO <= 1'b0;

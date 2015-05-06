@@ -52,7 +52,7 @@ module tlu_controller_core
     output wire     [31:0]      TIMESTAMP
 );
 
-localparam VERSION = 2;
+localparam VERSION = 3;
 
 // Registers
 wire SOFT_RST; // Address: 0
@@ -90,28 +90,26 @@ wire [1:0] TLU_MODE; // 2'b00 - RJ45 disabled, 2'b01 - TLU no handshake, 2'b10 -
 assign TLU_MODE = status_regs[1][1:0];
 wire TLU_TRIGGER_DATA_MSB_FIRST; // set endianness of TLU number
 assign TLU_TRIGGER_DATA_MSB_FIRST = status_regs[1][2];
-wire TLU_DISABLE_VETO;
-assign TLU_DISABLE_VETO = status_regs[1][3];
+//wire spare;
+//assign spare = status_regs[1][3];
 wire [3:0] TLU_TRIGGER_DATA_DELAY;
 assign TLU_TRIGGER_DATA_DELAY = status_regs[1][7:4];
 wire [4:0] TLU_TRIGGER_CLOCK_CYCLES;
-assign TLU_TRIGGER_CLOCK_CYCLES = status_regs[2][4:0];
+assign TLU_TRIGGER_CLOCK_CYCLES = status_regs[2][4:0]; // 0: 32 clock cycles
 wire TLU_ENABLE_RESET;
 assign TLU_ENABLE_RESET = status_regs[2][5];
-//wire spare;
-//assign spare = status_regs[2][6];
-//wire spare;
-//assign spare = status_regs[2][7];
+wire TLU_ENABLE_VETO;
+assign TLU_ENABLE_VETO = status_regs[2][6];
 wire CONF_EN_WRITE_TS;
 assign CONF_EN_WRITE_TS = status_regs[2][7];
 wire [7:0] TLU_TRIGGER_LOW_TIME_OUT;
 assign TLU_TRIGGER_LOW_TIME_OUT = status_regs[3];
 wire [7:0] TRIGGER_SELECT;
-assign TRIGGER_SELECT = status_regs[12];
+assign TRIGGER_SELECT = status_regs[13];
 wire [7:0] VETO_SELECT;
-assign VETO_SELECT = status_regs[13];
+assign VETO_SELECT = status_regs[14];
 wire [7:0] TRIGGER_INVERT;
-assign TRIGGER_INVERT = status_regs[14];
+assign TRIGGER_INVERT = status_regs[15];
 
 always @(posedge BUS_CLK)
 begin
@@ -119,7 +117,7 @@ begin
     begin
         status_regs[0] <= 8'b0;
         status_regs[1] <= 8'b0;
-        status_regs[2] <= 8'b0; // 0: 32 clock cycles
+        status_regs[2] <= 8'b0;
         status_regs[3] <= 8'b1111_1111;
         status_regs[4] <= 8'b0; // TLU trigger number
         status_regs[5] <= 8'b0;
@@ -129,10 +127,10 @@ begin
         status_regs[9] <= 8'b0;
         status_regs[10] <= 8'b0;
         status_regs[11] <= 8'b0;
-        status_regs[12] <= 8'b0; // trigger enable
-        status_regs[13] <= 8'b1111_1111; // veto enable (all enable by default)
-        status_regs[14] <= 8'b0; // trigger invert
-        status_regs[15] <= 8'b0; // spare
+        status_regs[12] <= 8'b0; // lost data counter
+        status_regs[13] <= 8'b0; // trigger select
+        status_regs[14] <= 8'b1111_1111; // veto select (all enable by default)
+        status_regs[15] <= 8'b0; // trigger invert
     end
     else if(BUS_WR && BUS_ADD < 16)
     begin
@@ -173,6 +171,12 @@ begin
         BUS_DATA_OUT <= TRIGGER_COUNTER_BUF[31:24];
     else if (BUS_ADD == 12)
         BUS_DATA_OUT <= LOST_DATA_CNT;
+    else if (BUS_ADD == 13)
+        BUS_DATA_OUT <= status_regs[13];
+    else if (BUS_ADD == 14)
+        BUS_DATA_OUT <= status_regs[14];
+    else if (BUS_ADD == 15)
+        BUS_DATA_OUT <= status_regs[15];
     else
         BUS_DATA_OUT <= 0;
 end
@@ -228,11 +232,11 @@ three_stage_synchronizer three_stage_trigger_data_msb_first_synchronizer (
     .OUT(TLU_TRIGGER_DATA_MSB_FIRST_SYNC)
 );
 
-wire TLU_DISABLE_VETO_SYNC;
-three_stage_synchronizer three_stage_disable_veto_synchronizer (
+wire TLU_ENABLE_VETO_SYNC;
+three_stage_synchronizer three_stage_tlu_en_veto_synchronizer (
     .CLK(TRIGGER_CLK),
-    .IN(TLU_DISABLE_VETO),
-    .OUT(TLU_DISABLE_VETO_SYNC)
+    .IN(TLU_ENABLE_VETO),
+    .OUT(TLU_ENABLE_VETO_SYNC)
 );
 
 wire CONF_EN_WRITE_TS_SYNC;
@@ -478,7 +482,7 @@ tlu_controller_fsm #(
     .TLU_TRIGGER_CLOCK_CYCLES(TLU_TRIGGER_CLOCK_CYCLES_SYNC),
     .TLU_TRIGGER_DATA_DELAY(TLU_TRIGGER_DATA_DELAY_SYNC),
     .TLU_TRIGGER_DATA_MSB_FIRST(TLU_TRIGGER_DATA_MSB_FIRST_SYNC),
-    .TLU_DISABLE_VETO(TLU_DISABLE_VETO_SYNC),
+    .TLU_ENABLE_VETO(TLU_ENABLE_VETO_SYNC),
     .TLU_RESET_FLAG(TLU_RESET_FLAG_SYNC),
     
     .WRITE_TIMESTAMP(CONF_EN_WRITE_TS_SYNC),

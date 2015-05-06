@@ -45,8 +45,6 @@ module tlu_controller
     output wire     [31:0]      TIMESTAMP
 );
 
-
-
 wire IP_RD, IP_WR;
 wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;

@@ -22,22 +22,21 @@ class tlu(RegisterHardwareLayer):
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
                   'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
-                  'LOST_DATA_COUNTER': {'descr': {'addr': 12, 'size': 8, 'properties': ['ro']}},
                   'TRIGGER_MODE': {'descr': {'addr': 1, 'size': 2, 'offset': 0}},
                   'TRIGGER_DATA_MSB_FIRST': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},
-                  'EN_VETO': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},
                   'TRIGGER_DATA_DELAY': {'descr': {'addr': 1, 'size': 4, 'offset': 4}},
                   'TRIGGER_CLOCK_CYCLES': {'descr': {'addr': 2, 'size': 5, 'offset': 0}},
                   'EN_TLU_RESET': {'descr': {'addr': 2, 'size': 1, 'offset': 5}},
-                  'EN_INVERT_LEMO_TRIGGER': {'descr': {'addr': 2, 'size': 1, 'offset': 6}},
+                  'EN_TLU_VETO': {'descr': {'addr': 2, 'size': 1, 'offset': 6}},
                   'EN_WRITE_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 7}},
                   'TRIGGER_LOW_TIMEOUT': {'descr': {'addr': 3, 'size': 8}},
                   'CURRENT_TLU_TRIGGER_NUMBER': {'descr': {'addr': 4, 'size': 32, 'properties': ['ro']}},
                   'TRIGGER_COUNTER': {'descr': {'addr': 8, 'size': 32}},
-                  'TRIGGER_SELECT': {'descr': {'addr': 12, 'size': 8}},
-                  'TRIGGER_VETO_SELECT': {'descr': {'addr': 13, 'size': 8}},
-                  'TRIGGER_INVERT': {'descr': {'addr': 14, 'size': 8}}}
-    _require_version = "==2"
+                  'LOST_DATA_COUNTER': {'descr': {'addr': 12, 'size': 8, 'properties': ['ro']}},
+                  'TRIGGER_SELECT': {'descr': {'addr': 13, 'size': 8}},
+                  'TRIGGER_VETO_SELECT': {'descr': {'addr': 14, 'size': 8}},
+                  'TRIGGER_INVERT': {'descr': {'addr': 15, 'size': 8}}}
+    _require_version = "==3"
 
     def __init__(self, intf, conf):
         super(tlu, self).__init__(intf, conf)
@@ -54,9 +53,6 @@ class tlu(RegisterHardwareLayer):
     def set_trigger_msb_first(self, value):
         self.TRIGGER_DATA_MSB_FIRST = value
 
-    def set_veto(self, value):
-        self.EN_VETO = value
-
     def set_trigger_data_delay(self, value):
         self.TRIGGER_DATA_DELAY = value
 
@@ -65,9 +61,6 @@ class tlu(RegisterHardwareLayer):
 
     def set_tlu_reset(self, value):
         self.EN_TLU_RESET = value
-
-    def set_invert_trigger(self, value):
-        self.EN_INVERT_TRIGGER = value
 
     def set_write_timestamp(self, value):
         self.EN_WRITE_TIMESTAMP = value
@@ -81,7 +74,7 @@ class tlu(RegisterHardwareLayer):
         return self.CURRENT_TLU_TRIGGER_NUMBER
 
     def set_trigger_counter(self, value):
-        raise NotImplementedError('Trigger counter cannot be set. Use RESET to set trigger counter to 0.')
+        self.TRIGGER_COUNTER = value
 
     def get_trigger_counter(self):
         '''Reading trigger counter.
