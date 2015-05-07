@@ -10,6 +10,8 @@ NOTE:
  2. If no TRIGGER_ACKNOWLEDGE signal is available, connect TRIGGER_ACCEPTED_FLAG output to TRIGGER_ACKNOWLEDGE input.
  3. TRIGGER_ENABLE and TRIGGER_ACKNOWLEDGE need to be synchronous to TRIGGER_CLOCK.
  4. Data words have the MSB always high to allow identification of data words. The remaining 31 bits are data.
+ 5. All selected trigger inputs (TRIGGER) are ORed
+ 6. All selected trigger veto inputs (TRIGGER_VETO) are ORed (and enabled by default)
 
 **Unit test/Example:** 
 `test_SimTlu.v <https://github.com/SiLab-Bonn/basil/blob/master/host/tests/test_SimTlu.v>`_ 
