@@ -54,10 +54,53 @@ class TestSimTlu(unittest.TestCase):
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
 
+    def test_simple_trigger_veto(self):
+        self.chip['tlu'].TRIGGER_COUNTER = 0
+        self.chip['tlu'].TRIGGER_MODE = 0
+        self.chip['tlu'].TRIGGER_SELECT = 2
+        self.chip['tlu'].TRIGGER_VETO_SELECT = 255
+#         self.chip['CONTROL']['ENABLE'] = 1
+        self.chip['gpio'].set_data([0x01])
+
+        readings = 0
+        while(readings < 1000):
+            readings += 1
+
+#         self.chip['CONTROL']['ENABLE'] = 0
+        self.chip['gpio'].set_data([0x00])
+
+        self.assertEqual(self.chip['sram'].get_fifo_int_size(), 0)
+        self.assertEqual(self.chip['tlu'].TRIGGER_COUNTER, 0)
+
+    def test_simple_trigger_veto_disabled(self):
+        self.chip['tlu'].TRIGGER_COUNTER = 0
+        self.chip['tlu'].TRIGGER_MODE = 0
+        self.chip['tlu'].TRIGGER_SELECT = 2
+        self.chip['tlu'].TRIGGER_VETO_SELECT = 253
+#         self.chip['CONTROL']['ENABLE'] = 1
+        self.chip['gpio'].set_data([0x01])
+
+        readings = 0
+        while(self.chip['sram'].get_fifo_int_size() < 4 and readings < 1000):
+            readings += 1
+
+#         self.chip['CONTROL']['ENABLE'] = 0
+        self.chip['gpio'].set_data([0x00])
+
+        self.assertGreaterEqual(self.chip['sram'].get_fifo_int_size(), 4)
+        self.assertGreaterEqual(self.chip['tlu'].TRIGGER_COUNTER, 3)
+
+        data = self.chip['sram'].get_data()[:4]
+        self.assertEqual(data[0], 0x80000000 + 0)
+        self.assertEqual(data[1], 0x80000000 + 1)
+        self.assertEqual(data[2], 0x80000000 + 2)
+        self.assertEqual(data[3], 0x80000000 + 3)
+
     def test_simple_trigger(self):
         self.chip['tlu'].TRIGGER_COUNTER = 10
         self.chip['tlu'].TRIGGER_MODE = 0
         self.chip['tlu'].TRIGGER_SELECT = 1
+        self.chip['tlu'].TRIGGER_VETO_SELECT = 0
 #         self.chip['CONTROL']['ENABLE'] = 1
         self.chip['gpio'].set_data([0x01])
 
@@ -99,6 +142,25 @@ class TestSimTlu(unittest.TestCase):
         self.assertEqual(data[1], 0x80000001)
         self.assertEqual(data[2], 0x80000002)
         self.assertEqual(data[3], 0x80000003)
+
+    def test_tlu_trigger_handshake_veto(self):
+        self.chip['tlu'].TRIGGER_COUNTER = 0
+        self.chip['tlu'].TRIGGER_MODE = 3
+        self.chip['tlu'].TRIGGER_VETO_SELECT = 2
+        self.chip['tlu'].EN_TLU_VETO = 1
+#         self.chip['CONTROL']['ENABLE'] = 1
+        self.chip['gpio'].set_data([0x01])
+
+        readings = 0
+        while(readings < 1000):
+            readings += 1
+
+#         self.chip['CONTROL']['ENABLE'] = 0
+        self.chip['gpio'].set_data([0x00])
+
+        self.assertEqual(self.chip['sram'].get_fifo_int_size(), 0)
+        self.assertEqual(self.chip['tlu'].TRIGGER_COUNTER, 0)
+        self.assertGreaterEqual(self.chip['tlu'].CURRENT_TLU_TRIGGER_NUMBER, 0)
 
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator

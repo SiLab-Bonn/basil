@@ -184,8 +184,8 @@ module tb (
         
         .FIFO_PREEMPT_REQ(),
         
-        .TRIGGER({7'b0, TLU_TRIGGER}),
-        .TRIGGER_VETO(8'b0),
+        .TRIGGER({6'b0, TLU_TRIGGER, TLU_TRIGGER}),
+        .TRIGGER_VETO(8'b0000_0010),
         
         .TLU_TRIGGER(TLU_TRIGGER),
         .TLU_RESET(TLU_RESET),
