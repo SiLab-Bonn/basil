@@ -11,6 +11,7 @@ import os
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 import numpy as np
+import yaml
 
 cnfg_yaml = """
 transfer_layer:
@@ -61,7 +62,7 @@ class TestSimGpio(unittest.TestCase):
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
-
+    
     def test_io(self):
         size = self.chip['spi'].get_size()
         self.chip['gpio'].reset()
@@ -103,7 +104,23 @@ class TestSimGpio(unittest.TestCase):
         data1 = np.right_shift(ret, 8).astype(np.uint8)
         data = np.reshape(np.vstack((data1, data0)), -1, order='F')
         self.assertEqual(data.tolist(), range(16))
-
+    
+    def test_dut_iter(self):
+        
+        conf = yaml.safe_load(cnfg_yaml)
+        def iter_conf():
+            for item in conf['registers']:
+                yield item
+            for item in conf['hw_drivers']:
+                yield item
+            for item in conf['transfer_layer']:
+                yield item
+            
+        
+        for mod, mcnf in zip(self.chip, iter_conf()):
+            self.assertEqual(mod.name, mcnf['name'])
+            self.assertEqual(mod.__class__.__name__, mcnf['type'])
+    
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()

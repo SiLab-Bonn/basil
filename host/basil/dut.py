@@ -270,6 +270,14 @@ class Dut(Base):
         else:
             raise ValueError('Item not existing: %s' % (item,))
 
+    def __iter__(self):
+        for item in self._registers.itervalues():
+            yield item
+        for item in self._hardware_layer.itervalues():
+            yield item
+        for item in self._transfer_layer.itervalues():
+            yield item
+    
     # TODO:
     def __setitem__(self, key, value):
         self._registers[key].set(value)
