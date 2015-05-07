@@ -81,7 +81,7 @@ always@(*) begin
     endcase
 end
 
-assign VETO = (state != WAIT_STATE);
+assign VETO = (state != WAIT_STATE) || (state == WAIT_STATE && TLU_CLOCK == 1'b1);
 
 reg [15:0] TRIG_ID_SR;
 always@(posedge TLU_CLOCK or posedge TRIG)
@@ -123,11 +123,14 @@ module tb (
     assign BUS_BYTE_ACCESS = BUS_ADD < 32'h8000_0000 ? 1'b1 : 1'b0;
     
     wire TLU_CMD_EXT_START_FLAG, CMD_EXT_START_ENABLE;
-    wire TLU_TRIGGER, TLU_RESET, TRIGGER_ENABLE, TLU_BUSY, TLU_CLOCK;
+    wire TLU_TRIGGER, TLU_RESET, TLU_BUSY, TLU_CLOCK;
+    wire TRIGGER_ENABLE, TRIGGER, TRIGGER_VETO;
     wire [6:0] NOT_CONNECTED;
     wire [7:0] GPIO_IO;
     assign NOT_CONNECTED = GPIO_IO[7:1];
     assign TRIGGER_ENABLE = GPIO_IO[0];
+    assign TRIGGER = GPIO_IO[1];
+    assign TRIGGER_VETO = GPIO_IO[2];
     
     gpio 
     #( 
@@ -184,8 +187,8 @@ module tb (
         
         .FIFO_PREEMPT_REQ(),
         
-        .TRIGGER({6'b0, TLU_TRIGGER, TLU_TRIGGER}),
-        .TRIGGER_VETO(8'b0000_0010),
+        .TRIGGER({6'b0, TRIGGER, TLU_TRIGGER}),
+        .TRIGGER_VETO({6'b0, TRIGGER_VETO, 1'b1}),
         
         .TLU_TRIGGER(TLU_TRIGGER),
         .TLU_RESET(TLU_RESET),
