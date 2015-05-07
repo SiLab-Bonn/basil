@@ -10,6 +10,7 @@
 module cmd_seq_core
 #(
     parameter                   ABUSWIDTH = 16,
+    parameter 					OUTPUTS = 1,
     parameter                   CMD_MEM_SIZE = 2048
 ) (
     input wire                  BUS_CLK,
@@ -20,11 +21,11 @@ module cmd_seq_core
     input wire                  BUS_WR,
     output reg [7:0]            BUS_DATA_OUT,
     
-    output wire                 CMD_CLK_OUT,
+    output wire [OUTPUTS-1:0]   CMD_CLK_OUT,
     input wire                  CMD_CLK_IN,
     input wire                  CMD_EXT_START_FLAG,
     output wire                 CMD_EXT_START_ENABLE,
-    output wire                 CMD_DATA,
+    output wire [OUTPUTS-1:0]   CMD_DATA,
     output reg                  CMD_READY,
     output reg                  CMD_START_FLAG
 );
@@ -314,25 +315,31 @@ always @ (posedge CMD_CLK_IN)
     cmd_data_pos <= cmd_data_ser;
 
 
-ODDR MANCHESTER_CODE_INST (
-    .Q(CMD_DATA),
-    .C(CMD_CLK_IN),
-    .CE(1'b1),
-    .D1((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? ~cmd_data_pos : cmd_data_pos))), 
-    .D2((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? cmd_data_pos : ~cmd_data_pos))),
-    .R(1'b0),
-    .S(1'b0)
-);
+genvar k;
+generate
+	for (k = 0; k < OUTPUTS; k = k + 1) begin: gen
+    	ODDR MANCHESTER_CODE_INST (
+    		.Q(CMD_DATA[k]),
+    		.C(CMD_CLK_IN),
+    		.CE(1'b1),
+    		.D1((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? ~cmd_data_pos : cmd_data_pos))), 
+    		.D2((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? cmd_data_pos : ~cmd_data_pos))),
+    		.R(1'b0),
+    		.S(1'b0)
+    	);
 
-ODDR CMD_CLK_FORWARDING_INST (
-    .Q(CMD_CLK_OUT),
-    .C(CMD_CLK_IN),
-    .CE(1'b1), 
-    .D1(1'b1),
-    .D2(1'b0),
-    .R(CONF_DIS_CLOCK_GATE),
-    .S(1'b0)
-);
+    	ODDR CMD_CLK_FORWARDING_INST (
+    		.Q(CMD_CLK_OUT[k]),
+    		.C(CMD_CLK_IN),
+    		.CE(1'b1), 
+    		.D1(1'b1),
+    		.D2(1'b0),
+    		.R(CONF_DIS_CLOCK_GATE),
+    		.S(1'b0)
+    	);
+    end
+endgenerate
+
 
 // command start flag
 always @ (posedge CMD_CLK_IN)
