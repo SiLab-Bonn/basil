@@ -268,14 +268,26 @@ class Dut(Base):
             return self._hardware_layer[item]
         elif item in self._transfer_layer:
             return self._transfer_layer[item]
-        else:
-            modules = []
-            for module in self:
-                if module.__class__.__name__ == item:
-                    modules.append(module)
-            if modules:
-                return modules
         raise ValueError('Item not existing: %s' % (item,))
+
+    def get_modules(self, type_name):
+        '''Getting modules by type name.
+
+        Parameters
+        ----------
+        type_name : string
+            Type name of the modules to be returned.
+
+        Returns
+        -------
+        List of modules of given type name.
+        '''
+        modules = []
+        for module in self:
+            if module.__class__.__name__ == type_name:
+                modules.append(module)
+        if modules:
+            return modules
 
     def __iter__(self):
         for item in self._registers.itervalues():
