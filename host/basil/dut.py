@@ -7,13 +7,14 @@
 
 import logging
 import os
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
 from importlib import import_module
 from inspect import getmembers, isclass
 from yaml import safe_load
 import sys
 import warnings
 from collections import OrderedDict
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
 
 
 class Base(object):
@@ -268,7 +269,13 @@ class Dut(Base):
         elif item in self._transfer_layer:
             return self._transfer_layer[item]
         else:
-            raise ValueError('Item not existing: %s' % (item,))
+            modules = []
+            for module in self:
+                if module.__class__.__name__ == item:
+                    modules.append(module)
+            if modules:
+                return modules
+        raise ValueError('Item not existing: %s' % (item,))
 
     def __iter__(self):
         for item in self._registers.itervalues():
@@ -277,7 +284,7 @@ class Dut(Base):
             yield item
         for item in self._transfer_layer.itervalues():
             yield item
-    
+
     # TODO:
     def __setitem__(self, key, value):
         self._registers[key].set(value)
