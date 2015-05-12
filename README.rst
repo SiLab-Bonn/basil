@@ -44,7 +44,7 @@ Features
 ============
 Firmware:
   - very simple single master bus definition
-  - multiple basic modules (SPI, SEQ)
+  - multiple basic modules (SPI, SEQ, GPIO, I2C)
   - multiple interfaces (UART, USB2, USB3, Ethernet)
 Software:
   - layer structure following hardware
