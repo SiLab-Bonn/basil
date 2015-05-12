@@ -4,7 +4,7 @@ basil
 
 |travis-status|  |rtd-status|  |landscape-status|  |Gitter-status|
 
-.. |travis-status| image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=development
+.. |travis-status| image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=master
     :target: https://travis-ci.org/SiLab-Bonn/basil
     :alt: Build status
 
@@ -27,6 +27,13 @@ Documentation
 =============
 
 Documentation can be found under: http://basil.rtfd.org
+
+Installation
+=============
+
+.. code-block:: bash
+
+    pip install -e "git+https://github.com/SiLab-Bonn/basil.git#egg=basil&subdirectory=host"
 
 Support
 =======
