@@ -11,7 +11,9 @@ module tdc_s3_core
 #(
     parameter DATA_IDENTIFIER = 4'b0100,
     parameter CLKDV = 4,
-    parameter ABUSWIDTH = 16
+    parameter ABUSWIDTH = 16,
+    parameter FAST_TDC = 1,
+    parameter FAST_TRIGGER = 1
 )(
     input wire CLK320,
     input wire CLK160,
@@ -86,7 +88,7 @@ always @(posedge BUS_CLK) begin
     else if(BUS_ADD == 1)
         BUS_DATA_OUT <= status_regs[1];
     else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= EVENT_CNT_BUF[7:0];
+        BUS_DATA_OUT <= EVENT_CNT[7:0];
     else if(BUS_ADD == 3)
         BUS_DATA_OUT <= EVENT_CNT_BUF[15:8];
     else if(BUS_ADD == 4)
@@ -102,7 +104,7 @@ end
 always @ (posedge BUS_CLK) begin
     if (RST)
         EVENT_CNT_BUF <= 32'b0;
-    else if (BUS_ADD == 2)
+    else if (BUS_ADD == 2 && BUS_RD)
             EVENT_CNT_BUF <= EVENT_CNT;
 end
 
@@ -116,10 +118,42 @@ flag_domain_crossing cmd_rst_flag_domain_crossing (
 
 // de-serialize
 wire [CLKDV*4-1:0] TDC, TDC_DES;
-ddr_des #(.CLKDV(CLKDV)) iddr_des_data(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TDC_IN), .OUT(TDC));
+
+generate
+    if (FAST_TDC==1) begin
+        ddr_des #(.CLKDV(CLKDV)) iddr_des_tdc(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TDC_IN), .OUT(TDC));
+    end
+    else begin
+        reg [1:0] TDC_DDRQ_DLY;
+        always@(posedge CLK320)
+            TDC_DDRQ_DLY[1:0] <= {TDC_IN, TDC_IN};
+
+        reg [3:0] TDC_DDRQ_DATA;
+        always@(posedge CLK320)
+            TDC_DDRQ_DATA[3:0] <= {TDC_DDRQ_DLY[1:0], {TDC_IN, TDC_IN}};
+
+         reg [3:0] TDC_DDRQ_DATA_BUF;
+        always@(posedge CLK320)
+            TDC_DDRQ_DATA_BUF[3:0] <= TDC_DDRQ_DATA[3:0];
+            
+        reg [3:0] TDC_DATA_IN;
+        always@(posedge CLK160)
+            TDC_DATA_IN[3:0] <= TDC_DDRQ_DATA_BUF[3:0];
+
+        reg [CLKDV*4-1:0] TDC_DATA_IN_SR;
+        always@(posedge CLK160)
+            TDC_DATA_IN_SR <= {TDC_DATA_IN_SR[CLKDV*4-5:0],TDC_DATA_IN[3:0]};
+
+        reg [CLKDV*4-1:0] TDC_DES_OUT;
+        always@(posedge DV_CLK)
+            TDC_DES_OUT <= TDC_DATA_IN_SR;
+        
+        assign TDC = TDC_DES_OUT;
+    end
+endgenerate
 
 assign TDC_DES = CONF_EN_INVERT_TDC ? ~TDC : TDC;
-assign TDC_OUT = |TDC_DES;
+assign TDC_OUT = |TDC;
 
 wire ZERO_DETECTED_TDC;
 assign ZERO_DETECTED_TDC = |(~TDC_DES); // asserted when one or more 0 occur
@@ -323,10 +357,42 @@ always @ (posedge DV_CLK)
 
 // de-serialize
 wire [CLKDV*4-1:0] TRIG, TRIG_DES;
-ddr_des #(.CLKDV(CLKDV)) iddr_des_trig(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TRIG_IN), .OUT(TRIG));
+
+generate
+    if (FAST_TRIGGER==1) begin
+        ddr_des #(.CLKDV(CLKDV)) iddr_des_trig(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TRIG_IN), .OUT(TRIG));
+    end
+    else begin
+        reg [1:0] TRIGGER_DDRQ_DLY;
+        always@(posedge CLK320)
+            TRIGGER_DDRQ_DLY[1:0] <= {TRIG_IN, TRIG_IN};
+
+        reg [3:0] TRIGGER_DDRQ_DATA;
+        always@(posedge CLK320)
+            TRIGGER_DDRQ_DATA[3:0] <= {TRIGGER_DDRQ_DLY[1:0], {TRIG_IN, TRIG_IN}};
+
+         reg [3:0] TRIGGER_DDRQ_DATA_BUF;
+        always@(posedge CLK320)
+            TRIGGER_DDRQ_DATA_BUF[3:0] <= TRIGGER_DDRQ_DATA[3:0];
+            
+        reg [3:0] TRIGGER_DATA_IN;
+        always@(posedge CLK160)
+            TRIGGER_DATA_IN[3:0] <= TRIGGER_DDRQ_DATA_BUF[3:0];
+
+        reg [CLKDV*4-1:0] TRIGGER_DATA_IN_SR;
+        always@(posedge CLK160)
+            TRIGGER_DATA_IN_SR <= {TRIGGER_DATA_IN_SR[CLKDV*4-5:0],TRIGGER_DATA_IN[3:0]};
+        
+        reg [CLKDV*4-1:0] TRIG_DES_OUT;
+        always@(posedge DV_CLK)
+            TRIG_DES_OUT <= TRIGGER_DATA_IN_SR;
+        
+        assign TRIG = TRIG_DES_OUT;
+    end
+endgenerate
 
 assign TRIG_DES = CONF_EN_INVERT_TRIGGER ? ~TRIG : TRIG;
-assign TRIG_OUT = |TRIG_DES;
+assign TRIG_OUT = |TRIG;
 
 reg TRIG_DES_BUF_0;
 always @ (posedge DV_CLK)

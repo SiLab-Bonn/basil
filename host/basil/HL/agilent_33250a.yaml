@@ -1,0 +1,14 @@
+# Device description for the Keithley 2400 Sourcemeter. 
+# set_ function expect a parameter, get_ function return a parameter.
+# Just the very basic commands are imlemented here.
+identifier : Agilent Technologies,33250A
+set_burst : BURST:STAT
+get_burst : BURST:STAT?
+set_n_bursts : BURS:NCYC
+set_pulse_period : PULS:PER
+set_pulse_width : PULS:WIDT
+set_trigger_delay : TRIG:DELAY
+get_voltage_high : VOLT:HIGH?
+get_voltage_low : VOLT:LOW?
+set_voltage_high : VOLT:HIGH
+set_voltage_low : VOLT:LOW

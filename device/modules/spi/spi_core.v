@@ -10,7 +10,7 @@
 module spi_core
 #(
     parameter ABUSWIDTH = 16,
-    parameter MEM_BYTES = 2
+    parameter MEM_BYTES = 16
 )(
     input wire                      BUS_CLK,
     input wire                      BUS_RST,
@@ -18,7 +18,7 @@ module spi_core
     input wire     [7:0]            BUS_DATA_IN,
     input wire                      BUS_RD,
     input wire                      BUS_WR,
-    output reg [7:0]            BUS_DATA_OUT,
+    output reg [7:0]                BUS_DATA_OUT,
     
     input wire SPI_CLK,
     
@@ -30,9 +30,9 @@ module spi_core
     output reg SLD
 );
 
-localparam VERSION = 0;
+localparam VERSION = 1;
 
-reg [7:0] status_regs [8+MEM_BYTES*2-1:0];
+reg [7:0] status_regs [15:0];
 
 wire RST;
 wire SOFT_RST;
@@ -50,10 +50,15 @@ always @(posedge BUS_CLK) begin
         status_regs[4] <= DEF_BIT_OUT[15:8]; //bits
         status_regs[5] <= 0; //wait
         status_regs[6] <= 0; //wait
-        status_regs[7] <= 1; // 7  repeat
+        status_regs[7] <= 0; //wait
+        status_regs[8] <= 0; //wait
+        status_regs[9] <= 1; //repeat
+        status_regs[10] <= 0; //repeat
+        status_regs[11] <= 0; //repeat
+        status_regs[12] <= 0; //repeat
     end
-    else if(BUS_WR && BUS_ADD < 8)
-        status_regs[BUS_ADD[2:0]] <= BUS_DATA_IN;
+    else if(BUS_WR && BUS_ADD < 16)
+        status_regs[BUS_ADD[3:0]] <= BUS_DATA_IN;
 end
 
 reg [7:0] BUS_IN_MEM;
@@ -66,62 +71,55 @@ assign START = (BUS_ADD==1 && BUS_WR);
 wire [15:0] CONF_BIT_OUT;
 assign CONF_BIT_OUT = {status_regs[4],status_regs[3]};
 
-//TODO:
+// TODO: not yet used
 wire [7:0] CONF_CLK_DIV;
 assign CONF_CLK_DIV = status_regs[2];
 reg CONF_DONE;
 
-wire [15:0] CONF_WAIT;
-assign CONF_WAIT = {status_regs[6],status_regs[5]};
+wire [31:0] CONF_WAIT;
+assign CONF_WAIT = {status_regs[8], status_regs[7], status_regs[6], status_regs[5]};
 
-wire [7:0] CONF_REPEAT;
-assign CONF_REPEAT = status_regs[7];
-
+wire [31:0] CONF_REPEAT;
+assign CONF_REPEAT = {status_regs[12], status_regs[11], status_regs[10], status_regs[9]};
 
 reg [7:0] BUS_DATA_OUT_REG;
 always@(posedge BUS_CLK) begin
     if(BUS_ADD == 0)
         BUS_DATA_OUT_REG <= VERSION;
     else if(BUS_ADD == 1)
-        BUS_DATA_OUT_REG <= {7'b0,CONF_DONE};
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT_REG <= CONF_BIT_OUT[7:0];
-    else if(BUS_ADD == 4)
-        BUS_DATA_OUT_REG <= CONF_BIT_OUT[15:8];
-    else if(BUS_ADD == 5)
-        BUS_DATA_OUT_REG <= CONF_WAIT[7:0];
-    else if(BUS_ADD == 6)
-        BUS_DATA_OUT_REG <= CONF_WAIT[15:8]; 
-    else if(BUS_ADD == 7)
-        BUS_DATA_OUT_REG <= CONF_REPEAT;
-    else if(BUS_ADD < 8)
-        BUS_DATA_OUT_REG <= status_regs[BUS_ADD[2:0]];     
+        BUS_DATA_OUT_REG <= {7'b0, CONF_DONE};
+    else if(BUS_ADD == 13)
+        BUS_DATA_OUT_REG <= MEM_BYTES[7:0];
+    else if(BUS_ADD == 14)
+        BUS_DATA_OUT_REG <= MEM_BYTES[15:8];
+    else if (BUS_ADD < 16)
+        BUS_DATA_OUT_REG <= status_regs[BUS_ADD[3:0]];
 end
 
 // if one has a synchronous memory need this to give data on next clock after read
-// limitation: this module still needs to addresses 
+// limitation: this module still needs two addresses
 reg [ABUSWIDTH-1:0]  PREV_BUS_ADD;
 always@(posedge BUS_CLK)
     PREV_BUS_ADD <= BUS_ADD;
 
 always @(*) begin
-    if(PREV_BUS_ADD < 8)
+    if(PREV_BUS_ADD < 16)
         BUS_DATA_OUT = BUS_DATA_OUT_REG;
-    else if(PREV_BUS_ADD < 8+MEM_BYTES )
+    else if(PREV_BUS_ADD < 16+MEM_BYTES)
         BUS_DATA_OUT = BUS_IN_MEM;
-    else if(PREV_BUS_ADD < 8+MEM_BYTES+ MEM_BYTES)
+    else if(PREV_BUS_ADD < 16+MEM_BYTES+MEM_BYTES)
         BUS_DATA_OUT = BUS_OUT_MEM;
     else
         BUS_DATA_OUT = 8'hxx;
 end
 
-reg [15:0] out_bit_cnt;
+reg [32:0] out_bit_cnt;
 
 
 wire [13:0] memout_addrb;
 assign memout_addrb = out_bit_cnt;
 wire [10:0] memout_addra;
-assign memout_addra =  (BUS_ADD-8);
+assign memout_addra = (BUS_ADD-16);
 
 reg [7:0] BUS_DATA_IN_IB;
 wire [7:0] BUS_IN_MEM_IB;
@@ -138,19 +136,36 @@ end
 wire SDI_MEM;
 
 blk_mem_gen_8_to_1_2k memout(
-    .CLKA(BUS_CLK), .CLKB(SPI_CLK), .DOUTA(BUS_IN_MEM_IB), .DOUTB(SDI_MEM), .WEA(BUS_WR && BUS_ADD >=8 && BUS_ADD < 8+MEM_BYTES), .WEB(1'b0),
-    .ADDRA(memout_addra), .ADDRB(memout_addrb), .DINA(BUS_DATA_IN_IB), .DINB(1'b0)
+    .CLKA(BUS_CLK),
+    .CLKB(SPI_CLK),
+    .DOUTA(BUS_IN_MEM_IB),
+    .DOUTB(SDI_MEM),
+    .WEA(BUS_WR && BUS_ADD >=16 && BUS_ADD < 16+MEM_BYTES),
+    .WEB(1'b0),
+    .ADDRA(memout_addra),
+    .ADDRB(memout_addrb),
+    .DINA(BUS_DATA_IN_IB),
+    .DINB(1'b0)
 );
 
 
 wire [10:0] ADDRA_MIN;
-assign ADDRA_MIN = (BUS_ADD-8-MEM_BYTES);
+assign ADDRA_MIN = (BUS_ADD-16-MEM_BYTES);
 wire [13:0] ADDRB_MIN;
 assign ADDRB_MIN = out_bit_cnt-1;
 reg SEN_INT;
+
 blk_mem_gen_8_to_1_2k memin(
-    .CLKA(BUS_CLK), .CLKB(SPI_CLK), .DOUTA(BUS_OUT_MEM_IB), .DOUTB(), .WEA(1'b0), .WEB(SEN_INT), 
-    .ADDRA( ADDRA_MIN ), .ADDRB( ADDRB_MIN ), .DINA(BUS_DATA_IN_IB), .DINB(SDO)
+    .CLKA(BUS_CLK),
+    .CLKB(SPI_CLK),
+    .DOUTA(BUS_OUT_MEM_IB),
+    .DOUTB(),
+    .WEA(1'b0),
+    .WEB(SEN_INT),
+    .ADDRA(ADDRA_MIN),
+    .ADDRB(ADDRB_MIN),
+    .DINA(BUS_DATA_IN_IB),
+    .DINB(SDO)
 );
 
 wire RST_SYNC;
@@ -161,9 +176,9 @@ assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
 wire START_SYNC;
 cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(SPI_CLK), .pulse_out(START_SYNC));
 
-wire [15:0] STOP_BIT;
+wire [32:0] STOP_BIT;
 assign STOP_BIT = CONF_BIT_OUT + CONF_WAIT;
-reg [7:0] REPEAT_COUNT;
+reg [31:0] REPEAT_COUNT;
 
 wire REP_START;
 assign REP_START = (out_bit_cnt == STOP_BIT && (CONF_REPEAT==0 || REPEAT_COUNT < CONF_REPEAT));

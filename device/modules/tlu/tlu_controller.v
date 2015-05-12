@@ -22,7 +22,7 @@ module tlu_controller
     input wire                  BUS_RD,
     input wire                  BUS_WR,
     
-    input wire                  CMD_CLK, // clock of the TLU FSM, usually connect clock of command sequencer here
+    input wire                  TRIGGER_CLK, // clock of the TLU FSM, usually connect clock of command sequencer here
     
     input wire                  FIFO_READ,
     output wire                 FIFO_EMPTY,
@@ -30,24 +30,20 @@ module tlu_controller
     
     output wire                 FIFO_PREEMPT_REQ,
     
-    input wire                  RJ45_TRIGGER,
-    input wire                  LEMO_TRIGGER,
-    input wire                  RJ45_RESET,
-    input wire                  LEMO_RESET,
-    output wire                 RJ45_ENABLED,
+    input wire      [7:0]       TRIGGER,
+    input wire      [7:0]       TRIGGER_VETO,
+    
+    input wire                  TRIGGER_ENABLE,
+    input wire                  TRIGGER_ACKNOWLEDGE,
+    output wire                 TRIGGER_ACCEPTED_FLAG,
+    
+    input wire                  TLU_TRIGGER,
+    input wire                  TLU_RESET,
     output wire                 TLU_BUSY,
     output wire                 TLU_CLOCK,
     
-    input wire                  EXT_VETO,
-    
-    input wire                  CMD_READY,
-    output wire                 CMD_EXT_START_FLAG,
-    input wire                  CMD_EXT_START_ENABLE,
-    
     output wire     [31:0]      TIMESTAMP
 );
-
-
 
 wire IP_RD, IP_WR;
 wire [ABUSWIDTH-1:0] IP_ADD;
@@ -84,7 +80,7 @@ tlu_controller_core #(
     .BUS_WR(IP_WR),
     .BUS_DATA_OUT(IP_DATA_OUT),
 
-    .CMD_CLK(CMD_CLK),
+    .TRIGGER_CLK(TRIGGER_CLK),
 
     .FIFO_READ(FIFO_READ),
     .FIFO_EMPTY(FIFO_EMPTY),
@@ -92,19 +88,17 @@ tlu_controller_core #(
 
     .FIFO_PREEMPT_REQ(FIFO_PREEMPT_REQ),
 
-    .RJ45_TRIGGER(RJ45_TRIGGER),
-    .LEMO_TRIGGER(LEMO_TRIGGER),
-    .RJ45_RESET(RJ45_RESET),
-    .LEMO_RESET(LEMO_RESET),
-    .RJ45_ENABLED(RJ45_ENABLED),
+    .TRIGGER(TRIGGER),
+    .TRIGGER_VETO(TRIGGER_VETO),
+
+    .TRIGGER_ENABLE(TRIGGER_ENABLE),
+    .TRIGGER_ACKNOWLEDGE(TRIGGER_ACKNOWLEDGE),
+    .TRIGGER_ACCEPTED_FLAG(TRIGGER_ACCEPTED_FLAG),
+    
+    .TLU_TRIGGER(TLU_TRIGGER),
+    .TLU_RESET(TLU_RESET),
     .TLU_BUSY(TLU_BUSY),
     .TLU_CLOCK(TLU_CLOCK),
-
-    .EXT_VETO(EXT_VETO),
-
-    .CMD_READY(CMD_READY),
-    .CMD_EXT_START_FLAG(CMD_EXT_START_FLAG),
-    .CMD_EXT_START_ENABLE(CMD_EXT_START_ENABLE),
 
     .TIMESTAMP(TIMESTAMP)
 );

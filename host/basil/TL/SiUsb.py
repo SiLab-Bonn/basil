@@ -8,11 +8,11 @@
 import logging
 import os
 
-from basil.TL.TransferLayer import TransferLayer
+from basil.TL.SiTransferLayer import SiTransferLayer
 from SiLibUSB import GetUSBBoards, SiUSBDevice
 
 
-class SiUsb (TransferLayer):
+class SiUsb (SiTransferLayer):
     '''SiLab USB device
     '''
     BASE_ADDRESS_I2C = 0x00000
@@ -39,7 +39,7 @@ class SiUsb (TransferLayer):
             if not devices:
                 raise IOError('Can\'t find USB board. Connect or reset USB board!')
             else:
-                logging.info('Found following USB boards: {}'.format(', '.join(('%s with ID %s (FW %s)' % (device.board_name, filter(type(device.board_id).isdigit, device.board_id), filter(type(device.fw_version).isdigit, device.fw_version))) for device in devices)))
+                logging.info('Found USB board(s): {}'.format(', '.join(('%s with ID %s (FW %s)' % (device.board_name, filter(type(device.board_id).isdigit, device.board_id), filter(type(device.fw_version).isdigit, device.fw_version))) for device in devices)))
                 if len(devices) > 1:
                     raise ValueError('Please specify ID of USB board')
                 self._sidev = devices[0]

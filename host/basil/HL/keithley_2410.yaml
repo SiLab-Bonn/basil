@@ -1,0 +1,10 @@
+# Device description for the Keithley 2410 Sourcemeter. 
+# set_ function expect a parameter, get_ function return a parameter.
+# Just the very basic commands are imlemented here.
+identifier : KEITHLEY INSTRUMENTS INC.,MODEL 2410
+on : OUTP ON
+off : OUTP OFF
+get_current : MEAS:CURR?
+set_current_limit : SENS:CURR:PROT
+set_voltage : SOUR:VOLT
+get_voltage : MEAS:VOLT?

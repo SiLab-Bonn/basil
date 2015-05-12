@@ -31,8 +31,14 @@ host/tests/Makefile
 docs/_build
 *.vcd
 host/tests/results.xml
+examples/lx9/device/src/SiTCP
 
 # PyDev files
 .project
 .pydevproject
 .vcd
+
+# Mac
+.DS_Store
+host/tests/qverilog.log
+host/tests/work

@@ -9,13 +9,10 @@ from basil.dut import Base
 
 
 class HardwareLayer(Base):
-    '''Hardware Layer.
-
-    Implementation of very basic register operations.
+    '''Hardware layer (HL) base class
     '''
     def __init__(self, intf, conf):
         super(HardwareLayer, self).__init__(conf)
-        # interface not required
+        # interface not required for some cases
         if intf is not None:
             self._intf = intf
-            self._base_addr = conf['base_addr']

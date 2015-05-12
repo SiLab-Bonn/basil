@@ -1,0 +1,15 @@
+transfer_layer:
+  - name     : Visa
+    type     : Visa
+    init     :
+        resource_name : ASRLCOM3
+        read_termination : "\r"
+        baud_rate : 19200
+        backend : "@py"
+
+hw_drivers:
+  - name      : Sourcemeter
+    type      : scpi
+    interface : Visa
+    init      :
+        device : Keithley 2410

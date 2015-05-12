@@ -19,9 +19,9 @@ class pulse_gen(RegisterHardwareLayer):
                   'EN': {'descr': {'addr': 2, 'size': 1}},
                   'DELAY': {'descr': {'addr': 3, 'size': 32}},
                   'WIDTH': {'descr': {'addr': 7, 'size': 32}},
-                  'REPEAT': {'descr': {'addr': 11, 'size': 8}}
+                  'REPEAT': {'descr': {'addr': 11, 'size': 32}}
                   }
-    _require_version = "==2"
+    _require_version = "==3"
 
     def __init__(self, intf, conf):
         super(pulse_gen, self).__init__(intf, conf)

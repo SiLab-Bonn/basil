@@ -81,10 +81,12 @@ assign RX_RST_FLAG = ~RX_RST_FF2 & RX_RST_FF;
 
 wire ready_rec;
 wire [15:0] fifo_size; // BUS_ADD==3, 4
-reg [7:0] decoder_err_cnt_buf; // BUS_ADD==5
-reg [7:0] lost_err_cnt_buf; // BUS_ADD==6
+reg [15:0] fifo_size_buf;
+wire [7:0] decoder_err_cnt; // BUS_ADD==5
+reg [7:0] decoder_err_cnt_buf;
+wire [7:0] lost_err_cnt; // BUS_ADD==6
+reg [7:0] lost_err_cnt_buf;
 
-wire [7:0] decoder_err_cnt, lost_err_cnt;
 assign RX_READY = (ready_rec==1'b1) ? 1'b1 : 1'b0;
 assign RX_8B10B_DECODER_ERR = (decoder_err_cnt!=8'b0);
 assign RX_FIFO_OVERFLOW_ERR = (lost_err_cnt!=8'b0);
@@ -109,7 +111,7 @@ always @ (posedge BUS_CLK) begin //(*) begin
     else if(BUS_ADD == 3)
         BUS_DATA_OUT <= fifo_size[7:0];
     else if(BUS_ADD == 4)
-        BUS_DATA_OUT <= fifo_size[15:8];
+        BUS_DATA_OUT <= fifo_size_buf[15:8];
     else if(BUS_ADD == 5)
         BUS_DATA_OUT <= decoder_err_cnt_buf;
     else if(BUS_ADD == 6)
@@ -123,20 +125,21 @@ wire [7:0] DATA_HEADER;
 assign DATA_HEADER = DATA_IDENTIFIER;
 assign FIFO_DATA = {DATA_HEADER, FE_DATA};
 
+
 always @ (posedge BUS_CLK)
 begin
-    if (RST | RX_RST_FLAG)
-        decoder_err_cnt_buf <= 8'b0;
-    else if (BUS_ADD == 4)
-        decoder_err_cnt_buf <= decoder_err_cnt;
+    if (BUS_ADD == 3 && BUS_RD)
+        fifo_size_buf <= fifo_size;
 end
 
 always @ (posedge BUS_CLK)
 begin
-    if (RST | RX_RST_FLAG)
-        lost_err_cnt_buf <= 8'b0;
-    else if (BUS_ADD == 5)
-        lost_err_cnt_buf <= lost_err_cnt;
+    decoder_err_cnt_buf <= decoder_err_cnt;
+end
+
+always @ (posedge BUS_CLK)
+begin
+    lost_err_cnt_buf <= lost_err_cnt;
 end
 
 receiver_logic #(

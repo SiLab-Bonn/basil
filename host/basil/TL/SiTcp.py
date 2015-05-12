@@ -11,10 +11,10 @@ import select
 import struct
 from array import array
 from threading import Thread, Lock
-from basil.TL.TransferLayer import TransferLayer
+from basil.TL.SiTransferLayer import SiTransferLayer
 
 
-class SiTcp (TransferLayer):
+class SiTcp (SiTransferLayer):
 
     '''SiTcp
     '''
@@ -141,7 +141,7 @@ class SiTcp (TransferLayer):
             if(size == 4):
                 return array('B', struct.pack('I', self._get_tcp_data_size()))
             else:
-                return array('B', '\x00' * size)
+                return array('B', '\x02' * size)
 
     def _tcp_readout(self):
         while True:

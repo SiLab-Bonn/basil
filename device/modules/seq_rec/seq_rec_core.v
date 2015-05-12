@@ -152,7 +152,7 @@ wire WEB;
 
 generate
     if (IN_BITS==8) begin
-        (* RAM_STYLE="{AUTO | BLOCK |  BLOCK_POWER1 | BLOCK_POWER2}" *)
+        (* RAM_STYLE="{BLOCK}" *)
         reg [7:0] mem [(2**ADDR_SIZEA)-1:0];
         
         

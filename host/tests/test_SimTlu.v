@@ -26,28 +26,28 @@
 
 
 module tlu_model ( 
-    input wire SYS_CLK, SYS_RST, TLU_CLOCK, TLU_BUSY, ENABLE, 
+    input wire SYS_CLK, SYS_RST, TLU_CLOCK, TLU_BUSY, ENABLE,
     output wire TLU_TRIGGER, TLU_RESET
 );
-    
+
 reg [14:0] TRIG_ID;
 reg TRIG;
 wire VETO;
 integer seed;
 
-initial 
+initial
     seed = 0;
 
-    
+
 always@(posedge SYS_CLK) begin
     if(SYS_RST)
         TRIG <= 0;
-    else if( $random(seed) % 100 == 10 && !VETO && ENABLE)
+    else if($random(seed) % 100 == 10 && !VETO && ENABLE)
         TRIG <= 1;
     else
         TRIG <= 0;
 end
-    
+
 always@(posedge SYS_CLK) begin
     if(SYS_RST)
         TRIG_ID <= 0;
@@ -81,7 +81,7 @@ always@(*) begin
     endcase
 end
 
-assign VETO = (state != WAIT_STATE);
+assign VETO = (state != WAIT_STATE) || (state == WAIT_STATE && TLU_CLOCK == 1'b1);
 
 reg [15:0] TRIG_ID_SR;
 always@(posedge TLU_CLOCK or posedge TRIG)
@@ -90,7 +90,7 @@ always@(posedge TLU_CLOCK or posedge TRIG)
     else
         TRIG_ID_SR <= {1'b0, TRIG_ID_SR[15:1]};
         
-assign TLU_TRIGGER = (state == TRIG_STATE) | (TRIG_ID_SR[0] & TLU_BUSY) ;
+assign TLU_TRIGGER = (state == TRIG_STATE) | (TRIG_ID_SR[0] & TLU_BUSY);
 
 assign TLU_RESET = 0;
 
@@ -123,10 +123,18 @@ module tb (
     assign BUS_BYTE_ACCESS = BUS_ADD < 32'h8000_0000 ? 1'b1 : 1'b0;
     
     wire TLU_CMD_EXT_START_FLAG, CMD_EXT_START_ENABLE;
+    wire TLU_TRIGGER, TLU_RESET, TLU_BUSY, TLU_CLOCK;
+    wire TRIGGER_ENABLE, TRIGGER, TRIGGER_VETO;
+    wire [6:0] NOT_CONNECTED;
+    wire [7:0] GPIO_IO;
+    assign NOT_CONNECTED = GPIO_IO[7:1];
+    assign TRIGGER_ENABLE = GPIO_IO[0];
+    assign TRIGGER = GPIO_IO[1];
+    assign TRIGGER_VETO = GPIO_IO[2];
     
     gpio 
     #( 
-        .BASEADDR(GPIO_BASEADDR), 
+        .BASEADDR(GPIO_BASEADDR),
         .HIGHADDR(GPIO_HIGHADDR),
         .ABUSWIDTH(ABUSWIDTH),
         .IO_WIDTH(8),
@@ -139,7 +147,7 @@ module tb (
         .BUS_DATA(BUS_DATA[7:0]),
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
-        .IO()
+        .IO(GPIO_IO)
     );
     
     assign TLU_CMD_EXT_START_FLAG = 0;
@@ -149,13 +157,13 @@ module tb (
     wire TLU_FIFO_EMPTY;
     wire [31:0] TLU_FIFO_DATA;
     wire FIFO_FULL;
+    wire ACKNOWLEDGE;
     
-    wire RJ45_TRIGGER, LEMO_TRIGGER, RJ45_RESET, LEMO_RESET, RJ45_ENABLED, TLU_BUSY, TLU_CLOCK;
-    
+    //assign TRIGGER_ENABLE = 1'b1;
     
     tlu_model itlu_model ( 
-        .SYS_CLK(BUS_CLK), .SYS_RST(BUS_RST), .ENABLE(RJ45_ENABLED), .TLU_CLOCK(TLU_CLOCK), .TLU_BUSY(TLU_BUSY), 
-        .TLU_TRIGGER(RJ45_TRIGGER), .TLU_RESET(RJ45_RESET)
+        .SYS_CLK(BUS_CLK), .SYS_RST(BUS_RST), .ENABLE(TRIGGER_ENABLE), .TLU_CLOCK(TLU_CLOCK), .TLU_BUSY(TLU_BUSY), 
+        .TLU_TRIGGER(TLU_TRIGGER), .TLU_RESET(TLU_RESET)
     );
     
     tlu_controller #(
@@ -171,7 +179,7 @@ module tb (
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
         
-        .CMD_CLK(BUS_CLK),
+        .TRIGGER_CLK(BUS_CLK),
         
         .FIFO_READ(TLU_FIFO_READ),
         .FIFO_EMPTY(TLU_FIFO_EMPTY),
@@ -179,31 +187,21 @@ module tb (
         
         .FIFO_PREEMPT_REQ(),
         
-        .RJ45_TRIGGER(RJ45_TRIGGER),
-        .LEMO_TRIGGER(LEMO_TRIGGER),
-        .RJ45_RESET(RJ45_RESET),
-        .LEMO_RESET(LEMO_RESET),
-        .RJ45_ENABLED(RJ45_ENABLED),
+        .TRIGGER({6'b0, TRIGGER, TLU_TRIGGER}),
+        .TRIGGER_VETO({6'b0, TRIGGER_VETO, 1'b1}),
+        
+        .TLU_TRIGGER(TLU_TRIGGER),
+        .TLU_RESET(TLU_RESET),
         .TLU_BUSY(TLU_BUSY),
         .TLU_CLOCK(TLU_CLOCK),
         
-        .EXT_VETO(FIFO_FULL),
-        
-        .CMD_READY(1'b1),
-        .CMD_EXT_START_FLAG(TLU_CMD_EXT_START_FLAG),
-        .CMD_EXT_START_ENABLE(CMD_EXT_START_ENABLE),
-        
+        .TRIGGER_ENABLE(TRIGGER_ENABLE),
+        .TRIGGER_ACKNOWLEDGE(ACKNOWLEDGE),
+        .TRIGGER_ACCEPTED_FLAG(ACKNOWLEDGE),
+
         .TIMESTAMP()
     );
     
-    
-    //assign RJ45_TRIGGER = 1'b0;
-    assign LEMO_TRIGGER = 1'b0;
-    //assign RJ45_RESET = 1'b0;
-    assign LEMO_RESET = 1'b0;
-    //assign RJ45_ENABLED = 1'b0;
-    
-
     wire FIFO_READ, FIFO_EMPTY;
     wire [31:0] FIFO_DATA;
     assign FIFO_DATA = TLU_FIFO_DATA;

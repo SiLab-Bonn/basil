@@ -176,7 +176,7 @@ three_stage_synchronizer #(
     .OUT(CONF_STOP_REPEAT_CMD_CLK)
 );
 
-(* RAM_STYLE="{AUTO | BLOCK | BLOCK_POWER1 | BLOCK_POWER2}" *)
+(* RAM_STYLE="{BLOCK}" *)
 reg [7:0] cmd_mem [CMD_MEM_SIZE-1:0];
 always @ (posedge BUS_CLK) begin
     if(BUS_ADD == 0)

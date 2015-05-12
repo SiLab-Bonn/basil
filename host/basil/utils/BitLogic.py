@@ -113,16 +113,22 @@ class BitLogic(bitarray):
             slc_step = slc.step
         except AttributeError:
             if make_slice:
+                if slc < 0:
+                    slc += self.length()
                 return slice(slc, slc + 1)
             else:
                 return slc
         else:
             if not start and start != 0:
                 slc_stop = self.length()
+            elif start < 0:
+                slc_stop = self.length() + start + 1
             else:
                 slc_stop = start + 1
             if not stop and stop != 0:
                 slc_start = 0
+            elif stop < 0:
+                slc_start = self.length() + stop
             else:
                 slc_start = stop
             return slice(slc_start, slc_stop, slc_step)

@@ -6,11 +6,15 @@
 #
 
 import logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
+import os
 from importlib import import_module
 from inspect import getmembers, isclass
 from yaml import safe_load
 import sys
+import warnings
+from collections import OrderedDict
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
 
 
 class Base(object):
@@ -37,9 +41,12 @@ class Base(object):
         if not conf:
             pass
         elif isinstance(conf, basestring):  # parse the first YAML document in a stream
-            with open(conf, 'r') as f:
-                conf_dict.update(safe_load(f))
-                conf_dict.update(conf_path=f.name)
+            if os.path.isfile(conf):
+                with open(conf, 'r') as f:
+                    conf_dict.update(safe_load(f))
+                    conf_dict.update(conf_path=f.name)
+            else:
+                conf_dict.update(safe_load(conf))
         elif isinstance(conf, file):  # parse the first YAML document in a stream
             conf_dict.update(safe_load(conf))
             conf_dict.update(conf_path=conf.name)
@@ -73,7 +80,6 @@ class Dut(Base):
         super(Dut, self).__init__(conf)
         self._transfer_layer = None
         self._hardware_layer = None
-        self._user_drivers = None
         self._registers = None
         self.load_hw_configuration(self._conf)
 
@@ -102,9 +108,6 @@ class Dut(Base):
         for item in self._hardware_layer.itervalues():
             update_init(item)
             catch_exception_on_init(item)
-        for item in self._user_drivers.itervalues():
-            update_init(item)
-            catch_exception_on_init(item)
         for item in self._registers.itervalues():
             update_init(item)
             catch_exception_on_init(item)
@@ -113,8 +116,6 @@ class Dut(Base):
         for item in self._transfer_layer.itervalues():
             item.close()
         for item in self._hardware_layer.itervalues():
-            item.close()
-        for item in self._user_drivers.itervalues():
             item.close()
         for item in self._registers.itervalues():
             item.close()
@@ -132,11 +133,6 @@ class Dut(Base):
     def get_configuration(self):
         conf = {}
         for key, value in self._registers.iteritems():
-            try:
-                conf[key] = value.get_configuration()
-            except NotImplementedError:
-                conf[key] = {}
-        for key, value in self._user_drivers.iteritems():
             try:
                 conf[key] = value.get_configuration()
             except NotImplementedError:
@@ -169,10 +165,9 @@ class Dut(Base):
                 self.version = self._conf['version']
             else:
                 self.version = None
-            self._transfer_layer = {}
-            self._hardware_layer = {}
-            self._user_drivers = {}
-            self._registers = {}
+            self._transfer_layer = OrderedDict()
+            self._hardware_layer = OrderedDict()
+            self._registers = OrderedDict()
 
         if 'transfer_layer' in conf:
             for intf in conf['transfer_layer']:
@@ -186,21 +181,27 @@ class Dut(Base):
                 for hwdrv in conf['hw_drivers']:
                     hwdrv['parent'] = self
                     kargs = {}
-                    if not hwdrv['interface'] or hwdrv['interface'].lower() == 'none':
-                        kargs['intf'] = None
+                    if 'interface' in hwdrv:
+                        if hwdrv['interface'].lower() == 'none':
+                            kargs['intf'] = None
+                        else:
+                            kargs['intf'] = self._transfer_layer[hwdrv['interface']]
+                    elif 'hw_driver' in hwdrv:
+                        kargs['intf'] = self._hardware_layer[hwdrv['hw_driver']]
                     else:
-                        kargs['intf'] = self._transfer_layer[hwdrv['interface']]
+                        kargs['intf'] = None
                     kargs['conf'] = hwdrv
                     self._hardware_layer[hwdrv['name']] = self._factory('basil.HL.' + hwdrv['type'], *(), **kargs)
 
         if 'user_drivers' in conf:
+            warnings.warn("Deprecated: user_drivers move modules to hw_drivers", DeprecationWarning)
             if conf['user_drivers']:
                 for userdrv in conf['user_drivers']:
                     userdrv['parent'] = self
                     kargs = {}
-                    kargs['hw_driver'] = self._hardware_layer[userdrv['hw_driver']]
+                    kargs['intf'] = self._hardware_layer[userdrv['hw_driver']]
                     kargs['conf'] = userdrv
-                    self._user_drivers[userdrv['name']] = self._factory('basil.UL.' + userdrv['type'], *(), **kargs)
+                    self._hardware_layer[userdrv['name']] = self._factory('basil.HL.' + userdrv['type'], *(), **kargs)
 
         if 'registers' in conf:
             if conf['registers']:
@@ -211,7 +212,7 @@ class Dut(Base):
                         if not reg['driver'] or reg['driver'].lower() == 'none':
                             kargs['driver'] = None
                         else:
-                            kargs['driver'] = self._user_drivers[reg['driver']]
+                            kargs['driver'] = self._hardware_layer[reg['driver']]
                         kargs['conf'] = reg
                         self._registers[reg['name']] = self._factory('basil.RL.' + reg['type'], *(), **kargs)
                     elif 'hw_driver' in reg:
@@ -222,40 +223,79 @@ class Dut(Base):
                         raise ValueError('No driver specified for register: %s' % (reg['name'],))
 
     def _factory(self, importname, *args, **kargs):
+        splitted_import_name = importname.split('.')
+        if len(splitted_import_name) > 2:
+            mod_name = '.'.join(splitted_import_name[2:])  # remove "basil.RL." etc.
+        else:
+            mod_name = None
+
         def is_base_class(item):
             return isclass(item) and issubclass(item, Base) and item.__module__ == importname
+
         try:
             mod = import_module(importname)
-        except ImportError:
-            exc = sys.exc_info()
-            splitted_import_name = importname.split('.')
-            if len(splitted_import_name) > 2:  # give it another try
+        except ImportError:  # give it another try
+            exc = sys.exc_info()  # temporarily save exception
+            if mod_name:
                 try:
-                    importname = '.'.join(splitted_import_name[2:])  # remove "basil.RL." etc.
-                    mod = import_module(importname)
+                    mod = import_module(mod_name)
                 except ImportError:
-                    raise exc[0], exc[1], exc[2]
+                    raise exc[0], exc[1], exc[2]  # raise previous error
+                else:
+                    importname = mod_name
             else:  # finally raise exception
                 raise
         clsmembers = getmembers(mod, is_base_class)
         if len(clsmembers) > 1:
-            raise ValueError('Found more than one matching class in %s.' % importname)
+            for clsmember in clsmembers:
+                if mod_name == clsmember[0]:
+                    cls = clsmember[1]
+                    break
+                else:
+                    cls = None
+            if cls is None:
+                raise ValueError('Found more than one matching class in %s.' % importname)
         elif not len(clsmembers):
             raise ValueError('Found no matching class in %s.' % importname)
-        cls = clsmembers[0][1]
+        else:
+            cls = clsmembers[0][1]
         return cls(*args, **kargs)
 
     def __getitem__(self, item):
         if item in self._registers:
             return self._registers[item]
-        elif item in self._user_drivers:
-            return self._user_drivers[item]
         elif item in self._hardware_layer:
             return self._hardware_layer[item]
         elif item in self._transfer_layer:
             return self._transfer_layer[item]
-        else:
-            raise ValueError('Item not existing: %s' % (item,))
+        raise ValueError('Item not existing: %s' % (item,))
+
+    def get_modules(self, type_name):
+        '''Getting modules by type name.
+
+        Parameters
+        ----------
+        type_name : string
+            Type name of the modules to be returned.
+
+        Returns
+        -------
+        List of modules of given type name.
+        '''
+        modules = []
+        for module in self:
+            if module.__class__.__name__ == type_name:
+                modules.append(module)
+        if modules:
+            return modules
+
+    def __iter__(self):
+        for item in self._registers.itervalues():
+            yield item
+        for item in self._hardware_layer.itervalues():
+            yield item
+        for item in self._transfer_layer.itervalues():
+            yield item
 
     # TODO:
     def __setitem__(self, key, value):
