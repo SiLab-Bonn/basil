@@ -13,7 +13,7 @@ basil
     :alt: Documentation
  
 .. |landscape-status| image:: https://landscape.io/github/SiLab-Bonn/basil/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/SiLab-Bonn/basil/development
+   :target: https://landscape.io/github/SiLab-Bonn/basil/master
    :alt: Code Health
    
 .. |Gitter-status| image:: https://badges.gitter.im/Join%20Chat.svg
