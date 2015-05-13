@@ -4,7 +4,7 @@ basil
 
 |travis-status|  |rtd-status|  |landscape-status|  |Gitter-status|
 
-.. |travis-status| image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=development
+.. |travis-status| image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=developemnt
     :target: https://travis-ci.org/SiLab-Bonn/basil
     :alt: Build status
 
@@ -12,7 +12,7 @@ basil
     :target: http://basil.rtfd.org
     :alt: Documentation
  
-.. |landscape-status| image:: https://landscape.io/github/SiLab-Bonn/basil/master/landscape.svg?style=flat
+.. |landscape-status| image:: https://landscape.io/github/SiLab-Bonn/basil/development/landscape.svg?style=flat
    :target: https://landscape.io/github/SiLab-Bonn/basil/development
    :alt: Code Health
    
@@ -28,6 +28,13 @@ Documentation
 
 Documentation can be found under: http://basil.rtfd.org
 
+Installation
+=============
+
+.. code-block:: bash
+
+    pip install -e "git+https://github.com/SiLab-Bonn/basil.git@development#egg=basil&subdirectory=host"
+
 Support
 =======
 
@@ -37,7 +44,7 @@ Features
 ============
 Firmware:
   - very simple single master bus definition
-  - multiple basic modules (SPI, SEQ)
+  - multiple basic modules (SPI, SEQ, GPIO, I2C)
   - multiple interfaces (UART, USB2, USB3, Ethernet)
 Software:
   - layer structure following hardware
