@@ -280,14 +280,12 @@ class Dut(Base):
 
         Returns
         -------
-        List of modules of given type name.
+        List of modules of given type name else empty list.
         '''
         modules = []
         for module in self:
             if module.__class__.__name__ == type_name:
                 modules.append(module)
-        if modules:
-            return modules
 
     def __iter__(self):
         for item in self._registers.itervalues():
