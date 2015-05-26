@@ -13,7 +13,8 @@ module fei4_rx
     parameter   HIGHADDR = 32'h0000,
     parameter   DSIZE = 10,
     parameter   DATA_IDENTIFIER = 0,
-    parameter   ABUSWIDTH = 16
+    parameter   ABUSWIDTH = 16,
+    parameter   USE_FIFO_CLK = 0
 )
 (
     input wire RX_CLK,
@@ -24,6 +25,7 @@ module fei4_rx
     output wire RX_8B10B_DECODER_ERR,
     output wire RX_FIFO_OVERFLOW_ERR,
     
+    input wire FIFO_CLK,
     input wire FIFO_READ,
     output wire FIFO_EMPTY,
     output wire [31:0] FIFO_DATA,
@@ -58,6 +60,14 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i
     .IP_DATA_OUT(IP_DATA_OUT)
 );
 
+wire FIFO_CLK_INT;
+generate
+    if (USE_FIFO_CLK == 0)
+        assign FIFO_CLK_INT = BUS_CLK;
+    else
+        assign FIFO_CLK_INT = FIFO_CLK;
+endgenerate
+
 fei4_rx_core
 #(
     .DSIZE(DSIZE),
@@ -81,6 +91,7 @@ fei4_rx_core
     .RX_8B10B_DECODER_ERR(RX_8B10B_DECODER_ERR),
     .RX_FIFO_OVERFLOW_ERR(RX_FIFO_OVERFLOW_ERR),
      
+    .FIFO_CLK(FIFO_CLK_INT),
     .FIFO_READ(FIFO_READ),
     .FIFO_EMPTY(FIFO_EMPTY),
     .FIFO_DATA(FIFO_DATA),

@@ -21,7 +21,8 @@ module fei4_rx_core
     output wire RX_READY,
     output wire RX_8B10B_DECODER_ERR,
     output wire RX_FIFO_OVERFLOW_ERR,
-     
+    
+    input wire FIFO_CLK,
     input wire FIFO_READ,
     output wire FIFO_EMPTY,
     output wire [31:0] FIFO_DATA,
@@ -159,7 +160,8 @@ receiver_logic #(
     .lost_err_cnt(lost_err_cnt),
     .decoder_err_cnt(decoder_err_cnt),
     .fifo_size(fifo_size),
-    .invert_rx_data(CONF_EN_INVERT_RX_DATA)
+    .invert_rx_data(CONF_EN_INVERT_RX_DATA),
+    .FIFO_CLK(FIFO_CLK)
 );
 
 endmodule
