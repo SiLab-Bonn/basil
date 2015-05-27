@@ -19,8 +19,9 @@ class spi(RegisterHardwareLayer):
                   'SIZE': {'descr': {'addr': 3, 'size': 16}},
                   'WAIT': {'descr': {'addr': 5, 'size': 32}},
                   'REPEAT': {'descr': {'addr': 9, 'size': 32}},
-                  'MEM_BYTES': {'descr': {'addr': 13, 'size': 16, 'properties': ['ro']}}}
-    _require_version = "==1"
+                  'EN': {'descr': {'addr': 13, 'size': 1}},
+                  'MEM_BYTES': {'descr': {'addr': 14, 'size': 16, 'properties': ['ro']}}}
+    _require_version = "==2"
 
     def __init__(self, intf, conf):
         super(spi, self).__init__(intf, conf)
@@ -78,6 +79,19 @@ class spi(RegisterHardwareLayer):
         Gets Number of repetitions of sequence with delay 'wait' (if 0 --> repeat forever)
         '''
         return self.REPEAT
+
+    def set_en(self, value):
+        '''
+        If 0: Repeat sequence forever
+        Other: Number of repetitions of sequence with delay 'wait'
+        '''
+        self.EN = value
+
+    def get_en(self):
+        '''
+        Gets Number of repetitions of sequence with delay 'wait' (if 0 --> repeat forever)
+        '''
+        return self.EN
 
     def is_done(self):
         return self.is_ready

@@ -26,7 +26,8 @@ module receiver_logic
     output reg  [7:0]       lost_err_cnt,
     output reg  [7:0]       decoder_err_cnt,
     output reg [15:0]       fifo_size,
-    input wire              invert_rx_data
+    input wire              invert_rx_data,
+    input wire              FIFO_CLK
 );
 
 wire RESET_WCLK;
@@ -204,6 +205,8 @@ always @(posedge WCLK) begin
     cdc_sync_ff <= rst_long;
 end
 
+//assign FIFO_CLK = BUS_CLK;
+
 cdc_syncfifo #(
     .DSIZE(24),
     .ASIZE(2)
@@ -216,7 +219,7 @@ cdc_syncfifo #(
     .wclk(WCLK),
     .wrst(cdc_sync_ff),
     .rinc(!full),
-    .rclk(BUS_CLK),
+    .rclk(FIFO_CLK),
     .rrst(rst_long)
 );
 
@@ -226,7 +229,7 @@ gerneric_fifo #(
     .DATA_SIZE(24),
     .DEPTH(2048)
 ) fifo_i (
-    .clk(BUS_CLK),
+    .clk(FIFO_CLK),
     .reset(rst_long),
     .write(!cdc_fifo_empty),
     .read(read),
@@ -237,7 +240,7 @@ gerneric_fifo #(
     .size(fifo_size_int)
 );
 
-always @(posedge BUS_CLK) begin
+always @(posedge FIFO_CLK) begin
     fifo_size <= {5'b0, fifo_size_int};
 end
 

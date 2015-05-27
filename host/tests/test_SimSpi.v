@@ -48,6 +48,9 @@ module tb (
     
     localparam FAST_SR_AQ_BASEADDR = 32'h2000;                    
     localparam FAST_SR_AQ_HIGHADDR = 32'h3000-1; 
+
+    localparam PULSE_BASEADDR = 32'h3000;                    
+    localparam PULSE_HIGHADDR = PULSE_BASEADDR + 15;
      
     localparam FIFO_BASEADDR = 32'h8000;
     localparam FIFO_HIGHADDR = 32'h9000-1;
@@ -76,6 +79,28 @@ module tb (
         .BUS_WR(BUS_WR),
         .IO()
     );
+    
+    
+    wire EX_START_PULSE;
+    pulse_gen
+    #( 
+        .BASEADDR(PULSE_BASEADDR), 
+        .HIGHADDR(PULSE_HIGHADDR),
+        .ABUSWIDTH(ABUSWIDTH)
+    ) i_pulse_gen
+    (
+        .BUS_CLK(BUS_CLK),
+        .BUS_RST(BUS_RST),
+        .BUS_ADD(BUS_ADD),
+        .BUS_DATA(BUS_DATA[7:0]),
+        .BUS_RD(BUS_RD),
+        .BUS_WR(BUS_WR),
+    
+        .PULSE_CLK(BUS_CLK),
+        .EXT_START(1'b0),
+        .PULSE(EX_START_PULSE)
+    );
+    
     
     wire SPI_CLK;
     
@@ -106,6 +131,7 @@ module tb (
         .BUS_WR(BUS_WR),
     
         .SPI_CLK(SPI_CLK),
+        .SPI_EXT_START(EX_START_PULSE),
     
         .SCLK(SCLK),
         .SDI(SDI),
