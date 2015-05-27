@@ -14,6 +14,9 @@
 `include "spi/spi.v"
 `include "spi/spi_core.v"
 `include "spi/blk_mem_gen_8_to_1_2k.v"
+
+`include "pulse_gen/pulse_gen.v"
+`include "pulse_gen/pulse_gen_core.v"
    
 `include "bram_fifo/bram_fifo_core.v"
 `include "bram_fifo/bram_fifo.v"
