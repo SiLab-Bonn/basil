@@ -134,7 +134,7 @@ module tb (
         .BUS_WR(BUS_WR),
     
         .SPI_CLK(SPI_CLK),
-        .SPI_EXT_START(EX_START_PULSE),
+        .EXT_START(EX_START_PULSE),
     
         .SCLK(SCLK),
         .SDI(SDI),
