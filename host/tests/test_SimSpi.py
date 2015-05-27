@@ -38,6 +38,11 @@ hw_drivers:
     interface : intf
     base_addr : 0x2000
 
+  - name      : PULSE_GEN
+    type      : pulse_gen
+    interface : intf
+    base_addr : 0x3000
+
   - name      : fifo
     type      : sram_fifo
     interface : intf
@@ -82,7 +87,20 @@ class TestSimGpio(unittest.TestCase):
 
         ret = self.chip['spi'].get_data()  # read back what was received (looped)
         self.assertEqual(ret.tolist(), range(16))
-
+        
+        # ext_start
+        self.chip['PULSE_GEN'].set_delay(1)
+        self.chip['PULSE_GEN'].set_width(1+size)
+        self.chip['PULSE_GEN'].set_repeat(1)
+        self.assertEqual(self.chip['PULSE_GEN'].get_delay(), 1)
+        self.assertEqual(self.chip['PULSE_GEN'].get_width(), 1)
+        self.assertEqual(self.chip['PULSE_GEN'].get_repeat(), 1+size)
+        self.chip['PULSE_GEN'].start()
+        while(not self.chip['PULSE_GEN'].is_done()):
+            time.sleep(0.1)
+        ret = self.chip['spi'].get_data()  # read back what was received (looped)
+        self.assertEqual(ret.tolist(), range(16))
+        
         # spi_rx
         ret = self.chip['spi_rx'].get_en()
         self.assertEqual(ret, False)
