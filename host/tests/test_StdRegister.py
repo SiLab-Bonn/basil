@@ -17,7 +17,7 @@ transfer_layer:
     - name  : dummy_tl
       type  : Dummy
       init:
-          mem : {0: 1, 13: 4} # module version for init of spi and mem bytes
+          mem : {0: 1, 14: 4} # module version for init of spi and mem bytes
 
 hw_drivers:
   - name      : spi_module
@@ -69,11 +69,11 @@ class TestClass(unittest.TestCase):
         cls.dut = Dut(cls.cnfg)
         cls.dut['spi_module']._require_version = "==1"
         cls.dut.init()
-        cls.dut['spi_module']._mem_bytes = 32
+        cls.dut['spi_module']._mem_bytes = 4
 
     def test_mem_bytes(self):
         self.dut.init()
-        self.dut['spi_module']._mem_bytes = 32
+        self.dut['spi_module']._mem_bytes = 4
         self.assertEqual(4, self.dut['spi_module'].MEM_BYTES)
         self.assertRaises(ValueError, self.dut['spi_module'].set_data, [1, 2, 3, 4, 5])
 
@@ -144,7 +144,7 @@ class TestClass(unittest.TestCase):
         mem = dict()
 #         mem[0] = 0  # reset
         mem[0] = 1
-        mem[13] = 4
+        mem[14] = 4
         mem[16] = 0
         mem[17] = 0
         mem[18] = 0
@@ -208,7 +208,7 @@ class TestClass(unittest.TestCase):
         mem = dict()
 #         mem[0] = 0  # reset
         mem[0] = 1
-        mem[13] = 4
+        mem[14] = 4
         mem[16] = 0x08
         mem[17] = 0
         mem[18] = 0
