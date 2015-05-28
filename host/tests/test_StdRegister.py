@@ -29,7 +29,8 @@ registers:
   - name        : TEST1
     type        : StdRegister
     hw_driver   : spi_module
-
+    size        : 32
+    
   - name        : TEST2
     type        : StdRegister
     hw_driver   : spi_module
