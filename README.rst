@@ -4,8 +4,8 @@ basil
 
 |travis-status|  |rtd-status|  |landscape-status|  |Gitter-status|
 
-.. |travis-status| image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=developemnt
-    :target: https://travis-ci.org/SiLab-Bonn/basil
+.. |travis-status| image:: https://travis-ci.org/thirono/basil.svg?branch=spi_ext_start
+    :target: https://travis-ci.org/thirono/basil
     :alt: Build status
 
 .. |rtd-status| image:: https://readthedocs.org/projects/basil/badge/?version=latest

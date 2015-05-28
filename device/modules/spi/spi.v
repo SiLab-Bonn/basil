@@ -27,6 +27,7 @@ module spi
     output wire SCLK,
     input wire SDO,
     output wire SDI,
+    input EXT_START,
 
     output wire SEN, 
     output wire SLD
@@ -70,10 +71,10 @@ spi_core #(
     .SCLK(SCLK),
     .SDO(SDO),
     .SDI(SDI),
+    .EXT_START(EXT_START),
     
     .SEN(SEN),
     .SLD(SLD)
 );
-
 
 endmodule
