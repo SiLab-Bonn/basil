@@ -17,7 +17,7 @@ transfer_layer:
     - name  : dummy_tl
       type  : Dummy
       init:
-          mem : {0: 2, 13: 4} # module version for init of spi and mem bytes
+          mem : {0: 1, 13: 4} # module version for init of spi and mem bytes
 
 hw_drivers:
   - name      : spi_module
@@ -67,6 +67,7 @@ class TestClass(unittest.TestCase):
     def setUpClass(cls):
         cls.cnfg = yaml.load(cnfg_yaml)
         cls.dut = Dut(cls.cnfg)
+        cls.dut['spi_module']._require_version = "==1"
         cls.dut.init()
 
     def test_mem_bytes(self):
@@ -199,6 +200,7 @@ class TestClass(unittest.TestCase):
     def test_default(self):
         self.cnfg['registers'][1]['fields'][0]['default'] = 0x01  # VINJECT
         self.dut = Dut(self.cnfg)
+        self.dut['spi_module']._require_version = "==1"
         self.dut.init()
         mem = dict()
 #         mem[0] = 0  # reset
