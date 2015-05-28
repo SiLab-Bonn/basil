@@ -43,7 +43,6 @@ class spi(RegisterHardwareLayer):
 
     def set_size(self, value):
         '''
-        Overwrites the size defined in YAML config file
         Number of clock cycles for shifting in data
         length of matrix shift register (number of pixels daisy chained)
         '''

@@ -61,7 +61,7 @@ registers:
 """
 
 
-class TestSimGpio(unittest.TestCase):
+class TestSimSpi(unittest.TestCase):
     def setUp(self):
         cocotb_compile_and_run([os.getcwd() + '/test_SimSpi.v'])
 
@@ -83,7 +83,7 @@ class TestSimGpio(unittest.TestCase):
 
         self.chip['spi'].start()
         while(not self.chip['spi'].is_done()):
-            time.sleep(0.1)
+            pass
 
         ret = self.chip['spi'].get_data()  # read back what was received (looped)
         self.assertEqual(ret.tolist(), range(16))
@@ -101,7 +101,8 @@ class TestSimGpio(unittest.TestCase):
         
         self.chip['PULSE_GEN'].start()
         while(not self.chip['PULSE_GEN'].is_done()):
-            time.sleep(0.1)
+            pass
+            
         ret = self.chip['spi'].get_data()  # read back what was received (looped)
         self.assertEqual(ret.tolist(), range(16))
         
@@ -115,7 +116,7 @@ class TestSimGpio(unittest.TestCase):
 
         self.chip['spi'].start()
         while(not self.chip['spi'].is_done()):
-            time.sleep(0.1)
+            pass
 
         ret = self.chip['fifo'].get_fifo_size()
         self.assertEqual(ret, 32)

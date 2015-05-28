@@ -99,7 +99,7 @@ module tb (
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
     
-        .PULSE_CLK(BUS_CLK),
+        .PULSE_CLK(SPI_CLK),
         .EXT_START(1'b0),
         .PULSE(EX_START_PULSE)
     );
