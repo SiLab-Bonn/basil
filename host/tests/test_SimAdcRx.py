@@ -55,7 +55,7 @@ hw_drivers:
 """
 
 
-class TestSimGpio(unittest.TestCase):
+class TestSimAdcRx(unittest.TestCase):
     def setUp(self):
         cocotb_compile_and_run([os.getcwd() + '/test_SimAdcRx.v'])
 
