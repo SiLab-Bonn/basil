@@ -250,7 +250,7 @@ cdc_pulse_sync done_pulse_ext_start (.clk_in(SPI_CLK), .pulse_in(EXT_START_PULSE
 always @(posedge BUS_CLK)
     if(RST)
         CONF_DONE <= 1;
-    else if(START || EXT_START_PULSE_SYNC)
+    else if(START || (EXT_START_PULSE_SYNC && CONF_EN))
         CONF_DONE <= 0;
     else if(DONE_SYNC)
         CONF_DONE <= 1;
