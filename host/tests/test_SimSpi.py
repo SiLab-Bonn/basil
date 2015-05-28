@@ -90,7 +90,7 @@ class TestSimGpio(unittest.TestCase):
         
         # ext_start
         self.chip['spi'].set_en(1)
-        self.assertEqual(self.chip['PULSE_GEN'].get_en(), 0)
+        self.assertEqual(self.chip['PULSE_GEN'].get_en(), 1)
         
         self.chip['PULSE_GEN'].set_delay(1)
         self.chip['PULSE_GEN'].set_width(1+size)
