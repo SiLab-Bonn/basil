@@ -29,7 +29,6 @@ registers:
   - name        : TEST1
     type        : StdRegister
     hw_driver   : spi_module
-    size        : 32
 
   - name        : TEST2
     type        : StdRegister
@@ -69,9 +68,11 @@ class TestClass(unittest.TestCase):
         cls.dut = Dut(cls.cnfg)
         cls.dut['spi_module']._require_version = "==1"
         cls.dut.init()
+        cls.dut['spi_module']._mem_bytes = 32
 
     def test_mem_bytes(self):
         self.dut.init()
+        self.dut['spi_module']._mem_bytes = 32
         self.assertEqual(4, self.dut['spi_module'].MEM_BYTES)
         self.assertRaises(ValueError, self.dut['spi_module'].set_data, [1, 2, 3, 4, 5])
 
@@ -202,6 +203,7 @@ class TestClass(unittest.TestCase):
         self.dut = Dut(self.cnfg)
         self.dut['spi_module']._require_version = "==1"
         self.dut.init()
+        self.dut['spi_module']._mem_bytes = 32
         mem = dict()
 #         mem[0] = 0  # reset
         mem[0] = 1
