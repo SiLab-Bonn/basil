@@ -89,12 +89,16 @@ class TestSimGpio(unittest.TestCase):
         self.assertEqual(ret.tolist(), range(16))
         
         # ext_start
+        self.chip['spi'].set_en(1)
+        self.assertEqual(self.chip['PULSE_GEN'].get_en(), 0)
+        
         self.chip['PULSE_GEN'].set_delay(1)
         self.chip['PULSE_GEN'].set_width(1+size)
         self.chip['PULSE_GEN'].set_repeat(1)
         self.assertEqual(self.chip['PULSE_GEN'].get_delay(), 1)
-        self.assertEqual(self.chip['PULSE_GEN'].get_width(), 1)
-        self.assertEqual(self.chip['PULSE_GEN'].get_repeat(), 1+size)
+        self.assertEqual(self.chip['PULSE_GEN'].get_width(), 1+size)
+        self.assertEqual(self.chip['PULSE_GEN'].get_repeat(), 1)
+        
         self.chip['PULSE_GEN'].start()
         while(not self.chip['PULSE_GEN'].is_done()):
             time.sleep(0.1)
