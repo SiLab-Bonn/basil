@@ -45,8 +45,11 @@ class Base(object):
                 with open(conf, 'r') as f:
                     conf_dict.update(safe_load(f))
                     conf_dict.update(conf_path=f.name)
-            else:
-                conf_dict.update(safe_load(conf))
+            else:  # YAML string
+                try:
+                    conf_dict.update(safe_load(conf))
+                except ValueError:  # invalid path/filename
+                    raise IOError("File not found: %s" % conf)
         elif isinstance(conf, file):  # parse the first YAML document in a stream
             conf_dict.update(safe_load(conf))
             conf_dict.update(conf_path=conf.name)
