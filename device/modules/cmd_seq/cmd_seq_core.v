@@ -10,7 +10,7 @@
 module cmd_seq_core
 #(
     parameter                   ABUSWIDTH = 16,
-    parameter 					OUTPUTS = 1,
+    parameter                   OUTPUTS = 1,
     parameter                   CMD_MEM_SIZE = 2048
 ) (
     input wire                  BUS_CLK,
@@ -317,26 +317,26 @@ always @ (posedge CMD_CLK_IN)
 
 genvar k;
 generate
-	for (k = 0; k < OUTPUTS; k = k + 1) begin: gen
-    	ODDR MANCHESTER_CODE_INST (
-    		.Q(CMD_DATA[k]),
-    		.C(CMD_CLK_IN),
-    		.CE(1'b1),
-    		.D1((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? ~cmd_data_pos : cmd_data_pos))), 
-    		.D2((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? cmd_data_pos : ~cmd_data_pos))),
-    		.R(1'b0),
-    		.S(1'b0)
-    	);
+    for (k = 0; k < OUTPUTS; k = k + 1) begin: gen
+        ODDR MANCHESTER_CODE_INST (
+            .Q(CMD_DATA[k]),
+            .C(CMD_CLK_IN),
+            .CE(1'b1),
+            .D1((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? ~cmd_data_pos : cmd_data_pos))), 
+            .D2((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? cmd_data_pos : ~cmd_data_pos))),
+            .R(1'b0),
+            .S(1'b0)
+        );
 
-    	ODDR CMD_CLK_FORWARDING_INST (
-    		.Q(CMD_CLK_OUT[k]),
-    		.C(CMD_CLK_IN),
-    		.CE(1'b1), 
-    		.D1(1'b1),
-    		.D2(1'b0),
-    		.R(CONF_DIS_CLOCK_GATE),
-    		.S(1'b0)
-    	);
+        ODDR CMD_CLK_FORWARDING_INST (
+            .Q(CMD_CLK_OUT[k]),
+            .C(CMD_CLK_IN),
+            .CE(1'b1), 
+            .D1(1'b1),
+            .D2(1'b0),
+            .R(CONF_DIS_CLOCK_GATE),
+            .S(1'b0)
+        );
     end
 endgenerate
 
