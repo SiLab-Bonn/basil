@@ -4,185 +4,114 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-
+#
+# ------------------------------------------------------------
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
+# ------------------------------------------------------------
+#
+import logging
 import serial
-from basil.TL.SiTransferLayer import SiTransferLayer
-# import time
+import socket
+import array
+from struct import unpack, unpack_from, pack
+from basil.TL.TransferLayer import TransferLayer
+from numpy import uint8, uint32
+from sys import getsizeof
+import math
+from time import sleep
 
-CMD_W = 'w'  # Command to write
-CMD_R = 'r'  # Command to read
-CMD_A = 'a'  # Command to set address
-CMD_L = 'l'  # Command to set length (number of bytes)
-
-
-class SiUart (SiTransferLayer):
-
-    ''' UART DRIVER
-    '''
+class SiUart (TransferLayer):
     _ser = None
 
     def __init__(self, conf):
         super(SiUart, self).__init__(conf)
 
-    def init(self):
-        if 'board_id' in self._conf.keys():
-            try:
-                self.parity = serial.PARITY_NONE
-#                 self.stopbit  = serial.STOPBITS_ONE
-#                 self.bytesize = serial.EIGHTBITS
-
-#                 if(self._conf['bytesize'] == 8):
-#                    print('BYTESIZE', self.bytesize)
-#                 else:
-#                    pass
-
-                if(self._conf['parity'] == 0):
-                    pass
-                else:
-                    if(self._conf['parity'] == 1):
-                        self.parity = serial.PARITY_ODD
-                    else:
-                        if(self._conf['parity'] == 2):
-                            self.parity = serial.PARITY_EVEN
-
-#                 if(self._conf['stopbits'] == 1):
-#                    pass
-#                 else:
-#                    if(self._conf['stopbits'] == 2):
-#                        self.stopbit = serial.STOPBITS_TWO
-#                    else:
-#                        if(self._conf['stopbits'] == 3):
-#                            self.stopbit = serial.STOPBITS_ONE_POINT_FIVE
-#
-#                 self._ser = serial.Serial(self._conf['port'],
-#                                          self._conf['baudrate'],
-#                                          self.parity,
-#                                          self.stopbit,
-#                                          self.bytesize,
-#                                          timeout=1)
-                self._ser = serial.Serial()
-                self._ser.setPort(self._conf['port'])
-                self._ser.setBaudrate(self._conf['baudrate'])
-                self._ser.setParity(self.parity)
-                self._ser.setStopbits(self._conf['stopbits'])
-                self._ser.setByteSize(self._conf['bytesize'])
-                self._ser.setTimeout(1)
-
-                print("_serial instance opened at", self._conf['port'])
-                self._ser.open()
-            except serial.serialutil.SerialException as e:
-                print("Failed to instantiate UART interface! Check if \n\t1) device is connected \n\t2) valid access to the used _port is guaranteed")
-                print("Error Message @ init:"), e
+    def init(self, **kwargs):
+        self._init.setdefault('board_id', None)
+        self._init.setdefault('avoid_download', False)
+        if self._init['board_id'] and int(self._init['board_id']) >= 0:
+            self._ser = serial.Serial()
+            if 'port' in self._init.keys():
+                self._ser.setPort(self._init['port'])
+            if 'baudrate' in self._init.keys():   
+                self._ser.setBaudrate(self._init['baudrate'])
+            if 'parity' in self._init.keys() and self._init["parity"] == 0:
+                self._ser.setParity(serial.PARITY_NONE)
+            if 'stopbits' in self._init.keys():          
+                self._ser.setStopbits(self._init['stopbits'])
+            if 'bytesize' in self._init.keys():          
+                self._ser.setByteSize(self._init['bytesize'])
+            if 'timeout' in self._init.keys():          
+                self._ser.setTimeout(self._init['timeout'])
+            
+            self._ser.open()
+            if not self._ser.isOpen():
+                raise IOError("Port at %s not open"%self._ser.port)
         else:
-            print('No board_id in config file')
-
+            logging.info('Found board')
+    
+  
+    
     def __del__(self):
-        try:
-            self._ser.close()
-            print("_serial _port closed successfully")
-        except serial.serialutil.SerialException as e:
-            print("Failed to close _serial _port with")
-            print("Error Message @ __del__(self):"), e
-        except AttributeError as a:
-            print("Error Message @ __del__(self):"), a
-
-    def send_cmd(self, cmd, data, explicit_size=False):
-        num_to_read = data
-        if not isinstance(data, str):
-            data = hex(data)
-        else:
-            pass
-
-        dataOut = ""
+        self._ser.close()
+       
+    def write(self, addr, data):
+        logging.debug("------------ writing ------------")
+        logging.debug('Addr: %s \tdata: %s', addr, data)
         done = False
-
-        self._ser.write(cmd)
-        if '0x' in data:
-            data = data[2:]
-        if len(data) % 2 == 0:
-            pass
-        else:
-            data = "0" + data
-        if(cmd == CMD_W):
-            self._ser.write(data.decode("hex"))
-        if(cmd == CMD_A):
-            byteData = '00000000'
-            data = byteData[:8 - len(data)] + data
-            # Revert byte order #### START
-            n = 2
-            dlist = [data[i:i + n] for i in range(0, len(data), n)]
-            d = "".join(dlist[::-1])
-            # Revert byte order #### END
-
-            self._ser.write(d.decode("hex"))
-        if(cmd == CMD_L):
-            if(explicit_size):
-                nbytes = len(data)
-                tmp = "00000000"
-                tmp = tmp[:8 - nbytes] + data
-            else:
-                nbytes = len(data) / 2
-                tmp = "00000000"
-                tmp = tmp[:8 - len(str(nbytes))] + hex(nbytes)[2:]
-                # print tmp
-            # Revert byte order #### START
-            n = 2
-            dlist = [tmp[i:i + n] for i in range(0, len(tmp), n)]
-            d = "".join(dlist[::-1])
-            # Revert byte order #### END
-            self._ser.write(d.decode("hex"))
-        if(cmd == CMD_R):
-            dataOut = self._ser.read(int(num_to_read))
-
-        respond = self._ser.readall()
-        if "OK" in respond:
+        d = ""
+      
+        a = array.array('B', 'a')+array.array('B', pack("<I", addr))
+        self._ser.write(a)
+        if "OK" in self._ser.readall():
+            logging.debug("Addr is okay")
+        
+        l = array.array('B', 'l') +array.array('B', pack("<I", len(data)))
+        self._ser.write(l)
+        if "OK" in self._ser.readall():
+            logging.debug("Length is okay")
+        
+        w = array.array('B', 'w')+array.array('B', data)
+        self._ser.write(w)
+        while self._ser.outWaiting() > 0:
+            logging.debug("writing ...")
+        sleep(0.3)    
+        if "OK" in self._ser.readall():
             done = True
-        return done, dataOut
-
-    def write(self, to_address, this_data):
-        # print ("##########  WRITE VIA UART: Started  ##########")
-        try:
-            done = False
-            if(self.send_cmd(cmd=CMD_A, data=to_address)[0]):
-#                 print("Send address")
-                if(self.send_cmd(cmd=CMD_L, data=this_data)[0]):
-#                     print("Send length")
-                    if(self.send_cmd(cmd=CMD_W, data=this_data)[0]):
-#                         print("Send data")
-                        done = True
-                else:
-                    print "Write failed"
-            # print ("##########  WRITE VIA UART: Finished   ##########\n")
+            logging.debug("Writing finished")
             return done
-        except AttributeError as e:
-            print ("Error message @ write(self,this_data, to_address): "), e
-
-    def read(self, from_address, num_of_bytes):
-        # print ("##########  READ VIA UART: Started  ##########")
-        try:
-            dataOut = ''
-            if(self.send_cmd(cmd=CMD_A, data=from_address)[0]):
-#                 print("Send address")
-                if(self.send_cmd(cmd=CMD_L, data=num_of_bytes, explicit_size=True)[0]):
-#                     print("Send length")
-                    done, dataOut = self.send_cmd(cmd=CMD_R, data=num_of_bytes)
-#                     print("Send read")
-                    if(done):
-                        print("Read data")
-                        done = True
-                    else:
-                        print "Read failed"
-            # print ("##########  READ VIA UART: Finished  ##########\n")
-            return dataOut
-        except AttributeError as e:
-            print ("Error message @ read(self, num_of_bytes, from_address): "), e
-
+        
+        raise Exception("Write serial port failed.")
+       
+    def read(self, addr, size):
+        logging.debug("------------ reading ------------")
+        logging.debug('Addr: %s \tSize: %s', addr, size)
+        dataOut = None
+        
+        a = array.array('B', 'a')+array.array('B', pack("<I", addr))
+        self._ser.write(a)
+        if "OK" in self._ser.readall():
+            logging.debug("Addr is okay")
+     
+        l = array.array('B', 'l')+array.array('B', pack("<I", size))
+        self._ser.write(l)
+        if "OK" in self._ser.readall():
+            logging.debug("Length is okay")
+     
+        r = array.array('B', 'r')
+        self._ser.write(r)
+        dataOut = self._ser.read(size)
+        while self._ser.inWaiting() > 0:
+            logging.info("reading ...")
+        sleep(0.3)
+        if "OK" in self._ser.read():
+            a = array.array('B', dataOut)
+            logging.debug("Reading finished")
+            return a
+        raise Exception("Read serial port failed")
+    
     def close(self):
-        try:
-            self._ser.close()
-            print("_serial _port closed successfully")
-        except serial.serialutil.serialException as e:
-            print("Failed to close _serial _port with")
-            print("Error Message @ __del__(self):"), e
-        except AttributeError as a:
-            print("Error Message @ __del__(self):"), a
+        self._ser.close()
+        logging.debug("_serial _port closed successfully")
+
