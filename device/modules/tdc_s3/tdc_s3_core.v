@@ -478,6 +478,8 @@ always@(*) begin
         TRIG_CNT = CLKDV*4 - LENGTH_TDC;
     else if (CNT_TRIG==1)
         TRIG_CNT = CLKDV*4;
+    else
+        TRIG_CNT = 0;
 end
 
 reg [8:0] TRIG_DIST; // overflow bit
