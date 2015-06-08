@@ -81,7 +81,7 @@ class SiLibUsbBusDriver(BusDriver):
                 result.append(val)
         else:
             self.entity.log.warning("This address space does not exist!")
-            
+
         raise ReturnValue(result)
 
     @cocotb.coroutine
@@ -96,7 +96,7 @@ class SiLibUsbBusDriver(BusDriver):
             # self._sidev.FastBlockWrite(data)
         else:
             self.entity.log.warning("This address space does not exist!")
-            
+
     @cocotb.coroutine
     def read_external(self, address):
         """Copied from silusb.sv testbench interface"""
