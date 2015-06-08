@@ -16,25 +16,25 @@ class i2c(RegisterHardwareLayer):
                   'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
-                  'NO_ACK': {'descr': {'addr': 1, 'size': 1, 'offset': 1,  'properties': ['ro']}},
+                  'NO_ACK': {'descr': {'addr': 1, 'size': 1, 'offset': 1, 'properties': ['ro']}},
                   'SIZE': {'descr': {'addr': 3, 'size': 16}},
                   'ADDR': {'descr': {'addr': 2, 'size': 8}},
                   'MEM_BYTES': {'descr': {'addr': 6, 'size': 16}},
                   }
-                  
+
     _require_version = "==1"
 
     def __init__(self, intf, conf):
         super(i2c, self).__init__(intf, conf)
         self._seq_mem_offset = 8  # in bytes
-        
+
     def init(self):
         super(i2c, self).init()
         self._mem_size = self.get_mem_size()
-     
+
     def get_mem_size(self):
         return self.MEM_BYTES
-        
+
     def reset(self):
         self.RESET = 0
 
@@ -43,22 +43,22 @@ class i2c(RegisterHardwareLayer):
 
     def set_addr(self, value):
         self.ADDR = value
-    
+
     def set_address(self, value):
         self.ADDR = value
-   
+
     def get_addr(self):
         return self.ADDR
-    
+
     def get_address(self):
         return self.ADDR
-     
+
     def set_size(self, value):
         self.SIZE = value
-    
+
     def get_size(self):
         return self.SIZE
-    
+
     def is_done(self):
         return self.is_ready
 
@@ -74,7 +74,7 @@ class i2c(RegisterHardwareLayer):
 
     def get_done(self):
         return self.is_ready
-        
+
     def set_data(self, data, addr=0):
         if self._mem_size < len(data):
             raise ValueError('Size of data %d is too big %d' % len(data), self._mem_size)
@@ -87,7 +87,7 @@ class i2c(RegisterHardwareLayer):
             return self._intf.read(self._conf['base_addr'] + self._seq_mem_offset + addr, self._mem_size)
         else:
             return self._intf.read(self._conf['base_addr'] + self._seq_mem_offset + addr, size)
-        
+
     def write(self, addr, data):
         '''Write access.
 
@@ -104,7 +104,7 @@ class i2c(RegisterHardwareLayer):
         self.start()
         while not self.is_ready:
             pass
-    
+
     def read(self, addr, size):
         '''Read access.
 
@@ -122,4 +122,3 @@ class i2c(RegisterHardwareLayer):
         while not self.is_ready:
             pass
         return self.get_data(size)
-    

@@ -5,7 +5,6 @@
 # ------------------------------------------------------------
 #
 
-
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 

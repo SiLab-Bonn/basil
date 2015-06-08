@@ -99,4 +99,3 @@ class sram_fifo(RegisterHardwareLayer):
 
     def get_size(self):
         return self.FIFO_SIZE
-        

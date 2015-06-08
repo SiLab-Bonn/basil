@@ -5,9 +5,10 @@
 # ------------------------------------------------------------
 #
 
-from basil.TL.SiTransferLayer import SiTransferLayer
 import array
 import logging
+
+from basil.TL.SiTransferLayer import SiTransferLayer
 
 
 class Dummy(SiTransferLayer):
@@ -29,6 +30,7 @@ class Dummy(SiTransferLayer):
                 self.mem = {i: j for i, j in enumerate(self._init['mem'])}
         else:
             self.mem = {}
+
     def write(self, addr, data):
         '''Write to dummy memory
 

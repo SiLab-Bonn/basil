@@ -6,8 +6,8 @@
 #
 
 import serial
+
 from basil.TL.SiTransferLayer import SiTransferLayer
-# import time
 
 CMD_W = 'w'  # Command to write
 CMD_R = 'r'  # Command to read
@@ -144,11 +144,8 @@ class SiUart (SiTransferLayer):
         try:
             done = False
             if(self.send_cmd(cmd=CMD_A, data=to_address)[0]):
-#                 print("Send address")
                 if(self.send_cmd(cmd=CMD_L, data=this_data)[0]):
-#                     print("Send length")
                     if(self.send_cmd(cmd=CMD_W, data=this_data)[0]):
-#                         print("Send data")
                         done = True
                 else:
                     print "Write failed"
@@ -162,11 +159,8 @@ class SiUart (SiTransferLayer):
         try:
             dataOut = ''
             if(self.send_cmd(cmd=CMD_A, data=from_address)[0]):
-#                 print("Send address")
                 if(self.send_cmd(cmd=CMD_L, data=num_of_bytes, explicit_size=True)[0]):
-#                     print("Send length")
                     done, dataOut = self.send_cmd(cmd=CMD_R, data=num_of_bytes)
-#                     print("Send read")
                     if(done):
                         print("Read data")
                         done = True

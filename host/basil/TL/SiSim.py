@@ -37,7 +37,7 @@ class SiSim (SiTransferLayer):
         try_cnt = 60
         if 'timeout' in self._init.keys():
             try_cnt = self._init['timeout']
-        
+
         while(self._sock.connect_ex((host, port)) != 0):
             logging.debug("Trying to connect to simulator.")
             time.sleep(1)
