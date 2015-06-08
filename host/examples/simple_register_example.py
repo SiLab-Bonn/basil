@@ -1,11 +1,6 @@
-import yaml
-
 from basil.dut import Dut
 
-setup_file = open("simple_register_example.yaml", 'r')
-cnfg = yaml.load(setup_file)
-
-chip = Dut(cnfg)
+chip = Dut("simple_register_example.yaml")
 
 print(chip['TEST'])
 print(chip['REG'])

@@ -25,12 +25,13 @@ module spi_core
     output wire SCLK,
     input wire SDO,
     output reg SDI,
+    input EXT_START,
     
     output reg SEN,
     output reg SLD
 );
 
-localparam VERSION = 1;
+localparam VERSION = 2;
 
 reg [7:0] status_regs [15:0];
 
@@ -56,6 +57,7 @@ always @(posedge BUS_CLK) begin
         status_regs[10] <= 0; //repeat
         status_regs[11] <= 0; //repeat
         status_regs[12] <= 0; //repeat
+        status_regs[13] <= 0; //0:enable external start
     end
     else if(BUS_WR && BUS_ADD < 16)
         status_regs[BUS_ADD[3:0]] <= BUS_DATA_IN;
@@ -82,15 +84,20 @@ assign CONF_WAIT = {status_regs[8], status_regs[7], status_regs[6], status_regs[
 wire [31:0] CONF_REPEAT;
 assign CONF_REPEAT = {status_regs[12], status_regs[11], status_regs[10], status_regs[9]};
 
+wire CONF_EN;
+assign CONF_EN = status_regs[13][0];
+
 reg [7:0] BUS_DATA_OUT_REG;
 always@(posedge BUS_CLK) begin
     if(BUS_ADD == 0)
         BUS_DATA_OUT_REG <= VERSION;
     else if(BUS_ADD == 1)
         BUS_DATA_OUT_REG <= {7'b0, CONF_DONE};
-    else if(BUS_ADD == 13)
-        BUS_DATA_OUT_REG <= MEM_BYTES[7:0];
+     else if(BUS_ADD == 13)
+        BUS_DATA_OUT_REG <= {7'b0, CONF_EN};
     else if(BUS_ADD == 14)
+        BUS_DATA_OUT_REG <= MEM_BYTES[7:0];
+    else if(BUS_ADD == 15)
         BUS_DATA_OUT_REG <= MEM_BYTES[15:8];
     else if (BUS_ADD < 16)
         BUS_DATA_OUT_REG <= status_regs[BUS_ADD[3:0]];
@@ -176,6 +183,16 @@ assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
 wire START_SYNC;
 cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(SPI_CLK), .pulse_out(START_SYNC));
 
+wire EXT_START_PULSE;
+reg [2:0] EXT_START_FF;
+always @(posedge SPI_CLK) // first stage
+begin
+    EXT_START_FF[0] <= EXT_START;
+    EXT_START_FF[1] <= EXT_START_FF[0];
+    EXT_START_FF[2] <= EXT_START_FF[1];
+end
+assign EXT_START_PULSE = !EXT_START_FF[2] & EXT_START_FF[1];
+
 wire [32:0] STOP_BIT;
 assign STOP_BIT = CONF_BIT_OUT + CONF_WAIT;
 reg [31:0] REPEAT_COUNT;
@@ -190,7 +207,7 @@ always @ (posedge SPI_CLK)
 always @ (posedge SPI_CLK)
     if (RST_SYNC)
         SEN_INT <= 0;
-    else if(START_SYNC || REP_START_DLY)
+    else if(START_SYNC || (EXT_START_PULSE && CONF_EN) || REP_START_DLY)
         SEN_INT <= 1;
     else if(out_bit_cnt == CONF_BIT_OUT)
         SEN_INT <= 0;
@@ -198,7 +215,7 @@ always @ (posedge SPI_CLK)
 always @ (posedge SPI_CLK)
     if (RST_SYNC)
         out_bit_cnt <= 0;
-    else if(START_SYNC)
+    else if(START_SYNC || (EXT_START_PULSE && CONF_EN))
         out_bit_cnt <= 1;
     else if(out_bit_cnt == STOP_BIT)
         out_bit_cnt <= 0;
@@ -210,7 +227,7 @@ always @ (posedge SPI_CLK)
         out_bit_cnt <= out_bit_cnt + 1;
 
 always @ (posedge SPI_CLK)
-    if (RST_SYNC || START_SYNC)
+    if (RST_SYNC || START_SYNC || (EXT_START_PULSE && CONF_EN))
         REPEAT_COUNT <= 1;
     else if(out_bit_cnt == STOP_BIT)
         REPEAT_COUNT <= REPEAT_COUNT + 1;
@@ -226,13 +243,14 @@ always @(posedge SPI_CLK)
     SLD <= (sync_ld[1]==1 && sync_ld[0]==0);
 
 wire DONE = out_bit_cnt == STOP_BIT && REPEAT_COUNT >= CONF_REPEAT;
-wire DONE_SYNC;
+wire DONE_SYNC, EXT_START_PULSE_SYNC;
 cdc_pulse_sync done_pulse_sync (.clk_in(SPI_CLK), .pulse_in(DONE), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
+cdc_pulse_sync done_pulse_ext_start (.clk_in(SPI_CLK), .pulse_in(EXT_START_PULSE), .clk_out(BUS_CLK), .pulse_out(EXT_START_PULSE_SYNC));
 
 always @(posedge BUS_CLK)
     if(RST)
         CONF_DONE <= 1;
-    else if(START)
+    else if(START || (EXT_START_PULSE_SYNC && CONF_EN))
         CONF_DONE <= 0;
     else if(DONE_SYNC)
         CONF_DONE <= 1;

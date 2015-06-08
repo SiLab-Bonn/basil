@@ -11,7 +11,7 @@ basil
 .. |rtd-status| image:: https://readthedocs.org/projects/basil/badge/?version=latest
     :target: http://basil.rtfd.org
     :alt: Documentation
- 
+
 .. |landscape-status| image:: https://landscape.io/github/SiLab-Bonn/basil/master/landscape.svg?style=flat
    :target: https://landscape.io/github/SiLab-Bonn/basil/master
    :alt: Code Health

@@ -38,6 +38,11 @@ hw_drivers:
     interface : intf
     base_addr : 0x2000
 
+  - name      : PULSE_GEN
+    type      : pulse_gen
+    interface : intf
+    base_addr : 0x3000
+
   - name      : fifo
     type      : sram_fifo
     interface : intf
@@ -56,7 +61,7 @@ registers:
 """
 
 
-class TestSimGpio(unittest.TestCase):
+class TestSimSpi(unittest.TestCase):
     def setUp(self):
         cocotb_compile_and_run([os.getcwd() + '/test_SimSpi.v'])
 
@@ -78,11 +83,29 @@ class TestSimGpio(unittest.TestCase):
 
         self.chip['spi'].start()
         while(not self.chip['spi'].is_done()):
-            time.sleep(0.1)
+            pass
 
         ret = self.chip['spi'].get_data()  # read back what was received (looped)
         self.assertEqual(ret.tolist(), range(16))
-
+        
+        # ext_start
+        self.chip['spi'].set_en(1)
+        self.assertEqual(self.chip['spi'].get_en(), 1)
+        
+        self.chip['PULSE_GEN'].set_delay(1)
+        self.chip['PULSE_GEN'].set_width(1+size)
+        self.chip['PULSE_GEN'].set_repeat(1)
+        self.assertEqual(self.chip['PULSE_GEN'].get_delay(), 1)
+        self.assertEqual(self.chip['PULSE_GEN'].get_width(), 1+size)
+        self.assertEqual(self.chip['PULSE_GEN'].get_repeat(), 1)
+        
+        self.chip['PULSE_GEN'].start()
+        while(not self.chip['PULSE_GEN'].is_done()):
+            pass
+            
+        ret = self.chip['spi'].get_data()  # read back what was received (looped)
+        self.assertEqual(ret.tolist(), range(16))
+        
         # spi_rx
         ret = self.chip['spi_rx'].get_en()
         self.assertEqual(ret, False)
@@ -93,7 +116,7 @@ class TestSimGpio(unittest.TestCase):
 
         self.chip['spi'].start()
         while(not self.chip['spi'].is_done()):
-            time.sleep(0.1)
+            pass
 
         ret = self.chip['fifo'].get_fifo_size()
         self.assertEqual(ret, 32)
