@@ -24,6 +24,7 @@
 `include "utils/generic_fifo.v"
 `include "utils/3_stage_synchronizer.v"
 
+`include "utils/cdc_pulse_sync.v"
 
 module tlu_model ( 
     input wire SYS_CLK, SYS_RST, TLU_CLOCK, TLU_BUSY, ENABLE,
