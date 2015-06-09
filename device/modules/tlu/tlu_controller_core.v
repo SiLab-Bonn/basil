@@ -253,14 +253,6 @@ three_stage_synchronizer three_stage_enable_reset_command_synchronizer (
     .OUT(TLU_ENABLE_RESET_SYNC)
 );
 
-// input sync
-wire TRIGGER_ENABLE_BUS_CLK;
-three_stage_synchronizer three_stage_cmd_external_start_synchronizer (
-    .CLK(BUS_CLK),
-    .IN(TRIGGER_ENABLE),
-    .OUT(TRIGGER_ENABLE_BUS_CLK)
-);
-
 // TLU input sync
 wire TLU_TRIGGER_SYNC, TRIGGER_OR_SYNC, TLU_RESET_SYNC, TRIGGER_VETO_OR_SYNC;
 
@@ -411,21 +403,8 @@ flag_domain_crossing trigger_accepted_flag_domain_crossing (
 
 wire TRIGGER_COUNTER_SET;
 assign TRIGGER_COUNTER_SET = (BUS_ADD == 11 & BUS_WR);
-reg TRIGGER_COUNTER_SET_FF;
-always @ (posedge BUS_CLK)
-begin
-    TRIGGER_COUNTER_SET_FF <= TRIGGER_COUNTER_SET;
-end
-wire TRIGGER_COUNTER_SET_FLAG;
-assign TRIGGER_COUNTER_SET_FLAG = ~TRIGGER_COUNTER_SET_FF & TRIGGER_COUNTER_SET;
-
 wire TRIGGER_COUNTER_SET_FLAG_SYNC;
-flag_domain_crossing trigger_counter_set_flag_domain_crossing (
-    .CLK_A(BUS_CLK),
-    .CLK_B(TRIGGER_CLK),
-    .FLAG_IN_CLK_A(TRIGGER_COUNTER_SET_FLAG),
-    .FLAG_OUT_CLK_B(TRIGGER_COUNTER_SET_FLAG_SYNC)
-);
+cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(TRIGGER_COUNTER_SET), .clk_out(TRIGGER_CLK), .pulse_out(TRIGGER_COUNTER_SET_FLAG_SYNC));
 
 wire [31:0] TRIGGER_COUNTER_DATA;
 always @ (posedge BUS_CLK)
@@ -434,7 +413,7 @@ begin
         TRIGGER_COUNTER <= 32'b0;
     else if (BUS_ADD == 11 && BUS_WR)
         TRIGGER_COUNTER <= {BUS_DATA_IN, status_regs[10], status_regs[9], status_regs[8]};
-    else if (TRIGGER_ACCEPTED_FLAG_BUS_CLK == 1'b1 && TRIGGER_ENABLE_BUS_CLK == 1'b1)
+    else if (TRIGGER_ACCEPTED_FLAG_BUS_CLK == 1'b1)
         TRIGGER_COUNTER <= TRIGGER_COUNTER_DATA;
     //else if (ENABLE_TLU_FLAG_BUS_CLK == 1'b1)
     //    TRIGGER_COUNTER <= 32'b0;
