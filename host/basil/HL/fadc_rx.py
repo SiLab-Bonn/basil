@@ -18,7 +18,9 @@ class fadc_rx(RegisterHardwareLayer):
                   'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'ALIGN_TO_SYNC': {'descr': {'addr': 2, 'size': 1}},
+                  'EN_TRIGGER': {'descr': {'addr': 2, 'size': 1, 'offset': 1}},
                   'SINGLE_DATA': {'descr': {'addr': 2, 'size': 1, 'offset': 2}},
+                  'SAMPEL_DLY': {'descr': {'addr': 7, 'size': 8}}}
                   'COUNT': {'descr': {'addr': 3, 'size': 24}}}
     _require_version = "==1"
 
@@ -51,6 +53,18 @@ class fadc_rx(RegisterHardwareLayer):
     def get_data_count(self):
         return self.COUNT
 
+    def set_en_trigger(self, val):
+        self.EN_TRIGGER = val
+
+    def get_en_trigger(self):
+        return self.EN_TRIGGER
+        
+    def set_delay(self, val):
+        self.SAMPEL_DLY = val
+
+    def get_delay(self):
+        return self.SAMPEL_DLY
+        
     def is_done(self):
         return self.is_ready
 
