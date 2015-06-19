@@ -1,0 +1,16 @@
+transfer_layer:
+  - name     : Serial
+    type     : Serial
+    init     :
+        port     : COM5
+        read_termination : ""
+        baudrate : 9600
+
+hw_drivers:
+  - name      : Climatechamber
+    type      : binder_mk53
+    interface : Serial
+    init :
+        address : 1
+        min_temp : 15
+        max_temp : 25
