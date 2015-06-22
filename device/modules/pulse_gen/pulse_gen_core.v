@@ -156,6 +156,8 @@ always @ (posedge PULSE_CLK) begin
         CNT <= 1;
     else if(CNT == LAST_CNT && REAPAT_CNT != 0)
         CNT <= 1;
+    else if(CNT == LAST_CNT && CONF_REPEAT==0)
+        CNT <= 1;
     else if(CNT == LAST_CNT && REAPAT_CNT == 0)
         CNT <= 0;
     else if(CNT != 0)
