@@ -9,7 +9,7 @@ import serial
 from basil.TL.TransferLayer import TransferLayer
 
 
-class SiSerial(TransferLayer):
+class Serial(TransferLayer):
 
     '''Transfer layer of serial device using the pySerial module.
     '''
@@ -29,6 +29,9 @@ class SiSerial(TransferLayer):
         self.timeout = self._init['timeout'] if 'timeout' in self._init else None
 
         self._port = serial.Serial(**self._init)
+
+    def close(self):
+        self._port.close()
 
     def write(self, data):
         if self.write_termination is None:

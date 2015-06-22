@@ -9,7 +9,7 @@ import visa
 from basil.TL.TransferLayer import TransferLayer
 
 
-class SiVisa(TransferLayer):
+class Visa(TransferLayer):
 
     '''Transfer layer for a Virtual Instrument Software Architecture (VISA) provided by pyVisa.
     Several interfaces are available (GPIB, RS232, USB, Ethernet). To be able to use pyVisa without
@@ -20,7 +20,7 @@ class SiVisa(TransferLayer):
 
     def __init__(self, conf):
         super(TransferLayer, self).__init__(conf)
-        self._port = None
+        self._resource = None
 
     def init(self):
         '''
@@ -30,6 +30,9 @@ class SiVisa(TransferLayer):
         backend = self._init.pop('backend', '')
         rm = visa.ResourceManager(backend)
         self._resource = rm.open_resource(**self._init)
+
+    def close(self):
+        self._resource.close()
 
     def write(self, data):
         self._resource.write(data)
