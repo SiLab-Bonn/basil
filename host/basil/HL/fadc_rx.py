@@ -20,7 +20,7 @@ class fadc_rx(RegisterHardwareLayer):
                   'ALIGN_TO_SYNC': {'descr': {'addr': 2, 'size': 1}},
                   'EN_TRIGGER': {'descr': {'addr': 2, 'size': 1, 'offset': 1}},
                   'SINGLE_DATA': {'descr': {'addr': 2, 'size': 1, 'offset': 2}},
-                  'SAMPEL_DLY': {'descr': {'addr': 7, 'size': 8}}}
+                  'SAMPLE_DLY': {'descr': {'addr': 7, 'size': 8}},
                   'COUNT': {'descr': {'addr': 3, 'size': 24}}}
     _require_version = "==1"
 
@@ -60,10 +60,10 @@ class fadc_rx(RegisterHardwareLayer):
         return self.EN_TRIGGER
         
     def set_delay(self, val):
-        self.SAMPEL_DLY = val
+        self.SAMPLE_DLY = val
 
     def get_delay(self):
-        return self.SAMPEL_DLY
+        return self.SAMPLE_DLY
         
     def is_done(self):
         return self.is_ready
