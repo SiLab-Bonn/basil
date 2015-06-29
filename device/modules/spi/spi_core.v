@@ -25,7 +25,7 @@ module spi_core
     output wire SCLK,
     input wire SDO,
     output reg SDI,
-    input EXT_START,
+    input wire EXT_START,
     
     output reg SEN,
     output reg SLD

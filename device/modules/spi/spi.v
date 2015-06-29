@@ -27,7 +27,7 @@ module spi
     output wire SCLK,
     input wire SDO,
     output wire SDI,
-    input EXT_START,
+    input wire EXT_START,
 
     output wire SEN, 
     output wire SLD
