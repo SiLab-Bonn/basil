@@ -18,7 +18,7 @@ from basil.dut import Dut
 dut = Dut('keithley2400_pyserial.yaml')
 dut.init()
 print dut['Sourcemeter'].get_name()
-  
+
 # Talk to a Keithley device via serial port using VISA with Serial interface
 dut = Dut('keithley2400_pyvisa.yaml')
 dut.init()
@@ -42,3 +42,8 @@ dut = Dut('ttiql335tp_pyvisa.yaml')
 dut.init()
 dut['PowerSupply'].get_name()
 dut['PowerSupply'].get_voltage(channel=1)
+
+# Talk to a Keithley device via GPIB using NI VISA
+dut = Dut('keithley2000_pyvisa.yaml')
+dut.init()
+print dut['Multimeter'].get_name()

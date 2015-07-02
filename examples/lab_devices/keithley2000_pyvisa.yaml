@@ -1,0 +1,12 @@
+transfer_layer:
+  - name     : Visa
+    type     : Visa
+    init     :
+        resource_name : GPIB0::5::INSTR
+
+hw_drivers:
+  - name      : Multimeter
+    type      : scpi
+    interface : Visa
+    init      :
+        device : Keithley 2000
