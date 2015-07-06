@@ -29,10 +29,12 @@ class Visa(TransferLayer):
         '''
         backend = self._init.pop('backend', '')
         rm = visa.ResourceManager(backend)
+        print rm.list_resources()
         self._resource = rm.open_resource(**self._init)
 
     def close(self):
-        self._resource.close()
+        pass
+        #self._resource.close()
 
     def write(self, data):
         self._resource.write(data)
