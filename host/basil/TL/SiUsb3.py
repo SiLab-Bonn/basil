@@ -11,6 +11,9 @@ import os
 from basil.TL.SiTransferLayer import SiTransferLayer
 from SiLibUSB import GetUSBBoards, SiUSBDevice
 
+import usb
+import time
+
 
 class SiUsb (SiTransferLayer):
     '''SiLab USB device
@@ -56,7 +59,15 @@ class SiUsb (SiTransferLayer):
         if(addr >= self.BASE_ADDRESS_I2C and addr < self.HIGH_ADDRESS_I2C):
             return self._sidev.ReadI2C(addr - self.BASE_ADDRESS_I2C, size)
         elif(addr >= self.BASE_ADDRESS_EXTERNAL and addr < self.HIGH_ADDRESS_EXTERNAL):
-            return self._sidev.ReadExternal(addr - self.BASE_ADDRESS_EXTERNAL, size)
+            try:
+                return self._sidev.ReadExternal(addr - self.BASE_ADDRESS_EXTERNAL, size)
+            except usb.USBError:
+                logging.warning('Recovering from the USB error, repeating ReadExternal in SiUsb3')
+                #print "Recovering from the USB error, repeating ReadExternal in SiUsb3"
+                #print dir(usb.USBError)
+                self.close()
+                time.sleep(1)
+                return self._sidev.ReadExternal(addr - self.BASE_ADDRESS_EXTERNAL, size)
         elif(addr >= self.BASE_ADDRESS_BLOCK and addr < self.HIGH_ADDRESS_BLOCK):
             return self._sidev.ReadExternal(addr - self.BASE_ADDRESS_BLOCK, size)
 
