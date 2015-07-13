@@ -271,7 +271,7 @@ class Dut(Base):
             return self._hardware_layer[item]
         elif item in self._transfer_layer:
             return self._transfer_layer[item]
-        raise ValueError('Item not existing: %s' % (item,))
+        raise KeyError('Item not existing: %s' % (item,))
 
     def get_modules(self, type_name):
         '''Getting modules by type name.
