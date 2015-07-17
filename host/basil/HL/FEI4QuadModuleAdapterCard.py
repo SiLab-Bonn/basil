@@ -146,7 +146,7 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
     def init(self):
         logging.info('Found adapter card: {}'.format('%s with ID %s' % ('Quad Module Adapter Card', self.get_id())))
         self._setup_adc(self.SETUP_FLAGS_BI)
-        self.read_eeprom_calibration()
+        #self.read_eeprom_calibration()
         self.set_current_limit('CH1', 1.0)
 
     def read_eeprom_calibration(self, temperature=False):  # use default values for temperature, EEPROM values are usually not calibrated and random
