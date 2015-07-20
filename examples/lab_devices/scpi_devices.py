@@ -15,30 +15,6 @@
 from basil.dut import Dut
 
 # Talk to a Keithley device via serial port using pySerial
-dut = Dut('keithley2400_pyserial.yaml')
+dut = Dut('keithley2410_pyvisa.yaml')
 dut.init()
 print dut['Sourcemeter'].get_name()
-  
-# Talk to a Keithley device via serial port using VISA with Serial interface
-dut = Dut('keithley2400_pyvisa.yaml')
-dut.init()
-print dut['Sourcemeter'].get_name()
-# Some additional implemented methods for this device
-print dut['Sourcemeter'].get_voltage()
-dut['Sourcemeter'].off()
-dut['Sourcemeter'].set_voltage(3.14159)
-dut['Sourcemeter'].set_current_limit(.9265)
-
-# Example of a SCPI device implementing more specialized functions (e.g. unit conversion) via extra class definitions
-dut = Dut('agilent33250a_pyserial.yaml')
-dut.init()
-print dut['Pulser'].get_info()
-# Some additional implemented methods for this device
-dut['Pulser'].set_voltage(0., 1., unit='V')
-print dut['Pulser'].get_voltage(0, unit='mV'), 'mV'
-
-# Example for device with multiple channels
-dut = Dut('ttiql335tp_pyvisa.yaml')
-dut.init()
-dut['PowerSupply'].get_info()
-dut['PowerSupply'].get_voltage(channel=1)

@@ -2,9 +2,9 @@ transfer_layer:
   - name     : Visa
     type     : Visa
     init     :
-        resource_name : ASRLCOM3
+        resource_name : ASRLCOM6
         read_termination : "\r"
-        baud_rate : 19200
+        baud_rate : 9600
         backend : "@py"
 
 hw_drivers:
