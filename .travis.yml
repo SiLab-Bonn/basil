@@ -29,7 +29,7 @@ install:
   - unzip cocotb-master.zip
   - export COCOTB=$(pwd)/cocotb-master
 
-  - sudo apt-get install -qq iverilog-daily  
+  - sudo apt-get -y install iverilog-daily  
 #  Build iverilog from source
   #- sudo apt-get install gperf
   #- wget -O iverilog-master.zip  https://github.com/steveicarus/iverilog/archive/master.zip
