@@ -47,3 +47,9 @@ dut['PowerSupply'].get_voltage(channel=1)
 dut = Dut('keithley2000_pyvisa.yaml')
 dut.init()
 print dut['Multimeter'].get_name()
+
+# Talk to a Tektronix mixed signal oscilloscope via TCPIP, USB
+dut = Dut('tektronixMSO4104B_pyvisa.yaml')
+dut.init()
+print dut['Oscilloscope'].get_name()
+print dut['Oscilloscope'].get_data(channel=1)
