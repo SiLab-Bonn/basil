@@ -31,8 +31,7 @@ class Serial(TransferLayer):
         self._port = serial.Serial(**self._init)
 
     def close(self):
-        pass
-        #self._port.close()
+        self._port.close()
 
     def write(self, data):
         if self.write_termination is None:
