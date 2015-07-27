@@ -5,6 +5,7 @@
 # ------------------------------------------------------------
 #
 import visa
+import logging
 
 from basil.TL.TransferLayer import TransferLayer
 
@@ -29,12 +30,14 @@ class Visa(TransferLayer):
         '''
         backend = self._init.pop('backend', '')
         rm = visa.ResourceManager(backend)
-        print rm.list_resources()
+        try:
+            logging.info('BASIL VISA TL with %s backend found the following devices: %s', backend, rm.list_resources())
+        except NotImplementedError:  # some backends do not always implement the list_resources function
+            logging.info('BASIL VISA TL instanciated with %s backend', backend)
         self._resource = rm.open_resource(**self._init)
 
     def close(self):
-        pass
-        #self._resource.close()
+        self._resource.close()
 
     def write(self, data):
         self._resource.write(data)
