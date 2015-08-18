@@ -27,7 +27,8 @@ module cmd_seq_core
     output wire                 CMD_EXT_START_ENABLE,
     output wire [OUTPUTS-1:0]   CMD_DATA,
     output reg                  CMD_READY,
-    output reg                  CMD_START_FLAG
+    output reg                  CMD_START_FLAG,
+    input wire  [OUTPUTS-1:0]   DIS_CH
 );
 
 localparam VERSION = 0;
@@ -324,7 +325,7 @@ generate
     		.CE(1'b1),
     		.D1((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? ~cmd_data_pos : cmd_data_pos))), 
     		.D2((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg : ((CONF_OUTPUT_MODE == 2'b10) ? cmd_data_pos : ~cmd_data_pos))),
-    		.R(1'b0),
+    		.R(DIS_CH[k]),
     		.S(1'b0)
     	);
 

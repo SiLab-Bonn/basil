@@ -28,7 +28,8 @@ module cmd_seq
     output wire         CMD_EXT_START_ENABLE,
     output wire [OUTPUTS-1:0]  CMD_DATA,
     output wire         CMD_READY,
-    output wire         CMD_START_FLAG
+    output wire         CMD_START_FLAG,
+    input wire  [OUTPUTS-1:0]  DIS_CH
 );
 
 wire IP_RD, IP_WR;
@@ -72,7 +73,8 @@ cmd_seq_core
     .CMD_EXT_START_ENABLE(CMD_EXT_START_ENABLE),
     .CMD_DATA(CMD_DATA),
     .CMD_READY(CMD_READY),
-    .CMD_START_FLAG(CMD_START_FLAG)
+    .CMD_START_FLAG(CMD_START_FLAG),
+    .DIS_CH(DIS_CH)
 );
 
 endmodule
