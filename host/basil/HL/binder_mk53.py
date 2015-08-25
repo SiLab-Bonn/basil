@@ -17,7 +17,7 @@ FUNCTION_WRITEN = 0x10  # write n words
 
 # Operation addresses
 ADDR_CURTEMP = 0x11a9
-ADDR_DOOROPEN = 0x1007
+ADDR_DOOROPEN = 0x1007  # does not work, wrong address?
 ADDR_SETPOINT = 0x1077
 ADDR_MANSETPT = 0x1581
 ADDR_BASICSETPT = 0x156f
@@ -54,7 +54,7 @@ class binderMK53(HardwareLayer):
     def get_temperature_target(self):
         return self._decode_float(self.read(ADDR_SETPOINT, 2))
 
-    def get_door_open(self):
+    def get_door_open(self):  # FIXME: does not work with tested model
         return bool(self.read(ADDR_DOOROPEN, 1)[0])
 
     def get_mode(self):
