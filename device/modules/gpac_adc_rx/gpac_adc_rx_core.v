@@ -147,14 +147,14 @@ always@(posedge ADC_ENC) begin
 end
 
 wire start_data_count;
-assign start_data_count = CONF_START_WITH_SYNC ? (adc_sync_wait && adc_sync_pulse) : start_adc_sync;
+assign start_data_count = (CONF_START_WITH_SYNC ? (adc_sync_wait && adc_sync_pulse) : start_adc_sync) || ( CONF_EN_EX_TRIGGER && ADC_TRIGGER);
 
 
 reg [23:0] rec_cnt;
 always@(posedge ADC_ENC) begin
     if(rst_adc_sync)
         rec_cnt <= 0;
-    else if(start_data_count)
+    else if(start_data_count && rec_cnt <= CONF_DATA_CNT)
         rec_cnt <= 1;
     else if(rec_cnt != -1 && rec_cnt>0 && CONF_DATA_CNT!=0 )
         rec_cnt <= rec_cnt + 1;
@@ -185,11 +185,33 @@ always@(posedge ADC_ENC) begin
         prev_ready <= !prev_ready;
 end
 
+//
+reg [13:0] ADC_IN_DLY, adc_dly_mem;
+reg [13:0] dly_mem [255:0];
+reg [7:0] dly_addr_read,  dly_addr_write;
+
+always@(posedge ADC_ENC)
+    if(RST)
+        dly_addr_write <= 0;
+    else
+        dly_addr_write <= dly_addr_write + 1;
+
+always@(posedge ADC_ENC)
+        dly_mem[dly_addr_write] <= ADC_IN;
+
+always@(posedge ADC_ENC)
+        adc_dly_mem <= dly_mem[dly_addr_read];
+
+always@(*) begin
+    dly_addr_read = dly_addr_write - CONF_SAMPEL_DLY;
+    ADC_IN_DLY = CONF_SAMPEL_DLY == 0 ? ADC_IN : adc_dly_mem;
+end     
+//
+
 always@(posedge ADC_ENC) begin
-        prev_data <= ADC_IN;
+        prev_data <= ADC_IN_DLY;
         prev_sync <= ADC_SYNC;
 end
-
 
 wire fifo_full, cdc_fifo_empty, cdc_fifo_write_double;
 assign cdc_fifo_write_double = cdc_fifo_write_single && prev_ready; //write every second
@@ -207,9 +229,9 @@ end
 reg [31:0] data_to_fifo;
 always@(*) begin
     if(CONF_SINGLE_DATA)
-        data_to_fifo = {HEADER_ID, ADC_ID, ADC_SYNC, 14'b0, ADC_IN};
+        data_to_fifo = {HEADER_ID, ADC_ID, CONF_EN_EX_TRIGGER ? rec_cnt == 1 : ADC_SYNC, 14'b0, ADC_IN_DLY};
     else
-        data_to_fifo = {HEADER_ID, ADC_ID, prev_sync, prev_data, ADC_IN};
+        data_to_fifo = {HEADER_ID, ADC_ID, prev_sync, prev_data, ADC_IN_DLY};
 
     if(CONF_SINGLE_DATA)
         cdc_fifo_write = cdc_fifo_write_single;
@@ -239,7 +261,6 @@ gerneric_fifo #(.DATA_SIZE(32), .DEPTH(1024))  fifo_i
     .data_out(FIFO_DATA[31:0]), .size());
 
 //assign FIFO_DATA[31:30]  = 0;
-
 
 wire DONE_SYNC;
 cdc_pulse_sync done_pulse_sync (.clk_in(ADC_ENC), .pulse_in(DONE), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
