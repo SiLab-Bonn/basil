@@ -45,8 +45,9 @@ class weissSB22(HardwareLayer):
         self.max_temp = self._init['max_temp']  # define the maximum temperature one can set, for safety
         self.min_humidity = self._init['min_humidity']  # define the minimum humidity one can set, for safety
         self.max_humidity = self._init['max_humidity']  # define the maximum humidity one can set, for safety
-        self._temperature = (self.max_temp - self.min_temp) / 2  # tmp variable to store last value set, needed since always temp and humidity has to be set
-        self._humidity = (self.max_humidity - self.min_humidity) / 2  # tmp variable to store last value set, needed since always temp and humidity has to be set
+        self._temperature = self.get_temperature()  # tmp variable to store last value set, needed since always temp and humidity has to be set
+        self._humidity = self.get_humidity()  # tmp variable to store last value set, needed since always temp and humidity has to be set
+        self._digital_ch = self.get_digital_ch()  # the digital channels define the functions (humiditiy control, dew protection, ..., in binary coding, 1000000000000000 is temperature control only)
 
     def get_temperature(self):
         self.write('%d?' % self.slave_address)
@@ -68,13 +69,18 @@ class weissSB22(HardwareLayer):
         answer = self.read()
         return int(answer[29:31])
 
+    def get_digital_ch(self):
+        self.write('%d?' % self.slave_address)
+        answer = self.read()
+        return int(answer[32:49])
+
     def set_temperature(self, temperature):
         if temperature < self.min_temp:
             raise RuntimeWarning('Set temperature %f is lower than minimum allowed temperature %f', temperature, self.min_temp)
         if temperature > self.max_temp:
             raise RuntimeWarning('Set temperature %f is higher than maximum allowed temperature %f', temperature, self.max_temp)
         self._temperature = temperature
-        msg = '%dT%05.1fF%02dR1000000000000000' % (self.slave_address, self._temperature, self._humidity)
+        msg = '%dT%05.1fF%02dR%16d' % (self.slave_address, self._temperature, self._humidity, self._digital_ch)
         self.write(msg)
         self.check_for_errors(self.read())
 
@@ -84,7 +90,7 @@ class weissSB22(HardwareLayer):
         if humidity > self.max_humidity:
             raise RuntimeWarning('Set humidity %f is higher than maximum allowed humidity %f', humidity, self.max_humidity)
         self._humidity = humidity
-        msg = '%dT%05.1fF%02dR1000000000000000' % (self.slave_address, self._temperature, self._humidity)
+        msg = '%dT%05.1fF%02dR%16d' % (self.slave_address, self._temperature, self._humidity, self._digital_ch)
         self.write(msg)
         self.check_for_errors(self.read())
 
