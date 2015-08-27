@@ -45,6 +45,8 @@ export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:$(PYTHONLIBS)
 export PYTHONPATH=$(shell python -c "from distutils import sysconfig; print(sysconfig.get_python_lib())"):$(COCOTB)
 export PYTHONHOME=$(shell python -c "from distutils.sysconfig import get_config_var; print(get_config_var('prefix'))")
 
+SIM_ARGS += -fst
+
 TOPLEVEL_LANG?=verilog
 export TOPLEVEL_LANG
 
