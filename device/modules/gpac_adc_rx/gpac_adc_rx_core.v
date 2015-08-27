@@ -105,10 +105,10 @@ always @(posedge BUS_CLK) begin
 end
 
 wire rst_adc_sync;
-cdc_pulse_sync_cnt isync_rst (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(ADC_ENC), .pulse_out(rst_adc_sync));
+cdc_reset_sync isync_rst (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(ADC_ENC), .pulse_out(rst_adc_sync));
 
 wire start_adc_sync;
-cdc_pulse_sync_cnt istart_rst (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(ADC_ENC), .pulse_out(start_adc_sync));
+cdc_pulse_sync istart_rst (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(ADC_ENC), .pulse_out(start_adc_sync));
 
 wire adc_sync_pulse;
 pulse_gen_rising pulse_adc_sync (.clk_in(ADC_ENC), .in(ADC_SYNC), .out(adc_sync_pulse));
@@ -191,7 +191,7 @@ reg [13:0] dly_mem [255:0];
 reg [7:0] dly_addr_read,  dly_addr_write;
 
 always@(posedge ADC_ENC)
-    if(RST)
+    if(rst_adc_sync)
         dly_addr_write <= 0;
     else
         dly_addr_write <= dly_addr_write + 1;
@@ -220,7 +220,7 @@ wire wfull;
 reg cdc_fifo_write;
 
 always@(posedge ADC_ENC) begin
-    if(RST)
+    if(rst_adc_sync)
         CONF_ERROR_LOST <= 0;
     else if (CONF_ERROR_LOST!=8'hff && wfull && cdc_fifo_write)
         CONF_ERROR_LOST <= CONF_ERROR_LOST +1;
