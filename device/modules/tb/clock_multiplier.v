@@ -14,8 +14,8 @@ initial begin
     time_prev = 0;
     forever begin
         @(posedge CLK)
-        time_diff = $time() - time_prev;
-        time_prev = $time();
+        time_diff = $time - time_prev;
+        time_prev = $time;
     end        
 end 
 
