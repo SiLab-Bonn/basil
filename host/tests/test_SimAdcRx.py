@@ -95,8 +95,32 @@ class TestSimAdcRx(unittest.TestCase):
             pass
 
         ret = self.chip['fifo'].get_data()
+        
+        self.assertEqual(len(ret), 16)
         self.assertEqual(ret[2:2 + 8].tolist(), [0x0100, 0x0101, 0x0102, 0x0103, 0x0104, 0x0105, 0x0106, 0x0107])
 
+        #2times
+        self.chip['FADC'].start()
+
+        self.chip['PULSE_GEN'].start()
+        self.chip['SEQ_GEN'].is_done()
+        
+        while(not self.chip['FADC'].is_done()):
+            pass
+        
+        self.chip['FADC'].start()
+
+        self.chip['PULSE_GEN'].start()
+        self.chip['SEQ_GEN'].is_done()
+        
+        while(not self.chip['FADC'].is_done()):
+            pass
+        
+        ret = self.chip['fifo'].get_data()
+        self.assertEqual(len(ret), 32)        
+        self.assertEqual(ret[2:2 + 8].tolist(), [0x0100, 0x0101, 0x0102, 0x0103, 0x0104, 0x0105, 0x0106, 0x0107])
+        
+        
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()

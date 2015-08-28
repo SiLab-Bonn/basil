@@ -86,7 +86,7 @@ wire [7:0] CONF_SAMPLE_SKIP = status_regs[6];
 wire [7:0] CONF_SAMPEL_DLY = status_regs[7];
 
 reg [7:0] CONF_ERROR_LOST;
-assign LOST_ERROR = CONF_ERROR_LOST!=0;
+assign LOST_ERROR = CONF_ERROR_LOST != 0;
 
 reg CONF_DONE;
 
@@ -99,6 +99,8 @@ always @(posedge BUS_CLK) begin
             BUS_DATA_OUT <= VERSION;
         else if(BUS_ADD == 1)
             BUS_DATA_OUT <= {7'b0, CONF_DONE};
+        else if(BUS_ADD == 8)
+            BUS_DATA_OUT <= CONF_ERROR_LOST;
         else if(BUS_ADD < 16)
             BUS_DATA_OUT <= BUS_STATUS_OUT;
     end
@@ -154,7 +156,7 @@ reg [23:0] rec_cnt;
 always@(posedge ADC_ENC) begin
     if(rst_adc_sync)
         rec_cnt <= 0;
-    else if(start_data_count && rec_cnt <= CONF_DATA_CNT)
+    else if(start_data_count && (rec_cnt > CONF_DATA_CNT || rec_cnt == 0))
         rec_cnt <= 1;
     else if(rec_cnt != -1 && rec_cnt>0 && CONF_DATA_CNT!=0 )
         rec_cnt <= rec_cnt + 1;
