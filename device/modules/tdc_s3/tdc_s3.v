@@ -16,18 +16,18 @@ module tdc_s3 #(
 )(
     input wire BUS_CLK,
     input wire [ABUSWIDTH-1:0] BUS_ADD,
-    inout [7:0] BUS_DATA,
+    inout wire [7:0] BUS_DATA,
     input wire BUS_RST,
-    input BUS_WR,
+    input wire BUS_WR,
     input wire BUS_RD,
 
-    input CLK320,
+    input wire CLK320,
     input wire CLK160,
     input wire DV_CLK, // clock synchronous to CLK160 division factor can be set by CLKDV parameter
     input wire TDC_IN,
     output wire TDC_OUT,
-    input TRIG_IN,
-    output TRIG_OUT,
+    input wire TRIG_IN,
+    output wire TRIG_OUT,
 
     input wire FIFO_READ,
     output wire FIFO_EMPTY,
