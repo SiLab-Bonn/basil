@@ -123,7 +123,7 @@ begin
         status_regs[5] <= 8'b0;
         status_regs[6] <= 8'b0;
         status_regs[7] <= 8'b0;
-        status_regs[8] <= 8'b0; // set trigger counter
+        status_regs[8] <= 8'b0; // trigger counter
         status_regs[9] <= 8'b0;
         status_regs[10] <= 8'b0;
         status_regs[11] <= 8'b0;
@@ -360,28 +360,28 @@ flag_domain_crossing tlu_reset_flag_domain_crossing (
 // writing current TLU trigger number to register
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_SYNC;
 wire [31:0] TLU_TRIGGER_NUMBER_DATA;
-wire TLU_FIFO_WRITE;
+wire TRIGGER_DATA_WRITE;
 always @ (posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         CURRENT_TLU_TRIGGER_NUMBER_SYNC <= 32'b0;
-    else if (TLU_FIFO_WRITE == 1'b1)
+    else if (TRIGGER_DATA_WRITE == 1'b1)
         CURRENT_TLU_TRIGGER_NUMBER_SYNC <= TLU_TRIGGER_NUMBER_DATA;
 end
 
-wire TLU_FIFO_WRITE_BUS_CLK;
-flag_domain_crossing tlu_fifo_write_flag_domain_crossing (
+wire TRIGGER_DATA_WRITE_BUS_CLK;
+flag_domain_crossing trigger_data_write_flag_domain_crossing (
     .CLK_A(TRIGGER_CLK),
     .CLK_B(BUS_CLK),
-    .FLAG_IN_CLK_A(TLU_FIFO_WRITE),
-    .FLAG_OUT_CLK_B(TLU_FIFO_WRITE_BUS_CLK)
+    .FLAG_IN_CLK_A(TRIGGER_DATA_WRITE),
+    .FLAG_OUT_CLK_B(TRIGGER_DATA_WRITE_BUS_CLK)
 );
 
 always @ (posedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK <= 32'b0;
-    else if (TLU_FIFO_WRITE_BUS_CLK == 1'b1)
+    else if (TRIGGER_DATA_WRITE_BUS_CLK == 1'b1)
         CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK <= CURRENT_TLU_TRIGGER_NUMBER_SYNC;
 end
 
@@ -402,19 +402,27 @@ flag_domain_crossing trigger_accepted_flag_domain_crossing (
 );
 
 wire TRIGGER_COUNTER_SET;
-assign TRIGGER_COUNTER_SET = (BUS_ADD == 11 & BUS_WR);
-wire TRIGGER_COUNTER_SET_FLAG_SYNC;
-cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(TRIGGER_COUNTER_SET), .clk_out(TRIGGER_CLK), .pulse_out(TRIGGER_COUNTER_SET_FLAG_SYNC));
+reg TRIGGER_COUNTER_SET_FF;
+assign TRIGGER_COUNTER_SET = (BUS_ADD == 11 && BUS_WR);
 
-wire [31:0] TRIGGER_COUNTER_DATA;
+always @ (posedge BUS_CLK)
+begin
+    TRIGGER_COUNTER_SET_FF <= TRIGGER_COUNTER_SET;
+end
+//wire TRIGGER_COUNTER_SET_FLAG;
+//assign TRIGGER_COUNTER_SET_FLAG = ~TRIGGER_COUNTER_SET_FF & TRIGGER_COUNTER_SET;
+
+wire TRIGGER_COUNTER_SET_FLAG_SYNC;
+cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(TRIGGER_COUNTER_SET_FF), .clk_out(TRIGGER_CLK), .pulse_out(TRIGGER_COUNTER_SET_FLAG_SYNC));
+
 always @ (posedge BUS_CLK)
 begin
     if (RST | TLU_RESET_FLAG_BUS_CLK == 1'b1)
         TRIGGER_COUNTER <= 32'b0;
-    else if (BUS_ADD == 11 && BUS_WR)
+    else if (TRIGGER_COUNTER_SET)
         TRIGGER_COUNTER <= {BUS_DATA_IN, status_regs[10], status_regs[9], status_regs[8]};
-    else if (TRIGGER_ACCEPTED_FLAG_BUS_CLK == 1'b1)
-        TRIGGER_COUNTER <= TRIGGER_COUNTER_DATA;
+    else if (TRIGGER_ACCEPTED_FLAG_BUS_CLK == 1'b1 && ~&TRIGGER_COUNTER)
+        TRIGGER_COUNTER <= TRIGGER_COUNTER + 1;
     //else if (ENABLE_TLU_FLAG_BUS_CLK == 1'b1)
     //    TRIGGER_COUNTER <= 32'b0;
 end
@@ -428,24 +436,24 @@ begin
 end
 
 // TLU FSM
-wire FIFO_PREEMPT_REQ_FLAG_SYNC;
-wire [31:0] TLU_FIFO_DATA;
+wire FIFO_PREEMPT_REQ_FLAG;
+wire [31:0] TRIGGER_DATA;
 tlu_controller_fsm #(
     .DIVISOR(DIVISOR)
 ) tlu_controller_fsm_inst (
     .RESET(RST_SYNC),
     .TRIGGER_CLK(TRIGGER_CLK),
     
-    .TLU_FIFO_WRITE(TLU_FIFO_WRITE),
-    .TLU_FIFO_DATA(TLU_FIFO_DATA),
+    .TRIGGER_DATA_WRITE(TRIGGER_DATA_WRITE),
+    .TRIGGER_DATA(TRIGGER_DATA),
     
-    .FIFO_PREEMPT_REQ_FLAG(FIFO_PREEMPT_REQ_FLAG_SYNC),
+    .FIFO_PREEMPT_REQ_FLAG(FIFO_PREEMPT_REQ_FLAG),
 
     .TIMESTAMP(TIMESTAMP),
     .TIMESTAMP_DATA(),
     .TLU_TRIGGER_NUMBER_DATA(TLU_TRIGGER_NUMBER_DATA),
 
-    .TRIGGER_COUNTER_DATA(TRIGGER_COUNTER_DATA),
+    .TRIGGER_COUNTER_DATA(),
     .TRIGGER_COUNTER_SET(TRIGGER_COUNTER_SET_FLAG_SYNC),
     .TRIGGER_COUNTER_SET_VALUE(TRIGGER_COUNTER),
 
@@ -478,7 +486,7 @@ wire FIFO_PREEMPT_REQ_FLAG_BUS_CLK;
 flag_domain_crossing fifo_preempt_flag_domain_crossing (
     .CLK_A(TRIGGER_CLK),
     .CLK_B(BUS_CLK),
-    .FLAG_IN_CLK_A(FIFO_PREEMPT_REQ_FLAG_SYNC),
+    .FLAG_IN_CLK_A(FIFO_PREEMPT_REQ_FLAG),
     .FLAG_OUT_CLK_B(FIFO_PREEMPT_REQ_FLAG_BUS_CLK)
 );
 
@@ -512,13 +520,13 @@ assign RST_LONG = |rst_cnt;
 
 wire wfull;
 wire cdc_fifo_write;
-assign cdc_fifo_write = !wfull && TLU_FIFO_WRITE;
+assign cdc_fifo_write = !wfull && TRIGGER_DATA_WRITE;
 wire fifo_full, cdc_fifo_empty;
 
 always@(posedge TRIGGER_CLK) begin
     if(RST_SYNC)
         LOST_DATA_CNT <= 0;
-    else if (wfull && TLU_FIFO_WRITE && LOST_DATA_CNT != -1)
+    else if (wfull && TRIGGER_DATA_WRITE && LOST_DATA_CNT != -1)
         LOST_DATA_CNT <= LOST_DATA_CNT + 1;
 end
 
@@ -528,20 +536,21 @@ cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) cdc_syncfifo_i
     .rdata(cdc_data_out),
     .wfull(wfull),
     .rempty(cdc_fifo_empty),
-    .wdata(TLU_FIFO_DATA),
+    .wdata(TRIGGER_DATA),
     .winc(cdc_fifo_write), .wclk(TRIGGER_CLK), .wrst(RST_LONG),
     .rinc(!fifo_full), .rclk(BUS_CLK), .rrst(RST_LONG)
 );
 
 gerneric_fifo #(.DATA_SIZE(32), .DEPTH(8))  fifo_i
 (
-    .clk(BUS_CLK), .reset(RST_LONG | BUS_RST), 
+    .clk(BUS_CLK), .reset(RST_LONG | BUS_RST),
     .write(!cdc_fifo_empty),
-    .read(FIFO_READ), 
-    .data_in(cdc_data_out), 
-    .full(fifo_full), 
-    .empty(FIFO_EMPTY), 
-    .data_out(FIFO_DATA[31:0]), .size() 
+    .read(FIFO_READ),
+    .data_in(cdc_data_out),
+    .full(fifo_full),
+    .empty(FIFO_EMPTY),
+    .data_out(FIFO_DATA[31:0]),
+    .size()
 );
 
 // Chipscope

@@ -14,8 +14,8 @@ module tlu_controller_fsm
     input wire                  RESET,
     input wire                  TRIGGER_CLK,
     
-    output reg                  TLU_FIFO_WRITE,
-    output wire     [31:0]      TLU_FIFO_DATA,
+    output reg                  TRIGGER_DATA_WRITE,
+    output wire     [31:0]      TRIGGER_DATA,
     
     output reg                  FIFO_PREEMPT_REQ_FLAG,
     
@@ -57,7 +57,7 @@ localparam TLU_WAIT_CYCLES = 5;
 
 // reg TLU_TRIGGER_ACCEPT_ERROR;
 // reg TLU_TRIGGER_LOW_TIMEOUT_ERROR;
-assign TLU_FIFO_DATA[31:0] = (WRITE_TIMESTAMP==1'b1) ? {1'b1, TIMESTAMP_DATA[30:0]} : ((TLU_MODE==2'b11) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : ({1'b1, TRIGGER_COUNTER_DATA[30:0]}));
+assign TRIGGER_DATA[31:0] = (WRITE_TIMESTAMP==1'b1) ? {1'b1, TIMESTAMP_DATA[30:0]} : ((TLU_MODE==2'b11) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : ({1'b1, TRIGGER_COUNTER_DATA[30:0]}));
 
 // shift register, serial to parallel, 32 FF
 reg [(32*DIVISOR)-1:0] tlu_data_sr;
@@ -86,6 +86,7 @@ parameter   [2:0]
     LATCH_DATA                          = 3'b100,
     WAIT_FOR_TLU_DATA_SAVED_CMD_READY   = 3'b101;
 
+
 // sequential always block, non-blocking assignments
 always @ (posedge TRIGGER_CLK)
 begin
@@ -106,8 +107,7 @@ begin
         
         SEND_COMMAND_WAIT_FOR_TRIGGER_LOW:
         begin
-            //if (TLU_MODE == 2'b00) next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY; // do not save data and do not wait for trigger low
-            if (TLU_MODE == 2'b00 || TLU_MODE == 2'b01) next = LATCH_DATA; // do not wait for trigger low
+            if (TLU_MODE == 2'b00 || TLU_MODE == 2'b01) next = LATCH_DATA; // do not wait for trigger becoming low
             else if (TLU_MODE == 2'b10 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1) && (counter_trigger_low_time_out >= TLU_WAIT_CYCLES)) next = LATCH_DATA; // wait for trigger low
             else if (TLU_MODE == 2'b11 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1) && (counter_trigger_low_time_out >= TLU_WAIT_CYCLES)) next = SEND_TLU_CLOCK; // wait for trigger low, TLU clock
             else next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
@@ -155,7 +155,7 @@ begin
     if (RESET | TLU_RESET_FLAG) // get D-FF
     begin
         FIFO_PREEMPT_REQ_FLAG <= 1'b0;
-        TLU_FIFO_WRITE <= 1'b0;
+        TRIGGER_DATA_WRITE <= 1'b0;
         TLU_TRIGGER_NUMBER_DATA <= 32'b0000_0000_0000_0000_0000_0000_0000_0000;
         TIMESTAMP_DATA <= 32'b0000_0000_0000_0000_0000_0000_0000_0000;
         TRIGGER_COUNTER_DATA <= 32'b0000_0000_0000_0000_0000_0000_0000_0000;
@@ -173,7 +173,7 @@ begin
     else
     begin
         FIFO_PREEMPT_REQ_FLAG <= 1'b0;
-        TLU_FIFO_WRITE <= 1'b0;
+        TRIGGER_DATA_WRITE <= 1'b0;
         TLU_TRIGGER_NUMBER_DATA <= TLU_TRIGGER_NUMBER_DATA;
         TIMESTAMP_DATA <= TIMESTAMP_DATA;
         TRIGGER_COUNTER_DATA <= TRIGGER_COUNTER_DATA;
@@ -193,7 +193,7 @@ begin
             IDLE:
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
-                TLU_FIFO_WRITE <= 1'b0;
+                TRIGGER_DATA_WRITE <= 1'b0;
                 if ((TRIGGER_ENABLE == 1'b0) || (TRIGGER_VETO == 1'b1 && TLU_ENABLE_VETO == 1'b1))
                     TLU_ASSERT_VETO <= 1'b1;
                 else
@@ -223,7 +223,7 @@ begin
                     FIFO_PREEMPT_REQ_FLAG <= 1'b1;
                 else
                     FIFO_PREEMPT_REQ_FLAG <= 1'b0;
-                TLU_FIFO_WRITE <= 1'b0;
+                TRIGGER_DATA_WRITE <= 1'b0;
                 // get timestamp closest to the trigger
                 if (state != next) begin
                     TIMESTAMP_DATA <= TIMESTAMP;
@@ -252,7 +252,7 @@ begin
             SEND_TLU_CLOCK:
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
-                TLU_FIFO_WRITE <= 1'b0;
+                TRIGGER_DATA_WRITE <= 1'b0;
                 TLU_ASSERT_VETO <= TLU_ASSERT_VETO;
                 TLU_BUSY <= 1'b1;
                 TLU_CLOCK_ENABLE <= 1'b1;
@@ -269,7 +269,7 @@ begin
             WAIT_BEFORE_LATCH:
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
-                TLU_FIFO_WRITE <= 1'b0;
+                TRIGGER_DATA_WRITE <= 1'b0;
                 TLU_ASSERT_VETO <= TLU_ASSERT_VETO;
                 TLU_BUSY <= 1'b1;
                 TLU_CLOCK_ENABLE <= 1'b0;
@@ -286,7 +286,7 @@ begin
             LATCH_DATA:
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
-                TLU_FIFO_WRITE <= 1'b1;
+                TRIGGER_DATA_WRITE <= 1'b1;
                 if (TLU_TRIGGER_CLOCK_CYCLES == 5'b0_0000) // 0 results in 32 clock cycles
                 begin
                     if (TLU_TRIGGER_DATA_MSB_FIRST == 1'b0)  // reverse bit order
@@ -349,7 +349,7 @@ begin
             WAIT_FOR_TLU_DATA_SAVED_CMD_READY:
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
-                TLU_FIFO_WRITE <= 1'b0;
+                TRIGGER_DATA_WRITE <= 1'b0;
                 TLU_ASSERT_VETO <= TLU_ASSERT_VETO;
                 // de-assert TLU busy as soon as possible
                 if (TRIGGER_ACKNOWLEDGE == 1'b1 || ACKNOWLEDGED == 1'b1)
@@ -387,7 +387,7 @@ begin
         TRIGGER_COUNTER <= 32'b0;
     else if(TRIGGER_COUNTER_SET==1'b1)
         TRIGGER_COUNTER <= TRIGGER_COUNTER_SET_VALUE;
-    else if(state==IDLE && next==SEND_COMMAND_WAIT_FOR_TRIGGER_LOW)
+    else if(TRIGGER_ACCEPTED_FLAG) // state==IDLE && next==SEND_COMMAND_WAIT_FOR_TRIGGER_LOW)
         TRIGGER_COUNTER <= TRIGGER_COUNTER + 1;
 end
 
@@ -404,7 +404,7 @@ chipscope_ila ichipscope_ila
 (
     .CONTROL(control_bus),
     .TRIGGER_CLK(TRIGGER_CLK),
-    .TRIG0({TRIGGER_ENABLE, TLU_FIFO_WRITE, TRIGGER_ACCEPTED_FLAG, TLU_CLOCK_ENABLE, TLU_ASSERT_VETO, TLU_BUSY, TRIGGER_ACKNOWLEDGE, TRIGGER_VETO, TLU_TRIGGER_ACCEPT_ERROR, TLU_TRIGGER_LOW_TIMEOUT_ERROR, TRIGGER_FLAG, TRIGGER, TLU_MODE, state})
+    .TRIG0({TRIGGER_ENABLE, TRIGGER_DATA_WRITE, TRIGGER_ACCEPTED_FLAG, TLU_CLOCK_ENABLE, TLU_ASSERT_VETO, TLU_BUSY, TRIGGER_ACKNOWLEDGE, TRIGGER_VETO, TLU_TRIGGER_ACCEPT_ERROR, TLU_TRIGGER_LOW_TIMEOUT_ERROR, TRIGGER_FLAG, TRIGGER, TLU_MODE, state})
     //.TRIGGER_CLK(CLK_160),
     //.TRIG0({FMODE, FSTROBE, FREAD, CMD_BUS_WR, RX_BUS_WR, FIFO_WR, BUS_DATA_IN, FE_RX ,WR_B, RD_B})
 );
