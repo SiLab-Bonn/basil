@@ -11,7 +11,7 @@ class weissSB22(HardwareLayer):
 
     '''Driver for the Weiss SB 22 climate chamber.
     A simple protocoll via RS 232 serial port is used with 9600/19200 baud rate and 256 modulo complement check sum.
-    Between the different command a delay of 5 seconds should be set according to the manual, but it works also faster.
+    Between the different command a delay of 5 seconds should be set according to the manual, but it works at faster rates.
     '''
 
     _ERROR_CODES = {
@@ -26,7 +26,7 @@ class weissSB22(HardwareLayer):
         9: "Chiller prestage failure",
         10: "Chiller final stage failure",
         11: "Water level at minimum",
-        12: "Water elvel below minimum",
+        12: "Water level below minimum",
         13: "Temperature too high",
         14: "Temperature too low",
         15: "Humidity too high",
