@@ -270,13 +270,18 @@ end
 
 
 always @ (posedge BUS_CLK) begin //(*) begin
-    if(wr_pointer >= rd_ponter)
-        if(read_state == READ_NOP_SRAM)
-            CONF_SIZE <= wr_pointer - rd_ponter+1;
-        else
-            CONF_SIZE <= wr_pointer - rd_ponter;
+    if(RST)
+        CONF_SIZE <= 0;
     else
-        CONF_SIZE <= wr_pointer + (DEPTH-rd_ponter);
+    begin
+        if(wr_pointer >= rd_ponter)
+            if(read_state == READ_NOP_SRAM)
+                CONF_SIZE <= wr_pointer - rd_ponter+1;
+            else
+                CONF_SIZE <= wr_pointer - rd_ponter;
+        else
+            CONF_SIZE <= wr_pointer + (DEPTH-rd_ponter);
+    end
 end
 
 assign FIFO_NOT_EMPTY = !empty;
