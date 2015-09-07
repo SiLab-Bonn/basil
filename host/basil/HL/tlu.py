@@ -26,7 +26,7 @@ class tlu(RegisterHardwareLayer):
                   'TRIGGER_DATA_MSB_FIRST': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},
                   'TRIGGER_DATA_DELAY': {'descr': {'addr': 1, 'size': 4, 'offset': 4}},
                   'TRIGGER_CLOCK_CYCLES': {'descr': {'addr': 2, 'size': 5, 'offset': 0}},
-                  'EN_TLU_RESET': {'descr': {'addr': 2, 'size': 1, 'offset': 5}},
+                  'EN_TLU_RESET_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 5}},
                   'EN_TLU_VETO': {'descr': {'addr': 2, 'size': 1, 'offset': 6}},
                   'EN_WRITE_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 7}},
                   'TRIGGER_LOW_TIMEOUT': {'descr': {'addr': 3, 'size': 8}},
@@ -35,8 +35,9 @@ class tlu(RegisterHardwareLayer):
                   'LOST_DATA_COUNTER': {'descr': {'addr': 12, 'size': 8, 'properties': ['ro']}},
                   'TRIGGER_SELECT': {'descr': {'addr': 13, 'size': 8}},
                   'TRIGGER_VETO_SELECT': {'descr': {'addr': 14, 'size': 8}},
-                  'TRIGGER_INVERT': {'descr': {'addr': 15, 'size': 8}}}
-    _require_version = "==3"
+                  'TRIGGER_INVERT': {'descr': {'addr': 15, 'size': 8}},
+                  'MAX_TRIGGERS': {'descr': {'addr': 16, 'size': 32}}}
+    _require_version = "==4"
 
     def __init__(self, intf, conf):
         super(tlu, self).__init__(intf, conf)

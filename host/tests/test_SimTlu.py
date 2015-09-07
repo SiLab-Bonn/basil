@@ -101,6 +101,37 @@ class TestSimTlu(unittest.TestCase):
         self.assertEqual(data[0], 0x80000000 + 0)
         self.assertEqual(data[1], 0x80000000 + 1)
 
+    def test_simple_trigger_max_triggers(self):
+        self.chip['tlu'].TRIGGER_COUNTER = 0
+        self.chip['tlu'].MAX_TRIGGERS = 2
+        self.chip['tlu'].TRIGGER_MODE = 0
+        self.chip['tlu'].TRIGGER_SELECT = 2
+        self.chip['tlu'].TRIGGER_VETO_SELECT = 252
+#         self.chip['CONTROL']['ENABLE'] = 1
+        self.chip['gpio'].set_data([0x01])
+
+        self.chip['gpio'].set_data([0x03])  # trigger
+        self.chip['gpio'].set_data([0x01])
+
+        self.chip['gpio'].set_data([0x03])  # trigger
+        self.chip['gpio'].set_data([0x01])
+
+        self.chip['gpio'].set_data([0x03])  # trigger
+        self.chip['gpio'].set_data([0x01])
+
+        self.chip['gpio'].set_data([0x03])  # trigger
+        self.chip['gpio'].set_data([0x01])
+
+#         self.chip['CONTROL']['ENABLE'] = 0
+        self.chip['gpio'].set_data([0x00])
+
+        self.assertEqual(self.chip['sram'].get_fifo_int_size(), 2)
+        self.assertEqual(self.chip['tlu'].TRIGGER_COUNTER, 2)
+
+        data = self.chip['sram'].get_data()
+        self.assertEqual(data[0], 0x80000000 + 0)
+        self.assertEqual(data[1], 0x80000000 + 1)
+
     def test_simple_trigger(self):
         self.chip['tlu'].TRIGGER_COUNTER = 10
         self.chip['tlu'].TRIGGER_MODE = 0

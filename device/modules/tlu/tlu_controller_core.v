@@ -52,7 +52,7 @@ module tlu_controller_core
     output wire     [31:0]      TIMESTAMP
 );
 
-localparam VERSION = 3;
+localparam VERSION = 4;
 
 // Registers
 wire SOFT_RST; // Address: 0
@@ -76,14 +76,14 @@ wire RST;
 assign RST = BUS_RST_FLAG | SOFT_RST_FLAG;
 
 wire RST_SYNC;
-flag_domain_crossing cmd_rst_flag_domain_crossing (
+flag_domain_crossing rst_flag_domain_crossing (
     .CLK_A(BUS_CLK),
     .CLK_B(TRIGGER_CLK),
     .FLAG_IN_CLK_A(RST),
     .FLAG_OUT_CLK_B(RST_SYNC)
 );
 
-reg [7:0] status_regs[15:0];
+reg [7:0] status_regs[31:0];
 
 // reg 0 for SOFT_RST
 wire [1:0] TLU_MODE; // 2'b00 - RJ45 disabled, 2'b01 - TLU no handshake, 2'b10 - TLU simple handshake, 2'b11 - TLU trigger data handshake
@@ -96,8 +96,8 @@ wire [3:0] TLU_TRIGGER_DATA_DELAY;
 assign TLU_TRIGGER_DATA_DELAY = status_regs[1][7:4];
 wire [4:0] TLU_TRIGGER_CLOCK_CYCLES;
 assign TLU_TRIGGER_CLOCK_CYCLES = status_regs[2][4:0]; // 0: 32 clock cycles
-wire TLU_ENABLE_RESET;
-assign TLU_ENABLE_RESET = status_regs[2][5];
+wire TLU_ENABLE_RESET_TS;
+assign TLU_ENABLE_RESET_TS = status_regs[2][5];
 wire TLU_ENABLE_VETO;
 assign TLU_ENABLE_VETO = status_regs[2][6];
 wire CONF_EN_WRITE_TS;
@@ -110,6 +110,8 @@ wire [7:0] VETO_SELECT;
 assign VETO_SELECT = status_regs[14];
 wire [7:0] TRIGGER_INVERT;
 assign TRIGGER_INVERT = status_regs[15];
+wire [31:0] TRIGGER_COUNTER_MAX;
+assign TRIGGER_COUNTER_MAX = {status_regs[19], status_regs[18], status_regs[17], status_regs[16]};
 
 always @(posedge BUS_CLK)
 begin
@@ -131,10 +133,14 @@ begin
         status_regs[13] <= 8'b0; // trigger select
         status_regs[14] <= 8'b1111_1111; // veto select (all enable by default)
         status_regs[15] <= 8'b0; // trigger invert
+        status_regs[16] <= 8'b0; // max. trigger counter
+        status_regs[17] <= 8'b0;
+        status_regs[18] <= 8'b0;
+        status_regs[19] <= 8'b0;
     end
-    else if(BUS_WR && BUS_ADD < 16)
+    else if(BUS_WR && BUS_ADD < 20)
     begin
-        status_regs[BUS_ADD[3:0]] <= BUS_DATA_IN;
+        status_regs[BUS_ADD[4:0]] <= BUS_DATA_IN;
     end
 end
 
@@ -177,6 +183,14 @@ begin
         BUS_DATA_OUT <= status_regs[14];
     else if (BUS_ADD == 15)
         BUS_DATA_OUT <= status_regs[15];
+    else if (BUS_ADD == 16)
+        BUS_DATA_OUT <= status_regs[16];
+    else if (BUS_ADD == 17)
+        BUS_DATA_OUT <= status_regs[17];
+    else if (BUS_ADD == 18)
+        BUS_DATA_OUT <= status_regs[18];
+    else if (BUS_ADD == 19)
+        BUS_DATA_OUT <= status_regs[19];
     else
         BUS_DATA_OUT <= 0;
 end
@@ -246,17 +260,17 @@ three_stage_synchronizer three_stage_enable_write_ts_synchronizer (
     .OUT(CONF_EN_WRITE_TS_SYNC)
 );
 
-wire TLU_ENABLE_RESET_SYNC;
-three_stage_synchronizer three_stage_enable_reset_command_synchronizer (
+wire TLU_ENABLE_RESET_TS_SYNC;
+three_stage_synchronizer three_stage_enable_tlu_reset_ts_synchronizer (
     .CLK(TRIGGER_CLK),
-    .IN(TLU_ENABLE_RESET),
-    .OUT(TLU_ENABLE_RESET_SYNC)
+    .IN(TLU_ENABLE_RESET_TS),
+    .OUT(TLU_ENABLE_RESET_TS_SYNC)
 );
 
 // TLU input sync
 wire TLU_TRIGGER_SYNC, TRIGGER_OR_SYNC, TLU_RESET_SYNC, TRIGGER_VETO_OR_SYNC;
 
-three_stage_synchronizer three_stage_rj45_trigger_synchronizer_cmd_clk (
+three_stage_synchronizer three_stage_rj45_trigger_synchronizer_trg_clk (
     .CLK(TRIGGER_CLK),
     .IN(TLU_TRIGGER),
     .OUT(TLU_TRIGGER_SYNC)
@@ -267,13 +281,13 @@ wire TRIGGER_OR;
 assign TRIGGER_XOR_INVERT = TRIGGER ^ TRIGGER_INVERT;
 assign TRIGGER_OR = |(TRIGGER_XOR_INVERT & TRIGGER_SELECT);
 
-three_stage_synchronizer three_stage_lemo_trigger_synchronizer_cmd_clk (
+three_stage_synchronizer three_stage_lemo_trigger_synchronizer_trg_clk (
     .CLK(TRIGGER_CLK),
     .IN(TRIGGER_OR),
     .OUT(TRIGGER_OR_SYNC)
 );
 
-three_stage_synchronizer three_stage_rj45_reset_synchronizer_cmd_clk (
+three_stage_synchronizer three_stage_rj45_reset_synchronizer_trg_clk (
     .CLK(TRIGGER_CLK),
     .IN(TLU_RESET),
     .OUT(TLU_RESET_SYNC)
@@ -282,7 +296,7 @@ three_stage_synchronizer three_stage_rj45_reset_synchronizer_cmd_clk (
 wire TRIGGER_VETO_OR;
 assign TRIGGER_VETO_OR = |(TRIGGER_VETO & VETO_SELECT);
 
-three_stage_synchronizer three_stage_lemo_ext_veto_synchronizer_cmd_clk (
+three_stage_synchronizer three_stage_lemo_ext_veto_synchronizer_trg_clk (
     .CLK(TRIGGER_CLK),
     .IN(TRIGGER_VETO_OR),
     .OUT(TRIGGER_VETO_OR_SYNC)
@@ -348,14 +362,7 @@ always @ (posedge TRIGGER_CLK)
     TLU_RESET_SYNC_FF <= TLU_RESET_SYNC;
 
 wire TLU_RESET_FLAG_SYNC;
-wire TLU_RESET_FLAG_BUS_CLK;
-assign TLU_RESET_FLAG_SYNC = ~TLU_RESET_SYNC_FF & TLU_RESET_SYNC & TLU_ENABLE_RESET_SYNC;
-flag_domain_crossing tlu_reset_flag_domain_crossing (
-    .CLK_A(TRIGGER_CLK),
-    .CLK_B(BUS_CLK),
-    .FLAG_IN_CLK_A(TLU_RESET_FLAG_SYNC),
-    .FLAG_OUT_CLK_B(TLU_RESET_FLAG_BUS_CLK)
-);
+assign TLU_RESET_FLAG_SYNC = ~TLU_RESET_SYNC_FF & TLU_RESET_SYNC & TLU_ENABLE_RESET_TS_SYNC;
 
 // writing current TLU trigger number to register
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_SYNC;
@@ -417,14 +424,43 @@ cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(TRIGGER_COUNTER_SET
 
 always @ (posedge BUS_CLK)
 begin
-    if (RST | TLU_RESET_FLAG_BUS_CLK == 1'b1)
+    if (RST)
         TRIGGER_COUNTER <= 32'b0;
     else if (TRIGGER_COUNTER_SET)
         TRIGGER_COUNTER <= {BUS_DATA_IN, status_regs[10], status_regs[9], status_regs[8]};
-    else if (TRIGGER_ACCEPTED_FLAG_BUS_CLK == 1'b1 && ~&TRIGGER_COUNTER)
+    else if (TRIGGER_ACCEPTED_FLAG_BUS_CLK == 1'b1)
         TRIGGER_COUNTER <= TRIGGER_COUNTER + 1;
     //else if (ENABLE_TLU_FLAG_BUS_CLK == 1'b1)
     //    TRIGGER_COUNTER <= 32'b0;
+end
+
+reg TRIGGER_LIMIT_REACHED;
+always @ (posedge BUS_CLK)
+begin
+    if (RST)
+        TRIGGER_LIMIT_REACHED <= 1'b0;
+    else if (TRIGGER_COUNTER >= TRIGGER_COUNTER_MAX && TRIGGER_COUNTER_MAX != 32'b0)
+        TRIGGER_LIMIT_REACHED <= 1'b1;
+    else
+        TRIGGER_LIMIT_REACHED <= 1'b0;
+end
+
+wire TRIGGER_LIMIT_REACHED_SYNC;
+three_stage_synchronizer three_stage_trigger_limit_synchronizer_trigger_clk (
+    .CLK(TRIGGER_CLK),
+    .IN(TRIGGER_LIMIT_REACHED),
+    .OUT(TRIGGER_LIMIT_REACHED_SYNC)
+);
+
+reg TRIGGER_ENABLE_FSM;
+always @ (posedge TRIGGER_CLK)
+begin
+    if (RST_SYNC)
+        TRIGGER_ENABLE_FSM <= 1'b0;
+    else if (TRIGGER_ENABLE == 1'b1 && !TRIGGER_LIMIT_REACHED_SYNC)
+        TRIGGER_ENABLE_FSM <= 1'b1;
+    else
+        TRIGGER_ENABLE_FSM <= 1'b0;
 end
 
 always @ (posedge BUS_CLK)
@@ -460,7 +496,7 @@ tlu_controller_fsm #(
     .TRIGGER(TRIGGER_FSM),
     .TRIGGER_FLAG(TRIGGER_FSM_FLAG),
     .TRIGGER_VETO(TRIGGER_VETO_OR_SYNC),
-    .TRIGGER_ENABLE(TRIGGER_ENABLE),    
+    .TRIGGER_ENABLE(TRIGGER_ENABLE_FSM),    
     .TRIGGER_ACKNOWLEDGE(TRIGGER_ACKNOWLEDGE),
     .TRIGGER_ACCEPTED_FLAG(TRIGGER_ACCEPTED_FLAG),
     

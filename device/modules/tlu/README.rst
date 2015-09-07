@@ -8,7 +8,7 @@ EUDAQ Telescope/TLU communication module. Received IDs are propagated to FIFO da
 NOTE:
  1. TRIGGER_ENABLE has to be asserted to allow triggering.
  2. If no TRIGGER_ACKNOWLEDGE signal is available, connect TRIGGER_ACCEPTED_FLAG output to TRIGGER_ACKNOWLEDGE input.
- 3. TRIGGER_ENABLE and TRIGGER_ACKNOWLEDGE need to be synchronous to TRIGGER_CLOCK.
+ 3. TRIGGER_ENABLE and TRIGGER_ACKNOWLEDGE needs to be synchronous to TRIGGER_CLOCK.
  4. Data words have the MSB always high to allow identification of data words. The remaining 31 bits are data.
  5. All selected trigger inputs (TRIGGER) are ORed
  6. All selected trigger veto inputs (TRIGGER_VETO) are ORed (and enabled by default)
@@ -66,7 +66,7 @@ Registers
     +----------------------------+----------------------------------+--------+-------+-------------+---------------------------------------------+ 
     | TRIGGER_CLOCK_CYCLES       | 2                                | [4:0]  | r/w   | 0           | TLU trigger number clocks(0=32 clock cycles)| 
     +----------------------------+----------------------------------+--------+-------+-------------+---------------------------------------------+ 
-    | EN_TLU_RESET               | 2                                | [5]    | r/w   | 0           | reset trigger counter on TLU reset          | 
+    | EN_TLU_RESET_TIMESTAMP     | 2                                | [5]    | r/w   | 0           | reset time stamp to 0 on TLU reset          | 
     +----------------------------+----------------------------------+--------+-------+-------------+---------------------------------------------+ 
     | EN_TLU_VETO                | 2                                | [6]    | r/w   | 0           | assert TLU veto when external veto          | 
     +----------------------------+----------------------------------+--------+-------+-------------+---------------------------------------------+ 
@@ -86,3 +86,6 @@ Registers
     +----------------------------+----------------------------------+--------+-------+-------------+---------------------------------------------+ 
     | TRIGGER_INVERT             | 15                               | [7:0]  | r/w   | 0           | selecting trigger invert                    | 
     +----------------------------+----------------------------------+--------+-------+-------------+---------------------------------------------+ 
+    | MAX_TRIGGERS               | 16 - 19                          | [31:0] | r/w   | 0           | maximum triggers, use 0 for unltd. triggers | 
+    +----------------------------+----------------------------------+--------+-------+-------------+---------------------------------------------+ 
+    

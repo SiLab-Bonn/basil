@@ -90,7 +90,7 @@ parameter   [2:0]
 // sequential always block, non-blocking assignments
 always @ (posedge TRIGGER_CLK)
 begin
-    if (RESET | TLU_RESET_FLAG)  state <= IDLE; // get D-FF for state
+    if (RESET)  state <= IDLE; // get D-FF for state
     else        state <= next;
 end
 
@@ -152,7 +152,7 @@ end
 // sequential always block, non-blocking assignments, registered outputs
 always @ (posedge TRIGGER_CLK)
 begin
-    if (RESET | TLU_RESET_FLAG) // get D-FF
+    if (RESET) // get D-FF
     begin
         FIFO_PREEMPT_REQ_FLAG <= 1'b0;
         TRIGGER_DATA_WRITE <= 1'b0;
@@ -374,7 +374,7 @@ end
 // time stamp
 always @ (posedge TRIGGER_CLK)
 begin
-    if (RESET)
+    if (TLU_RESET_FLAG)
         TIMESTAMP <= 32'b0;
     else
         TIMESTAMP <= TIMESTAMP + 1;
