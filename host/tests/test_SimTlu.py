@@ -72,7 +72,7 @@ class TestSimTlu(unittest.TestCase):
         self.chip['gpio'].set_data([0x00])
 
         self.assertEqual(self.chip['sram'].get_fifo_int_size(), 1)
-        self.assertEqual(self.chip['tlu'].TRIGGER_COUNTER, 0)
+        self.assertEqual(self.chip['tlu'].TRIGGER_COUNTER, 1)
 
         data = self.chip['sram'].get_data()
         self.assertEqual(data[0], 0x80000000 + 0)
