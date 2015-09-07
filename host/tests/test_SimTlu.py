@@ -95,7 +95,7 @@ class TestSimTlu(unittest.TestCase):
         self.chip['gpio'].set_data([0x00])
 
         self.assertEqual(self.chip['sram'].get_fifo_int_size(), 2)
-        self.assertEqual(self.chip['tlu'].TRIGGER_COUNTER, 1)
+        self.assertEqual(self.chip['tlu'].TRIGGER_COUNTER, 2)
 
         data = self.chip['sram'].get_data()
         self.assertEqual(data[0], 0x80000000 + 0)
@@ -117,7 +117,7 @@ class TestSimTlu(unittest.TestCase):
         self.chip['gpio'].set_data([0x00])
 
         self.assertGreaterEqual(self.chip['sram'].get_fifo_int_size(), 4)
-        self.assertGreaterEqual(self.chip['tlu'].TRIGGER_COUNTER, 13)
+        self.assertGreaterEqual(self.chip['tlu'].TRIGGER_COUNTER, 14)
 
         data = self.chip['sram'].get_data()
         self.assertEqual(data[0], 0x80000000 + 10)
@@ -141,7 +141,7 @@ class TestSimTlu(unittest.TestCase):
         self.chip['gpio'].set_data([0x00])
 
         self.assertGreaterEqual(self.chip['sram'].get_fifo_int_size(), 4)
-        self.assertGreaterEqual(self.chip['tlu'].TRIGGER_COUNTER, 3)
+        self.assertGreaterEqual(self.chip['tlu'].TRIGGER_COUNTER, 4)
         self.assertGreaterEqual(self.chip['tlu'].CURRENT_TLU_TRIGGER_NUMBER, 3)
 
         data = self.chip['sram'].get_data()
