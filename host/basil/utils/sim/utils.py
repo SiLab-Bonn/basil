@@ -6,22 +6,23 @@
 #
 
 import subprocess
-import basil;
-import os;
+import basil
+import os
+
 
 def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test', sim_host='localhost', sim_port=12345, sim_bus='basil.utils.sim.BasilBusDriver',
-                    end_on_disconnect=True, include_dirs=(), extra='' ):
+                    end_on_disconnect=True, include_dirs=(), extra=''):
 
     basil_dir = str(os.path.dirname(os.path.dirname(os.path.dirname(basil.__file__))))
-    include_dirs += (basil_dir+"/device/modules", basil_dir+"/device/modules/includes")
-    
+    include_dirs += (basil_dir + "/device/modules", basil_dir + "/device/modules/includes")
+
     mkfile = "SIMULATION_HOST?=%s\nSIMULATION_PORT?=%d\nSIMULATION_BUS?=%s\n" % (sim_host, sim_port, sim_bus)
-    
+
     if(end_on_disconnect):
         mkfile += "SIMULATION_END_ON_DISCONNECT?=1\n"
 
     mkfile += "\n"
-    
+
     mkfile += "VERILOG_SOURCES = %s\n\n" % (" ".join(str(e) for e in sim_files))
 
     mkfile += "TOPLEVEL = %s\nMODULE   = %s\n\n" % (top_level, test_module)
@@ -33,7 +34,7 @@ def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test
     mkfile += "\n"
     mkfile += extra
     mkfile += "\n"
-    
+
     mkfile += """
 export SIMULATION_HOST
 export SIMULATION_PORT
