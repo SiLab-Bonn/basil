@@ -37,14 +37,14 @@ class spi(RegisterHardwareLayer):
 
     def start(self):
         '''
-        Starts the shifting in of data
+        Starts the shifting data
         '''
         self.START = 0
 
     def set_size(self, value):
         '''
         Number of clock cycles for shifting in data
-        length of matrix shift register (number of pixels daisy chained)
+        ex. length of matrix shift register (number of pixels daisy chained)
         '''
         self.SIZE = value
 
@@ -56,13 +56,13 @@ class spi(RegisterHardwareLayer):
 
     def set_wait(self, value):
         '''
-        Defines time delay between repetitions in clock cycles (80ns)
+        Sets time delay between repetitions in clock cycles 
         '''
         self.WAIT = value
 
     def get_wait(self):
         '''
-        Gets time delay between repetitions in clock cycles (80ns)
+        Gets time delay between repetitions in clock cycles 
         '''
         return self.WAIT
 
@@ -81,18 +81,20 @@ class spi(RegisterHardwareLayer):
 
     def set_en(self, value):
         '''
-        If 0: Repeat sequence forever
-        Other: Number of repetitions of sequence with delay 'wait'
+        Enable start on external EXT_START signal (inside FPGA) 
         '''
         self.EN = value
 
     def get_en(self):
         '''
-        Gets Number of repetitions of sequence with delay 'wait' (if 0 --> repeat forever)
+        Gets state of enable.
         '''
         return self.EN
 
     def is_done(self):
+        '''
+        Get the status of transfer/sequence.
+        '''
         return self.is_ready
 
     @property
