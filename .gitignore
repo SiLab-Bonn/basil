@@ -31,7 +31,7 @@ host/tests/Makefile
 docs/_build
 *.vcd
 tests/results.xml
-examples/lx9/device/src/SiTCP
+examples/lx9/firmware/src/SiTCP
 
 # PyDev files
 .project
