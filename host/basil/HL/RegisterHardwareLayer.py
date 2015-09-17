@@ -54,7 +54,7 @@ class RegisterHardwareLayer(HardwareLayer, dict):
             version = str(self.VERSION)
         else:
             version = None
-        logging.info("Initializing %s from module %s (Version: %s)" % (self.__class__.__name__, self.__class__.__module__, version if 'VERSION' in self._registers else 'n/a'))
+        logging.info("Initializing %s (firmware version: %s), module %s" % (self.name, version if 'VERSION' in self._registers else 'n/a', self.__class__.__module__))
         if self._require_version and not eval(version + self._require_version):
             raise Exception("FPGA module %s does not satisfy version requirements (read: %s, require: %s)" % (self.__class__.__module__, version, self._require_version.strip()))
         for reg, value in self._registers.iteritems():
