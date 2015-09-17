@@ -61,7 +61,7 @@ copyright = u'2015, SiLab, Institute of Physics, University of Bonn'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-f = open('../host/VERSION', 'r')
+f = open('../VERSION', 'r')
 basil_version = f.readline().strip()
 f.close()
 
