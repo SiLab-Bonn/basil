@@ -30,7 +30,7 @@ host/tests/Makefile
 #docs
 docs/_build
 *.vcd
-host/tests/results.xml
+tests/results.xml
 examples/lx9/device/src/SiTCP
 
 # PyDev files
@@ -40,5 +40,5 @@ examples/lx9/device/src/SiTCP
 
 # Mac
 .DS_Store
-host/tests/qverilog.log
-host/tests/work
+tests/qverilog.log
+tests/work

@@ -37,8 +37,7 @@ install:
   #- cd iverilog-master && autoconf && ./configure && make && sudo make install && cd ..
   
   # Install basil
-  - cd host
   - python setup.py develop
 
 script:
-  - cd tests; nosetests test_*.py
+  - nosetests tests

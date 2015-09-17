@@ -33,7 +33,7 @@ Installation
 
 .. code-block:: bash
 
-    pip install -e "git+https://github.com/SiLab-Bonn/basil.git@development#egg=basil&subdirectory=host"
+    pip install -e "git+https://github.com/SiLab-Bonn/basil.git@development"
 
 Support
 =======
