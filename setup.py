@@ -11,12 +11,12 @@ author = 'Tomasz Hemperek, Jens Janssen'
 author_email = 'hemperek@uni-bonn.de, janssen@physik.uni-bonn.de'
 
 setup(
-    name='Basil',
+    name='Basil-daq',
     version=basil_version,
     description='Basil: SILAB modular readout framework',
     url='https://github.com/SiLab-Bonn/basil',
     license='BSD 3-Clause ("BSD New" or "BSD Simplified") License',
-    long_description='Basil is a modular Rapid Data Acquisition System Design and Testing Framwork. It consists of different hardware components, FPGA firmware modulus and a Python based contol software.',
+    long_description='Basil is a modular Rapid Data Acquisition System Design and Testing Framework. It consists of different hardware components, FPGA firmware modules and a Python based control software.',
     requires=['bitarray (>=0.8.1)', 'pyyaml', 'numpy'],
     author=author,
     maintainer=author,
