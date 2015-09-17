@@ -1,5 +1,5 @@
 ===============================================
-basil
+Basil
 ===============================================
 
 |travis-status|  |rtd-status|  |landscape-status|  |Gitter-status|
@@ -20,8 +20,9 @@ basil
    :target: https://gitter.im/SiLab-Bonn/basil?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
    :alt: Gitter
   
-Basil is a modular data acquisition system and testing framework. 
-It also comprises generic FPGA firmware modules for different hardware platforms and Python drivers.
+Basil is a modular data acquisition system and system testing framework in Python.
+
+It also provides generic FPGA firmware modules for different hardware platforms and drivers for wide range of lab appliances.
 
 Documentation
 =============
