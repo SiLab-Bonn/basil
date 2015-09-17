@@ -20,8 +20,8 @@ basil
    :target: https://gitter.im/SiLab-Bonn/basil?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
    :alt: Gitter
   
-Basil is a modular Rapid Data Acquisition System Design and Testing Framwork. 
-It consists of different hardware components, FPGA firmware modulus and a Python based contol software.
+Basil is a modular data acquisition system and testing framework. 
+It also comprises generic FPGA firmware modules for different hardware platforms and Python drivers.
 
 Documentation
 =============
