@@ -14,7 +14,7 @@ def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test
                     end_on_disconnect=True, include_dirs=(), extra=''):
 
     basil_dir = str(os.path.dirname(os.path.dirname(os.path.dirname(basil.__file__))))
-    include_dirs += (basil_dir + "/device/modules", basil_dir + "/device/modules/includes")
+    include_dirs += (basil_dir + "/firmware/modules", basil_dir + "/firmware/modules/includes")
 
     mkfile = "SIMULATION_HOST?=%s\nSIMULATION_PORT?=%d\nSIMULATION_BUS?=%s\n" % (sim_host, sim_port, sim_bus)
 
