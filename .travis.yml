@@ -40,4 +40,4 @@ install:
   - python setup.py develop
 
 script:
-  - nosetests tests
+  - cd tests; nosetests test_*.py
