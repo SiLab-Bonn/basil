@@ -1,0 +1,14 @@
+# Device description for the Tektronix 4104B Mixed signal oscilloscope.
+# If you need other commands consider to add them here or 
+# use dut._interface.write() to directly talk to the device
+identifier : TEKTRONIX,MSO4104B,C010877
+set_source : DATa:SOUrce  # the channel for the get_data command
+get_data : WAVFrm?  # returns the data as ; seperated values and a header describing all important settings
+channel 1:
+    get_data : DATA:SOURCE CH1;:WAVFrm?
+channel 2:
+    get_data : DATA:SOURCE CH2;:WAVFrm?
+channel 3:
+    get_data : DATA:SOURCE CH3;:WAVFrm?
+channel 4:
+    get_data : DATA:SOURCE CH4;:WAVFrm?

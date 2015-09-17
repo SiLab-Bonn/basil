@@ -21,7 +21,7 @@ import sphinx_rtd_theme
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../host'))
+sys.path.insert(0, os.path.abspath('../basil'))
 
 
 # -- General configuration ------------------------------------------------
@@ -61,7 +61,7 @@ copyright = u'2015, SiLab, Institute of Physics, University of Bonn'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-f = open('../host/VERSION', 'r')
+f = open('../VERSION', 'r')
 basil_version = f.readline().strip()
 f.close()
 

@@ -18,7 +18,7 @@ from basil.dut import Dut
 dut = Dut('keithley2400_pyserial.yaml')
 dut.init()
 print dut['Sourcemeter'].get_name()
-  
+
 # Talk to a Keithley device via serial port using VISA with Serial interface
 dut = Dut('keithley2400_pyvisa.yaml')
 dut.init()
@@ -40,5 +40,16 @@ print dut['Pulser'].get_voltage(0, unit='mV'), 'mV'
 # Example for device with multiple channels
 dut = Dut('ttiql335tp_pyvisa.yaml')
 dut.init()
-dut['PowerSupply'].get_info()
+dut['PowerSupply'].get_name()
 dut['PowerSupply'].get_voltage(channel=1)
+
+# Talk to a Keithley device via GPIB using NI VISA
+dut = Dut('keithley2000_pyvisa.yaml')
+dut.init()
+print dut['Multimeter'].get_name()
+
+# Talk to a Tektronix mixed signal oscilloscope via TCPIP, USB
+dut = Dut('tektronixMSO4104B_pyvisa.yaml')
+dut.init()
+print dut['Oscilloscope'].get_name()
+print dut['Oscilloscope'].get_data(channel=1)

@@ -1,0 +1,6 @@
+include README.* VERSION
+recursive-include docs *
+recursive-include examples *
+recursive-include firmware *
+recursive-include tests *
+global-exclude *.pyc .project .pydevproject build

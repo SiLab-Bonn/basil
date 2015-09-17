@@ -1,0 +1,12 @@
+transfer_layer:
+  - name     : Serial
+    type     : Serial
+    init     :
+        port     : COM16
+        read_termination : ""
+        baudrate : 115200
+
+hw_drivers:
+  - name      : Thermohygrometer
+    type      : sensirion_ekh4
+    interface : Serial

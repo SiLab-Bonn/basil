@@ -1,0 +1,6 @@
+# Device description for the Keithley 2000 Multimeter. 
+# Do not expect the Keithley 2000 to work over serial!
+# Only GPIB shows working communication with this device!
+identifier : KEITHLEY INSTRUMENTS INC.,MODEL 2000
+get_current : MEAS:CURR?
+get_voltage : MEAS:VOLT?
