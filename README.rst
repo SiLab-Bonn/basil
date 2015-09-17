@@ -34,7 +34,7 @@ Installation
 
 .. code-block:: bash
 
-    pip install -e "git+https://github.com/SiLab-Bonn/basil.git@development"
+    pip install git+https://github.com/SiLab-Bonn/basil.git@development
 
 Support
 =======
