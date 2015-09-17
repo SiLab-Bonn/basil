@@ -7,15 +7,21 @@ f = open('VERSION', 'r')
 basil_version = f.readline().strip()
 f.close()
 
+author = 'Tomasz Hemperek, Jens Janssen'
+author_email = 'hemperek@uni-bonn.de, janssen@physik.uni-bonn.de'
+
 setup(
     name='Basil',
     version=basil_version,
     description='Basil: SILAB modular readout framework',
     url='https://github.com/SiLab-Bonn/basil',
     license='BSD 3-Clause ("BSD New" or "BSD Simplified") License',
-    long_description='',
+    long_description='Basil is a modular Rapid Data Acquisition System Design and Testing Framwork. It consists of different hardware components, FPGA firmware modulus and a Python based contol software.',
     requires=['bitarray (>=0.8.1)', 'pyyaml', 'numpy'],
-    packages=find_packages(exclude=['*.tests', '*.test']),  # ['basil', 'basil.HL', 'basil.RL', 'basil.TL', 'basil.UL', 'basil.utils']
-#     package_data={'': ['README.*', 'VERSION'], 'docs': ['*'], 'examples': ['*']},  # you do not need to use this option if you are using include_package_data
-    include_package_data=True  # accept all data files and directories matched by MANIFEST.in or found in source control
+    author=author,
+    maintainer=author,
+    author_email=author_email,
+    packages=find_packages(),
+    include_package_data=True,  # accept all data files and directories matched by MANIFEST.in or found in source control
+    platforms='any'
 )
