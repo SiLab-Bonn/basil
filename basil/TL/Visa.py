@@ -14,9 +14,8 @@ class Visa(TransferLayer):
 
     '''Transfer layer for a Virtual Instrument Software Architecture (VISA) provided by pyVisa.
     Several interfaces are available (GPIB, RS232, USB, Ethernet). To be able to use pyVisa without
-    the proprietary NI-VISA driver a pyVisa backend pyVisa-py is used.
-    GPIB under linux is not supported via pyVisa-py right now and linux-gpib does not
-    compile on modern kernels right now. Thus no GPIB linux support on modern systems.
+    the proprietary NI-VISA driver a pyVisa backend pyVisa-py can be used.
+    GPIB under linux is not supported via pyVisa-py right now.
     '''
 
     def __init__(self, conf):
@@ -28,7 +27,7 @@ class Visa(TransferLayer):
         Initialize the device.
         Parameters of visa.ResourceManager().open_resource()
         '''
-        backend = self._init.pop('backend', '')
+        backend = self._init.pop('backend', 'National Instruments')
         rm = visa.ResourceManager(backend)
         try:
             logging.info('BASIL VISA TL with %s backend found the following devices: %s', backend, rm.list_resources())
