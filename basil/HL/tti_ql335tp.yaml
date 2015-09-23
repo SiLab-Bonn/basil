@@ -1,5 +1,5 @@
 # Device description for the TTi QL335 power supply series. 
-identifier : THURLBY THANDAR, QL355TP
+identifier : QL355TP
 on : OPALL 1
 off : OPALL 0
 reset_trip : TRIPRST
