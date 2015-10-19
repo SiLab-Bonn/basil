@@ -1,0 +1,30 @@
+#
+# ------------------------------------------------------------
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
+# ------------------------------------------------------------
+#
+
+transfer_layer:
+  - name  : intf
+    type  : SiUsb
+    init:
+      avoid_download : True
+      bit_file : ../ise/example.bit
+    
+hw_drivers:
+  - name      : gpio_drv
+    type      : gpio
+    interface : intf
+    base_addr : 0x10000
+    size      : 8
+
+registers:
+  - name        : GPIO_LED
+    type        : StdRegister
+    hw_driver   : gpio_drv
+    size        : 8
+    fields:
+      - name    : LED
+        size    : 5
+        offset  : 4

@@ -1,17 +1,5 @@
-/**
- * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
- * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
- */
- 
- 
-`timescale 1ps / 1ps
 
+`timescale 1ps / 1ps
 `default_nettype none
 
 module example (
@@ -51,43 +39,32 @@ module example (
     
     assign DEBUG_D = 16'ha5a5;
     
-    reg  BUS_CLK, BUS_CLK270;
-    wire SPI_CLK;
-    wire ADC_ENC;
-    wire CLK_LOCKED;
-    wire BUS_RST;
+    //BASIL bus mapping
+    wire [15:0] BUS_ADD;
+    assign BUS_ADD = ADD - 16'h4000;
+    wire BUS_RST, BUS_CLK, BUS_RD, BUS_WR;
+    assign BUS_RD = ~RD_B;
+    assign BUS_WR = ~WR_B;
+    assign BUS_CLK = FCLK_IN;
     
     reset_gen i_reset_gen(.CLK(BUS_CLK), .RST(BUS_RST));
  
-    always @(*)
-        BUS_CLK = FCLK_IN;
-
-    initial begin
-        $dumpfile("waveform.vcd");
-        $dumpvars(0,example);
-    end
-
     //MODULE ADREESSES
     localparam GPIO_BASEADDR = 16'h0000;
     localparam GPIO_HIGHADDR = 16'h000f;
     
-    reg [15:0] BUS_ADD;
-   // assign BUS_ADD = ADD - 16'h4000;
-    reg BUS_RD, BUS_WR;
-
-    always @(*) begin
-        BUS_RD = ~RD_B;
-        BUS_WR = ~WR_B;
-        BUS_ADD = ADD - 16'h4000;
-    end
-
-    // MODULES //
+    
+    // USER MODULES //
+    
     wire [1:0] GPIO_NOT_USED;
-    gpio8 
+    gpio
     #( 
         .BASEADDR(GPIO_BASEADDR), 
-        .HIGHADDR(GPIO_HIGHADDR)
-    ) i_gpio8
+        .HIGHADDR(GPIO_HIGHADDR),
+        
+        .IO_WIDTH(8),
+        .IO_DIRECTION(8'h7f) // MSB is input the rest output
+    ) i_gpio
     (
         .BUS_CLK(BUS_CLK),
         .BUS_RST(BUS_RST),
