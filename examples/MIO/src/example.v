@@ -63,7 +63,7 @@ module example (
         .HIGHADDR(GPIO_HIGHADDR),
         
         .IO_WIDTH(8),
-        .IO_DIRECTION(8'h7f) // MSB is input the rest output
+        .IO_DIRECTION(8'h1f) // 3 MSBs are input the rest output
     ) i_gpio
     (
         .BUS_CLK(BUS_CLK),
@@ -74,5 +74,13 @@ module example (
         .BUS_WR(BUS_WR),
         .IO({FPGA_BUTTON, GPIO_NOT_USED, LED5, LED4, LED3, LED2, LED1})
     );
+    
+    assign GPIO_NOT_USED = {LED2, LED1};
+   
+    //For simulation
+    initial begin
+        $dumpfile("mio_example.vcd");
+        $dumpvars(0);
+    end
 
 endmodule
