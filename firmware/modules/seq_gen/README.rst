@@ -7,8 +7,8 @@ Module implements a simple sequencer/pattern generator base on block ram. Suppor
 For OUT_BITS != 8 user need to provide block memory module (seq_gen_blk_mem) with proper size.
 
 **Unit test/Example:** 
-`test_SimSeq.v <https://github.com/SiLab-Bonn/basil/blob/master/host/tests/test_SimSeq.v>`_ 
-`test_SimSeq.py <https://github.com/SiLab-Bonn/basil/blob/master/host/tests/test_SimSeq.py>`_
+`test_SimSeq.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimSeq.v>`_ 
+`test_SimSeq.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimSeq.py>`_
 
 Parameters
     +--------------+---------------------+-------------------------------------------------------------------------+ 

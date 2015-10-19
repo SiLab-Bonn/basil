@@ -9,8 +9,8 @@ Features
 
 Firmware:
   - very simple single master `bus definition`_
-  - multiple `basic modules <https://github.com/SiLab-Bonn/basil/tree/master/device/modules>`_ (ex. SPI, SEQ)
-  - multiple `interfaces <https://github.com/SiLab-Bonn/basil/tree/master/host/basil/TL>`_ (UART, USB2, USB3, Ethernet)
+  - multiple `basic modules <https://github.com/SiLab-Bonn/basil/tree/master/firmware/modules>`_ (ex. SPI, SEQ)
+  - multiple `interfaces <https://github.com/SiLab-Bonn/basil/tree/master/basil/TL>`_ (UART, USB2, USB3, Ethernet)
 Software:
   - layer structure following hardware
   - generation based on yaml file
@@ -47,7 +47,7 @@ To make simulation one need:
   - set interface type to SiSim
   - set $COCOTB environment variable to path to cocotb
 
-Basil unit tests make extensive use of this feature. See host/tests folder.
+Basil unit tests make extensive use of this feature. See tests folder.
 
 License
 =====================
