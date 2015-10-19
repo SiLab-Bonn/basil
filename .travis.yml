@@ -1,14 +1,9 @@
 language: python
 python:
   - 2.7
-  
-#addons:
-#  apt:
-#    sources:
-#    - ppa:team-electronics/ppa
-#    packages:
-#    - iverilog-daily
-#sudo: false
+
+sudo: required
+dist: trusty
 
 notifications:
   email:
