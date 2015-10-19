@@ -1,9 +1,14 @@
 language: python
 python:
   - 2.7
-
-sudo: required
-dist: trusty
+  
+#addons:
+#  apt:
+#    sources:
+#    - ppa:team-electronics/ppa
+#    packages:
+#    - iverilog-daily
+#sudo: false
 
 notifications:
   email:
