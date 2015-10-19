@@ -9,7 +9,7 @@ import unittest
 
 from basil.dut import Dut
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
-
+import os
 
 _test_init = {
     'REG_test_init': 15,
@@ -36,7 +36,7 @@ class test_RegisterHardwareLayer(RegisterHardwareLayer):
 
 class TestRegisterHardwareLayer(unittest.TestCase):
     def setUp(self):
-        self.dut = Dut('test_RegisterHardwareLayer.yaml')
+        self.dut = Dut(os.path.dirname(__file__) + '/test_RegisterHardwareLayer.yaml')
         self.dut.init()
 
     def test_lazy_programming(self):
@@ -48,12 +48,12 @@ class TestRegisterHardwareLayer(unittest.TestCase):
         self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut['dummy_tl'].mem)
 
     def test_get_configuration(self):
-        self.dut.set_configuration('test_RegisterHardwareLayer_configuration.yaml')
+        self.dut.set_configuration(os.path.dirname(__file__) + '/test_RegisterHardwareLayer_configuration.yaml')
         conf = self.dut['test_register'].get_configuration()
         self.assertDictEqual({'REG1': 0, 'REG2': 1, 'REG3': 2, 'REG_test_init': 0, 'REG_byte_array': [1, 2, 3, 4]}, conf)
 
     def test_set_configuration(self):
-        self.dut.set_configuration('test_RegisterHardwareLayer_configuration.yaml')
+        self.dut.set_configuration(os.path.dirname(__file__) + '/test_RegisterHardwareLayer_configuration.yaml')
         self.assertDictEqual({0: 0, 1: 128, 2: 2, 3: 0, 5: 5, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut['dummy_tl'].mem)
 
     def test_read_only(self):

@@ -49,7 +49,7 @@ registers:
 
 class TestSimGpio(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run([os.getcwd() + '/test_SimGpio.v'])
+        cocotb_compile_and_run([os.path.dirname(__file__) + '/test_SimGpio.v'])
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()

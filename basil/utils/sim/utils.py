@@ -9,11 +9,13 @@ import subprocess
 import basil
 import os
 
+def get_basil_dir():
+    return str(os.path.dirname(os.path.dirname(os.path.dirname(basil.__file__))))
 
 def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test', sim_host='localhost', sim_port=12345, sim_bus='basil.utils.sim.BasilBusDriver',
                     end_on_disconnect=True, include_dirs=(), extra=''):
 
-    basil_dir = str(os.path.dirname(os.path.dirname(os.path.dirname(basil.__file__))))
+    basil_dir = get_basil_dir()
     include_dirs += (basil_dir + "/basil/firmware/modules", basil_dir + "/basil/firmware/modules/includes")
 
     mkfile = "SIMULATION_HOST?=%s\nSIMULATION_PORT?=%d\nSIMULATION_BUS?=%s\n" % (sim_host, sim_port, sim_bus)
