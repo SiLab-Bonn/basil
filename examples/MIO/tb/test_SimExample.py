@@ -14,9 +14,9 @@ class TestExampleMIO(unittest.TestCase):
     def setUp(self):
     
         cocotb_compile_and_run(
-            [get_basil_dir()+'/basil/firmware/modules/gpio/gpio.v', 
-            get_basil_dir()+'/basil/firmware/modules/utils/reset_gen.v', 
-            get_basil_dir()+'/basil/firmware/modules/utils/bus_to_ip.v', 
+            [get_basil_dir()+'/firmware/modules/gpio/gpio.v', 
+            get_basil_dir()+'/firmware/modules/utils/reset_gen.v', 
+            get_basil_dir()+'/firmware/modules/utils/bus_to_ip.v', 
             os.path.dirname(__file__) + '/../src/example.v'], 
             top_level = 'example',
             sim_bus='basil.utils.sim.SiLibUsbBusDriver'
