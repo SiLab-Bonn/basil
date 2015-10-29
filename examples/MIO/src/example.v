@@ -27,10 +27,10 @@ module example (
     output wire LED4,
     output wire LED5,
     
-    inout FPGA_BUTTON,
+    inout wire FPGA_BUTTON,
 
-    inout SDA,
-    inout SCL
+    inout wire SDA,
+    inout wire SCL
 
     );   
         

@@ -146,9 +146,8 @@ endgenerate
 
 reg [IN_BITS-1:0] SEQ_IN_MEM;
 
-wire WEA;
+wire WEA, WEB;
 assign WEA = BUS_WR && BUS_ADD >=16 && BUS_ADD < 16+MEM_BYTES && !WEB;
-wire WEB;
 
 generate
     if (IN_BITS==8) begin

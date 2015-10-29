@@ -11,16 +11,16 @@ module seq_gen_blk_mem (
     clka, clkb, wea, addra, dina, web, addrb, dinb, douta, doutb
 );
 
-input clka;
-input clkb;
-input [0 : 0] wea;
-input [13 : 0] addra;
-input [7 : 0] dina;
-input [0 : 0] web;
-input [12 : 0] addrb;
-input [15 : 0] dinb;
-output [7 : 0] douta;
-output [15 : 0] doutb;
+input wire clka;
+input wire clkb;
+input wire [0 : 0] wea;
+input wire [13 : 0] addra;
+input wire [7 : 0] dina;
+input wire [0 : 0] web;
+input wire [12 : 0] addrb;
+input wire [15 : 0] dinb;
+output wire [7 : 0] douta;
+output wire [15 : 0] doutb;
 
 RAMB16_S1_S2 mem0  (
     .CLKA(clka),

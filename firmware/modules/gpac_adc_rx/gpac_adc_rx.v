@@ -17,24 +17,24 @@ module gpac_adc_rx
     parameter [0:0] HEADER_ID = 0
 )
 (
-    input ADC_ENC,
-    input [13:0] ADC_IN,
+    input wire ADC_ENC,
+    input wire [13:0] ADC_IN,
 
-    input ADC_SYNC,
-    input ADC_TRIGGER,
+    input wire ADC_SYNC,
+    input wire ADC_TRIGGER,
 
-    input FIFO_READ,
-    output FIFO_EMPTY,
-    output [31:0] FIFO_DATA,
+    input wire FIFO_READ,
+    output wire FIFO_EMPTY,
+    output wire [31:0] FIFO_DATA,
 
-    input           BUS_CLK,
-    input           BUS_RST,
-    input   [ABUSWIDTH-1:0]  BUS_ADD,
-    inout   [7:0]   BUS_DATA,
-    input           BUS_RD,
-    input           BUS_WR,
+    input wire           BUS_CLK,
+    input wire           BUS_RST,
+    input wire   [ABUSWIDTH-1:0]  BUS_ADD,
+    inout wire   [7:0]   BUS_DATA,
+    input wire           BUS_RD,
+    input wire           BUS_WR,
 
-    output LOST_ERROR
+    output wire LOST_ERROR
 ); 
 
 wire IP_RD, IP_WR;

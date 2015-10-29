@@ -1,5 +1,5 @@
 
-module pulse_gen_rising (input clk_in, input in, output out);
+module pulse_gen_rising (input wire clk_in, input wire in, output wire out);
 
 reg ff;
 always@(posedge clk_in)

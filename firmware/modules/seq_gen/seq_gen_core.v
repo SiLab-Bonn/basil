@@ -28,16 +28,16 @@ module seq_gen_core
 
 localparam VERSION = 2;
 
-input                       BUS_CLK;
-input                       BUS_RST;
-input      [ABUSWIDTH-1:0]  BUS_ADD;
-input      [7:0]            BUS_DATA_IN;
-input                       BUS_RD;
-input                       BUS_WR;
+input wire                      BUS_CLK;
+input wire                        BUS_RST;
+input wire       [ABUSWIDTH-1:0]  BUS_ADD;
+input wire      [7:0]            BUS_DATA_IN;
+input wire                       BUS_RD;
+input wire                       BUS_WR;
 output reg [7:0]            BUS_DATA_OUT;
 
-input SEQ_EXT_START;
-input SEQ_CLK;
+input wire SEQ_EXT_START;
+input wire SEQ_CLK;
 output reg [OUT_BITS-1:0] SEQ_OUT;
 
 `include "../includes/log2func.v"

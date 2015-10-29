@@ -86,7 +86,8 @@ end
 reg [ABUSWIDTH-1:0]  PREV_BUS_ADD;
 always@(posedge BUS_CLK)
     PREV_BUS_ADD <= BUS_ADD;
-    
+
+reg [7:0] OUT_MEM;    
 always @(*) begin
     if(PREV_BUS_ADD < 8)
         BUS_DATA_OUT = BUS_DATA_OUT_REG;
@@ -105,7 +106,6 @@ assign BUS_MEM_ADD = BUS_ADD-8;
 (* RAM_STYLE="{BLOCK_POWER2}" *)
 reg [7:0] mem [MEM_BYTES-1:0];
 
-reg [7:0] OUT_MEM;
 always @(posedge BUS_CLK)
     if (BUS_MEM_EN) begin
         if (BUS_WR)
