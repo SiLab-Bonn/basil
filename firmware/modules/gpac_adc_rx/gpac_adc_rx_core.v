@@ -14,25 +14,25 @@ module gpac_adc_rx_core
     parameter [0:0] HEADER_ID = 0
 )
 (
-    input wire ADC_ENC,
-    input wire [13:0] ADC_IN,
+    input ADC_ENC,
+    input [13:0] ADC_IN,
 
-    input wire ADC_SYNC,
-    input wire ADC_TRIGGER,
+    input ADC_SYNC,
+    input ADC_TRIGGER,
 
-    input wire FIFO_READ,
-    output wire FIFO_EMPTY,
-    output wire [31:0] FIFO_DATA,
+    input FIFO_READ,
+    output FIFO_EMPTY,
+    output [31:0] FIFO_DATA,
 
-    input wire BUS_CLK,
-    input wire [ABUSWIDTH-1:0] BUS_ADD,
-    input wire [7:0] BUS_DATA_IN,
+    input BUS_CLK,
+    input [ABUSWIDTH-1:0] BUS_ADD,
+    input [7:0] BUS_DATA_IN,
     output reg [7:0] BUS_DATA_OUT,
-    input wire BUS_RST,
-    input wire BUS_WR,
-    input wire BUS_RD,
+    input BUS_RST,
+    input BUS_WR,
+    input BUS_RD,
 
-    output wire LOST_ERROR
+    output LOST_ERROR
 );
 
 localparam VERSION = 1;
@@ -86,7 +86,7 @@ wire [7:0] CONF_SAMPLE_SKIP = status_regs[6];
 wire [7:0] CONF_SAMPEL_DLY = status_regs[7];
 
 reg [7:0] CONF_ERROR_LOST;
-assign LOST_ERROR = CONF_ERROR_LOST != 0;
+assign LOST_ERROR = CONF_ERROR_LOST!=0;
 
 reg CONF_DONE;
 
@@ -99,7 +99,7 @@ always @(posedge BUS_CLK) begin
             BUS_DATA_OUT <= VERSION;
         else if(BUS_ADD == 1)
             BUS_DATA_OUT <= {7'b0, CONF_DONE};
-        else if(BUS_ADD == 8)
+		  else if(BUS_ADD == 8)
             BUS_DATA_OUT <= CONF_ERROR_LOST;
         else if(BUS_ADD < 16)
             BUS_DATA_OUT <= BUS_STATUS_OUT;
@@ -107,10 +107,10 @@ always @(posedge BUS_CLK) begin
 end
 
 wire rst_adc_sync;
-cdc_reset_sync isync_rst (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(ADC_ENC), .pulse_out(rst_adc_sync));
+cdc_pulse_sync_cnt isync_rst (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(ADC_ENC), .pulse_out(rst_adc_sync));
 
 wire start_adc_sync;
-cdc_pulse_sync istart_rst (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(ADC_ENC), .pulse_out(start_adc_sync));
+cdc_pulse_sync_cnt istart_rst (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(ADC_ENC), .pulse_out(start_adc_sync));
 
 wire adc_sync_pulse;
 pulse_gen_rising pulse_adc_sync (.clk_in(ADC_ENC), .in(ADC_SYNC), .out(adc_sync_pulse));
@@ -193,7 +193,7 @@ reg [13:0] dly_mem [255:0];
 reg [7:0] dly_addr_read,  dly_addr_write;
 
 always@(posedge ADC_ENC)
-    if(rst_adc_sync)
+    if(RST)
         dly_addr_write <= 0;
     else
         dly_addr_write <= dly_addr_write + 1;
@@ -222,7 +222,7 @@ wire wfull;
 reg cdc_fifo_write;
 
 always@(posedge ADC_ENC) begin
-    if(rst_adc_sync)
+    if(RST)
         CONF_ERROR_LOST <= 0;
     else if (CONF_ERROR_LOST!=8'hff && wfull && cdc_fifo_write)
         CONF_ERROR_LOST <= CONF_ERROR_LOST +1;
