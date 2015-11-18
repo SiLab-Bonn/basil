@@ -695,9 +695,12 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
     def init(self):
         # init DACs and ADCs
         super(GPAC, self).init()
-
+        
+        self._init.setdefault('no_calibration', False)
+        
         # read calibration
-        self.read_eeprom_calibration()
+        if not self._init['no_calibration']:
+            self.read_eeprom_calibration()
 
         logging.info('Found adapter card: {}'.format('%s with ID %s' % ('General Purpose Analog Card', self.get_id())))
 
