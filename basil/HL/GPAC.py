@@ -697,9 +697,11 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
         super(GPAC, self).init()
 
         # read calibration
-        self.read_eeprom_calibration()
-
-        logging.info('Found adapter card: {}'.format('%s with ID %s' % ('General Purpose Analog Card', self.get_id())))
+        if not self._init['no_calibration']:
+            self.read_eeprom_calibration()
+            logging.info('Found adapter card: {}'.format('%s with ID %s' % ('General Purpose Analog Card', self.get_id())))
+        else:
+            logging.info('GPAC: Skeeping calibration.')
 
         # setup current limit and current source
         self.set_current_limit('PWR0', 0.1)
