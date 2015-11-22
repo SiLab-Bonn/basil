@@ -280,7 +280,7 @@ always @ (posedge BUS_CLK) begin //(*) begin
             else
                 CONF_SIZE <= wr_pointer - rd_ponter;
         else
-            CONF_SIZE <= wr_pointer + (DEPTH-rd_ponter);
+            CONF_SIZE <= wr_pointer + (DEPTH - rd_ponter) + 1;
     end
 end
 
