@@ -37,7 +37,7 @@ module sram_test (
     assign SDA = 1'bz;
     assign SCL = 1'bz;
     
-    assign LED = 0; 
+    assign LED = 5'b10110; 
     
     //BASIL bus mapping
     wire [15:0] BUS_ADD;
@@ -58,6 +58,9 @@ module sram_test (
 
     localparam FIFO_BASEADDR = 16'h0020;  
     localparam FIFO_HIGHADDR = 16'h002f;  
+    
+    localparam PULSE_BASEADDR = 32'h0030;                    
+    localparam PULSE_HIGHADDR = 32'h003f;    
     
     // USER MODULES //
     wire [5:0] CONTROL_NOT_USED;
@@ -99,7 +102,27 @@ module sram_test (
         .BUS_WR(BUS_WR),
         .IO(PATTERN)
     );
-     
+    
+
+    wire PULSE;
+    pulse_gen
+    #( 
+        .BASEADDR(PULSE_BASEADDR), 
+        .HIGHADDR(PULSE_HIGHADDR)
+    ) i_pulse_gen
+    (
+        .BUS_CLK(BUS_CLK),
+        .BUS_RST(BUS_RST),
+        .BUS_ADD(BUS_ADD),
+        .BUS_DATA(BUS_DATA[7:0]),
+        .BUS_RD(BUS_RD),
+        .BUS_WR(BUS_WR),
+    
+        .PULSE_CLK(BUS_CLK),
+        .EXT_START(1'b0),
+        .PULSE(PULSE)
+    );
+    
     wire PATTERN_FIFO_READ;
     wire PATTERN_FIFO_EMPTY;
     
@@ -118,7 +141,7 @@ module sram_test (
         .RST(BUS_RST),
         .CLK(BUS_CLK),
     
-        .WRITE_REQ({COUNTER_EN, PATTERN_EN}),
+        .WRITE_REQ({COUNTER_EN | PULSE, PATTERN_EN}),
         .HOLD_REQ({2'b0}),
         .DATA_IN({COUNTER_FIFO_DATA, PATTERN}),
         .READ_GRANT({COUNTER_FIFO_READ, PATTERN_FIFO_READ}),
@@ -161,18 +184,18 @@ module sram_test (
         .FIFO_NEAR_FULL()
     ); 
 
-    reg [7:0] count;
+    reg [31:0] count;
     always@(posedge BUS_CLK)
         if(BUS_RST)
             count <= 0;
         else if (COUNTER_FIFO_READ)
-            count <= count + 4;
+            count <= count + 1;
     
     wire [7:0] count_send [3:0];
-    assign count_send[0] = count;
-    assign count_send[1] = count + 1;
-    assign count_send[2] = count + 2;
-    assign count_send[3] = count + 3;
+    assign count_send[0] = count*4;
+    assign count_send[1] = count*4 + 1;
+    assign count_send[2] = count*4 + 2;
+    assign count_send[3] = count*4 + 3;
     
     assign COUNTER_FIFO_DATA = {count_send[3], count_send[2], count_send[1], count_send[0]};
 

@@ -14,14 +14,18 @@ from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean, 
 class TestSram(unittest.TestCase):
     def setUp(self):
     
+        fw_path = get_basil_dir()+'/firmware/modules'
         cocotb_compile_and_run(
-            [get_basil_dir()+'/firmware/modules/gpio/gpio.v', 
-            get_basil_dir()+'/firmware/modules/utils/reset_gen.v', 
-            get_basil_dir()+'/firmware/modules/utils/bus_to_ip.v', 
-            get_basil_dir()+'/firmware/modules/rrp_arbiter/rrp_arbiter.v', 
-            get_basil_dir()+'/firmware/modules/utils/ODDR_sim.v', 
-            get_basil_dir()+'/firmware/modules/utils/generic_fifo.v', 
-            get_basil_dir()+'/firmware/modules/sram_fifo/sram_fifo_core.v', get_basil_dir()+'/firmware/modules/sram_fifo/sram_fifo.v', 
+            [fw_path + '/gpio/gpio.v', 
+            fw_path + '/utils/reset_gen.v', 
+            fw_path + '/utils/bus_to_ip.v', 
+            fw_path + '/rrp_arbiter/rrp_arbiter.v', 
+            fw_path + '/utils/ODDR_sim.v', 
+            fw_path + '/utils/generic_fifo.v', 
+            fw_path + '/utils/cdc_pulse_sync.v',
+            
+            fw_path + '/pulse_gen/pulse_gen.v', fw_path + '/pulse_gen/pulse_gen_core.v', 
+            fw_path + '/sram_fifo/sram_fifo_core.v', fw_path + '/sram_fifo/sram_fifo.v', 
             os.path.dirname(__file__) + '/../firmware/src/sram_test.v',
             os.path.dirname(__file__) + '/../tests/tb.v'], 
             top_level = 'tb',
@@ -39,8 +43,9 @@ class TestSram(unittest.TestCase):
         self.chip = Dut(cnfg)
         self.chip.init()
 
-    def test(self):
+    def test_simple(self):
         
+
         self.chip['CONTROL']['COUNTER_EN'] = 1
         self.chip['CONTROL'].write()
         self.chip['CONTROL'].write()
@@ -82,8 +87,92 @@ class TestSram(unittest.TestCase):
         x = np.arange(245*4,  dtype=np.uint8)
         x.dtype = np.uint32
         
+        self.assertEqual(ret.tolist(), x.tolist())
+    
+    def test_full(self):
+     
+        self.chip['CONTROL']['COUNTER_EN'] = 1
+        self.chip['CONTROL'].write()
+        
+        for i in range(2):
+            self.chip['fifo'].get_fifo_size()
+            
+        self.chip['CONTROL']['COUNTER_EN'] = 0
+        self.chip['CONTROL'].write()
+        
+        for _ in range(10):
+            self.chip['CONTROL'].write()
+             
+        size = self.chip['fifo'].get_fifo_size()
+        self.assertEqual(size, 512)
+        
+        
+        ret = self.chip['fifo'].get_data()
+        ret = np.hstack((ret,self.chip['fifo'].get_data())) 
+        
+        x = np.arange(203*4,  dtype=np.uint8)
+        x.dtype = np.uint32
+        
+        self.assertTrue(np.alltrue(ret == x))
+
+    def test_overflow(self):    
+        self.chip['CONTROL']['COUNTER_EN'] = 1
+        self.chip['CONTROL'].write()
+        
+        for i in range(20):
+            self.chip['fifo'].get_fifo_size()
+            
+        self.chip['CONTROL']['COUNTER_EN'] = 0
+        self.chip['CONTROL'].write()
+        
+        for _ in range(10):
+            self.chip['CONTROL'].write()
+            
+        ret = self.chip['fifo'].get_data()
+        while(self.chip['fifo'].get_fifo_size()):
+            ret = np.hstack((ret,self.chip['fifo'].get_data()))
+        
+        x = np.arange((128+1023)*4,  dtype=np.uint8)
+        x.dtype = np.uint32
+        
         self.assertTrue(np.alltrue(ret == x))
         
+        self.chip['pulse'].set_delay(1)
+        self.chip['pulse'].set_width(1)
+        self.chip['pulse'].start()
+        
+        ret = self.chip['fifo'].get_data()
+        x = np.arange((128+1023)*4, (128+1023+1)*4,  dtype=np.uint8)
+        x.dtype = np.uint32
+        
+        self.assertEqual(ret, x)
+
+    def test_single(self):
+        
+        self.chip['pulse'].set_delay(1)
+        self.chip['pulse'].set_width(1)
+        self.chip['pulse'].start()
+        
+        self.assertEqual(self.chip['fifo'].get_data().tolist(), [0x03020100])
+            
+        self.chip['pulse'].start()
+        
+        self.assertEqual(self.chip['fifo'].get_data().tolist(), [0x07060504])
+        
+    
+    def test_pattern(self):
+        self.chip['PATTERN'] = 0xaa5555aa
+        self.chip['PATTERN'].write()
+        
+        self.chip['CONTROL']['PATTERN_EN'] = 1
+        self.chip['CONTROL'].write()
+        self.chip['CONTROL']['PATTERN_EN'] = 0
+        self.chip['CONTROL'].write()
+        for _ in range(5):
+            self.chip['CONTROL'].write()
+             
+        self.assertEqual(self.chip['fifo'].get_data().tolist(), [0xaa5555aa]*35)
+    
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
