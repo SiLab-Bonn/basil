@@ -43,6 +43,7 @@ class TestSram(unittest.TestCase):
         self.chip = Dut(cnfg)
         self.chip.init()
 
+
     def test_simple(self):
         
 
@@ -89,6 +90,7 @@ class TestSram(unittest.TestCase):
         
         self.assertEqual(ret.tolist(), x.tolist())
     
+
     def test_full(self):
      
         self.chip['CONTROL']['COUNTER_EN'] = 1
@@ -114,6 +116,7 @@ class TestSram(unittest.TestCase):
         x.dtype = np.uint32
         
         self.assertTrue(np.alltrue(ret == x))
+
 
     def test_overflow(self):    
         self.chip['CONTROL']['COUNTER_EN'] = 1
@@ -147,6 +150,7 @@ class TestSram(unittest.TestCase):
         
         self.assertEqual(ret, x)
 
+
     def test_single(self):
         
         self.chip['pulse'].set_delay(1)
@@ -159,7 +163,7 @@ class TestSram(unittest.TestCase):
         
         self.assertEqual(self.chip['fifo'].get_data().tolist(), [0x07060504])
         
-    
+
     def test_pattern(self):
         self.chip['PATTERN'] = 0xaa5555aa
         self.chip['PATTERN'].write()
@@ -172,6 +176,19 @@ class TestSram(unittest.TestCase):
             self.chip['CONTROL'].write()
              
         self.assertEqual(self.chip['fifo'].get_data().tolist(), [0xaa5555aa]*35)
+    
+    def test_direct(self):
+        self.chip['CONTROL']['COUNTER_DIRECT'] = 1
+        self.chip['CONTROL'].write()
+        
+        size = 648
+        base_data_addr =  self.chip['fifo']._conf['base_data_addr']
+        
+        ret = self.chip['intf'].read(base_data_addr, size = size)
+        ret = np.hstack((ret,self.chip['intf'].read(base_data_addr, size = size)))
+        
+        x = np.arange(size*2,  dtype=np.uint8)
+        self.assertEqual(ret.tolist(), x.tolist())
     
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator

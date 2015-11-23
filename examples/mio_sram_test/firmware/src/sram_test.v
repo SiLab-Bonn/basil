@@ -63,9 +63,11 @@ module sram_test (
     localparam PULSE_HIGHADDR = 32'h003f;    
     
     // USER MODULES //
-    wire [5:0] CONTROL_NOT_USED;
+    wire [4:0] CONTROL_NOT_USED;
     wire PATTERN_EN;
     wire COUNTER_EN;
+    wire COUNTER_DIRECT;
+    
     gpio
     #(
         .BASEADDR(GPIO_CONTROL_BASEADDR), 
@@ -81,7 +83,7 @@ module sram_test (
         .BUS_DATA(BUS_DATA),
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
-        .IO({CONTROL_NOT_USED, PATTERN_EN, COUNTER_EN})
+        .IO({CONTROL_NOT_USED, COUNTER_DIRECT, PATTERN_EN, COUNTER_EN})
     );
         
     wire [31:0] PATTERN;
@@ -150,7 +152,10 @@ module sram_test (
         .WRITE_OUT(ARB_WRITE_OUT),
         .DATA_OUT(ARB_DATA_OUT)
     );
-
+    
+    wire USB_READ;
+    assign USB_READ = FREAD && FSTROBE;
+    wire [7:0] FD_SRAM;
     sram_fifo 
     #(
         .BASEADDR(FIFO_BASEADDR), 
@@ -171,8 +176,8 @@ module sram_test (
         .SRAM_OE_B(SRAM_OE_B),
         .SRAM_WE_B(SRAM_WE_B),
     
-        .USB_READ(FREAD && FSTROBE),
-        .USB_DATA(FD),
+        .USB_READ(USB_READ),
+        .USB_DATA(FD_SRAM),
     
         .FIFO_READ_NEXT_OUT(ARB_READY_OUT),
         .FIFO_EMPTY_IN(!ARB_WRITE_OUT),
@@ -199,4 +204,13 @@ module sram_test (
     
     assign COUNTER_FIFO_DATA = {count_send[3], count_send[2], count_send[1], count_send[0]};
 
+    reg [7:0] count_direct;
+    always@(posedge BUS_CLK)
+        if(BUS_RST)
+            count_direct <= 0;
+        else if (USB_READ)
+            count_direct <= count_direct + 1;
+    
+    assign FD = COUNTER_DIRECT ? count_direct: FD_SRAM;
+    
 endmodule
