@@ -43,7 +43,7 @@ class TestSram(unittest.TestCase):
         self.chip = Dut(cnfg)
         self.chip.init()
 
-
+    
     def test_simple(self):
         
 
@@ -90,7 +90,7 @@ class TestSram(unittest.TestCase):
         
         self.assertEqual(ret.tolist(), x.tolist())
     
-
+    
     def test_full(self):
      
         self.chip['CONTROL']['COUNTER_EN'] = 1
@@ -117,7 +117,7 @@ class TestSram(unittest.TestCase):
         
         self.assertTrue(np.alltrue(ret == x))
 
-
+    
     def test_overflow(self):    
         self.chip['CONTROL']['COUNTER_EN'] = 1
         self.chip['CONTROL'].write()
@@ -150,7 +150,7 @@ class TestSram(unittest.TestCase):
         
         self.assertEqual(ret, x)
 
-
+    
     def test_single(self):
         
         self.chip['pulse'].set_delay(1)
@@ -163,7 +163,7 @@ class TestSram(unittest.TestCase):
         
         self.assertEqual(self.chip['fifo'].get_data().tolist(), [0x07060504])
         
-
+    
     def test_pattern(self):
         self.chip['PATTERN'] = 0xaa5555aa
         self.chip['PATTERN'].write()
@@ -176,6 +176,7 @@ class TestSram(unittest.TestCase):
             self.chip['CONTROL'].write()
              
         self.assertEqual(self.chip['fifo'].get_data().tolist(), [0xaa5555aa]*35)
+
     
     def test_direct(self):
         self.chip['CONTROL']['COUNTER_DIRECT'] = 1
@@ -190,6 +191,30 @@ class TestSram(unittest.TestCase):
         x = np.arange(size*2,  dtype=np.uint8)
         self.assertEqual(ret.tolist(), x.tolist())
     
+    def test_continouse(self):
+        self.chip['pulse'].set_delay(35)
+        self.chip['pulse'].set_width(3)
+        self.chip['pulse'].set_repeat(0)
+        self.chip['pulse'].start()
+        
+        i = 0
+        error = False
+        for k in range(100):
+            ret = self.chip['fifo'].get_data()
+            
+            x = np.arange(i * 4, (i + ret.shape[0]) * 4, dtype=np.uint8)
+            x.dtype = np.uint32
+            
+            i += ret.shape[0]
+            
+            ok = np.alltrue(ret == x)
+            #print 'OK?', ok, ret.shape[0], i, k
+            if not ok:
+                error = True
+                break
+        
+        self.assertFalse(error)
+        
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
