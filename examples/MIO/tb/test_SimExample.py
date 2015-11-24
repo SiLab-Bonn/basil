@@ -13,10 +13,12 @@ from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean, 
 class TestExampleMIO(unittest.TestCase):
     def setUp(self):
     
+        fw_path = get_basil_dir()+'/firmware/modules'
         cocotb_compile_and_run(
-            [get_basil_dir()+'/firmware/modules/gpio/gpio.v', 
-            get_basil_dir()+'/firmware/modules/utils/reset_gen.v', 
-            get_basil_dir()+'/firmware/modules/utils/bus_to_ip.v', 
+            [fw_path+'/gpio/gpio.v', 
+            fw_path+'/utils/reset_gen.v', 
+            fw_path+'/utils/bus_to_ip.v', 
+            fw_path + '/utils/fx2_to_bus.v',
             os.path.dirname(__file__) + '/../src/example.v'], 
             top_level = 'example',
             sim_bus='basil.utils.sim.SiLibUsbBusDriver'
