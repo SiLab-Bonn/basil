@@ -23,7 +23,7 @@ class TestSram(unittest.TestCase):
             fw_path + '/utils/ODDR_sim.v', 
             fw_path + '/utils/generic_fifo.v', 
             fw_path + '/utils/cdc_pulse_sync.v',
-            
+            fw_path + '/utils/fx2_to_bus.v',
             fw_path + '/pulse_gen/pulse_gen.v', fw_path + '/pulse_gen/pulse_gen_core.v', 
             fw_path + '/sram_fifo/sram_fifo_core.v', fw_path + '/sram_fifo/sram_fifo.v', 
             os.path.dirname(__file__) + '/../firmware/src/sram_test.v',
