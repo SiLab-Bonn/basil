@@ -12,12 +12,11 @@ module fx2_to_bus
 #(
     parameter                   WIDTH = 16
 ) (
-    input wire                  FCLK_IN,
     input wire [WIDTH-1:0]      ADD,
     input wire                  RD_B, // neg active, two clock cycles
     input wire                  WR_B, // neg active
 
-    output wire                 BUS_CLK,
+    input wire                  BUS_CLK, // FCLK
     output wire [WIDTH-1:0]     BUS_ADD,
     output wire                 BUS_RD,
     output wire                 BUS_WR
@@ -36,6 +35,5 @@ end
 assign BUS_RD = (~RD_B & RD_B_FF);
 
 assign BUS_WR = ~WR_B;
-assign BUS_CLK = FCLK_IN;
 
 endmodule

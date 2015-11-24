@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -9,19 +9,19 @@
 
 module sram_test (
     input wire FCLK_IN,
-    
+
     // full speed
     inout wire [7:0] BUS_DATA,
     input wire [15:0] ADD,
     input wire RD_B,
     input wire WR_B,
-    
+
     // high speed
     inout wire [7:0] FD,
     input wire FREAD,
     input wire FSTROBE,
     input wire FMODE,
-    
+
     //SRAM
     output wire [19:0] SRAM_A,
     inout wire [15:0] SRAM_IO,
@@ -30,9 +30,9 @@ module sram_test (
     output wire SRAM_CE1_B,
     output wire SRAM_OE_B,
     output wire SRAM_WE_B,
-    
+
     output wire [4:0] LED,
-    
+
     inout wire SDA,
     inout wire SCL
 
@@ -48,12 +48,12 @@ wire [15:0] BUS_ADD;
 wire BUS_CLK, BUS_RD, BUS_WR, BUS_RST;
 
 // BASIL bus mapping
+assign BUS_CLK = FCLK_IN;
 fx2_to_bus i_fx2_to_bus (
-    .FCLK_IN(FCLK_IN),
     .ADD(ADD),
     .RD_B(RD_B),
     .WR_B(WR_B),
-    
+
     .BUS_CLK(BUS_CLK),
     .BUS_ADD(BUS_ADD),
     .BUS_RD(BUS_RD),
@@ -85,7 +85,7 @@ gpio
 #(
     .BASEADDR(GPIO_CONTROL_BASEADDR),
     .HIGHADDR(GPIO_CONTROL_HIGHADDR),
-    
+
     .IO_WIDTH(8),
     .IO_DIRECTION(8'hff)
 ) i_gpio_control
@@ -98,13 +98,13 @@ gpio
     .BUS_WR(BUS_WR),
     .IO({CONTROL_NOT_USED, COUNTER_DIRECT, PATTERN_EN, COUNTER_EN})
 );
-    
+
 wire [31:0] PATTERN;
 gpio
 #(
     .BASEADDR(GPIO_PATTERN_BASEADDR),
     .HIGHADDR(GPIO_PATTERN_HIGHADDR),
-    
+
     .IO_WIDTH(32),
     .IO_DIRECTION(32'hffffffff)
 ) i_gpio_pattern
