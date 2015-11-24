@@ -1,3 +1,12 @@
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
+ * ------------------------------------------------------------
+ */
+`timescale 1ps/1ps
+`default_nettype none
+
 // 'base' is a one hot signal indicating the first request
 // that should be considered for a grant.  Followed by higher
 // indexed requests, then wrapping around.

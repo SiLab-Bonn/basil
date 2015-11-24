@@ -1,4 +1,11 @@
-`timescale 1ns / 1ps
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
+ * ------------------------------------------------------------
+ */
+`timescale 1ps/1ps
+`default_nettype none
 
 // synchronizing asynchronous signals/flags, prevents metastable events
 
@@ -21,5 +28,3 @@ begin
 end
 
 endmodule
-
-

@@ -1,4 +1,11 @@
-`timescale 1ns / 1ps
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
+ * ------------------------------------------------------------
+ */
+`timescale 1ps/1ps
+`default_nettype none
 
 // synchronize flag (signal lasts just one clock cycle) to new clock domain (CLK_B)
 
