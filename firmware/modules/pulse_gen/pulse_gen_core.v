@@ -36,38 +36,40 @@ reg [31:0] CONF_REPEAT;
 reg CONF_DONE;
 
 always@(posedge BUS_CLK) begin
-    if(BUS_ADD == 0)
-        BUS_DATA_OUT <= VERSION;
-    else if(BUS_ADD == 1)
-        BUS_DATA_OUT <= {7'b0, CONF_DONE};
-    else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= {7'b0, CONF_EN};
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= CONF_DELAY[7:0];
-    else if(BUS_ADD == 4)
-        BUS_DATA_OUT <= CONF_DELAY[15:8];
-    else if(BUS_ADD == 5)
-        BUS_DATA_OUT <= CONF_DELAY[23:16];
-    else if(BUS_ADD == 6)
-        BUS_DATA_OUT <= CONF_DELAY[31:24];
-    else if(BUS_ADD == 7)
-        BUS_DATA_OUT <= CONF_WIDTH[7:0];
-    else if(BUS_ADD == 8)
-        BUS_DATA_OUT <= CONF_WIDTH[15:8];
-    else if(BUS_ADD == 9)
-        BUS_DATA_OUT <= CONF_WIDTH[23:16];
-    else if(BUS_ADD == 10)
-        BUS_DATA_OUT <= CONF_WIDTH[31:24];
-    else if(BUS_ADD == 11)
-        BUS_DATA_OUT <= CONF_REPEAT[7:0];
-    else if(BUS_ADD == 12)
-        BUS_DATA_OUT <= CONF_REPEAT[15:8];
-    else if(BUS_ADD == 13)
-        BUS_DATA_OUT <= CONF_REPEAT[23:16];
-    else if(BUS_ADD == 14)
-        BUS_DATA_OUT <= CONF_REPEAT[31:24];
-    else
-        BUS_DATA_OUT <= 8'b0;
+    if(BUS_RD) begin
+        if(BUS_ADD == 0)
+            BUS_DATA_OUT <= VERSION;
+        else if(BUS_ADD == 1)
+            BUS_DATA_OUT <= {7'b0, CONF_DONE};
+        else if(BUS_ADD == 2)
+            BUS_DATA_OUT <= {7'b0, CONF_EN};
+        else if(BUS_ADD == 3)
+            BUS_DATA_OUT <= CONF_DELAY[7:0];
+        else if(BUS_ADD == 4)
+            BUS_DATA_OUT <= CONF_DELAY[15:8];
+        else if(BUS_ADD == 5)
+            BUS_DATA_OUT <= CONF_DELAY[23:16];
+        else if(BUS_ADD == 6)
+            BUS_DATA_OUT <= CONF_DELAY[31:24];
+        else if(BUS_ADD == 7)
+            BUS_DATA_OUT <= CONF_WIDTH[7:0];
+        else if(BUS_ADD == 8)
+            BUS_DATA_OUT <= CONF_WIDTH[15:8];
+        else if(BUS_ADD == 9)
+            BUS_DATA_OUT <= CONF_WIDTH[23:16];
+        else if(BUS_ADD == 10)
+            BUS_DATA_OUT <= CONF_WIDTH[31:24];
+        else if(BUS_ADD == 11)
+            BUS_DATA_OUT <= CONF_REPEAT[7:0];
+        else if(BUS_ADD == 12)
+            BUS_DATA_OUT <= CONF_REPEAT[15:8];
+        else if(BUS_ADD == 13)
+            BUS_DATA_OUT <= CONF_REPEAT[23:16];
+        else if(BUS_ADD == 14)
+            BUS_DATA_OUT <= CONF_REPEAT[31:24];
+        else
+            BUS_DATA_OUT <= 8'b0;
+    end
 end
 
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);

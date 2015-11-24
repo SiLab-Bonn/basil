@@ -89,25 +89,30 @@ assign CONF_EN = status_regs[13][0];
 
 reg [7:0] BUS_DATA_OUT_REG;
 always@(posedge BUS_CLK) begin
-    if(BUS_ADD == 0)
-        BUS_DATA_OUT_REG <= VERSION;
-    else if(BUS_ADD == 1)
-        BUS_DATA_OUT_REG <= {7'b0, CONF_DONE};
-     else if(BUS_ADD == 13)
-        BUS_DATA_OUT_REG <= {7'b0, CONF_EN};
-    else if(BUS_ADD == 14)
-        BUS_DATA_OUT_REG <= MEM_BYTES[7:0];
-    else if(BUS_ADD == 15)
-        BUS_DATA_OUT_REG <= MEM_BYTES[15:8];
-    else if (BUS_ADD < 16)
-        BUS_DATA_OUT_REG <= status_regs[BUS_ADD[3:0]];
+    if(BUS_RD) begin
+        if(BUS_ADD == 0)
+            BUS_DATA_OUT_REG <= VERSION;
+        else if(BUS_ADD == 1)
+            BUS_DATA_OUT_REG <= {7'b0, CONF_DONE};
+         else if(BUS_ADD == 13)
+            BUS_DATA_OUT_REG <= {7'b0, CONF_EN};
+        else if(BUS_ADD == 14)
+            BUS_DATA_OUT_REG <= MEM_BYTES[7:0];
+        else if(BUS_ADD == 15)
+            BUS_DATA_OUT_REG <= MEM_BYTES[15:8];
+        else if (BUS_ADD < 16)
+            BUS_DATA_OUT_REG <= status_regs[BUS_ADD[3:0]];
+    end
 end
 
 // if one has a synchronous memory need this to give data on next clock after read
-// limitation: this module still needs two addresses
+// limitation: this module still needs to be addressed
 reg [ABUSWIDTH-1:0]  PREV_BUS_ADD;
-always@(posedge BUS_CLK)
-    PREV_BUS_ADD <= BUS_ADD;
+always @ (posedge BUS_CLK) begin
+    if(BUS_RD) begin
+        PREV_BUS_ADD <= BUS_ADD;
+    end
+end
 
 always @(*) begin
     if(PREV_BUS_ADD < 16)

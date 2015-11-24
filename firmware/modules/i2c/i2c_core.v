@@ -71,21 +71,26 @@ reg CONF_NO_ACK;
 
 reg [7:0] BUS_DATA_OUT_REG;
 always @ (posedge BUS_CLK) begin
-    if(BUS_ADD == 0)
-        BUS_DATA_OUT_REG <= VERSION;
-    else if(BUS_ADD == 1)
-        BUS_DATA_OUT_REG <= {6'b0, CONF_NO_ACK, CONF_DONE};
-    else if(BUS_ADD == 6)
-        BUS_DATA_OUT_REG <= MEM_BYTES[7:0];
-    else if(BUS_ADD == 7)
-        BUS_DATA_OUT_REG <= MEM_BYTES[15:8];
-    else if(BUS_ADD < 8)
-        BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
+    if(BUS_RD) begin
+        if(BUS_ADD == 0)
+            BUS_DATA_OUT_REG <= VERSION;
+        else if(BUS_ADD == 1)
+            BUS_DATA_OUT_REG <= {6'b0, CONF_NO_ACK, CONF_DONE};
+        else if(BUS_ADD == 6)
+            BUS_DATA_OUT_REG <= MEM_BYTES[7:0];
+        else if(BUS_ADD == 7)
+            BUS_DATA_OUT_REG <= MEM_BYTES[15:8];
+        else if(BUS_ADD < 8)
+            BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
+    end
 end
 
 reg [ABUSWIDTH-1:0]  PREV_BUS_ADD;
-always@(posedge BUS_CLK)
-    PREV_BUS_ADD <= BUS_ADD;
+always @ (posedge BUS_CLK) begin
+    if(BUS_RD) begin
+        PREV_BUS_ADD <= BUS_ADD;
+    end
+end
 
 reg [7:0] OUT_MEM;    
 always @(*) begin

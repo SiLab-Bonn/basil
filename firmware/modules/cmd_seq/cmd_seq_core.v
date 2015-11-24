@@ -180,16 +180,18 @@ three_stage_synchronizer #(
 (* RAM_STYLE="{BLOCK}" *)
 reg [7:0] cmd_mem [CMD_MEM_SIZE-1:0];
 always @ (posedge BUS_CLK) begin
-    if(BUS_ADD == 0)
-        BUS_DATA_OUT <= VERSION;
-    else if(BUS_ADD == 1)
-        BUS_DATA_OUT <= {7'b0, CONF_FINISH};
-    else if(BUS_ADD < 16)
-        BUS_DATA_OUT <= status_regs[BUS_ADD[3:0]];
-    else if(BUS_ADD < CMD_MEM_SIZE)
-        BUS_DATA_OUT <= cmd_mem[BUS_ADD[10:0]-16];
-    else
-        BUS_DATA_OUT <= 8'b0;
+    if(BUS_RD) begin
+        if(BUS_ADD == 0)
+            BUS_DATA_OUT <= VERSION;
+        else if(BUS_ADD == 1)
+            BUS_DATA_OUT <= {7'b0, CONF_FINISH};
+        else if(BUS_ADD < 16)
+            BUS_DATA_OUT <= status_regs[BUS_ADD[3:0]];
+        else if(BUS_ADD < CMD_MEM_SIZE)
+            BUS_DATA_OUT <= cmd_mem[BUS_ADD[10:0]-16];
+        else
+            BUS_DATA_OUT <= 8'b0;
+    end
 end
 
 always @ (posedge BUS_CLK) begin

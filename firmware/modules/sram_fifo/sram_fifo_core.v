@@ -6,7 +6,7 @@
  */
 `timescale 1ps/1ps
 `default_nettype none
- 
+
 module sram_fifo_core
 #(
     parameter                   DEPTH = 21'h10_0000,
@@ -86,24 +86,26 @@ reg [20:0] CONF_SIZE; // in units of 2 bytes (16 bit)
 assign CONF_SIZE_BYTE = CONF_SIZE * 2;
 
 always @ (posedge BUS_CLK) begin //(*) begin
-    if(BUS_ADD == 0)
-    	BUS_DATA_OUT <= VERSION;
-    else if(BUS_ADD == 1)
-        BUS_DATA_OUT <= FIFO_ALMOST_FULL_VALUE;
-    else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= FIFO_ALMOST_EMPTY_VALUE;
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= CONF_READ_ERROR;
-    else if(BUS_ADD == 4)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE[7:0]; // in units of bytes
-    else if(BUS_ADD == 5)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE_BUF[15:8];
-    else if(BUS_ADD == 6)
-        BUS_DATA_OUT <= {2'b0, CONF_SIZE_BYTE_BUF[21:16]};
-    else if(BUS_ADD == 7)
-        BUS_DATA_OUT <= 8'b0; // used by BRAM FIFO module
-    else
-        BUS_DATA_OUT <= 8'b0;
+    if(BUS_RD) begin
+        if(BUS_ADD == 0)
+            BUS_DATA_OUT <= VERSION;
+        else if(BUS_ADD == 1)
+            BUS_DATA_OUT <= FIFO_ALMOST_FULL_VALUE;
+        else if(BUS_ADD == 2)
+            BUS_DATA_OUT <= FIFO_ALMOST_EMPTY_VALUE;
+        else if(BUS_ADD == 3)
+            BUS_DATA_OUT <= CONF_READ_ERROR;
+        else if(BUS_ADD == 4)
+            BUS_DATA_OUT <= CONF_SIZE_BYTE[7:0]; // in units of bytes
+        else if(BUS_ADD == 5)
+            BUS_DATA_OUT <= CONF_SIZE_BYTE_BUF[15:8];
+        else if(BUS_ADD == 6)
+            BUS_DATA_OUT <= {2'b0, CONF_SIZE_BYTE_BUF[21:16]};
+        else if(BUS_ADD == 7)
+            BUS_DATA_OUT <= 8'b0; // used by BRAM FIFO module
+        else
+            BUS_DATA_OUT <= 8'b0;
+    end
 end
 
 always @ (posedge BUS_CLK)
