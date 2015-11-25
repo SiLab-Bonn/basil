@@ -8,14 +8,15 @@ import time
 from basil.dut import Dut
 import numpy as np
 
+
 chip = Dut("sram_test.yaml")
 chip.init()
 
-def test_sram(count = 10000):
 
+def test_sram(count=10000):
     i = 0
     error = 0
-    
+
     for k in range(count):
 
         # chip['CONTROL']['COUNTER_EN'] = 1
@@ -34,16 +35,15 @@ def test_sram(count = 10000):
         i += ret.shape[0]
 
         ok = np.alltrue(ret == x)
-        
-        #print 'OK?', ok, ret.shape[0], i, k, chip['fifo'].get_read_error_counter()
+
+        # print 'OK?', ok, ret.shape[0], i, k, chip['fifo'].get_read_error_counter()
         if not ok:
             error += 1
 
     return error
 
 
-def test_direct(count = 10000):
-
+def test_direct(count=10000):
     i = 0
     error = 0
 
@@ -61,38 +61,34 @@ def test_direct(count = 10000):
         i += size
 
         ok = np.alltrue(ret == x)
-        
-        #if k % 1000 == 1:
+
+        # if k % 1000 == 1:
         #    print k, error
 
         if not ok:
             error += 1
-        
+
     chip['CONTROL']['COUNTER_DIRECT'] = 0
     chip['CONTROL'].write()
     return error
 
-    
-def test_register(count = 10000):
 
+def test_register(count=10000):
     error = 0
     for i in range(count):
-        data = np.array([ (i*4+3) % 255, (i*4+2) % 255, (i*4+1) % 255, (i*4) % 255])
+        data = np.array([(i * 4 + 3) % 255, (i * 4 + 2) % 255, (i * 4 + 1) % 255, (i * 4) % 255])
         chip['gpio_pattern_drv'].set_data(data)
         ret = chip['gpio_pattern_drv'].get_data()
-        
+
         ok = np.alltrue(data == ret)
-                
+
         if not ok:
             error += 1
-            
+
     return error
 
-    
+
 if __name__ == "__main__":
     print 'test_register ...', 'errors:', test_register()
-    
-    print 'test_direct ...', print'errors:', test_direct()
-    
+    print 'test_direct ...', 'errors:', test_direct()
     print 'test_sram ...', 'errors:', test_sram()
-    
