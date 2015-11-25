@@ -101,18 +101,10 @@ class Pixel(Dut):
         
         
 if __name__ == "__main__":
-    # Read in the configuration YAML file
-    stream = open("pixel.yaml", 'r')
-    cnfg = yaml.load(stream)
 
     # Create the Pixel object
-    chip = Pixel(cnfg)
-
-    try:      
-        # Initialize the chip
-        chip.init()
-    except NotImplementedError: # this is to make simulation not fail
-        print 'chip.init() :: NotImplementedError'
+    chip = Pixel("pixel.yaml")
+    chip.init()
         
     # turn on the adapter card's power
     chip['PWR']['EN_VD1'] = 1
