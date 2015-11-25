@@ -243,23 +243,21 @@ module pixel (
     assign DEBUG_D = {SEQ_OUT,SEQ_OUT};
 
 
-    OFDDRRSE GLOBAL_SR_GC (
+    ODDR GLOBAL_SR_GC (
         .CE(GLOBAL_SR_EN), 
-        .C0(~SPI_CLK),
-        .C1(SPI_CLK),
-        .D0(1'b1),
-        .D1(1'b0),
+        .C(~SPI_CLK),
+        .D1(1'b1),
+        .D2(1'b0),
         .R(1'b0),
         .S(1'b0),
         .Q(GLOBAL_SR_CLK)
     );
 
-    OFDDRRSE PIXEL_SR_GC (
+    ODDR PIXEL_SR_GC (
         .CE(PIXEL_SR_EN), 
-        .C0(~SPI_CLK),
-        .C1(SPI_CLK),
-        .D0(1'b1),
-        .D1(1'b0),
+        .C(~SPI_CLK),
+        .D1(1'b1),
+        .D2(1'b0),
         .R(1'b0),
         .S(1'b0),
         .Q(PIXEL_SR_CLK)

@@ -85,7 +85,7 @@ module clk_gen(
    BUFG U2_CLK2X_INST (.I(U2_CLK2X), .O(U2_CLK2X_BUF));
    
    DCM #(
-         .CLKDV_DIVIDE(16.0), // Divide by: 1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5
+         .CLKDV_DIVIDE(16), // Divide by: 1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5
          // 7.0,7.5,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0 or 16.0
          .CLKFX_DIVIDE(4), // Can be any Integer from 1 to 32
          .CLKFX_MULTIPLY(2), // Can be any Integer from 2 to 32

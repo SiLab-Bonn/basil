@@ -40,4 +40,4 @@ install:
   - python setup.py develop
 
 script:
-  - nosetests tests/test_*.py examples/MIO/tb/test_*.py examples/mio_sram_test/tests/test_*.py
+  - nosetests tests/test_*.py examples/MIO/tb/test_*.py examples/mio_sram_test/tests/test_*.py python examples/mio_pixel/tests/test_*.py 

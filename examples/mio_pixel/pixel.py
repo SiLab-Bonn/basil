@@ -4,11 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 
 import yaml
 import numpy as np
@@ -62,7 +57,7 @@ class Pixel(Dut):
         self._clear_strobes()
 
         #enable receiver it work only if pixel register is enabled/clocked
-        chip['PIXEL_RX'].set_en(enable_receiver) 
+        self['PIXEL_RX'].set_en(enable_receiver) 
 
         px_size = len(self['PIXEL_REG'][:]) #get the size
         self['SEQ']['SHIFT_IN'][0:px_size] = self['PIXEL_REG'][:] # this will be shifted out
@@ -83,7 +78,7 @@ class Pixel(Dut):
         self['SEQ'].set_repeat(1) # set repeat
         self['SEQ'].start() # start
         
-        while not chip['SEQ'].get_done():
+        while not self['SEQ'].get_done():
             time.sleep(0.01)
             print "Wait for done..."
 
