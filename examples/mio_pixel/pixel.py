@@ -80,7 +80,6 @@ class Pixel(Dut):
         
         while not self['SEQ'].get_done():
             time.sleep(0.01)
-            print "Wait for done..."
 
     def _clear_strobes(self):
         """
