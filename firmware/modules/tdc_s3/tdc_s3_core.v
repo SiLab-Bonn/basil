@@ -83,22 +83,24 @@ always @(posedge BUS_CLK) begin
 end
 
 always @(posedge BUS_CLK) begin
-    if (BUS_ADD == 0)
-        BUS_DATA_OUT <= VERSION;
-    else if(BUS_ADD == 1)
-        BUS_DATA_OUT <= status_regs[1];
-    else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= EVENT_CNT[7:0];
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= EVENT_CNT_BUF[15:8];
-    else if(BUS_ADD == 4)
-        BUS_DATA_OUT <= EVENT_CNT_BUF[23:16];
-    else if(BUS_ADD == 5)
-        BUS_DATA_OUT <= EVENT_CNT_BUF[31:24];
-    else if(BUS_ADD == 6)
-        BUS_DATA_OUT <= LOST_DATA_CNT;
-    else
-        BUS_DATA_OUT <= 0;
+    if(BUS_RD) begin
+        if (BUS_ADD == 0)
+            BUS_DATA_OUT <= VERSION;
+        else if(BUS_ADD == 1)
+            BUS_DATA_OUT <= status_regs[1];
+        else if(BUS_ADD == 2)
+            BUS_DATA_OUT <= EVENT_CNT[7:0];
+        else if(BUS_ADD == 3)
+            BUS_DATA_OUT <= EVENT_CNT_BUF[15:8];
+        else if(BUS_ADD == 4)
+            BUS_DATA_OUT <= EVENT_CNT_BUF[23:16];
+        else if(BUS_ADD == 5)
+            BUS_DATA_OUT <= EVENT_CNT_BUF[31:24];
+        else if(BUS_ADD == 6)
+            BUS_DATA_OUT <= LOST_DATA_CNT;
+        else
+            BUS_DATA_OUT <= 0;
+    end
 end
 
 always @ (posedge BUS_CLK) begin

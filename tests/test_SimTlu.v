@@ -99,12 +99,12 @@ endmodule
 
 
 module tb (
-    input           BUS_CLK,
-    input           BUS_RST,
-    input   [31:0]  BUS_ADD,
-    inout   [31:0]  BUS_DATA,
-    input           BUS_RD,
-    input           BUS_WR,
+    input wire           BUS_CLK,
+    input wire           BUS_RST,
+    input wire   [31:0]  BUS_ADD,
+    inout wire   [31:0]  BUS_DATA,
+    input wire           BUS_RD,
+    input wire           BUS_WR,
     output wire     BUS_BYTE_ACCESS
 );   
 

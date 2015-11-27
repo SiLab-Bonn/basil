@@ -149,50 +149,51 @@ reg [7:0] LOST_DATA_CNT; // BUS_ADD==0
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK, CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF; // BUS_ADD==4 - 7
 reg [31:0] TRIGGER_COUNTER, TRIGGER_COUNTER_BUF; // BUS_ADD==8 - 11
 
-always @ (posedge BUS_CLK)
-begin
-    if (BUS_ADD == 0)
-        BUS_DATA_OUT <= VERSION;
-    else if (BUS_ADD == 1)
-        BUS_DATA_OUT <= status_regs[1];
-    else if (BUS_ADD == 2)
-        BUS_DATA_OUT <= status_regs[2];
-    else if (BUS_ADD == 3)
-        BUS_DATA_OUT <= status_regs[3];
-    else if (BUS_ADD == 4)
-        BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK[7:0];
-    else if (BUS_ADD == 5)
-        BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF[15:8];
-    else if (BUS_ADD == 6)
-        BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF[23:16];
-    else if (BUS_ADD == 7)
-        BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF[31:24];
-    else if (BUS_ADD == 8)
-        BUS_DATA_OUT <= TRIGGER_COUNTER[7:0];
-    else if (BUS_ADD == 9)
-        BUS_DATA_OUT <= TRIGGER_COUNTER_BUF[15:8];
-    else if (BUS_ADD == 10)
-        BUS_DATA_OUT <= TRIGGER_COUNTER_BUF[23:16];
-    else if (BUS_ADD == 11)
-        BUS_DATA_OUT <= TRIGGER_COUNTER_BUF[31:24];
-    else if (BUS_ADD == 12)
-        BUS_DATA_OUT <= LOST_DATA_CNT;
-    else if (BUS_ADD == 13)
-        BUS_DATA_OUT <= status_regs[13];
-    else if (BUS_ADD == 14)
-        BUS_DATA_OUT <= status_regs[14];
-    else if (BUS_ADD == 15)
-        BUS_DATA_OUT <= status_regs[15];
-    else if (BUS_ADD == 16)
-        BUS_DATA_OUT <= status_regs[16];
-    else if (BUS_ADD == 17)
-        BUS_DATA_OUT <= status_regs[17];
-    else if (BUS_ADD == 18)
-        BUS_DATA_OUT <= status_regs[18];
-    else if (BUS_ADD == 19)
-        BUS_DATA_OUT <= status_regs[19];
-    else
-        BUS_DATA_OUT <= 0;
+always @ (posedge BUS_CLK) begin
+    if(BUS_RD) begin
+        if (BUS_ADD == 0)
+            BUS_DATA_OUT <= VERSION;
+        else if (BUS_ADD == 1)
+            BUS_DATA_OUT <= status_regs[1];
+        else if (BUS_ADD == 2)
+            BUS_DATA_OUT <= status_regs[2];
+        else if (BUS_ADD == 3)
+            BUS_DATA_OUT <= status_regs[3];
+        else if (BUS_ADD == 4)
+            BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK[7:0];
+        else if (BUS_ADD == 5)
+            BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF[15:8];
+        else if (BUS_ADD == 6)
+            BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF[23:16];
+        else if (BUS_ADD == 7)
+            BUS_DATA_OUT <= CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF[31:24];
+        else if (BUS_ADD == 8)
+            BUS_DATA_OUT <= TRIGGER_COUNTER[7:0];
+        else if (BUS_ADD == 9)
+            BUS_DATA_OUT <= TRIGGER_COUNTER_BUF[15:8];
+        else if (BUS_ADD == 10)
+            BUS_DATA_OUT <= TRIGGER_COUNTER_BUF[23:16];
+        else if (BUS_ADD == 11)
+            BUS_DATA_OUT <= TRIGGER_COUNTER_BUF[31:24];
+        else if (BUS_ADD == 12)
+            BUS_DATA_OUT <= LOST_DATA_CNT;
+        else if (BUS_ADD == 13)
+            BUS_DATA_OUT <= status_regs[13];
+        else if (BUS_ADD == 14)
+            BUS_DATA_OUT <= status_regs[14];
+        else if (BUS_ADD == 15)
+            BUS_DATA_OUT <= status_regs[15];
+        else if (BUS_ADD == 16)
+            BUS_DATA_OUT <= status_regs[16];
+        else if (BUS_ADD == 17)
+            BUS_DATA_OUT <= status_regs[17];
+        else if (BUS_ADD == 18)
+            BUS_DATA_OUT <= status_regs[18];
+        else if (BUS_ADD == 19)
+            BUS_DATA_OUT <= status_regs[19];
+        else
+            BUS_DATA_OUT <= 0;
+    end
 end
 
 //assign some_value = (BUS_ADD==x && BUS_WR);

@@ -1,0 +1,60 @@
+#
+# ------------------------------------------------------------
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
+# ------------------------------------------------------------
+#
+
+transfer_layer:
+  - name  : intf
+    type  : SiUsb
+    init:
+      #avoid_download : True
+      bit_file : ./firmware/ise/sram_test.bit
+    
+hw_drivers:
+  - name      : gpio_control_drv
+    type      : gpio
+    interface : intf
+    base_addr : 0x10000
+    size      : 8
+    
+  - name      : gpio_pattern_drv
+    type      : gpio
+    interface : intf
+    base_addr : 0x10010
+    size      : 32
+
+  - name      : fifo
+    type      : sram_fifo
+    interface : intf
+    base_addr : 0x10020
+    base_data_addr: 0x0001000000000000
+    
+  - name      : pulse
+    type      : pulse_gen
+    interface : intf
+    base_addr : 0x10030
+    
+registers:
+  - name        : CONTROL
+    type        : StdRegister
+    hw_driver   : gpio_control_drv
+    size        : 8
+    fields:
+      - name    : COUNTER_EN
+        size    : 1
+        offset  : 0
+      - name    : PATTERN_EN
+        size    : 1
+        offset  : 1
+      - name    : COUNTER_DIRECT
+        size    : 1
+        offset  : 2        
+        
+        
+
+  - name        : PATTERN
+    type        : StdRegister
+    hw_driver   : gpio_pattern_drv
+    size        : 32

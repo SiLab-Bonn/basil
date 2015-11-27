@@ -6,8 +6,8 @@
 General purpose input output (gpio) is a generic pins whose behavior, including whether it is an input or output pin, can be controlled by the user at run time.  
 
 **Unit test/Example:** 
-`test_SimGpio.v <https://github.com/SiLab-Bonn/basil/blob/master/host/tests/test_SimGpio.v>`_ 
-`test_SimGpio.py <https://github.com/SiLab-Bonn/basil/blob/master/host/tests/test_SimGpio.py>`_
+`test_SimGpio.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimGpio.v>`_ 
+`test_SimGpio.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimGpio.py>`_
 
 Parameters
     +--------------+---------------------+-----------------------------------------------------------------+ 

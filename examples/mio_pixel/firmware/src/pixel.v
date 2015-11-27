@@ -3,11 +3,6 @@
  * Copyright (c) All rights reserved 
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $:
- *  $Date::                      $:
  */
  
 `timescale 1ps / 1ps
@@ -78,23 +73,25 @@ module pixel (
     assign SDA = 1'bz;
     assign SCL = 1'bz;
 
-    wire BUS_CLK;
-    wire SPI_CLK;
-    wire CLK_LOCKED;
-    wire BUS_RST;
-
     assign LEMO_TX[0] = INJECT;
     assign LEMO_TX[1] = 1'b0;
     assign LEMO_TX[2] = 1'b0;
-
-    wire CLK320, CLK160;
-    reset_gen i_reset_gen(.CLK(BUS_CLK), .RST(BUS_RST));
-
+    
+    (* KEEP = "{TRUE}" *) 
+    wire CLK320;
+    (* KEEP = "{TRUE}" *) 
+    wire CLK160;
+    (* KEEP = "{TRUE}" *) 
+    wire BUS_CLK;
+    (* KEEP = "{TRUE}" *) 
+    wire SPI_CLK;
+    (* KEEP = "{TRUE}" *) 
     wire TDC_WCLK; 
+    
+    wire CLK_LOCKED;
+    wire BUS_RST;
 
-    reg FCLK_IN_BUF;
-    always@(*)
-        FCLK_IN_BUF = FCLK_IN;
+    reset_gen i_reset_gen(.CLK(BUS_CLK), .RST(BUS_RST));
 
     clk_gen i_clkgen(
         .CLKIN(FCLK_IN),
@@ -108,7 +105,6 @@ module pixel (
     ); 
 
     // -------  MODULE ADREESSES  ------- //
-
     localparam GPIO_BASEADDR = 16'h0000;
     localparam GPIO_HIGHADDR = 16'h000f;
 
@@ -124,17 +120,23 @@ module pixel (
     localparam SEQ_GEN_BASEADDR = 16'h1000;                      //0x1000
     localparam SEQ_GEN_HIGHADDR = SEQ_GEN_BASEADDR + 16 + 16'h1fff;   //0x300f
 
+    
     // -------  BUS SYGNALING  ------- //
     wire [15:0] BUS_ADD;
-    assign BUS_ADD = ADD - 16'h4000;
     wire BUS_RD, BUS_WR;
-    assign BUS_RD = ~RD_B;
-    assign BUS_WR = ~WR_B;
-    
-    
-    // -------  USER MODULES  ------- //
-    
+    fx2_to_bus i_fx2_to_bus (
+        .ADD(ADD),
+        .RD_B(RD_B),
+        .WR_B(WR_B),
 
+        .BUS_CLK(BUS_CLK),
+        .BUS_ADD(BUS_ADD),
+        .BUS_RD(BUS_RD),
+        .BUS_WR(BUS_WR),
+        .CS_FPGA()
+    );
+
+    // -------  USER MODULES  ------- //
     wire ARB_READY_OUT, ARB_WRITE_OUT;
     wire [31:0] ARB_DATA_OUT;
     
@@ -242,23 +244,21 @@ module pixel (
     assign DEBUG_D = {SEQ_OUT,SEQ_OUT};
 
 
-    OFDDRRSE GLOBAL_SR_GC (
+    ODDR GLOBAL_SR_GC (
         .CE(GLOBAL_SR_EN), 
-        .C0(~SPI_CLK),
-        .C1(SPI_CLK),
-        .D0(1'b1),
-        .D1(1'b0),
+        .C(~SPI_CLK),
+        .D1(1'b1),
+        .D2(1'b0),
         .R(1'b0),
         .S(1'b0),
         .Q(GLOBAL_SR_CLK)
     );
 
-    OFDDRRSE PIXEL_SR_GC (
+    ODDR PIXEL_SR_GC (
         .CE(PIXEL_SR_EN), 
-        .C0(~SPI_CLK),
-        .C1(SPI_CLK),
-        .D0(1'b1),
-        .D1(1'b0),
+        .C(~SPI_CLK),
+        .D1(1'b1),
+        .D2(1'b0),
         .R(1'b0),
         .S(1'b0),
         .Q(PIXEL_SR_CLK)
@@ -288,32 +288,37 @@ module pixel (
     ); 
     
     
-    tdc_s3
-    #(
-         .BASEADDR(TDC_BASEADDR),
-         .HIGHADDR(TDC_HIGHADDR),
-         .DATA_IDENTIFIER(4'b0100),
-         .CLKDV(2)
-    ) i_tdc
-    (
-         .CLK320(CLK320),
-         .CLK160(CLK160),
-         .DV_CLK(TDC_WCLK),
-         .TDC_IN(HIT_OR),
-         .TDC_OUT(),
+    tdc_s3 #(
+        .BASEADDR(TDC_BASEADDR),
+        .HIGHADDR(TDC_HIGHADDR),
+        .CLKDV(2),
+        .DATA_IDENTIFIER(4'b0100), 
+        .FAST_TDC(1),
+        .FAST_TRIGGER(0)
+    ) i_tdc (
+        .CLK320(CLK320),
+        .CLK160(CLK160),
+        .DV_CLK(TDC_WCLK),
+        .TDC_IN(HIT_OR),
+        .TDC_OUT(),
+        .TRIG_IN(LEMO_RX[1]),
+        .TRIG_OUT(),
 
-         .FIFO_READ(TDC_FIFO_READ),
-         .FIFO_EMPTY(TDC_FIFO_EMPTY),
-         .FIFO_DATA(TDC_FIFO_DATA),
+        .FIFO_READ(TDC_FIFO_READ),
+        .FIFO_EMPTY(TDC_FIFO_EMPTY),
+        .FIFO_DATA(TDC_FIFO_DATA),
 
-         .BUS_CLK(BUS_CLK),
-         .BUS_RST(BUS_RST),
-         .BUS_ADD(BUS_ADD),
-         .BUS_DATA(BUS_DATA),
-         .BUS_RD(BUS_RD),
-         .BUS_WR(BUS_WR),
+        .BUS_CLK(BUS_CLK),
+        .BUS_RST(BUS_RST),
+        .BUS_ADD(BUS_ADD),
+        .BUS_DATA(BUS_DATA),
+        .BUS_RD(BUS_RD),
+        .BUS_WR(BUS_WR),
 
-         .ARM_TDC(1'b0)
+        .ARM_TDC(1'b0), // arm TDC by sending commands
+        .EXT_EN(1'b0),
+        
+        .TIMESTAMP(16'b0)
     );
     
     gpio 

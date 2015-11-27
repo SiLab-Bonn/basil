@@ -7,8 +7,8 @@ f = open('VERSION', 'r')
 basil_version = f.readline().strip()
 f.close()
 
-author = 'Tomasz Hemperek, Jens Janssen'
-author_email = 'hemperek@uni-bonn.de, janssen@physik.uni-bonn.de'
+author = 'Tomasz Hemperek, Jens Janssen, David-Leon Pohl'
+author_email = 'hemperek@uni-bonn.de, janssen@physik.uni-bonn.de, pohl@physik.uni-bonn.de'
 
 setup(
     name='basil_daq',

@@ -104,21 +104,23 @@ always @(posedge BUS_CLK) begin
         status_regs <= BUS_DATA_IN;
 end
 
-always @ (posedge BUS_CLK) begin //(*) begin
-    if(BUS_ADD == 0)
-        BUS_DATA_OUT <= VERSION;
-    else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= {status_regs[7:1], RX_READY};
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= fifo_size[7:0];
-    else if(BUS_ADD == 4)
-        BUS_DATA_OUT <= fifo_size_buf[15:8];
-    else if(BUS_ADD == 5)
-        BUS_DATA_OUT <= decoder_err_cnt_buf;
-    else if(BUS_ADD == 6)
-        BUS_DATA_OUT <= lost_err_cnt_buf;
-    else
-        BUS_DATA_OUT <= 8'b0;
+always @ (posedge BUS_CLK) begin
+    if(BUS_RD) begin
+        if(BUS_ADD == 0)
+            BUS_DATA_OUT <= VERSION;
+        else if(BUS_ADD == 2)
+            BUS_DATA_OUT <= {status_regs[7:1], RX_READY};
+        else if(BUS_ADD == 3)
+            BUS_DATA_OUT <= fifo_size[7:0];
+        else if(BUS_ADD == 4)
+            BUS_DATA_OUT <= fifo_size_buf[15:8];
+        else if(BUS_ADD == 5)
+            BUS_DATA_OUT <= decoder_err_cnt_buf;
+        else if(BUS_ADD == 6)
+            BUS_DATA_OUT <= lost_err_cnt_buf;
+        else
+            BUS_DATA_OUT <= 8'b0;
+    end
 end
 
 wire [23:0] FE_DATA;

@@ -1,63 +1,40 @@
 #
 # ------------------------------------------------------------
-# Copyright (c) All rights reserved
-# SiLab, Institute of Physics, University of Bonn
+# Copyright (c) SILAB , Physics Institute of Bonn University 
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
+
 
 #...............................................................................
 #  Constraints File - Xilinx UCF format
 #
-#       Device  :        XC3S1000-4FGG320C
-#       Board   :        S3-Multi-IO-Board V1.03
-#       Project :        S3_Multi_IO_USB
+#   	Device  :		XC3S1000-4FGG320C
+#   	Board   :		S3-Multi-IO-Board V1.03
+#   	Project :		S3_Multi_IO_USB
 #
 #...............................................................................
 #
 #     TargetId=XC3S1000-4FGG320C
 #
-#    Msel_0 = "0";        # Programming Mode
-#    Msel_1 = "1";        # Programming Mode
-#    Msel_2 = "1";        # Programming Mode
+#	Msel_0 = "0";		# Programming Mode
+#	Msel_1 = "1";		# Programming Mode
+#	Msel_2 = "1";		# Programming Mode
 #
 #...............................................................................
 
 
 # ------ Constraints -----------------------------------------------
 
-#DISABLE = reg_sr_clk;
-
 # FCLK (48 MHz)
 NET "FCLK_IN" TNM_NET = "TNM_FCLK_IN";
 TIMESPEC TS_FCLK_IN = PERIOD "TNM_FCLK_IN" 20 ns HIGH 50 %;
 
-
-NET "i_seq_gen/i_seq_gen_core/BUS_CLK" TNM_NET = "tn_BUS_CLK";
-NET "TDC_WCLK" TNM_NET = "tn_TDC_WCLK";
-
-TIMESPEC TS_FALSE_WCLK_BUS = FROM "tn_TDC_WCLK" TO "tn_BUS_CLK" TIG;
-TIMESPEC TS_FALSE_BUS_WCLK = FROM "tn_BUS_CLK" TO "tn_TDC_WCLK" TIG;
-
-NET "i_seq_gen/i_seq_gen_core/SEQ_CLK" TNM_NET = "tn_SPI_CLK";
-
-TIMESPEC TS_FALSE_ADC_ENC_BUS = FROM "tn_SPI_CLK" TO "tn_BUS_CLK" TIG;
-TIMESPEC TS_FALSE_BUS_ADC_ENC = FROM "tn_BUS_CLK" TO "tn_SPI_CLK" TIG;
-
-
-# ------ Overrride clock placement problems with ISE 11.x ----------
-#NET "FCKR" CLOCK_DEDICATED_ROUTE = FALSE;
-#NET "XCKR"        CLOCK_DEDICATED_ROUTE = FALSE;
 # ------ USB-Interface ---------------------------------------------
 
 NET "FCLK_IN" IOSTANDARD = LVCMOS33;
 NET "FCLK_IN" LOC = N10;
-#NET "LCK1"              LOC = "P9"      |    IOSTANDARD = LVCMOS33;        
-#NET "UCLK_IN"              LOC = "P10"     |    IOSTANDARD = LVCMOS33;
+#NET "LCK1"              LOC = "P9"      |	IOSTANDARD = LVCMOS33;		
+#NET "UCLK_IN"              LOC = "P10"     |	IOSTANDARD = LVCMOS33;
 
 # NET "BUSY_CONF" LOC=V10;
 # NET "_CS_CONF" LOC=V2;
@@ -117,18 +94,18 @@ NET "FSTROBE" LOC = T1;
 NET "FREAD" IOSTANDARD = LVCMOS33;
 NET "FREAD" LOC = U1;
 
-#NET "RDY[2]"        LOC = "V14"    |    IOSTANDARD = LVCMOS33;
-#NET "RDY[1]"        LOC = "V15"    |    IOSTANDARD = LVCMOS33;
-#NET "RDY[0]"        LOC = "U14"    |    IOSTANDARD = LVCMOS33;
+#NET "RDY[2]"		LOC = "V14"	|	IOSTANDARD = LVCMOS33;
+#NET "RDY[1]"		LOC = "V15"	|	IOSTANDARD = LVCMOS33;
+#NET "RDY[0]"		LOC = "U14"	|	IOSTANDARD = LVCMOS33;
 
-#NET "FD[15]"        LOC = "R8"    |    IOSTANDARD = LVCMOS33;
-#NET "FD[14]"        LOC = "R9"    |    IOSTANDARD = LVCMOS33;
-#NET "FD[13]"        LOC = "T8"    |    IOSTANDARD = LVCMOS33;
-#NET "FD[12]"        LOC = "R6"    |    IOSTANDARD = LVCMOS33;
-#NET "FD[11]"        LOC = "U5"    |    IOSTANDARD = LVCMOS33;
-#NET "FD[10]"        LOC = "R5"    |    IOSTANDARD = LVCMOS33;
-#NET "FD[9]"        LOC = "T5"    |    IOSTANDARD = LVCMOS33;
-#NET "FD[8]"        LOC = "T4"    |    IOSTANDARD = LVCMOS33;
+#NET "FD[15]"		LOC = "R8"	|	IOSTANDARD = LVCMOS33;
+#NET "FD[14]"		LOC = "R9"	|	IOSTANDARD = LVCMOS33;
+#NET "FD[13]"		LOC = "T8"	|	IOSTANDARD = LVCMOS33;
+#NET "FD[12]"		LOC = "R6"	|	IOSTANDARD = LVCMOS33;
+#NET "FD[11]"		LOC = "U5"	|	IOSTANDARD = LVCMOS33;
+#NET "FD[10]"		LOC = "R5"	|	IOSTANDARD = LVCMOS33;
+#NET "FD[9]"		LOC = "T5"	|	IOSTANDARD = LVCMOS33;
+#NET "FD[8]"		LOC = "T4"	|	IOSTANDARD = LVCMOS33;
 NET "FD[7]" IOSTANDARD = LVCMOS33;
 NET "FD[7]" LOC = U4;
 NET "FD[6]" IOSTANDARD = LVCMOS33;
@@ -146,59 +123,49 @@ NET "FD[1]" LOC = N9;
 NET "FD[0]" IOSTANDARD = LVCMOS33;
 NET "FD[0]" LOC = V11;
 
-
-
 # ------ LED -------------------------------------------------------
 
-NET "LED5" IOSTANDARD = LVCMOS33;
-NET "LED5" LOC = U15;
-NET "LED4" IOSTANDARD = LVCMOS33;
-NET "LED4" LOC = V16;
-NET "LED3" IOSTANDARD = LVCMOS33;
-NET "LED3" LOC = V17;
-NET "LED2" IOSTANDARD = LVCMOS33;
-NET "LED2" LOC = U16;
-NET "LED1" IOSTANDARD = LVCMOS33;
-NET "LED1" LOC = P13;
-
-
+NET "LED[4]" IOSTANDARD = LVCMOS33;
+NET "LED[4]" LOC = U15;
+NET "LED[3]" IOSTANDARD = LVCMOS33;
+NET "LED[3]" LOC = V16;
+NET "LED[2]" IOSTANDARD = LVCMOS33;
+NET "LED[2]" LOC = V17;
+NET "LED[1]" IOSTANDARD = LVCMOS33;
+NET "LED[1]" LOC = U16;
+NET "LED[0]" IOSTANDARD = LVCMOS33;
+NET "LED[0]" LOC = P13;
 
 # ------ Button & Spare & more -------------------------------------
 
-#NET "FPGA_BUTTON"       LOC=P4        |    IOSTANDARD = LVCMOS33;
-#NET "FPGA_SPARE_1"      LOC=C16        |    IOSTANDARD = LVCMOS33;
-#NET "FPGA_SPARE_2"      LOC=K6        |    IOSTANDARD = LVCMOS33;
+#NET "FPGA_BUTTON"       LOC=P4		|	IOSTANDARD = LVCMOS33;
+#NET "FPGA_SPARE_1"      LOC=C16		|	IOSTANDARD = LVCMOS33;
+#NET "FPGA_SPARE_2"      LOC=K6		|	IOSTANDARD = LVCMOS33;
 
-#NET "MULTI_IO<9>"      LOC=N5        |    IOSTANDARD = LVCMOS33;
-#NET "MULTI_IO<8>"      LOC=L6        |    IOSTANDARD = LVCMOS33;
-#NET "MULTI_IO<7>"      LOC=L3        |    IOSTANDARD = LVCMOS33;
-#NET "MULTI_IO<6>"      LOC=L4        |    IOSTANDARD = LVCMOS33;
-#NET "MULTI_IO<5>"      LOC=L2        |    IOSTANDARD = LVCMOS33;
-#NET "MULTI_IO<4>"      LOC=L1        |    IOSTANDARD = LVCMOS33;
-#NET "MULTI_IO<3>"      LOC=K5        |    IOSTANDARD = LVCMOS33;
-#NET "MULTI_IO<2>"      LOC=K4        |    IOSTANDARD = LVCMOS33;
-#NET "MULTI_IO<0>"      LOC=K2        |    IOSTANDARD = LVCMOS33;
-#NET "MULTI_IO<1>"      LOC=K1        |    IOSTANDARD = LVCMOS33;
+#NET "MULTI_IO_<9>"      LOC=N5		|	IOSTANDARD = LVCMOS33;
+#NET "MULTI_IO_<8>"      LOC=L6		|	IOSTANDARD = LVCMOS33;
+#NET "MULTI_IO_<7>"      LOC=L3		|	IOSTANDARD = LVCMOS33;
+#NET "MULTI_IO_<6>"      LOC=L4		|	IOSTANDARD = LVCMOS33;
+#NET "MULTI_IO_<5>"      LOC=L2		|	IOSTANDARD = LVCMOS33;
+#NET "MULTI_IO_<4>"      LOC=L1		|	IOSTANDARD = LVCMOS33;
+#NET "MULTI_IO_<3>"      LOC=K5		|	IOSTANDARD = LVCMOS33;
+#NET "MULTI_IO_<2>"      LOC=K4		|	IOSTANDARD = LVCMOS33;
+#NET "MULTI_IO_<1>"      LOC=K1		|	IOSTANDARD = LVCMOS33;
+#NET "MULTI_IO_<0>"      LOC=K2		|	IOSTANDARD = LVCMOS33;
 
 
 # ------ Trigger IOs ----------------------------------------------
 
-NET "LEMO_RX<2>"                                LOC=N2        |    IOSTANDARD = LVCMOS33;
-NET "LEMO_RX<1>"                                LOC=P1        |    IOSTANDARD = LVCMOS33;
-NET "LEMO_RX<0>"                                LOC=P3        |    IOSTANDARD = LVCMOS33;
+#NET "LEMO_RX<2>"								LOC=N2		|	IOSTANDARD = LVCMOS33;
+#NET "LEMO_RX<1>"								LOC=P1		|	IOSTANDARD = LVCMOS33;
+#NET "LEMO_RX<0>"								LOC=P3		|	IOSTANDARD = LVCMOS33;
 
-#NET "RJ45_RESET"                                LOC=L5        |    IOSTANDARD = LVCMOS33;
-#NET "RJ45_TRIGGER"                            LOC=M1        |    IOSTANDARD = LVCMOS33;
+#NET "RJ45_RESET"								LOC=L5		|	IOSTANDARD = LVCMOS33;
+#NET "RJ45_TRIGGER"							LOC=M1		|	IOSTANDARD = LVCMOS33;
 
-NET "LEMO_TX<2>"              LOC=R3     |   IOSTANDARD = LVCMOS33;
-NET "LEMO_TX<1>"              LOC=M5     |   IOSTANDARD = LVCMOS33;
-NET "LEMO_TX<0>"              LOC=M3     |   IOSTANDARD = LVCMOS33;
-
-#NET "TX[2]"                                LOC=R3        |    IOSTANDARD = LVCMOS33;
-#NET "TX[1]"                                LOC=M5        |    IOSTANDARD = LVCMOS33;
-#NET "TX[0]"                                LOC=M3        |    IOSTANDARD = LVCMOS33;
-
-
+#NET "TX<2>"								LOC=R3		|	IOSTANDARD = LVCMOS33;
+#NET "TX<1>"								LOC=M5		|	IOSTANDARD = LVCMOS33;
+#NET "TX<0>"								LOC=M3		|	IOSTANDARD = LVCMOS33;
 
 # ------ Async SRAM ------------------------------------------------
 
@@ -336,81 +303,43 @@ NET "SRAM_IO[0]" LOC = D17;
 #NET SRAM_WE_B  OFFSET = OUT 500 ps AFTER "FCLK_IN";
 #NET RAM_OE_N  OFFSET = OUT 500 ps AFTER "TG_MClk";
 
-
-
 # ------ Debugging -------------------------------------------------
 
-#NET "DEBUG_CLK1"    LOC = "P14"    |    IOSTANDARD = LVCMOS33;
-#NET "DEBUG_CLK2"    LOC = "R14"    |    IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[0]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[0]" LOC = K13;
-NET "DEBUG_D[1]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[1]" LOC = K14;
-NET "DEBUG_D[2]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[2]" LOC = L13;
-NET "DEBUG_D[3]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[3]" LOC = N14;
-NET "DEBUG_D[4]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[4]" LOC = N15;
-NET "DEBUG_D[5]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[5]" LOC = P16;
-NET "DEBUG_D[6]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[6]" LOC = P15;
-NET "DEBUG_D[7]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[7]" LOC = R16;
-NET "DEBUG_D[8]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[8]" LOC = T16;
-NET "DEBUG_D[9]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[9]" LOC = P18;
-NET "DEBUG_D[10]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[10]" LOC = P17;
-NET "DEBUG_D[11]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[11]" LOC = R18;
-NET "DEBUG_D[12]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[12]" LOC = R17;
-NET "DEBUG_D[13]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[13]" LOC = T18;
-NET "DEBUG_D[14]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[14]" LOC = T17;
-NET "DEBUG_D[15]" IOSTANDARD = LVCMOS33;
-NET "DEBUG_D[15]" LOC = U18;
+#NET "DEBUG_CLK1"	LOC = "P14"	|	IOSTANDARD = LVCMOS33;
+#NET "DEBUG_CLK2"	LOC = "R14"	|	IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[0]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[0]" LOC = K13;
+#NET "DEBUG_D[1]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[1]" LOC = K14;
+#NET "DEBUG_D[2]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[2]" LOC = L13;
+#NET "DEBUG_D[3]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[3]" LOC = N14;
+#NET "DEBUG_D[4]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[4]" LOC = N15;
+#NET "DEBUG_D[5]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[5]" LOC = P16;
+#NET "DEBUG_D[6]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[6]" LOC = P15;
+#NET "DEBUG_D[7]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[7]" LOC = R16;
+#NET "DEBUG_D[8]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[8]" LOC = T16;
+#NET "DEBUG_D[9]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[9]" LOC = P18;
+#NET "DEBUG_D[10]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[10]" LOC = P17;
+#NET "DEBUG_D[11]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[11]" LOC = R18;
+#NET "DEBUG_D[12]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[12]" LOC = R17;
+#NET "DEBUG_D[13]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[13]" LOC = T18;
+#NET "DEBUG_D[14]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[14]" LOC = T17;
+#NET "DEBUG_D[15]" IOSTANDARD = LVCMOS33;
+#NET "DEBUG_D[15]" LOC = U18;
 
 NET "SDA" LOC = D10;
 NET "SCL" LOC = D14;
 
-
-# ------GPAC IOs --------------------------------------
-
-#NET "INMUX[0]" LOC = A9;
-#NET "INMUX_SELECT[1]" LOC = B9
-#NET "INMUX[2]" LOC = D11;
-#NET "INMUX_SELECT[2]" LOC = E10;
-#NET "MONHIT" LOC = E13;
-#NET "CMOS_OUT[1]" LOC = D12;
-#NET "INMUX_SELECT[0]" LOC = E11;
-#NET "INMUX[3]" LOC = F11;
-#NET "INMUX[1]" LOC = E12;
-
-# outputs (from FPGA -> chip)
-NET "INJECT" LOC = E11; #IoMxSel0
-NET "GLOBAL_CTR_LD" LOC = B9; #IoMxSel1
-NET "PIXEL_SR_EN" LOC = E10; #IoMxSel2
-NET "GLOBAL_SR_EN" LOC = A9; #IoMxIn0 on chip
-NET "GLOBAL_DAC_LD" LOC = E12; #IoMxIn1 on chip
-NET "SR_IN" LOC = D11; #IoMxIn2
-NET "GLOBAL_SR_CLK" LOC = F11; #IoMxIn3
-NET "PIXEL_SR_CLK" LOC = B6; #SelCmd
-
-NET "PIXEL_SR_OUT" LOC = A7; #IoMxOut0
-NET "HIT_OR" LOC = D12; #IoMxOut1
-
-#NET "" LOC = D14; #SDA
-#NET "" LOC = D10; #SCL
-#NET "" LOC = A8; #IoMxOut2
-#NET "" LOC = A4; #SelAltBus
-
-# Enable Regulators
-NET "EN_VA1" LOC = H6 | IOSTANDARD = LVCMOS33;
-NET "EN_VA2" LOC = G5 | IOSTANDARD = LVCMOS33;
-NET "EN_VD2" LOC = C1 | IOSTANDARD = LVCMOS33;
-NET "EN_VD1" LOC = F5 | IOSTANDARD = LVCMOS33;

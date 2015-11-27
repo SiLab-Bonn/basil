@@ -64,7 +64,7 @@ registers:
 
 class TestSimSeq(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run([os.getcwd() + '/test_SimSeq.v'])
+        cocotb_compile_and_run([os.path.dirname(__file__) + '/test_SimSeq.v'])
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()

@@ -3,17 +3,10 @@
  * Copyright (c) All rights reserved 
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $:
- *  $Date::                      $:
- */
- 
-//`timescale 1ps / 1ps
-//`default_nettype none
 
-module pixel_cocotb (
+ */
+
+module tb (
     
     input wire FCLK_IN, 
     
@@ -31,7 +24,6 @@ module pixel_cocotb (
 
 );
 
-    
     wire [19:0] SRAM_A;
     wire SRAM_BHE_B;
     wire SRAM_BLE_B;
@@ -48,12 +40,7 @@ module pixel_cocotb (
     wire GLOBAL_DAC_LD;
 
     wire PIXEL_SR_CLK;
-    //wire PIXEL_SR_OUT;
-
-    //wire HIT_OR;
     wire INJECT;
-    
-    SiLibUSB sidev(FCLK_IN);
 
     // Instantiate the Unit Under Test (UUT)
     pixel uut (
@@ -94,8 +81,7 @@ module pixel_cocotb (
 
         .HIT_OR(INJECT), // loop INJECT to HIT_OR for testing
         .INJECT(INJECT)
-        
-        
+
     );
    
     /// SRAM Model
@@ -106,9 +92,8 @@ module pixel_cocotb (
     assign SRAM_IO = !SRAM_OE_B ? sram[SRAM_A] : 16'hzzzz;
     
     initial begin
-        $dumpfile("uut.vcd");
-        $dumpvars(0, uut);
-        //$monitor("%b", uut);
+        $dumpfile("pixel.vcd");
+        $dumpvars(0);
     end
 
 endmodule

@@ -80,25 +80,27 @@ reg [7:0] CONF_READ_ERROR; // read error count (read attempts when FIFO is empty
 wire [31:0] CONF_SIZE; // in units of int
 assign CONF_SIZE_BYTE = CONF_SIZE * 4;
 
-always @ (posedge BUS_CLK) begin //(*) begin
-    if(BUS_ADD == 0)
-    	BUS_DATA_OUT <= VERSION;
-    else if(BUS_ADD == 1)
-        BUS_DATA_OUT <= FIFO_ALMOST_FULL_VALUE;
-    else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= FIFO_ALMOST_EMPTY_VALUE;
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= CONF_READ_ERROR;
-    else if(BUS_ADD == 4)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE[7:0]; // in units of bytes
-    else if(BUS_ADD == 5)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE_BUF[15:8];
-    else if(BUS_ADD == 6)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE_BUF[23:16];
-    else if(BUS_ADD == 7)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE_BUF[31:24];
-    else
-        BUS_DATA_OUT <= 8'b0;
+always @ (posedge BUS_CLK) begin
+    if(BUS_RD) begin
+        if(BUS_ADD == 0)
+            BUS_DATA_OUT <= VERSION;
+        else if(BUS_ADD == 1)
+            BUS_DATA_OUT <= FIFO_ALMOST_FULL_VALUE;
+        else if(BUS_ADD == 2)
+            BUS_DATA_OUT <= FIFO_ALMOST_EMPTY_VALUE;
+        else if(BUS_ADD == 3)
+            BUS_DATA_OUT <= CONF_READ_ERROR;
+        else if(BUS_ADD == 4)
+            BUS_DATA_OUT <= CONF_SIZE_BYTE[7:0]; // in units of bytes
+        else if(BUS_ADD == 5)
+            BUS_DATA_OUT <= CONF_SIZE_BYTE_BUF[15:8];
+        else if(BUS_ADD == 6)
+            BUS_DATA_OUT <= CONF_SIZE_BYTE_BUF[23:16];
+        else if(BUS_ADD == 7)
+            BUS_DATA_OUT <= CONF_SIZE_BYTE_BUF[31:24];
+        else
+            BUS_DATA_OUT <= 8'b0;
+    end
 end
 
 always @ (posedge BUS_CLK)

@@ -14,8 +14,8 @@ NOTE:
  6. All selected trigger veto inputs (TRIGGER_VETO) are ORed (and enabled by default)
 
 **Unit test/Example:** 
-`test_SimTlu.v <https://github.com/SiLab-Bonn/basil/blob/master/host/tests/test_SimTlu.v>`_ 
-`test_SimTlu.py <https://github.com/SiLab-Bonn/basil/blob/master/host/tests/test_SimTlu.py>`_
+`test_SimTlu.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTlu.v>`_ 
+`test_SimTlu.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTlu.py>`_
 
 Parameters
     +--------------+---------------------+-------------------------------------------------------------------------+ 

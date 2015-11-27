@@ -6,8 +6,8 @@
 Module implements master i2c peripheral interface.
 
 **Unit test/Example:** 
-`test_SimI2c.v <https://github.com/SiLab-Bonn/basil/blob/master/host/tests/test_SimI2c.v>`_ 
-`test_SimI2c.py <https://github.com/SiLab-Bonn/basil/blob/master/host/tests/test_SimI2c.py>`_
+`test_SimI2c.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimI2c.v>`_ 
+`test_SimI2c.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimI2c.py>`_
 
 Parameters
     +--------------+---------------------+---------------------------------------------------------------------------------+ 

@@ -1,19 +1,20 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $: 
- *  $Date::                      $:
  */
- 
- 
-///////////////////////
+`timescale 1ps/1ps
+`default_nettype none
+
 // Closed loop solution
-/////////////////////
-module cdc_pulse_sync (input wire clk_in, input wire pulse_in, input wire clk_out, output wire pulse_out);
+
+module cdc_pulse_sync (
+    input wire clk_in,
+    input wire pulse_in,
+    input wire clk_out,
+    output wire pulse_out
+);
 
 wire aq_sync;
 

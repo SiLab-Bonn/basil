@@ -83,7 +83,7 @@ module tb (
         .IO()
     );
     
-    
+    wire SPI_CLK;
     wire EX_START_PULSE;
     pulse_gen
     #( 
@@ -103,9 +103,6 @@ module tb (
         .EXT_START(1'b0),
         .PULSE(EX_START_PULSE)
     );
-    
-    
-    wire SPI_CLK;
     
     clock_divider #(
     .DIVISOR(4) 

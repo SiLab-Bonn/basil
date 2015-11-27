@@ -6,7 +6,7 @@
  */
 `timescale 1ps/1ps
 `default_nettype none
- 
+
 module sram_fifo_core
 #(
     parameter                   DEPTH = 21'h10_0000,
@@ -86,24 +86,26 @@ reg [20:0] CONF_SIZE; // in units of 2 bytes (16 bit)
 assign CONF_SIZE_BYTE = CONF_SIZE * 2;
 
 always @ (posedge BUS_CLK) begin //(*) begin
-    if(BUS_ADD == 0)
-    	BUS_DATA_OUT <= VERSION;
-    else if(BUS_ADD == 1)
-        BUS_DATA_OUT <= FIFO_ALMOST_FULL_VALUE;
-    else if(BUS_ADD == 2)
-        BUS_DATA_OUT <= FIFO_ALMOST_EMPTY_VALUE;
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT <= CONF_READ_ERROR;
-    else if(BUS_ADD == 4)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE[7:0]; // in units of bytes
-    else if(BUS_ADD == 5)
-        BUS_DATA_OUT <= CONF_SIZE_BYTE_BUF[15:8];
-    else if(BUS_ADD == 6)
-        BUS_DATA_OUT <= {2'b0, CONF_SIZE_BYTE_BUF[21:16]};
-    else if(BUS_ADD == 7)
-        BUS_DATA_OUT <= 8'b0; // used by BRAM FIFO module
-    else
-        BUS_DATA_OUT <= 8'b0;
+    if(BUS_RD) begin
+        if(BUS_ADD == 0)
+            BUS_DATA_OUT <= VERSION;
+        else if(BUS_ADD == 1)
+            BUS_DATA_OUT <= FIFO_ALMOST_FULL_VALUE;
+        else if(BUS_ADD == 2)
+            BUS_DATA_OUT <= FIFO_ALMOST_EMPTY_VALUE;
+        else if(BUS_ADD == 3)
+            BUS_DATA_OUT <= CONF_READ_ERROR;
+        else if(BUS_ADD == 4)
+            BUS_DATA_OUT <= CONF_SIZE_BYTE[7:0]; // in units of bytes
+        else if(BUS_ADD == 5)
+            BUS_DATA_OUT <= CONF_SIZE_BYTE_BUF[15:8];
+        else if(BUS_ADD == 6)
+            BUS_DATA_OUT <= {2'b0, CONF_SIZE_BYTE_BUF[21:16]};
+        else if(BUS_ADD == 7)
+            BUS_DATA_OUT <= 8'b0; // used by BRAM FIFO module
+        else
+            BUS_DATA_OUT <= 8'b0;
+    end
 end
 
 always @ (posedge BUS_CLK)
@@ -131,7 +133,7 @@ gerneric_fifo #(.DATA_SIZE(32), .DEPTH(1024))  i_buf_fifo
 
 
 wire empty, full;
-reg [19:0] rd_ponter, next_rd_ponter, wr_pointer, next_wr_pointer;
+reg [19:0] rd_pointer, next_rd_pointer, wr_pointer, next_wr_pointer;
 
 reg usb_read_dly;
 always@(posedge BUS_CLK)
@@ -220,24 +222,24 @@ ODDR WE_INST (.D1(~write_sram), .D2(1'b1),
               .Q(SRAM_WE_B) );
 
 assign SRAM_IO = write_sram ? DATA_TO_SRAM : 16'hzzzz;
-assign SRAM_A = (read_sram) ? rd_ponter : wr_pointer;
+assign SRAM_A = (read_sram) ? rd_pointer : wr_pointer;
 assign SRAM_BHE_B = 0;
 assign SRAM_BLE_B = 0;
 assign SRAM_CE1_B = 0;
 assign SRAM_OE_B = !read_sram;
 
 always @ (*) begin
-     if(rd_ponter == DEPTH-1)
-        next_rd_ponter = 0;
+     if(rd_pointer == DEPTH-1)
+        next_rd_pointer = 0;
      else
-        next_rd_ponter = rd_ponter + 1;
+        next_rd_pointer = rd_pointer + 1;
 end
 
 always@(posedge BUS_CLK) begin
     if(RST)
-        rd_ponter <= 0;
+        rd_pointer <= 0;
     else if(read_sram && !empty) begin
-        rd_ponter <= next_rd_ponter;
+        rd_pointer <= next_rd_pointer;
     end
 end
 
@@ -256,16 +258,16 @@ always@(posedge BUS_CLK) begin
     end
 end
 
-assign empty = (wr_pointer == rd_ponter);
-assign full = ((wr_pointer==(DEPTH-1) && rd_ponter==0) ||  (wr_pointer!=(DEPTH-1) && wr_pointer+1 == rd_ponter) ); 
+assign empty = (wr_pointer == rd_pointer);
+assign full = ((wr_pointer==(DEPTH-1) && rd_pointer==0) ||  (wr_pointer!=(DEPTH-1) && wr_pointer+1 == rd_pointer) ); 
 
 always@(posedge BUS_CLK) begin
     if(RST)
         full_ff <= 0;
     else if(read_sram && !empty)
-        full_ff <= ((wr_pointer==(DEPTH-1) && next_rd_ponter==0) ||  (wr_pointer!=(DEPTH-1) && wr_pointer+1 == next_rd_ponter) );
+        full_ff <= ((wr_pointer==(DEPTH-1) && next_rd_pointer==0) ||  (wr_pointer!=(DEPTH-1) && wr_pointer+1 == next_rd_pointer) );
     else if(write_sram && !full)
-        full_ff <= ((next_wr_pointer==(DEPTH-1) && rd_ponter==0) ||  (next_wr_pointer!=(DEPTH-1) && next_wr_pointer+1 == rd_ponter) );
+        full_ff <= ((next_wr_pointer==(DEPTH-1) && rd_pointer==0) ||  (next_wr_pointer!=(DEPTH-1) && next_wr_pointer+1 == rd_pointer) );
 end
 
 
@@ -274,13 +276,13 @@ always @ (posedge BUS_CLK) begin //(*) begin
         CONF_SIZE <= 0;
     else
     begin
-        if(wr_pointer >= rd_ponter)
+        if(wr_pointer >= rd_pointer)
             if(read_state == READ_NOP_SRAM)
-                CONF_SIZE <= wr_pointer - rd_ponter+1;
+                CONF_SIZE <= wr_pointer - rd_pointer+1;
             else
-                CONF_SIZE <= wr_pointer - rd_ponter;
+                CONF_SIZE <= wr_pointer - rd_pointer;
         else
-            CONF_SIZE <= wr_pointer + (DEPTH-rd_ponter);
+            CONF_SIZE <= wr_pointer + (DEPTH - rd_pointer) + 1;
     end
 end
 

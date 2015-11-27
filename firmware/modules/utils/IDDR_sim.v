@@ -1,6 +1,17 @@
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) All rights reserved 
+ * SiLab, Institute of Physics, University of Bonn
+ * ------------------------------------------------------------
+ */
+`timescale 1ps/1ps
+`default_nettype none
 
-module IDDR ( output reg Q1, Q2, 
-              input wire C, CE, D, R, S );
+
+module IDDR (
+    output reg Q1, Q2, 
+    input wire C, CE, D, R, S
+);
 
 
 always@ (posedge C) begin

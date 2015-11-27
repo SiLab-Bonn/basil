@@ -14,25 +14,25 @@ module gpac_adc_rx_core
     parameter [0:0] HEADER_ID = 0
 )
 (
-    input ADC_ENC,
-    input [13:0] ADC_IN,
+    input wire ADC_ENC,
+    input wire [13:0] ADC_IN,
 
-    input ADC_SYNC,
-    input ADC_TRIGGER,
+    input wire ADC_SYNC,
+    input wire ADC_TRIGGER,
 
-    input FIFO_READ,
-    output FIFO_EMPTY,
-    output [31:0] FIFO_DATA,
+    input wire FIFO_READ,
+    output wire FIFO_EMPTY,
+    output wire [31:0] FIFO_DATA,
 
-    input BUS_CLK,
-    input [ABUSWIDTH-1:0] BUS_ADD,
-    input [7:0] BUS_DATA_IN,
+    input wire BUS_CLK,
+    input wire [ABUSWIDTH-1:0] BUS_ADD,
+    input wire [7:0] BUS_DATA_IN,
     output reg [7:0] BUS_DATA_OUT,
-    input BUS_RST,
-    input BUS_WR,
-    input BUS_RD,
+    input wire BUS_RST,
+    input wire BUS_WR,
+    input wire BUS_RD,
 
-    output LOST_ERROR
+    output wire LOST_ERROR
 );
 
 localparam VERSION = 1;
@@ -243,7 +243,7 @@ always@(*) begin
 end
 
 wire [31:0] cdc_data_out;
-cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) cdc_syncfifo_i
+cdc_syncfifo #(.DSIZE(32), .ASIZE(3)) cdc_syncfifo_i
 (
     .rdata(cdc_data_out),
     .wfull(wfull),

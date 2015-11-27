@@ -62,4 +62,4 @@ Host Software:
   The host software is distributed under the BSD 3-Clause ("BSD New" or "BSD Simplified") License.
 
 FPGA Firmware:
-  The FPGA software is distributed under the GNU Lesser General Public License, version 3.0 (LGPLv3).
+  The FPGA code is distributed under the GNU Lesser General Public License, version 3.0 (LGPLv3).

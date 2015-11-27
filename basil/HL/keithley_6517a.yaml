@@ -1,0 +1,14 @@
+# Device description for the Keithley 6517A Electrometer. 
+# set_ function expect a parameter, get_ function return a parameter.
+# Just the very basic commands are implemented here.
+identifier : KEITHLEY INSTRUMENTS INC.,MODEL 6517A
+remote_enable : REN
+on : OUTP ON
+off : OUTP OFF
+#get_current : MEAS:CURR?
+get_current : READ?
+set_current_limit : SENS:CURR:PROT
+set_voltage : SOUR:VOLT
+get_voltage : MEAS:VOLT?
+trigger : TRIG:GET
+set_current_range : CURR:RANG

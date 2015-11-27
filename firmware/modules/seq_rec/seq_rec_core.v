@@ -97,23 +97,29 @@ assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
 
 reg [7:0] BUS_DATA_OUT_REG;
 always @ (posedge BUS_CLK) begin
-    if(BUS_ADD == 0)
-        BUS_DATA_OUT_REG <= VERSION;
-    else if(BUS_ADD == 1)
-        BUS_DATA_OUT_REG <= {7'b0,CONF_DONE};
-    else if(BUS_ADD == 2)
-        BUS_DATA_OUT_REG <= {7'b0,CONF_EN_SEQ_EXT_START};
-    else if(BUS_ADD == 3)
-        BUS_DATA_OUT_REG <= CONF_COUNT[15:8];
-    else if(BUS_ADD == 4)
-        BUS_DATA_OUT_REG <= CONF_COUNT[7:0];
-    else if(BUS_ADD < 16)
-        BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
+    if(BUS_RD)
+    begin
+        if(BUS_ADD == 0)
+            BUS_DATA_OUT_REG <= VERSION;
+        else if(BUS_ADD == 1)
+            BUS_DATA_OUT_REG <= {7'b0,CONF_DONE};
+        else if(BUS_ADD == 2)
+            BUS_DATA_OUT_REG <= {7'b0,CONF_EN_SEQ_EXT_START};
+        else if(BUS_ADD == 3)
+            BUS_DATA_OUT_REG <= CONF_COUNT[15:8];
+        else if(BUS_ADD == 4)
+            BUS_DATA_OUT_REG <= CONF_COUNT[7:0];
+        else if(BUS_ADD < 16)
+            BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
+    end
 end
 
 reg [ABUSWIDTH-1:0]  PREV_BUS_ADD;
-always@(posedge BUS_CLK)
-    PREV_BUS_ADD <= BUS_ADD;
+always @ (posedge BUS_CLK) begin
+    if(BUS_RD) begin
+        PREV_BUS_ADD <= BUS_ADD;
+    end
+end
     
 always @(*) begin
     if(PREV_BUS_ADD < 16)
@@ -146,9 +152,8 @@ endgenerate
 
 reg [IN_BITS-1:0] SEQ_IN_MEM;
 
-wire WEA;
+wire WEA, WEB;
 assign WEA = BUS_WR && BUS_ADD >=16 && BUS_ADD < 16+MEM_BYTES && !WEB;
-wire WEB;
 
 generate
     if (IN_BITS==8) begin

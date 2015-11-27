@@ -6,8 +6,8 @@
 Module implements master serial peripheral interface. Supports simple internal loops.
 
 **Unit test/Example:** 
-`test_SimSpi.v <https://github.com/SiLab-Bonn/basil/blob/master/host/tests/test_SimSpi.v>`_ 
-`test_SimSpi.py <https://github.com/SiLab-Bonn/basil/blob/master/host/tests/test_SimSpi.py>`_
+`test_SimSpi.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimSpi.v>`_ 
+`test_SimSpi.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimSpi.py>`_
 
 Parameters
     +--------------+---------------------+-------------------------------------------------------------------------+ 

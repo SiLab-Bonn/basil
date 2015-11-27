@@ -3,11 +3,6 @@
  * Copyright (c) All rights reserved 
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
- *
- * SVN revision information:
- *  $Rev::                       $:
- *  $Author::                    $:
- *  $Date::                      $:
  */
  
  `timescale 1ns / 1ps
@@ -28,17 +23,14 @@ module clk_gen(
     
     wire U1_CLK0, U1_CLK0_BUF, U1_CLKDV, U1_CLKDV_BUF;
     assign BUS_CLK = U1_CLK0_BUF;
-
-
+    
     wire U2_CLKDV_BUF, U2_CLK0_BUF, U2_CLK2X_BUF, U2_CLKFX_BUF;
     
     assign U2_CLK5 = U2_CLKDV_BUF;
     assign U2_CLK80 = U2_CLK0_BUF;
     assign U2_CLK160 = U2_CLK2X_BUF;
     assign U2_CLK320 = U2_CLKFX_BUF;
-    
-    
-  
+
     BUFG CLKFB_BUFG_INST (.I(U1_CLK0), .O(U1_CLK0_BUF));
     BUFG CLKDV_BUFG_INST (.I(U1_CLKDV), .O(U1_CLKDV_BUF));
     
@@ -92,11 +84,8 @@ module clk_gen(
    BUFG CLKFX2_2_BUFG_INST (.I(U2_CLKFX), .O(U2_CLKFX_BUF));
    BUFG U2_CLK2X_INST (.I(U2_CLK2X), .O(U2_CLK2X_BUF));
    
-   
-     
-     
    DCM #(
-         .CLKDV_DIVIDE(16.0), // Divide by: 1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5
+         .CLKDV_DIVIDE(16), // Divide by: 1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5
          // 7.0,7.5,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0 or 16.0
          .CLKFX_DIVIDE(4), // Can be any Integer from 1 to 32
          .CLKFX_MULTIPLY(2), // Can be any Integer from 2 to 32
@@ -146,8 +135,5 @@ module clk_gen(
      DV 5
      FX 320
   */   
-     
-
-     
      
 endmodule

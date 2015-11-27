@@ -4,11 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# SVN revision information:
-#  $Rev::                       $:
-#  $Author::                    $:
-#  $Date::                      $:
-#
 
 import yaml
 import numpy as np
@@ -62,7 +57,7 @@ class Pixel(Dut):
         self._clear_strobes()
 
         #enable receiver it work only if pixel register is enabled/clocked
-        chip['PIXEL_RX'].set_en(enable_receiver) 
+        self['PIXEL_RX'].set_en(enable_receiver) 
 
         px_size = len(self['PIXEL_REG'][:]) #get the size
         self['SEQ']['SHIFT_IN'][0:px_size] = self['PIXEL_REG'][:] # this will be shifted out
@@ -83,9 +78,8 @@ class Pixel(Dut):
         self['SEQ'].set_repeat(1) # set repeat
         self['SEQ'].start() # start
         
-        while not chip['SEQ'].get_done():
+        while not self['SEQ'].get_done():
             time.sleep(0.01)
-            print "Wait for done..."
 
     def _clear_strobes(self):
         """
@@ -101,18 +95,10 @@ class Pixel(Dut):
         
         
 if __name__ == "__main__":
-    # Read in the configuration YAML file
-    stream = open("pixel.yaml", 'r')
-    cnfg = yaml.load(stream)
 
     # Create the Pixel object
-    chip = Pixel(cnfg)
-
-    try:      
-        # Initialize the chip
-        chip.init()
-    except NotImplementedError: # this is to make simulation not fail
-        print 'chip.init() :: NotImplementedError'
+    chip = Pixel("pixel.yaml")
+    chip.init()
         
     # turn on the adapter card's power
     chip['PWR']['EN_VD1'] = 1

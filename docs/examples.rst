@@ -4,7 +4,7 @@ Examples
 
 Example of project can be found in `examples folder <https://github.com/SiLab-Bonn/basil/tree/master/examples>`_.
 
-For more usecases check also `host/tests folder <https://github.com/SiLab-Bonn/basil/tree/master/host/tests>`_.
+For more usecases check also `tests folder <https://github.com/SiLab-Bonn/basil/tree/master/tests>`_.
 
 spi
 -------
@@ -90,7 +90,7 @@ Result of simulation:
 .. image:: _static/spi_example_timing.png
 
 
-A workin example can be seen in host/tests/test_SimSpi.py.
+A workin example can be seen in tests/test_SimSpi.py.
 
 gpio
 -------

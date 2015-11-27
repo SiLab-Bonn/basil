@@ -28,16 +28,16 @@ module seq_gen_core
 
 localparam VERSION = 2;
 
-input                       BUS_CLK;
-input                       BUS_RST;
-input      [ABUSWIDTH-1:0]  BUS_ADD;
-input      [7:0]            BUS_DATA_IN;
-input                       BUS_RD;
-input                       BUS_WR;
+input wire                  BUS_CLK;
+input wire                  BUS_RST;
+input wire [ABUSWIDTH-1:0]  BUS_ADD;
+input wire [7:0]            BUS_DATA_IN;
+input wire                  BUS_RD;
+input wire                  BUS_WR;
 output reg [7:0]            BUS_DATA_OUT;
 
-input SEQ_EXT_START;
-input SEQ_CLK;
+input wire SEQ_EXT_START;
+input wire SEQ_CLK;
 output reg [OUT_BITS-1:0] SEQ_OUT;
 
 `include "../includes/log2func.v"
@@ -124,23 +124,28 @@ assign BUS_STATUS_OUT = status_regs[BUS_ADD[4:0]];
 
 reg [7:0] BUS_DATA_OUT_REG;
 always @ (posedge BUS_CLK) begin
-    if(BUS_ADD == 0)
-        BUS_DATA_OUT_REG <= VERSION;
-    else if(BUS_ADD == 1)
-        BUS_DATA_OUT_REG <= {7'b0, CONF_DONE};
-    else if(BUS_ADD == 18)
-        BUS_DATA_OUT_REG <= DEF_BIT_OUT[7:0];
-    else if(BUS_ADD == 19)
-        BUS_DATA_OUT_REG <= DEF_BIT_OUT[15:8];
-    else if(BUS_ADD < 32)
-        BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
+    if(BUS_RD) begin
+        if(BUS_ADD == 0)
+            BUS_DATA_OUT_REG <= VERSION;
+        else if(BUS_ADD == 1)
+            BUS_DATA_OUT_REG <= {7'b0, CONF_DONE};
+        else if(BUS_ADD == 18)
+            BUS_DATA_OUT_REG <= DEF_BIT_OUT[7:0];
+        else if(BUS_ADD == 19)
+            BUS_DATA_OUT_REG <= DEF_BIT_OUT[15:8];
+        else if(BUS_ADD < 32)
+            BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
+    end
 end
 
 // if one has a synchronous memory need this to give data on next clock after read
-// limitation: this module still needs to addresses 
+// limitation: this module still needs to be addressed
 reg [ABUSWIDTH-1:0]  PREV_BUS_ADD;
-always@(posedge BUS_CLK)
-    PREV_BUS_ADD <= BUS_ADD;
+always @ (posedge BUS_CLK) begin
+    if(BUS_RD) begin
+        PREV_BUS_ADD <= BUS_ADD;
+    end
+end
     
 always @(*) begin
     if(PREV_BUS_ADD < 32)
