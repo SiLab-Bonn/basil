@@ -132,7 +132,8 @@ module pixel (
         .BUS_CLK(BUS_CLK),
         .BUS_ADD(BUS_ADD),
         .BUS_RD(BUS_RD),
-        .BUS_WR(BUS_WR)
+        .BUS_WR(BUS_WR),
+        .CS_FPGA()
     );
 
     // -------  USER MODULES  ------- //

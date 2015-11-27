@@ -57,7 +57,8 @@ fx2_to_bus i_fx2_to_bus (
     .BUS_CLK(BUS_CLK),
     .BUS_ADD(BUS_ADD),
     .BUS_RD(BUS_RD),
-    .BUS_WR(BUS_WR)
+    .BUS_WR(BUS_WR),
+    .CS_FPGA()
 );
 
 reset_gen i_reset_gen(.CLK(BUS_CLK), .RST(BUS_RST));
