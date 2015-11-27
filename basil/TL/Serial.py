@@ -15,7 +15,7 @@ class Serial(TransferLayer):
     '''
 
     def __init__(self, conf):
-        super(TransferLayer, self).__init__(conf)
+        super(Serial, self).__init__(conf)
         self._port = None
 
     def init(self):
