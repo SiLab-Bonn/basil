@@ -18,12 +18,12 @@ class BitLogic(bitarray):
             _ = int(args[0], base=2)
         except (TypeError, IndexError):
             # init by length
-            ba = super(BitLogic, cls).__new__(cls, *args, endian=endian, **kwargs)
+            ba = bitarray.__new__(cls, *args, endian=endian, **kwargs)
             # init to 0
             ba.setall(False)
         else:
             # init by bit string
-            ba = super(BitLogic, cls).__new__(cls, args[0][::-1], *args[1:], endian=endian, **kwargs)
+            ba = bitarray.__new__(cls, args[0][::-1], *args[1:], endian=endian, **kwargs)
         return ba
 
     @classmethod
