@@ -19,7 +19,7 @@ class Visa(TransferLayer):
     '''
 
     def __init__(self, conf):
-        super(TransferLayer, self).__init__(conf)
+        super(Visa, self).__init__(conf)
         self._resource = None
 
     def init(self):
