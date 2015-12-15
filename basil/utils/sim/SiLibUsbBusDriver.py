@@ -143,17 +143,25 @@ class SiLibUsbBusDriver(BusDriver):
         yield RisingEdge(self.clock)
         self.bus.ADD <= address + 0x4000
         self.bus.BUS_DATA <= int(value)
-     
+        yield Timer(1)  # This is hack for iverilog
+        self.bus.ADD <= address + 0x4000
+        self.bus.BUS_DATA <= int(value)
         yield RisingEdge(self.clock)
         self.bus.WR_B <= 0
-      
+        yield Timer(1)  # This is hack for iverilog
+        self.bus.BUS_DATA <= int(value)
+        self.bus.WR_B <= 0
         yield RisingEdge(self.clock)
         self.bus.WR_B <= 0
-      
+        yield Timer(1)  # This is hack for iverilog
+        self.bus.BUS_DATA <= int(value)
+        self.bus.WR_B <= 0
         yield RisingEdge(self.clock)
         self.bus.WR_B <= 1
         self.bus.BUS_DATA <= self._high_impedence
-      
+        yield Timer(1)  # This is hack for iverilog
+        self.bus.WR_B <= 1
+        self.bus.BUS_DATA <= self._high_impedence
         yield RisingEdge(self.clock)
         self.bus.WR_B <= 1
         self.bus.ADD <= self._x
