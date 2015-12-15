@@ -120,10 +120,6 @@ class BasilBusDriver(BusDriver):
             self.bus.BUS_DATA <= byte
             self.bus.BUS_WR <= 1
             self.bus.BUS_ADD <= address + index
-            yield Timer(1)  # This is hack for iverilog
-            self.bus.BUS_DATA <= byte
-            self.bus.BUS_WR <= 1
-            self.bus.BUS_ADD <= address + index
 
             yield RisingEdge(self.clock)
 
