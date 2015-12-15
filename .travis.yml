@@ -2,13 +2,8 @@ language: python
 python:
   - 2.7
   
-#addons:
-#  apt:
-#    sources:
-#    - ppa:team-electronics/ppa
-#    packages:
-#    - iverilog-daily
-#sudo: false
+sudo: required
+dist: trusty
 
 notifications:
   email:
@@ -21,21 +16,22 @@ before_install:
   - sudo apt-get update
 
 install:
-  - pip install bitarray
-  - pip install pyyaml
+   
+  #conda
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH=$HOME/miniconda/bin:$PATH
+  - conda update --yes conda
+  - conda install --yes numpy bitarray nose pyyaml
   - pip install pyvisa pyvisa-sim
   
-  - wget -O cocotb-master.zip https://github.com/potentialventures/cocotb/archive/master.zip 
-  - unzip cocotb-master.zip
-  - export COCOTB=$(pwd)/cocotb-master
-
+  #cocotb
+  - git clone https://github.com/potentialventures/cocotb.git
+  - export COCOTB=$(pwd)/cocotb
+ 
+  #iverilog
   - sudo apt-get -y install iverilog-daily  
-#  Build iverilog from source
-  #- sudo apt-get install gperf
-  #- wget -O iverilog-master.zip  https://github.com/steveicarus/iverilog/archive/master.zip
-  #- unzip iverilog-master.zip
-  #- cd iverilog-master && autoconf && ./configure && make && sudo make install && cd ..
-  
+
   # Install basil
   - python setup.py develop
 
