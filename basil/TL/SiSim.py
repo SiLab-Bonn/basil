@@ -11,10 +11,10 @@ import socket
 import array
 import time
 import logging
+from threading import Lock
 
 from basil.TL.SiTransferLayer import SiTransferLayer
 from basil.utils.sim.Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
-
 
 class SiSim (SiTransferLayer):
 
@@ -46,16 +46,23 @@ class SiSim (SiTransferLayer):
                 raise IOError("No connection to simulation server.")
 
         self._iface = PickleInterface(self._sock)  # exeption?
+        
+        self._lock = Lock()
 
     def write(self, addr, data):
         ad = array.array('B', data)
         req = WriteRequest(addr, ad)
-        self._iface.send(req)
-
+        
+        with self._lock:
+            self._iface.send(req)
+        
     def read(self, addr, size):
         req = ReadRequest(addr, size)
-        self._iface.send(req)
-        resp = self._iface.recv()
+        
+        with self._lock:
+            self._iface.send(req)
+            resp = self._iface.recv()
+        
         if not isinstance(resp, ReadResponse):
             raise ValueError("Communication error with Simulation: got %s" % repr(resp))
         return array.array('B', resp.data)

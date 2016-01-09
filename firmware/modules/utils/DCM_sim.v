@@ -4,7 +4,32 @@ Based on: https://github.com/dirjud/Nitro-Parts-lib-Xilinx
 `timescale 1ps/1ps
 `default_nettype none
 
-         
+module clock_divider_sim
+#(
+    parameter DIVISOR = 2
+)
+(
+    input wire CLK,
+    output reg CLOCK
+);
+
+integer cnt;
+initial cnt = 0;
+
+always@(posedge CLK)
+    if(cnt == DIVISOR -1)
+        cnt <= 0;
+    else
+        cnt <= cnt + 1;
+
+always@(posedge CLK)
+    if(cnt == DIVISOR -1)
+        CLOCK <= 1;
+    else if(cnt == DIVISOR/2-1)
+        CLOCK <= 0;
+        
+endmodule
+   
 module DCM
   #(   parameter CLKFX_MULTIPLY = 4,
        parameter CLKFX_DIVIDE   = 1,
@@ -44,7 +69,7 @@ assign CLKFX180 = ~CLKFX;
 wire resetb = ~RST;
 
 wire clk2x;
-clock_multiplier #( .MULTIPLIER(2) ) i_clock_multiplier(.CLK(CLKIN),.CLOCK(clk2x));
+clock_multiplier #( .MULTIPLIER(2) ) i_clock_multiplier_two(.CLK(CLKIN),.CLOCK(clk2x));
 
 reg clk90;
 reg [1:0] cnt;
@@ -61,18 +86,17 @@ assign CLK2X = clk2x;
 assign CLK90 = clk90;
 
 generate
-    wire lock_fx;
     if (CLKFX_MULTIPLY==2 && CLKFX_DIVIDE==1) begin
          assign CLKFX = clk2x;
     end else begin
         wire CLKINM;
         clock_multiplier #( .MULTIPLIER(CLKFX_MULTIPLY) ) i_clock_multiplier(.CLK(CLKIN),.CLOCK(CLKINM));
-        clock_divider #(.DIVISOR(2)) i_clock_divisor_rx (.CLK(CLKINM), .RESET(RST), .CE(), .CLOCK(CLKFX)); 
+        clock_divider_sim #(.DIVISOR(CLKFX_DIVIDE)) i_clock_divisor_rx (.CLK(CLKINM), .CLOCK(CLKFX)); 
 
     end
 endgenerate
 
-clock_divider #(.DIVISOR(CLKDV_DIVIDE)) i_clock_divisor_dv (.CLK(CLKIN), .RESET(RST), .CE(), .CLOCK(CLKDV)); 
+clock_divider_sim #(.DIVISOR(CLKDV_DIVIDE)) i_clock_divisor_dv (.CLK(CLKIN), .CLOCK(CLKDV)); 
 
 assign LOCKED = 1'b1;
 
