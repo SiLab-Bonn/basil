@@ -32,8 +32,9 @@ def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test
     mkfile += "COMPILE_ARGS = -D COCOTB_SIM=1 %s \n" % (" ".join('-I' + str(e) for e in include_dirs))
     mkfile += "COMPILE_ARGS += %s \n\n" % (" ".join('-D' + str(e) for e in extra_defines))
     
-    mkfile += "VERILOG_INCLUDE_DIRS=./ %s\n" % (" ".join('+incdir+' + str(e) for e in include_dirs))  # this is for modelsim better full path?
-
+    mkfile += "NOT_ICARUS_DEFINES= +define+COCOTB_SIM=1 %s \n" % (" ".join('+define+' + str(e) for e in extra_defines))
+    mkfile += "NOT_ICARUS_INCLUDE_DIRS=+incdir+./ %s \n" % (" ".join('+incdir+' + str(e) for e in include_dirs))  # this is for modelsim better full path?
+    
     mkfile += "\n"
     mkfile += extra
     mkfile += "\n"
@@ -49,7 +50,18 @@ export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:$(PYTHONLIBS)
 export PYTHONPATH=$(shell python -c "from distutils import sysconfig; print(sysconfig.get_python_lib())"):$(COCOTB)
 export PYTHONHOME=$(shell python -c "from distutils.sysconfig import get_config_var; print(get_config_var('prefix'))")
 
-EXTRA_ARGS +=-g2012
+ifeq ($(SIM),questa)
+    EXTRA_ARGS += $(NOT_ICARUS_DEFINES)
+    EXTRA_ARGS +=$(NOT_ICARUS_INCLUDE_DIRS)
+else ifeq ($(SIM),ius)
+    EXTRA_ARGS +=$(NOT_ICARUS_DEFINES)
+    EXTRA_ARGS +=$(NOT_ICARUS_INCLUDE_DIRS)
+else ifeq ($(SIM),icarus)
+    EXTRA_ARGS +=-g2012
+else
+    EXTRA_ARGS +=-g2012
+endif
+
 SIM_ARGS +=-fst
 
 TOPLEVEL_LANG?=verilog
