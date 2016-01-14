@@ -43,3 +43,7 @@ examples/lx9/device/src/SiTCP
 tests/qverilog.log
 tests/work
 results.xml
+
+firmware/modules/chipscope/*
+!firmware/modules/chipscope/*.xise
+!firmware/modules/chipscope/*.xco

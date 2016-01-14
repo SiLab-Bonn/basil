@@ -20,8 +20,8 @@ module tdc_s3_core
     input wire DV_CLK,
     input wire TDC_IN, // pulse need to be longer than one cycle of CLK320, distance of pulses needs to be longer than one cycle of DV_CLK
     output wire TDC_OUT, // sampled with 320MHz, kept high for at least DV_CLK
-    input TRIG_IN,
-    output TRIG_OUT,
+    input wire TRIG_IN,
+    output wire TRIG_OUT,
 
     input wire FIFO_READ,
     output wire FIFO_EMPTY,

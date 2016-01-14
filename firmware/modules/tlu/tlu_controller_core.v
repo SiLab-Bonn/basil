@@ -52,7 +52,7 @@ module tlu_controller_core
     output wire     [31:0]      TIMESTAMP
 );
 
-localparam VERSION = 4;
+localparam VERSION = 5;
 
 // Registers
 wire SOFT_RST; // Address: 0
@@ -90,8 +90,8 @@ wire [1:0] TLU_MODE; // 2'b00 - RJ45 disabled, 2'b01 - TLU no handshake, 2'b10 -
 assign TLU_MODE = status_regs[1][1:0];
 wire TLU_TRIGGER_DATA_MSB_FIRST; // set endianness of TLU number
 assign TLU_TRIGGER_DATA_MSB_FIRST = status_regs[1][2];
-//wire spare;
-//assign spare = status_regs[1][3];
+wire CONF_TRIGGER_ENABLE;
+assign CONF_TRIGGER_ENABLE = status_regs[1][3];
 wire [3:0] TLU_TRIGGER_DATA_DELAY;
 assign TLU_TRIGGER_DATA_DELAY = status_regs[1][7:4];
 wire [4:0] TLU_TRIGGER_CLOCK_CYCLES;
@@ -245,6 +245,13 @@ three_stage_synchronizer three_stage_trigger_data_msb_first_synchronizer (
     .CLK(TRIGGER_CLK),
     .IN(TLU_TRIGGER_DATA_MSB_FIRST),
     .OUT(TLU_TRIGGER_DATA_MSB_FIRST_SYNC)
+);
+
+wire CONF_TRIGGER_ENABLE_SYNC;
+three_stage_synchronizer three_stage_conf_trigger_enable_synchronizer (
+    .CLK(TRIGGER_CLK),
+    .IN(CONF_TRIGGER_ENABLE),
+    .OUT(CONF_TRIGGER_ENABLE_SYNC)
 );
 
 wire TLU_ENABLE_VETO_SYNC;
@@ -458,7 +465,7 @@ always @ (posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         TRIGGER_ENABLE_FSM <= 1'b0;
-    else if (TRIGGER_ENABLE == 1'b1 && !TRIGGER_LIMIT_REACHED_SYNC)
+    else if ((TRIGGER_ENABLE == 1'b1 || CONF_TRIGGER_ENABLE_SYNC == 1'b1) && !TRIGGER_LIMIT_REACHED_SYNC)
         TRIGGER_ENABLE_FSM <= 1'b1;
     else
         TRIGGER_ENABLE_FSM <= 1'b0;

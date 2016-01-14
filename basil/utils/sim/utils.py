@@ -13,7 +13,7 @@ def get_basil_dir():
     return str(os.path.dirname(os.path.dirname(basil.__file__)))
 
 def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test', sim_host='localhost', sim_port=12345, sim_bus='basil.utils.sim.BasilBusDriver',
-                    end_on_disconnect=True, include_dirs=(), extra=''):
+                    end_on_disconnect=True, include_dirs=(), extra_defines=(), extra=''):
 
     basil_dir = get_basil_dir()
     include_dirs += (basil_dir + "/firmware/modules", basil_dir + "/firmware/modules/includes")
@@ -29,10 +29,12 @@ def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test
 
     mkfile += "TOPLEVEL = %s\nMODULE   = %s\n\n" % (top_level, test_module)
 
-    mkfile += "COMPILE_ARGS = -D_IVERILOG_ %s \n\n" % (" ".join('-I' + str(e) for e in include_dirs))
-
-    mkfile += "VERILOG_INCLUDE_DIRS=./ %s\n" % (" ".join('+incdir+' + str(e) for e in include_dirs))  # this is for modelsim better full path?
-
+    mkfile += "COMPILE_ARGS = -D COCOTB_SIM=1 %s \n" % (" ".join('-I' + str(e) for e in include_dirs))
+    mkfile += "COMPILE_ARGS += %s \n\n" % (" ".join('-D' + str(e) for e in extra_defines))
+    
+    mkfile += "NOT_ICARUS_DEFINES= +define+COCOTB_SIM=1 %s \n" % (" ".join('+define+' + str(e) for e in extra_defines))
+    mkfile += "NOT_ICARUS_INCLUDE_DIRS=+incdir+./ %s \n" % (" ".join('+incdir+' + str(e) for e in include_dirs))  # this is for modelsim better full path?
+    
     mkfile += "\n"
     mkfile += extra
     mkfile += "\n"
@@ -48,7 +50,19 @@ export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:$(PYTHONLIBS)
 export PYTHONPATH=$(shell python -c "from distutils import sysconfig; print(sysconfig.get_python_lib())"):$(COCOTB)
 export PYTHONHOME=$(shell python -c "from distutils.sysconfig import get_config_var; print(get_config_var('prefix'))")
 
-SIM_ARGS += -fst
+ifeq ($(SIM),questa)
+    EXTRA_ARGS += $(NOT_ICARUS_DEFINES)
+    EXTRA_ARGS +=$(NOT_ICARUS_INCLUDE_DIRS)
+else ifeq ($(SIM),ius)
+    EXTRA_ARGS +=$(NOT_ICARUS_DEFINES)
+    EXTRA_ARGS +=$(NOT_ICARUS_INCLUDE_DIRS)
+else ifeq ($(SIM),icarus)
+    EXTRA_ARGS +=-g2012
+else
+    EXTRA_ARGS +=-g2012
+endif
+
+SIM_ARGS +=-fst
 
 TOPLEVEL_LANG?=verilog
 export TOPLEVEL_LANG

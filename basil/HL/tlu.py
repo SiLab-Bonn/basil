@@ -24,6 +24,7 @@ class tlu(RegisterHardwareLayer):
                   'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
                   'TRIGGER_MODE': {'descr': {'addr': 1, 'size': 2, 'offset': 0}},
                   'TRIGGER_DATA_MSB_FIRST': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},
+                  'TRIGGER_ENABLE': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},
                   'TRIGGER_DATA_DELAY': {'descr': {'addr': 1, 'size': 4, 'offset': 4}},
                   'TRIGGER_CLOCK_CYCLES': {'descr': {'addr': 2, 'size': 5, 'offset': 0}},
                   'EN_TLU_RESET_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 5}},
@@ -37,7 +38,7 @@ class tlu(RegisterHardwareLayer):
                   'TRIGGER_VETO_SELECT': {'descr': {'addr': 14, 'size': 8}},
                   'TRIGGER_INVERT': {'descr': {'addr': 15, 'size': 8}},
                   'MAX_TRIGGERS': {'descr': {'addr': 16, 'size': 32}}}
-    _require_version = "==4"
+    _require_version = "==5"
 
     def __init__(self, intf, conf):
         super(tlu, self).__init__(intf, conf)

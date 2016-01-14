@@ -49,7 +49,7 @@ always @(posedge BUS_CLK) begin
         status_regs[2] <= 0;
         status_regs[3] <= DEF_BIT_OUT[7:0]; //bits
         status_regs[4] <= DEF_BIT_OUT[15:8]; //bits
-        status_regs[5] <= 0; //wait
+        status_regs[5] <= 4; //wait
         status_regs[6] <= 0; //wait
         status_regs[7] <= 0; //wait
         status_regs[8] <= 0; //wait
