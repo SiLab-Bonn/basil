@@ -194,8 +194,8 @@ begin
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
                 TRIGGER_DATA_WRITE <= 1'b0;
-                if ((TRIGGER_ENABLE == 1'b0) || (TRIGGER_VETO == 1'b1 && TLU_ENABLE_VETO == 1'b1))
-                    TLU_ASSERT_VETO <= 1'b1;
+                if ((TRIGGER_ENABLE == 1'b0) || ((TRIGGER_VETO == 1'b1 && TLU_ENABLE_VETO == 1'b1) && (TLU_MODE == 2'b11 || TLU_MODE == 2'b10)))
+                    TLU_ASSERT_VETO <= 1'b1; // assert only outside Trigger/Busy handshake
                 else
                     TLU_ASSERT_VETO <= 1'b0;
                 // if (TRIGGER_ENABLE == 1'b0)
@@ -229,7 +229,7 @@ begin
                     TIMESTAMP_DATA <= TIMESTAMP;
                     TRIGGER_COUNTER_DATA <= TRIGGER_COUNTER;
                 end
-                TLU_ASSERT_VETO <= TLU_ASSERT_VETO;
+                TLU_ASSERT_VETO <= 1'b0; // de-assert here, assert only outside Trigger/Busy handshake
                 TLU_BUSY <= 1'b1;
                 TLU_CLOCK_ENABLE <= 1'b0;
                 counter_trigger_low_time_out <= counter_trigger_low_time_out + 1;
@@ -253,7 +253,7 @@ begin
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
                 TRIGGER_DATA_WRITE <= 1'b0;
-                TLU_ASSERT_VETO <= TLU_ASSERT_VETO;
+                TLU_ASSERT_VETO <= 1'b0;
                 TLU_BUSY <= 1'b1;
                 TLU_CLOCK_ENABLE <= 1'b1;
                 counter_trigger_low_time_out <= 8'b0;
@@ -270,7 +270,7 @@ begin
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
                 TRIGGER_DATA_WRITE <= 1'b0;
-                TLU_ASSERT_VETO <= TLU_ASSERT_VETO;
+                TLU_ASSERT_VETO <= 1'b0;
                 TLU_BUSY <= 1'b1;
                 TLU_CLOCK_ENABLE <= 1'b0;
                 counter_trigger_low_time_out <= 8'b0;
@@ -333,7 +333,7 @@ begin
                         end
                     end
                 end
-                TLU_ASSERT_VETO <= TLU_ASSERT_VETO;
+                TLU_ASSERT_VETO <= 1'b0;
                 TLU_BUSY <= 1'b1;
                 TLU_CLOCK_ENABLE <= 1'b0;
                 counter_trigger_low_time_out <= 8'b0;
@@ -350,7 +350,7 @@ begin
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
                 TRIGGER_DATA_WRITE <= 1'b0;
-                TLU_ASSERT_VETO <= TLU_ASSERT_VETO;
+                TLU_ASSERT_VETO <= 1'b0;
                 // de-assert TLU busy as soon as possible
                 if (TRIGGER_ACKNOWLEDGE == 1'b1 || ACKNOWLEDGED == 1'b1)
                     TLU_BUSY <= 1'b0;
