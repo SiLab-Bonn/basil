@@ -4,7 +4,7 @@ Basil
 
 |travis-status|  |rtd-status|  |landscape-status|  |Gitter-status|
 
-.. |travis-status| image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=master
+.. |travis-status| image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=development
     :target: https://travis-ci.org/SiLab-Bonn/basil
     :alt: Build status
 
@@ -12,8 +12,8 @@ Basil
     :target: http://basil.rtfd.org
     :alt: Documentation
 
-.. |landscape-status| image:: https://landscape.io/github/SiLab-Bonn/basil/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/SiLab-Bonn/basil/master
+.. |landscape-status| image:: https://landscape.io/github/SiLab-Bonn/basil/development/landscape.svg?style=flat
+   :target: https://landscape.io/github/SiLab-Bonn/basil/development
    :alt: Code Health
    
 .. |Gitter-status| image:: https://badges.gitter.im/Join%20Chat.svg
