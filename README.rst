@@ -4,16 +4,16 @@ Basil
 
 |travis-status|  |rtd-status|  |landscape-status|  |Gitter-status|
 
-.. |travis-status| image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=developemnt
+.. |travis-status| image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=master
     :target: https://travis-ci.org/SiLab-Bonn/basil
     :alt: Build status
 
 .. |rtd-status| image:: https://readthedocs.org/projects/basil/badge/?version=latest
     :target: http://basil.rtfd.org
     :alt: Documentation
- 
-.. |landscape-status| image:: https://landscape.io/github/SiLab-Bonn/basil/development/landscape.svg?style=flat
-   :target: https://landscape.io/github/SiLab-Bonn/basil/development
+
+.. |landscape-status| image:: https://landscape.io/github/SiLab-Bonn/basil/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/SiLab-Bonn/basil/master
    :alt: Code Health
    
 .. |Gitter-status| image:: https://badges.gitter.im/Join%20Chat.svg
@@ -34,7 +34,7 @@ Installation
 
 .. code-block:: bash
 
-    pip install git+https://github.com/SiLab-Bonn/basil.git@development
+    pip install git+https://github.com/SiLab-Bonn/basil.git@v2.5.0
 
 Support
 =======
