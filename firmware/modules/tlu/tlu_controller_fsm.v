@@ -41,22 +41,17 @@ module tlu_controller_fsm
     input wire                  TLU_TRIGGER_DATA_MSB_FIRST,
     input wire                  TLU_ENABLE_VETO,
     input wire                  TLU_RESET_FLAG,
-
+    
     input wire                  WRITE_TIMESTAMP,
-
+    
     output reg                  TLU_BUSY,
     output reg                  TLU_CLOCK_ENABLE,
     output reg                  TLU_ASSERT_VETO,
-
-    output reg                  TLU_TRIGGER_LOW_TIMEOUT_ERROR,
-    output reg                  TLU_TRIGGER_ACCEPT_ERROR
+    
+    output reg                  TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG, // error flag
+    output reg                  TLU_TRIGGER_ACCEPT_ERROR_FLAG // error flag
 );
 
-// Workaround for TLU bug where short szintillator trigger pulses lead to glitches on TLU trigger
-localparam TLU_WAIT_CYCLES = 5;
-
-// reg TLU_TRIGGER_ACCEPT_ERROR;
-// reg TLU_TRIGGER_LOW_TIMEOUT_ERROR;
 assign TRIGGER_DATA[31:0] = (WRITE_TIMESTAMP==1'b1) ? {1'b1, TIMESTAMP_DATA[30:0]} : ((TLU_MODE==2'b11) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : ({1'b1, TRIGGER_COUNTER_DATA[30:0]}));
 
 // shift register, serial to parallel, 32 FF
@@ -67,6 +62,14 @@ begin
 end
 
 // FSM
+// workaround for TLU bug where short szintillator pulses lead to glitches on TLU trigger
+localparam TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES = 5;
+reg TLU_TRIGGER_HANDSHAKE_ACCEPT;
+reg [7:0] counter_trigger_high;
+// additional wait cycles for TLU veto after TLU handshake
+localparam TLU_HANDSHAKE_VETO_WAIT_CYCLES = 5;
+reg [7:0] counter_tlu_handshake_veto;
+// other
 reg [7:0] counter_trigger_low_time_out;
 integer counter_tlu_clock;
 integer counter_sr_wait_cycles;
@@ -80,11 +83,12 @@ reg     [2:0]   next;
 
 parameter   [2:0]
     IDLE                                = 3'b000,
-    SEND_COMMAND_WAIT_FOR_TRIGGER_LOW   = 3'b001,
-    SEND_TLU_CLOCK                      = 3'b010,
-    WAIT_BEFORE_LATCH                   = 3'b011,
-    LATCH_DATA                          = 3'b100,
-    WAIT_FOR_TLU_DATA_SAVED_CMD_READY   = 3'b101;
+    SEND_COMMAND                        = 3'b001,
+    SEND_COMMAND_WAIT_FOR_TRIGGER_LOW   = 3'b010,
+    SEND_TLU_CLOCK                      = 3'b011,
+    WAIT_BEFORE_LATCH                   = 3'b100,
+    LATCH_DATA                          = 3'b101,
+    WAIT_FOR_TLU_DATA_SAVED_CMD_READY   = 3'b110;
 
 
 // sequential always block, non-blocking assignments
@@ -95,21 +99,26 @@ begin
 end
 
 // combinational always block, blocking assignments
-always @ (state or TRIGGER_ACKNOWLEDGE or ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_FLAG or TRIGGER or TLU_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock or TLU_TRIGGER_CLOCK_CYCLES or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or counter_trigger_low_time_out) //or TLU_TRIGGER_BUSY)
+always @ (state or TRIGGER_ACKNOWLEDGE or ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_FLAG or TRIGGER or TLU_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG or counter_tlu_clock or TLU_TRIGGER_CLOCK_CYCLES or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or TLU_TRIGGER_HANDSHAKE_ACCEPT) //or TLU_TRIGGER_BUSY)
 begin
     case (state)
     
         IDLE:
         begin
-            if ((TRIGGER_ACKNOWLEDGE == 1'b0) && (TRIGGER_ENABLE == 1'b1) && (TRIGGER_FLAG == 1'b1 || (TRIGGER == 1'b1 && (TLU_MODE == 2'b11 || TLU_MODE == 2'b10))) && (TRIGGER_VETO == 1'b0 || TLU_MODE == 2'b11 || TLU_MODE == 2'b10)) next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
+            if ((TLU_MODE == 2'b00 || TLU_MODE == 2'b01) && (TRIGGER_ACKNOWLEDGE == 1'b0) && (TRIGGER_ENABLE == 1'b1) && (TRIGGER_FLAG == 1'b1) && (TRIGGER_VETO == 1'b0)) next = SEND_COMMAND;
+            else if ((TLU_MODE == 2'b10 || TLU_MODE == 2'b11) && (TRIGGER_ACKNOWLEDGE == 1'b0) && (TRIGGER_ENABLE == 1'b1) && (TLU_TRIGGER_HANDSHAKE_ACCEPT == 1'b1)) next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
             else next = IDLE;
+        end
+        
+        SEND_COMMAND:
+        begin
+            next = LATCH_DATA; // do not wait for trigger becoming low
         end
         
         SEND_COMMAND_WAIT_FOR_TRIGGER_LOW:
         begin
-            if (TLU_MODE == 2'b00 || TLU_MODE == 2'b01) next = LATCH_DATA; // do not wait for trigger becoming low
-            else if (TLU_MODE == 2'b10 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1) && (counter_trigger_low_time_out >= TLU_WAIT_CYCLES)) next = LATCH_DATA; // wait for trigger low
-            else if (TLU_MODE == 2'b11 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1) && (counter_trigger_low_time_out >= TLU_WAIT_CYCLES)) next = SEND_TLU_CLOCK; // wait for trigger low, TLU clock
+            if (TLU_MODE == 2'b10 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG == 1'b1)) next = LATCH_DATA; // wait for trigger low
+            else if (TLU_MODE == 2'b11 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG == 1'b1)) next = SEND_TLU_CLOCK; // wait for trigger low
             else next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
         end
         
@@ -162,11 +171,14 @@ begin
         TLU_ASSERT_VETO <= 1'b0;
         TLU_BUSY <= 1'b0;
         TLU_CLOCK_ENABLE <= 1'b0;
+        counter_trigger_high <= 8'b0;
+        counter_tlu_handshake_veto <= 8'b0;
+        TLU_TRIGGER_HANDSHAKE_ACCEPT <= 1'b0;
         counter_trigger_low_time_out <= 8'b0;
         counter_tlu_clock <= 0;
         counter_sr_wait_cycles <= 0;
-        TLU_TRIGGER_LOW_TIMEOUT_ERROR <= 1'b0;
-        TLU_TRIGGER_ACCEPT_ERROR <= 1'b0;
+        TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG <= 1'b0;
+        TLU_TRIGGER_ACCEPT_ERROR_FLAG <= 1'b0;
         TRIGGER_ACCEPTED_FLAG <= 1'b0;
         ACKNOWLEDGED <= 1'b0;
     end
@@ -180,21 +192,24 @@ begin
         TLU_ASSERT_VETO <= 1'b0;
         TLU_BUSY <= 1'b0;
         TLU_CLOCK_ENABLE <= 1'b0;
+        counter_trigger_high <= 8'b0;
+        counter_tlu_handshake_veto <= 8'b0;
+        TLU_TRIGGER_HANDSHAKE_ACCEPT <= 1'b0;
         counter_trigger_low_time_out <= 8'b0;
         counter_tlu_clock <= 0;
         counter_sr_wait_cycles <= 0;
-        TLU_TRIGGER_LOW_TIMEOUT_ERROR <= TLU_TRIGGER_LOW_TIMEOUT_ERROR;
-        TLU_TRIGGER_ACCEPT_ERROR <= TLU_TRIGGER_ACCEPT_ERROR;
+        TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG <= 1'b0;
+        TLU_TRIGGER_ACCEPT_ERROR_FLAG <= 1'b0;
         TRIGGER_ACCEPTED_FLAG <= 1'b0;
         ACKNOWLEDGED <= ACKNOWLEDGED;
-
+        
         case (next)
-
+        
             IDLE:
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
                 TRIGGER_DATA_WRITE <= 1'b0;
-                if ((TRIGGER_ENABLE == 1'b0) || ((TRIGGER_VETO == 1'b1 && TLU_ENABLE_VETO == 1'b1) && (TLU_MODE == 2'b11 || TLU_MODE == 2'b10)))
+                if ((TRIGGER_ENABLE == 1'b0 || TRIGGER_VETO == 1'b1) && TLU_ENABLE_VETO == 1'b1 && (TLU_MODE == 2'b10 || TLU_MODE == 2'b11) && counter_tlu_handshake_veto == 0)
                     TLU_ASSERT_VETO <= 1'b1; // assert only outside Trigger/Busy handshake
                 else
                     TLU_ASSERT_VETO <= 1'b0;
@@ -204,16 +219,52 @@ begin
                     // TLU_BUSY <= 1'b0;
                 TLU_BUSY <= 1'b0;
                 TLU_CLOCK_ENABLE <= 1'b0;
-                counter_trigger_low_time_out <= 8'b0;
+                if (TRIGGER == 1'b1 && (TLU_MODE == 2'b10 || TLU_MODE == 2'b11) && TRIGGER_ENABLE == 1'b1)
+                    counter_trigger_high <= counter_trigger_high + 1;
+                else
+                    counter_trigger_high <= 8'b0;
+                if (state != next)
+                    counter_tlu_handshake_veto <= TLU_HANDSHAKE_VETO_WAIT_CYCLES;
+                else if (counter_tlu_handshake_veto != 8'b0)
+                    counter_tlu_handshake_veto <= counter_tlu_handshake_veto - 1;
+                if ((counter_trigger_high >= TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES) && (TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0))
+                    TLU_TRIGGER_HANDSHAKE_ACCEPT <= 1'b1;
+                else
+                    TLU_TRIGGER_HANDSHAKE_ACCEPT <= 1'b0;
                 counter_tlu_clock <= 0;
                 counter_sr_wait_cycles <= 0;
-                TLU_TRIGGER_LOW_TIMEOUT_ERROR <= 1'b0;
-                if (TRIGGER == 1'b1 && TRIGGER_ENABLE == 1'b1)
-                    TLU_TRIGGER_ACCEPT_ERROR <= 1'b1;
+                if (counter_trigger_high != 0 && TRIGGER == 1'b0 && (TLU_MODE == 2'b10 || TLU_MODE == 2'b11) && TRIGGER_ENABLE == 1'b1)
+                    TLU_TRIGGER_ACCEPT_ERROR_FLAG <= 1'b1;
                 else
-                    TLU_TRIGGER_ACCEPT_ERROR <= 1'b0;
+                    TLU_TRIGGER_ACCEPT_ERROR_FLAG <= 1'b0;
                 TRIGGER_ACCEPTED_FLAG <= 1'b0;
                 ACKNOWLEDGED <= 1'b0;
+            end
+
+            SEND_COMMAND:
+            begin
+                // send flag at beginning of state
+                if (state != next)
+                    FIFO_PREEMPT_REQ_FLAG <= 1'b1;
+                else
+                    FIFO_PREEMPT_REQ_FLAG <= 1'b0;
+                TRIGGER_DATA_WRITE <= 1'b0;
+                // get timestamp closest to the trigger
+                if (state != next) begin
+                    TIMESTAMP_DATA <= TIMESTAMP;
+                    TRIGGER_COUNTER_DATA <= TRIGGER_COUNTER;
+                end
+                TLU_BUSY <= 1'b1;
+                TLU_CLOCK_ENABLE <= 1'b0;
+                counter_tlu_clock <= 0;
+                counter_sr_wait_cycles <= 0;
+                // send flag at beginning of state
+                if (state != next)
+                    TRIGGER_ACCEPTED_FLAG <= 1'b1;
+                else
+                    TRIGGER_ACCEPTED_FLAG <= 1'b0;
+                if (TRIGGER_ACKNOWLEDGE == 1'b1)
+                    ACKNOWLEDGED <= 1'b1;
             end
             
             SEND_COMMAND_WAIT_FOR_TRIGGER_LOW:
@@ -229,17 +280,15 @@ begin
                     TIMESTAMP_DATA <= TIMESTAMP;
                     TRIGGER_COUNTER_DATA <= TRIGGER_COUNTER;
                 end
-                TLU_ASSERT_VETO <= 1'b0; // de-assert here, assert only outside Trigger/Busy handshake
                 TLU_BUSY <= 1'b1;
                 TLU_CLOCK_ENABLE <= 1'b0;
                 counter_trigger_low_time_out <= counter_trigger_low_time_out + 1;
                 counter_tlu_clock <= 0;
                 counter_sr_wait_cycles <= 0;
                 if ((counter_trigger_low_time_out >= TLU_TRIGGER_LOW_TIME_OUT) && (TLU_TRIGGER_LOW_TIME_OUT != 8'b0))
-                    TLU_TRIGGER_LOW_TIMEOUT_ERROR <= 1'b1;
+                    TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG <= 1'b1;
                 else
-                    TLU_TRIGGER_LOW_TIMEOUT_ERROR <= 1'b0;
-                TLU_TRIGGER_ACCEPT_ERROR <= TLU_TRIGGER_ACCEPT_ERROR;
+                    TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG <= 1'b0;
                 // send flag at beginning of state
                 if (state != next)
                     TRIGGER_ACCEPTED_FLAG <= 1'b1;
@@ -253,14 +302,10 @@ begin
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
                 TRIGGER_DATA_WRITE <= 1'b0;
-                TLU_ASSERT_VETO <= 1'b0;
                 TLU_BUSY <= 1'b1;
                 TLU_CLOCK_ENABLE <= 1'b1;
-                counter_trigger_low_time_out <= 8'b0;
                 counter_tlu_clock <= counter_tlu_clock + 1;
                 counter_sr_wait_cycles <= 0;
-                TLU_TRIGGER_LOW_TIMEOUT_ERROR <= TLU_TRIGGER_LOW_TIMEOUT_ERROR;
-                TLU_TRIGGER_ACCEPT_ERROR <= TLU_TRIGGER_ACCEPT_ERROR;
                 TRIGGER_ACCEPTED_FLAG <= 1'b0;
                 if (TRIGGER_ACKNOWLEDGE == 1'b1)
                     ACKNOWLEDGED <= 1'b1;
@@ -270,14 +315,10 @@ begin
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
                 TRIGGER_DATA_WRITE <= 1'b0;
-                TLU_ASSERT_VETO <= 1'b0;
                 TLU_BUSY <= 1'b1;
                 TLU_CLOCK_ENABLE <= 1'b0;
-                counter_trigger_low_time_out <= 8'b0;
                 counter_tlu_clock <= 0;
                 counter_sr_wait_cycles <= counter_sr_wait_cycles + 1;
-                TLU_TRIGGER_LOW_TIMEOUT_ERROR <= TLU_TRIGGER_LOW_TIMEOUT_ERROR;
-                TLU_TRIGGER_ACCEPT_ERROR <= TLU_TRIGGER_ACCEPT_ERROR;
                 TRIGGER_ACCEPTED_FLAG <= 1'b0;
                 if (TRIGGER_ACKNOWLEDGE == 1'b1)
                     ACKNOWLEDGED <= 1'b1;
@@ -333,14 +374,10 @@ begin
                         end
                     end
                 end
-                TLU_ASSERT_VETO <= 1'b0;
                 TLU_BUSY <= 1'b1;
                 TLU_CLOCK_ENABLE <= 1'b0;
-                counter_trigger_low_time_out <= 8'b0;
                 counter_tlu_clock <= 0;
                 counter_sr_wait_cycles <= 0;
-                TLU_TRIGGER_LOW_TIMEOUT_ERROR <= TLU_TRIGGER_LOW_TIMEOUT_ERROR;
-                TLU_TRIGGER_ACCEPT_ERROR <= TLU_TRIGGER_ACCEPT_ERROR;
                 TRIGGER_ACCEPTED_FLAG <= 1'b0;
                 if (TRIGGER_ACKNOWLEDGE == 1'b1)
                     ACKNOWLEDGED <= 1'b1;
@@ -350,18 +387,14 @@ begin
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
                 TRIGGER_DATA_WRITE <= 1'b0;
-                TLU_ASSERT_VETO <= 1'b0;
                 // de-assert TLU busy as soon as possible
-                if (TRIGGER_ACKNOWLEDGE == 1'b1 || ACKNOWLEDGED == 1'b1)
-                    TLU_BUSY <= 1'b0;
-                else
-                    TLU_BUSY <= TLU_BUSY;
+                //if (TRIGGER_ACKNOWLEDGE == 1'b1 || ACKNOWLEDGED == 1'b1)
+                //    TLU_BUSY <= 1'b0;
+                //else
+                TLU_BUSY <= TLU_BUSY;
                 TLU_CLOCK_ENABLE <= 1'b0;
-                counter_trigger_low_time_out <= 8'b0;
                 counter_tlu_clock <= 0;
                 counter_sr_wait_cycles <= 0;
-                TLU_TRIGGER_LOW_TIMEOUT_ERROR <= TLU_TRIGGER_LOW_TIMEOUT_ERROR;
-                TLU_TRIGGER_ACCEPT_ERROR <= TLU_TRIGGER_ACCEPT_ERROR;
                 TRIGGER_ACCEPTED_FLAG <= 1'b0;
                 if (TRIGGER_ACKNOWLEDGE == 1'b1)
                     ACKNOWLEDGED <= 1'b1;
