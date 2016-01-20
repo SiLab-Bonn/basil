@@ -86,8 +86,8 @@ flag_domain_crossing rst_flag_domain_crossing (
 reg [7:0] status_regs[31:0];
 
 // reg 0 for SOFT_RST
-wire [1:0] TLU_MODE; // 2'b00 - RJ45 disabled, 2'b01 - TLU no handshake, 2'b10 - TLU simple handshake, 2'b11 - TLU trigger data handshake
-assign TLU_MODE = status_regs[1][1:0];
+wire [1:0] TRIGGER_MODE; // 2'b00 - standard trigger, 2'b01 - TLU no handshake, 2'b10 - TLU simple handshake, 2'b11 - TLU trigger data handshake
+assign TRIGGER_MODE = status_regs[1][1:0];
 wire TLU_TRIGGER_DATA_MSB_FIRST; // set endianness of TLU number
 assign TLU_TRIGGER_DATA_MSB_FIRST = status_regs[1][2];
 wire CONF_TRIGGER_ENABLE;
@@ -222,13 +222,13 @@ end
 //assign some_value = {status_regs[x][y:z]}; // multiple bits
 
 // register sync
-wire [1:0] TLU_MODE_SYNC;
+wire [1:0] TRIGGER_MODE_SYNC;
 three_stage_synchronizer #(
     .WIDTH(2)
 ) three_stage_tlu_mode_synchronizer (
     .CLK(TRIGGER_CLK),
-    .IN(TLU_MODE),
-    .OUT(TLU_MODE_SYNC)
+    .IN(TRIGGER_MODE),
+    .OUT(TRIGGER_MODE_SYNC)
 );
 
 wire [7:0] TLU_TRIGGER_LOW_TIME_OUT_SYNC;
@@ -390,7 +390,7 @@ begin
 end
 
 wire TRIGGER_FSM;
-assign TRIGGER_FSM = (TLU_MODE != 2'b00) ? TLU_TRIGGER_SYNC : TRIGGER_OR_SYNC; // RJ45 inputs tied to 1 if no connector is plugged in
+assign TRIGGER_FSM = (TRIGGER_MODE != 2'b00) ? TLU_TRIGGER_SYNC : TRIGGER_OR_SYNC; // RJ45 inputs tied to 1 if no connector is plugged in
 
 // Trigger flag
 reg TRIGGER_FSM_FF;
@@ -588,7 +588,7 @@ tlu_controller_fsm #(
     .TRIGGER_ACKNOWLEDGE(TRIGGER_ACKNOWLEDGE),
     .TRIGGER_ACCEPTED_FLAG(TRIGGER_ACCEPTED_FLAG),
     
-    .TLU_MODE(TLU_MODE_SYNC),
+    .TRIGGER_MODE(TRIGGER_MODE_SYNC),
     .TLU_TRIGGER_LOW_TIME_OUT(TLU_TRIGGER_LOW_TIME_OUT_SYNC),
     .TLU_TRIGGER_CLOCK_CYCLES(TLU_TRIGGER_CLOCK_CYCLES_SYNC),
     .TLU_TRIGGER_DATA_DELAY(TLU_TRIGGER_DATA_DELAY_SYNC),
@@ -693,7 +693,7 @@ chipscope_ila ichipscope_ila
 (
     .CONTROL(control_bus),
     .CLK(BUS_CLK),
-    .TRIG0({TLU_MODE,BUS_DATA_IN,BUS_ADD,BUS_RD,BUS_WR, BUS_CLK ,RST})
+    .TRIG0({TRIGGER_MODE,BUS_DATA_IN,BUS_ADD,BUS_RD,BUS_WR, BUS_CLK ,RST})
 );
 `endif
 

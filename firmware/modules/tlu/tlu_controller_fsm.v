@@ -34,7 +34,7 @@ module tlu_controller_fsm
     input wire                  TRIGGER_ACKNOWLEDGE,
     output reg                  TRIGGER_ACCEPTED_FLAG,
     
-    input wire      [1:0]       TLU_MODE,
+    input wire      [1:0]       TRIGGER_MODE,
     input wire      [7:0]       TLU_TRIGGER_LOW_TIME_OUT,
     input wire      [4:0]       TLU_TRIGGER_CLOCK_CYCLES,
     input wire      [3:0]       TLU_TRIGGER_DATA_DELAY,
@@ -55,7 +55,7 @@ module tlu_controller_fsm
     output wire                 TLU_TRIGGER_ACCEPT_ERROR_FLAG // error flag
 );
 
-assign TRIGGER_DATA[31:0] = (WRITE_TIMESTAMP==1'b1) ? {1'b1, TIMESTAMP_DATA[30:0]} : ((TLU_MODE==2'b11) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : ({1'b1, TRIGGER_COUNTER_DATA[30:0]}));
+assign TRIGGER_DATA[31:0] = (WRITE_TIMESTAMP==1'b1) ? {1'b1, TIMESTAMP_DATA[30:0]} : ((TRIGGER_MODE==2'b11) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : ({1'b1, TRIGGER_COUNTER_DATA[30:0]}));
 
 // shift register, serial to parallel, 32 FF
 reg [(32*DIVISOR)-1:0] tlu_data_sr;
@@ -114,15 +114,18 @@ begin
 end
 
 // combinational always block, blocking assignments
-always @ (state or TRIGGER_ACKNOWLEDGE or ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_FLAG or TRIGGER or TLU_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock or TLU_TRIGGER_CLOCK_CYCLES or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or TLU_TRIGGER_HANDSHAKE_ACCEPT or TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES) //or TLU_TRIGGER_BUSY)
+always @ (state or TRIGGER_ACKNOWLEDGE or ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_FLAG or TRIGGER or TRIGGER_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock or TLU_TRIGGER_CLOCK_CYCLES or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or TLU_TRIGGER_HANDSHAKE_ACCEPT or TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES) //or TLU_TRIGGER_BUSY)
 begin
     case (state)
     
         IDLE:
         begin
-            if ((TLU_MODE == 2'b00 || TLU_MODE == 2'b01) && (TRIGGER_ACKNOWLEDGE == 1'b0) && (TRIGGER_ENABLE == 1'b1) && (TRIGGER_FLAG == 1'b1) && (TRIGGER_VETO == 1'b0)) next = SEND_COMMAND;
-            else if ((TLU_MODE == 2'b10 || TLU_MODE == 2'b11) && (TRIGGER_ACKNOWLEDGE == 1'b0) && (TRIGGER_ENABLE == 1'b1) && ((TRIGGER_FLAG == 1'b1 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES == 0) || (TLU_TRIGGER_HANDSHAKE_ACCEPT == 1'b1 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0))) next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
-            else next = IDLE;
+            if ((TRIGGER_MODE == 2'b00 || TRIGGER_MODE == 2'b01) && (TRIGGER_ACKNOWLEDGE == 1'b0) && (TRIGGER_ENABLE == 1'b1) && (TRIGGER_FLAG == 1'b1) && (TRIGGER_VETO == 1'b0))
+                next = SEND_COMMAND;
+            else if ((TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11) && (TRIGGER_ACKNOWLEDGE == 1'b0) && (TRIGGER_ENABLE == 1'b1) && ((TRIGGER_FLAG == 1'b1 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES == 0) || (TLU_TRIGGER_HANDSHAKE_ACCEPT == 1'b1 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0)))
+                next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
+            else
+                next = IDLE;
         end
         
         SEND_COMMAND:
@@ -132,25 +135,34 @@ begin
         
         SEND_COMMAND_WAIT_FOR_TRIGGER_LOW:
         begin
-            if (TLU_MODE == 2'b10 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1)) next = LATCH_DATA; // wait for trigger low
-            else if (TLU_MODE == 2'b11 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1)) next = SEND_TLU_CLOCK; // wait for trigger low
-            else next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
+            if (TRIGGER_MODE == 2'b10 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1))
+                next = LATCH_DATA; // wait for trigger low
+            else if (TRIGGER_MODE == 2'b11 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1))
+                next = SEND_TLU_CLOCK; // wait for trigger low
+            else
+                next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
         end
         
         SEND_TLU_CLOCK:
         begin
             if (TLU_TRIGGER_CLOCK_CYCLES == 5'b0) // send 32 clock cycles
-                if (counter_tlu_clock == 32 * DIVISOR) next = WAIT_BEFORE_LATCH;
-                else next = SEND_TLU_CLOCK;
+                if (counter_tlu_clock == 32 * DIVISOR)
+                    next = WAIT_BEFORE_LATCH;
+                else
+                    next = SEND_TLU_CLOCK;
             else
-                if (counter_tlu_clock == TLU_TRIGGER_CLOCK_CYCLES * DIVISOR) next = WAIT_BEFORE_LATCH;
-                else next = SEND_TLU_CLOCK;
+                if (counter_tlu_clock == TLU_TRIGGER_CLOCK_CYCLES * DIVISOR)
+                    next = WAIT_BEFORE_LATCH;
+                else
+                    next = SEND_TLU_CLOCK;
         end
         
         WAIT_BEFORE_LATCH:
         begin
-            if (counter_sr_wait_cycles == TLU_TRIGGER_DATA_DELAY+3) next = LATCH_DATA; // 3 clock cycles is minimum delay for sync
-            else next = WAIT_BEFORE_LATCH;
+            if (counter_sr_wait_cycles == TLU_TRIGGER_DATA_DELAY + 3)
+                next = LATCH_DATA; // 3 clock cycles is minimum delay for sync
+            else
+                next = WAIT_BEFORE_LATCH;
         end
         
         LATCH_DATA:
@@ -160,8 +172,10 @@ begin
         
         WAIT_FOR_TLU_DATA_SAVED_CMD_READY:
         begin
-            if (TRIGGER_ACKNOWLEDGE == 1'b1 || ACKNOWLEDGED == 1'b1) next = IDLE;
-            else next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY;
+            if (TRIGGER_ACKNOWLEDGE == 1'b1 || ACKNOWLEDGED == 1'b1)
+                next = IDLE;
+            else
+                next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY;
         end
         
         // inferring FF
@@ -224,7 +238,7 @@ begin
             begin
                 FIFO_PREEMPT_REQ_FLAG <= 1'b0;
                 TRIGGER_DATA_WRITE <= 1'b0;
-                if ((TRIGGER_ENABLE == 1'b0 || TRIGGER_VETO == 1'b1) && TLU_ENABLE_VETO == 1'b1 && (TLU_MODE == 2'b10 || TLU_MODE == 2'b11) && counter_tlu_handshake_veto == 0)
+                if ((TRIGGER_ENABLE == 1'b0 || TRIGGER_VETO == 1'b1) && TLU_ENABLE_VETO == 1'b1 && (TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11) && counter_tlu_handshake_veto == 0)
                     TLU_ASSERT_VETO <= 1'b1; // assert only outside Trigger/Busy handshake
                 else
                     TLU_ASSERT_VETO <= 1'b0;
@@ -234,7 +248,7 @@ begin
                     // TLU_BUSY <= 1'b0;
                 TLU_BUSY <= 1'b0;
                 TLU_CLOCK_ENABLE <= 1'b0;
-                if (TRIGGER == 1'b1 && (TLU_MODE == 2'b10 || TLU_MODE == 2'b11) && TRIGGER_ENABLE == 1'b1)
+                if (TRIGGER == 1'b1 && (TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11) && TRIGGER_ENABLE == 1'b1)
                     counter_trigger_high <= counter_trigger_high + 1;
                 else
                     counter_trigger_high <= 8'b0;
@@ -248,7 +262,7 @@ begin
                     TLU_TRIGGER_HANDSHAKE_ACCEPT <= 1'b0;
                 counter_tlu_clock <= 0;
                 counter_sr_wait_cycles <= 0;
-                if (counter_trigger_high != 0 && TRIGGER == 1'b0 && (TLU_MODE == 2'b10 || TLU_MODE == 2'b11) && TRIGGER_ENABLE == 1'b1)
+                if (counter_trigger_high != 0 && TRIGGER == 1'b0 && (TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11) && TRIGGER_ENABLE == 1'b1)
                     TLU_TRIGGER_ACCEPT_ERROR <= 1'b1;
                 else
                     TLU_TRIGGER_ACCEPT_ERROR <= 1'b0;
@@ -435,7 +449,7 @@ begin
         TRIGGER_COUNTER <= 32'b0;
     else if(TRIGGER_COUNTER_SET==1'b1)
         TRIGGER_COUNTER <= TRIGGER_COUNTER_SET_VALUE;
-    else if(TRIGGER_ACCEPTED_FLAG) // state==IDLE && next==SEND_COMMAND_WAIT_FOR_TRIGGER_LOW)
+    else if(TRIGGER_ACCEPTED_FLAG)
         TRIGGER_COUNTER <= TRIGGER_COUNTER + 1;
 end
 
@@ -452,7 +466,7 @@ chipscope_ila ichipscope_ila
 (
     .CONTROL(control_bus),
     .TRIGGER_CLK(TRIGGER_CLK),
-    .TRIG0({TRIGGER_ENABLE, TRIGGER_DATA_WRITE, TRIGGER_ACCEPTED_FLAG, TLU_CLOCK_ENABLE, TLU_ASSERT_VETO, TLU_BUSY, TRIGGER_ACKNOWLEDGE, TRIGGER_VETO, TLU_TRIGGER_ACCEPT_ERROR, TLU_TRIGGER_LOW_TIMEOUT_ERROR, TRIGGER_FLAG, TRIGGER, TLU_MODE, state})
+    .TRIG0({TRIGGER_ENABLE, TRIGGER_DATA_WRITE, TRIGGER_ACCEPTED_FLAG, TLU_CLOCK_ENABLE, TLU_ASSERT_VETO, TLU_BUSY, TRIGGER_ACKNOWLEDGE, TRIGGER_VETO, TLU_TRIGGER_ACCEPT_ERROR, TLU_TRIGGER_LOW_TIMEOUT_ERROR, TRIGGER_FLAG, TRIGGER, TRIGGER_MODE, state})
     //.TRIGGER_CLK(CLK_160),
     //.TRIG0({FMODE, FSTROBE, FREAD, CMD_BUS_WR, RX_BUS_WR, FIFO_WR, BUS_DATA_IN, FE_RX ,WR_B, RD_B})
 );
