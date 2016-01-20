@@ -52,7 +52,7 @@ module tlu_controller_core
     output wire     [31:0]      TIMESTAMP
 );
 
-localparam VERSION = 5;
+localparam VERSION = 6;
 
 // Registers
 wire SOFT_RST; // Address: 0
@@ -112,6 +112,10 @@ wire [7:0] TRIGGER_INVERT;
 assign TRIGGER_INVERT = status_regs[15];
 wire [31:0] TRIGGER_COUNTER_MAX;
 assign TRIGGER_COUNTER_MAX = {status_regs[19], status_regs[18], status_regs[17], status_regs[16]};
+wire [7:0] CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES;
+assign CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES = status_regs[20];
+wire [7:0] CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES;
+assign CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES = status_regs[21];
 
 always @(posedge BUS_CLK)
 begin
@@ -137,8 +141,12 @@ begin
         status_regs[17] <= 8'b0;
         status_regs[18] <= 8'b0;
         status_regs[19] <= 8'b0;
+        status_regs[20] <= 8'b0; // TLU trigger high accept clock cycles
+        status_regs[21] <= 8'b0; // TLU busy low to veto high wait cycles
+        status_regs[22] <= 8'b0;
+        status_regs[23] <= 8'b0;
     end
-    else if(BUS_WR && BUS_ADD < 20)
+    else if(BUS_WR && BUS_ADD < 23)
     begin
         status_regs[BUS_ADD[4:0]] <= BUS_DATA_IN;
     end
@@ -148,6 +156,8 @@ end
 reg [7:0] LOST_DATA_CNT; // BUS_ADD==0
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK, CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF; // BUS_ADD==4 - 7
 reg [31:0] TRIGGER_COUNTER, TRIGGER_COUNTER_BUF; // BUS_ADD==8 - 11
+reg [7:0] TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT;
+reg [7:0] TLU_TRIGGER_ACCEPT_ERROR_CNT;
 
 always @ (posedge BUS_CLK) begin
     if(BUS_RD) begin
@@ -191,6 +201,14 @@ always @ (posedge BUS_CLK) begin
             BUS_DATA_OUT <= status_regs[18];
         else if (BUS_ADD == 19)
             BUS_DATA_OUT <= status_regs[19];
+        else if (BUS_ADD == 20)
+            BUS_DATA_OUT <= status_regs[16];
+        else if (BUS_ADD == 21)
+            BUS_DATA_OUT <= status_regs[17];
+        else if (BUS_ADD == 22)
+            BUS_DATA_OUT <= TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT;
+        else if (BUS_ADD == 23)
+            BUS_DATA_OUT <= TLU_TRIGGER_ACCEPT_ERROR_CNT;
         else
             BUS_DATA_OUT <= 0;
     end
@@ -310,6 +328,24 @@ three_stage_synchronizer three_stage_lemo_ext_veto_synchronizer_trg_clk (
     .OUT(TRIGGER_VETO_OR_SYNC)
 );
 
+wire [7:0] CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES_SYNC;
+three_stage_synchronizer #(
+    .WIDTH(8)
+) three_stage_handshake_accept_wait_cycles_synchronizer (
+    .CLK(TRIGGER_CLK),
+    .IN(CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES),
+    .OUT(CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES_SYNC)
+);
+
+wire [7:0] CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES_SYNC;
+three_stage_synchronizer #(
+    .WIDTH(8)
+) three_stage_busy_veto_wait_cycles_synchronizer (
+    .CLK(TRIGGER_CLK),
+    .IN(CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES),
+    .OUT(CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES_SYNC)
+);
+
 // output sync
 // nothing to do here
 
@@ -416,6 +452,38 @@ flag_domain_crossing trigger_accepted_flag_domain_crossing (
     .FLAG_OUT_CLK_B(TRIGGER_ACCEPTED_FLAG_BUS_CLK)
 );
 
+wire TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG, TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG_BUS_CLK;
+flag_domain_crossing trigger_low_timeout_error_flag_domain_crossing (
+    .CLK_A(TRIGGER_CLK),
+    .CLK_B(BUS_CLK),
+    .FLAG_IN_CLK_A(TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG),
+    .FLAG_OUT_CLK_B(TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG_BUS_CLK)
+);
+
+always @ (posedge BUS_CLK)
+begin
+    if (RST)
+        TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT <= 8'b0;
+    else if (TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG_BUS_CLK == 1'b1)
+        TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT <= TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT + 1;
+end
+
+wire TLU_TRIGGER_ACCEPT_ERROR_FLAG, TLU_TRIGGER_ACCEPT_ERROR_FLAG_BUS_CLK;
+flag_domain_crossing trigger_accept_error_flag_domain_crossing (
+    .CLK_A(TRIGGER_CLK),
+    .CLK_B(BUS_CLK),
+    .FLAG_IN_CLK_A(TLU_TRIGGER_ACCEPT_ERROR_FLAG),
+    .FLAG_OUT_CLK_B(TLU_TRIGGER_ACCEPT_ERROR_FLAG_BUS_CLK)
+);
+
+always @ (posedge BUS_CLK)
+begin
+    if (RST)
+        TLU_TRIGGER_ACCEPT_ERROR_CNT <= 8'b0;
+    else if (TLU_TRIGGER_ACCEPT_ERROR_FLAG_BUS_CLK == 1'b1)
+        TLU_TRIGGER_ACCEPT_ERROR_CNT <= TLU_TRIGGER_ACCEPT_ERROR_CNT + 1;
+end
+
 wire TRIGGER_COUNTER_SET;
 reg TRIGGER_COUNTER_SET_FF;
 assign TRIGGER_COUNTER_SET = (BUS_ADD == 11 && BUS_WR);
@@ -429,6 +497,18 @@ end
 
 wire TRIGGER_COUNTER_SET_FLAG_SYNC;
 cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(TRIGGER_COUNTER_SET_FF), .clk_out(TRIGGER_CLK), .pulse_out(TRIGGER_COUNTER_SET_FLAG_SYNC));
+
+always @ (posedge BUS_CLK)
+begin
+    if (RST)
+        TRIGGER_COUNTER <= 32'b0;
+    else if (TRIGGER_COUNTER_SET)
+        TRIGGER_COUNTER <= {BUS_DATA_IN, status_regs[10], status_regs[9], status_regs[8]};
+    else if (TRIGGER_ACCEPTED_FLAG_BUS_CLK == 1'b1)
+        TRIGGER_COUNTER <= TRIGGER_COUNTER + 1;
+    //else if (ENABLE_TLU_FLAG_BUS_CLK == 1'b1)
+    //    TRIGGER_COUNTER <= 32'b0;
+end
 
 always @ (posedge BUS_CLK)
 begin
@@ -522,8 +602,11 @@ tlu_controller_fsm #(
     .TLU_CLOCK_ENABLE(TLU_CLOCK_ENABLE),
     .TLU_ASSERT_VETO(TLU_ASSERT_VETO),
 
-    .TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG(),
-    .TLU_TRIGGER_ACCEPT_ERROR_FLAG()
+    .TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES(CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES_SYNC),
+    .TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES(CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES_SYNC),
+
+    .TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG(TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG),
+    .TLU_TRIGGER_ACCEPT_ERROR_FLAG(TLU_TRIGGER_ACCEPT_ERROR_FLAG)
 );
 
 wire FIFO_PREEMPT_REQ_FLAG_BUS_CLK;
