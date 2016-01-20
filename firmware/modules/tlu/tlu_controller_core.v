@@ -146,7 +146,7 @@ begin
         status_regs[22] <= 8'b0;
         status_regs[23] <= 8'b0;
     end
-    else if(BUS_WR && BUS_ADD < 23)
+    else if(BUS_WR && BUS_ADD < 24)
     begin
         status_regs[BUS_ADD[4:0]] <= BUS_DATA_IN;
     end
@@ -202,9 +202,9 @@ always @ (posedge BUS_CLK) begin
         else if (BUS_ADD == 19)
             BUS_DATA_OUT <= status_regs[19];
         else if (BUS_ADD == 20)
-            BUS_DATA_OUT <= status_regs[16];
+            BUS_DATA_OUT <= status_regs[20];
         else if (BUS_ADD == 21)
-            BUS_DATA_OUT <= status_regs[17];
+            BUS_DATA_OUT <= status_regs[21];
         else if (BUS_ADD == 22)
             BUS_DATA_OUT <= TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT;
         else if (BUS_ADD == 23)
