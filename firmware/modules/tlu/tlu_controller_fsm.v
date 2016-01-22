@@ -314,10 +314,6 @@ begin
                     TLU_TRIGGER_LOW_TIMEOUT_ERROR <= 1'b1;
                 else
                     TLU_TRIGGER_LOW_TIMEOUT_ERROR <= 1'b0;
-                // TODO: better check for trigger accept error, this state is at least 5 clk, check counter_trigger_low_time_out
-                //if (TRIGGER == 1'b0 && )
-                //    TLU_TRIGGER_ACCEPT_ERROR <= 1'b1;
-                // send flag at beginning of state
                 if (state != next)
                     TRIGGER_ACCEPTED_FLAG <= 1'b1;
                 else
