@@ -3,7 +3,7 @@
 **tlu** - trigger logic unit
 =====================================
 
-EUDAQ Telescope/TLU communication module. Received IDs are propagated to FIFO data interface.
+General purpose trigger module and EUDAQ Telescope/TLU communication module. Trigger IDs received by the TLU are propagated to FIFO data interface.
 
 NOTE:
  1. TRIGGER_ENABLE has to be asserted to allow triggering.
@@ -17,10 +17,10 @@ NOTE:
  9. If TLU_TRIGGER_ACCEPT_ERROR_COUNTER in TLU handshake mode is not 0, the TLU might be not configured properly or is in a weird state.
 
 TRIGGER_MODE:
- 0 = normal trigger mode
- 1 = TLU no handshake
- 2 = TLU simple handshake
- 3 = TLU trigger data handshake
+ 1. 0 = normal trigger mode
+ 2. 1 = TLU no handshake
+ 3. 2 = TLU simple handshake
+ 4. 3 = TLU trigger data handshake
 
 **Unit test/Example:** 
 `test_SimTlu.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTlu.v>`_ 
