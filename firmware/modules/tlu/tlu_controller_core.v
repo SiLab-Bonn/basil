@@ -352,9 +352,11 @@ three_stage_synchronizer #(
 // TLU clock (not a real clock ...)
 wire TLU_ASSERT_VETO, TLU_CLOCK_ENABLE;
 integer counter_clk;
-always @ (posedge TRIGGER_CLK)
+always @ (posedge TRIGGER_CLK or posedge TRIGGER_ACCEPTED_FLAG or posedge TLU_ASSERT_VETO)
 begin
-    if (TLU_ASSERT_VETO) // synchronous set
+    if (TRIGGER_ACCEPTED_FLAG) // asynchronous reset
+        TLU_CLOCK <= 1'b0;
+    else if (TLU_ASSERT_VETO) // asynchronous set
         TLU_CLOCK <= 1'b1;
     else
     begin
