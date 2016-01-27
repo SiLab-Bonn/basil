@@ -1,14 +1,25 @@
 # Device description for the Tektronix 4104B Mixed signal oscilloscope.
 # If you need other commands consider to add them here or 
 # use dut._interface.write() to directly talk to the device
-identifier : TEKTRONIX,MSO4104B,C010877
+
+identifier : TEKTRONIX,MSO4104B,C
 set_source : DATa:SOUrce  # the channel for the get_data command
-get_data : WAVFrm?  # returns the data as ; seperated values and a header describing all important settings
+data_init : DATa:INIT  # reset data taking settings
+set_data_start : DATa:STARt  # the data start index for read out  (?)
+set_data_stop : DATa:STOP  # the data stop index for read out (?)
+get_data : WAVFrm?  # returns the data as ; separated values and a header describing all important settings
+set_trigger_level : TRIGger:A:LEVel  # set the trigger level in volt
+get_trigger_level : TRIGger:A:LEVel?  # get the trigger level in volt
+force_trigger : TRIGger FORCe  # like the force trigger button
+set_acquire_mode : ACQuire:MODe  # set the data acquire mode (SAMPLE, AVERAGE, ... )
+get_acquire_mode : ACQuire:MODe?  # get the data acquire mode (SAMPLE, AVERAGE, ... )
+get_actual_acquire_mode : ACQuire:MODe:ACTUal  # returns the actual used acquire mode, is different to get_acquire_mode (in rare use cases)
+set_average_waveforms : ACQuire:NUMAVg  # the number of waveforms used for averaging
 channel 1:
-    get_data : DATA:SOURCE CH1;:WAVFrm?
+    get_data : DATA:SOURCE CH1;:WAVFrm?  # read data from channel 1
 channel 2:
-    get_data : DATA:SOURCE CH2;:WAVFrm?
+    get_data : DATA:SOURCE CH2;:WAVFrm?  # read data from channel 2
 channel 3:
-    get_data : DATA:SOURCE CH3;:WAVFrm?
+    get_data : DATA:SOURCE CH3;:WAVFrm?  # read data from channel 3
 channel 4:
-    get_data : DATA:SOURCE CH4;:WAVFrm?
+    get_data : DATA:SOURCE CH4;:WAVFrm?  # read data from channel 4
