@@ -362,28 +362,19 @@ assign TLU_ASSERT_VETO_LE = ~TLU_ASSERT_VETO_FF & TLU_ASSERT_VETO;
 wire TLU_ASSERT_VETO_TE;
 assign TLU_ASSERT_VETO_TE = TLU_ASSERT_VETO_FF & ~TLU_ASSERT_VETO;
 
-always @ (posedge TRIGGER_CLK or posedge TRIGGER_ACCEPTED_FLAG or posedge TLU_ASSERT_VETO_LE or posedge TLU_ASSERT_VETO_TE)
+always @ (RST_SYNC or TRIGGER_ACCEPTED_FLAG or TLU_ASSERT_VETO_TE or TLU_ASSERT_VETO_LE or TLU_CLOCK_ENABLE or counter_clk)
 begin
+    if (RST_SYNC)
+        TLU_CLOCK <= 1'b0;
     if (TRIGGER_ACCEPTED_FLAG) // asynchronous reset
         TLU_CLOCK <= 1'b0;
     else if (TLU_ASSERT_VETO_TE)
         TLU_CLOCK <= 1'b0;
     else if (TLU_ASSERT_VETO_LE) // asynchronous set
         TLU_CLOCK <= 1'b1;
-    else
-    begin
-        if (RST_SYNC)
-            TLU_CLOCK <= 1'b0;
-        else if (TLU_CLOCK_ENABLE)
-        begin
-            if (counter_clk == 0)
-                TLU_CLOCK <= ~TLU_CLOCK;
-            else
-                TLU_CLOCK <= TLU_CLOCK;
-        end
-        else
-            TLU_CLOCK <= TLU_CLOCK;
-    end
+    else if (TLU_CLOCK_ENABLE)
+        if (counter_clk == 0)
+            TLU_CLOCK <= ~TLU_CLOCK;
 end
 
 	
@@ -607,19 +598,15 @@ flag_domain_crossing fifo_preempt_flag_domain_crossing (
 );
 
 // 7 to 9 clock cycles after trigger (depending on TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES)
-always @ (posedge BUS_CLK or posedge FIFO_EMPTY_FLAG_BUS_CLK or posedge FIFO_PREEMPT_REQ_LE_BUS_CLK or posedge FIFO_PREEMPT_REQ_TE_BUS_CLK) begin
-    if (FIFO_EMPTY_FLAG_BUS_CLK == 1'b1)
+always @ (RST or FIFO_EMPTY_FLAG_BUS_CLK or FIFO_PREEMPT_REQ_TE_BUS_CLK or FIFO_PREEMPT_REQ_LE_BUS_CLK) begin
+    if (RST)
+        FIFO_PREEMPT_REQ <= 1'b0;
+    else if (FIFO_EMPTY_FLAG_BUS_CLK == 1'b1)
         FIFO_PREEMPT_REQ <= 1'b0;
     else if (FIFO_PREEMPT_REQ_TE_BUS_CLK == 1'b1)
         FIFO_PREEMPT_REQ <= 1'b0;
     else if (FIFO_PREEMPT_REQ_LE_BUS_CLK == 1'b1)
         FIFO_PREEMPT_REQ <= 1'b1;
-    else begin
-        if (RST_SYNC)
-            FIFO_PREEMPT_REQ <= 1'b0;
-        else
-            FIFO_PREEMPT_REQ <= FIFO_PREEMPT_REQ;
-    end
 end
 
 // TLU FSM
