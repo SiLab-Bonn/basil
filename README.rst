@@ -51,6 +51,7 @@ where version is a version number (e.g. 2.4.2)
 or install from git, when no PyPI package is available (for non-developers):
 
 .. code-block:: bash
+
     pip install git+https://github.com/SiLab-Bonn/basil.git@branch
 
 where branch is a branch name (e.g. master or v2.4.2).
