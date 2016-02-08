@@ -33,7 +33,7 @@ module tlu_controller
     input wire      [7:0]       TRIGGER,
     input wire      [7:0]       TRIGGER_VETO,
     
-    input wire                  TRIGGER_ENABLE,
+    input wire                  EXT_TRIGGER_ENABLE,
     input wire                  TRIGGER_ACKNOWLEDGE,
     output wire                 TRIGGER_ACCEPTED_FLAG,
     
@@ -91,7 +91,7 @@ tlu_controller_core #(
     .TRIGGER(TRIGGER),
     .TRIGGER_VETO(TRIGGER_VETO),
 
-    .TRIGGER_ENABLE(TRIGGER_ENABLE),
+    .EXT_TRIGGER_ENABLE(EXT_TRIGGER_ENABLE),
     .TRIGGER_ACKNOWLEDGE(TRIGGER_ACKNOWLEDGE),
     .TRIGGER_ACCEPTED_FLAG(TRIGGER_ACCEPTED_FLAG),
     

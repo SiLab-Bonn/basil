@@ -40,14 +40,14 @@ module tlu_controller_core
     input wire      [7:0]       TRIGGER, // trigger input
     input wire      [7:0]       TRIGGER_VETO, // veto input
     
-    input wire                  TRIGGER_ENABLE, // enable trigger FSM
+    input wire                  EXT_TRIGGER_ENABLE, // enable trigger FSM
     input wire                  TRIGGER_ACKNOWLEDGE, // acknowledge signal/flag
     output wire                 TRIGGER_ACCEPTED_FLAG, // trigger start flag
     
     input wire                  TLU_TRIGGER, // TLU
     input wire                  TLU_RESET,
     output wire                 TLU_BUSY,
-    output reg                  TLU_CLOCK,
+    output wire                 TLU_CLOCK,
     
     output wire     [31:0]      TIMESTAMP
 );
@@ -362,22 +362,35 @@ assign TLU_ASSERT_VETO_LE = ~TLU_ASSERT_VETO_FF & TLU_ASSERT_VETO;
 wire TLU_ASSERT_VETO_TE;
 assign TLU_ASSERT_VETO_TE = TLU_ASSERT_VETO_FF & ~TLU_ASSERT_VETO;
 
-always @ (RST_SYNC or TRIGGER_ACCEPTED_FLAG or TLU_ASSERT_VETO_TE or TLU_ASSERT_VETO_LE or TLU_CLOCK_ENABLE or counter_clk)
+reg TLU_VETO;
+always @ (RST_SYNC or TRIGGER_ACCEPTED_FLAG or TLU_ASSERT_VETO_TE or TLU_ASSERT_VETO_LE)
 begin
     if (RST_SYNC)
-        TLU_CLOCK <= 1'b0;
-    if (TRIGGER_ACCEPTED_FLAG) // asynchronous reset
-        TLU_CLOCK <= 1'b0;
+        TLU_VETO <= 1'b0;
+    if (TRIGGER_ACCEPTED_FLAG)
+        TLU_VETO <= 1'b0;
     else if (TLU_ASSERT_VETO_TE)
-        TLU_CLOCK <= 1'b0;
-    else if (TLU_ASSERT_VETO_LE) // asynchronous set
-        TLU_CLOCK <= 1'b1;
-    else if (TLU_CLOCK_ENABLE)
-        if (counter_clk == 0)
-            TLU_CLOCK <= ~TLU_CLOCK;
+        TLU_VETO <= 1'b0;
+    else if (TLU_ASSERT_VETO_LE)
+        TLU_VETO <= 1'b1;
 end
 
-	
+reg TLU_CLOCK_SIGNAL;
+always @ (posedge TRIGGER_CLK)
+begin
+    if (RST_SYNC)
+        TLU_CLOCK_SIGNAL <= 1'b0;
+    else
+        if (TLU_CLOCK_ENABLE)
+            if (counter_clk == 0)
+                TLU_CLOCK_SIGNAL <= ~TLU_CLOCK_SIGNAL;
+            else
+                TLU_CLOCK_SIGNAL <= TLU_CLOCK_SIGNAL;
+        else
+            TLU_CLOCK_SIGNAL <= 1'b0;
+end
+assign TLU_CLOCK = TLU_CLOCK_SIGNAL | TLU_VETO;
+
 always @ (posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
@@ -552,7 +565,7 @@ always @ (posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         TRIGGER_ENABLE_FSM <= 1'b0;
-    else if ((TRIGGER_ENABLE == 1'b1 || CONF_TRIGGER_ENABLE_SYNC == 1'b1) && !TRIGGER_LIMIT_REACHED_SYNC)
+    else if ((EXT_TRIGGER_ENABLE == 1'b1 || CONF_TRIGGER_ENABLE_SYNC == 1'b1) && !TRIGGER_LIMIT_REACHED_SYNC)
         TRIGGER_ENABLE_FSM <= 1'b1;
     else
         TRIGGER_ENABLE_FSM <= 1'b0;
@@ -597,16 +610,17 @@ flag_domain_crossing fifo_preempt_flag_domain_crossing (
     .FLAG_OUT_CLK_B(FIFO_EMPTY_FLAG)
 );
 
-// 7 to 9 clock cycles after trigger (depending on TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES)
-always @ (RST or FIFO_EMPTY_FLAG_BUS_CLK or FIFO_PREEMPT_REQ_TE_BUS_CLK or FIFO_PREEMPT_REQ_LE_BUS_CLK) begin
+// 8 to 10 clock cycles after trigger (depending on TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES)
+always @ (posedge BUS_CLK) begin
     if (RST)
         FIFO_PREEMPT_REQ <= 1'b0;
-    else if (FIFO_EMPTY_FLAG_BUS_CLK == 1'b1)
-        FIFO_PREEMPT_REQ <= 1'b0;
-    else if (FIFO_PREEMPT_REQ_TE_BUS_CLK == 1'b1)
-        FIFO_PREEMPT_REQ <= 1'b0;
-    else if (FIFO_PREEMPT_REQ_LE_BUS_CLK == 1'b1)
-        FIFO_PREEMPT_REQ <= 1'b1;
+    else
+        if (FIFO_EMPTY_FLAG_BUS_CLK)
+            FIFO_PREEMPT_REQ <= 1'b0;
+        else if (FIFO_PREEMPT_REQ_TE_BUS_CLK == 1'b1)
+            FIFO_PREEMPT_REQ <= 1'b0;
+        else if (FIFO_PREEMPT_REQ_LE_BUS_CLK == 1'b1)
+            FIFO_PREEMPT_REQ <= 1'b1; // needs to be delayed by 1 clock cycle, otherwise it will not work
 end
 
 // TLU FSM

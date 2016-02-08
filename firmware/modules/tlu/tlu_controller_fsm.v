@@ -364,7 +364,7 @@ begin
             begin
                 FIFO_PREEMPT_REQ <= 1'b1;
                 TRIGGER_DATA_WRITE <= 1'b1;
-                if (TLU_TRIGGER_CLOCK_CYCLES == 5'b0_0000) // 0 results in 32 clock cycles
+                if (TLU_TRIGGER_CLOCK_CYCLES == 5'b0_0000) // 0 results in 32 clock cycles -> 31bit trigger number
                 begin
                     if (TLU_TRIGGER_DATA_MSB_FIRST == 1'b0)  // reverse bit order
                     begin
