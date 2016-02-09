@@ -297,7 +297,7 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
     DAC7578_3_ADD = 0x98
 
     # Current limit
-    CURRENT_LIMIT_GAIN = 1.0
+    CURRENT_LIMIT_GAIN = 20.0
     CURRENT_LIMIT_DAC_CH = 0
     CURRENT_LIMIT_DAC_SLAVE_ADD = DAC7578_1_ADD
 
