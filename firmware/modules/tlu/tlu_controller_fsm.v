@@ -32,7 +32,6 @@ module tlu_controller_fsm
     input wire [1:0]            TRIGGER_MODE,
     
     input wire                  TRIGGER,
-    input wire                  TRIGGER_FLAG,
     input wire                  TRIGGER_VETO,
     input wire                  TRIGGER_ENABLE,
     input wire                  TRIGGER_ACKNOWLEDGE,
@@ -69,6 +68,22 @@ begin
     else
         tlu_data_sr[((TLU_TRIGGER_MAX_CLOCK_CYCLES)*DIVISOR)-1:0] <= {tlu_data_sr[((TLU_TRIGGER_MAX_CLOCK_CYCLES)*DIVISOR)-2:0], TRIGGER};
 end
+
+// Trigger flag
+reg TRIGGER_FF;
+always @ (posedge TRIGGER_CLK)
+    TRIGGER_FF <= TRIGGER;
+
+wire TRIGGER_FLAG;
+assign TRIGGER_FLAG = ~TRIGGER_FF & TRIGGER;
+
+// Trigger enable flag
+reg TRIGGER_ENABLE_FF;
+always @ (posedge TRIGGER_CLK)
+    TRIGGER_ENABLE_FF <= TRIGGER_ENABLE;
+
+wire TRIGGER_ENABLE_FLAG;
+assign TRIGGER_ENABLE_FLAG = ~TRIGGER_ENABLE_FF & TRIGGER_ENABLE;
 
 // FSM
 // workaround for TLU bug where short szintillator pulses lead to glitches on TLU trigger
@@ -120,15 +135,29 @@ begin
 end
 
 // combinational always block, blocking assignments
-always @ (state or TRIGGER_ACKNOWLEDGE or TRIGGER_ACKNOWLEDGED or FIFO_ACKNOWLEDGE or FIFO_ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_FLAG or TRIGGER or TRIGGER_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock or TLU_TRIGGER_CLOCK_CYCLES or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or TLU_TRIGGER_HANDSHAKE_ACCEPT or TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES) //or TLU_TRIGGER_BUSY)
+always @ (state or TRIGGER_ACKNOWLEDGE or TRIGGER_ACKNOWLEDGED or FIFO_ACKNOWLEDGE or FIFO_ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_ENABLE_FLAG or TRIGGER_FLAG or TRIGGER or TRIGGER_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock /*or TLU_TRIGGER_CLOCK_CYCLES*/ or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or TLU_TRIGGER_HANDSHAKE_ACCEPT or TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES) //or TLU_TRIGGER_BUSY)
 begin
     case (state)
     
         IDLE:
         begin
-            if ((TRIGGER_MODE == 2'b00 || TRIGGER_MODE == 2'b01) && (TRIGGER_ACKNOWLEDGE == 1'b0) && (FIFO_ACKNOWLEDGE == 1'b0) && (TRIGGER_ENABLE == 1'b1) && (TRIGGER_FLAG == 1'b1) && (TRIGGER_VETO == 1'b0))
+            if ((TRIGGER_MODE == 2'b00 || TRIGGER_MODE == 2'b01)
+                && (TRIGGER_ACKNOWLEDGE == 1'b0)
+                && (FIFO_ACKNOWLEDGE == 1'b0)
+                && (TRIGGER_ENABLE == 1'b1)
+                && (TRIGGER_FLAG == 1'b1)
+                && (TRIGGER_VETO == 1'b0)
+               )
                 next = SEND_COMMAND;
-            else if ((TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11) && (TRIGGER_ACKNOWLEDGE == 1'b0) && (FIFO_ACKNOWLEDGE == 1'b0) && (TRIGGER_ENABLE == 1'b1) && ((TRIGGER_FLAG == 1'b1 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES == 0) || (TLU_TRIGGER_HANDSHAKE_ACCEPT == 1'b1 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0)))
+            else if ((TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11)
+                     && (TRIGGER_ACKNOWLEDGE == 1'b0)
+                     && (FIFO_ACKNOWLEDGE == 1'b0)
+                     && (TRIGGER_ENABLE == 1'b1)
+                     && ((TRIGGER == 1'b1 && TRIGGER_ENABLE_FLAG == 1'b1) // workaround TLU trigger high when FSM enabled
+                         || (TRIGGER_FLAG == 1'b1 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES == 0) // no trigger accept counter enabled
+                         || (TLU_TRIGGER_HANDSHAKE_ACCEPT == 1'b1 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0) // trigger accept counter enabled
+                        )
+                    )
                 next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
             else
                 next = IDLE;

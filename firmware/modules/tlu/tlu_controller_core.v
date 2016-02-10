@@ -415,14 +415,6 @@ end
 wire TRIGGER_FSM;
 assign TRIGGER_FSM = (TRIGGER_MODE != 2'b00) ? TLU_TRIGGER_SYNC : TRIGGER_OR_SYNC; // RJ45 inputs tied to 1 if no connector is plugged in
 
-// Trigger flag
-reg TRIGGER_FSM_FF;
-always @ (posedge TRIGGER_CLK)
-    TRIGGER_FSM_FF <= TRIGGER_FSM;
-
-wire TRIGGER_FSM_FLAG;
-assign TRIGGER_FSM_FLAG = ~TRIGGER_FSM_FF & TRIGGER_FSM;
-
 // Reset flag
 reg TLU_RESET_SYNC_FF;
 always @ (posedge TRIGGER_CLK)
@@ -653,7 +645,6 @@ tlu_controller_fsm #(
     .TRIGGER_MODE(TRIGGER_MODE_SYNC),
 
     .TRIGGER(TRIGGER_FSM),
-    .TRIGGER_FLAG(TRIGGER_FSM_FLAG),
     .TRIGGER_VETO(TRIGGER_VETO_OR_SYNC),
     .TRIGGER_ENABLE(TRIGGER_ENABLE_FSM),    
     .TRIGGER_ACKNOWLEDGE(TRIGGER_ACKNOWLEDGE),
