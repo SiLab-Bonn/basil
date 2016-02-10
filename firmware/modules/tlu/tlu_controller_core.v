@@ -18,7 +18,8 @@
 module tlu_controller_core
 #(
     parameter                   DIVISOR = 8, // dividing TRIGGER_CLK by DIVISOR for TLU_CLOCK
-    parameter                   ABUSWIDTH = 16
+    parameter                   ABUSWIDTH = 16,
+    parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 32
 )
 (
     input wire                  BUS_CLK,
@@ -94,8 +95,8 @@ wire CONF_TRIGGER_ENABLE;
 assign CONF_TRIGGER_ENABLE = status_regs[1][3];
 wire [3:0] TLU_TRIGGER_DATA_DELAY;
 assign TLU_TRIGGER_DATA_DELAY = status_regs[1][7:4];
-wire [4:0] TLU_TRIGGER_CLOCK_CYCLES;
-assign TLU_TRIGGER_CLOCK_CYCLES = status_regs[2][4:0]; // 0: 32 clock cycles
+//wire [4:0] TLU_TRIGGER_CLOCK_CYCLES;
+//assign TLU_TRIGGER_CLOCK_CYCLES = status_regs[2][4:0]; // 0: 32 clock cycles
 wire TLU_ENABLE_RESET_TS;
 assign TLU_ENABLE_RESET_TS = status_regs[2][5];
 wire TLU_ENABLE_VETO;
@@ -240,6 +241,7 @@ three_stage_synchronizer #(
     .OUT(TLU_TRIGGER_LOW_TIME_OUT_SYNC)
 );
 
+/*
 wire [4:0] TLU_TRIGGER_CLOCK_CYCLES_SYNC;
 three_stage_synchronizer #(
     .WIDTH(5)
@@ -248,6 +250,7 @@ three_stage_synchronizer #(
     .IN(TLU_TRIGGER_CLOCK_CYCLES),
     .OUT(TLU_TRIGGER_CLOCK_CYCLES_SYNC)
 );
+*/
 
 wire [3:0] TLU_TRIGGER_DATA_DELAY_SYNC;
 three_stage_synchronizer #(
@@ -627,7 +630,8 @@ end
 
 wire [31:0] TRIGGER_DATA;
 tlu_controller_fsm #(
-    .DIVISOR(DIVISOR)
+    .DIVISOR(DIVISOR),
+    .TLU_TRIGGER_MAX_CLOCK_CYCLES(TLU_TRIGGER_MAX_CLOCK_CYCLES)
 ) tlu_controller_fsm_inst (
     .RESET(RST_SYNC),
     .TRIGGER_CLK(TRIGGER_CLK),
@@ -656,7 +660,7 @@ tlu_controller_fsm #(
     .TRIGGER_ACCEPTED_FLAG(TRIGGER_ACCEPTED_FLAG),
     
     .TLU_TRIGGER_LOW_TIME_OUT(TLU_TRIGGER_LOW_TIME_OUT_SYNC),
-    .TLU_TRIGGER_CLOCK_CYCLES(TLU_TRIGGER_CLOCK_CYCLES_SYNC),
+//    .TLU_TRIGGER_CLOCK_CYCLES(TLU_TRIGGER_CLOCK_CYCLES_SYNC),
     .TLU_TRIGGER_DATA_DELAY(TLU_TRIGGER_DATA_DELAY_SYNC),
     .TLU_TRIGGER_DATA_MSB_FIRST(TLU_TRIGGER_DATA_MSB_FIRST_SYNC),
     .TLU_ENABLE_VETO(TLU_ENABLE_VETO_SYNC),

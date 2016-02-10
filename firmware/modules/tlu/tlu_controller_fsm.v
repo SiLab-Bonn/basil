@@ -9,7 +9,8 @@
 
 module tlu_controller_fsm
 #(
-    parameter                   DIVISOR = 8
+    parameter                   DIVISOR = 8,
+    parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 32 // bit length of trigger data always TLU_TRIGGER_MAX_CLOCK_CYCLES - 1
 ) (
     input wire                  RESET,
     input wire                  TRIGGER_CLK,
@@ -38,7 +39,7 @@ module tlu_controller_fsm
     output reg                  TRIGGER_ACCEPTED_FLAG,
     
     input wire [7:0]            TLU_TRIGGER_LOW_TIME_OUT,
-    input wire [4:0]            TLU_TRIGGER_CLOCK_CYCLES,
+//    input wire [4:0]            TLU_TRIGGER_CLOCK_CYCLES,
     input wire [3:0]            TLU_TRIGGER_DATA_DELAY,
     input wire                  TLU_TRIGGER_DATA_MSB_FIRST,
     input wire                  TLU_ENABLE_VETO,
@@ -59,11 +60,14 @@ module tlu_controller_fsm
 
 assign TRIGGER_DATA[31:0] = (WRITE_TIMESTAMP==1'b1) ? {1'b1, TIMESTAMP_DATA[30:0]} : ((TRIGGER_MODE==2'b11) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : ({1'b1, TRIGGER_COUNTER_DATA[30:0]}));
 
-// shift register, serial to parallel, 32 FF
-reg [(32*DIVISOR)-1:0] tlu_data_sr;
+// shift register, serial to parallel, length of TLU_TRIGGER_MAX_CLOCK_CYCLES
+reg [((TLU_TRIGGER_MAX_CLOCK_CYCLES+1)*DIVISOR)-1:0] tlu_data_sr;
 always @ (posedge TRIGGER_CLK)
 begin
-    tlu_data_sr[(32*DIVISOR)-1:0] <= {tlu_data_sr[(32*DIVISOR)-2:0], TRIGGER};
+    if (RESET | TRIGGER_ACCEPTED_FLAG)
+        tlu_data_sr <= 0;
+    else
+        tlu_data_sr[((TLU_TRIGGER_MAX_CLOCK_CYCLES)*DIVISOR)-1:0] <= {tlu_data_sr[((TLU_TRIGGER_MAX_CLOCK_CYCLES)*DIVISOR)-2:0], TRIGGER};
 end
 
 // FSM
@@ -147,21 +151,23 @@ begin
         
         SEND_TLU_CLOCK:
         begin
-            if (TLU_TRIGGER_CLOCK_CYCLES == 5'b0) // send 32 clock cycles
-                if (counter_tlu_clock == 32 * DIVISOR)
-                    next = WAIT_BEFORE_LATCH;
-                else
-                    next = SEND_TLU_CLOCK;
+            //if (TLU_TRIGGER_CLOCK_CYCLES == 5'b0) // send 32 clock cycles
+            if (counter_tlu_clock >= TLU_TRIGGER_MAX_CLOCK_CYCLES * DIVISOR)
+                next = WAIT_BEFORE_LATCH;
+            else
+                next = SEND_TLU_CLOCK;
+            /*
             else
                 if (counter_tlu_clock == TLU_TRIGGER_CLOCK_CYCLES * DIVISOR)
                     next = WAIT_BEFORE_LATCH;
                 else
                     next = SEND_TLU_CLOCK;
+            */
         end
         
         WAIT_BEFORE_LATCH:
         begin
-            if (counter_sr_wait_cycles == TLU_TRIGGER_DATA_DELAY + 3) // in total 3 clock cycles for sync of the signal
+            if (counter_sr_wait_cycles == TLU_TRIGGER_DATA_DELAY + 5) // wait at least 3 (2 + next state) clock cycles for sync of the signal
                 next = LATCH_DATA;
             else
                 next = WAIT_BEFORE_LATCH;
@@ -364,52 +370,64 @@ begin
             begin
                 FIFO_PREEMPT_REQ <= 1'b1;
                 TRIGGER_DATA_WRITE <= 1'b1;
-                if (TLU_TRIGGER_CLOCK_CYCLES == 5'b0_0000) // 0 results in 32 clock cycles -> 31bit trigger number
-                begin
-                    if (TLU_TRIGGER_DATA_MSB_FIRST == 1'b0)  // reverse bit order
-                    begin
-                        for ( n=0 ; n < 32 ; n = n+1 )
-                        begin
+                if (TLU_TRIGGER_DATA_MSB_FIRST == 1'b0) begin // reverse bit order
+                    for ( n=0 ; n < TLU_TRIGGER_MAX_CLOCK_CYCLES ; n = n+1 ) begin
+                        if (n > 31-1)
+                            TLU_TRIGGER_NUMBER_DATA[n] <= 1'b0;
+                        else
+                            TLU_TRIGGER_NUMBER_DATA[n] <= tlu_data_sr[((TLU_TRIGGER_MAX_CLOCK_CYCLES-n)*DIVISOR)-1];
+                    end
+                end
+                else begin // do not reverse
+                    for ( n=0 ; n < TLU_TRIGGER_MAX_CLOCK_CYCLES ; n = n+1 ) begin
+                        if (n > 31-1)
+                            TLU_TRIGGER_NUMBER_DATA[n] <= 1'b0;
+                        else
+                            TLU_TRIGGER_NUMBER_DATA[n] <= tlu_data_sr[((n+2)*DIVISOR)-1];
+                    end
+                end
+                /*
+                if (TLU_TRIGGER_CLOCK_CYCLES == 5'b0_0000) begin // 0 results in 32 clock cycles -> 31bit trigger number
+                    if (TLU_TRIGGER_DATA_MSB_FIRST == 1'b0) begin // reverse bit order
+                        for ( n=0 ; n < 32 ; n = n+1 ) begin
                             if (n > 31-1)
                                 TLU_TRIGGER_NUMBER_DATA[n] <= 1'b0;
                             else
-                                TLU_TRIGGER_NUMBER_DATA[n] <= tlu_data_sr[(32*DIVISOR)-1-(n*DIVISOR)-DIVISOR];
+                                TLU_TRIGGER_NUMBER_DATA[n] <= tlu_data_sr[((32-n)*DIVISOR)-1];
                         end
                     end
-                    else // do not reverse
-                    begin
-                        for ( n=0 ; n < 32 ; n = n+1 )
-                        begin
+                    else begin // do not reverse
+                        for ( n=0 ; n < 32 ; n = n+1 ) begin
                             if (n > 31-1)
                                 TLU_TRIGGER_NUMBER_DATA[n] <= 1'b0;
                             else
-                                TLU_TRIGGER_NUMBER_DATA[n] <= tlu_data_sr[(n*DIVISOR)+DIVISOR-1];
+                                TLU_TRIGGER_NUMBER_DATA[n] <= tlu_data_sr[((n+2)*DIVISOR)-1];
                         end
                     end
                 end
-                else // specific number of clock cycles
-                begin
-                    if (TLU_TRIGGER_DATA_MSB_FIRST == 1'b0)  // reverse bit order
-                    begin
-                        for ( n=0 ; n < 32 ; n = n+1 )
-                        begin
-                            if (n > TLU_TRIGGER_CLOCK_CYCLES-1-1)
-                                TLU_TRIGGER_NUMBER_DATA[n] <= 1'b0;
-                            else
-                                TLU_TRIGGER_NUMBER_DATA[n] <= tlu_data_sr[(32*DIVISOR)-1-(TLU_TRIGGER_CLOCK_CYCLES*DIVISOR)-(n*DIVISOR)-DIVISOR]; // reverse bit order
+                else begin // specific number of clock cycles
+                    if (TLU_TRIGGER_DATA_MSB_FIRST == 1'b0) begin // reverse bit order
+                        for ( n=31 ; n >= 0 ; n = n-1 ) begin
+                            if (n + 1 > TLU_TRIGGER_CLOCK_CYCLES - 1)
+                                TLU_TRIGGER_NUMBER_DATA[n] = 1'b0;
+                            else if (n + 1 == TLU_TRIGGER_CLOCK_CYCLES - 1) begin
+                                for ( i=0 ; i < 32 ; i = i+1 ) begin
+                                    if (i < TLU_TRIGGER_CLOCK_CYCLES-1)
+                                        TLU_TRIGGER_NUMBER_DATA[n-i] = tlu_data_sr[((i+2)*DIVISOR)-1];
+                                end
+                            end
                         end
                     end
-                    else // do not reverse
-                    begin
-                        for ( n=0 ; n < 32 ; n = n+1 )
-                        begin
-                            if (n > TLU_TRIGGER_CLOCK_CYCLES-1-1)
+                    else begin // do not reverse
+                        for ( n=0 ; n < 32 ; n = n+1 ) begin
+                            if (n + 1 > TLU_TRIGGER_CLOCK_CYCLES - 1)
                                 TLU_TRIGGER_NUMBER_DATA[n] <= 1'b0;
                             else
-                                TLU_TRIGGER_NUMBER_DATA[n] <= tlu_data_sr[(n*DIVISOR)+DIVISOR-1];
+                                TLU_TRIGGER_NUMBER_DATA[n] <= tlu_data_sr[((n+2)*DIVISOR)-1];
                         end
                     end
                 end
+                */
                 TLU_BUSY <= 1'b1;
                 TLU_CLOCK_ENABLE <= 1'b0;
                 counter_tlu_clock <= 0;

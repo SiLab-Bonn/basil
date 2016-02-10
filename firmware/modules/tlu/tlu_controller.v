@@ -12,7 +12,8 @@ module tlu_controller
     parameter       BASEADDR = 16'h0000,
     parameter       HIGHADDR = 16'h0000, 
     parameter       ABUSWIDTH = 16,
-    parameter       DIVISOR = 8
+    parameter       DIVISOR = 8,
+    parameter       TLU_TRIGGER_MAX_CLOCK_CYCLES = 32
 )
 (
     input wire                  BUS_CLK,
@@ -70,7 +71,8 @@ bus_to_ip #(
 
 tlu_controller_core #(
     .DIVISOR(DIVISOR),
-    .ABUSWIDTH(ABUSWIDTH)
+    .ABUSWIDTH(ABUSWIDTH),
+    .TLU_TRIGGER_MAX_CLOCK_CYCLES(TLU_TRIGGER_MAX_CLOCK_CYCLES)
 ) i_tlu_controller_core (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
