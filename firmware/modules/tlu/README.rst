@@ -15,6 +15,7 @@ NOTE:
  7. All selected trigger veto inputs (TRIGGER_VETO) are ORed (all veto inputs are enabled by default!)
  8. If TRIGGER_LOW_TIMEOUT_ERROR_COUNTER in TLU handshake mode is not 0, the busy signal might be broken.
  9. If TLU_TRIGGER_ACCEPT_ERROR_COUNTER in TLU handshake mode is not 0, the TLU might be not configured properly (must be in handshake mode) or short pulses are appearing on the trigger line. Possible solution is to increase TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES.
+10. TLU_TRIGGER_MAX_CLOCK_CYCLES should always be one more clock cycle than the bit lenght of the trigger data to return the trigger line to logical low.
 
 TRIGGER_MODE:
  1. 0 = normal trigger mode
@@ -27,11 +28,13 @@ TRIGGER_MODE:
 `test_SimTlu.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTlu.py>`_
 
 Parameters
-    +--------------+---------------------+-------------------------------------------------------------------------+ 
-    | Name         | Default             | Description                                                             | 
-    +==============+=====================+=========================================================================+ 
-    | DIVISOR      | 8                   | Defines TLU clock speed. TLU clock is divided by Divisor.               | 
-    +--------------+---------------------+-------------------------------------------------------------------------+ 
+    +------------------------------+---------------------+--------------------------------------------------------------------------+
+    | Name                         | Default             | Description                                                              |
+    +==============================+=====================+==========================================================================+
+    | DIVISOR                      | 8                   | Defines TLU clock speed. TLU clock is divided by Divisor.                |
+    +------------------------------+---------------------+--------------------------------------------------------------------------+
+    | TLU_TRIGGER_MAX_CLOCK_CYCLES | 32                  | Number of clock cycles send to the TLU. Bit lenght of trigger data is -1.|
+    +------------------------------+---------------------+--------------------------------------------------------------------------+
 
 Pins
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+ 
@@ -74,8 +77,6 @@ Registers
     | TRIGGER_ENABLE                         | 1                                | [3]    | r/w   | 0           | enable trigger FSM, ORed with TRIGGER_ENABLE input | 
     +----------------------------------------+----------------------------------+--------+-------+-------------+----------------------------------------------------+ 
     | TRIGGER_DATA_DELAY                     | 1                                | [7:4]  | r/w   | 0           | additional TLU data delay for longer cables        | 
-    +----------------------------------------+----------------------------------+--------+-------+-------------+----------------------------------------------------+ 
-    | TRIGGER_CLOCK_CYCLES                   | 2                                | [4:0]  | r/w   | 0           | TLU trigger number clocks(0=32 clock cycles)       | 
     +----------------------------------------+----------------------------------+--------+-------+-------------+----------------------------------------------------+ 
     | EN_TLU_RESET_TIMESTAMP                 | 2                                | [5]    | r/w   | 0           | reset time stamp to 0 on TLU reset                 | 
     +----------------------------------------+----------------------------------+--------+-------+-------------+----------------------------------------------------+ 
