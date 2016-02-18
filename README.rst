@@ -30,11 +30,31 @@ Documentation
 Documentation can be found under: http://basil.rtfd.org
 
 Installation
-=============
+============
+
+Clone the repository to get a copy of the source code (for developers):
 
 .. code-block:: bash
 
-    pip install git+https://github.com/SiLab-Bonn/basil.git@v2.5.0
+    git clone https://github.com/SiLab-Bonn/basil.git
+    cd basil
+    python setup.py develop
+
+or install via PyPI into the Python's site-packages folder (for non-developers):
+
+.. code-block:: bash
+
+    pip install basil_daq==version
+
+where version is a version number (e.g. 2.4.2)
+
+or install from git, when no PyPI package is available (for non-developers):
+
+.. code-block:: bash
+
+    pip install git+https://github.com/SiLab-Bonn/basil.git@branch
+
+where branch is a branch name (e.g. master or v2.4.2).
 
 Support
 =======

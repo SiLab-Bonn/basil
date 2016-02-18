@@ -47,6 +47,11 @@ class SiUsb (SiTransferLayer):
             if 'avoid_download' in self._init.keys() and self._init['avoid_download'] is True and self._sidev.XilinxAlreadyLoaded():
                 logging.info("FPGA already programmed, skipping download")
             else:
+                # invert polarity of the interface clock (IFCONFIG.4) -> IFCLK & UCLK are in-phase
+                ifconfig = self._sidev._Read8051(0xE601, 1)[0]
+                ifconfig = ifconfig & ~0x10
+                self._sidev._Write8051(0xE601, [ifconfig])
+
                 if os.path.exists(self._init['bit_file']):
                     bit_file = self._init['bit_file']
                 elif os.path.exists(os.path.join(os.path.dirname(self.parent.conf_path), self._init['bit_file'])):

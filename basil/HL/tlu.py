@@ -26,7 +26,6 @@ class tlu(RegisterHardwareLayer):
                   'TRIGGER_DATA_MSB_FIRST': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},
                   'TRIGGER_ENABLE': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},
                   'TRIGGER_DATA_DELAY': {'descr': {'addr': 1, 'size': 4, 'offset': 4}},
-                  'TRIGGER_CLOCK_CYCLES': {'descr': {'addr': 2, 'size': 5, 'offset': 0}},
                   'EN_TLU_RESET_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 5}},
                   'EN_TLU_VETO': {'descr': {'addr': 2, 'size': 1, 'offset': 6}},
                   'EN_WRITE_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 7}},
@@ -37,8 +36,12 @@ class tlu(RegisterHardwareLayer):
                   'TRIGGER_SELECT': {'descr': {'addr': 13, 'size': 8}},
                   'TRIGGER_VETO_SELECT': {'descr': {'addr': 14, 'size': 8}},
                   'TRIGGER_INVERT': {'descr': {'addr': 15, 'size': 8}},
-                  'MAX_TRIGGERS': {'descr': {'addr': 16, 'size': 32}}}
-    _require_version = "==5"
+                  'MAX_TRIGGERS': {'descr': {'addr': 16, 'size': 32}},
+                  'TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES': {'descr': {'addr': 20, 'size': 8}},
+                  'HANDSHAKE_BUSY_VETO_WAIT_CYCLES': {'descr': {'addr': 21, 'size': 8}},
+                  'TRIGGER_LOW_TIMEOUT_ERROR_COUNTER': {'descr': {'addr': 22, 'size': 8, 'properties': ['ro']}},
+                  'TLU_TRIGGER_ACCEPT_ERROR_COUNTER': {'descr': {'addr': 23, 'size': 8, 'properties': ['ro']}}}
+    _require_version = "==6"
 
     def __init__(self, intf, conf):
         super(tlu, self).__init__(intf, conf)
@@ -57,9 +60,6 @@ class tlu(RegisterHardwareLayer):
 
     def set_trigger_data_delay(self, value):
         self.TRIGGER_DATA_DELAY = value
-
-    def set_trigger_clock_cycles(self, value):
-        self.TRIGGER_CLOCK_CYCLES = value
 
     def set_tlu_reset(self, value):
         self.EN_TLU_RESET = value
