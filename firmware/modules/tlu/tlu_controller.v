@@ -12,7 +12,8 @@ module tlu_controller
     parameter       BASEADDR = 16'h0000,
     parameter       HIGHADDR = 16'h0000, 
     parameter       ABUSWIDTH = 16,
-    parameter       DIVISOR = 8
+    parameter       DIVISOR = 8,
+    parameter       TLU_TRIGGER_MAX_CLOCK_CYCLES = 17
 )
 (
     input wire                  BUS_CLK,
@@ -33,7 +34,7 @@ module tlu_controller
     input wire      [7:0]       TRIGGER,
     input wire      [7:0]       TRIGGER_VETO,
     
-    input wire                  TRIGGER_ENABLE,
+    input wire                  EXT_TRIGGER_ENABLE,
     input wire                  TRIGGER_ACKNOWLEDGE,
     output wire                 TRIGGER_ACCEPTED_FLAG,
     
@@ -70,7 +71,8 @@ bus_to_ip #(
 
 tlu_controller_core #(
     .DIVISOR(DIVISOR),
-    .ABUSWIDTH(ABUSWIDTH)
+    .ABUSWIDTH(ABUSWIDTH),
+    .TLU_TRIGGER_MAX_CLOCK_CYCLES(TLU_TRIGGER_MAX_CLOCK_CYCLES)
 ) i_tlu_controller_core (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
@@ -91,7 +93,7 @@ tlu_controller_core #(
     .TRIGGER(TRIGGER),
     .TRIGGER_VETO(TRIGGER_VETO),
 
-    .TRIGGER_ENABLE(TRIGGER_ENABLE),
+    .EXT_TRIGGER_ENABLE(EXT_TRIGGER_ENABLE),
     .TRIGGER_ACKNOWLEDGE(TRIGGER_ACKNOWLEDGE),
     .TRIGGER_ACCEPTED_FLAG(TRIGGER_ACCEPTED_FLAG),
     

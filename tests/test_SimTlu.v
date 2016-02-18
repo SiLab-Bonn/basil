@@ -171,7 +171,8 @@ module tb (
         .BASEADDR(TLU_BASEADDR),
         .HIGHADDR(TLU_HIGHADDR),
         .ABUSWIDTH(ABUSWIDTH),
-        .DIVISOR(8)
+        .DIVISOR(16),
+        .TLU_TRIGGER_MAX_CLOCK_CYCLES(16)
     ) i_tlu_controller (
         .BUS_CLK(BUS_CLK),
         .BUS_RST(BUS_RST),
@@ -196,7 +197,7 @@ module tb (
         .TLU_BUSY(TLU_BUSY),
         .TLU_CLOCK(TLU_CLOCK),
         
-        .TRIGGER_ENABLE(TRIGGER_ENABLE),
+        .EXT_TRIGGER_ENABLE(TRIGGER_ENABLE),
         .TRIGGER_ACKNOWLEDGE(ACKNOWLEDGE),
         .TRIGGER_ACCEPTED_FLAG(ACKNOWLEDGE),
 
