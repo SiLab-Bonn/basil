@@ -10,7 +10,7 @@
 module tlu_controller_fsm
 #(
     parameter                   DIVISOR = 8,
-    parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 32 // bit length of trigger data always TLU_TRIGGER_MAX_CLOCK_CYCLES - 1
+    parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 17
 ) (
     input wire                  RESET,
     input wire                  TRIGGER_CLK,

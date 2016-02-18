@@ -13,7 +13,7 @@ module tlu_controller
     parameter       HIGHADDR = 16'h0000, 
     parameter       ABUSWIDTH = 16,
     parameter       DIVISOR = 8,
-    parameter       TLU_TRIGGER_MAX_CLOCK_CYCLES = 32
+    parameter       TLU_TRIGGER_MAX_CLOCK_CYCLES = 17
 )
 (
     input wire                  BUS_CLK,

@@ -17,9 +17,9 @@
 
 module tlu_controller_core
 #(
-    parameter                   DIVISOR = 8, // dividing TRIGGER_CLK by DIVISOR for TLU_CLOCK
     parameter                   ABUSWIDTH = 16,
-    parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 32
+    parameter                   DIVISOR = 8, // dividing TRIGGER_CLK by DIVISOR for TLU_CLOCK
+    parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 17 // bit length of trigger data always TLU_TRIGGER_MAX_CLOCK_CYCLES - 1
 )
 (
     input wire                  BUS_CLK,
