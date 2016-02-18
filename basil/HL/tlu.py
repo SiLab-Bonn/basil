@@ -26,7 +26,6 @@ class tlu(RegisterHardwareLayer):
                   'TRIGGER_DATA_MSB_FIRST': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},
                   'TRIGGER_ENABLE': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},
                   'TRIGGER_DATA_DELAY': {'descr': {'addr': 1, 'size': 4, 'offset': 4}},
-                  'TRIGGER_CLOCK_CYCLES': {'descr': {'addr': 2, 'size': 5, 'offset': 0}},
                   'EN_TLU_RESET_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 5}},
                   'EN_TLU_VETO': {'descr': {'addr': 2, 'size': 1, 'offset': 6}},
                   'EN_WRITE_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 7}},
@@ -61,9 +60,6 @@ class tlu(RegisterHardwareLayer):
 
     def set_trigger_data_delay(self, value):
         self.TRIGGER_DATA_DELAY = value
-
-    def set_trigger_clock_cycles(self, value):
-        self.TRIGGER_CLOCK_CYCLES = value
 
     def set_tlu_reset(self, value):
         self.EN_TLU_RESET = value
