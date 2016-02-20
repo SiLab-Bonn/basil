@@ -50,12 +50,12 @@ class BasilBusDriver(BusDriver):
         self.bus.BUS_ADD <= self._x
         self.bus.BUS_DATA <= self._high_impedence
 
-        for _ in range(5):
+        for _ in range(8):
             yield RisingEdge(self.clock)
 
         self.bus.BUS_RST <= 0
 
-        for _ in range(5):
+        for _ in range(2):
             yield RisingEdge(self.clock)
 
         # why this does not work? hasattr(self.bus, 'BUS_BYTE_ACCESS'):
