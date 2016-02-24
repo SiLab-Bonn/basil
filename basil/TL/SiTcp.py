@@ -25,7 +25,7 @@ class SiTcp (SiTransferLayer):
     RBCP_ID = 0xa5
     RBCP_MAX_SIZE = 255
 
-    UDP_TIMEOUT = 0.1
+    UDP_TIMEOUT = 0.5
     UDP_RETRANSMIT_CNT = 0  # TODO
 
     BASE_DATA_TCP = 0x100000000
