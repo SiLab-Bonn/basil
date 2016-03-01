@@ -73,8 +73,6 @@ class TestSimM26(unittest.TestCase):
         header1 = BitLogic(16)
         header0[:] = 0x5555
         header1[:] = 0xDAAA
-        header0.reverse()
-        header1.reverse()
         
         self.chip['SEQ']['DATA0'][0:16] = header0[:]
         self.chip['SEQ']['DATA1'][0:16] = header1[:]
@@ -83,18 +81,14 @@ class TestSimM26(unittest.TestCase):
         fcnt1 = BitLogic(16)
         fcnt0[:] = 0xffaa
         fcnt1[:] = 0xaa55
-        fcnt0.reverse()
-        fcnt1.reverse()
         
         self.chip['SEQ']['DATA0'][16:32] = fcnt0[:]
         self.chip['SEQ']['DATA1'][16:32] = fcnt1[:]
         
         datalen0 = BitLogic(16)
         datalen1 = BitLogic(16)
-        datalen0[:] = 0x0004
-        datalen1[:] = 0x0004
-        datalen0.reverse()
-        datalen1.reverse()
+        datalen0[:] = 0x0003
+        datalen1[:] = 0x0003
         
         self.chip['SEQ']['DATA0'][32:48] = datalen0[:]
         self.chip['SEQ']['DATA1'][32:48] = datalen1[:]
@@ -105,8 +99,6 @@ class TestSimM26(unittest.TestCase):
             data1 = BitLogic(16)
             data0[:] = i*2
             data1[:] = i*2+1
-            data0.reverse()
-            data1.reverse()
             self.chip['SEQ']['DATA0'][48+i*16:48+16+i*16] = data0[:]
             self.chip['SEQ']['DATA1'][48+i*16:48+16+i*16] = data1[:]
 
@@ -132,8 +124,8 @@ class TestSimM26(unittest.TestCase):
         exp[1] = 0xDAAA
         exp[2] = 0xffaa
         exp[3] = 0xaa55
-        exp[4] = 0x0004
-        exp[5] = 0x0004
+        exp[4] = 0x0003
+        exp[5] = 0x0003
         for i in range(4):
             exp[6+i*2] = i*2
             exp[7+i*2] = i*2+1
