@@ -23,7 +23,7 @@ always@(posedge CLK_RX)
 
 reg [15:0] data_sr;
 always@(posedge CLK_RX)
-    data_sr[15:0] <= {data_sr[14:0], DATA_RX};
+    data_sr[15:0] <= {DATA_RX, data_sr[15:1]};
     
 assign FRAME_START = (mkd_sr[15:12] == 4'b1111);
 
@@ -44,7 +44,7 @@ always@(posedge CLK_RX)
         data_len <= data_sr;
 
         
-assign WRITE = FRAME_START | data_cnt == 15 | data_cnt == 31 | ((data_cnt + 1) % 16 == 0 && data_cnt / 16 < data_len + 2);
+assign WRITE = FRAME_START | data_cnt == 15 | data_cnt == 31 | ((data_cnt + 1) % 16 == 0 && data_cnt / 16 < data_len + 3);
 assign DATA = data_sr;
 
 endmodule

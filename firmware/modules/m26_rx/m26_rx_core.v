@@ -10,6 +10,7 @@
 module m26_rx_core
 #(
     parameter ABUSWIDTH = 16,
+    parameter HEADER = 0,
     parameter IDENTYFIER = 0
 )(
     input wire CLK_RX,
@@ -28,7 +29,7 @@ module m26_rx_core
     input wire BUS_WR,
     input wire BUS_RD,
     
-    output LOST_ERROR
+    output wire LOST_ERROR
 ); 
 
 localparam VERSION = 1;
@@ -102,6 +103,11 @@ m26_rx_ch m26_rx_ch1(
     .WRITE(WRITE[1]), .FRAME_START(), .DATA(DATA[1])
 );
 
+//ila_0 ila(
+//    .clk(CLK_RX),
+//    .probe0({FRAME_START, WRITE, DATA[1], DATA[0]})
+//);
+
 
 wire [16:0] cdc_data;
 wire fifo_full, cdc_fifo_empty;
@@ -140,7 +146,9 @@ gerneric_fifo #(.DATA_SIZE(17), .DEPTH(1024))  fifo_i
     .data_out(FIFO_DATA[16:0]), .size() 
 );
 
-assign FIFO_DATA[31:25]  = IDENTYFIER[7:1];
+assign FIFO_DATA[19:17]  =  0; 
+assign FIFO_DATA[23:20]  =  IDENTYFIER[3:0]; 
+assign FIFO_DATA[31:24]  =  HEADER[7:0]; 
 
 assign LOST_ERROR = LOST_DATA_CNT != 0;
 

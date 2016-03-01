@@ -12,7 +12,7 @@ module m26_rx
     parameter BASEADDR = 16'h0000,
     parameter HIGHADDR = 16'h0000,
     parameter ABUSWIDTH = 16,
-    
+    parameter HEADER = 0,
     parameter IDENTYFIER = 0
 )(
     input wire BUS_CLK,
@@ -30,7 +30,7 @@ module m26_rx
     output wire FIFO_EMPTY,
     output wire [31:0] FIFO_DATA,
     
-    output LOST_ERROR
+    output wire LOST_ERROR
     
 ); 
 
@@ -56,7 +56,8 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i
 m26_rx_core 
 #(
     .ABUSWIDTH(ABUSWIDTH),
-    .IDENTYFIER(IDENTYFIER)
+    .IDENTYFIER(IDENTYFIER),
+    .HEADER(HEADER)
 ) i_m26_rx_core
 (
     .BUS_CLK(BUS_CLK),                     
