@@ -30,6 +30,8 @@ module m26_rx
     output wire FIFO_EMPTY,
     output wire [31:0] FIFO_DATA,
     
+    input wire [31:0] TIMESTAMP,
+    
     output wire LOST_ERROR
     
 ); 
@@ -75,6 +77,8 @@ m26_rx_core
     .FIFO_READ(FIFO_READ),
     .FIFO_EMPTY(FIFO_EMPTY),
     .FIFO_DATA(FIFO_DATA),
+    
+    .TIMESTAMP(TIMESTAMP),
     
     .LOST_ERROR(LOST_ERROR)
 );

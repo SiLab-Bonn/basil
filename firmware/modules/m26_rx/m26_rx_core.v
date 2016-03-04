@@ -29,6 +29,8 @@ module m26_rx_core
     input wire BUS_WR,
     input wire BUS_RD,
     
+    input wire [31:0] TIMESTAMP,
+    
     output wire LOST_ERROR
 ); 
 
@@ -43,14 +45,17 @@ wire RST;
 assign RST = BUS_RST | SOFT_RST; 
 
 reg CONF_EN;
+reg CONF_TIMESTAMP_HEADER;
 
 always @(posedge BUS_CLK) begin
     if(RST) begin
         CONF_EN <= 0;
     end
     else if(BUS_WR) begin
-        if(BUS_ADD == 2)
+        if(BUS_ADD == 2) begin
             CONF_EN <= BUS_DATA_IN[0];
+            CONF_TIMESTAMP_HEADER <= BUS_DATA_IN[1];
+        end
     end
 end
 
@@ -61,7 +66,7 @@ always @(posedge BUS_CLK) begin
         if(BUS_ADD == 0)
             BUS_DATA_OUT <= VERSION;
         else if(BUS_ADD == 2)
-            BUS_DATA_OUT <= {7'b0, CONF_EN};
+            BUS_DATA_OUT <= {6'b0, CONF_TIMESTAMP_HEADER, CONF_EN};
         else if(BUS_ADD == 3)
             BUS_DATA_OUT <= LOST_DATA_CNT;
         else
@@ -76,7 +81,7 @@ assign RST_SYNC = RST_SOFT_SYNC;
 
 wire CONF_EN_SYNC;
 assign CONF_EN_SYNC  = CONF_EN;
-
+ 
 reg [4:0] MKD_DLY;
 always@(posedge CLK_RX)
     MKD_DLY[4:0] <= {MKD_DLY[3:0], MKD_RX};
@@ -90,7 +95,7 @@ always@(posedge CLK_RX)
     DATA0_DLY[4:0] <= {DATA0_DLY[3:0], DATA_RX[0]};
 
 wire [1:0] WRITE;
-wire FRAME_START;
+wire FRAME_START, FRAME_START1;
 wire [15:0] DATA [1:0];
 
 m26_rx_ch m26_rx_ch0(
@@ -100,7 +105,7 @@ m26_rx_ch m26_rx_ch0(
 
 m26_rx_ch m26_rx_ch1(
     .RST(RST_SYNC), .CLK_RX(CLK_RX), .MKD_RX(MKD_DLY[4]), .DATA_RX(DATA1_DLY[4]),
-    .WRITE(WRITE[1]), .FRAME_START(), .DATA(DATA[1])
+    .WRITE(WRITE[1]), .FRAME_START(FRAME_START1), .DATA(DATA[1])
 );
 
 //ila_0 ila(
@@ -108,15 +113,32 @@ m26_rx_ch m26_rx_ch1(
 //    .probe0({FRAME_START, WRITE, DATA[1], DATA[0]})
 //);
 
+reg [31:0] TIMESTAMP_save;
+always@(posedge CLK_RX)
+    if(FRAME_START)
+        TIMESTAMP_save <= TIMESTAMP;
 
 wire [17:0] cdc_data;
 wire fifo_full, cdc_fifo_empty;
 wire cdc_fifo_write;
 reg data_lost_flag;
 
+reg [15:0] data_field;
+always@(*) begin
+    if(CONF_TIMESTAMP_HEADER & (WRITE[0] && FRAME_START))
+        data_field = TIMESTAMP[15:0];
+    else if(CONF_TIMESTAMP_HEADER & (WRITE[1] && FRAME_START1))
+        data_field = TIMESTAMP_save[31:16];
+    else if(WRITE[0])
+        data_field = DATA[0];
+    else
+        data_field = DATA[1];
+end
+
 assign cdc_data[17] = data_lost_flag;
 assign cdc_data[16] = FRAME_START;
-assign cdc_data[15:0] = WRITE[0] ? DATA[0] : DATA[1];
+assign cdc_data[15:0] = data_field;
+
 assign cdc_fifo_write = |WRITE & CONF_EN_SYNC;
 
 wire wfull;

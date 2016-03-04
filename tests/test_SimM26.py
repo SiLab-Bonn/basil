@@ -119,20 +119,40 @@ class TestSimM26(unittest.TestCase):
         
         ret = self.chip['fifo'].get_data()
 
-        exp = np.zeros((14,), dtype=np.uint32)
-        exp[0] = 0x00010000 | 0x5555
-        exp[1] = 0xDAAA
-        exp[2] = 0xffaa
-        exp[3] = 0xaa55
-        exp[4] = 0x0003
-        exp[5] = 0x0003
+        exps = np.zeros((14,), dtype=np.uint32)
+        exps[0] = 0x00010000 | 0x5555
+        exps[1] = 0xDAAA
+        exps[2] = 0xffaa
+        exps[3] = 0xaa55
+        exps[4] = 0x0003
+        exps[5] = 0x0003
         for i in range(4):
-            exp[6+i*2] = i*2
-            exp[7+i*2] = i*2+1
+            exps[6+i*2] = i*2
+            exps[7+i*2] = i*2+1
         
-        exp = np.tile(exp, 4)
+        exp = np.tile(exps, 4)
 
         np.testing.assert_array_equal(exp, ret)
+        
+        self.chip['M26_RX'].reset()
+        self.chip['M26_RX'].TIMESTAMP_HEADER = 1
+        self.chip['M26_RX'].set_en(True)
+        self.chip['fifo'].get_data()
+        self.chip['SEQ'].start()
+        
+        exps[0] = 0x00010000 | 0xBB44
+        exps[1] = 0xAA55
+        
+        exp = np.tile(exps, 4)
+        
+        while(not self.chip['SEQ'].is_done()):
+            pass
+        
+        ret = self.chip['fifo'].get_data()
+            
+        np.testing.assert_array_equal(exp, ret)
+        
+        
 
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator

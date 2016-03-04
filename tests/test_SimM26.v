@@ -97,7 +97,9 @@ module tb (
         .FIFO_READ(FIFO_READ_RX),
         .FIFO_EMPTY(FIFO_EMPTY_RX),
         .FIFO_DATA(FIFO_DATA_RX),
-
+        
+        .TIMESTAMP(32'haa55bb44),
+        
         .LOST_ERROR()
     ); 
     
