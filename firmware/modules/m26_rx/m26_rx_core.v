@@ -109,10 +109,12 @@ m26_rx_ch m26_rx_ch1(
 //);
 
 
-wire [16:0] cdc_data;
+wire [17:0] cdc_data;
 wire fifo_full, cdc_fifo_empty;
 wire cdc_fifo_write;
+reg data_lost_flag;
 
+assign cdc_data[17] = data_lost_flag;
 assign cdc_data[16] = FRAME_START;
 assign cdc_data[15:0] = WRITE[0] ? DATA[0] : DATA[1];
 assign cdc_fifo_write = |WRITE & CONF_EN_SYNC;
@@ -125,8 +127,19 @@ always@(posedge CLK_RX) begin
         LOST_DATA_CNT <= LOST_DATA_CNT +1;
 end
 
-wire [16:0] cdc_data_out;
-cdc_syncfifo #(.DSIZE(17), .ASIZE(3)) cdc_syncfifo_i
+always@(posedge CLK_RX) begin
+    if(RST_SYNC)
+        data_lost_flag <= 0;
+    else if (cdc_fifo_write) begin
+            if(wfull)
+                data_lost_flag <= 1;
+            else
+                data_lost_flag <= 0;
+    end
+end
+
+wire [17:0] cdc_data_out;
+cdc_syncfifo #(.DSIZE(18), .ASIZE(3)) cdc_syncfifo_i
 (
     .rdata(cdc_data_out),
     .wfull(wfull),
@@ -136,17 +149,17 @@ cdc_syncfifo #(.DSIZE(17), .ASIZE(3)) cdc_syncfifo_i
     .rinc(!fifo_full), .rclk(BUS_CLK), .rrst(RST)
 );
 
-gerneric_fifo #(.DATA_SIZE(17), .DEPTH(1024))  fifo_i
+gerneric_fifo #(.DATA_SIZE(18), .DEPTH(1024))  fifo_i
 ( .clk(BUS_CLK), .reset(RST), 
     .write(!cdc_fifo_empty),
     .read(FIFO_READ), 
     .data_in(cdc_data_out), 
     .full(fifo_full), 
     .empty(FIFO_EMPTY), 
-    .data_out(FIFO_DATA[16:0]), .size() 
+    .data_out(FIFO_DATA[17:0]), .size() 
 );
 
-assign FIFO_DATA[19:17]  =  0; 
+assign FIFO_DATA[19:18]  =  0; 
 assign FIFO_DATA[23:20]  =  IDENTYFIER[3:0]; 
 assign FIFO_DATA[31:24]  =  HEADER[7:0]; 
 
