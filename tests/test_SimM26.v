@@ -76,6 +76,28 @@ module tb (
     wire FIFO_EMPTY_RX;
     wire [31:0] FIFO_DATA_RX;
     
+    //safe clock domain crossing synchronization
+    reg [31:0] TIMESTAMP, timestamp_gray;
+    always@(posedge BUS_CLK)
+        TIMESTAMP <= 32'haa55bb44;
+
+    always@(posedge BUS_CLK) 
+        timestamp_gray <=  (TIMESTAMP>>1) ^ TIMESTAMP;
+
+    reg [31:0] timestamp_cdc0, timestamp_cdc1, timestamp_m26;
+    always@(posedge BUS_CLK) begin
+        timestamp_cdc0 <= timestamp_gray;
+        timestamp_cdc1 <= timestamp_cdc0;
+    end
+
+    integer gbi;
+    always@(*) begin
+        timestamp_m26[31] = timestamp_cdc1[31];
+        for(gbi  =30; gbi >= 0; gbi = gbi -1) begin
+            timestamp_m26[gbi] = timestamp_cdc1[gbi] ^ timestamp_m26[gbi+1];
+        end
+    end     
+        
     m26_rx 
     #(
         .BASEADDR(M26_RX_BASEADDR), 
@@ -98,7 +120,7 @@ module tb (
         .FIFO_EMPTY(FIFO_EMPTY_RX),
         .FIFO_DATA(FIFO_DATA_RX),
         
-        .TIMESTAMP(32'haa55bb44),
+        .TIMESTAMP(timestamp_m26),
         
         .LOST_ERROR()
     ); 
