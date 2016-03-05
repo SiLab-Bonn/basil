@@ -16,7 +16,7 @@ module tlu_controller_fsm
     input wire                  TRIGGER_CLK,
     
     output reg                  TRIGGER_DATA_WRITE,
-    output reg [31:0]          TRIGGER_DATA,
+    output reg [31:0]           TRIGGER_DATA,
     
     output reg                  FIFO_PREEMPT_REQ,
     input wire                  FIFO_ACKNOWLEDGE,
@@ -61,14 +61,15 @@ module tlu_controller_fsm
 
 always@(*)
 begin
-    if(CONF_DATA_FORMAT == 2'b11)
-        TRIGGER_DATA[31:0] = {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} ;
-    else if(CONF_DATA_FORMAT == 2'b01)
-        TRIGGER_DATA[31:0] = {1'b1, TIMESTAMP_DATA[30:0]} ;
-    else if(CONF_DATA_FORMAT == 2'b10)
-        TRIGGER_DATA[31:0] = {1'b1, TIMESTAMP_DATA[14:0], TLU_TRIGGER_NUMBER_DATA[15:0]} ;
-    else
-        TRIGGER_DATA[31:0] = {1'b1, TRIGGER_COUNTER_DATA[30:0]} ;
+    if(TRIGGER_MODE == 2'b11) // TLU trigger number
+        TRIGGER_DATA[31:0] = {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]};
+    else // internally generated trigger number
+        TRIGGER_DATA[31:0] = {1'b1, TRIGGER_COUNTER_DATA[30:0]};
+
+    if(CONF_DATA_FORMAT == 2'b01) // time stamp only
+        TRIGGER_DATA[31:0] = {1'b1, TIMESTAMP_DATA[30:0]};
+    else if(CONF_DATA_FORMAT == 2'b10) // combined
+        TRIGGER_DATA[31:16] = {1'b1, TIMESTAMP_DATA[14:0]};
 end
 
 // shift register, serial to parallel, length of TLU_TRIGGER_MAX_CLOCK_CYCLES

@@ -16,10 +16,9 @@ trigger_modes = {
 }
 
 trigger_data_format = {
-    'TRIGGER_COUNTER': 0,  # internal trigger counter 
-    'TIMESTAMP': 1,  # internal timestamp
-    'COMBINED': 2,  # 15bit timestamp + 16bit TLU trigger id
-    'TRIGGER_ID': 3  # TLU trigger id
+    'TRIGGER_COUNTER': 0,  # trigger number according to TRIGGER_MODE
+    'TIMESTAMP': 1,  # time stamp only
+    'COMBINED': 2,  # combined, 15bit time stamp + 16bit trigger number
 }
 
 class tlu(RegisterHardwareLayer):
@@ -32,9 +31,9 @@ class tlu(RegisterHardwareLayer):
                   'TRIGGER_DATA_MSB_FIRST': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},
                   'TRIGGER_ENABLE': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},
                   'TRIGGER_DATA_DELAY': {'descr': {'addr': 1, 'size': 4, 'offset': 4}},
+                  'DATA_FORMAT': {'descr': {'addr': 2, 'size': 2, 'offset': 0}},
                   'EN_TLU_RESET_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 5}},
                   'EN_TLU_VETO': {'descr': {'addr': 2, 'size': 1, 'offset': 6}},
-                  'DATA_FORMAT': {'descr': {'addr': 2, 'size': 2, 'offset': 0}},
                   'TRIGGER_LOW_TIMEOUT': {'descr': {'addr': 3, 'size': 8}},
                   'CURRENT_TLU_TRIGGER_NUMBER': {'descr': {'addr': 4, 'size': 32, 'properties': ['ro']}},
                   'TRIGGER_COUNTER': {'descr': {'addr': 8, 'size': 32}},
@@ -69,9 +68,6 @@ class tlu(RegisterHardwareLayer):
 
     def set_tlu_reset(self, value):
         self.EN_TLU_RESET = value
-
-    def set_write_timestamp(self, value):
-        self.EN_WRITE_TIMESTAMP = value
 
     def set_trigger_low_timeout(self, value):
         self.TRIGGER_LOW_TIMEOUT = value
