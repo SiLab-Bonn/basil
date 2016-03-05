@@ -39,7 +39,7 @@ Parameters
     +==============================+=====================+==========================================================================+
     | DIVISOR                      | 8                   | Defines TLU clock speed. TLU clock is divided by Divisor.                |
     +------------------------------+---------------------+--------------------------------------------------------------------------+
-    | TLU_TRIGGER_MAX_CLOCK_CYCLES | 32                  | Number of clock cycles send to the TLU. Bit lenght of trigger data is -1.|
+    | TLU_TRIGGER_MAX_CLOCK_CYCLES | 17                  | Number of clock cycles send to the TLU. Bit lenght of trigger data is -1.|
     +------------------------------+---------------------+--------------------------------------------------------------------------+
 
 Pins
