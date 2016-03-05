@@ -15,6 +15,12 @@ trigger_modes = {
     'DATA_HANDSHAKE': 3  # TLU trigger data handshake
 }
 
+trigger_data_format = {
+    'TRIGGER_COUNTER': 0,  # internal trigger counter 
+    'TIMESTAMP': 1,  # internal timestamp
+    'COMBINED': 2,  # 15bit timestamp + 16bit TLU trigger id
+    'TRIGGER_ID': 3  # TLU trigger id
+}
 
 class tlu(RegisterHardwareLayer):
     '''TLU controller interface
@@ -28,7 +34,7 @@ class tlu(RegisterHardwareLayer):
                   'TRIGGER_DATA_DELAY': {'descr': {'addr': 1, 'size': 4, 'offset': 4}},
                   'EN_TLU_RESET_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 5}},
                   'EN_TLU_VETO': {'descr': {'addr': 2, 'size': 1, 'offset': 6}},
-                  'EN_WRITE_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 7}},
+                  'DATA_FORMAT': {'descr': {'addr': 2, 'size': 2, 'offset': 0}},
                   'TRIGGER_LOW_TIMEOUT': {'descr': {'addr': 3, 'size': 8}},
                   'CURRENT_TLU_TRIGGER_NUMBER': {'descr': {'addr': 4, 'size': 32, 'properties': ['ro']}},
                   'TRIGGER_COUNTER': {'descr': {'addr': 8, 'size': 32}},
@@ -41,7 +47,7 @@ class tlu(RegisterHardwareLayer):
                   'HANDSHAKE_BUSY_VETO_WAIT_CYCLES': {'descr': {'addr': 21, 'size': 8}},
                   'TRIGGER_LOW_TIMEOUT_ERROR_COUNTER': {'descr': {'addr': 22, 'size': 8, 'properties': ['ro']}},
                   'TLU_TRIGGER_ACCEPT_ERROR_COUNTER': {'descr': {'addr': 23, 'size': 8, 'properties': ['ro']}}}
-    _require_version = "==6"
+    _require_version = "==7"
 
     def __init__(self, intf, conf):
         super(tlu, self).__init__(intf, conf)

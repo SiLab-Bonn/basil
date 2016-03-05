@@ -53,7 +53,7 @@ module tlu_controller_core
     output wire     [31:0]      TIMESTAMP
 );
 
-localparam VERSION = 6;
+localparam VERSION = 7;
 
 // Registers
 wire SOFT_RST; // Address: 0
@@ -95,14 +95,12 @@ wire CONF_TRIGGER_ENABLE;
 assign CONF_TRIGGER_ENABLE = status_regs[1][3];
 wire [3:0] TLU_TRIGGER_DATA_DELAY;
 assign TLU_TRIGGER_DATA_DELAY = status_regs[1][7:4];
-//wire [4:0] TLU_TRIGGER_CLOCK_CYCLES;
-//assign TLU_TRIGGER_CLOCK_CYCLES = status_regs[2][4:0]; // 0: 32 clock cycles
+wire [1:0] CONF_DATA_FORMAT;
+assign CONF_DATA_FORMAT = status_regs[2][1:0];
 wire TLU_ENABLE_RESET_TS;
 assign TLU_ENABLE_RESET_TS = status_regs[2][5];
 wire TLU_ENABLE_VETO;
 assign TLU_ENABLE_VETO = status_regs[2][6];
-wire CONF_EN_WRITE_TS;
-assign CONF_EN_WRITE_TS = status_regs[2][7];
 wire [7:0] TLU_TRIGGER_LOW_TIME_OUT;
 assign TLU_TRIGGER_LOW_TIME_OUT = status_regs[3];
 wire [7:0] TRIGGER_SELECT;
@@ -280,13 +278,6 @@ three_stage_synchronizer three_stage_tlu_en_veto_synchronizer (
     .CLK(TRIGGER_CLK),
     .IN(TLU_ENABLE_VETO),
     .OUT(TLU_ENABLE_VETO_SYNC)
-);
-
-wire CONF_EN_WRITE_TS_SYNC;
-three_stage_synchronizer three_stage_enable_write_ts_synchronizer (
-    .CLK(TRIGGER_CLK),
-    .IN(CONF_EN_WRITE_TS),
-    .OUT(CONF_EN_WRITE_TS_SYNC)
 );
 
 wire TLU_ENABLE_RESET_TS_SYNC;
@@ -657,7 +648,7 @@ tlu_controller_fsm #(
     .TLU_ENABLE_VETO(TLU_ENABLE_VETO_SYNC),
     .TLU_RESET_FLAG(TLU_RESET_FLAG_SYNC),
     
-    .WRITE_TIMESTAMP(CONF_EN_WRITE_TS_SYNC),
+    .CONF_DATA_FORMAT(CONF_DATA_FORMAT),
     
     .TLU_BUSY(TLU_BUSY),
     .TLU_CLOCK_ENABLE(TLU_CLOCK_ENABLE),

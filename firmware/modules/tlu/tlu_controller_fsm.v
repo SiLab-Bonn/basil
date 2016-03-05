@@ -16,7 +16,7 @@ module tlu_controller_fsm
     input wire                  TRIGGER_CLK,
     
     output reg                  TRIGGER_DATA_WRITE,
-    output wire [31:0]          TRIGGER_DATA,
+    output reg [31:0]          TRIGGER_DATA,
     
     output reg                  FIFO_PREEMPT_REQ,
     input wire                  FIFO_ACKNOWLEDGE,
@@ -44,7 +44,7 @@ module tlu_controller_fsm
     input wire                  TLU_ENABLE_VETO,
     input wire                  TLU_RESET_FLAG,
     
-    input wire                  WRITE_TIMESTAMP,
+    input wire [1:0]            CONF_DATA_FORMAT,
     
     output reg                  TLU_BUSY,
     output reg                  TLU_CLOCK_ENABLE,
@@ -57,7 +57,19 @@ module tlu_controller_fsm
     output wire                 TLU_TRIGGER_ACCEPT_ERROR_FLAG // error flag
 );
 
-assign TRIGGER_DATA[31:0] = (WRITE_TIMESTAMP==1'b1) ? {1'b1, TIMESTAMP_DATA[30:0]} : ((TRIGGER_MODE==2'b11) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : ({1'b1, TRIGGER_COUNTER_DATA[30:0]}));
+//assign TRIGGER_DATA[31:0] = (WRITE_TIMESTAMP==1'b1) ? {1'b1, TIMESTAMP_DATA[30:0]} : ((TRIGGER_MODE==2'b11) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : ({1'b1, TRIGGER_COUNTER_DATA[30:0]}));
+
+always@(*)
+begin
+    if(CONF_DATA_FORMAT == 2'b11)
+        TRIGGER_DATA[31:0] = {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} ;
+    else if(CONF_DATA_FORMAT == 2'b01)
+        TRIGGER_DATA[31:0] = {1'b1, TIMESTAMP_DATA[30:0]} ;
+    else if(CONF_DATA_FORMAT == 2'b10)
+        TRIGGER_DATA[31:0] = {1'b1, TIMESTAMP_DATA[14:0], TLU_TRIGGER_NUMBER_DATA[15:0]} ;
+    else
+        TRIGGER_DATA[31:0] = {1'b1, TRIGGER_COUNTER_DATA[30:0]} ;
+end
 
 // shift register, serial to parallel, length of TLU_TRIGGER_MAX_CLOCK_CYCLES
 reg [((TLU_TRIGGER_MAX_CLOCK_CYCLES+1)*DIVISOR)-1:0] tlu_data_sr;
