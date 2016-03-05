@@ -162,6 +162,7 @@ class TestSimTlu(unittest.TestCase):
         self.chip['tlu'].TRIGGER_MODE = 3
         self.chip['tlu'].TRIGGER_VETO_SELECT = 255
         self.chip['tlu'].EN_TLU_VETO = 0
+#         self.chip['tlu'].DATA_FORMAT = 2
 #         self.chip['tlu'].TRIGGER_LOW_TIMEOUT = 5
 #         self.chip['tlu'].TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES = 0
 #         self.chip['tlu'].HANDSHAKE_BUSY_VETO_WAIT_CYCLES = 0
