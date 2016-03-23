@@ -12,14 +12,13 @@ from basil.utils import utils
 
 class StdRegister(RegisterLayer):
 
-    _bv = None
-    _fields_conf = dict()
-
     def __init__(self, driver, conf):
         super(StdRegister, self).__init__(driver, conf)
         self._size = conf['size']
         self._fields = dict()
-
+        self._bv = None
+        self._fields_conf = dict()
+    
         if 'fields' in self._conf:
             for field in self._conf['fields']:
                 if 'repeat' in field:
