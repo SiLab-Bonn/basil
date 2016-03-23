@@ -12,13 +12,14 @@ from basil.utils import utils
 
 class StdRegister(RegisterLayer):
 
+    _bv = None
+    _fields_conf = dict()
+
     def __init__(self, driver, conf):
         super(StdRegister, self).__init__(driver, conf)
         self._size = conf['size']
         self._fields = dict()
-        self._bv = None
-        self._fields_conf = dict()
-    
+
         if 'fields' in self._conf:
             for field in self._conf['fields']:
                 if 'repeat' in field:
@@ -30,7 +31,7 @@ class StdRegister(RegisterLayer):
                 else:
                     bv = BitLogic(field['size'])
                     self._fields[field['name']] = bv
-                    
+
                 self._fields_conf[field['name']] = field
                 # set default
                 if "default" in field:
@@ -116,7 +117,7 @@ class StdRegister(RegisterLayer):
 #         return self._drv.get_data()
 
     def _construct_reg(self):
-        
+
         for field in self._fields:
             offs = self._fields_conf[field]['offset']
 
@@ -127,11 +128,14 @@ class StdRegister(RegisterLayer):
 #                     self._bv[bvstart:bvstop] = sub_filed._construct_reg()
                     self._bv.set_slice_ba(bvstart, bvstop, sub_filed._construct_reg())
             else:
+
                 bvsize = len(self._fields[field])
                 bvstart = offs
                 bvstop = offs - bvsize + 1
 #                 self._bv[bvstart:bvstop] = self._fields[field]
                 self._bv.set_slice_ba(bvstart, bvstop, self._fields[field])
+
+        return self._bv
 
     def _deconstruct_reg(self, reg):
         for field in self._fields:
