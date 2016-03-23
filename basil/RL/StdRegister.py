@@ -96,7 +96,7 @@ class StdRegister(RegisterLayer):
             return str(full)
 
     def set(self, value):
-         self._deconstruct_reg(value)
+        self[:] = value
          
     def write(self, size=None):
         """
