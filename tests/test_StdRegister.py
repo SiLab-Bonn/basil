@@ -98,10 +98,7 @@ class TestClass(unittest.TestCase):
         mem[16] = 0x80
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
-        print self.dut['TEST1']
         self.dut['TEST1'] = 0
-        print self.dut['TEST1']
-        
         self.dut['TEST1'].write()
         mem[16] = 0
         mem[19] = 0
