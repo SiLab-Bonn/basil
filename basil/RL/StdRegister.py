@@ -21,6 +21,10 @@ class StdRegister(RegisterLayer):
     
         if 'fields' in self._conf:
             for field in self._conf['fields']:
+            
+                if field['offset'] +1 < field['size']:
+                    raise ValueError("Register " + self._conf['name'] + ":"+ field['name']  + ": Invalid offset value. Specify MSB position.")
+                    
                 if 'repeat' in field:
                     reg_list = []
                     for _ in range(field['repeat']):
@@ -30,21 +34,22 @@ class StdRegister(RegisterLayer):
                 else:
                     bv = BitLogic(field['size'])
                     self._fields[field['name']] = bv
-                    if field['offset'] +1 < field['size']:
-                        raise ValueError("Register " + self._conf['name'] + ":"+ field['name']  + ": Invalid offset value. Specify MSB position.")
+                
                 self._fields_conf[field['name']] = field
                 # set default
                 if "default" in field:
                     self[field['name']] = field['default']
         self._bv = BitLogic(self._conf['size'])
         
-    def init(self):
+    def init(self):       
         for name, value in self._init.iteritems():
             if name in self._fields:
-                if 'repeat' in self._get_filed_config(name):
-                    raise NotImplementedError("Not implemented")
+                if 'repeat' in self._fields_conf[name]:
+                    raise NotImplemented
                 self[name] = value
-        
+            else:
+                raise ValueError("Filed " + name + " does not exist.")
+                
     def __getitem__(self, items):
         if isinstance(items, str):
             return self._fields[items]
@@ -150,7 +155,7 @@ class StdRegister(RegisterLayer):
             bvstart = offs
             bvstop = offs - bvsize + 1
             if 'repeat' in self._get_filed_config(field):
-                raise NotImplementedError("Not implemented")
+                raise NotImplemented
             else:
                 self._fields[field] = reg[bvstart:bvstop]
 
