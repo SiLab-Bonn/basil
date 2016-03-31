@@ -26,17 +26,17 @@ class StdRegister(RegisterLayer):
                     for _ in range(field['repeat']):
                         reg = StdRegister(None, field)
                         reg_list.append(reg)
-                    self._fields[field['name']] = reg_list
+                    self._fields[field['name']] = reg_list    
                 else:
                     bv = BitLogic(field['size'])
                     self._fields[field['name']] = bv
-
+                    if field['offset'] +1 < field['size']:
+                        raise ValueError("Register " + self._conf['name'] + ":"+ field['name']  + ": Invalid offset value. Specify MSB position.")
                 self._fields_conf[field['name']] = field
                 # set default
                 if "default" in field:
                     self[field['name']] = field['default']
         self._bv = BitLogic(self._conf['size'])
-        # TODO: check if offsets sizes are right!
         
     def init(self):
         for name, value in self._init.iteritems():
