@@ -81,14 +81,14 @@ class StdRegister(RegisterLayer):
         full = dict()
 
         reg = self._construct_reg()
-        full[self._conf['name']] = str(len(reg)) + 'b' + reg.to01()
+        full[self._conf['name']] = str(len(reg)) + 'b' + str(reg[:])
 
         for field in self._fields:
             if 'repeat' in self._get_filed_config(field):
                 for i, sub_reg in enumerate(self._fields[field]):
                     fields[str(field) + '[' + str(i) + ']'] = str(sub_reg)
             else:
-                fields[field] = str(len(self._fields[field])) + 'b' + self._fields[field].to01()
+                fields[field] = str(len(self._fields[field])) + 'b' + str(self._fields[field][:])
 
         if self._fields:
             return str([full, fields])
