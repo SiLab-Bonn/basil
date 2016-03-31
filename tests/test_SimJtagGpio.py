@@ -83,7 +83,29 @@ registers:
       - name    : F4
         size    : 21
         offset  : 31
-        
+
+  - name        : DEV
+    type        : StdRegister
+    size        : 64
+    driver      : None
+    fields:
+        - name   : NX
+          offset : 63
+          size   : 32
+          repeat : 2
+          fields : 
+            - name    : F1
+              size    : 1
+              offset  : 0
+            - name    : F2
+              size    : 6
+              offset  : 6
+            - name    : F3
+              size    : 4
+              offset  : 10
+            - name    : F4
+              size    : 21
+              offset  : 31
 """
 
 gpio_yaml = """
@@ -117,6 +139,16 @@ DEV2:
     F2 : 0x1a
     F3 : 0x0
     F4 : 0x1aa55
+DEV:
+    NX :
+      - F1 : 0x1
+        F2 : 0x2f
+        F3 : 0x2
+        F4 : 0x17cf4
+      - F1 : 0x0
+        F2 : 0x1a
+        F3 : 0x0
+        F4 : 0x1aa55
 """
     
 class TestSimJtagGpio(unittest.TestCase):
@@ -193,6 +225,15 @@ class TestSimJtagGpio(unittest.TestCase):
         
         dev1ret.set(ret[1])
         self.assertEqual(dev1ret[:], self.chip['DEV2'][:])
+        
+        #REPEATING REGISTER
+        self.chip['jtag'].scan_dr([self.chip['DEV'][:]])
+        ret1 = self.chip['jtag'].scan_dr([self.chip['DEV'][:]])
+        self.chip['jtag'].scan_dr([self.chip['DEV1'][:],self.chip['DEV2'][:]])
+        ret2 = self.chip['jtag'].scan_dr([self.chip['DEV1'][:]+self.chip['DEV2'][:]])
+        #ret3 = self.chip['jtag'].scan_dr([self.chip['DEV1'][:]+self.chip['DEV2'][:]])            
+        self.assertEqual(ret1[:], ret2[:])
+        
         
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator

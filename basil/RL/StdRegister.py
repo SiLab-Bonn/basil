@@ -45,8 +45,11 @@ class StdRegister(RegisterLayer):
         for name, value in self._init.iteritems():
             if name in self._fields:
                 if 'repeat' in self._fields_conf[name]:
-                    raise NotImplemented
-                self[name] = value
+                    for i, rep_val_dict in enumerate(value):
+                        for rep_name, rep_value in rep_val_dict.iteritems():
+                            self[name][i][rep_name] = rep_value
+                else:
+                    self[name] = value
                 
     def __getitem__(self, items):
         if isinstance(items, str):
