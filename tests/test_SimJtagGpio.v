@@ -56,8 +56,8 @@ module tb (
     wire td_int;
     wire [31:0] debug_reg1, debug_reg2;
     
-    jtag_tap i_jtag_tap1(.jtag_tms_i(TMS), .jtag_tck_i(TCK), .jtag_trstn_i(1'b1), .jtag_tdi_i(TDI), .jtag_tdo_o(td_int), .debug_reg(debug_reg1));
-    jtag_tap i_jtag_tap2(.jtag_tms_i(TMS), .jtag_tck_i(TCK), .jtag_trstn_i(1'b1), .jtag_tdi_i(td_int), .jtag_tdo_o(TDO), .debug_reg(debug_reg2));
+    jtag_tap i_jtag_tap1(.jtag_tms_i(TMS), .jtag_tck_i(TCK), .jtag_trstn_i(1'b1), .jtag_tdi_i(TDI), .jtag_tdo_o(td_int), .debug_reg(debug_reg2));
+    jtag_tap i_jtag_tap2(.jtag_tms_i(TMS), .jtag_tck_i(TCK), .jtag_trstn_i(1'b1), .jtag_tdi_i(td_int), .jtag_tdo_o(TDO), .debug_reg(debug_reg1));
     
     wire D1_F1;
     wire [5:0] D1_F2;
@@ -69,29 +69,12 @@ module tb (
     wire [5:0] D2_F2;
     wire [3:0] D2_F3;
     wire [20:0] D2_F4;
-    assign {D2_F4, D2_F3, D2_F2, D2_F1} = debug_reg1;
+    assign {D2_F4, D2_F3, D2_F2, D2_F1} = debug_reg2;
     
     gpio 
     #( 
         .BASEADDR(GPIO_BASEADDR_DEV1), 
         .HIGHADDR(GPIO_HIGHADDR_DEV1),
-        .IO_WIDTH(32),
-        .IO_DIRECTION(32'h00000000)
-    ) i_gpio_dev1
-    (
-        .BUS_CLK(BUS_CLK),
-        .BUS_RST(BUS_RST),
-        .BUS_ADD(BUS_ADD),
-        .BUS_DATA(BUS_DATA),
-        .BUS_RD(BUS_RD),
-        .BUS_WR(BUS_WR),
-        .IO(debug_reg1)
-    );
-    
-    gpio 
-    #( 
-        .BASEADDR(GPIO_BASEADDR_DEV2), 
-        .HIGHADDR(GPIO_HIGHADDR_DEV2),
         .IO_WIDTH(32),
         .IO_DIRECTION(32'h00000000)
     ) i_gpio_dev2
@@ -103,6 +86,23 @@ module tb (
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
         .IO(debug_reg2)
+    );
+    
+    gpio 
+    #( 
+        .BASEADDR(GPIO_BASEADDR_DEV2), 
+        .HIGHADDR(GPIO_HIGHADDR_DEV2),
+        .IO_WIDTH(32),
+        .IO_DIRECTION(32'h00000000)
+    ) i_gpio_dev1
+    (
+        .BUS_CLK(BUS_CLK),
+        .BUS_RST(BUS_RST),
+        .BUS_ADD(BUS_ADD),
+        .BUS_DATA(BUS_DATA),
+        .BUS_RD(BUS_RD),
+        .BUS_WR(BUS_WR),
+        .IO(debug_reg1)
     );
     
     initial begin

@@ -92,10 +92,10 @@ fields:
         ret_bit = self._write() #shift
         
         ret = []
-        for dev in reversed(range(len(data))):
+        for dev in range(len(data)):
             dev_ret = BitLogic(len(data[dev]))
             for bit in range(len(data[dev])):
-                if dev == 0 and bit == len(data[dev]) -1:
+                if dev == len(data) -1 and bit == len(data[dev]) -1:
                     self.reg['TMS'] = 1 #exit1 
                 self.reg['TDI'] = data[dev][bit]
                 dev_ret[bit] = ret_bit
@@ -109,7 +109,7 @@ fields:
         self.reg['TMS'] = 0
         self._write() #idle
         
-        return ret[::-1]
+        return ret
         
     def _write(self, tck = True):
 

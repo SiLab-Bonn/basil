@@ -35,13 +35,13 @@ hw_drivers:
     base_addr : 0x0000
     size      : 8
 
-  - name      : gpio_dev1
+  - name      : gpio_dev2
     type      : gpio
     interface : intf
     base_addr : 0x1000
     size      : 32
 
-  - name      : gpio_dev2
+  - name      : gpio_dev1
     type      : gpio
     interface : intf
     base_addr : 0x2000
@@ -141,14 +141,15 @@ DEV2:
     F4 : 0x1aa55
 DEV:
     NX :
-      - F1 : 0x1
-        F2 : 0x2f
-        F3 : 0x2
-        F4 : 0x17cf4
       - F1 : 0x0
         F2 : 0x1a
         F3 : 0x0
         F4 : 0x1aa55
+      - F1 : 0x1
+        F2 : 0x2f
+        F3 : 0x2
+        F4 : 0x17cf4
+
 """
     
 class TestSimJtagGpio(unittest.TestCase):
@@ -231,8 +232,9 @@ class TestSimJtagGpio(unittest.TestCase):
         ret1 = self.chip['jtag'].scan_dr([self.chip['DEV'][:]])
         self.chip['jtag'].scan_dr([self.chip['DEV1'][:],self.chip['DEV2'][:]])
         ret2 = self.chip['jtag'].scan_dr([self.chip['DEV1'][:]+self.chip['DEV2'][:]])
-        #ret3 = self.chip['jtag'].scan_dr([self.chip['DEV1'][:]+self.chip['DEV2'][:]])            
+        ret3 = self.chip['jtag'].scan_dr([self.chip['DEV1'][:]+self.chip['DEV2'][:]])            
         self.assertEqual(ret1[:], ret2[:])
+        self.assertEqual(ret2[:], ret3[:])
         
         
     def tearDown(self):
