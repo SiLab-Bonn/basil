@@ -50,7 +50,9 @@ class StdRegister(RegisterLayer):
                             self[name][i][rep_name] = rep_value
                 else:
                     self[name] = value
-                
+            else:
+                raise ValueError("Filed " + name + " does not exist.")
+ 
     def __getitem__(self, items):
         if isinstance(items, str):
             return self._fields[items]
