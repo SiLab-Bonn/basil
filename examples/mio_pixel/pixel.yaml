@@ -48,7 +48,8 @@ hw_drivers:
     type      : FEI4AdapterCard
     interface : usb
     base_addr : 0x00000
-    no_calibration : True
+    init:
+        no_calibration : True
 
 registers:
 
