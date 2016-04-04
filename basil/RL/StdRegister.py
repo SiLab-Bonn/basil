@@ -154,11 +154,13 @@ class StdRegister(RegisterLayer):
     def _deconstruct_reg(self, reg):
         for field in self._fields:
             offs = self._get_filed_config(field)['offset']
-            bvsize = len(self._fields[field])
+            bvsize = self._get_filed_config(field)['size']
             bvstart = offs
             bvstop = offs - bvsize + 1
             if 'repeat' in self._get_filed_config(field):
-                raise NotImplemented
+                size = self._get_filed_config(field)['size']
+                for i, ifield in enumerate(self._fields[field]):
+                    ifield.set(reg[bvstart - size * i:bvstop - size * i])
             else:
                 self._fields[field] = reg[bvstart:bvstop]
 
@@ -178,3 +180,23 @@ class StdRegister(RegisterLayer):
         bl_value = BitLogic()
         bl_value.frombytes(array.array('B', value)[::-1].tostring())
         self._deconstruct_reg(bl_value[self._conf['size']:])
+
+    def get_configuration(self):
+        fields = dict()
+        
+        reg = self._construct_reg()
+
+        for field in self._fields:
+            if 'repeat' in self._get_filed_config(field):
+                rep_field = []
+                for i, sub_reg in enumerate(self._fields[field]):
+                    rep_field.append(sub_reg.get_configuration())
+                
+                fields[field] = rep_field
+            else:
+                fields[field] = str(self._fields[field][:])
+
+        if self._fields:
+            return fields
+        else:
+            return str(reg[:])
