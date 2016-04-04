@@ -52,6 +52,9 @@ registers:
     type        : StdRegister
     size        : 32
     driver      : None
+    init        :
+        F3      : 0x2
+        F4      : 0
     fields:
       - name    : F1
         size    : 1
@@ -132,7 +135,7 @@ init_yaml = """
 DEV1:
     F1 : 0x1
     F2 : 0x2f
-    F3 : 0x2
+    #F3 : 0x2
     F4 : 0x17cf4
 DEV2:
     F1 : 0x0
@@ -173,6 +176,12 @@ class TestSimJtagGpio(unittest.TestCase):
         dev1ret['F2'] = 0x2f
         dev1ret['F3'] = 0x2
         dev1ret['F4'] = 0x17cf4
+        self.assertEqual(dev1ret[:], self.chip['DEV1'][:])
+        
+        self.chip['DEV1']['F2'] = 0
+        self.assertFalse(dev1ret[:] == self.chip['DEV1'][:])
+        
+        self.chip.set_configuration(init_yaml)
         self.assertEqual(dev1ret[:], self.chip['DEV1'][:])
         
         self.chip['jtag'].reset()
@@ -235,6 +244,20 @@ class TestSimJtagGpio(unittest.TestCase):
         ret3 = self.chip['jtag'].scan_dr([self.chip['DEV1'][:]+self.chip['DEV2'][:]])            
         self.assertEqual(ret1[:], ret2[:])
         self.assertEqual(ret2[:], ret3[:])
+        
+        #REPEATING SETTING
+        self.chip['jtag'].scan_dr(['1'*32 + '0'*32])
+        ret = self.chip['jtag'].scan_dr(['0'*32 +'0'*32])
+        
+        self.chip['DEV'].set(ret[0])
+        self.assertEqual(self.chip['DEV'][:], BitLogic('0'*32 + '1'*32))
+        
+        self.chip['jtag'].scan_dr([self.chip['DEV1'][:]+self.chip['DEV2'][:]])   
+        ret = self.chip['jtag'].scan_dr([self.chip['DEV1'][:]+self.chip['DEV2'][:]])   
+        
+        self.chip['DEV'].set(ret[0])
+        self.assertEqual(self.chip['DEV'][:], self.chip['DEV1'][:]+self.chip['DEV2'][:])
+
         
         
     def tearDown(self):

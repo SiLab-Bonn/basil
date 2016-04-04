@@ -42,16 +42,7 @@ class StdRegister(RegisterLayer):
         self._bv = BitLogic(self._conf['size'])
         
     def init(self):       
-        for name, value in self._init.iteritems():
-            if name in self._fields:
-                if 'repeat' in self._fields_conf[name]:
-                    for i, rep_val_dict in enumerate(value):
-                        for rep_name, rep_value in rep_val_dict.iteritems():
-                            self[name][i][rep_name] = rep_value
-                else:
-                    self[name] = value
-            else:
-                raise ValueError("Filed " + name + " does not exist.")
+        self.set_configuration(self._init)
  
     def __getitem__(self, items):
         if isinstance(items, str):
@@ -200,3 +191,15 @@ class StdRegister(RegisterLayer):
             return fields
         else:
             return str(reg[:])
+
+    def set_configuration(self, conf):
+        for name, value in conf.iteritems():
+            if name in self._fields:
+                if 'repeat' in self._fields_conf[name]:
+                    for i, rep_val_dict in enumerate(value):
+                        for rep_name, rep_value in rep_val_dict.iteritems():
+                            self[name][i][rep_name] = rep_value
+                else:
+                    self[name] = value
+            else:
+                raise ValueError("Filed " + name + " does not exist.")
