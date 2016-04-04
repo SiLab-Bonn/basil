@@ -22,8 +22,8 @@ install:
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH=$HOME/miniconda/bin:$PATH
   - conda update --yes conda
-  - conda install --yes numpy bitarray nose pyyaml
-  - pip install pyvisa pyvisa-sim
+  - conda install --yes numpy bitarray nose pyyaml coverage
+  - pip install pyvisa pyvisa-sim coveralls
   
   #cocotb
   - git clone https://github.com/potentialventures/cocotb.git
@@ -36,8 +36,11 @@ install:
   - python setup.py develop
 
 script:
-  - nosetests tests/test_*.py examples/MIO/tb/test_*.py examples/mio_sram_test/tests/test_*.py examples/mio_pixel/tests/test_*.py
-  
+  - nosetests --with-coverage --cover-package=basil tests/test_*.py examples/MIO/tb/test_*.py examples/mio_sram_test/tests/test_*.py examples/mio_pixel/tests/test_*.py
+
+after_success:
+  - coveralls
+
 deploy:
   provider: pypi
   user: DavidLP
