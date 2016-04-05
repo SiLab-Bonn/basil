@@ -1,0 +1,26 @@
+# Device description for the Keithley 2001 Multimeter. 
+# Only GPIB is possible with this device!
+identifier : KEITHLEY INSTRUMENTS INC.,MODEL 2001
+get_current : MEAS:CURR?
+get_voltage : MEAS:VOLT?
+get_channels : ROUT:CLOSE:STAT?
+
+# If the multi channel switcher card Model 2000-SCAN Scanner Card
+# is installed the following works for voltage measurements
+channel 1:
+    get_voltage : ROUT:OPEN ALL;:ROUT:CLOS (@1);:MEAS:VOLT?
+channel 2:
+    get_voltage : ROUT:OPEN ALL;:ROUT:CLOS (@2);:MEAS:VOLT?
+channel 3:
+    get_voltage : ROUT:OPEN ALL;:ROUT:CLOS (@3);:MEAS:VOLT?
+channel 4:
+    get_voltage : ROUT:OPEN ALL;:ROUT:CLOS (@4);:MEAS:VOLT?
+channel 5:
+    get_voltage : ROUT:OPEN ALL;:ROUT:CLOS (@5);:MEAS:VOLT?
+channel 6:
+    get_voltage : ROUT:OPEN ALL;:ROUT:CLOS (@6);:MEAS:VOLT?
+channel 7:
+    get_voltage : ROUT:OPEN ALL;:ROUT:CLOS (@7);:MEAS:VOLT?
+channel 8:
+    get_voltage : ROUT:OPEN ALL;:ROUT:CLOS (@8);:MEAS:VOLT?
+
