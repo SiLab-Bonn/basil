@@ -27,7 +27,7 @@ class Visa(TransferLayer):
         Initialize the device.
         Parameters of visa.ResourceManager().open_resource()
         '''
-        backend = self._init.pop('backend', 'National Instruments')
+        backend = self._init.pop('backend', '')  # Empty string means std. backend (NI VISA)
         rm = visa.ResourceManager(backend)
         try:
             logging.info('BASIL VISA TL with %s backend found the following devices: %s', backend, rm.list_resources())
