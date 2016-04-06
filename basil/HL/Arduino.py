@@ -25,7 +25,10 @@ class Arduino(HardwareLayer):
         if value != 0 and value != 1:
             raise ValueError('The value for the output has to be ON, OFF, 0 or 1')
 
-        if channel < 1 or channel > 14:
-            raise ValueError('Arduino support only 14 IOs. %d is out of range', channel)
+        if channel == 'ALL':
+            channel = 99  # All channels are internally channel 99
 
-        self._intf.write('GPIO%d %d' % channel, value)
+        if channel < 2 or (channel > 13 and channel != 99):
+            raise ValueError('Arduino supports only 14 IOs and 0 and 1 are blocked by Serial communication. %d is out of range' % channel)
+        
+        self._intf.write('GPIO%d %d' % (channel, value))
