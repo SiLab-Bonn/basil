@@ -5,8 +5,6 @@
 # ------------------------------------------------------------
 #
 
-import time
-
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 
