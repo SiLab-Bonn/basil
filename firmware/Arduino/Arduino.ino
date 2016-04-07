@@ -40,6 +40,7 @@ void loop() {
       } else {
         digitalWrite(pin, state);
       }
+      Serial.println('r');
     }
   }
 }
