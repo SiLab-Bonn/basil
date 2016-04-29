@@ -15,7 +15,7 @@ void setup() {
   pinMode(13, OUTPUT);
 
   for (int x = 2; x<=13; x++){
-    digitalWrite(x, HIGH);
+    digitalWrite(x, LOW);
   }
 }
 
