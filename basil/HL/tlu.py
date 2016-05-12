@@ -45,8 +45,9 @@ class tlu(RegisterHardwareLayer):
                   'TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES': {'descr': {'addr': 20, 'size': 8}},
                   'HANDSHAKE_BUSY_VETO_WAIT_CYCLES': {'descr': {'addr': 21, 'size': 8}},
                   'TRIGGER_LOW_TIMEOUT_ERROR_COUNTER': {'descr': {'addr': 22, 'size': 8, 'properties': ['ro']}},
-                  'TLU_TRIGGER_ACCEPT_ERROR_COUNTER': {'descr': {'addr': 23, 'size': 8, 'properties': ['ro']}}}
-    _require_version = "==7"
+                  'TLU_TRIGGER_ACCEPT_ERROR_COUNTER': {'descr': {'addr': 23, 'size': 8, 'properties': ['ro']}},
+                  'TRIGGER_THRESHOLD': {'descr': {'addr': 24, 'size': 8}}}
+    _require_version = "==8"
 
     def __init__(self, intf, conf):
         super(tlu, self).__init__(intf, conf)

@@ -4,7 +4,7 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
- 
+
 `timescale 1ps / 1ps
 
 
@@ -128,10 +128,16 @@ module tb (
     wire TRIGGER_ENABLE, TRIGGER, TRIGGER_VETO;
     wire [6:0] NOT_CONNECTED;
     wire [7:0] GPIO_IO;
+    wire SHORT_TRIGGER;
+    reg TRIGGER_FF;
     assign NOT_CONNECTED = GPIO_IO[7:1];
     assign TRIGGER_ENABLE = GPIO_IO[0];
     assign TRIGGER = GPIO_IO[1];
     assign TRIGGER_VETO = GPIO_IO[2];
+    always @(posedge BUS_CLK) begin
+        TRIGGER_FF <= TRIGGER;
+    end
+    assign SHORT_TRIGGER = TRIGGER & ~TRIGGER_FF;
     
     gpio 
     #( 
@@ -189,7 +195,7 @@ module tb (
         
         .FIFO_PREEMPT_REQ(),
         
-        .TRIGGER({6'b0, TRIGGER, TLU_TRIGGER}),
+        .TRIGGER({5'b0, SHORT_TRIGGER, TRIGGER, TLU_TRIGGER}),
         .TRIGGER_VETO({6'b0, TRIGGER_VETO, 1'b1}),
         
         .TLU_TRIGGER(TLU_TRIGGER),

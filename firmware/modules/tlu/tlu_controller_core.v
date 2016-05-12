@@ -53,7 +53,7 @@ module tlu_controller_core
     output wire     [31:0]      TIMESTAMP
 );
 
-localparam VERSION = 7;
+localparam VERSION = 8;
 
 // Registers
 wire SOFT_RST; // Address: 0
@@ -115,6 +115,8 @@ wire [7:0] CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES;
 assign CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES = status_regs[20];
 wire [7:0] CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES;
 assign CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES = status_regs[21];
+wire [7:0] CONF_TRIGGER_THRESHOLD;
+assign CONF_TRIGGER_THRESHOLD = status_regs[24];
 
 always @(posedge BUS_CLK)
 begin
@@ -134,18 +136,19 @@ begin
         status_regs[11] <= 8'b0;
         status_regs[12] <= 8'b0; // lost data counter
         status_regs[13] <= 8'b0; // trigger select
-        status_regs[14] <= 8'b1111_1111; // veto select (all enable by default)
+        status_regs[14] <= 8'b0; // veto select
         status_regs[15] <= 8'b0; // trigger invert
         status_regs[16] <= 8'b0; // max. trigger counter
         status_regs[17] <= 8'b0;
         status_regs[18] <= 8'b0;
         status_regs[19] <= 8'b0;
-        status_regs[20] <= 8'b0; // TLU trigger high accept clock cycles
+        status_regs[20] <= 8'd3; // TLU trigger high accept clock cycles
         status_regs[21] <= 8'b0; // TLU busy low to veto high wait cycles
-        status_regs[22] <= 8'b0;
-        status_regs[23] <= 8'b0;
+        status_regs[22] <= 8'b0; // trigger low timeout error
+        status_regs[23] <= 8'b0; // trigger accept error
+        status_regs[24] <= 8'b0; // trigger threshold
     end
-    else if(BUS_WR && BUS_ADD < 24)
+    else if(BUS_WR && BUS_ADD < 25)
     begin
         status_regs[BUS_ADD[4:0]] <= BUS_DATA_IN;
     end
@@ -208,6 +211,8 @@ always @ (posedge BUS_CLK) begin
             BUS_DATA_OUT <= TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT;
         else if (BUS_ADD == 23)
             BUS_DATA_OUT <= TLU_TRIGGER_ACCEPT_ERROR_CNT;
+        else if (BUS_ADD == 24)
+            BUS_DATA_OUT <= status_regs[24];
         else
             BUS_DATA_OUT <= 0;
     end
@@ -338,6 +343,15 @@ three_stage_synchronizer #(
     .CLK(TRIGGER_CLK),
     .IN(CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES),
     .OUT(CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES_SYNC)
+);
+
+wire [7:0] CONF_TRIGGER_THRESHOLD_SYNC;
+three_stage_synchronizer #(
+    .WIDTH(8)
+) three_stage_trigger_threshold_synchronizer (
+    .CLK(TRIGGER_CLK),
+    .IN(CONF_TRIGGER_THRESHOLD),
+    .OUT(CONF_TRIGGER_THRESHOLD_SYNC)
 );
 
 // output sync
@@ -634,6 +648,7 @@ tlu_controller_fsm #(
     .TRIGGER_COUNTER_SET_VALUE(TRIGGER_COUNTER),
 
     .TRIGGER_MODE(TRIGGER_MODE_SYNC),
+    .TRIGGER_THRESHOLD(CONF_TRIGGER_THRESHOLD_SYNC),
 
     .TRIGGER(TRIGGER_FSM),
     .TRIGGER_VETO(TRIGGER_VETO_OR_SYNC),
