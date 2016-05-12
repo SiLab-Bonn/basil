@@ -586,7 +586,7 @@ always @ (posedge BUS_CLK)
     FIFO_EMPTY_FF <= FIFO_EMPTY;
 
 wire FIFO_EMPTY_FLAG_BUS_CLK;
-assign FIFO_EMPTY_FLAG_BUS_CLK = FIFO_EMPTY_FF & ~FIFO_EMPTY; // assert flag when FIFO is empty again
+assign FIFO_EMPTY_FLAG_BUS_CLK = ~FIFO_EMPTY_FF & FIFO_EMPTY; // assert flag when FIFO is empty again
 
 wire FIFO_EMPTY_FLAG;
 flag_domain_crossing fifo_preempt_flag_domain_crossing (
