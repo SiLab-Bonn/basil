@@ -15,11 +15,13 @@ trigger_modes = {
     'DATA_HANDSHAKE': 3  # TLU trigger data handshake
 }
 
+
 trigger_data_format = {
     'TRIGGER_COUNTER': 0,  # trigger number according to TRIGGER_MODE
     'TIMESTAMP': 1,  # time stamp only
     'COMBINED': 2,  # combined, 15bit time stamp + 16bit trigger number
 }
+
 
 class tlu(RegisterHardwareLayer):
     '''TLU controller interface
@@ -54,34 +56,3 @@ class tlu(RegisterHardwareLayer):
 
     def reset(self):
         self.RESET = 0
-
-    def get_lost_data_counter(self):
-        return self.LOST_DATA_COUNTER
-
-    def set_trigger_mode(self, value):
-        self.TRIGGER_MODE = value
-
-    def set_trigger_msb_first(self, value):
-        self.TRIGGER_DATA_MSB_FIRST = value
-
-    def set_trigger_data_delay(self, value):
-        self.TRIGGER_DATA_DELAY = value
-
-    def set_tlu_reset(self, value):
-        self.EN_TLU_RESET = value
-
-    def set_trigger_low_timeout(self, value):
-        self.TRIGGER_LOW_TIMEOUT = value
-
-    def get_current_tlu_trigger_number(self):
-        '''Reading current trigger number.
-        '''
-        return self.CURRENT_TLU_TRIGGER_NUMBER
-
-    def set_trigger_counter(self, value):
-        self.TRIGGER_COUNTER = value
-
-    def get_trigger_counter(self):
-        '''Reading trigger counter.
-        '''
-        return self.TRIGGER_COUNTER
