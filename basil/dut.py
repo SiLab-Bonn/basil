@@ -95,7 +95,7 @@ class Dut(Base):
                     mod._update_init(init_conf[mod.name])
             if mod.name in kwargs:
                 mod._update_init(kwargs[mod.name])
-            
+
         def catch_exception_on_init(mod):
             try:
                 mod.init()
