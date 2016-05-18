@@ -168,6 +168,12 @@ class TestRegisterHardwareLayer(unittest.TestCase):
             ret_val = self.dut['test_register'].get_value(0, size=size, offset=7)
             self.assertEqual(ret_val, val)
 
+    def test_write_non_existing(self):
+        with self.assertRaises(KeyError) as raises:
+            self.dut['test_register'].NON_EXISTING
+        with self.assertRaises(KeyError) as raises:
+            self.dut['test_register']['NON_EXISTING']
+
     def test_wrong_size(self):
         self.assertRaises(ValueError, self.dut['test_register'].set_value, 131, addr=0, size=7, offset=7)
 

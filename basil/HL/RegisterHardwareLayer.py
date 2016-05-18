@@ -246,8 +246,10 @@ class RegisterHardwareLayer(HardwareLayer, dict):
     def __getattr__(self, name):
         '''called only on last resort if there are no attributes in the instance that match the name
         '''
-        if name.isupper() and name not in self._registers:
-            raise ValueError('%s register does not exist in %s' % (name, self.__class__))
+        if name.isupper():
+            _ = self._get(name)
+        #if name.isupper() and name not in self._registers:
+        #    raise ValueError('%s register does not exist in %s' % (name, self.__class__))
 
         def method(*args, **kwargs):
             nsplit = name.split('_', 1)
