@@ -18,7 +18,7 @@ transfer_layer:
     - name  : dummy_tl
       type  : Dummy
       init:
-          mem : {0: 1, 14: 4} # module version for init of spi and mem bytes
+          mem : {0: 2, 14: 4} # module version for init of spi and mem bytes
 
 hw_drivers:
   - name      : spi_module
