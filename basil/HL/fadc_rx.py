@@ -23,7 +23,7 @@ class fadc_rx(RegisterHardwareLayer):
                   'SAMPLE_DLY': {'descr': {'addr': 7, 'size': 8}},
                   'COUNT': {'descr': {'addr': 3, 'size': 24}},
                   'COUNT_LOST': {'descr': {'addr': 8, 'size': 8, 'properties': ['ro']}}}
-                  
+
     _require_version = "==1"
 
     def __init__(self, intf, conf):
@@ -60,15 +60,15 @@ class fadc_rx(RegisterHardwareLayer):
 
     def get_en_trigger(self):
         return self.EN_TRIGGER
-        
+
     def set_delay(self, val):
         self.SAMPLE_DLY = val
 
     def get_delay(self):
         return self.SAMPLE_DLY
-        
+
     def get_count_lost(self):
-        return self.COUNT_LOST   
+        return self.COUNT_LOST
 
     def is_done(self):
         return self.is_ready

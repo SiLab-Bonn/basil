@@ -30,7 +30,7 @@ class Arduino(HardwareLayer):
 
         if channel < 2 or (channel > 13 and channel != 99):
             raise ValueError('Arduino supports only 14 IOs and pins 0 and 1 are blocked by Serial communication. %d is out of range' % channel)
-        
+
         self._intf.write('GPIO%d %d' % (channel, value))
         if self._intf.read() == 'r':  # Wait for response of Arduino
                 raise RuntimeError('Got no or wrong response from Arduino!')

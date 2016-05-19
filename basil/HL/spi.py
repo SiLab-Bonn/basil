@@ -56,13 +56,13 @@ class spi(RegisterHardwareLayer):
 
     def set_wait(self, value):
         '''
-        Sets time delay between repetitions in clock cycles 
+        Sets time delay between repetitions in clock cycles
         '''
         self.WAIT = value
 
     def get_wait(self):
         '''
-        Gets time delay between repetitions in clock cycles 
+        Gets time delay between repetitions in clock cycles
         '''
         return self.WAIT
 
@@ -81,7 +81,7 @@ class spi(RegisterHardwareLayer):
 
     def set_en(self, value):
         '''
-        Enable start on external EXT_START signal (inside FPGA) 
+        Enable start on external EXT_START signal (inside FPGA)
         '''
         self.EN = value
 
