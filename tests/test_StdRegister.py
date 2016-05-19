@@ -30,7 +30,7 @@ registers:
     type        : StdRegister
     hw_driver   : spi_module
     size        : 32
-    
+
   - name        : TEST2
     type        : StdRegister
     hw_driver   : spi_module
@@ -67,7 +67,7 @@ class TestClass(unittest.TestCase):
     def setUpClass(cls):
         cls.cnfg = yaml.load(cnfg_yaml)
         cls.dut = Dut(cls.cnfg)
-        cls.dut['spi_module']._require_version = "==1"
+        cls.dut['spi_module']._require_version = "==2"
         cls.dut.init()
         cls.dut['spi_module']._mem_bytes = 4
 
