@@ -371,17 +371,17 @@ wire TLU_ASSERT_VETO_TE;
 assign TLU_ASSERT_VETO_TE = TLU_ASSERT_VETO_FF & ~TLU_ASSERT_VETO;
 
 reg TLU_VETO;
-#always @ (RST_SYNC or TRIGGER_ACCEPTED_FLAG or TLU_ASSERT_VETO_TE or TLU_ASSERT_VETO_LE)
-#begin
-#    if (RST_SYNC)
-#        TLU_VETO <= 1'b0;
-#    if (TRIGGER_ACCEPTED_FLAG)
-#        TLU_VETO <= 1'b0;
-#    else if (TLU_ASSERT_VETO_TE)
-#        TLU_VETO <= 1'b0;
-#    else if (TLU_ASSERT_VETO_LE)
-#        TLU_VETO <= 1'b1;
-#end
+//always @ (RST_SYNC or TRIGGER_ACCEPTED_FLAG or TLU_ASSERT_VETO_TE or TLU_ASSERT_VETO_LE)
+//begin
+//    if (RST_SYNC)
+//        TLU_VETO <= 1'b0;
+//    if (TRIGGER_ACCEPTED_FLAG)
+//        TLU_VETO <= 1'b0;
+//    else if (TLU_ASSERT_VETO_TE)
+//        TLU_VETO <= 1'b0;
+//    else if (TLU_ASSERT_VETO_LE)
+//        TLU_VETO <= 1'b1;
+//end
 always @ (posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
