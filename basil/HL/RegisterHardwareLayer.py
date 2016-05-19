@@ -54,7 +54,7 @@ class RegisterHardwareLayer(HardwareLayer):
     def init(self):
 #         reset during initialization to get default state and to remove any prior settings
         if "RESET" in self._registers:
-            self.RESET = 0
+            self.RESET  # assign no value, to read back value and write same value or default value
         if 'VERSION' in self._registers:
             version = str(self.VERSION)
         else:
@@ -206,7 +206,7 @@ class RegisterHardwareLayer(HardwareLayer):
             if 'default' in self._registers[reg]:
                 self._set(reg, self._registers[reg]['default'])
             else:
-                self._set(reg, 0)
+                self._set(reg, self._get(reg))
             # raise error when doing read on write-only register
 #             raise IOError('Register is write-only')
             # return None to prevent misuse

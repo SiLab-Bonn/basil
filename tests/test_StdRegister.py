@@ -144,7 +144,7 @@ class TestClass(unittest.TestCase):
         self.dut['TEST2'].write()
         mem = dict()
 #         mem[0] = 0  # reset
-        mem[0] = 1
+        mem[0] = 2
         mem[14] = 4
         mem[16] = 0
         mem[17] = 0
@@ -203,12 +203,12 @@ class TestClass(unittest.TestCase):
     def test_default(self):
         self.cnfg['registers'][1]['fields'][0]['default'] = 0x01  # VINJECT
         self.dut = Dut(self.cnfg)
-        self.dut['spi_module']._require_version = "==1"
+        self.dut['spi_module']._require_version = "==2"
         self.dut.init()
         self.dut['spi_module']._mem_bytes = 32
         mem = dict()
 #         mem[0] = 0  # reset
-        mem[0] = 1
+        mem[0] = 2
         mem[14] = 4
         mem[16] = 0x08
         mem[17] = 0

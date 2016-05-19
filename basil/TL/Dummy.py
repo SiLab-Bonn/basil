@@ -5,8 +5,8 @@
 # ------------------------------------------------------------
 #
 
-import array
 import logging
+import array
 
 from basil.TL.SiTransferLayer import SiTransferLayer
 
