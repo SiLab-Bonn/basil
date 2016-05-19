@@ -7,6 +7,7 @@
 
 import unittest
 import yaml
+
 from bitarray import bitarray
 
 from basil.dut import Dut

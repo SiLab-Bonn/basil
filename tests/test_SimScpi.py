@@ -7,6 +7,7 @@
 
 import unittest
 import yaml
+
 from basil.dut import Dut
 
 cnfg_yaml = r"""

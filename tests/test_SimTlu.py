@@ -6,9 +6,10 @@
 #
 
 import unittest
+import os
+
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
-import os
 
 cnfg_yaml = """
 transfer_layer:
