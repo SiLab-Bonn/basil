@@ -5,9 +5,10 @@
 # ------------------------------------------------------------
 #
 
-from basil.RL.RegisterLayer import RegisterLayer
 from bitarray import bitarray
+
 from basil.utils import utils
+from basil.RL.RegisterLayer import RegisterLayer
 
 
 class TrackRegister(RegisterLayer):
@@ -56,13 +57,7 @@ class TrackRegister(RegisterLayer):
                     raise NotImplementedError("To be implemented.")
                 bv[bit] = self._tracks[track['name']][i]
 
-#         ba = utils.bitvector_to_byte_array(bv)
         ba = utils.bitarray_to_byte_array(bv)
-#         print 'ba1', ba
         ba = ba[::-1]
-#         print 'ba2', ba
-#         print 'bv', bv[:32]
-#         for track in self._conf['tracks']:
-#            print track['name'], track['position'], self._tracks[track['name']][:32].to01(), len(self._tracks[track['name']])
-
-        self._drv.set_data(ba)  # TODO: this probably has to be done different way
+        # TODO: this probably has to be done different way
+        self._drv.set_data(ba)
