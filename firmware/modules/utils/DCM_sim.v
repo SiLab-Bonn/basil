@@ -22,12 +22,21 @@ always@(posedge CLK)
     else
         cnt <= cnt + 1;
 
-always@(posedge CLK)
-    if(cnt == DIVISOR -1)
-        CLOCK <= 1;
-    else if(cnt == DIVISOR/2-1)
-        CLOCK <= 0;
+initial begin
+    CLOCK = 0;
+    forever begin    
+        @(posedge CLK);
+        if(cnt == DIVISOR-1)
+            CLOCK = 1;
+            
+        if(cnt == DIVISOR/2-1) begin
+            if(DIVISOR % 2 == 1) @(negedge CLK);
+            CLOCK = 0;
+        end
         
+    end
+end
+
 endmodule
    
 module DCM
