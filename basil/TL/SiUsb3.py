@@ -6,10 +6,11 @@
 #
 
 import logging
-import os
+# import os
+
+from SiLibUSB import GetUSBBoards, SiUSBDevice
 
 from basil.TL.SiTransferLayer import SiTransferLayer
-from SiLibUSB import GetUSBBoards, SiUSBDevice
 
 
 class SiUsb (SiTransferLayer):
