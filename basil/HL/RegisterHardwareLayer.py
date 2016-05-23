@@ -204,13 +204,14 @@ class RegisterHardwareLayer(HardwareLayer):
         if 'properties' in descr and [i for i in write_only if i in descr['properties']]:
             # allows a lazy-style of programming
             if 'default' in self._registers[reg]:
-                self._set(reg, self._registers[reg]['default'])
+                return self._set(reg, self._registers[reg]['default'])
             else:
-                self._set(reg, self._get(reg))
+                descr.setdefault('offset', 0)
+                return self._set(reg, self.get_value(**descr))
             # raise error when doing read on write-only register
 #             raise IOError('Register is write-only')
             # return None to prevent misuse
-            return None
+#             return None
         else:
             if 'properties' in descr and [i for i in is_byte_array if i in descr['properties']]:
                 ret_val = self.get_bytes(**descr)
