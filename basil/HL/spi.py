@@ -109,7 +109,7 @@ class spi(RegisterHardwareLayer):
         Sets data for outgoing stream
         '''
         if self._mem_bytes < len(data):
-            raise ValueError('Size of data is too big')
+            raise ValueError('Size of data (%d bytes) is too big for memory (%d bytes)' % (len(data), self._mem_bytes))
         self._intf.write(self._conf['base_addr'] + self._spi_mem_offset + addr, data)
 
     # This needs to be changed to return written value
