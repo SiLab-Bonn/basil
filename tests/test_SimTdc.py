@@ -23,7 +23,7 @@ hw_drivers:
   - name      : SEQ_GEN
     type      : seq_gen
     interface : intf
-    mem_size  : 8192
+    mem_size  : 65536
     base_addr : 0x0000
 
   - name      : TDC
@@ -42,7 +42,7 @@ registers:
     type        : TrackRegister
     hw_driver   : SEQ_GEN
     seq_width   : 8
-    seq_size    : 8192
+    seq_size    : 65536
     tracks  :
       - name     : TDC_TRIGGER_IN
         position : 0
@@ -70,23 +70,39 @@ class TestSimTlu(unittest.TestCase):
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
 
-    def test_tdc(self):
+#     def test_tdc(self):
+#         self.chip['TDC'].ENABLE = 1
+#         self.chip['SEQ'].REPEAT = 1
+# 
+#         for index, i in enumerate(range(0, 10)):
+#             print index, i
+#             self.chip['SEQ']['TDC_IN'][0:i + 1] = True
+#             self.chip['SEQ'].write(i + 1)
+#             self.chip['SEQ'].SIZE = i + 1
+#             self.chip['SEQ'].START
+#             while(not self.chip['SEQ'].is_done()):
+#                 pass
+#             self.assertEqual(self.chip['SRAM'].get_fifo_int_size(), 1)
+# 
+#             data = self.chip['SRAM'].get_data()
+#             self.assertEqual(data[0], (index << 12) + i + 1)
+
+    def test_tdc_overflow(self):
         self.chip['TDC'].ENABLE = 1
-        self.chip['SEQ']['TDC_IN'][0:1] = True
-        self.chip['SEQ'].write()
-        self.chip['SEQ'].SIZE = 10
         self.chip['SEQ'].REPEAT = 1
-        self.chip['SEQ'].START
 
-        while(not self.chip['SEQ'].is_done()):
-            pass
-        self.assertEqual(self.chip['SRAM'].get_fifo_int_size(), 1)
-#
-        data = self.chip['SRAM'].get_data()
-        self.assertEqual(data[0], 0x00000001)
+        for index, i in enumerate(range(4090, 5000)):
+            print index, i
+            self.chip['SEQ']['TDC_IN'][0:i + 1] = True
+            self.chip['SEQ'].write(i + 1)
+            self.chip['SEQ'].SIZE = i + 1
+            self.chip['SEQ'].START
+            while(not self.chip['SEQ'].is_done()):
+                pass
+            self.assertEqual(self.chip['SRAM'].get_fifo_int_size(), 1)
 
-#     def test_tdc_overflow(self):
-#         pass
+            data = self.chip['SRAM'].get_data()
+            self.assertEqual(data[0], (index << 12) + max(i + 1, 4095))
 # 
 #     def test_tdc_delay(self):
 #         pass
