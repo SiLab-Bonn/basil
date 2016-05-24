@@ -126,9 +126,7 @@ class SiTcp (SiTransferLayer):
                     ret += self._read_single(new_addr, self.RBCP_MAX_SIZE)
                     new_addr = addr + next_size
                     next_size = next_size + self.RBCP_MAX_SIZE
-                
                 ret += self._read_single(new_addr, size + self.RBCP_MAX_SIZE - next_size)
-
             else:
                 ret += self._read_single(addr, size)
 
