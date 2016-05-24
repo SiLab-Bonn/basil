@@ -47,10 +47,8 @@ class RegisterLayer(Base):
 
     def __setattr__(self, name, value):
         if "_initialized" not in self.__dict__:  # this test allows attributes to be set in the __init__ method
-            print "not initialized setattr", name, value
             super(RegisterLayer, self).__setattr__(name, value)
         else:
-            print "initialized setattr", name, value
             try:
                 setattr(self._drv, name, value)
             except:
