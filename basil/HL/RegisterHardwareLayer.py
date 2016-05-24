@@ -52,7 +52,8 @@ class RegisterHardwareLayer(HardwareLayer):
             self.add_property(reg)
 
     def init(self):
-#         reset during initialization to get default state and to remove any prior settings
+        self._initialized = True
+        # reset during initialization to get default state and to remove any prior settings
         if "RESET" in self._registers:
             self.RESET  # assign no value, to read back value and write same value or default value
         if 'VERSION' in self._registers:
@@ -223,11 +224,13 @@ class RegisterHardwareLayer(HardwareLayer):
                 ret_val = array.array('B', ret_val).tolist()
             else:
                 descr.setdefault('offset', 0)
-                ret_val = self.get_value(**descr)
                 curr_val = self._register_values._asdict()[reg]
-#                 curr_val = self.setdefault(reg, None)
-                if curr_val is not None and 'properties' in descr and not [i for i in read_only if i in descr['properties']] and curr_val != ret_val:
-                    raise ValueError('Read value was not expected: read: %s, expected: %s' % (str(ret_val), str(curr_val)))
+                if "_initialized" not in self.__dict__:  # this test allows attributes to be set in the __init__ method
+                    ret_val = curr_val
+                else:
+                    ret_val = self.get_value(**descr)
+                    if curr_val is not None and 'properties' in descr and not [i for i in read_only if i in descr['properties']] and curr_val != ret_val:
+                        raise ValueError('Read value was not expected: read: %s, expected: %s' % (str(ret_val), str(curr_val)))
             return ret_val
 
     def _set(self, reg, value):
