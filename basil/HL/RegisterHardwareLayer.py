@@ -91,14 +91,18 @@ class RegisterHardwareLayer(HardwareLayer):
         -------
         nothing
         '''
-        div, mod = divmod(size + offset, 8)
-        if mod:
-            div += 1
-        ret = self._intf.read(self._base_addr + addr, size=div)
-        reg = BitLogic()
-        reg.frombytes(ret.tostring())
-        reg[size + offset - 1:offset] = value
-        self._intf.write(self._base_addr + addr, data=array.array('B', reg.tobytes()))
+        div_offset, mod_offset = divmod(offset, 8)
+        div_size, mod_size = divmod(size + mod_offset, 8)
+        if mod_size:
+            div_size += 1
+        if mod_offset == 0:
+            reg = BitLogic.from_value(0, size=div_size * 8)
+        else:
+            ret = self._intf.read(self._base_addr + addr + div_offset, size=div_size)
+            reg = BitLogic()
+            reg.frombytes(ret.tostring())
+        reg[size + mod_offset - 1:mod_offset] = value
+        self._intf.write(self._base_addr + addr + div_offset, data=array.array('B', reg.tobytes()))
 
     def get_value(self, addr, size, offset, **kwargs):
         '''Reading a value of any arbitrary size (max. unsigned int 64) and offset from a register
@@ -117,13 +121,14 @@ class RegisterHardwareLayer(HardwareLayer):
         reg : int
             Register value.
         '''
-        div, mod = divmod(size + offset, 8)
-        if mod:
-            div += 1
-        ret = self._intf.read(self._base_addr + addr, size=div)
+        div_offset, mod_offset = divmod(offset, 8)
+        div_size, mod_size = divmod(size + mod_offset, 8)
+        if mod_size:
+            div_size += 1
+        ret = self._intf.read(self._base_addr + addr + div_offset, size=div_size)
         reg = BitLogic()
         reg.frombytes(ret.tostring())
-        return reg[size + offset - 1:offset].tovalue()
+        return reg[size + mod_offset - 1:mod_offset].tovalue()
 
     def set_bytes(self, data, addr, **kwargs):
         '''Writing bytes of any arbitrary size
