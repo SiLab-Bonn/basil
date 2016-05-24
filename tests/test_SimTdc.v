@@ -64,7 +64,7 @@ assign TDC_IN = SEQ_OUT[1];
 assign TDC_ARM = SEQ_OUT[2];
 assign TDC_EXT_EN = SEQ_OUT[3];
 
-wire CLK_40, CLK_160, CLK_320, CLK_320_TO_DCM, CLK_640, CLK_640_180;
+wire CLK_40, CLK_160, CLK_320, CLK_320_TO_DCM, CLK_640;
 
 DCM #(
     .CLKFX_MULTIPLY(40),
@@ -80,7 +80,7 @@ DCM #(
     .CLKFX_DIVIDE(2),
     .CLKDV_DIVIDE(8)
 ) i_dcm_2 (
-    .CLK0(CLK_320), .CLK180(), .CLK270(), .CLK2X(CLK_640), .CLK2X180(CLK_640_180), .CLK90(),
+    .CLK0(CLK_320), .CLK180(), .CLK270(), .CLK2X(CLK_640), .CLK2X180(), .CLK90(),
     .CLKDV(CLK_40), .CLKFX(CLK_160), .CLKFX180(), .LOCKED(), .PSDONE(), .STATUS(),
     .CLKFB(1'b0), .CLKIN(CLK_320_TO_DCM), .DSSEN(1'b0), .PSCLK(1'b0), .PSEN(1'b0), .PSINCDEC(1'b0), .RST(1'b0)
 );
@@ -90,7 +90,7 @@ seq_gen #(
     .BASEADDR(SEQ_GEN_BASEADDR),
     .HIGHADDR(SEQ_GEN_HIGHADDR),
     .ABUSWIDTH(ABUSWIDTH),
-    .MEM_BYTES(8*1024), 
+    .MEM_BYTES(8 * 8 * 1024 - 1), 
     .OUT_BITS(8) 
 ) i_seq_gen (
     .BUS_CLK(BUS_CLK),
@@ -100,7 +100,7 @@ seq_gen #(
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
     .SEQ_EXT_START(),
-    .SEQ_CLK(CLK_640_180),
+    .SEQ_CLK(CLK_640),
     .SEQ_OUT(SEQ_OUT)
 );
 
