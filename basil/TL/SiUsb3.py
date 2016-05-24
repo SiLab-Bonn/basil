@@ -13,7 +13,7 @@ from SiLibUSB import GetUSBBoards, SiUSBDevice
 from basil.TL.SiTransferLayer import SiTransferLayer
 
 
-class SiUsb (SiTransferLayer):
+class SiUsb(SiTransferLayer):
     '''SiLab USB3 device
     '''
     BASE_ADDRESS_I2C = 0x00000

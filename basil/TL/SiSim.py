@@ -17,7 +17,7 @@ from basil.TL.SiTransferLayer import SiTransferLayer
 from basil.utils.sim.Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
 
 
-class SiSim (SiTransferLayer):
+class SiSim(SiTransferLayer):
 
     def __init__(self, conf):
         super(SiSim, self).__init__(conf)

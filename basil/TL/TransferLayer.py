@@ -11,7 +11,6 @@ from basil.dut import Base
 
 
 class TransferLayer(Base):
-
     '''Transfer Layer implements minimum API needed access to hardware.
     On error ``raise IOError``.
     '''

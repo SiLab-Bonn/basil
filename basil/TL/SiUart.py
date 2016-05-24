@@ -15,7 +15,7 @@ import serial
 from basil.TL.TransferLayer import TransferLayer
 
 
-class SiUart (TransferLayer):
+class SiUart(TransferLayer):
     _ser = None
 
     def __init__(self, conf):

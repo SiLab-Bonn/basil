@@ -14,8 +14,7 @@ from threading import Thread, Lock
 from basil.TL.SiTransferLayer import SiTransferLayer
 
 
-class SiTcp (SiTransferLayer):
-
+class SiTcp(SiTransferLayer):
     '''SiTcp
     '''
 

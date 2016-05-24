@@ -11,7 +11,6 @@ from basil.TL.TransferLayer import TransferLayer
 
 
 class Visa(TransferLayer):
-
     '''Transfer layer for a Virtual Instrument Software Architecture (VISA) provided by pyVisa.
     Several interfaces are available (GPIB, RS232, USB, Ethernet). To be able to use pyVisa without
     the proprietary NI-VISA driver a pyVisa backend pyVisa-py can be used.

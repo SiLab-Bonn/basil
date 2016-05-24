@@ -9,7 +9,6 @@ from basil.TL.TransferLayer import TransferLayer
 
 
 class SiTransferLayer(TransferLayer):
-
     '''Multiplexing Transfer Layer implements abstract methods to access
     hardware with multiple endpoints.
     On error ``raise IOError``.
