@@ -5,19 +5,18 @@
 # ------------------------------------------------------------
 #
 
-import array
 import logging
+import array
 
 from basil.TL.SiTransferLayer import SiTransferLayer
 
 
 class Dummy(SiTransferLayer):
-
     '''Dummy device
     '''
-    mem = {}  # dummy memory dict, keys are addresses, values are of type int
 
     def __init__(self, conf):
+        self.mem = {}  # dummy memory dict, keys are addresses, values are of type int
         super(Dummy, self).__init__(conf)
 
     def init(self):

@@ -14,8 +14,7 @@ from threading import Thread, Lock
 from basil.TL.SiTransferLayer import SiTransferLayer
 
 
-class SiTcp (SiTransferLayer):
-
+class SiTcp(SiTransferLayer):
     '''SiTcp
     '''
 
@@ -25,7 +24,7 @@ class SiTcp (SiTransferLayer):
     RBCP_ID = 0xa5
     RBCP_MAX_SIZE = 255
 
-    UDP_TIMEOUT = 0.1
+    UDP_TIMEOUT = 0.5
     UDP_RETRANSMIT_CNT = 0  # TODO
 
     BASE_DATA_TCP = 0x100000000
@@ -39,7 +38,7 @@ class SiTcp (SiTransferLayer):
         self._tcp_readout_thread = None
         self.tmp = 0
 
-    def init(self, **kwargs):
+    def init(self):
 
         self._udp_lock = Lock()
         self._sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -126,9 +125,7 @@ class SiTcp (SiTransferLayer):
                     ret += self._read_single(new_addr, self.RBCP_MAX_SIZE)
                     new_addr = addr + next_size
                     next_size = next_size + self.RBCP_MAX_SIZE
-
-                ret += self._read_single(new_addr - self.RBCP_MAX_SIZE, size + self.RBCP_MAX_SIZE - next_size)
-
+                ret += self._read_single(new_addr, size + self.RBCP_MAX_SIZE - next_size)
             else:
                 ret += self._read_single(addr, size)
 

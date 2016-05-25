@@ -9,6 +9,7 @@ import logging
 from copy import deepcopy
 import collections
 import array
+from collections import namedtuple
 
 from basil.utils.BitLogic import BitLogic
 from basil.HL.HardwareLayer import HardwareLayer
@@ -20,7 +21,7 @@ write_only = ['write_only', 'write-only', 'writeonly', 'wo']
 is_byte_array = ['byte_array', 'byte-array', 'bytearray']
 
 
-class RegisterHardwareLayer(HardwareLayer, dict):
+class RegisterHardwareLayer(HardwareLayer):
     '''Register Hardware Layer.
 
     Implementation of advanced register operations.
@@ -43,13 +44,18 @@ class RegisterHardwareLayer(HardwareLayer, dict):
         # require interface and base address
         self._intf = intf
         self._base_addr = conf['base_addr']
+        rv = namedtuple('_register_values', field_names=self._registers.iterkeys())
+        self._register_values = rv(*([None] * len(self._registers)))
         for reg in self._registers.iterkeys():
+            if not reg.isupper():
+                raise ValueError("Register %s must be uppercase." % reg)
             self.add_property(reg)
-            dict.__setitem__(self, reg, None)  # set values, but not writing to the interface
 
     def init(self):
-        # reset on initialization
-#         self.RESET = 0
+        super(RegisterHardwareLayer, self).init()
+        # reset during initialization to get default state and to remove any prior settings
+        if "RESET" in self._registers:
+            self.RESET  # assign no value, to read back value and write same value or default value
         if 'VERSION' in self._registers:
             version = str(self.VERSION)
         else:
@@ -62,9 +68,11 @@ class RegisterHardwareLayer(HardwareLayer, dict):
                 self[reg] = self._init[reg]
             elif 'default' in value and not ('properties' in value['descr'] and [i for i in read_only if i in value['descr']['properties']]):
                 self[reg] = value['default']
-            else:  # do nothing here, no value to write
+            else:  # do nothing here, keep existing value
                 pass
-#                 self[reg] = None
+        unknown_regs = set(self._init.keys()).difference(set(self._registers.keys()))
+        if unknown_regs:
+            raise KeyError("Attempt to write to unknown register(s) in %s, module %s during initialization: %s" % (self.name, self.__class__.__module__, ", ".join(unknown_regs)))
 
     def set_value(self, value, addr, size, offset, **kwargs):
         '''Writing a value of any arbitrary size (max. unsigned int 64) and offset to a register
@@ -84,14 +92,18 @@ class RegisterHardwareLayer(HardwareLayer, dict):
         -------
         nothing
         '''
-        div, mod = divmod(size + offset, 8)
-        if mod:
-            div += 1
-        ret = self._intf.read(self._base_addr + addr, size=div)
-        reg = BitLogic()
-        reg.frombytes(ret.tostring())
-        reg[size + offset - 1:offset] = value
-        self._intf.write(self._base_addr + addr, data=array.array('B', reg.tobytes()))
+        div_offset, mod_offset = divmod(offset, 8)
+        div_size, mod_size = divmod(size + mod_offset, 8)
+        if mod_size:
+            div_size += 1
+        if mod_offset == 0 and mod_size == 0:
+            reg = BitLogic.from_value(0, size=div_size * 8)
+        else:
+            ret = self._intf.read(self._base_addr + addr + div_offset, size=div_size)
+            reg = BitLogic()
+            reg.frombytes(ret.tostring())
+        reg[size + mod_offset - 1:mod_offset] = value
+        self._intf.write(self._base_addr + addr + div_offset, data=array.array('B', reg.tobytes()))
 
     def get_value(self, addr, size, offset, **kwargs):
         '''Reading a value of any arbitrary size (max. unsigned int 64) and offset from a register
@@ -110,13 +122,14 @@ class RegisterHardwareLayer(HardwareLayer, dict):
         reg : int
             Register value.
         '''
-        div, mod = divmod(size + offset, 8)
-        if mod:
-            div += 1
-        ret = self._intf.read(self._base_addr + addr, size=div)
+        div_offset, mod_offset = divmod(offset, 8)
+        div_size, mod_size = divmod(size + mod_offset, 8)
+        if mod_size:
+            div_size += 1
+        ret = self._intf.read(self._base_addr + addr + div_offset, size=div_size)
         reg = BitLogic()
         reg.frombytes(ret.tostring())
-        return reg[size + offset - 1:offset].tovalue()
+        return reg[size + mod_offset - 1:mod_offset].tovalue()
 
     def set_bytes(self, data, addr, **kwargs):
         '''Writing bytes of any arbitrary size
@@ -197,25 +210,27 @@ class RegisterHardwareLayer(HardwareLayer, dict):
         if 'properties' in descr and [i for i in write_only if i in descr['properties']]:
             # allows a lazy-style of programming
             if 'default' in self._registers[reg]:
-                self._set(reg, self._registers[reg]['default'])
+                return self._set(reg, self._registers[reg]['default'])
             else:
-                self._set(reg, 0)
+                descr.setdefault('offset', 0)
+                return self._set(reg, self.get_value(**descr))
             # raise error when doing read on write-only register
 #             raise IOError('Register is write-only')
             # return None to prevent misuse
-            return None
+#             return None
         else:
             if 'properties' in descr and [i for i in is_byte_array if i in descr['properties']]:
                 ret_val = self.get_bytes(**descr)
                 ret_val = array.array('B', ret_val).tolist()
-#                 curr_val = dict.__getitem__(self, reg)
             else:
                 descr.setdefault('offset', 0)
-                ret_val = self.get_value(**descr)
-                curr_val = dict.__getitem__(self, reg)
-#                 curr_val = self.setdefault(reg, None)
-                if curr_val is not None and 'properties' in descr and not [i for i in read_only if i in descr['properties']] and curr_val != ret_val:
-                    raise ValueError('Read value was not expected: read: %s, expected: %s' % (str(ret_val), str(curr_val)))
+                curr_val = self._register_values._asdict()[reg]
+                if not self.is_initialized:  # this test allows attributes to be set in the __init__ method
+                    ret_val = curr_val
+                else:
+                    ret_val = self.get_value(**descr)
+                    if curr_val is not None and 'properties' in descr and not [i for i in read_only if i in descr['properties']] and curr_val != ret_val:
+                        raise ValueError('Read value was not expected: read: %s, expected: %s' % (str(ret_val), str(curr_val)))
             return ret_val
 
     def _set(self, reg, value):
@@ -227,15 +242,16 @@ class RegisterHardwareLayer(HardwareLayer, dict):
                 raise ValueError('For array byte_register iterable object is needed')
             value = array.array('B', value).tolist()
             self.set_bytes(value, **descr)
-            dict.__setitem__(self, reg, value)
+            self._register_values = self._register_values._replace(**{reg: value})
         else:
             descr.setdefault('offset', 0)
+            value = value if isinstance(value, (int, long)) else int(value, base=2)
             try:
                 self.set_value(value, **descr)
             except ValueError:
                 raise
             else:
-                dict.__setitem__(self, reg, value if isinstance(value, (int, long)) else int(value, base=2))
+                self._register_values = self._register_values._replace(**{reg: value})
 
     def __getitem__(self, name):
         return self._get(name)
@@ -246,20 +262,20 @@ class RegisterHardwareLayer(HardwareLayer, dict):
     def __getattr__(self, name):
         '''called only on last resort if there are no attributes in the instance that match the name
         '''
-        if name.isupper() and name not in self._registers:
-            raise ValueError('%s register does not exist in %s' % (name, self.__class__))
+        if name.isupper():
+            _ = self._register_values._asdict()[name]
 
         def method(*args, **kwargs):
             nsplit = name.split('_', 1)
-            if len(nsplit) == 2 and nsplit[0] == 'set' and len(args) == 1 and not kwargs:
+            if len(nsplit) == 2 and nsplit[0] == 'set' and nsplit[1].isupper() and len(args) == 1 and not kwargs:
                 self[nsplit[1]] = args[0]  # returns None
-            elif len(nsplit) == 2 and nsplit[0] == 'get' and not args and not kwargs:
+            elif len(nsplit) == 2 and nsplit[0] == 'get' and nsplit[1].isupper() and not args and not kwargs:
                 return self[nsplit[1]]
             else:
                 raise AttributeError("%r object has no attribute %r" % (self.__class__, name))
         return method
 
     def __setattr__(self, name, value):
-        if name.isupper() and name not in self._registers:
-            raise ValueError('%s register does not exist in %s' % (name, self.__class__))
-        return dict.__setattr__(self, name, value)
+        if name.isupper():
+            _ = self._register_values._asdict()[name]
+        super(RegisterHardwareLayer, self).__setattr__(name, value)

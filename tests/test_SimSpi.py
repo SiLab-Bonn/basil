@@ -6,12 +6,14 @@
 #
 
 import unittest
-import time
 import os
+import yaml
+
+import numpy as np
+
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
-import numpy as np
-import yaml
+
 
 cnfg_yaml = """
 transfer_layer:
@@ -63,11 +65,11 @@ registers:
 
 class TestSimSpi(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run([os.path.dirname(__file__) + '/test_SimSpi.v'])
+        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), 'test_SimSpi.v')])
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
-    
+
     def test_io(self):
         size = self.chip['spi'].get_size()
         self.chip['gpio'].reset()
@@ -87,25 +89,25 @@ class TestSimSpi(unittest.TestCase):
 
         ret = self.chip['spi'].get_data()  # read back what was received (looped)
         self.assertEqual(ret.tolist(), range(16))
-        
+
         # ext_start
         self.chip['spi'].set_en(1)
         self.assertEqual(self.chip['spi'].get_en(), 1)
-        
+
         self.chip['PULSE_GEN'].set_delay(1)
-        self.chip['PULSE_GEN'].set_width(1+size)
+        self.chip['PULSE_GEN'].set_width(1 + size)
         self.chip['PULSE_GEN'].set_repeat(1)
         self.assertEqual(self.chip['PULSE_GEN'].get_delay(), 1)
-        self.assertEqual(self.chip['PULSE_GEN'].get_width(), 1+size)
+        self.assertEqual(self.chip['PULSE_GEN'].get_width(), 1 + size)
         self.assertEqual(self.chip['PULSE_GEN'].get_repeat(), 1)
-        
+
         self.chip['PULSE_GEN'].start()
         while(not self.chip['PULSE_GEN'].is_done()):
             pass
-            
+
         ret = self.chip['spi'].get_data()  # read back what was received (looped)
         self.assertEqual(ret.tolist(), range(16))
-        
+
         # spi_rx
         ret = self.chip['spi_rx'].get_en()
         self.assertEqual(ret, False)
@@ -127,10 +129,10 @@ class TestSimSpi(unittest.TestCase):
         data1 = np.right_shift(ret, 8).astype(np.uint8)
         data = np.reshape(np.vstack((data1, data0)), -1, order='F')
         self.assertEqual(data.tolist(), range(16))
-    
+
     def test_dut_iter(self):
-        
         conf = yaml.safe_load(cnfg_yaml)
+
         def iter_conf():
             for item in conf['registers']:
                 yield item
@@ -138,12 +140,11 @@ class TestSimSpi(unittest.TestCase):
                 yield item
             for item in conf['transfer_layer']:
                 yield item
-            
-        
+
         for mod, mcnf in zip(self.chip, iter_conf()):
             self.assertEqual(mod.name, mcnf['name'])
             self.assertEqual(mod.__class__.__name__, mcnf['type'])
-    
+
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()

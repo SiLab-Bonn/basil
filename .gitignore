@@ -47,3 +47,8 @@ results.xml
 firmware/modules/chipscope/*
 !firmware/modules/chipscope/*.xise
 !firmware/modules/chipscope/*.xco
+
+examples/mmc3_eth/firmware/vivado/*
+!examples/mmc3_eth/firmware/vivado/*.xpr
+examples/mmc3_eth/firmware/src/SiTCP
+

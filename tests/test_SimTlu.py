@@ -6,9 +6,10 @@
 #
 
 import unittest
+import os
+
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
-import os
 
 cnfg_yaml = """
 transfer_layer:
@@ -50,7 +51,7 @@ registers:
 
 class TestSimTlu(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run([os.path.dirname(__file__) + '/test_SimTlu.v'])
+        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), 'test_SimTlu.v')])
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
@@ -61,13 +62,13 @@ class TestSimTlu(unittest.TestCase):
         self.chip['tlu'].TRIGGER_SELECT = 2
         self.chip['tlu'].TRIGGER_VETO_SELECT = 2
 #         self.chip['CONTROL']['ENABLE'] = 1
-        self.chip['gpio'].set_data([0x01])
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
 
         self.chip['gpio'].set_data([0x07])  # trigger + veto
-        self.chip['gpio'].set_data([0x01])
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
 
         self.chip['gpio'].set_data([0x03])  # trigger
-        self.chip['gpio'].set_data([0x01])
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
 
 #         self.chip['CONTROL']['ENABLE'] = 0
         self.chip['gpio'].set_data([0x00])
@@ -84,13 +85,14 @@ class TestSimTlu(unittest.TestCase):
         self.chip['tlu'].TRIGGER_SELECT = 2
         self.chip['tlu'].TRIGGER_VETO_SELECT = 252
 #         self.chip['CONTROL']['ENABLE'] = 1
-        self.chip['gpio'].set_data([0x01])
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
+        self.chip['gpio'].set_data([0x01])  # issue a second time, wait for reset
 
         self.chip['gpio'].set_data([0x07])  # trigger + veto
-        self.chip['gpio'].set_data([0x01])
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
 
         self.chip['gpio'].set_data([0x03])  # trigger
-        self.chip['gpio'].set_data([0x01])
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
 
 #         self.chip['CONTROL']['ENABLE'] = 0
         self.chip['gpio'].set_data([0x00])
@@ -102,6 +104,48 @@ class TestSimTlu(unittest.TestCase):
         self.assertEqual(data[0], 0x80000000 + 0)
         self.assertEqual(data[1], 0x80000000 + 1)
 
+    def test_simple_trigger_threshold(self):
+        self.chip['tlu'].TRIGGER_COUNTER = 0
+        self.chip['tlu'].TRIGGER_MODE = 0
+        self.chip['tlu'].TRIGGER_SELECT = 4  # select single pulse trigger
+        self.chip['tlu'].TRIGGER_THRESHOLD = 1  # at least two clock cycles
+#         self.chip['CONTROL']['ENABLE'] = 1
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
+        self.chip['gpio'].set_data([0x01])  # issue a second time, wait for reset
+
+        self.chip['gpio'].set_data([0x03])  # trigger
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
+
+        self.chip['gpio'].set_data([0x03])  # trigger
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
+
+#         self.chip['CONTROL']['ENABLE'] = 0
+        self.chip['gpio'].set_data([0x00])
+
+        self.assertEqual(self.chip['sram'].get_fifo_int_size(), 2)
+        self.assertEqual(self.chip['tlu'].TRIGGER_COUNTER, 2)
+
+        data = self.chip['sram'].get_data()
+        self.assertEqual(data[0], 0x80000000 + 0)
+        self.assertEqual(data[1], 0x80000000 + 1)
+
+        self.chip['tlu'].TRIGGER_COUNTER = 0
+        self.chip['tlu'].TRIGGER_THRESHOLD = 2  # at least two clock cycles
+
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
+
+        self.chip['gpio'].set_data([0x03])  # trigger
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
+
+        self.chip['gpio'].set_data([0x03])  # trigger
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
+
+#         self.chip['CONTROL']['ENABLE'] = 0
+        self.chip['gpio'].set_data([0x00])
+
+        self.assertEqual(self.chip['sram'].get_fifo_int_size(), 0)
+        self.assertEqual(self.chip['tlu'].TRIGGER_COUNTER, 0)
+
     def test_simple_trigger_max_triggers(self):
         self.chip['tlu'].TRIGGER_COUNTER = 0
         self.chip['tlu'].MAX_TRIGGERS = 2
@@ -109,19 +153,19 @@ class TestSimTlu(unittest.TestCase):
         self.chip['tlu'].TRIGGER_SELECT = 2
         self.chip['tlu'].TRIGGER_VETO_SELECT = 252
 #         self.chip['CONTROL']['ENABLE'] = 1
-        self.chip['gpio'].set_data([0x01])
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
 
         self.chip['gpio'].set_data([0x03])  # trigger
-        self.chip['gpio'].set_data([0x01])
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
 
         self.chip['gpio'].set_data([0x03])  # trigger
-        self.chip['gpio'].set_data([0x01])
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
 
         self.chip['gpio'].set_data([0x03])  # trigger
-        self.chip['gpio'].set_data([0x01])
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
 
         self.chip['gpio'].set_data([0x03])  # trigger
-        self.chip['gpio'].set_data([0x01])
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
 
 #         self.chip['CONTROL']['ENABLE'] = 0
         self.chip['gpio'].set_data([0x00])
@@ -139,7 +183,7 @@ class TestSimTlu(unittest.TestCase):
         self.chip['tlu'].TRIGGER_SELECT = 1
         self.chip['tlu'].TRIGGER_VETO_SELECT = 0
 #         self.chip['CONTROL']['ENABLE'] = 1
-        self.chip['gpio'].set_data([0x01])
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
 
         readings = 0
         while(self.chip['sram'].get_fifo_int_size() < 4 and readings < 1000):
@@ -162,6 +206,7 @@ class TestSimTlu(unittest.TestCase):
         self.chip['tlu'].TRIGGER_MODE = 3
         self.chip['tlu'].TRIGGER_VETO_SELECT = 255
         self.chip['tlu'].EN_TLU_VETO = 0
+#         self.chip['tlu'].DATA_FORMAT = 2
 #         self.chip['tlu'].TRIGGER_LOW_TIMEOUT = 5
 #         self.chip['tlu'].TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES = 0
 #         self.chip['tlu'].HANDSHAKE_BUSY_VETO_WAIT_CYCLES = 0
@@ -191,7 +236,7 @@ class TestSimTlu(unittest.TestCase):
         self.chip['tlu'].TRIGGER_VETO_SELECT = 1
         self.chip['tlu'].EN_TLU_VETO = 1
 #         self.chip['CONTROL']['ENABLE'] = 1
-        self.chip['gpio'].set_data([0x01])
+        self.chip['gpio'].set_data([0x01])  # ext enable trigger/TLU
 
         readings = 0
         while(self.chip['sram'].get_fifo_int_size() == 0 and readings < 1000):

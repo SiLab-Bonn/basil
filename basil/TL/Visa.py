@@ -11,7 +11,6 @@ from basil.TL.TransferLayer import TransferLayer
 
 
 class Visa(TransferLayer):
-
     '''Transfer layer for a Virtual Instrument Software Architecture (VISA) provided by pyVisa.
     Several interfaces are available (GPIB, RS232, USB, Ethernet). To be able to use pyVisa without
     the proprietary NI-VISA driver a pyVisa backend pyVisa-py can be used.
@@ -27,7 +26,7 @@ class Visa(TransferLayer):
         Initialize the device.
         Parameters of visa.ResourceManager().open_resource()
         '''
-        backend = self._init.pop('backend', 'National Instruments')
+        backend = self._init.pop('backend', '')  # Empty string means std. backend (NI VISA)
         rm = visa.ResourceManager(backend)
         try:
             logging.info('BASIL VISA TL with %s backend found the following devices: %s', backend, rm.list_resources())

@@ -56,13 +56,13 @@ class spi(RegisterHardwareLayer):
 
     def set_wait(self, value):
         '''
-        Sets time delay between repetitions in clock cycles 
+        Sets time delay between repetitions in clock cycles
         '''
         self.WAIT = value
 
     def get_wait(self):
         '''
-        Gets time delay between repetitions in clock cycles 
+        Gets time delay between repetitions in clock cycles
         '''
         return self.WAIT
 
@@ -81,7 +81,7 @@ class spi(RegisterHardwareLayer):
 
     def set_en(self, value):
         '''
-        Enable start on external EXT_START signal (inside FPGA) 
+        Enable start on external EXT_START signal (inside FPGA)
         '''
         self.EN = value
 
@@ -109,7 +109,7 @@ class spi(RegisterHardwareLayer):
         Sets data for outgoing stream
         '''
         if self._mem_bytes < len(data):
-            raise ValueError('Size of data is too big')
+            raise ValueError('Size of data (%d bytes) is too big for memory (%d bytes)' % (len(data), self._mem_bytes))
         self._intf.write(self._conf['base_addr'] + self._spi_mem_offset + addr, data)
 
     # This needs to be changed to return written value

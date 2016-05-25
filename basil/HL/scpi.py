@@ -19,7 +19,7 @@ class scpi(HardwareLayer):
         super(scpi, self).__init__(intf, conf)
 
     def init(self):
-        device_desciption = os.path.dirname(__file__) + '/' + self._init['device'].lower().replace(" ", "_") + '.yaml'
+        device_desciption = os.path.join(os.path.dirname(__file__), self._init['device'].lower().replace(" ", "_") + '.yaml')
         try:
             with open(device_desciption, 'r') as in_file:
                 self._scpi_commands = load(in_file, Loader=BaseLoader)

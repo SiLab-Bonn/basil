@@ -7,6 +7,7 @@
 
 import unittest
 import os
+
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
@@ -40,7 +41,7 @@ registers:
 
 class TestSimS2C(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run([os.path.dirname(__file__) + '/test_SimI2c.v'])
+        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), 'test_SimI2c.v')])
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()

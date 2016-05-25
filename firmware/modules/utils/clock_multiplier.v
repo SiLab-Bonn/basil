@@ -22,7 +22,7 @@ end
 initial begin
     CLOCK = 0;
     forever begin
-        @(negedge CLK)
+        @(posedge CLK)
         CLOCK = 1;
         repeat(MULTIPLIER*2-1)
             #(time_diff/(MULTIPLIER*2)) CLOCK = !CLOCK;

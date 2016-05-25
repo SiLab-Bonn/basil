@@ -4,9 +4,9 @@
 # ------------------------------------------------------------
 #
 
-import time
-from basil.dut import Dut
 import numpy as np
+
+from basil.dut import Dut
 
 
 chip = Dut("sram_test.yaml")

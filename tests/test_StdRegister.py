@@ -7,6 +7,7 @@
 
 import unittest
 import yaml
+
 from bitarray import bitarray
 
 from basil.dut import Dut
@@ -17,7 +18,7 @@ transfer_layer:
     - name  : dummy_tl
       type  : Dummy
       init:
-          mem : {0: 1, 14: 4} # module version for init of spi and mem bytes
+          mem : {0: 2, 14: 4} # module version for init of spi and mem bytes
 
 hw_drivers:
   - name      : spi_module
@@ -30,7 +31,7 @@ registers:
     type        : StdRegister
     hw_driver   : spi_module
     size        : 32
-    
+
   - name        : TEST2
     type        : StdRegister
     hw_driver   : spi_module
@@ -67,7 +68,7 @@ class TestClass(unittest.TestCase):
     def setUpClass(cls):
         cls.cnfg = yaml.load(cnfg_yaml)
         cls.dut = Dut(cls.cnfg)
-        cls.dut['spi_module']._require_version = "==1"
+        cls.dut['spi_module']._require_version = "==2"
         cls.dut.init()
         cls.dut['spi_module']._mem_bytes = 4
 
@@ -143,7 +144,7 @@ class TestClass(unittest.TestCase):
         self.dut['TEST2'].write()
         mem = dict()
 #         mem[0] = 0  # reset
-        mem[0] = 1
+        mem[0] = 2
         mem[14] = 4
         mem[16] = 0
         mem[17] = 0
@@ -202,12 +203,12 @@ class TestClass(unittest.TestCase):
     def test_default(self):
         self.cnfg['registers'][1]['fields'][0]['default'] = 0x01  # VINJECT
         self.dut = Dut(self.cnfg)
-        self.dut['spi_module']._require_version = "==1"
+        self.dut['spi_module']._require_version = "==2"
         self.dut.init()
         self.dut['spi_module']._mem_bytes = 32
         mem = dict()
 #         mem[0] = 0  # reset
-        mem[0] = 1
+        mem[0] = 2
         mem[14] = 4
         mem[16] = 0x08
         mem[17] = 0

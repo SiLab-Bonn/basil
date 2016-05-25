@@ -10,7 +10,6 @@ from basil.TL.TransferLayer import TransferLayer
 
 
 class Serial(TransferLayer):
-
     '''Transfer layer of serial device using the pySerial module.
     '''
 

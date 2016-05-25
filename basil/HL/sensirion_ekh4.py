@@ -22,7 +22,7 @@ class sensirionEKH4(HardwareLayer):
     '''Driver for the Sensirion EK-H4 multiplexer box. Can be used to read up to 4 channels of sensirion sensors for humidity and temperature
     (http://www.sensirion.com/en/products/humidity-temperature/evaluation-kits/ek-h4/).
     A TLV protocoll via serial port is used with 115200 baud rate. The type byte definitions cannot be found online...
-    The data returned by the device is often too long, especially for the humidity read out. Still it is interpreted. 
+    The data returned by the device is often too long, especially for the humidity read out. Still it is interpreted.
     But to avoid unreasonable values a max_value can be set (e.g. rel. humidity < 100). If this values is exceeded None is set for that channel.
     '''
 

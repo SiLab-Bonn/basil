@@ -31,7 +31,7 @@ class pulse_gen(RegisterHardwareLayer):
         Software start of pulse at random time
         '''
         self.START = 0
- 
+
     def reset(self):
         self.RESET = 0
 

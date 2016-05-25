@@ -9,8 +9,10 @@ import subprocess
 import basil
 import os
 
+
 def get_basil_dir():
     return str(os.path.dirname(os.path.dirname(basil.__file__)))
+
 
 def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test', sim_host='localhost', sim_port=12345, sim_bus='basil.utils.sim.BasilBusDriver',
                     end_on_disconnect=True, include_dirs=(), extra_defines=(), extra=''):
@@ -31,10 +33,10 @@ def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test
 
     mkfile += "COMPILE_ARGS = -D COCOTB_SIM=1 %s \n" % (" ".join('-I' + str(e) for e in include_dirs))
     mkfile += "COMPILE_ARGS += %s \n\n" % (" ".join('-D' + str(e) for e in extra_defines))
-    
+
     mkfile += "NOT_ICARUS_DEFINES= +define+COCOTB_SIM=1 %s \n" % (" ".join('+define+' + str(e) for e in extra_defines))
     mkfile += "NOT_ICARUS_INCLUDE_DIRS=+incdir+./ %s \n" % (" ".join('+incdir+' + str(e) for e in include_dirs))  # this is for modelsim better full path?
-    
+
     mkfile += "\n"
     mkfile += extra
     mkfile += "\n"

@@ -46,7 +46,7 @@ or install via PyPI into the Python's site-packages folder (for non-developers):
 
     pip install basil_daq==version
 
-where version is a version number (e.g. 2.4.2)
+where version is a version number (e.g. 2.4.3)
 
 or install from git, when no PyPI package is available (for non-developers):
 
@@ -54,7 +54,9 @@ or install from git, when no PyPI package is available (for non-developers):
 
     pip install git+https://github.com/SiLab-Bonn/basil.git@branch
 
-where branch is a branch name (e.g. master or v2.4.2).
+where branch is a branch name (e.g. master or v2.4.3).
+
+Check `.travis.yml <.travis.yml>`_ for installation/testing hints.
 
 Support
 =======
@@ -65,13 +67,19 @@ Features
 ============
 Firmware:
   - very simple single master bus definition
-  - multiple basic modules (SPI, SEQ, GPIO, I2C)
+  - multiple basic modules (SPI, SEQ, GPIO, I2C, JTAG)
   - multiple interfaces (UART, USB2, USB3, Ethernet)
 Software:
   - layer structure following hardware
   - generation based on yaml file
   - register abstract layer (RAL)
   - simulator interface allows software test against simulated RTL (thanks to `cocotb <https://github.com/potentialventures/cocotb>`_)
+
+Example Projects:
+=================
+- `pyBar <https://github.com/SiLab-Bonn/pyBAR>`_ - Bonn ATLAS Readout in Python and C++ 
+- `MCA <https://github.com/SiLab-Bonn/MCA>`_ - Multi Channel Analyzer
+- `fe65_p2 <https://github.com/SiLab-Bonn/fe65_p2>`_ - DAQ for FE65P2 prototype
 
 License
 ============

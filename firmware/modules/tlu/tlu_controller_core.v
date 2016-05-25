@@ -53,7 +53,7 @@ module tlu_controller_core
     output wire     [31:0]      TIMESTAMP
 );
 
-localparam VERSION = 6;
+localparam VERSION = 8;
 
 // Registers
 wire SOFT_RST; // Address: 0
@@ -95,14 +95,12 @@ wire CONF_TRIGGER_ENABLE;
 assign CONF_TRIGGER_ENABLE = status_regs[1][3];
 wire [3:0] TLU_TRIGGER_DATA_DELAY;
 assign TLU_TRIGGER_DATA_DELAY = status_regs[1][7:4];
-//wire [4:0] TLU_TRIGGER_CLOCK_CYCLES;
-//assign TLU_TRIGGER_CLOCK_CYCLES = status_regs[2][4:0]; // 0: 32 clock cycles
+wire [1:0] CONF_DATA_FORMAT;
+assign CONF_DATA_FORMAT = status_regs[2][1:0];
 wire TLU_ENABLE_RESET_TS;
 assign TLU_ENABLE_RESET_TS = status_regs[2][5];
 wire TLU_ENABLE_VETO;
 assign TLU_ENABLE_VETO = status_regs[2][6];
-wire CONF_EN_WRITE_TS;
-assign CONF_EN_WRITE_TS = status_regs[2][7];
 wire [7:0] TLU_TRIGGER_LOW_TIME_OUT;
 assign TLU_TRIGGER_LOW_TIME_OUT = status_regs[3];
 wire [7:0] TRIGGER_SELECT;
@@ -117,6 +115,8 @@ wire [7:0] CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES;
 assign CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES = status_regs[20];
 wire [7:0] CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES;
 assign CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES = status_regs[21];
+wire [7:0] CONF_TRIGGER_THRESHOLD;
+assign CONF_TRIGGER_THRESHOLD = status_regs[24];
 
 always @(posedge BUS_CLK)
 begin
@@ -136,18 +136,19 @@ begin
         status_regs[11] <= 8'b0;
         status_regs[12] <= 8'b0; // lost data counter
         status_regs[13] <= 8'b0; // trigger select
-        status_regs[14] <= 8'b1111_1111; // veto select (all enable by default)
+        status_regs[14] <= 8'b0; // veto select
         status_regs[15] <= 8'b0; // trigger invert
         status_regs[16] <= 8'b0; // max. trigger counter
         status_regs[17] <= 8'b0;
         status_regs[18] <= 8'b0;
         status_regs[19] <= 8'b0;
-        status_regs[20] <= 8'b0; // TLU trigger high accept clock cycles
+        status_regs[20] <= 8'd3; // TLU trigger high accept clock cycles
         status_regs[21] <= 8'b0; // TLU busy low to veto high wait cycles
-        status_regs[22] <= 8'b0;
-        status_regs[23] <= 8'b0;
+        status_regs[22] <= 8'b0; // trigger low timeout error
+        status_regs[23] <= 8'b0; // trigger accept error
+        status_regs[24] <= 8'b0; // trigger threshold
     end
-    else if(BUS_WR && BUS_ADD < 24)
+    else if(BUS_WR && BUS_ADD < 25)
     begin
         status_regs[BUS_ADD[4:0]] <= BUS_DATA_IN;
     end
@@ -210,6 +211,8 @@ always @ (posedge BUS_CLK) begin
             BUS_DATA_OUT <= TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT;
         else if (BUS_ADD == 23)
             BUS_DATA_OUT <= TLU_TRIGGER_ACCEPT_ERROR_CNT;
+        else if (BUS_ADD == 24)
+            BUS_DATA_OUT <= status_regs[24];
         else
             BUS_DATA_OUT <= 0;
     end
@@ -282,13 +285,6 @@ three_stage_synchronizer three_stage_tlu_en_veto_synchronizer (
     .OUT(TLU_ENABLE_VETO_SYNC)
 );
 
-wire CONF_EN_WRITE_TS_SYNC;
-three_stage_synchronizer three_stage_enable_write_ts_synchronizer (
-    .CLK(TRIGGER_CLK),
-    .IN(CONF_EN_WRITE_TS),
-    .OUT(CONF_EN_WRITE_TS_SYNC)
-);
-
 wire TLU_ENABLE_RESET_TS_SYNC;
 three_stage_synchronizer three_stage_enable_tlu_reset_ts_synchronizer (
     .CLK(TRIGGER_CLK),
@@ -349,6 +345,15 @@ three_stage_synchronizer #(
     .OUT(CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES_SYNC)
 );
 
+wire [7:0] CONF_TRIGGER_THRESHOLD_SYNC;
+three_stage_synchronizer #(
+    .WIDTH(8)
+) three_stage_trigger_threshold_synchronizer (
+    .CLK(TRIGGER_CLK),
+    .IN(CONF_TRIGGER_THRESHOLD),
+    .OUT(CONF_TRIGGER_THRESHOLD_SYNC)
+);
+
 // output sync
 // nothing to do here
 
@@ -366,7 +371,18 @@ wire TLU_ASSERT_VETO_TE;
 assign TLU_ASSERT_VETO_TE = TLU_ASSERT_VETO_FF & ~TLU_ASSERT_VETO;
 
 reg TLU_VETO;
-always @ (RST_SYNC or TRIGGER_ACCEPTED_FLAG or TLU_ASSERT_VETO_TE or TLU_ASSERT_VETO_LE)
+//always @ (RST_SYNC or TRIGGER_ACCEPTED_FLAG or TLU_ASSERT_VETO_TE or TLU_ASSERT_VETO_LE)
+//begin
+//    if (RST_SYNC)
+//        TLU_VETO <= 1'b0;
+//    if (TRIGGER_ACCEPTED_FLAG)
+//        TLU_VETO <= 1'b0;
+//    else if (TLU_ASSERT_VETO_TE)
+//        TLU_VETO <= 1'b0;
+//    else if (TLU_ASSERT_VETO_LE)
+//        TLU_VETO <= 1'b1;
+//end
+always @ (posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         TLU_VETO <= 1'b0;
@@ -595,7 +611,7 @@ always @ (posedge BUS_CLK)
     FIFO_EMPTY_FF <= FIFO_EMPTY;
 
 wire FIFO_EMPTY_FLAG_BUS_CLK;
-assign FIFO_EMPTY_FLAG_BUS_CLK = FIFO_EMPTY_FF & ~FIFO_EMPTY; // assert flag when FIFO is empty again
+assign FIFO_EMPTY_FLAG_BUS_CLK = ~FIFO_EMPTY_FF & FIFO_EMPTY; // assert flag when FIFO is empty again
 
 wire FIFO_EMPTY_FLAG;
 flag_domain_crossing fifo_preempt_flag_domain_crossing (
@@ -643,6 +659,7 @@ tlu_controller_fsm #(
     .TRIGGER_COUNTER_SET_VALUE(TRIGGER_COUNTER),
 
     .TRIGGER_MODE(TRIGGER_MODE_SYNC),
+    .TRIGGER_THRESHOLD(CONF_TRIGGER_THRESHOLD_SYNC),
 
     .TRIGGER(TRIGGER_FSM),
     .TRIGGER_VETO(TRIGGER_VETO_OR_SYNC),
@@ -657,7 +674,7 @@ tlu_controller_fsm #(
     .TLU_ENABLE_VETO(TLU_ENABLE_VETO_SYNC),
     .TLU_RESET_FLAG(TLU_RESET_FLAG_SYNC),
     
-    .WRITE_TIMESTAMP(CONF_EN_WRITE_TS_SYNC),
+    .CONF_DATA_FORMAT(CONF_DATA_FORMAT),
     
     .TLU_BUSY(TLU_BUSY),
     .TLU_CLOCK_ENABLE(TLU_CLOCK_ENABLE),

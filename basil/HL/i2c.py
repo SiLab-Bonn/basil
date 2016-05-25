@@ -77,7 +77,7 @@ class i2c(RegisterHardwareLayer):
 
     def set_data(self, data, addr=0):
         if self._mem_size < len(data):
-            raise ValueError('Size of data %d is too big %d' % len(data), self._mem_size)
+            raise ValueError('Size of data (%d bytes) is too big for memory (%d bytes)' % (len(data), self._mem_size))
         self._intf.write(self._conf['base_addr'] + self._seq_mem_offset + addr, data)
 
     def get_data(self, size=None, addr=0):

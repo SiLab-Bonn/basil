@@ -7,6 +7,7 @@
 
 import unittest
 import os
+
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
@@ -49,7 +50,7 @@ registers:
 
 class TestSimGpio(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run([os.path.dirname(__file__) + '/test_SimGpio.v'])
+        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), 'test_SimGpio.v')])
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()

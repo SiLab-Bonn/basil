@@ -123,7 +123,10 @@ wire [CLKDV*4-1:0] TDC, TDC_DES;
 
 generate
     if (FAST_TDC==1) begin
-        ddr_des #(.CLKDV(CLKDV)) iddr_des_tdc(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TDC_IN), .OUT(TDC));
+    	wire [1:0] TDC_FAST;
+        ddr_des #(.CLKDV(CLKDV)) iddr_des_tdc(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TDC_IN), .OUT(TDC), .OUT_FAST(TDC_FAST));
+        // assigning TDC output, getting effective 2x CLK320 (640MHz) sampling of leading edge
+        assign TDC_OUT = CONF_EN_INVERT_TDC ? &TDC_FAST : |TDC_FAST;
     end
     else begin
         reg [1:0] TDC_DDRQ_DLY;
@@ -151,11 +154,13 @@ generate
             TDC_DES_OUT <= TDC_DATA_IN_SR;
         
         assign TDC = TDC_DES_OUT;
+        
+        // assigning TDC output
+        assign TDC_OUT = TDC_IN;
     end
 endgenerate
 
 assign TDC_DES = CONF_EN_INVERT_TDC ? ~TDC : TDC;
-assign TDC_OUT = |TDC;
 
 wire ZERO_DETECTED_TDC;
 assign ZERO_DETECTED_TDC = |(~TDC_DES); // asserted when one or more 0 occur
@@ -362,7 +367,10 @@ wire [CLKDV*4-1:0] TRIG, TRIG_DES;
 
 generate
     if (FAST_TRIGGER==1) begin
-        ddr_des #(.CLKDV(CLKDV)) iddr_des_trig(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TRIG_IN), .OUT(TRIG));
+    	wire [1:0] TRIG_FAST;
+        ddr_des #(.CLKDV(CLKDV)) iddr_des_trig(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TRIG_IN), .OUT(TRIG), .OUT_FAST(TRIG_FAST));
+        // assigning TRIG output, getting effective 2x CLK320 (640MHz) sampling of leading edge
+        assign TRIG_OUT = CONF_EN_INVERT_TRIGGER ? &TRIG_FAST : |TRIG_FAST;
     end
     else begin
         reg [1:0] TRIGGER_DDRQ_DLY;
@@ -390,11 +398,13 @@ generate
             TRIG_DES_OUT <= TRIGGER_DATA_IN_SR;
         
         assign TRIG = TRIG_DES_OUT;
+        
+        // assigning TRIG output
+        assign TRIG_OUT = TRIG_IN;
     end
 endgenerate
 
 assign TRIG_DES = CONF_EN_INVERT_TRIGGER ? ~TRIG : TRIG;
-assign TRIG_OUT = |TRIG;
 
 reg TRIG_DES_BUF_0;
 always @ (posedge DV_CLK)

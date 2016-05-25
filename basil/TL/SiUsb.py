@@ -8,11 +8,12 @@
 import logging
 import os
 
-from basil.TL.SiTransferLayer import SiTransferLayer
 from SiLibUSB import GetUSBBoards, SiUSBDevice
 
+from basil.TL.SiTransferLayer import SiTransferLayer
 
-class SiUsb (SiTransferLayer):
+
+class SiUsb(SiTransferLayer):
     '''SiLab USB device
     '''
     BASE_ADDRESS_I2C = 0x00000
@@ -28,7 +29,7 @@ class SiUsb (SiTransferLayer):
         super(SiUsb, self).__init__(conf)
         self._sidev = None
 
-    def init(self, **kwargs):
+    def init(self):
         self._init.setdefault('board_id', None)
         self._init.setdefault('avoid_download', False)
         if self._init['board_id'] and int(self._init['board_id']) >= 0:

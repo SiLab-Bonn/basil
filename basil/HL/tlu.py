@@ -16,6 +16,13 @@ trigger_modes = {
 }
 
 
+trigger_data_format = {
+    'TRIGGER_COUNTER': 0,  # trigger number according to TRIGGER_MODE
+    'TIMESTAMP': 1,  # time stamp only
+    'COMBINED': 2,  # combined, 15bit time stamp + 16bit trigger number
+}
+
+
 class tlu(RegisterHardwareLayer):
     '''TLU controller interface
     '''
@@ -26,9 +33,9 @@ class tlu(RegisterHardwareLayer):
                   'TRIGGER_DATA_MSB_FIRST': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},
                   'TRIGGER_ENABLE': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},
                   'TRIGGER_DATA_DELAY': {'descr': {'addr': 1, 'size': 4, 'offset': 4}},
+                  'DATA_FORMAT': {'descr': {'addr': 2, 'size': 2, 'offset': 0}},
                   'EN_TLU_RESET_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 5}},
                   'EN_TLU_VETO': {'descr': {'addr': 2, 'size': 1, 'offset': 6}},
-                  'EN_WRITE_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 7}},
                   'TRIGGER_LOW_TIMEOUT': {'descr': {'addr': 3, 'size': 8}},
                   'CURRENT_TLU_TRIGGER_NUMBER': {'descr': {'addr': 4, 'size': 32, 'properties': ['ro']}},
                   'TRIGGER_COUNTER': {'descr': {'addr': 8, 'size': 32}},
@@ -40,45 +47,12 @@ class tlu(RegisterHardwareLayer):
                   'TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES': {'descr': {'addr': 20, 'size': 8}},
                   'HANDSHAKE_BUSY_VETO_WAIT_CYCLES': {'descr': {'addr': 21, 'size': 8}},
                   'TRIGGER_LOW_TIMEOUT_ERROR_COUNTER': {'descr': {'addr': 22, 'size': 8, 'properties': ['ro']}},
-                  'TLU_TRIGGER_ACCEPT_ERROR_COUNTER': {'descr': {'addr': 23, 'size': 8, 'properties': ['ro']}}}
-    _require_version = "==6"
+                  'TLU_TRIGGER_ACCEPT_ERROR_COUNTER': {'descr': {'addr': 23, 'size': 8, 'properties': ['ro']}},
+                  'TRIGGER_THRESHOLD': {'descr': {'addr': 24, 'size': 8}}}
+    _require_version = "==8"
 
     def __init__(self, intf, conf):
         super(tlu, self).__init__(intf, conf)
 
     def reset(self):
         self.RESET = 0
-
-    def get_lost_data_counter(self):
-        return self.LOST_DATA_COUNTER
-
-    def set_trigger_mode(self, value):
-        self.TRIGGER_MODE = value
-
-    def set_trigger_msb_first(self, value):
-        self.TRIGGER_DATA_MSB_FIRST = value
-
-    def set_trigger_data_delay(self, value):
-        self.TRIGGER_DATA_DELAY = value
-
-    def set_tlu_reset(self, value):
-        self.EN_TLU_RESET = value
-
-    def set_write_timestamp(self, value):
-        self.EN_WRITE_TIMESTAMP = value
-
-    def set_trigger_low_timeout(self, value):
-        self.TRIGGER_LOW_TIMEOUT = value
-
-    def get_current_tlu_trigger_number(self):
-        '''Reading current trigger number.
-        '''
-        return self.CURRENT_TLU_TRIGGER_NUMBER
-
-    def set_trigger_counter(self, value):
-        self.TRIGGER_COUNTER = value
-
-    def get_trigger_counter(self):
-        '''Reading trigger counter.
-        '''
-        return self.TRIGGER_COUNTER

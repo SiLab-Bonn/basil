@@ -74,16 +74,16 @@ reg [7:0] OUTPUT_DATA [IO_BYTES-1:0]; //2
 reg [7:0] DIRECTION_DATA [IO_BYTES-1:0]; //3
 
 always @ (posedge BUS_CLK) begin
-    if(IP_ADD == 0)
-        IP_DATA_OUT <= VERSION;
-    else if(IP_ADD - 1 < IO_BYTES)
-        IP_DATA_OUT <= INPUT_DATA[IO_BYTES - IP_ADD];
-    else if(IP_ADD - (IO_BYTES+1) < IO_BYTES)
-        IP_DATA_OUT <= OUTPUT_DATA[(IO_BYTES*2) - IP_ADD];
-    else if(IP_ADD - (IO_BYTES*2+1) < IO_BYTES)
-        IP_DATA_OUT <= DIRECTION_DATA[(IO_BYTES*3) - IP_ADD];
-    else
-        IP_DATA_OUT <= 8'b0;
+    if(IP_RD) begin
+        if(IP_ADD == 0)
+          IP_DATA_OUT <= VERSION;
+        else if(IP_ADD - 1 < IO_BYTES)
+          IP_DATA_OUT <= INPUT_DATA[IO_BYTES - IP_ADD];
+        else if(IP_ADD - (IO_BYTES+1) < IO_BYTES)
+          IP_DATA_OUT <= OUTPUT_DATA[(IO_BYTES*2) - IP_ADD];
+        else if(IP_ADD - (IO_BYTES*2+1) < IO_BYTES)
+          IP_DATA_OUT <= DIRECTION_DATA[(IO_BYTES*3) - IP_ADD];
+    end
 end
 
 assign SOFT_RST = (IP_ADD==0 && IP_WR);  

@@ -1,0 +1,11 @@
+transfer_layer:
+  - name     : Serial
+    type     : Serial
+    init     :
+        port     : COM5
+        baudrate : 9600
+
+hw_drivers:
+  - name      : Arduino
+    type      : Arduino
+    interface : Serial
