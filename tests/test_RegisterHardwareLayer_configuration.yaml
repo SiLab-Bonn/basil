@@ -6,7 +6,7 @@
 #
 
 test_register:
-   REG1    : 0
+   REG1    : 257
    REG2    : 1
    REG3    : 2
 #   REG4_RO : 3

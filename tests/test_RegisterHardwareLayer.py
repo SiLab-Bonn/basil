@@ -54,11 +54,11 @@ class TestRegisterHardwareLayer(unittest.TestCase):
     def test_get_configuration(self):
         self.dut.set_configuration(os.path.dirname(__file__) + '/test_RegisterHardwareLayer_configuration.yaml')
         conf = self.dut['test_register'].get_configuration()
-        self.assertDictEqual({'REG1': 0, 'REG2': 1, 'REG3': 2, 'REG_TEST_INIT': 0, 'REG_BYTE_ARRAY': [1, 2, 3, 4]}, conf)
+        self.assertDictEqual({'REG1': 257, 'REG2': 1, 'REG3': 2, 'REG_TEST_INIT': 0, 'REG_BYTE_ARRAY': [1, 2, 3, 4]}, conf)
 
     def test_set_configuration(self):
         self.dut.set_configuration(os.path.dirname(__file__) + '/test_RegisterHardwareLayer_configuration.yaml')
-        self.assertDictEqual({0: 0, 1: 128, 2: 2, 3: 0, 5: 5, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut['dummy_tl'].mem)
+        self.assertDictEqual({0: 1, 1: 129, 2: 2, 3: 0, 5: 5, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut['dummy_tl'].mem)
 
     def test_set_configuration_non_existing(self):
         with self.assertRaises(KeyError):
