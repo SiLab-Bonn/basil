@@ -15,15 +15,15 @@ class TestExampleMIO(unittest.TestCase):
     def setUp(self):
 
         fw_path = get_basil_dir() + '/firmware/modules'
-        cocotb_compile_and_run(
-            [fw_path + '/gpio/gpio.v',
+        cocotb_compile_and_run([
+            fw_path + '/gpio/gpio.v',
             fw_path + '/utils/reset_gen.v',
             fw_path + '/utils/bus_to_ip.v',
             fw_path + '/utils/fx2_to_bus.v',
             os.path.dirname(__file__) + '/../src/example.v'],
             top_level='example',
             sim_bus='basil.utils.sim.SiLibUsbBusDriver'
-            )
+        )
 
         with open(os.path.dirname(__file__) + '/example.yaml', 'r') as f:
             cnfg = yaml.load(f)

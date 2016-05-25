@@ -37,7 +37,6 @@ class Pixel(Dut):
         self['SEQ']['GLOBAL_CTR_LD'][gr_size + 1:gr_size + 2] = bitarray("1")  # load signals
         self['SEQ']['GLOBAL_DAC_LD'][gr_size + 1:gr_size + 2] = bitarray("1")
 
-
         # Execute the program (write bits to output pins)
         # + 1 extra 0 bit so that everything ends on LOW instead of HIGH
         self._run_seq(gr_size + 3)
