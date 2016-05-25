@@ -43,6 +43,7 @@ class StdRegister(RegisterLayer):
         self._bv = BitLogic(self._conf['size'])
 
     def init(self):
+        super(StdRegister, self).init()
         self.set_configuration(self._init)
 
     def __getitem__(self, items):
