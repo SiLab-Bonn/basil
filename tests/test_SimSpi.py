@@ -65,7 +65,7 @@ registers:
 
 class TestSimSpi(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run([os.path.dirname(__file__) + '/test_SimSpi.v'])
+        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), 'test_SimSpi.v')])
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()

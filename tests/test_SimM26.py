@@ -60,7 +60,7 @@ registers:
 
 class TestSimM26(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run([os.path.dirname(__file__) + '/test_SimM26.v'])
+        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), 'test_SimM26.v')])
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()

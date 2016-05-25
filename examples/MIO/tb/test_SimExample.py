@@ -7,25 +7,25 @@
 import unittest
 import os
 import yaml
+
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean, get_basil_dir
 
 
 class TestExampleMIO(unittest.TestCase):
     def setUp(self):
-
-        fw_path = get_basil_dir() + '/firmware/modules'
+        fw_path = os.path.join(get_basil_dir(), 'firmware/modules')
         cocotb_compile_and_run([
-            fw_path + '/gpio/gpio.v',
-            fw_path + '/utils/reset_gen.v',
-            fw_path + '/utils/bus_to_ip.v',
-            fw_path + '/utils/fx2_to_bus.v',
-            os.path.dirname(__file__) + '/../src/example.v'],
+            os.path.join(fw_path, 'gpio/gpio.v'),
+            os.path.join(fw_path, 'utils/reset_gen.v'),
+            os.path.join(fw_path, 'utils/bus_to_ip.v'),
+            os.path.join(fw_path, 'utils/fx2_to_bus.v'),
+            os.path.join(os.path.dirname(__file__), '../src/example.v')],
             top_level='example',
             sim_bus='basil.utils.sim.SiLibUsbBusDriver'
         )
 
-        with open(os.path.dirname(__file__) + '/example.yaml', 'r') as f:
+        with open(os.path.join(os.path.dirname(__file__), 'example.yaml'), 'r') as f:
             cnfg = yaml.load(f)
 
         # change to simulation interface
@@ -34,8 +34,7 @@ class TestExampleMIO(unittest.TestCase):
         self.chip = Dut(cnfg)
         self.chip.init()
 
-    def test(self):
-
+    def test_gpio(self):
         ret = self.chip['GPIO_LED'].get_data()
         self.assertEqual([0], ret)
 

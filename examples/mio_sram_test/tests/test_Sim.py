@@ -7,7 +7,9 @@
 import unittest
 import os
 import yaml
+
 import numpy as np
+
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean, get_basil_dir
 
@@ -15,25 +17,27 @@ from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean, 
 class TestSram(unittest.TestCase):
     def setUp(self):
 
-        fw_path = get_basil_dir() + '/firmware/modules'
-        cocotb_compile_and_run(
-            [fw_path + '/gpio/gpio.v',
-            fw_path + '/utils/reset_gen.v',
-            fw_path + '/utils/bus_to_ip.v',
-            fw_path + '/rrp_arbiter/rrp_arbiter.v',
-            fw_path + '/utils/ODDR_sim.v',
-            fw_path + '/utils/generic_fifo.v',
-            fw_path + '/utils/cdc_pulse_sync.v',
-            fw_path + '/utils/fx2_to_bus.v',
-            fw_path + '/pulse_gen/pulse_gen.v', fw_path + '/pulse_gen/pulse_gen_core.v',
-            fw_path + '/sram_fifo/sram_fifo_core.v', fw_path + '/sram_fifo/sram_fifo.v',
-            os.path.dirname(__file__) + '/../firmware/src/sram_test.v',
-            os.path.dirname(__file__) + '/../tests/tb.v'],
+        fw_path = os.path.join(get_basil_dir(), 'firmware/modules')
+        cocotb_compile_and_run([
+            os.path.join(fw_path, 'gpio/gpio.v'),
+            os.path.join(fw_path, 'utils/reset_gen.v'),
+            os.path.join(fw_path, 'utils/bus_to_ip.v'),
+            os.path.join(fw_path, 'rrp_arbiter/rrp_arbiter.v'),
+            os.path.join(fw_path, 'utils/ODDR_sim.v'),
+            os.path.join(fw_path, 'utils/generic_fifo.v'),
+            os.path.join(fw_path, 'utils/cdc_pulse_sync.v'),
+            os.path.join(fw_path, 'utils/fx2_to_bus.v'),
+            os.path.join(fw_path, 'pulse_gen/pulse_gen.v'),
+            os.path.join(fw_path, 'pulse_gen/pulse_gen_core.v'),
+            os.path.join(fw_path, 'sram_fifo/sram_fifo_core.v'),
+            os.path.join(fw_path, 'sram_fifo/sram_fifo.v'),
+            os.path.join(os.path.dirname(__file__), '../firmware/src/sram_test.v'),
+            os.path.join(os.path.dirname(__file__), '../tests/tb.v')],
             top_level='tb',
             sim_bus='basil.utils.sim.SiLibUsbBusDriver'
-            )
+        )
 
-        with open(os.path.dirname(__file__) + '/../sram_test.yaml', 'r') as f:
+        with open(os.path.join(os.path.dirname(__file__), '../sram_test.yaml'), 'r') as f:
             cnfg = yaml.load(f)
 
         # change to simulation interface

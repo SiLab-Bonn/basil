@@ -41,7 +41,7 @@ registers:
 
 class TestSimS2C(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run([os.path.dirname(__file__) + '/test_SimI2c.v'])
+        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), 'test_SimI2c.v')])
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()

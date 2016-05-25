@@ -5,9 +5,10 @@
 # ------------------------------------------------------------
 #
 
-import numpy as np
+
 import time
 
+import numpy as np
 from bitarray import bitarray
 
 from basil.dut import Dut

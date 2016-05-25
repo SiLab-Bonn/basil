@@ -158,7 +158,10 @@ DEV:
 
 class TestSimJtagGpio(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run([os.path.dirname(__file__) + '/jtag_tap.v', os.path.dirname(__file__) + '/test_SimJtagGpio.v'])
+        cocotb_compile_and_run([
+            os.path.join(os.path.dirname(__file__), 'jtag_tap.v'),
+            os.path.join(os.path.dirname(__file__), 'test_SimJtagGpio.v')]
+        )
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init(init_yaml)
