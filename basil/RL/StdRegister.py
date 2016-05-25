@@ -5,45 +5,46 @@
 # ------------------------------------------------------------
 #
 
+import array
+
 from basil.RL.RegisterLayer import RegisterLayer
 from basil.utils.BitLogic import BitLogic
 from basil.utils import utils
-import array
+
 
 class StdRegister(RegisterLayer):
-
     def __init__(self, driver, conf):
         super(StdRegister, self).__init__(driver, conf)
         self._size = conf['size']
         self._fields = dict()
         self._bv = None
         self._fields_conf = dict()
-    
+
         if 'fields' in self._conf:
             for field in self._conf['fields']:
-            
-                if field['offset'] +1 < field['size']:
-                    raise ValueError("Register " + self._conf['name'] + ":"+ field['name']  + ": Invalid offset value. Specify MSB position.")
-                    
+
+                if field['offset'] + 1 < field['size']:
+                    raise ValueError("Register " + self._conf['name'] + ":" + field['name'] + ": Invalid offset value. Specify MSB position.")
+
                 if 'repeat' in field:
                     reg_list = []
                     for _ in range(field['repeat']):
                         reg = StdRegister(None, field)
                         reg_list.append(reg)
-                    self._fields[field['name']] = reg_list    
+                    self._fields[field['name']] = reg_list
                 else:
                     bv = BitLogic(field['size'])
                     self._fields[field['name']] = bv
-                
+
                 self._fields_conf[field['name']] = field
                 # set default
                 if "default" in field:
                     self[field['name']] = field['default']
         self._bv = BitLogic(self._conf['size'])
-        
-    def init(self):       
+
+    def init(self):
         self.set_configuration(self._init)
- 
+
     def __getitem__(self, items):
         if isinstance(items, str):
             return self._fields[items]
@@ -96,7 +97,7 @@ class StdRegister(RegisterLayer):
 
     def set(self, value):
         self[:] = value
-         
+
     def write(self, size=None):
         """
         to call start() automatically, set yaml file as follows:
@@ -174,15 +175,15 @@ class StdRegister(RegisterLayer):
 
     def get_configuration(self):
         fields = dict()
-        
+
         reg = self._construct_reg()
 
         for field in self._fields:
             if 'repeat' in self._get_filed_config(field):
                 rep_field = []
-                for i, sub_reg in enumerate(self._fields[field]):
+                for sub_reg in self._fields[field]:
                     rep_field.append(sub_reg.get_configuration())
-                
+
                 fields[field] = rep_field
             else:
                 fields[field] = str(self._fields[field][:])
