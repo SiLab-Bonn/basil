@@ -85,6 +85,7 @@ end
 assign VETO = (state != WAIT_STATE) || (state == WAIT_STATE && TLU_CLOCK == 1'b1);
 
 reg [15:0] TRIG_ID_SR;
+initial TRIG_ID_SR = 0;
 always@(posedge TLU_CLOCK or posedge TRIG)
     if(TRIG)
         TRIG_ID_SR <= {TRIG_ID, 1'b0};
