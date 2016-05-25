@@ -96,7 +96,7 @@ class RegisterHardwareLayer(HardwareLayer):
         div_size, mod_size = divmod(size + mod_offset, 8)
         if mod_size:
             div_size += 1
-        if mod_offset == 0:
+        if mod_offset == 0 and mod_size == 0:
             reg = BitLogic.from_value(0, size=div_size * 8)
         else:
             ret = self._intf.read(self._base_addr + addr + div_offset, size=div_size)
