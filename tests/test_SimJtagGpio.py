@@ -166,7 +166,7 @@ class TestSimJtagGpio(unittest.TestCase):
         self.chip = Dut(cnfg_yaml)
         self.chip.init(init_yaml)
 
-    def test(self):
+    def test_gpio(self):
 
         ID_CODE = BitLogic('0010')
         BYPASS = BitLogic('1111')
@@ -176,6 +176,7 @@ class TestSimJtagGpio(unittest.TestCase):
 
         # TEST REG INIT
         dev1ret = StdRegister(driver=None, conf=yaml.load(gpio_yaml))
+        dev1ret.init()
         dev1ret['F1'] = 0x1
         dev1ret['F2'] = 0x2f
         dev1ret['F3'] = 0x2

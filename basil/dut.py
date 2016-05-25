@@ -64,7 +64,14 @@ class Base(object):
         self._init.update(kwargs)
 
     def init(self):
-        raise NotImplementedError("init() not implemented")
+        self._initialized = True
+
+    @property
+    def is_initialized(self):
+        if "_initialized" in self.__dict__ and self._initialized:
+            return True
+        else:
+            return False
 
     def close(self):
         pass
@@ -87,6 +94,7 @@ class Dut(Base):
         self.load_hw_configuration(self._conf)
 
     def init(self, init_conf=None, **kwargs):
+        super(Dut, self).init()
         init_conf = self._open_conf(init_conf)
 
         def update_init(mod):

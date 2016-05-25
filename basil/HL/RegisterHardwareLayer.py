@@ -52,7 +52,7 @@ class RegisterHardwareLayer(HardwareLayer):
             self.add_property(reg)
 
     def init(self):
-        self._initialized = True
+        super(RegisterHardwareLayer, self).init()
         # reset during initialization to get default state and to remove any prior settings
         if "RESET" in self._registers:
             self.RESET  # assign no value, to read back value and write same value or default value
@@ -225,7 +225,7 @@ class RegisterHardwareLayer(HardwareLayer):
             else:
                 descr.setdefault('offset', 0)
                 curr_val = self._register_values._asdict()[reg]
-                if "_initialized" not in self.__dict__:  # this test allows attributes to be set in the __init__ method
+                if not self.is_initialized:  # this test allows attributes to be set in the __init__ method
                     ret_val = curr_val
                 else:
                     ret_val = self.get_value(**descr)

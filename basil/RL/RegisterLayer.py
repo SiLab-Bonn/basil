@@ -16,11 +16,10 @@ class RegisterLayer(Base):
         self._drv = driver
 
     def init(self):
-        self._initialized = True
         super(RegisterLayer, self).init()
 
     def __getattr__(self, name):
-        if "_initialized" not in self.__dict__:  # this test allows attributes to be set in the __init__ method
+        if not self.is_initialized:  # this test allows attributes to be set in the __init__ method
             super(RegisterLayer, self).__getattr__(name)
         else:
             attr = getattr(self._drv, name)
@@ -46,7 +45,7 @@ class RegisterLayer(Base):
             return method
 
     def __setattr__(self, name, value):
-        if "_initialized" not in self.__dict__:  # this test allows attributes to be set in the __init__ method
+        if not self.is_initialized:  # this test allows attributes to be set in the __init__ method
             super(RegisterLayer, self).__setattr__(name, value)
         else:
             try:
