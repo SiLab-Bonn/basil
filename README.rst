@@ -77,7 +77,7 @@ Software:
 
 Example Projects:
 =================
-- `pyBar <https://github.com/SiLab-Bonn/pyBAR>`_ - Bonn ATLAS Readout in Python and C++ 
+- `pyBAR <https://github.com/SiLab-Bonn/pyBAR>`_ - Bonn ATLAS Readout in Python and C++ 
 - `MCA <https://github.com/SiLab-Bonn/MCA>`_ - Multi Channel Analyzer
 - `fe65_p2 <https://github.com/SiLab-Bonn/fe65_p2>`_ - DAQ for FE65P2 prototype
 
