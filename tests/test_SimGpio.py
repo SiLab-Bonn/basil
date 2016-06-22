@@ -56,18 +56,19 @@ class TestSimGpio(unittest.TestCase):
         self.chip.init()
 
     def test_io(self):
+        self.chip['gpio'].set_output_en([0xff, 0, 0]) #to remove 'z in simulation
+    
         ret = self.chip['gpio'].get_data()
         self.assertEqual([0, 0, 0], ret)
-
-        self.chip['gpio'].set_data([0xe3, 0xfa, 0x5a])
-        ret = self.chip['gpio'].get_data()
-        self.assertEqual([0, 0x5a, 0x5a], ret)
-
+    
         self.chip['gpio'].set_output_en([0x0f, 0, 0])
+        self.chip['gpio'].set_data([0xe3, 0xfa, 0x5a])
         ret = self.chip['gpio'].get_data()
         self.assertEqual([0x33, 0x5a, 0x5a], ret)
 
     def test_io_register(self):
+        self.chip['gpio'].set_output_en([0xff, 0, 0]) #to remove 'z in simulation
+        
         self.chip['GPIO']['OUT'] = 0xa5
         self.chip['GPIO'].write()
         ret = self.chip['gpio'].get_data()

@@ -94,8 +94,17 @@ class BasilBusDriver(BusDriver):
                     result.append((self.bus.BUS_DATA.value.integer & 0x00ff0000) >> 16)
                     result.append((self.bus.BUS_DATA.value.integer & 0xff000000) >> 24)
                 else:
-                    result.append(self.bus.BUS_DATA.value.integer & 0xff)
-
+                    #    result.append(self.bus.BUS_DATA.value[24:31].integer & 0xff)
+                    if len(self.bus.BUS_DATA.value) == 8:
+                        result.append(self.bus.BUS_DATA.value.integer & 0xff)
+                    else:
+                        #value = self.bus.BUS_DATA.value[24:31].integer & 0xff
+                        
+                        #workaround for cocotb https://github.com/potentialventures/cocotb/pull/459
+                        value = BinaryValue(self.bus.BUS_DATA.value.binstr[24:32])
+                        
+                        result.append(value.integer)
+                        
             if(self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value.integer == 0):
                 byte += 4
             else:

@@ -89,17 +89,22 @@ fields:
         self._write()  # capture
 
         self.reg['TMS'] = 0
-        ret_bit = self._write()  # shift
+        ret_bit = self._write(tdo=True)
 
         ret = []
-        for dev in range(len(data)):
+        size_dev = len(data)
+        for dev in range(size_dev):
             dev_ret = BitLogic(len(data[dev]))
-            for bit in range(len(data[dev])):
+            size = len(data[dev])
+            for bit in range(size):
                 if dev == len(data) - 1 and bit == len(data[dev]) - 1:
                     self.reg['TMS'] = 1  # exit1
                 self.reg['TDI'] = data[dev][bit]
                 dev_ret[bit] = ret_bit
-                ret_bit = self._write()
+                if bit == size-1 and dev == size_dev-1: #lest bit
+                    self._write()
+                else:
+                    ret_bit = self._write(tdo=True)
             ret.append(dev_ret)
 
         self.reg['TDI'] = 0
@@ -111,7 +116,7 @@ fields:
 
         return ret
 
-    def _write(self, tck=True):
+    def _write(self, tck=True, tdo=False):
 
         self._intf.set_data(self.reg.tobytes())
 
@@ -123,4 +128,5 @@ fields:
             self.reg['TCK'] = 0
             self._intf.set_data(self.reg.tobytes())
 
-        return (self._intf.get_data()[0] & 0b0010000) >> 4  # TODO:
+        if tdo:
+            return (self._intf.get_data()[0] & 0b0010000) >> 4  # TODO:

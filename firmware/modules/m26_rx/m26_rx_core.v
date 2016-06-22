@@ -50,6 +50,7 @@ reg CONF_TIMESTAMP_HEADER;
 always @(posedge BUS_CLK) begin
     if(RST) begin
         CONF_EN <= 0;
+        CONF_TIMESTAMP_HEADER <= 0;
     end
     else if(BUS_WR) begin
         if(BUS_ADD == 2) begin
