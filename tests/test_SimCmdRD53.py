@@ -41,6 +41,7 @@ class TestSimSpi(unittest.TestCase):
         self.chip.init()
 
     def test_io(self):
+
         self.chip['cmd'].reset()
         self.chip['cmd'].set_syncmode(0)    #0: Send sync patterns forever, 1: Send sync pattern only once after timeout
 
@@ -49,41 +50,25 @@ class TestSimSpi(unittest.TestCase):
 
         memsize = self.chip['cmd'].get_mem_size()
 
+        self.chip['cmd'].start()
+
+        #load 256 Bytes to block memory, read back and compare
         indata = list(range(256))
         self.chip['cmd'].set_data(indata)
         ret = self.chip['cmd'].get_data(size=len(indata))
         self.assertEqual(ret.tolist(), indata)
 
+        #set memory range and start
         self.chip['cmd'].set_size(64)
         self.chip['cmd'].start()
-
-        while(not self.chip['cmd'].is_syncing()):
+        while(not self.chip['cmd'].is_done()):
              pass
 
-#        while(not self.chip['cmd'].is_done()):
-#             pass
-#
-#         self.chip['cmd'].set_size(32)
-#         print('Mem size=',self.chip['cmd'].get_cmd_size())
-#         self.chip['cmd'].start()
-#
-#         while(not self.chip['cmd'].is_done()):
-#              pass
-#
-#         self.chip['cmd'].set_size(9)
-#         print('Mem size=',self.chip['cmd'].get_cmd_size())
-#         self.chip['cmd'].start()
-
-#        while(not self.chip['cmd'].is_done()):
-#             pass
-
-
-        print('Mem size=',self.chip['cmd'].get_mem_size())
-        print('Mem size=',self.chip['cmd'].get_mem_size())
-
-#
-#         while(not self.chip['cmd'].is_syncing()):
-#             pass
+        #set memory range and start
+        self.chip['cmd'].set_size(32)
+        self.chip['cmd'].start()
+        while(not self.chip['cmd'].is_done()):
+             pass
 
 
     def tearDown(self):
