@@ -245,11 +245,12 @@ end
 
 //MUX
 always @ (posedge CMD_CLK_IN) begin
-    if(state==STATE_SYNC) begin // && serdes_next_byte
+    if(state==STATE_SYNC && serdes_next_byte) begin // && serdes_next_byte
 	    CMD_DATA_OUT = sync_halfpattern;
         CMD_DATA_OUT_SR = sync_halfpattern;
+	    CMD_SERIAL_OUT <= OUT_SR;
 	    end
-    else if(state==STATE_DATA_WRITE) begin
+    else if(state==STATE_DATA_WRITE && serdes_next_byte) begin
 	    CMD_DATA_OUT = mem[read_address];//OUT_MEM_CMD_CLK;
         CMD_DATA_OUT_SR = mem[read_address];//OUT_MEM_CMD_CLK;
         CMD_SERIAL_OUT <= OUT_SR;
