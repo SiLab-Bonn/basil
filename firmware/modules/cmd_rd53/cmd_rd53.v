@@ -21,7 +21,7 @@ module cmd_rd53
     input wire                   BUS_WR,
 
     input wire                   CMD_CLK,
-    output wire                  CMD_SERIAL_OUT
+    output wire 				 CMD_SERIAL_OUT
 //    output reg  [7:0]			 CMD_DATA_OUT
 );
 
@@ -58,8 +58,8 @@ cmd_rd53_core
     .BUS_WR(IP_WR),
     .BUS_DATA_OUT(IP_DATA_OUT),
 
-    .CMD_CLK(CMD_CLK_IN),
-    .CMD_DATA_OUT(CMD_DATA_OUT)
+    .CMD_CLK(CMD_CLK),
+    .CMD_SERIAL_OUT(CMD_SERIAL_OUT)
 );
 
 endmodule
