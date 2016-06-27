@@ -19,8 +19,8 @@ module cmd_rd53_core
     output reg [7:0]            BUS_DATA_OUT,
 
     input wire                  CMD_CLK,
-    output reg					CMD_SERIAL_OUT,
-    output reg [7:0]			CMD_DATA_OUT
+    output reg			CMD_SERIAL_OUT
+//    output reg [7:0]		CMD_DATA_OUT
 );
 
 localparam VERSION = 1;
@@ -231,9 +231,9 @@ reg [7:0] sync_halfpattern = 8'h00;
 always @ (posedge CMD_CLK) begin
     if(state==STATE_SYNC) begin
         if (sync_cycle_cnt[0])
-            sync_halfpattern <= SYNC_PATTERN[15:8];
-        else
             sync_halfpattern <= SYNC_PATTERN[7:0];
+        else
+            sync_halfpattern <= SYNC_PATTERN[15:8];
         if(serdes_next_byte)
         	sync_cycle_cnt <= sync_cycle_cnt + 1;
         end
@@ -279,7 +279,7 @@ always @ (posedge BUS_CLK) begin
 end
 
 
-//SERIALIZER
+//SERIALIZER (LSB first)
 reg [7:0] serializer_shift_register;
 reg [2:0] serdes_cnt = 3'b000;
 always @ (posedge CMD_CLK) begin
