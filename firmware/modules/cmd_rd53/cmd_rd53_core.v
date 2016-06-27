@@ -19,8 +19,8 @@ module cmd_rd53_core
     output reg [7:0]            BUS_DATA_OUT,
 
     input wire                  CMD_CLK,
-    output reg			CMD_SERIAL_OUT
-//    output reg [7:0]		CMD_DATA_OUT
+    output reg					CMD_SERIAL_OUT
+//    output reg [7:0]			CMD_DATA_OUT
 );
 
 localparam VERSION = 1;
@@ -245,17 +245,17 @@ end
 //MUX
 always @ (posedge CMD_CLK) begin
     if(state==STATE_SYNC && serdes_next_byte) begin
-	    CMD_DATA_OUT = sync_halfpattern;
+//	    CMD_DATA_OUT = sync_halfpattern;
         CMD_DATA_OUT_SR = sync_halfpattern;
 	    CMD_SERIAL_OUT <= OUT_SR;
 	    end
     else if(state==STATE_DATA_WRITE && serdes_next_byte) begin
-	    CMD_DATA_OUT = mem[read_address];
+//	    CMD_DATA_OUT = mem[read_address];
         CMD_DATA_OUT_SR = mem[read_address];
         CMD_SERIAL_OUT <= OUT_SR;
 	    end
     else if(state==STATE_IDLE) begin
-	    CMD_DATA_OUT = 8'h00;
+//	    CMD_DATA_OUT = 8'h00;
         CMD_DATA_OUT_SR = 8'h00;
 	    CMD_SERIAL_OUT <= OUT_SR;
 	    end
