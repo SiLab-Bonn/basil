@@ -18,7 +18,7 @@ module cmd_rd53_core
     input wire                  BUS_WR,
     output reg [7:0]            BUS_DATA_OUT,
 
-    input wire                  CMD_CLK_IN,
+    input wire                  CMD_CLK,
     output reg					CMD_SERIAL_OUT,
     output reg [7:0]			CMD_DATA_OUT
 );
@@ -54,11 +54,11 @@ assign START = (BUS_ADD==1 && BUS_WR);
 // CDC
 wire RST_SYNC;
 wire RST_SOFT_SYNC;
-cdc_reset_sync rst_reset_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(CMD_CLK_IN), .pulse_out(RST_SOFT_SYNC));
+cdc_reset_sync rst_reset_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(CMD_CLK), .pulse_out(RST_SOFT_SYNC));
 assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
 
 wire START_SYNC;
-cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(CMD_CLK_IN), .pulse_out(START_SYNC));
+cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(CMD_CLK), .pulse_out(START_SYNC));
 
 
 // wire CONF_EN_EXT_START;
@@ -143,14 +143,12 @@ always @(*) begin
 end
 
 
-reg [7:0] OUT_MEM_CMD_CLK;
-
 //DIFFERENT METHOD
-reg [BRAM_ABUSWIDTH-1:0] read_address = 0; //read_address_reg
+reg [BRAM_ABUSWIDTH-1:0] read_address = 0;
 
 // BRAM
 wire BUS_MEM_EN;
-wire [ABUSWIDTH-1:0] BUS_MEM_ADD;//, BUS_MEM_ADD_CMD_CLK;
+wire [ABUSWIDTH-1:0] BUS_MEM_ADD;
 
 assign BUS_MEM_EN = (BUS_WR | BUS_RD) & BUS_ADD >= REGSIZE;
 assign BUS_MEM_ADD = BUS_ADD[BRAM_ABUSWIDTH-1:0]-REGSIZE;
@@ -164,8 +162,9 @@ always @(posedge BUS_CLK)
             mem[BUS_MEM_ADD] <= BUS_DATA_IN;
         OUT_MEM <= mem[BUS_MEM_ADD];
     end
-always @ (posedge CMD_CLK_IN)
-    OUT_MEM_CMD_CLK <= mem[read_address];
+//reg [7:0] OUT_MEM_CMD_CLK;
+//always @ (posedge CMD_CLK)
+//    OUT_MEM_CMD_CLK <= mem[read_address];
 
 // FSM
 reg START_FSM;
@@ -174,7 +173,7 @@ localparam STATE_INIT  = 0, STATE_IDLE = 1, STATE_SYNC = 2, STATE_DATA_WRITE = 3
 reg [3:0] state, next_state;
 
 
-always @ (posedge CMD_CLK_IN) begin
+always @ (posedge CMD_CLK) begin
     if (RST_SYNC)
         START_FSM <= 0;
     else if(START_SYNC)
@@ -192,7 +191,7 @@ always @(posedge BUS_CLK)
         CONF_DONE <= 0;
 
 
-always @ (posedge CMD_CLK_IN) begin
+always @ (posedge CMD_CLK) begin
     if (RST_SYNC)
         state <= STATE_INIT;
     else
@@ -229,7 +228,7 @@ end
 
 //SYNC_PATTERN
 reg [7:0] sync_halfpattern = 8'h00;
-always @ (posedge CMD_CLK_IN) begin
+always @ (posedge CMD_CLK) begin
     if(state==STATE_SYNC) begin
         if (sync_cycle_cnt[0])
             sync_halfpattern <= SYNC_PATTERN[15:8];
@@ -244,15 +243,15 @@ end
 
 
 //MUX
-always @ (posedge CMD_CLK_IN) begin
-    if(state==STATE_SYNC && serdes_next_byte) begin // && serdes_next_byte
+always @ (posedge CMD_CLK) begin
+    if(state==STATE_SYNC && serdes_next_byte) begin
 	    CMD_DATA_OUT = sync_halfpattern;
         CMD_DATA_OUT_SR = sync_halfpattern;
 	    CMD_SERIAL_OUT <= OUT_SR;
 	    end
     else if(state==STATE_DATA_WRITE && serdes_next_byte) begin
-	    CMD_DATA_OUT = mem[read_address];//OUT_MEM_CMD_CLK;
-        CMD_DATA_OUT_SR = mem[read_address];//OUT_MEM_CMD_CLK;
+	    CMD_DATA_OUT = mem[read_address];
+        CMD_DATA_OUT_SR = mem[read_address];
         CMD_SERIAL_OUT <= OUT_SR;
 	    end
     else if(state==STATE_IDLE) begin
@@ -265,7 +264,7 @@ end
 
 //data_pending flag
 always @ (posedge BUS_CLK) begin
-	if(START && CONF_CMD_SIZE)// && next_state!=STATE_IDLE)
+	if(START && CONF_CMD_SIZE)
     	data_pending <= 1;
 	else if(state==STATE_DATA_WRITE && next_state!=STATE_DATA_WRITE) //
        	data_pending <= 0;
@@ -273,7 +272,7 @@ end
 
 
 always @ (posedge BUS_CLK) begin
-	if(state!=STATE_INIT) //==STATE_IDLE || state==STATE_DATA_WRITE)
+	if(state!=STATE_INIT)
 		serializer_active <= 1'b1;
 	else
 		serializer_active <= 1'b0;
@@ -281,11 +280,11 @@ end
 
 
 //SERIALIZER
-reg [7:0] serializer_shift_register;// = 8'h00;
+reg [7:0] serializer_shift_register;
 reg [2:0] serdes_cnt = 3'b000;
-always @ (posedge CMD_CLK_IN) begin
+always @ (posedge CMD_CLK) begin
 	if(serializer_active) begin
-		serializer_shift_register <= {1'b0, serializer_shift_register [7:1]};//, 1'b0};
+		serializer_shift_register <= {1'b0, serializer_shift_register [7:1]};
 		if(serdes_cnt == 3'b111) begin
 			serdes_next_byte <= 1;
 			serializer_shift_register <= CMD_DATA_OUT_SR;
@@ -305,8 +304,8 @@ end
 
 
 //DATA_WRITE
-always @ (posedge BUS_CLK) begin
-    if(state==STATE_DATA_WRITE) begin // && serdes_next_byte
+always @ (posedge CMD_CLK) begin
+    if(state==STATE_DATA_WRITE) begin
     	if(serdes_next_byte) begin
 	        if(read_address < CONF_CMD_SIZE-1)
            		read_address <= read_address + 1;
