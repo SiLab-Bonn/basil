@@ -23,7 +23,8 @@ module tb (
 		inout wire  [31:0]  BUS_DATA,
 		input wire          BUS_RD,
 		input wire          BUS_WR,
-		output wire         BUS_BYTE_ACCESS
+		output wire         BUS_BYTE_ACCESS,
+		output wire			CMD_SERIAL_OUT
 	);
 
 
@@ -48,8 +49,8 @@ module tb (
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
 
-    	.CMD_CLK_IN(BUS_CLK),
-    	.CMD_DATA_OUT()
+    	.CMD_CLK(BUS_CLK),
+    	.CMD_SERIAL_OUT(CMD_SERIAL_OUT)
 	);
 
 
