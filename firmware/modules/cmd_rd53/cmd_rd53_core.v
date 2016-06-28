@@ -244,12 +244,12 @@ end
 
 //MUX
 always @ (posedge CMD_CLK) begin
-    if(state==STATE_SYNC && serdes_next_byte) begin
+    if(state==STATE_SYNC) begin
 //	    CMD_DATA_OUT = sync_halfpattern;
         CMD_DATA_OUT_SR = sync_halfpattern;
 	    CMD_SERIAL_OUT <= OUT_SR;
 	    end
-    else if(state==STATE_DATA_WRITE && serdes_next_byte) begin
+    else if(state==STATE_DATA_WRITE) begin
 //	    CMD_DATA_OUT = mem[read_address];
         CMD_DATA_OUT_SR = mem[read_address];
         CMD_SERIAL_OUT <= OUT_SR;
@@ -272,10 +272,10 @@ end
 
 
 always @ (posedge BUS_CLK) begin
-	if(state!=STATE_INIT)
-		serializer_active <= 1'b1;
-	else
+	if(state==STATE_INIT)
 		serializer_active <= 1'b0;
+	else
+		serializer_active <= 1'b1;
 end
 
 
@@ -284,18 +284,18 @@ reg [7:0] serializer_shift_register;
 reg [2:0] serdes_cnt = 3'b000;
 always @ (posedge CMD_CLK) begin
 	if(serializer_active) begin
-		serializer_shift_register <= {1'b0, serializer_shift_register [7:1]};
+		serializer_shift_register <= {1'b0, serializer_shift_register [7:1]};	//MSB first: "[6:0], 1'b0"
 		if(serdes_cnt == 3'b111) begin
 			serdes_next_byte <= 1;
 			serializer_shift_register <= CMD_DATA_OUT_SR;
 			serdes_cnt <= 3'b000;
 		end
 		else begin
-			serdes_cnt <= serdes_cnt + 1;
+			serdes_cnt <= serdes_cnt + 1;	//MSB first: "- 1"
 			serdes_next_byte <= 0;
 		end
 
-		OUT_SR <= serializer_shift_register[0];
+		OUT_SR <= serializer_shift_register[0];	//MSB first: "[7]"
 	end
 	else
 		serdes_cnt <= 3'b000;
