@@ -316,8 +316,10 @@ begin
                     // TLU_BUSY <= 1'b0;
                 TLU_BUSY <= 1'b0;
                 TLU_CLOCK_ENABLE <= 1'b0;
-                if (TRIGGER == 1'b1 && TRIGGER_ENABLE == 1'b1)
+                if (TRIGGER_ENABLE == 1'b1 && counter_trigger_high != 8'b1111_1111 && ((counter_trigger_high > 0 && TRIGGER == 1'b1) || (counter_trigger_high == 0 && TRIGGER_FLAG == 1'b1)))
                     counter_trigger_high <= counter_trigger_high + 1;
+                else if (TRIGGER_ENABLE == 1'b1 && counter_trigger_high == 8'b1111_1111 && TRIGGER == 1'b1)
+                    counter_trigger_high <= counter_trigger_high;
                 else
                     counter_trigger_high <= 8'b0;
                 if (TRIGGER_ENABLE == 1'b0)
