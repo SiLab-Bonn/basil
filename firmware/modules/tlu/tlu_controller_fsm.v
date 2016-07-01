@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -14,43 +14,43 @@ module tlu_controller_fsm
 ) (
     input wire                  RESET,
     input wire                  TRIGGER_CLK,
-    
+
     output reg                  TRIGGER_DATA_WRITE,
     output reg [31:0]           TRIGGER_DATA,
-    
+
     output reg                  FIFO_PREEMPT_REQ,
     input wire                  FIFO_ACKNOWLEDGE,
-    
+
     output reg [31:0]           TIMESTAMP,
     output reg [31:0]           TIMESTAMP_DATA,
     output reg [31:0]           TLU_TRIGGER_NUMBER_DATA,
-    
+
     output reg [31:0]           TRIGGER_COUNTER_DATA,
     input wire                  TRIGGER_COUNTER_SET,
     input wire [31:0]           TRIGGER_COUNTER_SET_VALUE,
-    
+
     input wire [1:0]            TRIGGER_MODE,
     input wire [7:0]            TRIGGER_THRESHOLD,
-    
+
     input wire                  TRIGGER,
     input wire                  TRIGGER_VETO,
     input wire                  TRIGGER_ENABLE,
     input wire                  TRIGGER_ACKNOWLEDGE,
     output reg                  TRIGGER_ACCEPTED_FLAG,
-    
+
     input wire [7:0]            TLU_TRIGGER_LOW_TIME_OUT,
 //    input wire [4:0]            TLU_TRIGGER_CLOCK_CYCLES,
     input wire [3:0]            TLU_TRIGGER_DATA_DELAY,
     input wire                  TLU_TRIGGER_DATA_MSB_FIRST,
     input wire                  TLU_ENABLE_VETO,
     input wire                  TLU_RESET_FLAG,
-    
+
     input wire [1:0]            CONF_DATA_FORMAT,
-    
+
     output reg                  TLU_BUSY,
     output reg                  TLU_CLOCK_ENABLE,
     output reg                  TLU_ASSERT_VETO,
-    
+
     input wire [7:0]            TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES,
     input wire [7:0]            TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES,
 
@@ -150,10 +150,10 @@ begin
 end
 
 // combinational always block, blocking assignments
-always @ (state or TRIGGER_ACKNOWLEDGE or TRIGGER_ACKNOWLEDGED or FIFO_ACKNOWLEDGE or FIFO_ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_ENABLE_FLAG or TRIGGER_FLAG or TRIGGER or TRIGGER_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock /*or TLU_TRIGGER_CLOCK_CYCLES*/ or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or TRIGGER_ACCEPT or TLU_TRIGGER_HANDSHAKE_ACCEPT or TRIGGER_THRESHOLD or TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES or TLU_TRIGGER_MAX_CLOCK_CYCLES or DIVISOR) //or TLU_TRIGGER_BUSY)
+always @ (state or TRIGGER_ACKNOWLEDGE or TRIGGER_ACKNOWLEDGED or FIFO_ACKNOWLEDGE or FIFO_ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_ENABLE_FLAG or TRIGGER_FLAG or TRIGGER or TRIGGER_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock /*or TLU_TRIGGER_CLOCK_CYCLES*/ or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or TRIGGER_ACCEPT or TLU_TRIGGER_HANDSHAKE_ACCEPT or TRIGGER_THRESHOLD or TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES or TLU_TRIGGER_MAX_CLOCK_CYCLES or DIVISOR)
 begin
     case (state)
-    
+
         IDLE:
         begin
             if ((TRIGGER_MODE == 2'b00 || TRIGGER_MODE == 2'b01)
@@ -179,12 +179,12 @@ begin
             else
                 next = IDLE;
         end
-        
+
         SEND_COMMAND:
         begin
             next = LATCH_DATA; // do not wait for trigger becoming low
         end
-        
+
         SEND_COMMAND_WAIT_FOR_TRIGGER_LOW:
         begin
             if (TRIGGER_MODE == 2'b10 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1))
@@ -194,7 +194,7 @@ begin
             else
                 next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
         end
-        
+
         SEND_TLU_CLOCK:
         begin
             //if (TLU_TRIGGER_CLOCK_CYCLES == 5'b0) // send 32 clock cycles
@@ -210,7 +210,7 @@ begin
                     next = SEND_TLU_CLOCK;
             */
         end
-        
+
         WAIT_BEFORE_LATCH:
         begin
             if (counter_sr_wait_cycles == TLU_TRIGGER_DATA_DELAY + 5) // wait at least 3 (2 + next state) clock cycles for sync of the signal
@@ -218,12 +218,12 @@ begin
             else
                 next = WAIT_BEFORE_LATCH;
         end
-        
+
         LATCH_DATA:
         begin
             next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY;
         end
-        
+
         WAIT_FOR_TLU_DATA_SAVED_CMD_READY:
         begin
             if (TRIGGER_ACKNOWLEDGED == 1'b1 && FIFO_ACKNOWLEDGED == 1'b1)
@@ -231,13 +231,13 @@ begin
             else
                 next = WAIT_FOR_TLU_DATA_SAVED_CMD_READY;
         end
-        
+
         // inferring FF
         default:
         begin
             next = IDLE;
         end
-    
+
     endcase
 end
 
@@ -289,9 +289,9 @@ begin
         TRIGGER_ACCEPTED_FLAG <= 1'b0;
         TRIGGER_ACKNOWLEDGED <= TRIGGER_ACKNOWLEDGED;
         FIFO_ACKNOWLEDGED <= FIFO_ACKNOWLEDGED;
-        
+
         case (next)
-        
+
             IDLE:
             begin
                 if (TRIGGER_FLAG)
@@ -328,11 +328,11 @@ begin
                     counter_tlu_handshake_veto <= counter_tlu_handshake_veto;
                 else
                     counter_tlu_handshake_veto <= counter_tlu_handshake_veto - 1;
-                if ((counter_trigger_high >= TRIGGER_THRESHOLD) && (TRIGGER_THRESHOLD != 0))
+                if (counter_trigger_high >= TRIGGER_THRESHOLD && TRIGGER_THRESHOLD != 0)
                     TRIGGER_ACCEPT <= 1'b1;
                 else
                     TRIGGER_ACCEPT <= 1'b0;
-                if ((counter_trigger_high >= TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES) && (TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0))
+                if (counter_trigger_high >= TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0)
                     TLU_TRIGGER_HANDSHAKE_ACCEPT <= 1'b1;
                 else
                     TLU_TRIGGER_HANDSHAKE_ACCEPT <= 1'b0;
@@ -365,7 +365,7 @@ begin
                 if (FIFO_ACKNOWLEDGE == 1'b1)
                     FIFO_ACKNOWLEDGED <= 1'b1;
             end
-            
+
             SEND_COMMAND_WAIT_FOR_TRIGGER_LOW:
             begin
                 // send flag at beginning of state
@@ -524,7 +524,7 @@ begin
                 if (FIFO_ACKNOWLEDGE == 1'b1)
                     FIFO_ACKNOWLEDGED <= 1'b1;
             end
-        
+
         endcase
     end
 end
