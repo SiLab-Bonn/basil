@@ -204,4 +204,4 @@ class StdRegister(RegisterLayer):
                 else:
                     self[name] = value
             else:
-                raise ValueError("Filed " + name + " does not exist.")
+                raise ValueError("Register %s does not exist." % name)
