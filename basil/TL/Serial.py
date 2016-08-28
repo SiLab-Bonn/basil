@@ -4,6 +4,8 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
+import logging
+
 import serial
 
 from basil.TL.TransferLayer import TransferLayer
@@ -45,6 +47,9 @@ class Serial(TransferLayer):
         return self._port.read(size)
 
     def query(self, data):
+        if self._port.inWaiting():
+            logging.warning("Found %d bytes in the input buffer of interface %s which will be flushed" % (self._port.inWaiting(), self.name))
+            self._port.flushInput()
         self.write(data)
         return self._readline()
 
