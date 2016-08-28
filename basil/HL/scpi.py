@@ -55,13 +55,13 @@ class scpi(HardwareLayer):
                 raise ValueError('SCPI command %s is not defined for device %s' % (name, self.name))
             else:
                 name_split = name.split('_', 1)
-                if len(name_split) == 1:
-                    self._intf.write(command)
-                elif len(name_split) == 2 and name_split[0] == 'set' and len(args) == 1 and not kwargs:
+                if len(name_split) == 2 and name_split[0] == 'set' and len(args) == 1 and not kwargs:
                     self._intf.write(command + ' ' + str(args[0]))
                 elif len(name_split) == 2 and name_split[0] == 'get' and not args and not kwargs:
                     return self._intf.query(command)
+                elif len(name_split) >= 1 and not args and not kwargs:
+                    self._intf.write(command)
                 else:
-                    raise ValueError('Invalid SCPI command %s for device %s' % (name, self.name))
+                    raise ValueError('Invalid SCPI command %s for device %s with args=%s and kwargs=%s' % (name, self.name, str(args), str(kwargs)))
 
         return method
