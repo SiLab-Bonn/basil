@@ -26,7 +26,7 @@ class Serial(TransferLayer):
         super(Serial, self).init()
         self.read_termination = self._init.pop('read_termination', None)
         self.write_termination = self._init.pop('write_termination', self.read_termination)
-        self.timeout = self._init['timeout'] if 'timeout' in self._init else None
+        self.timeout = self._init['timeout'] if 'timeout' in self._init else None  # timeout of 0 returns immediately
 
         self._port = serial.Serial(**self._init)
 
@@ -49,12 +49,16 @@ class Serial(TransferLayer):
         return self._readline()
 
     def _readline(self):  # http://stackoverflow.com/questions/16470903/pyserial-2-6-specify-end-of-line-in-readline
-        if self.read_termination == '' and self.timeout is None:
-            raise RuntimeError('Requested serial read will not terminate due to missing termination string and missing time out')
+        # catch a few cases:
+        # 1. termination of None will never return
+        # 2. termination of "" will return immediately
+        # 3. timeout of None will never return
+        if not self.read_termination and self.timeout is None:
+            raise RuntimeError('Requested serial read will not terminate due to missing termination string and missing timeout')
 
         data = bytearray()
         count = len(self.read_termination) if self.read_termination else 0
-        while data[-count:] != self.read_termination:
+        while data[-count:] != self.read_termination:  # termination of "" returns immediately
             character = self._port.read(1)
             data += character
             if not character:
