@@ -24,9 +24,9 @@ class Serial(TransferLayer):
         Plus termination string parameter eol
         '''
         super(Serial, self).init()
-        self.read_termination = self._init.pop('read_termination', None)
-        self.write_termination = self._init.pop('write_termination', self.read_termination)
-        self.timeout = self._init['timeout'] if 'timeout' in self._init else None  # timeout of 0 returns immediately
+        self.read_termination = self._init.get('read_termination', None)
+        self.write_termination = self._init.get('write_termination', self.read_termination)
+        self.timeout = self._init.get('timeout', None)  # timeout of 0 returns immediately
 
         self._port = serial.Serial(**self._init)
 
