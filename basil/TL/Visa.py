@@ -27,13 +27,13 @@ class Visa(TransferLayer):
         Parameters of visa.ResourceManager().open_resource()
         '''
         super(Visa, self).init()
-        backend = self._init.pop('backend', '')  # Empty string means std. backend (NI VISA)
+        backend = self._init.get('backend', '')  # Empty string means std. backend (NI VISA)
         rm = visa.ResourceManager(backend)
         try:
             logging.info('BASIL VISA TL with %s backend found the following devices: %s', backend, rm.list_resources())
         except NotImplementedError:  # some backends do not always implement the list_resources function
             logging.info('BASIL VISA TL instanciated with %s backend', backend)
-        self._resource = rm.open_resource(**self._init)
+        self._resource = rm.open_resource(**{key: value for key, value in self._init.items() if key not in ("backend",)})
 
     def close(self):
         self._resource.close()
