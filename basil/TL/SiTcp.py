@@ -39,7 +39,7 @@ class SiTcp(SiTransferLayer):
         self.tmp = 0
 
     def init(self):
-
+        super(SiTcp, self).init()
         self._udp_lock = Lock()
         self._sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # self._sock_udp.setblocking(0)

@@ -23,6 +23,7 @@ class Serial(TransferLayer):
         Parameters of serial.Serial: http://pyserial.sourceforge.net/pyserial_api.html
         Plus termination string parameter eol
         '''
+        super(Serial, self).init()
         self.read_termination = self._init.pop('read_termination', None)
         self.write_termination = self._init.pop('write_termination', self.read_termination)
         self.timeout = self._init['timeout'] if 'timeout' in self._init else None

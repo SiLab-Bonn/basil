@@ -19,6 +19,7 @@ class scpi(HardwareLayer):
         super(scpi, self).__init__(intf, conf)
 
     def init(self):
+        super(scpi, self).init()
         device_desciption = os.path.join(os.path.dirname(__file__), self._init['device'].lower().replace(" ", "_") + '.yaml')
         try:
             with open(device_desciption, 'r') as in_file:

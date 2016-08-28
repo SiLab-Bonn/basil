@@ -26,6 +26,7 @@ class Visa(TransferLayer):
         Initialize the device.
         Parameters of visa.ResourceManager().open_resource()
         '''
+        super(Visa, self).init()
         backend = self._init.pop('backend', '')  # Empty string means std. backend (NI VISA)
         rm = visa.ResourceManager(backend)
         try:
