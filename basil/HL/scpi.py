@@ -36,9 +36,9 @@ class scpi(HardwareLayer):
             with open(device_desciption, 'r') as in_file:
                 self._scpi_commands.update(load(in_file, Loader=BaseLoader))
         except scanner.ScannerError:
-            raise RuntimeError('Parsing error for ' + self._init['device'] + ' device description in ' + device_desciption)
+            raise RuntimeError('Parsing error for ' + self._init['device'] + ' device description in file ' + device_desciption)
         except IOError:
-            raise RuntimeError('Cannot find a device description for ' + self._init['device'] + ' Consider adding it!')
+            raise RuntimeError('Cannot find a device description for ' + self._init['device'] + '. Consider adding it!')
         name = self.get_name()
         if self._scpi_commands['identifier'] not in self.get_name():
             raise RuntimeError('Wrong device description (' + self._init['device'] + ') loaded for ' + name)
