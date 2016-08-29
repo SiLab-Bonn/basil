@@ -11,6 +11,15 @@ from yaml import load, BaseLoader, scanner
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 
+# SCPI command mandatory by IEEE 488.2
+_scpi_ieee_488_2 = {
+    'clear': '*CLS',
+    'reset': '*RST',
+    'trigger': '*TRG',
+    'get_name': '*IDN?'
+}
+
+
 class scpi(HardwareLayer):
 
     '''Implement Standard Commands for Programmable Instruments (SCPI).
@@ -21,10 +30,11 @@ class scpi(HardwareLayer):
 
     def init(self):
         super(scpi, self).init()
+        self._scpi_commands = _scpi_ieee_488_2.copy()
         device_desciption = os.path.join(os.path.dirname(__file__), self._init['device'].lower().replace(" ", "_") + '.yaml')
         try:
             with open(device_desciption, 'r') as in_file:
-                self._scpi_commands = load(in_file, Loader=BaseLoader)
+                self._scpi_commands.update(load(in_file, Loader=BaseLoader))
         except scanner.ScannerError:
             raise RuntimeError('Parsing error for ' + self._init['device'] + ' device description in ' + device_desciption)
         except IOError:
@@ -32,18 +42,6 @@ class scpi(HardwareLayer):
         name = self.get_name()
         if self._scpi_commands['identifier'] not in self.get_name():
             raise RuntimeError('Wrong device description (' + self._init['device'] + ') loaded for ' + name)
-
-    def clear(self):  # SCPI command mandatory by IEEE 488.2
-        self._intf.write('*CLS')
-
-    def reset(self):  # SCPI command mandatory by IEEE 488.2
-        self._intf.write('*RST')
-
-    def trigger(self):  # SCPI command mandatory by IEEE 488.2
-        self._intf.write('*TRG')
-
-    def get_name(self):  # SCPI command mandatory by IEEE 488.2
-        return self._intf.query('*IDN?')
 
     def __getattr__(self, name):
         '''dynamically adding device specific commands

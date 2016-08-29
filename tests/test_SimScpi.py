@@ -33,33 +33,26 @@ class TestSimScpi(unittest.TestCase):
 
     def setUp(self):
         self.cfg = yaml.load(cnfg_yaml)
+        self.device = Dut(self.cfg)
+        self.device.init()
+
+    def tearDown(self):
+        self.device.close()
 
     def test_read(self):
-        device = Dut(self.cfg)
-        device.init()
-        self.assertEqual(device['Pulser'].get_frequency(), u'100.00')
-        device.close()
+        self.assertEqual(self.device['Pulser'].get_frequency(), u'100.00')
  
     def test_write(self):
-        device = Dut(self.cfg)
-        device.init()
-        device['Pulser'].set_on(1)
-        self.assertEqual(device['Pulser'].get_on(), u'OK')
-        device.close()
+        self.device['Pulser'].set_on(1)
+        self.assertEqual(self.device['Pulser'].get_on(), u'OK')
 
     def test_invalid_parameter(self):
-        device = Dut(self.cfg)
-        device.init()
         with self.assertRaises(ValueError):
-            device['Pulser'].set_on(1, 2)
-        device.close()
+            self.device['Pulser'].set_on(1, 2)
  
     def test_exception(self):
-        device = Dut(self.cfg)
-        device.init()
         with self.assertRaises(ValueError):
-            device['Pulser'].unknown_function()
-        device.close()
+            self.device['Pulser'].unknown_function()
 
 if __name__ == '__main__':
     unittest.main()
