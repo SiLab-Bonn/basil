@@ -2,7 +2,7 @@
 # If you need other commands consider to add them here or 
 # use dut._interface.write() to directly talk to the device
 
-identifier : TEKTRONIX,MSO4104B,C
+identifier : TEKTRONIX,MSO4034,C
 set_source : DATa:SOUrce  # the channel for the get_data command
 data_init : DATa:INIT  # reset data taking settings
 set_data_start : DATa:STARt  # the data start index for read out  (?)
