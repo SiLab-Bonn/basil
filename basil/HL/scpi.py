@@ -12,6 +12,7 @@ from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 
 class scpi(HardwareLayer):
+
     '''Implement Standard Commands for Programmable Instruments (SCPI).
     '''
 
@@ -53,15 +54,15 @@ class scpi(HardwareLayer):
                 command = self._scpi_commands['channel %s' % channel][name] if channel is not None else self._scpi_commands[name]
             except:
                 raise ValueError('SCPI command %s is not defined for device %s' % (name, self.name))
+
+            name_split = name.split('_', 1)
+            if len(name_split) == 2 and name_split[0] == 'set' and len(args) == 1 and not kwargs:
+                self._intf.write(command + ' ' + str(args[0]))
+            elif len(name_split) == 2 and name_split[0] == 'get' and not args and not kwargs:
+                return self._intf.query(command)
+            elif len(name_split) >= 1 and not args and not kwargs:
+                self._intf.write(command)
             else:
-                name_split = name.split('_', 1)
-                if len(name_split) == 2 and name_split[0] == 'set' and len(args) == 1 and not kwargs:
-                    self._intf.write(command + ' ' + str(args[0]))
-                elif len(name_split) == 2 and name_split[0] == 'get' and not args and not kwargs:
-                    return self._intf.query(command)
-                elif len(name_split) >= 1 and not args and not kwargs:
-                    self._intf.write(command)
-                else:
-                    raise ValueError('Invalid SCPI command %s for device %s with args=%s and kwargs=%s' % (name, self.name, str(args), str(kwargs)))
+                raise ValueError('Invalid SCPI command %s for device %s with args=%s and kwargs=%s' % (name, self.name, str(args), str(kwargs)))
 
         return method
