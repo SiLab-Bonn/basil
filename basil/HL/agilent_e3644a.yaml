@@ -1,0 +1,8 @@
+# Device description for the Agilent Technologies E3644A Power supply. 
+# set_ function expect a parameter, get_ function return a parameter.
+# Just the very basic commands are imlemented here.
+identifier: Agilent Technologies,E3644A
+get_voltage: MEAS:VOLT:DC?
+get_current: MEAS:CURR:DC?
+set_enable: OUTP:STAT
+get_enable: OUTP:STAT?
