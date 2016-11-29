@@ -300,14 +300,16 @@ assign LED = ~{TCP_OPEN_ACK, TCP_CLOSE_REQ, TCP_RX_WR, TCP_TX_WR, FIFO_FULL, FIF
 
 always@ (posedge BUS_CLK)
     begin
-    ETH_START_SENDING <= TCP_OPEN_ACK;//GPIO_IO[7];
-    //ETH_START_SENDING <= TCP_OPEN_ACK;//TCP_RX_WR;
-//    if(TCP_RX_WR && TCP_RX_DATA)
-//        ETH_START_SENDING <= 1;
-//    else
-//        ETH_START_SENDING <= 0;
-
-    //RX FIFO word counter
+    
+    // wait for start condition
+    ETH_START_SENDING <= GPIO_IO[0];    //TCP_OPEN_ACK;
+    
+    if(ETH_START_SENDING && !ETH_START_SENDING_temp)
+        ETH_START_SENDING_LOCK <= 1;
+    ETH_START_SENDING_temp <= ETH_START_SENDING;
+    
+    
+    // RX FIFO word counter
     if(TCP_RX_WR) begin
         TCP_RX_WC_11B <= TCP_RX_WC_11B + 1;
     end
@@ -315,10 +317,6 @@ always@ (posedge BUS_CLK)
         TCP_RX_WC_11B <= 11'd0;
     end
 
-
-    if(ETH_START_SENDING && !ETH_START_SENDING_temp)
-        ETH_START_SENDING_LOCK <= 1;
-    ETH_START_SENDING_temp <= ETH_START_SENDING;
 
     // FIFO handshake
     if(ETH_START_SENDING_LOCK) begin
@@ -331,29 +329,14 @@ always@ (posedge BUS_CLK)
             fifo_write <= 1'b0;
     end
 
-    //stop, if connection is closed by host
-    if(TCP_CLOSE_REQ) begin
+
+    // stop, if connection is closed by host
+    if(TCP_CLOSE_REQ || !GPIO_IO[0]) begin
         ETH_START_SENDING_LOCK <= 0;
         fifo_write <= 1'b0;
         datasource <= 32'd0;
     end
     
-    
-    //TX handshake      
-//    if(ETH_START_SENDING_LOCK) begin
-//        if(!TCP_TX_FULL) begin
-//            TCP_TX_DATA <= datasource;
-//            datasource <= datasource + 1;
-//            TCP_TX_WR <= 1'b1;
-//            end
-//        else begin
-//            TCP_TX_WR <= 1'b0;
-//            datasource <= 8'h00;
-//            end
-//    end
-
 end
-
-
 
 endmodule
