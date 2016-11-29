@@ -21,6 +21,12 @@ hw_drivers:
     base_addr : 0x1000
     size      : 8
 
+  - name      : SRAM
+    type      : sram_fifo
+    interface : intf
+    base_addr : 0x200000000
+    base_data_addr : 0x100000000
+
 registers:
   - name        : GPIO_LED
     type        : StdRegister
