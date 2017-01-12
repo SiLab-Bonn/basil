@@ -23,7 +23,7 @@ class SussProber(HardwareLayer):
             self._intf.write('MoveChuckSubsite %1.1f %1.1f R Y %d' % (x, y, speed))
         else:
             self._intf.write('MoveChuckSubsite %1.1f %1.1f R Y' % (x, y))
-        
+
     def move_position(self, dx, dy, speed=None):
         ''' Move chuck relative to actual position in um'''
         if speed:

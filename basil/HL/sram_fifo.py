@@ -5,9 +5,11 @@
 # ------------------------------------------------------------
 #
 
-from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from time import sleep
+
 import numpy as np
+
+from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
 class sram_fifo(RegisterHardwareLayer):

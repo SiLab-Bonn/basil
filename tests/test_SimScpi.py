@@ -41,7 +41,7 @@ class TestSimScpi(unittest.TestCase):
 
     def test_read(self):
         self.assertEqual(self.device['Pulser'].get_frequency(), u'100.00')
- 
+
     def test_write(self):
         self.device['Pulser'].set_on(1)
         self.assertEqual(self.device['Pulser'].get_on(), u'OK')
@@ -49,7 +49,7 @@ class TestSimScpi(unittest.TestCase):
     def test_invalid_parameter(self):
         with self.assertRaises(ValueError):
             self.device['Pulser'].set_on(1, 2)
- 
+
     def test_exception(self):
         with self.assertRaises(ValueError):
             self.device['Pulser'].unknown_function()

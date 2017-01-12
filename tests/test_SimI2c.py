@@ -63,8 +63,8 @@ class TestSimS2C(unittest.TestCase):
         self.chip['i2c'].write(0x92, range(16))
         self.chip['i2c'].write(0x92, [0])
         ret = self.chip['i2c'].read(0x92, 15)
-        self.assertEqual(ret.tolist(), range(16)[1:] )
-        
+        self.assertEqual(ret.tolist(), range(16)[1:])
+
         # no ack/no such device
         exept = False
         try:

@@ -11,7 +11,7 @@ from basil.dut import Base
 
 
 class HardwareLayer(Base):
-    '''Hardware layer (HL) base class
+    '''Hardware layer (HL) base class.
     '''
     def __init__(self, intf, conf):
         super(HardwareLayer, self).__init__(conf)
