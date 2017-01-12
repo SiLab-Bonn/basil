@@ -43,8 +43,8 @@ class SussProber(HardwareLayer):
     def get_die(self):
         ''' Move chuck to wafer map chip index'''
         reply = self._intf.query('43')
-        if not 'Invalid' in reply:  # No wafer map loaded
-            return [float(i) for i in reply[3:].split()] 
+        if 'Invalid' not in reply:  # No wafer map loaded
+            return [float(i) for i in reply[3:].split()]
 
     def contact(self):
         ''' Move chuck to contact z position'''
