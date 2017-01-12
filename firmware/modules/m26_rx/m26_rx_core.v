@@ -50,6 +50,7 @@ reg CONF_TIMESTAMP_HEADER;
 always @(posedge BUS_CLK) begin
     if(RST) begin
         CONF_EN <= 0;
+        CONF_TIMESTAMP_HEADER <= 0;
     end
     else if(BUS_WR) begin
         if(BUS_ADD == 2) begin
@@ -82,17 +83,49 @@ assign RST_SYNC = RST_SOFT_SYNC;
 wire CONF_EN_SYNC;
 assign CONF_EN_SYNC  = CONF_EN;
  
+wire MKD_RX_IO; 
+IDDR IDDR_inst_mkd (
+   .Q1(), 
+   .Q2(MKD_RX_IO), 
+   .C(CLK_RX),   
+   .CE(1'b1), 
+   .D(MKD_RX), 
+   .R(1'b0),
+   .S(1'b0) 
+);
+
+wire [1:0] DATA_RX_IO;
+IDDR IDDR_inst_rx0 (
+   .Q1(), 
+   .Q2(DATA_RX_IO[0]), 
+   .C(CLK_RX),   
+   .CE(1'b1), 
+   .D(DATA_RX[0]), 
+   .R(1'b0),
+   .S(1'b0) 
+);
+
+IDDR IDDR_inst_rx1 (
+   .Q1(), 
+   .Q2(DATA_RX_IO[1]), 
+   .C(CLK_RX),   
+   .CE(1'b1), 
+   .D(DATA_RX[1]), 
+   .R(1'b0),
+   .S(1'b0) 
+);
+
 reg [4:0] MKD_DLY;
 always@(posedge CLK_RX)
-    MKD_DLY[4:0] <= {MKD_DLY[3:0], MKD_RX};
+    MKD_DLY[4:0] <= {MKD_DLY[3:0], MKD_RX_IO};
     
 reg [4:0] DATA1_DLY;
 always@(posedge CLK_RX)
-    DATA1_DLY[4:0] <= {DATA1_DLY[3:0], DATA_RX[1]};
+    DATA1_DLY[4:0] <= {DATA1_DLY[3:0], DATA_RX_IO[1]};
 
 reg [4:0] DATA0_DLY;
 always@(posedge CLK_RX)
-    DATA0_DLY[4:0] <= {DATA0_DLY[3:0], DATA_RX[0]};
+    DATA0_DLY[4:0] <= {DATA0_DLY[3:0], DATA_RX_IO[0]};
 
 wire [1:0] WRITE;
 wire FRAME_START, FRAME_START1;

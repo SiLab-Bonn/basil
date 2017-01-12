@@ -46,7 +46,7 @@ or install via PyPI into the Python's site-packages folder (for non-developers):
 
     pip install basil_daq==version
 
-where version is a version number (e.g. 2.4.3)
+where version is a version number (e.g. 2.4.4)
 
 or install from git, when no PyPI package is available (for non-developers):
 
@@ -54,7 +54,7 @@ or install from git, when no PyPI package is available (for non-developers):
 
     pip install git+https://github.com/SiLab-Bonn/basil.git@branch
 
-where branch is a branch name (e.g. master or v2.4.3).
+where branch is a branch name (e.g. master or v2.4.4).
 
 Check `.travis.yml <.travis.yml>`_ for installation/testing hints.
 
@@ -77,7 +77,7 @@ Software:
 
 Example Projects:
 =================
-- `pyBar <https://github.com/SiLab-Bonn/pyBAR>`_ - Bonn ATLAS Readout in Python and C++ 
+- `pyBAR <https://github.com/SiLab-Bonn/pyBAR>`_ - Bonn ATLAS Readout in Python and C++ 
 - `MCA <https://github.com/SiLab-Bonn/MCA>`_ - Multi Channel Analyzer
 - `fe65_p2 <https://github.com/SiLab-Bonn/fe65_p2>`_ - DAQ for FE65P2 prototype
 

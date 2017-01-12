@@ -24,6 +24,7 @@ class SiSim(SiTransferLayer):
         self._sock = None
 
     def init(self):
+        super(SiSim, self).init()
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         host = 'localhost'

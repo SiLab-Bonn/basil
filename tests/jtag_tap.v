@@ -287,7 +287,7 @@ module jtag_tap
          jtag_ir        = {IR_LENGTH{1'bx}};
          bypass_reg     = 1'bx;
          idcode_reg     = {32{1'bx}};
-         debug_reg      = {32{1'bx}}; //TH
+         debug_reg      = {32{1'b0}}; //TH
          is_tap_current_instruction_debug_o = 0;
          is_tap_state_test_logic_reset_o    = 0;
          is_tap_state_shift_dr_o            = 0;
@@ -312,7 +312,7 @@ module jtag_tap
          jtag_ir        <= {IR_LENGTH{1'bx}};
          bypass_reg     <= 1'bx;
          idcode_reg     <= {32{1'bx}};
-         debug_reg     <= {32{1'bx}};
+         debug_reg     <= {32{1'b0}};
 
          is_tap_current_instruction_debug_o <= 0;
 

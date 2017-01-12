@@ -88,4 +88,8 @@ module example (
     assign SCL = 1'bz;
     assign DEBUG_D = 16'ha5a5;
 
+    `ifdef COCOTB_SIM
+        assign FPGA_BUTTON = 0;
+    `endif
+
 endmodule

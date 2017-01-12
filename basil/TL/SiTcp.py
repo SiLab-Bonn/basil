@@ -39,7 +39,7 @@ class SiTcp(SiTransferLayer):
         self.tmp = 0
 
     def init(self):
-
+        super(SiTcp, self).init()
         self._udp_lock = Lock()
         self._sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # self._sock_udp.setblocking(0)
@@ -145,7 +145,7 @@ class SiTcp(SiTransferLayer):
             ready = select.select([self._sock_tcp], [], [], 1)
             if(ready[0]):
                 self._tcp_lock.acquire()
-                data = self._sock_tcp.recv(1024 * 8)
+                data = self._sock_tcp.recv(1024 * 8 * 64)
                 self._tcp_read_buff.extend(array('B', data))
                 self._tcp_lock.release()
 

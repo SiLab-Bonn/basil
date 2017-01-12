@@ -1,13 +1,13 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 `timescale 1ps/1ps
 `default_nettype none
 
- /*  _____ _   _   _ 
+ /*  _____ _   _   _
  * |_   _| | | | | |
  *   | | | |_| |_| |
  *   |_| |___|\___/
@@ -29,27 +29,27 @@ module tlu_controller_core
     input wire                  BUS_RD,
     input wire                  BUS_WR,
     output reg      [7:0]       BUS_DATA_OUT,
-    
+
     input wire                  TRIGGER_CLK, // clock of the TLU FSM
-    
+
     input wire                  FIFO_READ,
     output wire                 FIFO_EMPTY,
     output wire     [31:0]      FIFO_DATA,
-    
+
     output reg                  FIFO_PREEMPT_REQ, // FIFO hold request
 
     input wire      [7:0]       TRIGGER, // trigger input
     input wire      [7:0]       TRIGGER_VETO, // veto input
-    
+
     input wire                  EXT_TRIGGER_ENABLE, // enable trigger FSM
     input wire                  TRIGGER_ACKNOWLEDGE, // acknowledge signal/flag
     output wire                 TRIGGER_ACCEPTED_FLAG, // trigger start flag
-    
+
     input wire                  TLU_TRIGGER, // TLU
     input wire                  TLU_RESET,
     output wire                 TLU_BUSY,
     output wire                 TLU_CLOCK,
-    
+
     output wire     [31:0]      TIMESTAMP
 );
 
@@ -553,6 +553,10 @@ begin
     //    TRIGGER_COUNTER <= 32'b0;
 end
 
+// return TRIGGER_ACCEPTED_FLAG to the FSM when TRIGGER_ACKNOWLEDGE is not provided externally
+wire TRIGGER_ACKNOWLEDGE_FSM;
+assign TRIGGER_ACKNOWLEDGE_FSM = (EXT_TRIGGER_ENABLE == 1'b1) ? TRIGGER_ACKNOWLEDGE : TRIGGER_ACCEPTED_FLAG;
+
 reg TRIGGER_LIMIT_REACHED;
 always @ (posedge BUS_CLK)
 begin
@@ -643,10 +647,10 @@ tlu_controller_fsm #(
 ) tlu_controller_fsm_inst (
     .RESET(RST_SYNC),
     .TRIGGER_CLK(TRIGGER_CLK),
-    
+
     .TRIGGER_DATA_WRITE(TRIGGER_DATA_WRITE),
     .TRIGGER_DATA(TRIGGER_DATA),
-    
+
     .FIFO_PREEMPT_REQ(FIFO_PREEMPT_REQ_TRIGGER_CLK),
     .FIFO_ACKNOWLEDGE(FIFO_EMPTY_FLAG),
 
@@ -663,19 +667,19 @@ tlu_controller_fsm #(
 
     .TRIGGER(TRIGGER_FSM),
     .TRIGGER_VETO(TRIGGER_VETO_OR_SYNC),
-    .TRIGGER_ENABLE(TRIGGER_ENABLE_FSM),    
-    .TRIGGER_ACKNOWLEDGE(TRIGGER_ACKNOWLEDGE),
+    .TRIGGER_ENABLE(TRIGGER_ENABLE_FSM),
+    .TRIGGER_ACKNOWLEDGE(TRIGGER_ACKNOWLEDGE_FSM),
     .TRIGGER_ACCEPTED_FLAG(TRIGGER_ACCEPTED_FLAG),
-    
+
     .TLU_TRIGGER_LOW_TIME_OUT(TLU_TRIGGER_LOW_TIME_OUT_SYNC),
 //    .TLU_TRIGGER_CLOCK_CYCLES(TLU_TRIGGER_CLOCK_CYCLES_SYNC),
     .TLU_TRIGGER_DATA_DELAY(TLU_TRIGGER_DATA_DELAY_SYNC),
     .TLU_TRIGGER_DATA_MSB_FIRST(TLU_TRIGGER_DATA_MSB_FIRST_SYNC),
     .TLU_ENABLE_VETO(TLU_ENABLE_VETO_SYNC),
     .TLU_RESET_FLAG(TLU_RESET_FLAG_SYNC),
-    
+
     .CONF_DATA_FORMAT(CONF_DATA_FORMAT),
-    
+
     .TLU_BUSY(TLU_BUSY),
     .TLU_CLOCK_ENABLE(TLU_CLOCK_ENABLE),
     .TLU_ASSERT_VETO(TLU_ASSERT_VETO),
@@ -693,7 +697,7 @@ always@(posedge BUS_CLK) begin
         rst_cnt <= 8'b1111_1111; // start value
     else if (rst_cnt != 0)
         rst_cnt <= rst_cnt - 1;
-end 
+end
 
 wire RST_LONG;
 assign RST_LONG = |rst_cnt;

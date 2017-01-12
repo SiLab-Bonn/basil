@@ -20,6 +20,7 @@ class Dummy(SiTransferLayer):
         super(Dummy, self).__init__(conf)
 
     def init(self):
+        super(Dummy, self).init()
         logging.debug(
             "Dummy SiTransferLayer.init configuration: %s" % str(self._conf))
         if 'mem' in self._init:

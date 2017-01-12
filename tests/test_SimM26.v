@@ -23,7 +23,7 @@
 
 `include "bram_fifo/bram_fifo_core.v"
 `include "bram_fifo/bram_fifo.v"
-
+`include "utils/IDDR_sim.v"
 
 module tb (
     input wire          BUS_CLK,

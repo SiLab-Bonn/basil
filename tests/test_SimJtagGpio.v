@@ -52,6 +52,7 @@ module tb (
     assign TMS = IO[2];
     assign TDI = IO[3];
     assign IO[4] = TDO;
+    assign IO[7:5] = 0;
     
     wire td_int;
     wire [31:0] debug_reg1, debug_reg2;

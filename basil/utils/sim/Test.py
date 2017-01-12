@@ -37,11 +37,11 @@ def socket_test(dut, debug=False):
     port = os.getenv("SIMULATION_PORT", '12345')
 
     if debug:
-        dut.log.setLevel(logging.DEBUG)
+        dut._log.setLevel(logging.DEBUG)
 
     bus = get_bus()(dut)
 
-    dut.log.info("Using bus driver : %s" % (type(bus).__name__))
+    dut._log.info("Using bus driver : %s" % (type(bus).__name__))
 
     sim_modules = []
     sim_modules_data = os.getenv("SIMULATION_MODULES", "")
@@ -51,7 +51,7 @@ def socket_test(dut, debug=False):
             mod_import = import_driver(mod)
             kargs = dict(sim_modules_yml[mod])
             sim_modules.append(mod_import(dut, **kargs))
-            dut.log.info("Using simulation modules : %s  arguments: %s" % (mod, kargs))
+            dut._log.info("Using simulation modules : %s  arguments: %s" % (mod, kargs))
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -65,9 +65,9 @@ def socket_test(dut, debug=False):
     yield bus.init()
 
     while True:
-        dut.log.info("Waiting for incoming connection on %s:%d" % (host, int(port)))
+        dut._log.info("Waiting for incoming connection on %s:%d" % (host, int(port)))
         client, sockname = s.accept()
-        dut.log.info("New connection from %s:%d" % (sockname[0], sockname[1]))
+        dut._log.info("New connection from %s:%d" % (sockname[0], sockname[1]))
         iface = PickleInterface(client)
 
         while True:
@@ -77,13 +77,13 @@ def socket_test(dut, debug=False):
             try:
                 req = iface.try_recv()
             except EOFError:
-                dut.log.info("Remote client closed the connection")
+                dut._log.info("Remote client closed the connection")
                 client.close()
                 break
             if req is None:
                 continue
 
-            dut.log.debug("Received: %s" % str(req))
+            dut._log.debug("Received: %s" % str(req))
 
             # add few clocks
             for _ in range(10):
@@ -94,7 +94,7 @@ def socket_test(dut, debug=False):
             elif isinstance(req, ReadRequest):
                 result = yield bus.read(req.address, req.size)
                 resp = ReadResponse(result)
-                dut.log.debug("Send: %s" % str(resp))
+                dut._log.debug("Send: %s" % str(resp))
                 iface.send(resp)
             else:
                 raise NotImplementedError("Unsupported request type: %s" % str(type(req)))

@@ -45,7 +45,7 @@ class SiLibUsbBusDriver(BusDriver):
         self._x.binstr = "x" * 16
 
         # Kick off a clock generator
-        cocotb.fork(Clock(self.clock, 20833).start())
+        cocotb.fork(Clock(self.clock, 20800).start())
 
     @cocotb.coroutine
     def init(self):
@@ -68,7 +68,7 @@ class SiLibUsbBusDriver(BusDriver):
     def read(self, address, size):
         result = []
         if(address >= self.BASE_ADDRESS_I2C and address < self.HIGH_ADDRESS_I2C):
-            self.entity.log.warning("I2C address space supported in simulation!")
+            self.entity._log.warning("I2C address space supported in simulation!")
             for byte in xrange(size):
                 result.append(0)
         elif(address >= self.BASE_ADDRESS_EXTERNAL and address < self.HIGH_ADDRESS_EXTERNAL):
@@ -80,14 +80,14 @@ class SiLibUsbBusDriver(BusDriver):
                 val = yield self.fast_block_read()
                 result.append(val)
         else:
-            self.entity.log.warning("This address space does not exist!")
+            self.entity._log.warning("This address space does not exist!")
 
         raise ReturnValue(result)
 
     @cocotb.coroutine
     def write(self, address, data):
         if(address >= self.BASE_ADDRESS_I2C and address < self.HIGH_ADDRESS_I2C):
-            self.entity.log.warning("I2C address space supported in simulation!")
+            self.entity._log.warning("I2C address space supported in simulation!")
         elif(address >= self.BASE_ADDRESS_EXTERNAL and address < self.HIGH_ADDRESS_EXTERNAL):
             for index, byte in enumerate(data):
                 yield self.write_external(address - self.BASE_ADDRESS_EXTERNAL + index, byte)
@@ -95,7 +95,7 @@ class SiLibUsbBusDriver(BusDriver):
             raise NotImplementedError("Unsupported request")
             # self._sidev.FastBlockWrite(data)
         else:
-            self.entity.log.warning("This address space does not exist!")
+            self.entity._log.warning("This address space does not exist!")
 
     @cocotb.coroutine
     def read_external(self, address):
