@@ -1,0 +1,15 @@
+transfer_layer:
+  - name     : Visa
+    type     : Visa
+    init     :
+        resource_name : TCPIP::131.220.165.164::INSTR
+        # read_termination : "\n"
+        backend : "@py"
+        open_timeout : 2
+
+hw_drivers:
+  - name      : Sourcemeter
+    type      : scpi
+    interface : Visa
+    init      :
+        device : Keithley 2450
