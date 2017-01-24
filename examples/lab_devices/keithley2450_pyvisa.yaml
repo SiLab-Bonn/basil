@@ -1,3 +1,4 @@
+# example for connection of keithley 2450 via TCP/IP
 transfer_layer:
   - name     : Visa
     type     : Visa
