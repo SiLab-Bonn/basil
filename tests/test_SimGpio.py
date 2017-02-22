@@ -26,7 +26,13 @@ hw_drivers:
     interface : intf
     base_addr : 0x0000
     size      : 24
-
+    
+  - name      : gpio2
+    type      : gpio
+    interface : intf
+    base_addr : 0x0010
+    size      : 16
+    
 registers:
   - name        : GPIO
     type        : StdRegister
@@ -65,7 +71,9 @@ class TestSimGpio(unittest.TestCase):
         self.chip['gpio'].set_data([0xe3, 0xfa, 0x5a])
         ret = self.chip['gpio'].get_data()
         self.assertEqual([0x33, 0x5a, 0x5a], ret)
-
+        ret = self.chip['gpio2'].get_data()
+        self.assertEqual([0xa5, 0xcd], ret)
+        
     def test_io_register(self):
         self.chip['gpio'].set_output_en([0xff, 0, 0])  # to remove 'z in simulation
 
