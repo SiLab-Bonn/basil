@@ -1,0 +1,51 @@
+#
+# ------------------------------------------------------------
+# Copyright (c) All rights reserved
+# SiLab, Institute of Physics, University of Bonn
+# ------------------------------------------------------------
+#
+
+transfer_layer:
+  - name  : intf
+    type  : SiTcp
+    init:
+        ip : "192.168.10.16"
+        udp_port : 4660
+        tcp_port : 24
+        tcp_connection : True
+
+hw_drivers:
+  - name      : gpio_drv
+    type      : gpio
+    interface : intf
+    base_addr : 0x1000
+    size      : 32
+
+  - name      : i2c
+    type      : i2c
+    interface : intf
+    base_addr : 0x2000
+
+  - name      : GPAC
+    type      : GPAC
+    hw_driver : i2c
+    base_addr : 0x00000
+    init:
+        no_calibration : False
+
+registers:
+  - name        : CONTROL
+    type        : StdRegister
+    hw_driver   : gpio_drv
+    size        : 8
+    fields:
+      - name    : LED
+        size    : 8
+        offset  : 7
+
+  - name        : VDD
+    type        : FunctionalRegister
+    hw_driver   : GPAC
+    arg_names   : [ value ]
+    arg_add     : { 'channel': 'PWR0'}
+
