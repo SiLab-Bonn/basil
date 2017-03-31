@@ -15,7 +15,7 @@ class timestamp(RegisterHardwareLayer):
     def __init__(self, intf, conf):
         self._registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
                            'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}}}
-        self._require_version = "==0"
+        self._require_version = "==1"
 
         super(timestamp, self).__init__(intf, conf)
 

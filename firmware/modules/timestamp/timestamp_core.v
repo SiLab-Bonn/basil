@@ -30,9 +30,12 @@ module timestamp_core
     input wire BUS_RD
 ); 
 
-localparam VERSION = 0;
+localparam VERSION = 1;
 
-//output format #ID (as parameter IDENTYFIER + 12 id-frame + 16 bit data) 
+//output format:
+//31-28: ID, 27-24: 0x1, 23-0: 23-0th bit of timestamp data
+//31-28: ID, 27-24: 0x2, 23-0: 47-24th bit of timestamp data
+//31-28: ID, 27-24: 0x3, 23-16: 0x00, 15-0: 63-48th bit timestamp data
 
 wire SOFT_RST;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
