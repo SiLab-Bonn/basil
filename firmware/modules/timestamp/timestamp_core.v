@@ -40,7 +40,7 @@ assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 wire RST;
 assign RST = BUS_RST | SOFT_RST; 
 
-reg CONF_EN;  ##TODO add enable/disable by software
+reg CONF_EN;  //TODO add enable/disable by software
 reg [7:0] LOST_DATA_CNT;
 
 always @(posedge BUS_CLK) begin
