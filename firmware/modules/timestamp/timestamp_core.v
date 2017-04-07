@@ -31,7 +31,7 @@ module timestamp_core
     input wire BUS_RD
 ); 
 
-localparam VERSION = 0;
+localparam VERSION = 1;
 
 //output format #ID (as parameter IDENTYFIER + 12 id-frame + 16 bit data) 
 
