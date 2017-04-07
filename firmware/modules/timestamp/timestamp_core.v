@@ -111,7 +111,7 @@ always@(posedge CLK) begin
         timestamp_out <= 0;
 	cdc_fifo_write_reg<=0;
     end
-    else if(~DI_FF & DI) begin
+    else if(~DI_FF & DI and cdc_fifo_write_reg==0) begin
         timestamp_out <= curr_timestamp;
 	cdc_fifo_write_reg<=1;
     end
@@ -126,7 +126,7 @@ wire [63:0] cdc_data_in;
 assign cdc_data_in = timestamp_out;
 
 wire cdc_fifo_write;
-assign cdc_fifo_write = cdc_fifo_write_reg;
+assign cdc_fifo_write = cdc_fifo_write_reg[1];
 
 wire fifo_full,fifo_write,cdc_fifo_empty;
 
