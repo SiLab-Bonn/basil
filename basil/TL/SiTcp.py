@@ -10,7 +10,9 @@ import socket
 import select
 import struct
 from array import array
-from threading import Thread, Lock
+from threading import Thread
+from threading import RLock as Lock
+
 from basil.TL.SiTransferLayer import SiTransferLayer
 
 
@@ -139,8 +141,8 @@ class SiTcp(SiTransferLayer):
         return size
 
     def _get_tcp_data(self, size):
-        ret_size = min((size, self._get_tcp_data_size()))
         self._tcp_lock.acquire()
+        ret_size = min((size, self._get_tcp_data_size()))
         ret = self._tcp_read_buff[:ret_size]
         self._tcp_read_buff = self._tcp_read_buff[ret_size:]
         self._tcp_lock.release()
