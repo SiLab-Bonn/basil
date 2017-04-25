@@ -15,7 +15,7 @@ from basil.TL.SiTransferLayer import SiTransferLayer
 
 
 class SiTcp(SiTransferLayer):
-    '''SiTcp
+    '''SiTcp transport layer.
     '''
 
     RBCP_VER = 0xff
@@ -33,7 +33,6 @@ class SiTcp(SiTransferLayer):
     def __init__(self, conf):
         super(SiTcp, self).__init__(conf)
         self._sock_udp = None
-
         self._sock_tcp = None
         self._tcp_readout_thread = None
         self.tmp = 0
@@ -51,7 +50,6 @@ class SiTcp(SiTransferLayer):
         if(self._init['tcp_connection']):
             self._sock_tcp.connect((self._init['ip'], self._init['tcp_port']))
             self._sock_tcp.setblocking(0)
-
             self._tcp_readout_thread = Thread(target=self._tcp_readout, name='TcpReadoutThread', kwargs={})
             self._tcp_readout_thread.daemon = True
             self._tcp_readout_thread.start()
@@ -59,25 +57,19 @@ class SiTcp(SiTransferLayer):
     def _write_single(self, addr, data):
         request = array('B', struct.pack('>BBBBI', self.RBCP_VER, self.RBCP_CMD_WR, self.RBCP_ID, len(data), addr))
         request += data
-
         self._sock_udp.sendto(request, (self._init['ip'], self._init['udp_port']))
         ready = select.select([self._sock_udp], [], [], self.UDP_TIMEOUT)
         if not ready[0]:
-            raise IOError('SiTcp:Write - Timeout')
-
+            raise IOError('SiTcp:_write_single - Timeout')
         ack = self._sock_udp.recv(1024)
-
         if(len(ack) < 8):
-            raise IOError('SiTcp:Write - Packet is too short')
-
+            raise IOError('SiTcp:_write_single - Packet is too short')
         if(array('B', ack)[8:] != data):
-            raise IOError('SiTcp:Write - Data error')
-
+            raise IOError('SiTcp:_write_single - Data error')
         if((0x0f & ord(ack[1])) != 0x8):
-            raise IOError('SiTcp:Write - Bus error')
-
+            raise IOError('SiTcp:_write_single - Bus error')
         if(ord(ack[2]) != self.RBCP_ID):
-            raise IOError('SiTcp:Write - Wrong ID')
+            raise IOError('SiTcp:_write_single - Wrong ID')
 
     def write(self, addr, data):
         if addr < self.BASE_DATA_TCP:
@@ -94,27 +86,20 @@ class SiTcp(SiTransferLayer):
 
     def _read_single(self, addr, size):
         request = array('B', struct.pack('>BBBBI', self.RBCP_VER, self.RBCP_CMD_RD, self.RBCP_ID, size, addr))
-
         self._sock_udp.sendto(request, (self._init['ip'], self._init['udp_port']))
         ready = select.select([self._sock_udp], [], [], self.UDP_TIMEOUT)
         if not ready[0]:
-            raise IOError('SiTcp:Read - Timeout')
-
+            raise IOError('SiTcp:_read_single - Timeout')
         ack = self._sock_udp.recv(4096)
-
         if(len(ack) != size + 8):
-            raise IOError('SiTcp:Read - Wrong packet size')
-
+            raise IOError('SiTcp:_read_single - Wrong packet size')
         if((0x0f & ord(ack[1])) != 0x8):
-            raise IOError('SiTcp:Read - Bus error')
-
+            raise IOError('SiTcp:_read_single - Bus error')
         if(ord(ack[2]) != self.RBCP_ID):
-            raise IOError('SiTcp:Read - Wrong ID')
-
+            raise IOError('SiTcp:_read_single - Wrong ID')
         return array('B', ack[8:])
 
     def read(self, addr, size):
-
         if addr < self.BASE_DATA_TCP:
             self._udp_lock.acquire()
             ret = array('B')
@@ -128,9 +113,7 @@ class SiTcp(SiTransferLayer):
                 ret += self._read_single(new_addr, size + self.RBCP_MAX_SIZE - next_size)
             else:
                 ret += self._read_single(addr, size)
-
             self._udp_lock.release()
-
             return ret
         elif addr < self.BASE_FAKE_FIFO_TCP:
             return self._get_tcp_data(size)
@@ -142,7 +125,7 @@ class SiTcp(SiTransferLayer):
 
     def _tcp_readout(self):
         while True:
-            ready = select.select([self._sock_tcp], [], [], 1)
+            ready = select.select([self._sock_tcp], [], [], 1.0)
             if(ready[0]):
                 self._tcp_lock.acquire()
                 data = self._sock_tcp.recv(1024 * 8 * 64)
