@@ -5,10 +5,12 @@
 # ------------------------------------------------------------
 #
 # A transfer layer for SiTcp Ethernet more: http://sitcp.bbtech.co.jp
+import logging
 
 import socket
 import select
 import struct
+import re
 from array import array
 from threading import Thread
 from threading import RLock as Lock
@@ -85,6 +87,13 @@ class SiTcp(SiTransferLayer):
             self._udp_lock.release()
         elif addr < self.BASE_FAKE_FIFO_TCP:
             self._sock_tcp.sendall(data)  # chunking?
+        # resetting SiTcp buffer
+        # the buffer may contain random (?) data words after setting
+        # up of the TCP socket and stating of the readout thread
+        elif addr == self.BASE_FAKE_FIFO_TCP:
+            self._tcp_read_buff = array('B')
+        else:
+            logging.warning("SiTcp:write - Invalid address %d" % hex(addr))
 
     def _read_single(self, addr, size):
         request = array('B', struct.pack('>BBBBI', self.RBCP_VER, self.RBCP_CMD_RD, self.RBCP_ID, size, addr))
@@ -119,11 +128,17 @@ class SiTcp(SiTransferLayer):
             return ret
         elif addr < self.BASE_FAKE_FIFO_TCP:
             return self._get_tcp_data(size)
-        else:  # this is to fake a HL fifo. Is there better way?
+        elif addr == self.BASE_FAKE_FIFO_TCP:
+            from basil.HL.sram_fifo import sram_fifo
+            version = int(re.findall(r'\d+', sram_fifo._require_version)[-1])
+            del sram_fifo
+            return array('B', chr(version))
+        else:  # this is to fake a HL fifo. Is there better way? Definitely...
             if(size == 4):
                 return array('B', struct.pack('I', self._get_tcp_data_size()))
             else:
-                return array('B', '\x02' * size)
+                return array('B', '\x00' * size)  # FIXME: workaround for SRAM module registers
+#                 logging.warning("SiTcp:read - Invalid address %d" % hex(addr))
 
     def _tcp_readout(self):
         while True:
