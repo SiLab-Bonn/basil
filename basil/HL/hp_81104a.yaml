@@ -1,0 +1,17 @@
+# Device description for the Hewlett Packard Pulse-/ Pattern Generator. 
+# Only GPIB shows working communication with this device!
+identifier : HEWLETT-PACKARD,HP81104A
+
+channel 1:
+    on : OUTP1:NORM:STAT ON
+    off : OUTP1:NORM:STAT OFF
+
+channel 2:
+    on : OUTP2:NORM:STAT ON
+    off : OUTP2:NORM:STAT OFF
+    
+on : OUTP1:NORM:STAT ON
+off : OUTP1:NORM:STAT OFF
+
+set_frequency : FREQ
+get_frequency : FREQ? 

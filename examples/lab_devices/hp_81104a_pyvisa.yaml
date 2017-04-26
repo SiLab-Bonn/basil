@@ -1,0 +1,12 @@
+transfer_layer:
+  - name  : Visa_sm
+    type  : Visa
+    init  :
+        resource_name    : GPIB0::1::INSTR
+        
+hw_drivers:
+  - name      : ClockGenerator
+    type      : scpi
+    interface : Visa_sm
+    init      :
+         device    : HP 81104A

@@ -6,6 +6,7 @@ sudo: required
 dist: trusty
 
 notifications:
+  slack: silab-bonn:nU3pnaHN3RJ6WRFrfjec9vPM
   email:
     - hemperek@uni-bonn.de
     - janssen@physik.uni-bonn.de
