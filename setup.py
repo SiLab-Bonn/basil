@@ -13,7 +13,7 @@ author_email = 'hemperek@uni-bonn.de, janssen@physik.uni-bonn.de, pohl@physik.un
 setup(
     name='basil_daq',
     version=basil_version,
-    description='Basil - a data acquisition system and system testing framework',
+    description='Basil - a data acquisition and system testing framework',
     url='https://github.com/SiLab-Bonn/basil',
     license='BSD 3-Clause ("BSD New" or "BSD Simplified") License',
     long_description='Basil is a modular data acquisition system and system testing framework in Python.\nIt also provides generic FPGA firmware modules for different hardware platforms and drivers for wide range of lab appliances.',

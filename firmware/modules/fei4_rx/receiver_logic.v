@@ -27,6 +27,7 @@ module receiver_logic
     output reg  [7:0]       decoder_err_cnt,
     output reg [15:0]       fifo_size,
     input wire              invert_rx_data,
+    input wire              enable_rx,
     input wire              FIFO_CLK
 );
 
@@ -45,6 +46,14 @@ flag_domain_crossing reset_domain_crossing_fclk_inst (
     .FLAG_IN_CLK_A(RESET),
     .FLAG_OUT_CLK_B(RESET_FCLK)
 );
+
+reg enable_rx_buf, enable_rx_buf2, enable_rx_wclk;
+always @ (posedge WCLK)
+begin
+    enable_rx_buf <= enable_rx;
+    enable_rx_buf2 <= enable_rx_buf;
+    enable_rx_wclk <= enable_rx_buf2;
+end
 
 // data to clock phase alignment
 wire RX_DATA_SYNC; //, USEAOUT, USEBOUT, USECOUT, USEDOUT;
@@ -77,7 +86,7 @@ rec_sync #(
 );
 
 wire write_8b10b;
-assign write_8b10b = rec_sync_ready;
+assign write_8b10b = rec_sync_ready & enable_rx_wclk;
 
 reg [9:0] data_to_dec;
 integer i;

@@ -38,7 +38,7 @@ module fei4_rx_core
     input wire BUS_RD
 );
 
-localparam VERSION = 2;
+localparam VERSION = 3;
 
 // 0 - soft reset
 // 1 - status
@@ -96,10 +96,12 @@ reg [7:0] status_regs;
 
 wire CONF_EN_INVERT_RX_DATA; // BUS_ADD==2 BIT==1
 assign CONF_EN_INVERT_RX_DATA = status_regs[1];
+wire CONF_EN_RX; // BUS_ADD==2 BIT==2
+assign CONF_EN_RX = status_regs[2];
 
 always @(posedge BUS_CLK) begin
     if(RST)
-        status_regs <= 8'b0000_0000;
+        status_regs <= 8'b0000_0100; // enable Rx by default
     else if(BUS_WR && BUS_ADD == 2)
         status_regs <= BUS_DATA_IN;
 end
@@ -163,6 +165,7 @@ receiver_logic #(
     .decoder_err_cnt(decoder_err_cnt),
     .fifo_size(fifo_size),
     .invert_rx_data(CONF_EN_INVERT_RX_DATA),
+    .enable_rx(CONF_EN_RX),
     .FIFO_CLK(FIFO_CLK)
 );
 

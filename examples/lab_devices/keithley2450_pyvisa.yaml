@@ -1,0 +1,20 @@
+# example for connection of keithley 2450 via TCP/IP or usbtmc
+# For usbtmc use USB0::<vendorID>::<productID>::<serialNumber>::0:INSTR
+
+transfer_layer:
+  - name     : Visa
+    type     : Visa
+    init     :
+#        resource_name     : TCPIP::131.220.165.164::INSTR
+	resource_name     : USB0::1510::9296::04039405::0::INSTR
+        backend           : "@py"
+        query_delay       : 0.1
+#        read_termination  : "\n"
+#        open_timeout      : 2
+
+hw_drivers:
+  - name      : Sourcemeter
+    type      : scpi
+    interface : Visa
+    init      :
+        device : Keithley 2450

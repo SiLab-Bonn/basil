@@ -20,7 +20,7 @@ class RegisterLayer(Base):
 
     def __getattr__(self, name):
         if not self.is_initialized:  # this test allows attributes to be set in the __init__ method
-            super(RegisterLayer, self).__getattr__(name)
+            raise AttributeError("'%s' has no attribute '%s'" % (self.__class__.__name__, name))
         else:
             attr = getattr(self._drv, name)
             # for compatibility with RegisterHardwareLayer:

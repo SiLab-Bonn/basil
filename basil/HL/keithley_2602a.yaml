@@ -1,0 +1,47 @@
+# Device description for the Keithley 2602A Sourcemeter. 
+# set_ function expect a parameter, get_ function return a parameter.
+# Just the very basic commands are implemented here.
+identifier : Keithley Instruments Inc., Model 2602A
+
+channel 1:
+    reset : smua.reset()
+    on : smua.source.output = 1
+    off : smua.source.output = 0
+    source_current : smua.source.func = smua.OUTPUT_DCAMPS
+    source_volt : smua.source.func = smua.OUTPUT_DCVOLTS
+    set_voltage_limit : smua.source.limitv = 
+    set_current_limit : smua.source.limiti =
+    set_voltage_range : smua.source.rangev = 
+    set_current_range : smua.source.rangei = 
+    set_current : smua.source.leveli =
+    get_current : print(smua.measure.i())
+    set_voltage : smua.source.levelv =
+    get_voltage : print(smua.measure.v())
+    set_mode_measure_current_A : display.smua.measure.func = display.MEASURE_DCAMPS
+    four_wire_on : smua.sense = smua.SENSE_REMOTE
+    four_wire_off : smua.sense = smua.SENSE_LOCAL
+
+channel 2:
+    reset : smub.reset()
+    on : smub.source.output = 1
+    off : smub.source.output = 0
+    source_current : smub.source.func = smub.OUTPUT_DCAMPS
+    source_volt : smub.source.func = smub.OUTPUT_DCVOLTS
+    set_voltage_range : smub.source.rangev =
+    set_current_range : smub.source.rangei = 
+    set_voltage_limit : smub.source.limitv = 
+    set_current_limit : smub.source.limiti =
+    set_current : smub.source.leveli = 
+    get_current : print(smub.measure.i())
+    set_voltage : smub.source.levelv =
+    get_voltage : print(smub.measure.v())
+    set_mode_measure_current : display.smub.measure.func = display.MEASURE_DCAMPS
+    four_wire_on : smub.sense = smub.SENSE_REMOTE
+    four_wire_off : smub.sense = smub.SENSE_LOCAL
+    
+#on : smua.source.output = 1
+#off : smua.source.output = 0
+#get_current : print(smua.measure.i())
+#set_voltage : smua.source.levelv =
+#get_voltage : print(smua.measure.v())
+#set_mode_measure_current : display.smua.measure.func = display.MEASURE_DCAMPS
