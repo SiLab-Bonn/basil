@@ -22,6 +22,7 @@ class SiUart(TransferLayer):
         super(SiUart, self).__init__(conf)
 
     def init(self):
+        super(SiUart, self).init()
         self._init.setdefault('board_id', None)
         self._init.setdefault('avoid_download', False)
         if self._init['board_id'] and int(self._init['board_id']) >= 0:

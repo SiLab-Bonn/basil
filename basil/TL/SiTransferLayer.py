@@ -20,7 +20,7 @@ class SiTransferLayer(TransferLayer):
     def init(self):
         '''Initialize and connect to hardware.
         '''
-        pass
+        super(SiTransferLayer, self).init()
 
     def read(self, addr, size):
         '''Read access.

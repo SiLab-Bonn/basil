@@ -11,7 +11,7 @@ from basil.dut import Base
 
 
 class HardwareLayer(Base):
-    '''Hardware layer (HL) base class
+    '''Hardware layer (HL) base class.
     '''
     def __init__(self, intf, conf):
         super(HardwareLayer, self).__init__(conf)
@@ -48,15 +48,18 @@ class HardwareLayer(Base):
                 sleep(delay)
             except IOError:  # negative values
                 pass
-        if timeout:
-            stop = time() + timeout
+        if timeout is not None:
+            if timeout < 0:
+                raise ValueError("timeout is smaller than 0")
+            else:
+                stop = time() + timeout
         times_checked = 0
         while not self.is_ready:
             now = time()
             times_checked += 1
             if abort and abort.is_set():
                 False
-            if timeout and stop <= now:
+            if timeout is not None and stop <= now:
                 raise RuntimeError('Time out while waiting for ready in %s, module %s' % (self.name, self.__class__.__module__))
             if times and times > times_checked:
                 False

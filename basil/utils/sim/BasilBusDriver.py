@@ -9,9 +9,7 @@
 
 # pylint: disable=pointless-statement, expression-not-assigned
 
-"""
-Abastract away interactions with the control bus
-"""
+
 import cocotb
 from cocotb.binary import BinaryValue
 from cocotb.triggers import RisingEdge, ReadOnly, Timer
@@ -21,7 +19,8 @@ from cocotb.clock import Clock
 
 
 class BasilBusDriver(BusDriver):
-
+    """Abastract away interactions with the control bus.
+    """
     _signals = ["BUS_CLK", "BUS_RST", "BUS_DATA", "BUS_ADD", "BUS_RD", "BUS_WR"]
     _optional_signals = ["BUS_BYTE_ACCESS"]
 
