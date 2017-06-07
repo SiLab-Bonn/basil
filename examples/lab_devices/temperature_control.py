@@ -28,11 +28,3 @@ print dut['Climatechamber'].get_door_open()
 print dut['Climatechamber'].get_mode()
 temperature_target = dut['Climatechamber'].get_temperature_target()
 dut['Climatechamber'].set_temperature(temperature_target)
-
-# Weiss SB 22 control
-dut = Dut('WeissSB22_pyserial.yaml')
-dut.init()
-print dut['Climatechamber'].get_temperature()
-print dut['Climatechamber'].get_digital_ch()
-temperature_target = dut['Climatechamber'].get_temperature_target()
-dut['Climatechamber'].set_temperature(temperature_target)

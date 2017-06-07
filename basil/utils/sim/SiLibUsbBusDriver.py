@@ -45,7 +45,7 @@ class SiLibUsbBusDriver(BusDriver):
         self._x.binstr = "x" * 16
 
         # Kick off a clock generator
-        cocotb.fork(Clock(self.clock, 20800).start())
+        cocotb.fork(Clock(self.clock, 20833).start())
 
     @cocotb.coroutine
     def init(self):

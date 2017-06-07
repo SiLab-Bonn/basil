@@ -62,9 +62,9 @@ class StdRegister(RegisterLayer):
             self._deconstruct_reg(reg)
         elif isinstance(key, str):
             self._fields[key][len(self._fields[key]) - 1:0] = value
-            if 'bit_order' in self._get_field_config(key):
+            if 'bit_order' in self._get_filed_config(key):
                 new_val = BitLogic(len(self._fields[key]))
-                for i, bit in enumerate(self._get_field_config(key)['bit_order']):
+                for i, bit in enumerate(self._get_filed_config(key)['bit_order']):
                     new_val[len(self._fields[key]) - 1 - i] = self._fields[key][bit]
                 self._fields[key] = new_val
         elif isinstance(key, (int, long)):
@@ -85,7 +85,7 @@ class StdRegister(RegisterLayer):
         full[self._conf['name']] = str(len(reg)) + 'b' + str(reg[:])
 
         for field in self._fields:
-            if 'repeat' in self._get_field_config(field):
+            if 'repeat' in self._get_filed_config(field):
                 for i, sub_reg in enumerate(self._fields[field]):
                     fields[str(field) + '[' + str(i) + ']'] = str(sub_reg)
             else:
@@ -129,11 +129,11 @@ class StdRegister(RegisterLayer):
             offs = self._fields_conf[field]['offset']
 
             if 'repeat' in self._fields_conf[field]:
-                for i, sub_field in enumerate(self._fields[field]):
-                    bvstart = offs - i * self._get_field_config(field)['size']
-                    bvstop = bvstart - len(sub_field._construct_reg()) + 1
-#                     self._bv[bvstart:bvstop] = sub_field._construct_reg()
-                    self._bv.set_slice_ba(bvstart, bvstop, sub_field._construct_reg())
+                for i, sub_filed in enumerate(self._fields[field]):
+                    bvstart = offs - i * self._get_filed_config(field)['size']
+                    bvstop = bvstart - len(sub_filed._construct_reg()) + 1
+#                     self._bv[bvstart:bvstop] = sub_filed._construct_reg()
+                    self._bv.set_slice_ba(bvstart, bvstop, sub_filed._construct_reg())
             else:
 
                 bvsize = len(self._fields[field])
@@ -146,18 +146,18 @@ class StdRegister(RegisterLayer):
 
     def _deconstruct_reg(self, reg):
         for field in self._fields:
-            offs = self._get_field_config(field)['offset']
-            bvsize = self._get_field_config(field)['size']
+            offs = self._get_filed_config(field)['offset']
+            bvsize = self._get_filed_config(field)['size']
             bvstart = offs
             bvstop = offs - bvsize + 1
-            if 'repeat' in self._get_field_config(field):
-                size = self._get_field_config(field)['size']
+            if 'repeat' in self._get_filed_config(field):
+                size = self._get_filed_config(field)['size']
                 for i, ifield in enumerate(self._fields[field]):
                     ifield.set(reg[bvstart - size * i:bvstop - size * i])
             else:
                 self._fields[field] = reg[bvstart:bvstop]
 
-    def _get_field_config(self, field):
+    def _get_filed_config(self, field):
         return self._fields_conf[field]
 
     def tobytes(self):
@@ -180,7 +180,7 @@ class StdRegister(RegisterLayer):
         reg = self._construct_reg()
 
         for field in self._fields:
-            if 'repeat' in self._get_field_config(field):
+            if 'repeat' in self._get_filed_config(field):
                 rep_field = []
                 for sub_reg in self._fields[field]:
                     rep_field.append(sub_reg.get_configuration())
@@ -204,4 +204,4 @@ class StdRegister(RegisterLayer):
                 else:
                     self[name] = value
             else:
-                raise ValueError("Register %s does not exist." % name)
+                raise ValueError("Filed " + name + " does not exist.")

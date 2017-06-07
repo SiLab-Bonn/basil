@@ -21,10 +21,6 @@ module tb (
 
     localparam GPIO_BASEADDR = 16'h0000;
     localparam GPIO_HIGHADDR = 16'h000f;
-    
-    localparam GPIO2_BASEADDR = 16'h0010;
-    localparam GPIO2_HIGHADDR = 16'h001f;
-    
     wire [23:0] IO;
     
     gpio 
@@ -47,25 +43,6 @@ module tb (
     
     assign IO[15:8] = IO[7:0];
     assign IO[23:20] = IO[19:16];
-    
-    wire [15:0] IO_2;
-    gpio 
-    #( 
-        .BASEADDR(GPIO2_BASEADDR), 
-        .HIGHADDR(GPIO2_HIGHADDR),
-        .IO_WIDTH(16),
-        .IO_DIRECTION(16'h0000)
-    ) i_gpio2
-    (
-        .BUS_CLK(BUS_CLK),
-        .BUS_RST(BUS_RST),
-        .BUS_ADD(BUS_ADD),
-        .BUS_DATA(BUS_DATA),
-        .BUS_RD(BUS_RD),
-        .BUS_WR(BUS_WR),
-        .IO(IO_2)
-    );
-    assign IO_2 = 16'ha5cd;
     
     initial begin
         $dumpfile("gpio.vcd");

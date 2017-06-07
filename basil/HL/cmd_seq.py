@@ -31,9 +31,8 @@ class cmd_seq(RegisterHardwareLayer):
                   'CMD_SIZE': {'descr': {'addr': 3, 'size': 16}},
                   'CMD_REPEAT': {'descr': {'addr': 5, 'size': 32}},
                   'START_SEQUENCE_LENGTH': {'descr': {'addr': 9, 'size': 16}},
-                  'STOP_SEQUENCE_LENGTH': {'descr': {'addr': 11, 'size': 16}},
-                  'OUTPUT_ENABLE': {'descr': {'addr': 13, 'size': 8}, 'default': 0xff}}
-    _require_version = "==1"
+                  'STOP_SEQUENCE_LENGTH': {'descr': {'addr': 11, 'size': 16}}}
+    _require_version = "==0"
 
     def __init__(self, intf, conf):
         super(cmd_seq, self).__init__(intf, conf)
@@ -92,12 +91,6 @@ class cmd_seq(RegisterHardwareLayer):
     def set_stop_seq_length(self, value):
         self.STOP_SEQUENCE_LENGTH = value
 
-    def get_output_enable(self):
-        return self.OUTPUT_ENABLE
-
-    def set_output_enable(self, value):
-        self.OUTPUT_ENABLE = value
-        
     def set_data(self, data, addr=0):
         if self._cmd_mem_size < len(data):
             raise ValueError('Size of data (%d bytes) is too big for memory (%d bytes)' % (len(data), self._cmd_mem_size))

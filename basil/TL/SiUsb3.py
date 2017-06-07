@@ -30,7 +30,6 @@ class SiUsb(SiTransferLayer):
         self._sidev = None
 
     def init(self):
-        super(SiUsb, self).init()
         self._init.setdefault('board_id', None)
         self._init.setdefault('avoid_download', False)
         if self._init['board_id'] and int(self._init['board_id']) >= 0:

@@ -9,12 +9,14 @@ from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 
 class Arduino(HardwareLayer):
+
     '''
-    Implement functions to control the Arduino digital IO using the Basil Arduino firmware.
+    Implement functions to control the Arduino digital IO using the BASIL Arduino firmware.
     '''
 
     def __init__(self, intf, conf):
         super(Arduino, self).__init__(intf, conf)
+        
 
     def set_output(self, channel, value):
         if value == 'ON':
@@ -32,15 +34,15 @@ class Arduino(HardwareLayer):
             raise ValueError('Arduino supports only 14 IOs and pins 0 and 1 are blocked by Serial communication. %d is out of range' % channel)
 
         self._intf.write('GPIO%d %d\r\n' % (channel, value))
-
+        
         ret = self._intf.read()  # Wait for response of Arduino
-
+        
         error = False
-        if channel == 99 and int(ret) != value * 1111111111:
+        if channel == 99 and int(ret) != value*1111111111:
             error = True
-        elif channel != 99 and ret[channel - 2] != str(value):
+        elif channel != 99 and ret[channel-2] != str(value):
             error = True
-
+            
         if error:
             raise RuntimeError('Got no or wrong response from Arduino!')
 

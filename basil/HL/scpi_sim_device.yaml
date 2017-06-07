@@ -1,6 +1,5 @@
 # Device description for a simulated device for SCPI HL + VISA TL test.
-identifier : "LSG Serial #1234"
-get_name : "?IDN"  # overwrite default SCPI
+identifier : ERROR
 set_on : "!OUT"
 get_on : "?OUT"
 get_frequency : "?FREQ"

@@ -32,27 +32,23 @@ hw_drivers:
 class TestSimScpi(unittest.TestCase):
 
     def setUp(self):
-        self.cfg = yaml.load(cnfg_yaml)
-        self.device = Dut(self.cfg)
+        cfg = yaml.load(cnfg_yaml)
+        self.device = Dut(cfg)
         self.device.init()
-
-    def tearDown(self):
-        self.device.close()
 
     def test_read(self):
         self.assertEqual(self.device['Pulser'].get_frequency(), u'100.00')
 
     def test_write(self):
-        self.device['Pulser'].set_on(1)
-        self.assertEqual(self.device['Pulser'].get_on(), u'OK')
-
-    def test_invalid_parameter(self):
-        with self.assertRaises(ValueError):
-            self.device['Pulser'].set_on(1, 2)
+        self.device['Pulser'].set_on()
+        self.assertEqual(self.device['Pulser'].get_on(), u'0')
 
     def test_exception(self):
         with self.assertRaises(ValueError):
             self.device['Pulser'].unknown_function()
+
+    def tearDown(self):
+        self.device.close()
 
 if __name__ == '__main__':
     unittest.main()

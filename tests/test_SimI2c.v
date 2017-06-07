@@ -187,7 +187,7 @@ module tb (
         .BASEADDR(I2C_BASEADDR), 
         .HIGHADDR(I2C_HIGHADDR),
         .ABUSWIDTH(ABUSWIDTH),
-        .MEM_BYTES(32) 
+        .MEM_BYTES(16) 
     )  i_i2c
     (
         .BUS_CLK(BUS_CLK),

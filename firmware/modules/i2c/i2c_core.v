@@ -122,7 +122,7 @@ wire EN_MEM_I2C;
 wire WE_MEM_I2C;
 
 reg [2:0] bit_count;
-reg [15:0] byte_count;
+reg [3:0] byte_count;
 wire [15:0] MEM_I2_WR; 
 reg [1:0] div_cnt;
 

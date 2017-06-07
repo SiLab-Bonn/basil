@@ -14,7 +14,6 @@ chip = Dut("mmc3_eth.yaml")
 chip.init()
 
 chip['GPIO_LED']['LED'] = 0x01  #start data source
-chip['GPIO_LED'].write()
 
 testduration = 10
 total_len = 0
@@ -34,4 +33,3 @@ while time.time() - start_time < testduration:
 print ('Bytes received:', total_len, '  data rate:', round((total_len/1e6/testduration),2), ' Mbit/s')
 
 chip['GPIO_LED']['LED'] = 0x00  #stop data source
-chip['GPIO_LED'].write()

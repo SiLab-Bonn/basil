@@ -22,7 +22,7 @@ class TransferLayer(Base):
     def init(self):
         '''Initialize and connect to hardware.
         '''
-        super(TransferLayer, self).init()
+        pass
 
     @abc.abstractmethod
     def read(self):
