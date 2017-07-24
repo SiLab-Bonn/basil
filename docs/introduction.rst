@@ -45,7 +45,6 @@ To make simulation one need:
   - verilog simulator (ex. `Icarus <https://github.com/steveicarus/iverilog>`_ )
   - `cocotb <https://github.com/potentialventures/cocotb>`_ library
   - set interface type to SiSim
-  - set $COCOTB environment variable to path to cocotb
 
 Basil unit tests make extensive use of this feature. See tests folder.
 
