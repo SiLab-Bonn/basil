@@ -25,11 +25,7 @@ install:
   - export PATH=$HOME/miniconda/bin:$PATH
   - conda update --yes conda
   - conda install --yes numpy bitarray nose pyyaml coverage
-  - pip install pyvisa pyvisa-sim coveralls
-
-  # cocotb
-  - git clone https://github.com/potentialventures/cocotb.git
-  - export COCOTB=$(pwd)/cocotb
+  - pip install pyvisa pyvisa-sim coveralls cocotb
 
   # iverilog
   - sudo apt-get -y install iverilog-daily

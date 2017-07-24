@@ -47,7 +47,8 @@ export SIMULATION_PORT
 export SIMULATION_BUS
 export SIMULATION_END_ON_DISCONNECT
 
-PYTHONLIBS=$(shell python -c 'from distutils import sysconfig; print(sysconfig.get_config_var("LIBDIR"))')
+export COCOTB=$(shell cocotb-path)
+export PYTHONPATH=$(shell python -c "from distutils import sysconfig; print(sysconfig.get_python_lib())"):$(COCOTB)
 export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:$(PYTHONLIBS)
 export PYTHONPATH=$(shell python -c "from distutils import sysconfig; print(sysconfig.get_python_lib())"):$(COCOTB)
 export PYTHONHOME=$(shell python -c "from distutils.sysconfig import get_config_var; print(get_config_var('prefix'))")
