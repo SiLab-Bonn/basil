@@ -18,10 +18,11 @@ class fei4_rx(RegisterHardwareLayer):
                   'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
                   'READY': {'descr': {'addr': 2, 'size': 1, 'properties': ['ro']}},
                   'INVERT_RX': {'descr': {'addr': 2, 'size': 1, 'offset': 1}},
+                  'ENABLE_RX': {'descr': {'addr': 2, 'size': 1, 'offset': 2}},
                   'FIFO_SIZE': {'default': 0, 'descr': {'addr': 3, 'size': 16, 'properties': ['ro']}},
                   'DECODER_ERROR_COUNTER': {'descr': {'addr': 5, 'size': 8, 'properties': ['ro']}},
                   'LOST_DATA_COUNTER': {'descr': {'addr': 6, 'size': 8, 'properties': ['ro']}}}
-    _require_version = "==2"
+    _require_version = "==3"
 
     def __init__(self, intf, conf):
         super(fei4_rx, self).__init__(intf, conf)

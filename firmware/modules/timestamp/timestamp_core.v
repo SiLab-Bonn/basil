@@ -140,7 +140,9 @@ end
 
 wire [63:0] cdc_data_out;   
 wire cdc_fifo_read;
-cdc_syncfifo #(.DSIZE(64), .ASIZE(8)) cdc_syncfifo_i
+cdc_syncfifo 
+#(.DSIZE(64), .ASIZE(8))
+ cdc_syncfifo_i
 (
     .rdata(cdc_data_out),
     .wfull(wfull),
