@@ -19,7 +19,8 @@ module tlu_controller_core
 #(
     parameter                   ABUSWIDTH = 16,
     parameter                   DIVISOR = 8, // dividing TRIGGER_CLK by DIVISOR for TLU_CLOCK
-    parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 17 // bit length of trigger data always TLU_TRIGGER_MAX_CLOCK_CYCLES - 1
+    parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 17, // bit length of trigger data always TLU_TRIGGER_MAX_CLOCK_CYCLES - 1
+    parameter                   WIDTH = 8
 )
 (
     input wire                  BUS_CLK,
@@ -38,8 +39,8 @@ module tlu_controller_core
 
     output reg                  FIFO_PREEMPT_REQ, // FIFO hold request
 
-    input wire      [7:0]       TRIGGER, // trigger input
-    input wire      [7:0]       TRIGGER_VETO, // veto input
+    input wire [WIDTH-1:0]      TRIGGER, // trigger input
+    input wire [WIDTH-1:0]      TRIGGER_VETO, // veto input
 
     input wire                  EXT_TRIGGER_ENABLE, // enable trigger FSM
     input wire                  TRIGGER_ACKNOWLEDGE, // acknowledge signal/flag
@@ -84,7 +85,7 @@ flag_domain_crossing rst_flag_domain_crossing (
     .FLAG_OUT_CLK_B(RST_SYNC)
 );
 
-reg [7:0] status_regs[31:0];
+reg [7:0] status_regs[63:0];
 
 // reg 0 for SOFT_RST
 wire [1:0] TRIGGER_MODE; // 2'b00 - standard trigger, 2'b01 - TLU no handshake, 2'b10 - TLU simple handshake, 2'b11 - TLU trigger data handshake
@@ -103,20 +104,20 @@ wire TLU_ENABLE_VETO;
 assign TLU_ENABLE_VETO = status_regs[2][6];
 wire [7:0] TLU_TRIGGER_LOW_TIME_OUT;
 assign TLU_TRIGGER_LOW_TIME_OUT = status_regs[3];
-wire [7:0] TRIGGER_SELECT;
-assign TRIGGER_SELECT = status_regs[13];
-wire [7:0] VETO_SELECT;
-assign VETO_SELECT = status_regs[14];
-wire [7:0] TRIGGER_INVERT;
-assign TRIGGER_INVERT = status_regs[15];
+wire [31:0] TRIGGER_SELECT;
+assign TRIGGER_SELECT = {status_regs[16], status_regs[15], status_regs[14], status_regs[13]};
+wire [31:0] VETO_SELECT;
+assign VETO_SELECT = {status_regs[20], status_regs[19], status_regs[18], status_regs[17]};
+wire [31:0] TRIGGER_INVERT;
+assign TRIGGER_INVERT = {status_regs[24], status_regs[23], status_regs[22], status_regs[21]};
 wire [31:0] TRIGGER_COUNTER_MAX;
-assign TRIGGER_COUNTER_MAX = {status_regs[19], status_regs[18], status_regs[17], status_regs[16]};
+assign TRIGGER_COUNTER_MAX = {status_regs[28], status_regs[27], status_regs[26], status_regs[25]};
 wire [7:0] CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES;
-assign CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES = status_regs[20];
+assign CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES = status_regs[29];
 wire [7:0] CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES;
-assign CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES = status_regs[21];
+assign CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES = status_regs[30];
 wire [7:0] CONF_TRIGGER_THRESHOLD;
-assign CONF_TRIGGER_THRESHOLD = status_regs[24];
+assign CONF_TRIGGER_THRESHOLD = status_regs[33];
 
 always @(posedge BUS_CLK)
 begin
@@ -136,21 +137,30 @@ begin
         status_regs[11] <= 8'b0;
         status_regs[12] <= 8'b0; // lost data counter
         status_regs[13] <= 8'b0; // trigger select
-        status_regs[14] <= 8'b0; // veto select
-        status_regs[15] <= 8'b0; // trigger invert
-        status_regs[16] <= 8'b0; // max. trigger counter
-        status_regs[17] <= 8'b0;
-        status_regs[18] <= 8'b0;
-        status_regs[19] <= 8'b0;
-        status_regs[20] <= 8'd3; // TLU trigger high accept clock cycles
-        status_regs[21] <= 8'b0; // TLU busy low to veto high wait cycles
-        status_regs[22] <= 8'b0; // trigger low timeout error
-        status_regs[23] <= 8'b0; // trigger accept error
-        status_regs[24] <= 8'b0; // trigger threshold
+        status_regs[14] <= 8'b0; // trigger select
+        status_regs[15] <= 8'b0; // trigger select
+        status_regs[16] <= 8'b0; // trigger select
+        status_regs[17] <= 8'b0; // veto select
+        status_regs[18] <= 8'b0; // veto select
+        status_regs[19] <= 8'b0; // veto select
+        status_regs[20] <= 8'b0; // veto select
+        status_regs[21] <= 8'b0; // trigger invert
+        status_regs[22] <= 8'b0; // trigger invert
+        status_regs[23] <= 8'b0; // trigger invert
+        status_regs[24] <= 8'b0; // trigger invert
+        status_regs[25] <= 8'b0; // max. trigger counter
+        status_regs[26] <= 8'b0;
+        status_regs[27] <= 8'b0;
+        status_regs[28] <= 8'b0;
+        status_regs[29] <= 8'd3; // TLU trigger high accept clock cycles
+        status_regs[30] <= 8'b0; // TLU busy low to veto high wait cycles
+        status_regs[31] <= 8'b0; // trigger low timeout error
+        status_regs[32] <= 8'b0; // trigger accept error
+        status_regs[33] <= 8'b0; // trigger threshold
     end
-    else if(BUS_WR && BUS_ADD < 25)
+    else if(BUS_WR && BUS_ADD < 34)
     begin
-        status_regs[BUS_ADD[4:0]] <= BUS_DATA_IN;
+        status_regs[BUS_ADD[5:0]] <= BUS_DATA_IN;
     end
 end
 
@@ -208,11 +218,29 @@ always @ (posedge BUS_CLK) begin
         else if (BUS_ADD == 21)
             BUS_DATA_OUT <= status_regs[21];
         else if (BUS_ADD == 22)
-            BUS_DATA_OUT <= TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT;
+            BUS_DATA_OUT <= status_regs[22];
         else if (BUS_ADD == 23)
-            BUS_DATA_OUT <= TLU_TRIGGER_ACCEPT_ERROR_CNT;
+            BUS_DATA_OUT <= status_regs[23];
         else if (BUS_ADD == 24)
             BUS_DATA_OUT <= status_regs[24];
+        else if (BUS_ADD == 25)
+            BUS_DATA_OUT <= status_regs[25];
+		else if (BUS_ADD == 26)
+            BUS_DATA_OUT <= status_regs[26];
+		else if (BUS_ADD == 27)
+            BUS_DATA_OUT <= status_regs[27];
+		else if (BUS_ADD == 28)
+            BUS_DATA_OUT <= status_regs[28];
+		else if (BUS_ADD == 29)
+            BUS_DATA_OUT <= status_regs[29];
+		else if (BUS_ADD == 30)
+            BUS_DATA_OUT <= status_regs[30];
+        else if (BUS_ADD == 31)
+            BUS_DATA_OUT <= TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT;
+        else if (BUS_ADD == 32)
+            BUS_DATA_OUT <= TLU_TRIGGER_ACCEPT_ERROR_CNT;
+        else if (BUS_ADD == 33)
+            BUS_DATA_OUT <= status_regs[33];
         else
             BUS_DATA_OUT <= 0;
     end
@@ -301,10 +329,10 @@ three_stage_synchronizer three_stage_rj45_trigger_synchronizer_trg_clk (
     .OUT(TLU_TRIGGER_SYNC)
 );
 
-wire [7:0] TRIGGER_XOR_INVERT;
+wire [WIDTH-1:0] TRIGGER_XOR_INVERT;
 wire TRIGGER_OR;
-assign TRIGGER_XOR_INVERT = TRIGGER ^ TRIGGER_INVERT;
-assign TRIGGER_OR = |(TRIGGER_XOR_INVERT & TRIGGER_SELECT);
+assign TRIGGER_XOR_INVERT = TRIGGER[WIDTH-1:0] ^ TRIGGER_INVERT[WIDTH-1:0];
+assign TRIGGER_OR = |(TRIGGER_XOR_INVERT & TRIGGER_SELECT[WIDTH-1:0]);
 
 three_stage_synchronizer three_stage_lemo_trigger_synchronizer_trg_clk (
     .CLK(TRIGGER_CLK),
@@ -319,7 +347,7 @@ three_stage_synchronizer three_stage_rj45_reset_synchronizer_trg_clk (
 );
 
 wire TRIGGER_VETO_OR;
-assign TRIGGER_VETO_OR = |(TRIGGER_VETO & VETO_SELECT);
+assign TRIGGER_VETO_OR = |(TRIGGER_VETO[WIDTH-1:0] & VETO_SELECT[WIDTH-1:0]);
 
 three_stage_synchronizer three_stage_lemo_ext_veto_synchronizer_trg_clk (
     .CLK(TRIGGER_CLK),

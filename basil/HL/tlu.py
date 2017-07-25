@@ -40,15 +40,15 @@ class tlu(RegisterHardwareLayer):
                   'CURRENT_TLU_TRIGGER_NUMBER': {'descr': {'addr': 4, 'size': 32, 'properties': ['ro']}},
                   'TRIGGER_COUNTER': {'descr': {'addr': 8, 'size': 32}},
                   'LOST_DATA_COUNTER': {'descr': {'addr': 12, 'size': 8, 'properties': ['ro']}},
-                  'TRIGGER_SELECT': {'descr': {'addr': 13, 'size': 8}},
-                  'TRIGGER_VETO_SELECT': {'descr': {'addr': 14, 'size': 8}},
-                  'TRIGGER_INVERT': {'descr': {'addr': 15, 'size': 8}},
-                  'MAX_TRIGGERS': {'descr': {'addr': 16, 'size': 32}},
-                  'TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES': {'descr': {'addr': 20, 'size': 8}},
-                  'HANDSHAKE_BUSY_VETO_WAIT_CYCLES': {'descr': {'addr': 21, 'size': 8}},
-                  'TRIGGER_LOW_TIMEOUT_ERROR_COUNTER': {'descr': {'addr': 22, 'size': 8, 'properties': ['ro']}},
-                  'TLU_TRIGGER_ACCEPT_ERROR_COUNTER': {'descr': {'addr': 23, 'size': 8, 'properties': ['ro']}},
-                  'TRIGGER_THRESHOLD': {'descr': {'addr': 24, 'size': 8}}}
+                  'TRIGGER_SELECT': {'descr': {'addr': 13, 'size': 32}},
+                  'TRIGGER_VETO_SELECT': {'descr': {'addr': 17, 'size': 32}},
+                  'TRIGGER_INVERT': {'descr': {'addr': 21, 'size': 32}},
+                  'MAX_TRIGGERS': {'descr': {'addr': 25, 'size': 32}},
+                  'TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES': {'descr': {'addr': 29, 'size': 8}},
+                  'HANDSHAKE_BUSY_VETO_WAIT_CYCLES': {'descr': {'addr': 30, 'size': 8}},
+                  'TRIGGER_LOW_TIMEOUT_ERROR_COUNTER': {'descr': {'addr': 31, 'size': 8, 'properties': ['ro']}},
+                  'TLU_TRIGGER_ACCEPT_ERROR_COUNTER': {'descr': {'addr': 32, 'size': 8, 'properties': ['ro']}},
+                  'TRIGGER_THRESHOLD': {'descr': {'addr': 33, 'size': 8}}}
     _require_version = "==8"
 
     def __init__(self, intf, conf):
