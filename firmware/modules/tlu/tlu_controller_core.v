@@ -54,7 +54,7 @@ module tlu_controller_core
     output wire     [31:0]      TIMESTAMP
 );
 
-localparam VERSION = 8;
+localparam VERSION = 9;
 
 // Registers
 wire SOFT_RST; // Address: 0
