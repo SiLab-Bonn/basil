@@ -6,7 +6,7 @@ transfer_layer:
     type     : Visa
     init     :
 #        resource_name     : TCPIP::131.220.165.164::INSTR
-	resource_name     : USB0::1510::9296::04039405::0::INSTR
+        resource_name     : USB0::1510::9296::04039405::0::INSTR
         backend           : "@py"
         query_delay       : 0.1
 #        read_termination  : "\n"
