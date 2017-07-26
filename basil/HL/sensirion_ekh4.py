@@ -10,12 +10,6 @@ import time
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 
-def twos_complement(value, bits):
-    """compute the 2's compliment of int value"""
-    if (value & (1 << (bits - 1))) != 0:  # if sign bit is set e.g., 8bit: 128-255
-        value = value - (1 << bits)  # compute negative value
-    return value  # return positive value as is
-
 
 class sensirionEKH4(HardwareLayer):
 
@@ -27,68 +21,83 @@ class sensirionEKH4(HardwareLayer):
     '''
 
     def __init__(self, intf, conf):
+        self.debug=0
         super(sensirionEKH4, self).__init__(intf, conf)
 
     def init(self):
-        self._intf.write(binascii.a2b_hex(r"7e230200013102010c25010e2601033a7e"))  # set readout every second
+        self.read() ## clear trash 
+        self.ask(r"7e230200013102010c25010e2601033a7e")  # set readout every second
 
-    def read_values(self, command):
+    def write(self,command):
+        if self.debug==1:
+             print "sensirionEKH4.write() %s"%cmd
+        self._intf.write(binascii.a2b_hex(command))
+
+    def ask(self,command):
         '''Read response to command and convert it to 16-bit integer.
         Returns : list of values
         '''
-        self._intf.write(binascii.a2b_hex(command))
+        self.write(command)
         time.sleep(0.1)
-        answer = self._intf.read().encode('hex_codec')
-        time.sleep(0.1)
-        if len(answer) < 26 or command[-2:] != '7e' or answer[:6] != command[:4] + '08':  # read failed
-            return [None, None, None, None]
-        data = answer[6:-4]  # cut away commas and CRC
-        values = []
-        for value in [data[i:i + 4] for i in range(0, len(data), 4)]:  # every chanel has 16 bit temp value, all 4 channels are always returned
-            if value != '7fff':  # std. value if channel has no sensor
-                values.append(int(value, 16))
-            else:
-                values.append(None)
-        return values
+        return self.read()
+
+    def read(self):
+        answer=[]
+        flg=0
+        if self.debug==1:
+             print "sensirionEKH4.read()",
+        for  i in range(1024): # data assumed to be less than 1024 words
+            a = self._intf.read(size=1).encode('hex_codec')
+            if self.debug==1:
+                print a,
+            if a=='':
+                if self.debug==1:
+                    print "sensirionEKH4.read() timeout"
+                break
+            elif flg==0 and a=='7e':
+                flg=1
+            elif flg==1 and a=='7e':
+                break
+            elif flg==1:
+                answer.append(a)
+        if self.debug==1:
+             print "----",answer
+        return answer
 
     def get_temperature(self, min_val=-40, max_val=200):
-        values = self.read_values(r"7e4700b87e")
-        temperatures = []
-        for channel_value in values:
-            if channel_value:
-                temperature = float(twos_complement(channel_value, 16)) / 100.
-                if temperature >= min_val and temperature <= max_val:  # mask unlikely values
-                    temperatures.append(temperature)
-                else:
-                    temperatures.append(None)
+        ret = self.ask(r"7e4700b87e")
+        values = []
+        for j in range(4):
+            if ret[2+2*j]=="7f" and ret[2+2*j+1]=="ff":
+                values.append(None)
             else:
-                temperatures.append(None)
-        return temperatures
+                values.append(self.cal_ret(ret[2+2*j]+ret[2+2*j+1]))
+        return values
 
     def get_humidity(self, min_val=0, max_val=100):
-        values = self.read_values(r"7e4600b97e")
-        humidities = []
-        for channel_value in values:
-            if channel_value:
-                humidity = float(channel_value) / 100.
-                if humidity >= min_val and humidity <= max_val:  # mask unlikely values
-                    humidities.append(humidity)
-                else:
-                    humidities.append(None)
+        ret = self.ask(r"7e4600b97e")
+        values = []
+        for j in range(4):
+            if ret[2+2*j]=="7f" and ret[2+2*j+1]=="ff":
+                values.append(None)
             else:
-                humidities.append(None)
-        return humidities
+                values.append(self.cal_ret(ret[2+2*j]+ret[2+2*j+1]))
+        return values
 
     def get_dew_point(self, min_val=-40, max_val=100):
-        values = self.read_values(r"7e4800b77e")
-        dew_points = []
-        for channel_value in values:
-            if channel_value:
-                dew_point = float(channel_value) / 100.
-                if dew_point >= min_val and dew_point <= max_val:  # mask unlikely values
-                    dew_points.append(dew_point)
-                else:
-                    dew_points.append(None)
+        ret = self.ask(r"7e4800b77e")
+        values = []
+        for j in range(4):
+            if ret[2+2*j]=="7f" and ret[2+2*j+1]=="ff":
+                values.append(None)
             else:
-                dew_points.append(None)
-        return dew_points
+                values.append(self.cal_ret(ret[2+2*j]+ret[2+2*j+1]))
+        return values
+
+    def cal_ret(self,value):
+        bits=16
+        value=int(value,16)
+        #"""compute the 2's compliment of int value"""
+        if (value & (1 << (bits - 1))) != 0:  # if sign bit is set e.g., 8bit: 128-255
+            value = value - (1 << bits)  # compute negative value
+        return float(value)/100.0  # return positive value as is
