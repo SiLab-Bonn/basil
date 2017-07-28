@@ -6,10 +6,10 @@
 General purpose trigger module and EUDAQ Telescope/TLU communication module. Trigger IDs received by the TLU are propagated to FIFO data interface.
 
 NOTE:
- 1. TRIGGER_ENABLE has to be asserted to allow triggering.
+ 1. EXT_TRIGGER_ENABLE input or TRIGGER_ENABLE register have to be asserted to enable trigger FSM.
  2. If no TRIGGER_ACKNOWLEDGE signal is available, connect TRIGGER_ACCEPTED_FLAG output to TRIGGER_ACKNOWLEDGE input.
  3. TRIGGER_ENABLE and TRIGGER_ACKNOWLEDGE input signals needs to be synchronous to TRIGGER_CLOCK.
- 4. TRIGGER_ENABLE input and TRIGGER_ENABLE register are ORed. To start trigger FSM, assert TRIGGER_ENABLE input or set TRIGGER_ENABLE register to 1.
+ 4. EXT_TRIGGER_ENABLE input and TRIGGER_ENABLE register are ORed. To start trigger FSM, assert TRIGGER_ENABLE input or set TRIGGER_ENABLE register to 1.
  5. Data words have the MSB always high to allow identification of data words. The remaining 31 bits are data.
  6. All selected trigger inputs (TRIGGER) are ORed
  7. All selected trigger veto inputs (TRIGGER_VETO) are ORed (all veto inputs are enabled by default!)
@@ -41,22 +41,26 @@ Parameters
     +------------------------------+---------------------+--------------------------------------------------------------------------+
     | TLU_TRIGGER_MAX_CLOCK_CYCLES | 17                  | Number of clock cycles send to the TLU. Bit lenght of trigger data is -1.|
     +------------------------------+---------------------+--------------------------------------------------------------------------+
+    | WIDTH                        | 8                   | Bus width of the trigger input and trigger veto input.                   |
+    +------------------------------+---------------------+--------------------------------------------------------------------------+
 
 Pins
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
     | Name                     | Size                | Direction             | Description                                          |
     +==========================+=====================+=======================+======================================================+
-    | TRIGGER_CLOCK            | 1                   |  input                | clock for module                                     |
+    | TRIGGER_CLK              | 1                   |  input                | clock for module                                     |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
-    | TRIGGER                  | 8                   |  input (async)        | extenel trigger                                      |
+    | TRIGGER                  | 8 (default), max. 32|  input (async)        | extenel trigger (see also WIDTH parameter)           |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
-    | TRIGGER_VETO             | 8                   |  input (async)        | external veto                                        |
+    | TRIGGER_VETO             | 8 (default), max. 32|  input (async)        | external veto (see also WIDTH parameter)             |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
-    | TRIGGER_ENABLE           | 1                   |  input (sync)         | enable trigger FSM, ORed with TRIGGER_ENABLE register|
+    | EXT_TRIGGER_ENABLE       | 1                   |  input (sync)         | enable trigger FSM, ORed with TRIGGER_ENABLE register|
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
     | TRIGGER_ACKNOWLEDGE      | 1                   |  input (sync)         | signal from external devices/modules if ready        |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
     | TRIGGER_ACCEPTED_FLAG    | 1                   |  output               | flag for trigger is valid and was accepted           |
+    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
+    | FIFO_PREEMPT_REQ         | 1                   |  output               | fast signal that put arbiter on hold                 |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
     | TLU_TRIGGER              | 1                   |  input (async)        | TLU trigger input                                    |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
@@ -66,8 +70,9 @@ Pins
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
     | TLU_CLOCK                | 1                   |  output               | TLU clock output                                     |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
-    | TIMESTAMP                | 32                  |  output               | timestamp counter for external devices/modules       |
+    | TIMESTAMP                | 32                  |  output               | timestamp counter provided for other devices/modules |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
+
 Registers
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
     | Name                                   | Address                          | Bits   | r/w   | Default     | Description                                           |
@@ -98,21 +103,21 @@ Registers
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
     | LOST_DATA_COUNTER                      | 12                               | [7:0]  | ro    |             | lost data counter                                     |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
-    | TRIGGER_SELECT                         | 13                               | [7:0]  | r/w   | 0           | selecting trigger input                               |
+    | TRIGGER_SELECT                         | 13 - 16                          | [31:0] | r/w   | 0           | selecting trigger input (see also WIDTH parameter)    |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
-    | TRIGGER_VETO_SELECT                    | 14                               | [7:0]  | r/w   | 0           | selecting veto input                                  |
+    | TRIGGER_VETO_SELECT                    | 17 - 20                          | [31:0] | r/w   | 0           | selecting veto input (see also WIDTH parameter)       |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
-    | TRIGGER_INVERT                         | 15                               | [7:0]  | r/w   | 0           | invert selected trigger input                         |
+    | TRIGGER_INVERT                         | 21 - 24                          | [31:0] | r/w   | 0           | inverting selected trigger input                      |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
-    | MAX_TRIGGERS                           | 16 - 19                          | [31:0] | r/w   | 0           | maximum triggers, use 0 for unltd. triggers           |
+    | MAX_TRIGGERS                           | 25 - 28                          | [31:0] | r/w   | 0           | maximum triggers, use 0 for unltd. triggers           |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
-    | TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES   | 20                               | [7:0]  | r/w   | 3           | TLU trigger minimum length in TLU clock cycles        |
+    | TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES   | 29                               | [7:0]  | r/w   | 3           | TLU trigger minimum length in TLU clock cycles        |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
-    | HANDSHAKE_BUSY_VETO_WAIT_CYCLES        | 21                               | [7:0]  | r/w   | 0           | additional wait cycles before de-asserting TLU busy   |
+    | HANDSHAKE_BUSY_VETO_WAIT_CYCLES        | 30                               | [7:0]  | r/w   | 0           | additional wait cycles before de-asserting TLU busy   |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
-    | TRIGGER_LOW_TIMEOUT_ERROR_COUNTER      | 22                               | [7:0]  | ro    |             | trigger low timeout error counter                     |
+    | TRIGGER_LOW_TIMEOUT_ERROR_COUNTER      | 31                               | [7:0]  | ro    |             | trigger low timeout error counter                     |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
-    | TLU_TRIGGER_ACCEPT_ERROR_COUNTER       | 23                               | [7:0]  | ro    |             | trigger accept error counter                          |
+    | TLU_TRIGGER_ACCEPT_ERROR_COUNTER       | 32                               | [7:0]  | ro    |             | trigger accept error counter                          |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
-    | TRIGGER_THRESHOLD                      | 24                               | [7:0]  | r/w   | 0           | trigger minimum length in TLU clock cycles            |
+    | TRIGGER_THRESHOLD                      | 33                               | [7:0]  | r/w   | 0           | trigger minimum length in TLU clock cycles            |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+

@@ -16,6 +16,7 @@ module timestamp_core
     input wire DI,
     input wire EXT_ENABLE,
     output wire [63:0] TIMESTAMP,
+	 output wire DEBUG,
 
     input wire FIFO_READ,
     output wire FIFO_EMPTY,
@@ -32,10 +33,7 @@ module timestamp_core
 
 localparam VERSION = 1;
 
-//output format:
-//31-28: ID, 27-24: 0x1, 23-0: 23-0th bit of timestamp data
-//31-28: ID, 27-24: 0x2, 23-0: 47-24th bit of timestamp data
-//31-28: ID, 27-24: 0x3, 23-16: 0x00, 15-0: 63-48th bit timestamp data
+//output format #ID (as parameter IDENTYFIER + 12 id-frame + 16 bit data) 
 
 wire SOFT_RST;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
@@ -43,7 +41,7 @@ assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 wire RST;
 assign RST = BUS_RST | SOFT_RST; 
 
-reg CONF_EN;  //TODO add enable/disable by software
+reg CONF_EN;
 reg [7:0] LOST_DATA_CNT;
 
 always @(posedge BUS_CLK) begin
@@ -109,16 +107,18 @@ reg [3:0] bit_cnt;
 always@(posedge CLK) begin
     if(RST_SYNC) begin
         timestamp_out <= 0;
-	cdc_fifo_write_reg<=0;
+	     cdc_fifo_write_reg<=0;
     end
     else if(~DI_FF & DI & cdc_fifo_write_reg==0) begin
         timestamp_out <= curr_timestamp;
-	cdc_fifo_write_reg<=1;
+	     cdc_fifo_write_reg<=1;
     end
-    else if (cdc_fifo_write_reg==1)
+    else if (cdc_fifo_write_reg==1) begin
         cdc_fifo_write_reg<=2;
-    else
-        cdc_fifo_write_reg<=0;
+	 end
+    else begin
+	     cdc_fifo_write_reg<=0;
+	 end
 end
 assign TIMESTAMP=timestamp_out;
 

@@ -5,6 +5,7 @@ transfer_layer:
         port     : COM16
         read_termination : ""
         baudrate : 115200
+        timeout : 2.0
 
 hw_drivers:
   - name      : Thermohygrometer

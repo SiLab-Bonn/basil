@@ -13,7 +13,7 @@ import numpy as np
 
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
-
+import time
 
 cnfg_yaml = """
 transfer_layer:
@@ -117,6 +117,7 @@ class TestSimTimestamp(unittest.TestCase):
         self.assertEqual(ret[1]&0xFFFFFF,0x10000*ret2[2]+0x100*ret2[3]+ret2[4])
         self.assertEqual(ret[1]&0xFFFFFF,0x100*ret2[0]+ret2[1])
 
+    
     def test_dut_iter(self):
         conf = yaml.safe_load(cnfg_yaml)
 
@@ -131,9 +132,11 @@ class TestSimTimestamp(unittest.TestCase):
         for mod, mcnf in zip(self.chip, iter_conf()):
             self.assertEqual(mod.name, mcnf['name'])
             self.assertEqual(mod.__class__.__name__, mcnf['type'])
-
+    
+    
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
+        time.sleep(5)
         cocotb_compile_clean()
 
 if __name__ == '__main__':

@@ -28,6 +28,7 @@ module fei4_rx_core
     output wire [31:0] FIFO_DATA,
     
     output wire RX_FIFO_FULL,
+    output wire RX_ENABLED,
 
     input wire BUS_CLK,
     input wire [ABUSWIDTH-1:0] BUS_ADD,
@@ -98,6 +99,7 @@ wire CONF_EN_INVERT_RX_DATA; // BUS_ADD==2 BIT==1
 assign CONF_EN_INVERT_RX_DATA = status_regs[1];
 wire CONF_EN_RX; // BUS_ADD==2 BIT==2
 assign CONF_EN_RX = status_regs[2];
+assign RX_ENABLED = CONF_EN_RX;
 
 always @(posedge BUS_CLK) begin
     if(RST)

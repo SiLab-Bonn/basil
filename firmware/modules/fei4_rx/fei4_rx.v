@@ -31,6 +31,7 @@ module fei4_rx
     output wire [31:0] FIFO_DATA,
     
     output wire RX_FIFO_FULL,
+    output wire RX_ENABLED,
     
     input wire          BUS_CLK,
     input wire          BUS_RST,
@@ -96,7 +97,8 @@ fei4_rx_core
     .FIFO_EMPTY(FIFO_EMPTY),
     .FIFO_DATA(FIFO_DATA),
     
-    .RX_FIFO_FULL(RX_FIFO_FULL)
+    .RX_FIFO_FULL(RX_FIFO_FULL),
+    .RX_ENABLED(RX_ENABLED)
 );
 
 endmodule
