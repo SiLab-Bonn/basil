@@ -38,24 +38,30 @@ class SiTcp(SiTransferLayer):
         super(SiTcp, self).__init__(conf)
         self._sock_udp = None
         self._sock_tcp = None
+        self._udp_lock = Lock()
+        self._tcp_lock = Lock()
         self._tcp_readout_thread = None
-        self.tmp = 0
+        self._tcp_read_buff = None
+
+    def reset(self):
+        self.reset_fifo()
+
+    def reset_fifo(self):
+        with self._tcp_lock:
+            self._tcp_read_buff = array('B')
 
     def init(self):
         super(SiTcp, self).init()
-        self._udp_lock = Lock()
+        self.reset()
         self._sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # self._sock_udp.setblocking(0)
-
-        self._tcp_lock = Lock()
-        self._tcp_read_buff = array('B')
         self._sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+        # start readout thread if TCP connection is set
         if(self._init['tcp_connection']):
             self._sock_tcp.connect((self._init['ip'], self._init['tcp_port']))
             self._sock_tcp.setblocking(0)
             self._tcp_readout_thread = Thread(target=self._tcp_readout, name='TcpReadoutThread', kwargs={})
-            self._tcp_readout_thread.daemon = True
+            self._tcp_readout_thread.daemon = True  # exiting program even when thread is alive
             self._tcp_readout_thread.start()
 
     def _write_single(self, addr, data):
