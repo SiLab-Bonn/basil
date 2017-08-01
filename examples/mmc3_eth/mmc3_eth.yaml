@@ -22,7 +22,7 @@ hw_drivers:
     size      : 8
 
   - name      : FIFO
-    type      : sram_fifo
+    type      : sitcp_fifo
     interface : INTF
     base_addr : 0x200000000
     base_data_addr : 0x100000000
