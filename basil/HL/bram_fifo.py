@@ -13,7 +13,7 @@ import numpy as np
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
-class sram_fifo(RegisterHardwareLayer):
+class bram_fifo(RegisterHardwareLayer):
     '''BRAM FIFO controller interface for bram_fifo FPGA module.
     '''
 
@@ -26,7 +26,7 @@ class sram_fifo(RegisterHardwareLayer):
     _require_version = "==2"
 
     def __init__(self, intf, conf):
-        super(sram_fifo, self).__init__(intf, conf)
+        super(bram_fifo, self).__init__(intf, conf)
 
     def reset(self):
         self.RESET = 0
@@ -43,7 +43,7 @@ class sram_fifo(RegisterHardwareLayer):
             FIFO size in units of integers (32 bit).
         '''
         fifo_size = self.FIFO_SIZE
-        # sometimes reading of FIFO size happens during writing to SRAM, but we want to have a multiplicity of 32 bits
+        # sometimes reading of FIFO size happens during writing to BRAM, but we want to have a multiplicity of 32 bits
         return (fifo_size - (fifo_size % 4)) / 4
 
     def get_FIFO_INT_SIZE(self):
