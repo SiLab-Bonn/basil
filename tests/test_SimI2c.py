@@ -13,7 +13,7 @@ from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
 cnfg_yaml = """
 transfer_layer:
-  - name  : intf
+  - name  : INTF
     type  : SiSim
     init:
         host : localhost
@@ -23,7 +23,7 @@ hw_drivers:
 
   - name      : i2c
     type      : i2c
-    interface : intf
+    interface : INTF
     base_addr : 0x1000
 
 registers:

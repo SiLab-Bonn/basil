@@ -13,7 +13,7 @@ from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
 cnfg_yaml = """
 transfer_layer:
-  - name  : intf
+  - name  : INTF
     type  : SiSim
     init:
         host : localhost
@@ -22,18 +22,18 @@ transfer_layer:
 hw_drivers:
   - name      : SEQ_GEN
     type      : seq_gen
-    interface : intf
+    interface : INTF
     mem_size  : 65535
     base_addr : 0x0000
 
   - name      : TDC
     type      : tdc_s3
-    interface : intf
+    interface : INTF
     base_addr : 0x8000
 
   - name      : FIFO
     type      : bram_fifo
-    interface : intf
+    interface : INTF
     base_addr : 0x8100
     base_data_addr : 0x80000000
 

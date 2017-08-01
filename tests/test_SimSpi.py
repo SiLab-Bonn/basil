@@ -17,7 +17,7 @@ from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
 cnfg_yaml = """
 transfer_layer:
-  - name  : intf
+  - name  : INTF
     type  : SiSim
     init:
         host : localhost
@@ -26,28 +26,28 @@ transfer_layer:
 hw_drivers:
   - name      : GPIO
     type      : gpio
-    interface : intf
+    interface : INTF
     base_addr : 0x0000
     size      : 8
 
   - name      : SPI
     type      : spi
-    interface : intf
+    interface : INTF
     base_addr : 0x1000
 
   - name      : SPI_RX
     type      : fast_spi_rx
-    interface : intf
+    interface : INTF
     base_addr : 0x2000
 
   - name      : PULSE_GEN
     type      : pulse_gen
-    interface : intf
+    interface : INTF
     base_addr : 0x3000
 
   - name      : FIFO
     type      : bram_fifo
-    interface : intf
+    interface : INTF
     base_addr : 0x8000
     base_data_addr: 0x80000000
 

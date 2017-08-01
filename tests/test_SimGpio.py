@@ -14,29 +14,29 @@ from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
 cnfg_yaml = """
 transfer_layer:
-  - name  : intf
+  - name  : INTF
     type  : SiSim
     init:
         host : localhost
         port  : 12345
 
 hw_drivers:
-  - name      : gpio
+  - name      : GPIO
     type      : gpio
-    interface : intf
+    interface : INTF
     base_addr : 0x0000
     size      : 24
     
-  - name      : gpio2
+  - name      : GPIO2
     type      : gpio
-    interface : intf
+    interface : INTF
     base_addr : 0x0010
     size      : 16
     
 registers:
   - name        : GPIO
     type        : StdRegister
-    hw_driver   : gpio
+    hw_driver   : GPIO
     size        : 24
     fields:
       - name    : OUT
@@ -62,24 +62,24 @@ class TestSimGpio(unittest.TestCase):
         self.chip.init()
 
     def test_io(self):
-        self.chip['gpio'].set_output_en([0xff, 0, 0])  # to remove 'z in simulation
+        self.chip['GPIO'].set_output_en([0xff, 0, 0])  # to remove 'z in simulation
 
-        ret = self.chip['gpio'].get_data()
+        ret = self.chip['GPIO'].get_data()
         self.assertEqual([0, 0, 0], ret)
 
-        self.chip['gpio'].set_output_en([0x0f, 0, 0])
-        self.chip['gpio'].set_data([0xe3, 0xfa, 0x5a])
-        ret = self.chip['gpio'].get_data()
+        self.chip['GPIO'].set_output_en([0x0f, 0, 0])
+        self.chip['GPIO'].set_data([0xe3, 0xfa, 0x5a])
+        ret = self.chip['GPIO'].get_data()
         self.assertEqual([0x33, 0x5a, 0x5a], ret)
-        ret = self.chip['gpio2'].get_data()
+        ret = self.chip['GPIO2'].get_data()
         self.assertEqual([0xa5, 0xcd], ret)
         
     def test_io_register(self):
-        self.chip['gpio'].set_output_en([0xff, 0, 0])  # to remove 'z in simulation
+        self.chip['GPIO'].set_output_en([0xff, 0, 0])  # to remove 'z in simulation
 
         self.chip['GPIO']['OUT'] = 0xa5
         self.chip['GPIO'].write()
-        ret = self.chip['gpio'].get_data()
+        ret = self.chip['GPIO'].get_data()
         self.assertEqual([0, 0xa5, 0xa5], ret)
         # TODO: Add register readback and comparison
 

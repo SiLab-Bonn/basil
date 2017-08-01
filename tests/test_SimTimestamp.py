@@ -17,7 +17,7 @@ import time
 
 cnfg_yaml = """
 transfer_layer:
-  - name  : intf
+  - name  : INTF
     type  : SiSim
     init:
         host : localhost
@@ -26,24 +26,24 @@ transfer_layer:
 hw_drivers:
   - name      : GPIO
     type      : gpio
-    interface : intf
+    interface : INTF
     base_addr : 0x0000
     size      : 64
 
   - name      : timestamp
     type      : timestamp
-    interface : intf
+    interface : INTF
     base_addr : 0x1000
 
 
   - name      : PULSE_GEN
     type      : pulse_gen
-    interface : intf
+    interface : INTF
     base_addr : 0x3000
 
   - name      : FIFO
     type      : bram_fifo
-    interface : intf
+    interface : INTF
     base_addr : 0x8000
     base_data_addr: 0x80000000
 
