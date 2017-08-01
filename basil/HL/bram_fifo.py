@@ -34,8 +34,7 @@ class bram_fifo(RegisterHardwareLayer):
 
     @property
     def FIFO_INT_SIZE(self):
-        '''
-        Get FIFO size in units of integers (32 bit).
+        ''' Get FIFO size in units of integers (32 bit).
 
         Returns
         -------
@@ -47,8 +46,7 @@ class bram_fifo(RegisterHardwareLayer):
         return (fifo_size - (fifo_size % 4)) / 4
 
     def get_FIFO_INT_SIZE(self):
-        '''
-        Get FIFO size in units of integers (32 bit).
+        ''' Get FIFO size in units of integers (32 bit).
 
         Returns
         -------
@@ -58,8 +56,7 @@ class bram_fifo(RegisterHardwareLayer):
         return self.FIFO_INT_SIZE
 
     def get_data(self):
-        '''
-        Reading data in BRAM.
+        ''' Reading data in BRAM.
 
         Returns
         -------

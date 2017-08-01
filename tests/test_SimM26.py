@@ -115,7 +115,7 @@ class TestSimM26(unittest.TestCase):
         while(not self.chip['SEQ'].is_done()):
             pass
 
-        ret = self.chip['FIFO'].get_fifo_size()
+        ret = self.chip['FIFO'].get_FIFO_SIZE()
         self.assertEqual(ret, 14 * 4 * 4)
 
         ret = self.chip['FIFO'].get_data()

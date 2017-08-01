@@ -78,7 +78,7 @@ class TestSimTimestamp(unittest.TestCase):
         self.chip['GPIO'].reset()
 
         self.chip['FIFO'].reset()
-        ret = self.chip['FIFO'].get_fifo_size()
+        ret = self.chip['FIFO'].get_FIFO_SIZE()
         self.assertEqual(ret, 0)
 
         # trigger timestamp
@@ -94,7 +94,7 @@ class TestSimTimestamp(unittest.TestCase):
             pass
         
         ## get data from FIFO
-        ret = self.chip['FIFO'].get_fifo_size()
+        ret = self.chip['FIFO'].get_FIFO_SIZE()
         self.assertEqual(ret, 3*4)
 
         ret = self.chip['FIFO'].get_data()

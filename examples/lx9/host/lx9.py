@@ -155,7 +155,7 @@ chip.program_pixel_reg()
 
 time.sleep(0.5)
 # Get output size in bytes
-print "chip['DATA'].get_fifo_size() = ", chip['DATA'].get_fifo_size()
+print "chip['DATA'].get_FIFO_SIZE() = ", chip['DATA'].get_FIFO_SIZE()
 
 rxd = chip['DATA'].get_data() #get data from sram fifo
 print rxd

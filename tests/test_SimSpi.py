@@ -71,7 +71,7 @@ class TestSimSpi(unittest.TestCase):
         self.chip.init()
 
     def test_io(self):
-        size = self.chip['SPI'].get_size()
+        size = self.chip['SPI'].get_SIZE()
         self.chip['GPIO'].reset()
         self.assertEqual(size, 16 * 8)
 
@@ -120,7 +120,7 @@ class TestSimSpi(unittest.TestCase):
         while(not self.chip['SPI'].is_done()):
             pass
 
-        ret = self.chip['FIFO'].get_fifo_size()
+        ret = self.chip['FIFO'].get_FIFO_SIZE()
         self.assertEqual(ret, 32)
 
         ret = self.chip['FIFO'].get_data()

@@ -151,7 +151,7 @@ if __name__ == "__main__":
     chip.program_pixel_reg()
 
     # Get output size in bytes
-    print "chip['DATA'].get_fifo_size() = ", chip['DATA'].get_fifo_size()
+    print "chip['DATA'].get_FIFO_SIZE() = ", chip['DATA'].get_FIFO_SIZE()
 
     # Get output in bytes
     print "chip['DATA'].get_data()"

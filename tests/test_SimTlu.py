@@ -73,7 +73,7 @@ class TestSimTlu(unittest.TestCase):
 #         self.chip['CONTROL']['ENABLE'] = 0
         self.chip['GPIO'].set_data([0x00])
 
-        self.assertEqual(self.chip['FIFO'].get_fifo_int_size(), 1)
+        self.assertEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 1)
         self.assertEqual(self.chip['TLU'].TRIGGER_COUNTER, 1)
 
         data = self.chip['FIFO'].get_data()
@@ -97,7 +97,7 @@ class TestSimTlu(unittest.TestCase):
 #         self.chip['CONTROL']['ENABLE'] = 0
         self.chip['GPIO'].set_data([0x00])
 
-        self.assertEqual(self.chip['FIFO'].get_fifo_int_size(), 2)
+        self.assertEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 2)
         self.assertEqual(self.chip['TLU'].TRIGGER_COUNTER, 2)
 
         data = self.chip['FIFO'].get_data()
@@ -122,7 +122,7 @@ class TestSimTlu(unittest.TestCase):
 #         self.chip['CONTROL']['ENABLE'] = 0
         self.chip['GPIO'].set_data([0x00])
 
-        self.assertEqual(self.chip['FIFO'].get_fifo_int_size(), 2)
+        self.assertEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 2)
         self.assertEqual(self.chip['TLU'].TRIGGER_COUNTER, 2)
 
         data = self.chip['FIFO'].get_data()
@@ -143,7 +143,7 @@ class TestSimTlu(unittest.TestCase):
 #         self.chip['CONTROL']['ENABLE'] = 0
         self.chip['GPIO'].set_data([0x00])
 
-        self.assertEqual(self.chip['FIFO'].get_fifo_int_size(), 0)
+        self.assertEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 0)
         self.assertEqual(self.chip['TLU'].TRIGGER_COUNTER, 0)
 
     def test_simple_trigger_max_triggers(self):
@@ -170,7 +170,7 @@ class TestSimTlu(unittest.TestCase):
 #         self.chip['CONTROL']['ENABLE'] = 0
         self.chip['GPIO'].set_data([0x00])
 
-        self.assertEqual(self.chip['FIFO'].get_fifo_int_size(), 2)
+        self.assertEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 2)
         self.assertEqual(self.chip['TLU'].TRIGGER_COUNTER, 2)
 
         data = self.chip['FIFO'].get_data()
@@ -186,13 +186,13 @@ class TestSimTlu(unittest.TestCase):
         self.chip['GPIO'].set_data([0x01])  # ext enable trigger/TLU
 
         readings = 0
-        while(self.chip['FIFO'].get_fifo_int_size() < 4 and readings < 1000):
+        while(self.chip['FIFO'].get_FIFO_INT_SIZE() < 4 and readings < 1000):
             readings += 1
 
 #         self.chip['CONTROL']['ENABLE'] = 0
         self.chip['GPIO'].set_data([0x00])
 
-        self.assertGreaterEqual(self.chip['FIFO'].get_fifo_int_size(), 4)
+        self.assertGreaterEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 4)
         self.assertGreaterEqual(self.chip['TLU'].TRIGGER_COUNTER, 14)
 
         data = self.chip['FIFO'].get_data()
@@ -214,13 +214,13 @@ class TestSimTlu(unittest.TestCase):
         self.chip['GPIO'].set_data([0x01])
 
         readings = 0
-        while(self.chip['FIFO'].get_fifo_int_size() < 4 and readings < 1000):
+        while(self.chip['FIFO'].get_FIFO_INT_SIZE() < 4 and readings < 1000):
             readings += 1
 
 #         self.chip['CONTROL']['ENABLE'] = 0
         self.chip['GPIO'].set_data([0x00])
 
-        self.assertGreaterEqual(self.chip['FIFO'].get_fifo_int_size(), 4)
+        self.assertGreaterEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 4)
         self.assertGreaterEqual(self.chip['TLU'].TRIGGER_COUNTER, 4)
         self.assertGreaterEqual(self.chip['TLU'].CURRENT_TLU_TRIGGER_NUMBER, 3)
 
@@ -239,10 +239,10 @@ class TestSimTlu(unittest.TestCase):
         self.chip['GPIO'].set_data([0x01])  # ext enable trigger/TLU
 
         readings = 0
-        while(self.chip['FIFO'].get_fifo_int_size() == 0 and readings < 1000):
+        while(self.chip['FIFO'].get_FIFO_INT_SIZE() == 0 and readings < 1000):
             readings += 1
 
-        self.assertEqual(self.chip['FIFO'].get_fifo_int_size(), 0)
+        self.assertEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 0)
         self.assertEqual(self.chip['TLU'].TRIGGER_COUNTER, 0)
         self.assertEqual(self.chip['TLU'].CURRENT_TLU_TRIGGER_NUMBER, 0)
 

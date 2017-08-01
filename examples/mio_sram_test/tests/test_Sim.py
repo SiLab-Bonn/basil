@@ -95,7 +95,7 @@ class TestSram(unittest.TestCase):
         self.chip['CONTROL'].write()
 
         for _ in range(2):
-            self.chip['fifo'].get_fifo_size()
+            self.chip['fifo'].get_FIFO_SIZE()
 
         self.chip['CONTROL']['COUNTER_EN'] = 0
         self.chip['CONTROL'].write()
@@ -103,7 +103,7 @@ class TestSram(unittest.TestCase):
         for _ in range(10):
             self.chip['CONTROL'].write()
 
-        size = self.chip['fifo'].get_fifo_size()
+        size = self.chip['fifo'].get_FIFO_SIZE()
         self.assertEqual(size, 512)
 
         ret = self.chip['fifo'].get_data()
@@ -119,7 +119,7 @@ class TestSram(unittest.TestCase):
         self.chip['CONTROL'].write()
 
         for _ in range(20):
-            self.chip['fifo'].get_fifo_size()
+            self.chip['fifo'].get_FIFO_SIZE()
 
         self.chip['CONTROL']['COUNTER_EN'] = 0
         self.chip['CONTROL'].write()

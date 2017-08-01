@@ -82,7 +82,7 @@ class TestSimTlu(unittest.TestCase):
             self.chip['SEQ'].START
             while(not self.chip['SEQ'].is_done()):
                 pass
-            self.assertEqual(self.chip['FIFO'].get_fifo_int_size(), 1)
+            self.assertEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 1)
 
             data = self.chip['FIFO'].get_data()
             self.assertEqual(data[0], (index << 12) + length)
@@ -99,7 +99,7 @@ class TestSimTlu(unittest.TestCase):
             self.chip['SEQ'].START
             while(not self.chip['SEQ_GEN'].is_done()):
                 pass
-            self.assertEqual(self.chip['FIFO'].get_fifo_int_size(), 1)
+            self.assertEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 1)
 
             data = self.chip['FIFO'].get_data()
             self.assertEqual(data[0], (index << 12) + min(length, 4095))  # overflow 12bit
