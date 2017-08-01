@@ -36,8 +36,8 @@ hw_drivers:
     interface : intf
     base_addr : 0x3000
 
-  - name      : fifo
-    type      : sram_fifo
+  - name      : FIFO
+    type      : bram_fifo
     interface : intf
     base_addr : 0x8000
     base_data_addr: 0x80000000
@@ -47,7 +47,7 @@ hw_drivers:
     interface : intf
     base_addr : 0x5000
 
-  - name      : fadc_conf
+  - name      : FADC_CONF
     type      : FadcConf
     hw_driver : SPI_FADC
 """
@@ -92,7 +92,7 @@ class TestSimAdcRx(unittest.TestCase):
         while(not self.chip['FADC'].is_done()):
             pass
 
-        ret = self.chip['fifo'].get_data()
+        ret = self.chip['FIFO'].get_data()
 
         self.assertEqual(len(ret), 16)
         self.assertEqual(ret[2:2 + 8].tolist(), [0x0100, 0x0101, 0x0102, 0x0103, 0x0104, 0x0105, 0x0106, 0x0107])
@@ -114,7 +114,7 @@ class TestSimAdcRx(unittest.TestCase):
         while(not self.chip['FADC'].is_done()):
             pass
 
-        ret = self.chip['fifo'].get_data()
+        ret = self.chip['FIFO'].get_data()
         self.assertEqual(len(ret), 32)
         self.assertEqual(ret[2:2 + 8].tolist(), [0x0100, 0x0101, 0x0102, 0x0103, 0x0104, 0x0105, 0x0106, 0x0107])
 
@@ -125,7 +125,7 @@ class TestSimAdcRx(unittest.TestCase):
         while(not self.chip['FADC'].is_done()):
             pass
 
-        ret = self.chip['fifo'].get_data()
+        ret = self.chip['FIFO'].get_data()
         self.assertEqual(len(ret), 16)
 
     def tearDown(self):

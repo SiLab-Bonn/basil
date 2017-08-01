@@ -35,8 +35,8 @@ hw_drivers:
     interface : intf
     base_addr : 0x3000
 
-  - name      : fifo
-    type      : sram_fifo
+  - name      : FIFO
+    type      : bram_fifo
     interface : intf
     base_addr : 0x8000
     base_data_addr: 0x80000000
@@ -115,10 +115,10 @@ class TestSimM26(unittest.TestCase):
         while(not self.chip['SEQ'].is_done()):
             pass
 
-        ret = self.chip['fifo'].get_fifo_size()
+        ret = self.chip['FIFO'].get_fifo_size()
         self.assertEqual(ret, 14 * 4 * 4)
 
-        ret = self.chip['fifo'].get_data()
+        ret = self.chip['FIFO'].get_data()
 
         exps = np.zeros((14,), dtype=np.uint32)
         exps[0] = 0x00010000 | 0x5555
@@ -138,7 +138,7 @@ class TestSimM26(unittest.TestCase):
         self.chip['M26_RX'].reset()
         self.chip['M26_RX'].TIMESTAMP_HEADER = 1
         self.chip['M26_RX'].set_en(True)
-        self.chip['fifo'].get_data()
+        self.chip['FIFO'].get_data()
         self.chip['SEQ'].start()
 
         exps[0] = 0x00010000 | 0xBB44
@@ -149,7 +149,7 @@ class TestSimM26(unittest.TestCase):
         while(not self.chip['SEQ'].is_done()):
             pass
 
-        ret = self.chip['fifo'].get_data()
+        ret = self.chip['FIFO'].get_data()
 
         np.testing.assert_array_equal(exp, ret)
 

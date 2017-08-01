@@ -24,18 +24,18 @@ transfer_layer:
         port  : 12345
 
 hw_drivers:
-  - name      : gpio
+  - name      : GPIO
     type      : gpio
     interface : intf
     base_addr : 0x0000
     size      : 8
 
-  - name      : spi
+  - name      : SPI
     type      : spi
     interface : intf
     base_addr : 0x1000
 
-  - name      : spi_rx
+  - name      : SPI_RX
     type      : fast_spi_rx
     interface : intf
     base_addr : 0x2000
@@ -45,8 +45,8 @@ hw_drivers:
     interface : intf
     base_addr : 0x3000
 
-  - name      : fifo
-    type      : sram_fifo
+  - name      : FIFO
+    type      : bram_fifo
     interface : intf
     base_addr : 0x8000
     base_data_addr: 0x80000000
@@ -54,7 +54,7 @@ hw_drivers:
 registers:
   - name        : CONTROL
     type        : StdRegister
-    hw_driver   : gpio
+    hw_driver   : GPIO
     size        : 8
     fields:
       - name    : OUT
@@ -71,28 +71,28 @@ class TestSimSpi(unittest.TestCase):
         self.chip.init()
 
     def test_io(self):
-        size = self.chip['spi'].get_size()
-        self.chip['gpio'].reset()
+        size = self.chip['SPI'].get_size()
+        self.chip['GPIO'].reset()
         self.assertEqual(size, 16 * 8)
 
-        self.chip['spi'].set_data(range(16))
-        ret = self.chip['spi'].get_data(size=16, addr=0)  # to read back what was written
+        self.chip['SPI'].set_data(range(16))
+        ret = self.chip['SPI'].get_data(size=16, addr=0)  # to read back what was written
         self.assertEqual(ret.tolist(), range(16))
 
-        self.chip['spi'].set_data(range(16))
-        ret = self.chip['spi'].get_data(addr=0)  # to read back what was written
+        self.chip['SPI'].set_data(range(16))
+        ret = self.chip['SPI'].get_data(addr=0)  # to read back what was written
         self.assertEqual(ret.tolist(), range(16))
 
-        self.chip['spi'].start()
-        while(not self.chip['spi'].is_done()):
+        self.chip['SPI'].start()
+        while(not self.chip['SPI'].is_done()):
             pass
 
-        ret = self.chip['spi'].get_data()  # read back what was received (looped)
+        ret = self.chip['SPI'].get_data()  # read back what was received (looped)
         self.assertEqual(ret.tolist(), range(16))
 
         # ext_start
-        self.chip['spi'].set_en(1)
-        self.assertEqual(self.chip['spi'].get_en(), 1)
+        self.chip['SPI'].set_en(1)
+        self.assertEqual(self.chip['SPI'].get_en(), 1)
 
         self.chip['PULSE_GEN'].set_delay(1)
         self.chip['PULSE_GEN'].set_width(1 + size)
@@ -105,25 +105,25 @@ class TestSimSpi(unittest.TestCase):
         while(not self.chip['PULSE_GEN'].is_done()):
             pass
 
-        ret = self.chip['spi'].get_data()  # read back what was received (looped)
+        ret = self.chip['SPI'].get_data()  # read back what was received (looped)
         self.assertEqual(ret.tolist(), range(16))
 
-        # spi_rx
-        ret = self.chip['spi_rx'].get_en()
+        # SPI_RX
+        ret = self.chip['SPI_RX'].get_en()
         self.assertEqual(ret, False)
 
-        self.chip['spi_rx'].set_en(True)
-        ret = self.chip['spi_rx'].get_en()
+        self.chip['SPI_RX'].set_en(True)
+        ret = self.chip['SPI_RX'].get_en()
         self.assertEqual(ret, True)
 
-        self.chip['spi'].start()
-        while(not self.chip['spi'].is_done()):
+        self.chip['SPI'].start()
+        while(not self.chip['SPI'].is_done()):
             pass
 
-        ret = self.chip['fifo'].get_fifo_size()
+        ret = self.chip['FIFO'].get_fifo_size()
         self.assertEqual(ret, 32)
 
-        ret = self.chip['fifo'].get_data()
+        ret = self.chip['FIFO'].get_data()
 
         data0 = ret.astype(np.uint8)
         data1 = np.right_shift(ret, 8).astype(np.uint8)

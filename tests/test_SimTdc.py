@@ -31,8 +31,8 @@ hw_drivers:
     interface : intf
     base_addr : 0x8000
 
-  - name      : SRAM
-    type      : sram_fifo
+  - name      : FIFO
+    type      : bram_fifo
     interface : intf
     base_addr : 0x8100
     base_data_addr : 0x80000000
@@ -82,9 +82,9 @@ class TestSimTlu(unittest.TestCase):
             self.chip['SEQ'].START
             while(not self.chip['SEQ'].is_done()):
                 pass
-            self.assertEqual(self.chip['SRAM'].get_fifo_int_size(), 1)
+            self.assertEqual(self.chip['FIFO'].get_fifo_int_size(), 1)
 
-            data = self.chip['SRAM'].get_data()
+            data = self.chip['FIFO'].get_data()
             self.assertEqual(data[0], (index << 12) + length)
 
     def test_tdc_overflow(self):
@@ -99,9 +99,9 @@ class TestSimTlu(unittest.TestCase):
             self.chip['SEQ'].START
             while(not self.chip['SEQ_GEN'].is_done()):
                 pass
-            self.assertEqual(self.chip['SRAM'].get_fifo_int_size(), 1)
+            self.assertEqual(self.chip['FIFO'].get_fifo_int_size(), 1)
 
-            data = self.chip['SRAM'].get_data()
+            data = self.chip['FIFO'].get_data()
             self.assertEqual(data[0], (index << 12) + min(length, 4095))  # overflow 12bit
 
 #     def test_tdc_delay(self):

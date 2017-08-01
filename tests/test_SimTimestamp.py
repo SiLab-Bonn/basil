@@ -24,7 +24,7 @@ transfer_layer:
         port  : 12345
 
 hw_drivers:
-  - name      : gpio
+  - name      : GPIO
     type      : gpio
     interface : intf
     base_addr : 0x0000
@@ -41,8 +41,8 @@ hw_drivers:
     interface : intf
     base_addr : 0x3000
 
-  - name      : fifo
-    type      : sram_fifo
+  - name      : FIFO
+    type      : bram_fifo
     interface : intf
     base_addr : 0x8000
     base_data_addr: 0x80000000
@@ -50,7 +50,7 @@ hw_drivers:
 registers:
   - name        : timestamp_value
     type        : StdRegister
-    hw_driver   : gpio
+    hw_driver   : GPIO
     size        : 64
     fields:
       - name    : OUT3
@@ -75,10 +75,10 @@ class TestSimTimestamp(unittest.TestCase):
 
     def test_io(self):
         self.chip['timestamp'].reset()
-        self.chip['gpio'].reset()
+        self.chip['GPIO'].reset()
 
-        self.chip['fifo'].reset()
-        ret = self.chip['fifo'].get_fifo_size()
+        self.chip['FIFO'].reset()
+        ret = self.chip['FIFO'].get_fifo_size()
         self.assertEqual(ret, 0)
 
         # trigger timestamp
@@ -93,15 +93,15 @@ class TestSimTimestamp(unittest.TestCase):
         while(not self.chip['PULSE_GEN'].is_done()):
             pass
         
-        ## get data from fifo
-        ret = self.chip['fifo'].get_fifo_size()
+        ## get data from FIFO
+        ret = self.chip['FIFO'].get_fifo_size()
         self.assertEqual(ret, 3*4)
 
-        ret = self.chip['fifo'].get_data()
+        ret = self.chip['FIFO'].get_data()
         self.assertEqual(len(ret), 3)
 
-        ## check with gpio
-        ret2 = self.chip['gpio'].get_data()
+        ## check with GPIO
+        ret2 = self.chip['GPIO'].get_data()
         self.assertEqual(len(ret2), 8)
 
         for i,r in enumerate(ret):
