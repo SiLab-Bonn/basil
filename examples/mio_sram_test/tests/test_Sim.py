@@ -178,8 +178,8 @@ class TestSram(unittest.TestCase):
         size = 648
         base_data_addr = self.chip['FIFO']._conf['base_data_addr']
 
-        ret = self.chip['INTF'].read(base_data_addr, size=size)
-        ret = np.hstack((ret, self.chip['INTF'].read(base_data_addr, size=size)))
+        ret = self.chip['USB'].read(base_data_addr, size=size)
+        ret = np.hstack((ret, self.chip['USB'].read(base_data_addr, size=size)))
 
         x = np.arange(size * 2, dtype=np.uint8)
         self.assertEqual(ret.tolist(), x.tolist())
