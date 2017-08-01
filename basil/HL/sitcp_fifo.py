@@ -19,7 +19,7 @@ class sitcp_fifo(HardwareLayer):
     _version = 0
 
     def __getitem__(self, name):
-        if key == "RESET":
+        if name == "RESET":
             self._intf.reset_fifo()
         elif name == 'VERSION':
             return array('B', struct.pack('I', _version))
@@ -29,7 +29,7 @@ class sitcp_fifo(HardwareLayer):
             super(sitcp_fifo, self).__getitem__(name)
 
     def __setitem__(self, name, value):
-        if key == "RESET":
+        if name == "RESET":
             self._intf.reset_fifo()
         else:
             super(sitcp_fifo, self).__setitem__(name, value)
@@ -54,4 +54,17 @@ class sitcp_fifo(HardwareLayer):
         if name.isupper():
             self[name] = value
         else:
-            super(RhlHandle, self).__setattr__(name, value)
+            super(sitcp_fifo, self).__setattr__(name, value)
+
+    def get_data(self):
+        ''' Reading data from SiTCP FIFO.
+
+        Returns
+        -------
+        array : numpy.ndarray
+            Array of unsigned integers (32 bit).
+        '''
+        fifo_size = self._intf._get_tcp_data_size()
+        fifo_int_size = (fifo_size - (fifo_size % 4)) / 4
+        data = self._intf._get_tcp_data(fifo_int_size * 4)
+        return np.fromstring(data.tostring(), dtype=np.dtype('<u4'))
