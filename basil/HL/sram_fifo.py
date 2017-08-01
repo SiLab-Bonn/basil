@@ -23,7 +23,7 @@ class sram_fifo(RegisterHardwareLayer):
                   'ALMOST_EMPTY_THRESHOLD': {'descr': {'addr': 2, 'size': 8}},
                   'READ_ERROR_COUNTER': {'descr': {'addr': 3, 'size': 8, 'properties': ['ro']}},
                   'FIFO_SIZE': {'descr': {'addr': 4, 'size': 32, 'properties': ['ro']}}}
-    _require_version = "==2"  # make sure to keep BRAM FIFO and SRAM FIFO synchronized
+    _require_version = "==2"
 
     def __init__(self, intf, conf):
         super(sram_fifo, self).__init__(intf, conf)
