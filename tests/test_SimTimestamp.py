@@ -90,7 +90,7 @@ class TestSimTimestamp(unittest.TestCase):
         self.assertEqual(self.chip['PULSE_GEN'].get_REPEAT(), 1)
 
         self.chip['PULSE_GEN'].start()
-        while(not self.chip['PULSE_GEN'].is_ready()):
+        while(not self.chip['PULSE_GEN'].is_ready):
             pass
         
         ## get data from FIFO
