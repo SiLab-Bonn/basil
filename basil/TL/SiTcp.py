@@ -77,18 +77,17 @@ class SiTcp(SiTransferLayer):
 
     def write(self, addr, data):
         if addr < self.BASE_DATA_TCP:
-            self._udp_lock.acquire()
-            buff = array('B', data)
-            def chunks(array, max_len):
-                index = 0
-                while index < len(array):
-                    yield array[index: index + max_len]
-                    index += max_len
-            new_addr = addr
-            for req in chunks(buff, self.RBCP_MAX_SIZE):
-                self._write_single(new_addr, req)
-                new_addr += len(req)
-            self._udp_lock.release()
+            with self._udp_lock:
+                buff = array('B', data)
+                def chunks(array, max_len):
+                    index = 0
+                    while index < len(array):
+                        yield array[index: index + max_len]
+                        index += max_len
+                new_addr = addr
+                for req in chunks(buff, self.RBCP_MAX_SIZE):
+                    self._write_single(new_addr, req)
+                    new_addr += len(req)
         elif addr < self.BASE_FAKE_FIFO_TCP:
             self._sock_tcp.sendall(data)  # chunking?
         # resetting SiTcp buffer
@@ -116,19 +115,18 @@ class SiTcp(SiTransferLayer):
 
     def read(self, addr, size):
         if addr < self.BASE_DATA_TCP:
-            self._udp_lock.acquire()
-            ret = array('B')
-            if size > self.RBCP_MAX_SIZE:
-                new_addr = addr
-                next_size = self.RBCP_MAX_SIZE
-                while next_size < size:
-                    ret += self._read_single(new_addr, self.RBCP_MAX_SIZE)
-                    new_addr = addr + next_size
-                    next_size = next_size + self.RBCP_MAX_SIZE
-                ret += self._read_single(new_addr, size + self.RBCP_MAX_SIZE - next_size)
-            else:
-                ret += self._read_single(addr, size)
-            self._udp_lock.release()
+            with self._udp_lock:
+                ret = array('B')
+                if size > self.RBCP_MAX_SIZE:
+                    new_addr = addr
+                    next_size = self.RBCP_MAX_SIZE
+                    while next_size < size:
+                        ret += self._read_single(new_addr, self.RBCP_MAX_SIZE)
+                        new_addr = addr + next_size
+                        next_size = next_size + self.RBCP_MAX_SIZE
+                    ret += self._read_single(new_addr, size + self.RBCP_MAX_SIZE - next_size)
+                else:
+                    ret += self._read_single(addr, size)
             return ret
         elif addr < self.BASE_FAKE_FIFO_TCP:
             return self._get_tcp_data(size)
@@ -148,21 +146,18 @@ class SiTcp(SiTransferLayer):
         while True:
             ready = select.select([self._sock_tcp], [], [], 1.0)
             if(ready[0]):
-                self._tcp_lock.acquire()
-                data = self._sock_tcp.recv(1024 * 8 * 64)
-                self._tcp_read_buff.extend(array('B', data))
-                self._tcp_lock.release()
+                with self._tcp_lock:
+                    data = self._sock_tcp.recv(1024 * 8 * 64)
+                    self._tcp_read_buff.extend(array('B', data))
 
     def _get_tcp_data_size(self):
-        self._tcp_lock.acquire()
-        size = len(self._tcp_read_buff)
-        self._tcp_lock.release()
+        with self._tcp_lock:
+            size = len(self._tcp_read_buff)
         return size
 
     def _get_tcp_data(self, size):
-        self._tcp_lock.acquire()
-        ret_size = min((size, self._get_tcp_data_size()))
-        ret = self._tcp_read_buff[:ret_size]
-        self._tcp_read_buff = self._tcp_read_buff[ret_size:]
-        self._tcp_lock.release()
+        with self._tcp_lock:
+            ret_size = min((size, self._get_tcp_data_size()))
+            ret = self._tcp_read_buff[:ret_size]
+            self._tcp_read_buff = self._tcp_read_buff[ret_size:]
         return ret
