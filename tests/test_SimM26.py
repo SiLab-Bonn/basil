@@ -105,14 +105,14 @@ class TestSimM26(unittest.TestCase):
             self.chip['SEQ']['DATA1'][48 + i * 16:48 + 16 + i * 16] = data1[:]
 
         self.chip['SEQ'].write(16 * (4 + 4))
-        self.chip['SEQ'].set_repeat(4)
-        self.chip['SEQ'].set_size(16 * (4 + 12))
+        self.chip['SEQ'].set_REPEAT(4)
+        self.chip['SEQ'].set_SIZE(16 * (4 + 12))
 
         self.chip['M26_RX'].set_en(True)
 
         self.chip['SEQ'].start()
 
-        while(not self.chip['SEQ'].is_done()):
+        while(not self.chip['SEQ'].is_ready()):
             pass
 
         ret = self.chip['FIFO'].get_FIFO_SIZE()
@@ -146,7 +146,7 @@ class TestSimM26(unittest.TestCase):
 
         exp = np.tile(exps, 4)
 
-        while(not self.chip['SEQ'].is_done()):
+        while(not self.chip['SEQ'].is_ready()):
             pass
 
         ret = self.chip['FIFO'].get_data()

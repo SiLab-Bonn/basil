@@ -82,15 +82,15 @@ class TestSimTimestamp(unittest.TestCase):
         self.assertEqual(ret, 0)
 
         # trigger timestamp
-        self.chip['PULSE_GEN'].set_delay(0x105)
-        self.chip['PULSE_GEN'].set_width(10)
-        self.chip['PULSE_GEN'].set_repeat(1)
-        self.assertEqual(self.chip['PULSE_GEN'].get_delay(), 0x105)
-        self.assertEqual(self.chip['PULSE_GEN'].get_width(), 10)
-        self.assertEqual(self.chip['PULSE_GEN'].get_repeat(), 1)
+        self.chip['PULSE_GEN'].set_DELAY(0x105)
+        self.chip['PULSE_GEN'].set_WIDTH(10)
+        self.chip['PULSE_GEN'].set_REPEAT(1)
+        self.assertEqual(self.chip['PULSE_GEN'].get_DELAY(), 0x105)
+        self.assertEqual(self.chip['PULSE_GEN'].get_WIDTH(), 10)
+        self.assertEqual(self.chip['PULSE_GEN'].get_REPEAT(), 1)
 
         self.chip['PULSE_GEN'].start()
-        while(not self.chip['PULSE_GEN'].is_done()):
+        while(not self.chip['PULSE_GEN'].is_ready()):
             pass
         
         ## get data from FIFO

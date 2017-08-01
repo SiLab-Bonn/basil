@@ -80,7 +80,7 @@ class TestSimTlu(unittest.TestCase):
             self.chip['SEQ']['TDC_IN'][0:length] = True
             self.chip['SEQ'].write(length)
             self.chip['SEQ'].START
-            while(not self.chip['SEQ'].is_done()):
+            while(not self.chip['SEQ'].is_ready()):
                 pass
             self.assertEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 1)
 
@@ -97,7 +97,7 @@ class TestSimTlu(unittest.TestCase):
             self.chip['SEQ']['TDC_IN'][0:length] = True
             self.chip['SEQ'].write(length)
             self.chip['SEQ'].START
-            while(not self.chip['SEQ_GEN'].is_done()):
+            while(not self.chip['SEQ_GEN'].is_ready()):
                 pass
             self.assertEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 1)
 

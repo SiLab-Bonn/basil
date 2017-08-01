@@ -23,7 +23,7 @@ tick_old = 0
 start_time = time.time()
 
 while time.time() - start_time < testduration:
-    data = chip['SRAM'].get_data()
+    data = chip['FIFO'].get_data()
     total_len += len(data)*4*8
     time.sleep(0.01)
     tick = int(time.time() - start_time)

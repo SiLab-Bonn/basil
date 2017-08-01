@@ -64,19 +64,19 @@ class TestSimAdcRx(unittest.TestCase):
         pattern = [1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7]
         self.chip['SEQ_GEN'].set_data(pattern)
 
-        self.chip['PULSE_GEN'].set_delay(1)
-        self.chip['PULSE_GEN'].set_width(1)
+        self.chip['PULSE_GEN'].set_DELAY(1)
+        self.chip['PULSE_GEN'].set_WIDTH(1)
 
         self.chip['SEQ_GEN'].set_en_ext_start(True)
-        self.chip['SEQ_GEN'].set_size(8)
-        self.chip['SEQ_GEN'].set_repeat(1)
+        self.chip['SEQ_GEN'].set_SIZE(8)
+        self.chip['SEQ_GEN'].set_REPEAT(1)
 
         # this is to have something in memory and not X
         self.chip['PULSE_GEN'].start()
-        self.chip['SEQ_GEN'].is_done()
-        self.chip['SEQ_GEN'].is_done()
+        self.chip['SEQ_GEN'].is_ready()
+        self.chip['SEQ_GEN'].is_ready()
 
-        while(not self.chip['SEQ_GEN'].is_done()):
+        while(not self.chip['SEQ_GEN'].is_ready()):
             pass
 
         # take some data
@@ -86,10 +86,10 @@ class TestSimAdcRx(unittest.TestCase):
         self.chip['FADC'].start()
 
         self.chip['PULSE_GEN'].start()
-        self.chip['SEQ_GEN'].is_done()
-        self.chip['SEQ_GEN'].is_done()
+        self.chip['SEQ_GEN'].is_ready()
+        self.chip['SEQ_GEN'].is_ready()
 
-        while(not self.chip['FADC'].is_done()):
+        while(not self.chip['FADC'].is_ready()):
             pass
 
         ret = self.chip['FIFO'].get_data()
@@ -101,17 +101,17 @@ class TestSimAdcRx(unittest.TestCase):
         self.chip['FADC'].start()
 
         self.chip['PULSE_GEN'].start()
-        self.chip['SEQ_GEN'].is_done()
+        self.chip['SEQ_GEN'].is_ready()
 
-        while(not self.chip['FADC'].is_done()):
+        while(not self.chip['FADC'].is_ready()):
             pass
 
         self.chip['FADC'].start()
 
         self.chip['PULSE_GEN'].start()
-        self.chip['SEQ_GEN'].is_done()
+        self.chip['SEQ_GEN'].is_ready()
 
-        while(not self.chip['FADC'].is_done()):
+        while(not self.chip['FADC'].is_ready()):
             pass
 
         ret = self.chip['FIFO'].get_data()
@@ -122,7 +122,7 @@ class TestSimAdcRx(unittest.TestCase):
         self.chip['FADC'].start()
         self.chip['FADC'].start()
 
-        while(not self.chip['FADC'].is_done()):
+        while(not self.chip['FADC'].is_ready()):
             pass
 
         ret = self.chip['FIFO'].get_data()

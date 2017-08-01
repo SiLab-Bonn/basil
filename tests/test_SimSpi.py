@@ -84,7 +84,7 @@ class TestSimSpi(unittest.TestCase):
         self.assertEqual(ret.tolist(), range(16))
 
         self.chip['SPI'].start()
-        while(not self.chip['SPI'].is_done()):
+        while(not self.chip['SPI'].is_ready()):
             pass
 
         ret = self.chip['SPI'].get_data()  # read back what was received (looped)
@@ -94,15 +94,15 @@ class TestSimSpi(unittest.TestCase):
         self.chip['SPI'].set_en(1)
         self.assertEqual(self.chip['SPI'].get_en(), 1)
 
-        self.chip['PULSE_GEN'].set_delay(1)
-        self.chip['PULSE_GEN'].set_width(1 + size)
-        self.chip['PULSE_GEN'].set_repeat(1)
-        self.assertEqual(self.chip['PULSE_GEN'].get_delay(), 1)
-        self.assertEqual(self.chip['PULSE_GEN'].get_width(), 1 + size)
-        self.assertEqual(self.chip['PULSE_GEN'].get_repeat(), 1)
+        self.chip['PULSE_GEN'].set_DELAY(1)
+        self.chip['PULSE_GEN'].set_WIDTH(1 + size)
+        self.chip['PULSE_GEN'].set_REPEAT(1)
+        self.assertEqual(self.chip['PULSE_GEN'].get_DELAY(), 1)
+        self.assertEqual(self.chip['PULSE_GEN'].get_WIDTH(), 1 + size)
+        self.assertEqual(self.chip['PULSE_GEN'].get_REPEAT(), 1)
 
         self.chip['PULSE_GEN'].start()
-        while(not self.chip['PULSE_GEN'].is_done()):
+        while(not self.chip['PULSE_GEN'].is_ready()):
             pass
 
         ret = self.chip['SPI'].get_data()  # read back what was received (looped)
@@ -117,7 +117,7 @@ class TestSimSpi(unittest.TestCase):
         self.assertEqual(ret, True)
 
         self.chip['SPI'].start()
-        while(not self.chip['SPI'].is_done()):
+        while(not self.chip['SPI'].is_ready()):
             pass
 
         ret = self.chip['FIFO'].get_FIFO_SIZE()
