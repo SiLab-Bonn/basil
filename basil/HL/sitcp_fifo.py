@@ -6,7 +6,6 @@
 #
 
 import logging
-from time import sleep
 
 import numpy as np
 
@@ -15,16 +14,19 @@ from basil.HL.HardwareLayer import HardwareLayer
 
 class sitcp_fifo(HardwareLayer):
     ''' SiTCP driver that mimics the RegisterHardwareLayer BRAM and SRAM FIFO interfaces.
+
+    No firmware module is available for this driver.
+    This is just a driver that replaces BRAM and SRAM FIFO when the SiTCP transfer layer is used.
     '''
     _version = 0
 
     def __getitem__(self, name):
         if name == "RESET":
-            self._intf.reset_fifo()
+            self._intf.reset_fifo()  # returns None
         elif name == 'VERSION':
-            return array('B', struct.pack('I', _version))
+            return self._version
         elif name == 'FIFO_SIZE':
-            return array('B', struct.pack('I', self._intf._get_tcp_data_size()))
+            return self._intf._get_tcp_data_size()
         else:
             super(sitcp_fifo, self).__getitem__(name)
 
