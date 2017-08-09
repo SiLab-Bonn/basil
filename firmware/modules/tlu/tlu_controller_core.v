@@ -20,7 +20,8 @@ module tlu_controller_core
     parameter                   ABUSWIDTH = 16,
     parameter                   DIVISOR = 8, // dividing TRIGGER_CLK by DIVISOR for TLU_CLOCK
     parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 17, // bit length of trigger data always TLU_TRIGGER_MAX_CLOCK_CYCLES - 1
-    parameter                   WIDTH = 8
+    parameter                   WIDTH = 8,    
+    parameter                   TIMESTAMP_N_OF_BIT = 32	 
 )
 (
     input wire                  BUS_CLK,
@@ -51,10 +52,10 @@ module tlu_controller_core
     output wire                 TLU_BUSY,
     output wire                 TLU_CLOCK,
 
-    output wire     [31:0]      TIMESTAMP
+    output wire [TIMESTAMP_N_OF_BIT-1:0] TIMESTAMP
 );
 
-localparam VERSION = 9;
+localparam VERSION = 10;
 
 // Registers
 wire SOFT_RST; // Address: 0
@@ -671,7 +672,8 @@ end
 wire [31:0] TRIGGER_DATA;
 tlu_controller_fsm #(
     .DIVISOR(DIVISOR),
-    .TLU_TRIGGER_MAX_CLOCK_CYCLES(TLU_TRIGGER_MAX_CLOCK_CYCLES)
+    .TLU_TRIGGER_MAX_CLOCK_CYCLES(TLU_TRIGGER_MAX_CLOCK_CYCLES),
+    .TIMESTAMP_N_OF_BIT(TIMESTAMP_N_OF_BIT)
 ) tlu_controller_fsm_inst (
     .RESET(RST_SYNC),
     .TRIGGER_CLK(TRIGGER_CLK),

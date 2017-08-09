@@ -14,7 +14,8 @@ module tlu_controller
     parameter       ABUSWIDTH = 16,
     parameter       DIVISOR = 8,
     parameter       WIDTH = 8,
-    parameter       TLU_TRIGGER_MAX_CLOCK_CYCLES = 17
+    parameter       TLU_TRIGGER_MAX_CLOCK_CYCLES = 17,
+    parameter       TIMESTAMP_N_OF_BIT = 32
 )
 (
     input wire                  BUS_CLK,
@@ -74,7 +75,8 @@ tlu_controller_core #(
     .DIVISOR(DIVISOR),
     .ABUSWIDTH(ABUSWIDTH),
     .TLU_TRIGGER_MAX_CLOCK_CYCLES(TLU_TRIGGER_MAX_CLOCK_CYCLES),
-    .WIDTH(WIDTH)
+    .WIDTH(WIDTH),
+    .TIMESTAMP_N_OF_BIT(TIMESTAMP_N_OF_BIT)
 ) i_tlu_controller_core (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),

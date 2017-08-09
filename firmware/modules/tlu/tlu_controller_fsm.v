@@ -10,7 +10,8 @@
 module tlu_controller_fsm
 #(
     parameter                   DIVISOR = 8,
-    parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 17
+    parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 17,
+    parameter                   TIMESTAMP_N_OF_BIT = 32
 ) (
     input wire                  RESET,
     input wire                  TRIGGER_CLK,
@@ -21,7 +22,7 @@ module tlu_controller_fsm
     output reg                  FIFO_PREEMPT_REQ,
     input wire                  FIFO_ACKNOWLEDGE,
 
-    output reg [31:0]           TIMESTAMP,
+    output reg [TIMESTAMP_N_OF_BIT-1:0] TIMESTAMP,
     output reg [31:0]           TIMESTAMP_DATA,
     output reg [31:0]           TLU_TRIGGER_NUMBER_DATA,
 
@@ -295,7 +296,7 @@ begin
             IDLE:
             begin
                 if (TRIGGER_FLAG)
-                    TIMESTAMP_DATA <= TIMESTAMP;
+                    TIMESTAMP_DATA <= TIMESTAMP[31:0];
                 if (TRIGGER_ENABLE == 1'b1
                     && TRIGGER == 1'b1
                     && (((TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11) && (counter_trigger_high != 0 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0))
@@ -533,7 +534,7 @@ end
 always @ (posedge TRIGGER_CLK)
 begin
     if (RESET | TLU_RESET_FLAG)
-        TIMESTAMP <= 32'b0;
+        TIMESTAMP <= {(TIMESTAMP_N_OF_BIT){1'b0}};
     else
         TIMESTAMP <= TIMESTAMP + 1;
 end
