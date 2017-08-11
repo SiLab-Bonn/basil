@@ -44,11 +44,14 @@ class SiTcp(SiTransferLayer):
         self._tcp_read_buff = None
 
     def reset(self):
-        self.reset_fifo()
+        self._tcp_read_buff = array('B')
 
     def reset_fifo(self):
         with self._tcp_lock:
-            self._tcp_read_buff = array('B')
+            fifo_size = self._get_tcp_data_size()
+            fifo_int_size = (fifo_size - (fifo_size % 4)) / 4
+            del_size = fifo_int_size * 4
+            self._tcp_read_buff = self._tcp_read_buff[del_size:]
 
     def init(self):
         super(SiTcp, self).init()
