@@ -45,7 +45,7 @@ PLLE2_BASE #(
 
     .CLKOUT4_DIVIDE(8),     // Divide amount for CLKOUT0 (1-128)
     .CLKOUT4_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
-    .CLKOUT4_PHASE(-5.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
+    .CLKOUT4_PHASE(-5.625),      // Phase offset for CLKOUT0 (-360.000-360.000).
     //-65 -> 0?; - 45 -> 39;  -25 -> 100; -5 -> 0;
 
     .DIVCLK_DIVIDE(1),        // Master division value, (1-56)
