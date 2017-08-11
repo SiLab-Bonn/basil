@@ -154,6 +154,7 @@
         </FileInfo>
       </File>
       <Config>
+        <Option Name="TargetConstrsFile" Val="$PPRDIR/../src/mmc3.xdc"/>
         <Option Name="ConstrsType" Val="XDC"/>
       </Config>
     </FileSet>
@@ -212,9 +213,13 @@
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2014"/>
         <Step Id="init_design"/>
-        <Step Id="opt_design"/>
+        <Step Id="opt_design">
+          <Option Id="Directive">4</Option>
+        </Step>
         <Step Id="power_opt_design"/>
-        <Step Id="place_design"/>
+        <Step Id="place_design">
+          <Option Id="Directive">15</Option>
+        </Step>
         <Step Id="post_place_power_opt_design"/>
         <Step Id="phys_opt_design"/>
         <Step Id="route_design"/>
