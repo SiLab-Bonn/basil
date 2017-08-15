@@ -103,7 +103,7 @@ class SiTcp(SiTransferLayer):
         # the buffer may contain random (?) data words after setting
         # up of the TCP socket and stating of the readout thread
         elif addr == self.BASE_FAKE_FIFO_TCP:
-            self._tcp_read_buff = array('B')
+            self.reset_fifo()
         else:
             logging.warning("SiTcp:write - Invalid address %s" % hex(addr))
 
