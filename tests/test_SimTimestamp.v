@@ -129,7 +129,7 @@ module tb (
         
         .CLK(SPI_CLK),
         .DI(PULSE),
-        .TIMESTAMP(TIMESTAMP),
+        .TIMESTAMP_OUT(TIMESTAMP),
         
         .FIFO_READ(FIFO_READ),
         .FIFO_EMPTY(FIFO_EMPTY),
