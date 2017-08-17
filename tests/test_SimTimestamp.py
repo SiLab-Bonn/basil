@@ -75,6 +75,7 @@ class TestSimTimestamp(unittest.TestCase):
 
     def test_io(self):
         self.chip['timestamp'].reset()
+        self.chip['timestamp']["ENABLE"]=1
         self.chip['GPIO'].reset()
 
         self.chip['FIFO'].reset()
