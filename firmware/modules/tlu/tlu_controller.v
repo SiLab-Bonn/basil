@@ -4,6 +4,7 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -24,27 +25,29 @@ module tlu_controller
     inout wire      [7:0]       BUS_DATA,
     input wire                  BUS_RD,
     input wire                  BUS_WR,
-    
+
     input wire                  TRIGGER_CLK, // clock of the TLU FSM, usually connect clock of command sequencer here
-    
+
     input wire                  FIFO_READ,
     output wire                 FIFO_EMPTY,
     output wire     [31:0]      FIFO_DATA,
-    
+
     output wire                 FIFO_PREEMPT_REQ,
-    
+
     input wire  [WIDTH-1:0]     TRIGGER,
     input wire  [WIDTH-1:0]     TRIGGER_VETO,
-    
+
     input wire                  EXT_TRIGGER_ENABLE,
     input wire                  TRIGGER_ACKNOWLEDGE,
     output wire                 TRIGGER_ACCEPTED_FLAG,
-    
+
+    output wire                 TRIGGER_ENABLED,
+    output wire                 TLU_ENABLED,
     input wire                  TLU_TRIGGER,
     input wire                  TLU_RESET,
     output wire                 TLU_BUSY,
     output wire                 TLU_CLOCK,
-    
+
     output wire     [31:0]      TIMESTAMP
 );
 
@@ -100,7 +103,9 @@ tlu_controller_core #(
     .EXT_TRIGGER_ENABLE(EXT_TRIGGER_ENABLE),
     .TRIGGER_ACKNOWLEDGE(TRIGGER_ACKNOWLEDGE),
     .TRIGGER_ACCEPTED_FLAG(TRIGGER_ACCEPTED_FLAG),
-    
+
+    .TRIGGER_ENABLED(TRIGGER_ENABLED),
+    .TLU_ENABLED(TLU_ENABLED),
     .TLU_TRIGGER(TLU_TRIGGER),
     .TLU_RESET(TLU_RESET),
     .TLU_BUSY(TLU_BUSY),

@@ -4,6 +4,7 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -47,6 +48,8 @@ module tlu_controller_core
     input wire                  TRIGGER_ACKNOWLEDGE, // acknowledge signal/flag
     output wire                 TRIGGER_ACCEPTED_FLAG, // trigger start flag
 
+    output wire                 TRIGGER_ENABLED,
+    output wire                 TLU_ENABLED,
     input wire                  TLU_TRIGGER, // TLU
     input wire                  TLU_RESET,
     output wire                 TLU_BUSY,
@@ -458,7 +461,7 @@ begin
 end
 
 wire TRIGGER_FSM;
-assign TRIGGER_FSM = (TRIGGER_MODE != 2'b00) ? TLU_TRIGGER_SYNC : TRIGGER_OR_SYNC; // RJ45 inputs tied to 1 if no connector is plugged in
+assign TRIGGER_FSM = (TRIGGER_MODE_SYNC != 2'b00) ? TLU_TRIGGER_SYNC : TRIGGER_OR_SYNC; // RJ45 inputs tied to 1 if no connector is plugged in
 
 // Reset flag
 reg TLU_RESET_SYNC_FF;
@@ -614,6 +617,8 @@ begin
     else
         TRIGGER_ENABLE_FSM <= 1'b0;
 end
+assign TRIGGER_ENABLED = TRIGGER_ENABLE_FSM;
+assign TLU_ENABLED = (TRIGGER_ENABLE_FSM && TRIGGER_MODE_SYNC != 2'b00);
 
 always @ (posedge BUS_CLK)
 begin
