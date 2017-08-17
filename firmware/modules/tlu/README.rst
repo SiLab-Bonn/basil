@@ -18,10 +18,10 @@ NOTE:
 10. TLU_TRIGGER_MAX_CLOCK_CYCLES should always be one more clock cycle than the bit lenght of the trigger data to return the trigger line to logical low.
 
 TRIGGER_MODE[1:0]:
- 1. 0 = normal trigger mode
- 2. 1 = TLU no handshake
- 3. 2 = TLU simple handshake
- 4. 3 = TLU trigger data handshake
+ 1. 0 = normal trigger mode (receiving triggers from input TRIGGER)
+ 2. 1 = EUDAQ TLU - no handshake
+ 3. 2 = EUDAQ TLU - simple handshake
+ 4. 3 = EUDAQ TLU - trigger data handshake
 
 DATA_FORMAT[1:0]:
  1. 0 = trigger number according to TRIGGER_MODE
@@ -29,8 +29,8 @@ DATA_FORMAT[1:0]:
  3. 2 = combined, 15bit time stamp + 16bit trigger number
  4. 3 = n/a
 
-**Unit test/Example:** 
-`test_SimTlu.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTlu.v>`_ 
+**Unit test/Example:**
+`test_SimTlu.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTlu.v>`_
 `test_SimTlu.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTlu.py>`_
 
 Parameters
@@ -61,6 +61,10 @@ Pins
     | TRIGGER_ACCEPTED_FLAG    | 1                   |  output               | flag for trigger is valid and was accepted           |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
     | FIFO_PREEMPT_REQ         | 1                   |  output               | fast signal that put arbiter on hold                 |
+    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
+    | TRIGGER_ENABLED          | 1                   |  output (sync)        | assert signal when trigger FSM is enabled and running|
+    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
+    | TLU_ENABLED              | 1                   |  output (sync)        | assert signal when trigger mode is != 0 (EUDAQ TLU)  |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
     | TLU_TRIGGER              | 1                   |  input (async)        | TLU trigger input                                    |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
