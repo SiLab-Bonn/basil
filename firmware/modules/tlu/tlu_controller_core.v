@@ -21,8 +21,8 @@ module tlu_controller_core
     parameter                   ABUSWIDTH = 16,
     parameter                   DIVISOR = 8, // dividing TRIGGER_CLK by DIVISOR for TLU_CLOCK
     parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 17, // bit length of trigger data always TLU_TRIGGER_MAX_CLOCK_CYCLES - 1
-    parameter                   WIDTH = 8,    
-    parameter                   TIMESTAMP_N_OF_BIT = 32	 
+    parameter                   WIDTH = 8,
+    parameter                   TIMESTAMP_N_OF_BIT = 32
 )
 (
     input wire                  BUS_CLK,
@@ -41,6 +41,11 @@ module tlu_controller_core
 
     output reg                  FIFO_PREEMPT_REQ, // FIFO hold request
 
+
+    output wire                 TRIGGER_ENABLED,
+    output wire [WIDTH-1:0]     TRIGGER_SELECTED,
+    output wire                 TLU_ENABLED,
+
     input wire [WIDTH-1:0]      TRIGGER, // trigger input
     input wire [WIDTH-1:0]      TRIGGER_VETO, // veto input
 
@@ -48,8 +53,6 @@ module tlu_controller_core
     input wire                  TRIGGER_ACKNOWLEDGE, // acknowledge signal/flag
     output wire                 TRIGGER_ACCEPTED_FLAG, // trigger start flag
 
-    output wire                 TRIGGER_ENABLED,
-    output wire                 TLU_ENABLED,
     input wire                  TLU_TRIGGER, // TLU
     input wire                  TLU_RESET,
     output wire                 TLU_BUSY,
@@ -256,6 +259,8 @@ end
 //assign some_value = {status_regs[x:y]}; // multiple regs
 //assign some_value = {status_regs[x][y]}; // single bit
 //assign some_value = {status_regs[x][y:z]}; // multiple bits
+
+assign TRIGGER_SELECTED = TRIGGER_SELECT[WIDTH-1:0];
 
 // register sync
 wire [1:0] TRIGGER_MODE_SYNC;
@@ -612,7 +617,7 @@ always @ (posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         TRIGGER_ENABLE_FSM <= 1'b0;
-    else if ((EXT_TRIGGER_ENABLE == 1'b1 || CONF_TRIGGER_ENABLE_SYNC == 1'b1) && !TRIGGER_LIMIT_REACHED_SYNC)
+    else if ((CONF_TRIGGER_ENABLE_SYNC == 1'b1) && !TRIGGER_LIMIT_REACHED_SYNC)
         TRIGGER_ENABLE_FSM <= 1'b1;
     else
         TRIGGER_ENABLE_FSM <= 1'b0;

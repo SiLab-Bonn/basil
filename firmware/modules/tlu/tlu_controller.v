@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -11,7 +11,7 @@
 module tlu_controller
 #(
     parameter       BASEADDR = 16'h0000,
-    parameter       HIGHADDR = 16'h0000, 
+    parameter       HIGHADDR = 16'h0000,
     parameter       ABUSWIDTH = 16,
     parameter       DIVISOR = 8,
     parameter       WIDTH = 8,
@@ -34,6 +34,10 @@ module tlu_controller
 
     output wire                 FIFO_PREEMPT_REQ,
 
+    output wire                 TRIGGER_ENABLED,
+    output wire [WIDTH-1:0]     TRIGGER_SELECTED,
+    output wire                 TLU_ENABLED,
+
     input wire  [WIDTH-1:0]     TRIGGER,
     input wire  [WIDTH-1:0]     TRIGGER_VETO,
 
@@ -41,8 +45,6 @@ module tlu_controller
     input wire                  TRIGGER_ACKNOWLEDGE,
     output wire                 TRIGGER_ACCEPTED_FLAG,
 
-    output wire                 TRIGGER_ENABLED,
-    output wire                 TLU_ENABLED,
     input wire                  TLU_TRIGGER,
     input wire                  TLU_RESET,
     output wire                 TLU_BUSY,
@@ -99,6 +101,7 @@ tlu_controller_core #(
 
     .TRIGGER(TRIGGER),
     .TRIGGER_VETO(TRIGGER_VETO),
+    .TRIGGER_SELECTED(TRIGGER_SELECTED),
 
     .EXT_TRIGGER_ENABLE(EXT_TRIGGER_ENABLE),
     .TRIGGER_ACKNOWLEDGE(TRIGGER_ACKNOWLEDGE),

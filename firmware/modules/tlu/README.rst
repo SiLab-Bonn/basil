@@ -6,16 +6,14 @@
 General purpose trigger module and EUDAQ Telescope/TLU communication module. Trigger IDs received by the TLU are propagated to FIFO data interface.
 
 NOTE:
- 1. EXT_TRIGGER_ENABLE input or TRIGGER_ENABLE register have to be asserted to enable trigger FSM.
- 2. If no TRIGGER_ACKNOWLEDGE signal is available, connect TRIGGER_ACCEPTED_FLAG output to TRIGGER_ACKNOWLEDGE input.
- 3. TRIGGER_ENABLE and TRIGGER_ACKNOWLEDGE input signals needs to be synchronous to TRIGGER_CLOCK.
- 4. EXT_TRIGGER_ENABLE input and TRIGGER_ENABLE register are ORed. To start trigger FSM, assert TRIGGER_ENABLE input or set TRIGGER_ENABLE register to 1.
- 5. Data words have the MSB always high to allow identification of data words. The remaining 31 bits are data.
- 6. All selected trigger inputs (TRIGGER) are ORed
- 7. All selected trigger veto inputs (TRIGGER_VETO) are ORed (all veto inputs are enabled by default!)
- 8. If TRIGGER_LOW_TIMEOUT_ERROR_COUNTER in TLU handshake mode is not 0, the busy signal might be broken.
- 9. If TLU_TRIGGER_ACCEPT_ERROR_COUNTER in TLU handshake mode is not 0, the TLU might be not configured properly (must be in handshake mode) or short pulses are appearing on the trigger line. Possible solution is to increase TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES.
-10. TLU_TRIGGER_MAX_CLOCK_CYCLES should always be one more clock cycle than the bit lenght of the trigger data to return the trigger line to logical low.
+ 1. TRIGGER_ENABLE register has to be set to true to enable trigger FSM.
+ 2. TRIGGER_ENABLE and TRIGGER_ACKNOWLEDGE input signals needs to be synchronous to TRIGGER_CLOCK.
+ 3. Data words have the MSB always high to allow identification of trigger data words. The remaining 31 bits are data.
+ 4. All selected trigger inputs are ORed. Trigger inputs are connected to TRIGGER input. Trgger inputs are selected by applying a bit mask to TRIGGER_SELECT.
+ 5. All selected veto inputs are ORed. Veto inputs are connected to TRIGGER_VETO input. Veto inputs are selected by applying a bit mask to TRIGGER_VETO_SELECT.
+ 6. If TRIGGER_LOW_TIMEOUT_ERROR_COUNTER in TLU handshake mode is not 0, the busy signal might be broken.
+ 7. If TLU_TRIGGER_ACCEPT_ERROR_COUNTER in TLU handshake mode is not 0, the TLU might be not configured properly (must be in handshake mode) or short pulses are appearing on the trigger line. Possible solution is to increase TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES.
+ 8. TLU_TRIGGER_MAX_CLOCK_CYCLES should always be one more clock cycle than the bit lenght of the trigger data to return the trigger line to logical low.
 
 TRIGGER_MODE[1:0]:
  1. 0 = normal trigger mode (receiving triggers from input TRIGGER)
@@ -41,7 +39,7 @@ Parameters
     +------------------------------+---------------------+--------------------------------------------------------------------------+
     | TLU_TRIGGER_MAX_CLOCK_CYCLES | 17                  | Number of clock cycles send to the TLU. Bit lenght of trigger data is -1.|
     +------------------------------+---------------------+--------------------------------------------------------------------------+
-    | WIDTH                        | 8                   | Bus width of the trigger input and trigger veto input.                   |
+    | WIDTH                        | 8 (max. 32)         | Bus width of the trigger input and trigger veto input.                   |
     +------------------------------+---------------------+--------------------------------------------------------------------------+
 
 Pins
@@ -50,21 +48,23 @@ Pins
     +==========================+=====================+=======================+======================================================+
     | TRIGGER_CLK              | 1                   |  input                | clock for module                                     |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
-    | TRIGGER                  | 8 (default), max. 32|  input (async)        | extenel trigger (see also WIDTH parameter)           |
-    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
-    | TRIGGER_VETO             | 8 (default), max. 32|  input (async)        | external veto (see also WIDTH parameter)             |
-    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
-    | EXT_TRIGGER_ENABLE       | 1                   |  input (sync)         | enable trigger FSM, ORed with TRIGGER_ENABLE register|
-    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
-    | TRIGGER_ACKNOWLEDGE      | 1                   |  input (sync)         | signal from external devices/modules if ready        |
-    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
-    | TRIGGER_ACCEPTED_FLAG    | 1                   |  output               | flag for trigger is valid and was accepted           |
-    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
-    | FIFO_PREEMPT_REQ         | 1                   |  output               | fast signal that put arbiter on hold                 |
-    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
     | TRIGGER_ENABLED          | 1                   |  output (sync)        | assert signal when trigger FSM is enabled and running|
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
+    | TRIGGER_SELECTED         | WIDTH (max. 32)     |  output (sync)        | selected trigger inputs                              |
+    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
     | TLU_ENABLED              | 1                   |  output (sync)        | assert signal when trigger mode is != 0 (EUDAQ TLU)  |
+    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
+    | TRIGGER                  | WIDTH (max. 32)     |  input (async)        | extenel trigger (see also WIDTH parameter)           |
+    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
+    | TRIGGER_VETO             | WIDTH (max. 32)     |  input (async)        | external veto (see also WIDTH parameter)             |
+    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
+    | EXT_TRIGGER_ENABLE       | 1                   |  input (sync)         | enables sync with other external devices/modules     |
+    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
+    | TRIGGER_ACKNOWLEDGE      | 1                   |  input (sync)         | signal/flag from external devices/modules if ready   |
+    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
+    | TRIGGER_ACCEPTED_FLAG    | 1                   |  output               | flag if trigger is valid and was accepted            |
+    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
+    | FIFO_PREEMPT_REQ         | 1                   |  output               | fast signal that put arbiter on hold                 |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
     | TLU_TRIGGER              | 1                   |  input (async)        | TLU trigger input                                    |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
@@ -89,7 +89,7 @@ Registers
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
     | TRIGGER_DATA_MSB_FIRST                 | 1                                | [2]    | r/w   | 0           | TLU trigger number MSB                                |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
-    | TRIGGER_ENABLE                         | 1                                | [3]    | r/w   | 0           | enable trigger FSM, ORed with TRIGGER_ENABLE input    |
+    | TRIGGER_ENABLE                         | 1                                | [3]    | r/w   | 0           | enable trigger FSM                                    |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
     | TRIGGER_DATA_DELAY                     | 1                                | [7:4]  | r/w   | 0           | additional TLU data delay for longer cables           |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
