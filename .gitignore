@@ -58,3 +58,7 @@ examples/mio3_eth_gpac/firmware/src/SiTCP
 
 examples/mmc3_eth_sim/vivado/*
 !examples/mmc3_eth_sim/vivado/*.xpr
+
+examples/mmc3_eth_sim_bram/vivado/*
+examples/mmc3_eth_sim_bram/sim_build/*
+!examples/mmc3_eth_sim_bram/vivado/*.xpr
