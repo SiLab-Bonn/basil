@@ -77,3 +77,6 @@ set_property SLEW SLOW [get_ports LED*]
 
 
 create_generated_clock -name rgmii_txc -source [get_pins rgmii/ODDR_inst/C] -divide_by 1 [get_ports rgmii_txc]
+
+
+set_false_path -from [get_clocks rgmii_rxc] -to [get_clocks -of_objects [get_pins PLLE2_BASE_inst/CLKOUT2]]

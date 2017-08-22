@@ -67,7 +67,7 @@ class si570(HardwareLayer):
 
 	def __init__(self):
 		self.chip = Dut(mmc3_i2c)
-    	self.chip.init()         	
+    		self.chip.init()         	
 		
 	def frequency_change(self, f0):
 		change_freq = 1
