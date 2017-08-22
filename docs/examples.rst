@@ -82,7 +82,7 @@ Write control program.
     dut['CNT'].write()
     dut['CNT'].start()
 
-    while not dut['CNT'].is_done():
+    while not dut['CNT'].is_ready():
         pass
 
 Result of simulation:

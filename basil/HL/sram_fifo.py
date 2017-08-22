@@ -23,7 +23,7 @@ class sram_fifo(RegisterHardwareLayer):
                   'ALMOST_EMPTY_THRESHOLD': {'descr': {'addr': 2, 'size': 8}},
                   'READ_ERROR_COUNTER': {'descr': {'addr': 3, 'size': 8, 'properties': ['ro']}},
                   'FIFO_SIZE': {'descr': {'addr': 4, 'size': 32, 'properties': ['ro']}}}
-    _require_version = "==2"  # make sure to keep BRAM FIFO and SRAM FIFO synchronized
+    _require_version = "==2"
 
     def __init__(self, intf, conf):
         super(sram_fifo, self).__init__(intf, conf)
@@ -39,20 +39,19 @@ class sram_fifo(RegisterHardwareLayer):
         self.ALMOST_EMPTY_THRESHOLD = value  # no get function possible
 
     def get_fifo_size(self):
-        '''
-        Get FIFO size in units of bytes (8 bit).
+        ''' *Deprecated* Get FIFO size in units of bytes (8 bit).
 
         Returns
         -------
         fifo_size : int
             FIFO size in units of bytes (8 bit).
         '''
+        logging.warning("Deprecated: Use get_FIFO_SIZE()")
         return self.FIFO_SIZE
 
     @property
     def FIFO_INT_SIZE(self):
-        '''
-        Get FIFO size in units of integers (32 bit).
+        ''' Get FIFO size in units of integers (32 bit).
 
         Returns
         -------
@@ -64,8 +63,18 @@ class sram_fifo(RegisterHardwareLayer):
         return (fifo_size - (fifo_size % 4)) / 4
 
     def get_fifo_int_size(self):
+        ''' *Deprecated* Get FIFO size in units of integers (32 bit).
+
+        Returns
+        -------
+        fifo_size : int
+            FIFO size in units of integers (32 bit).
         '''
-        Get FIFO size in units of integers (32 bit).
+        logging.warning("Deprecated: Use get_FIFO_INT_SIZE()")
+        return self.FIFO_INT_SIZE
+
+    def get_FIFO_INT_SIZE(self):
+        ''' Get FIFO size in units of integers (32 bit).
 
         Returns
         -------
@@ -75,19 +84,18 @@ class sram_fifo(RegisterHardwareLayer):
         return self.FIFO_INT_SIZE
 
     def get_read_error_counter(self):
-        '''
-        Get read error counter.
+        ''' *Deprecated* Get read error counter.
 
         Returns
         -------
         fifo_size : int
             Read error counter (read attempts when SRAM is empty).
         '''
+        logging.warning("Deprecated: Use get_READ_ERROR_COUNTER()")
         return self.READ_ERROR_COUNTER
 
     def get_data(self):
-        '''
-        Reading data in SRAM.
+        ''' Reading data in SRAM.
 
         Returns
         -------
@@ -107,4 +115,7 @@ class sram_fifo(RegisterHardwareLayer):
             return np.array([], dtype=np.dtype('<u4'))
 
     def get_size(self):
+        ''' *Deprecated*
+        '''
+        logging.warning("Deprecated: Use get_FIFO_SIZE()")
         return self.FIFO_SIZE

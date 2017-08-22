@@ -23,13 +23,14 @@ module timestamp
     
     input wire CLK,
     input wire DI,
-    output wire [63:0] TIMESTAMP,
+	 input wire [63:0] EXT_TIMESTAMP,
+    output wire [63:0] TIMESTAMP_OUT,
     input wire EXT_ENABLE,
 
     input wire FIFO_READ,
     output wire FIFO_EMPTY,
     output wire [31:0] FIFO_DATA
-    
+ 
 ); 
 
 wire IP_RD, IP_WR;
@@ -67,7 +68,8 @@ timestamp_core
       
     .CLK(CLK),
     .DI(DI),
-    .TIMESTAMP(TIMESTAMP),
+    .TIMESTAMP_OUT(TIMESTAMP_OUT),
+	 .EXT_TIMESTAMP(EXT_TIMESTAMP),
     .EXT_ENABLE(EXT_ENABLE),
 
     .FIFO_READ(FIFO_READ),

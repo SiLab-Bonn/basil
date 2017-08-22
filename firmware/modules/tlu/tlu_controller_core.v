@@ -4,6 +4,7 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -20,7 +21,8 @@ module tlu_controller_core
     parameter                   ABUSWIDTH = 16,
     parameter                   DIVISOR = 8, // dividing TRIGGER_CLK by DIVISOR for TLU_CLOCK
     parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 17, // bit length of trigger data always TLU_TRIGGER_MAX_CLOCK_CYCLES - 1
-    parameter                   WIDTH = 8
+    parameter                   WIDTH = 8,
+    parameter                   TIMESTAMP_N_OF_BIT = 32
 )
 (
     input wire                  BUS_CLK,
@@ -39,6 +41,11 @@ module tlu_controller_core
 
     output reg                  FIFO_PREEMPT_REQ, // FIFO hold request
 
+
+    output wire                 TRIGGER_ENABLED,
+    output wire [WIDTH-1:0]     TRIGGER_SELECTED,
+    output wire                 TLU_ENABLED,
+
     input wire [WIDTH-1:0]      TRIGGER, // trigger input
     input wire [WIDTH-1:0]      TRIGGER_VETO, // veto input
 
@@ -51,10 +58,10 @@ module tlu_controller_core
     output wire                 TLU_BUSY,
     output wire                 TLU_CLOCK,
 
-    output wire     [31:0]      TIMESTAMP
+    output wire [TIMESTAMP_N_OF_BIT-1:0] TIMESTAMP
 );
 
-localparam VERSION = 9;
+localparam VERSION = 10;
 
 // Registers
 wire SOFT_RST; // Address: 0
@@ -252,6 +259,8 @@ end
 //assign some_value = {status_regs[x:y]}; // multiple regs
 //assign some_value = {status_regs[x][y]}; // single bit
 //assign some_value = {status_regs[x][y:z]}; // multiple bits
+
+assign TRIGGER_SELECTED = TRIGGER_SELECT[WIDTH-1:0];
 
 // register sync
 wire [1:0] TRIGGER_MODE_SYNC;
@@ -457,7 +466,7 @@ begin
 end
 
 wire TRIGGER_FSM;
-assign TRIGGER_FSM = (TRIGGER_MODE != 2'b00) ? TLU_TRIGGER_SYNC : TRIGGER_OR_SYNC; // RJ45 inputs tied to 1 if no connector is plugged in
+assign TRIGGER_FSM = (TRIGGER_MODE_SYNC != 2'b00) ? TLU_TRIGGER_SYNC : TRIGGER_OR_SYNC; // RJ45 inputs tied to 1 if no connector is plugged in
 
 // Reset flag
 reg TLU_RESET_SYNC_FF;
@@ -608,11 +617,13 @@ always @ (posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         TRIGGER_ENABLE_FSM <= 1'b0;
-    else if ((EXT_TRIGGER_ENABLE == 1'b1 || CONF_TRIGGER_ENABLE_SYNC == 1'b1) && !TRIGGER_LIMIT_REACHED_SYNC)
+    else if ((CONF_TRIGGER_ENABLE_SYNC == 1'b1) && !TRIGGER_LIMIT_REACHED_SYNC)
         TRIGGER_ENABLE_FSM <= 1'b1;
     else
         TRIGGER_ENABLE_FSM <= 1'b0;
 end
+assign TRIGGER_ENABLED = TRIGGER_ENABLE_FSM;
+assign TLU_ENABLED = (TRIGGER_ENABLE_FSM && TRIGGER_MODE_SYNC != 2'b00);
 
 always @ (posedge BUS_CLK)
 begin
@@ -671,7 +682,8 @@ end
 wire [31:0] TRIGGER_DATA;
 tlu_controller_fsm #(
     .DIVISOR(DIVISOR),
-    .TLU_TRIGGER_MAX_CLOCK_CYCLES(TLU_TRIGGER_MAX_CLOCK_CYCLES)
+    .TLU_TRIGGER_MAX_CLOCK_CYCLES(TLU_TRIGGER_MAX_CLOCK_CYCLES),
+    .TIMESTAMP_N_OF_BIT(TIMESTAMP_N_OF_BIT)
 ) tlu_controller_fsm_inst (
     .RESET(RST_SYNC),
     .TRIGGER_CLK(TRIGGER_CLK),
