@@ -6,13 +6,12 @@
 #
 
 transfer_layer:
+transfer_layer:
   - name  : INTF
-    type  : SiTcp
+    type  : SiSim
     init:
-        ip : "192.168.10.16"
-        udp_port : 4660
-        tcp_port : 24
-        tcp_connection : True
+        host : localhost
+        port  : 12345
 
 hw_drivers:
   - name      : GPIO_DRV
@@ -22,10 +21,10 @@ hw_drivers:
     size      : 8
 
   - name      : FIFO
-    type      : sitcp_fifo
+    type      : bram_fifo
     interface : INTF
-    base_addr : 0x200000000
-    base_data_addr : 0x100000000
+    base_addr : 0x8000
+    base_data_addr: 0x80000000
 
 registers:
   - name        : GPIO_LED
