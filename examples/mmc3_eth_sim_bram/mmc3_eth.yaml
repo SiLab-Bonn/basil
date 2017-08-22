@@ -20,7 +20,7 @@ hw_drivers:
     base_addr : 0x1000
     size      : 8
 
-  - name      : fifo
+  - name      : FIFO
     type      : bram_fifo
     interface : INTF
     base_addr : 0x8000

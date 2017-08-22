@@ -13,16 +13,13 @@ from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
 
-#chip = Dut("mmc3_eth.yaml")
-#chip.init()
+doprint=True
 
 
-class TestSimAdcRx(unittest.TestCase):
+class TestSimMMC3Eth(unittest.TestCase):
     def setUp(self):
         sys.path = [os.path.dirname(os.getcwd())] + sys.path
-        print sys.path
         proj_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        print proj_dir
 
         cocotb_compile_and_run(
            sim_files = [proj_dir + '/mmc3_eth_sim_bram/mmc3_eth_tb.v'],
@@ -35,7 +32,7 @@ class TestSimAdcRx(unittest.TestCase):
         self.chip.init()
 
 
-    def test(selfself):
+    def test(self):
         testduration = 1
         total_len = 0
         tick = 0
@@ -46,7 +43,7 @@ class TestSimAdcRx(unittest.TestCase):
         self.chip['GPIO_LED'].write()
 
         while time.time() - start_time < testduration:
-            data = chip['FIFO'].get_data()
+            data = self.chip['FIFO'].get_data()
             total_len += len(data)*4*8
             time.sleep(0.01)
             tick = int(time.time() - start_time)
@@ -54,18 +51,18 @@ class TestSimAdcRx(unittest.TestCase):
                 print tick
                 tick_old = tick
 
-        if sys.argv[1]=="-doprint":
+        if doprint==True:
             print data[1:128]
 
         print ('Bytes received:', total_len, '  data rate:', round((total_len/1e6/testduration),2), ' Mbit/s')
 
-        chip['GPIO_LED']['LED'] = 0x00  #stop data source
-        chip['GPIO_LED'].write()
+        self.chip['GPIO_LED']['LED'] = 0x00  #stop data source
+        self.chip['GPIO_LED'].write()
 
 
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
-        cocotb_compile_clean()
+        #cocotb_compile_clean()
 
 
 if __name__ == '__main__':

@@ -28,8 +28,8 @@ module mmc3_eth_core(
     input wire          FIFO_NEXT,
     output wire         FIFO_WRITE,
     output wire [31:0]  FIFO_DATA,
-        
-    output wire [7:0] LED
+
+    output wire [7:0]   GPIO
     );
 
 
@@ -39,7 +39,6 @@ module mmc3_eth_core(
 
 
 /* -------  USER MODULES  ------- */
-    wire [7:0] GPIO_IO;
     gpio #(
         .BASEADDR(GPIO_BASEADDR),
         .HIGHADDR(GPIO_HIGHADDR),
@@ -50,10 +49,10 @@ module mmc3_eth_core(
         .BUS_CLK(BUS_CLK),
         .BUS_RST(BUS_RST),
         .BUS_ADD(BUS_ADD),
-        .BUS_DATA(BUS_DATA),
+        .BUS_DATA(BUS_DATA[7:0]),
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
-        .IO(GPIO_IO)
+        .IO(GPIO)
     );
 
 
@@ -62,7 +61,7 @@ module mmc3_eth_core(
     assign FIFO_WRITE = fifo_write;
     reg [31:0] fifo_data_out;
     assign FIFO_DATA = fifo_data_out;
-    
+
 /* -------  Main FSM  ------- */
     always@ (posedge BUS_CLK)
         begin
