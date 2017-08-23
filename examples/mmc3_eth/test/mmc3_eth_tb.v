@@ -140,7 +140,7 @@ mmc3_eth_core i_mmc3_eth_core(
 
 
 initial begin
-    $dumpfile("mmc3_eth.vcd");
+    $dumpfile("/tmp/mmc3_eth.vcd");
     $dumpvars(0);
 end
 
