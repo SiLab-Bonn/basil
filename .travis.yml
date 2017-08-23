@@ -37,7 +37,7 @@ install:
   - python setup.py develop
 
 script:
-  - nosetests --with-coverage --cover-package=basil tests/test_*.py examples/MIO/tb/test_*.py examples/mio_sram_test/tests/test_*.py examples/mio_pixel/tests/test_*.py
+  - nosetests --with-coverage --cover-package=basil  tests/test_*.py examples/*/*/test_*.py
 
 after_success:
   - coveralls
