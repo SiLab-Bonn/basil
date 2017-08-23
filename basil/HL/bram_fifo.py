@@ -70,7 +70,4 @@ class bram_fifo(RegisterHardwareLayer):
             logging.warning("Reading wrong FIFO size. Expected: %d <= %d" % (fifo_int_size_1, fifo_int_size_2))
         else:
             fifo_int_size = fifo_int_size_1  # use smaller chunk
-        if fifo_int_size:
-            return np.fromstring(self._intf.read(self._conf['base_data_addr'], size=4 * fifo_int_size).tostring(), dtype=np.dtype('<u4'))  # size in number of bytes
-        else:
-            return np.array([], dtype=np.dtype('<u4'))
+        return np.frombuffer(self._intf.read(self._conf['base_data_addr'], size=4 * fifo_int_size), dtype=np.dtype('<u4'))  # size in number of bytes

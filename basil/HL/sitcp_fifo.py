@@ -69,4 +69,4 @@ class sitcp_fifo(HardwareLayer):
         fifo_size = self._intf._get_tcp_data_size()
         fifo_int_size = (fifo_size - (fifo_size % 4)) / 4
         data = self._intf._get_tcp_data(fifo_int_size * 4)
-        return np.fromstring(data.tostring(), dtype=np.dtype('<u4'))
+        return np.frombuffer(data, dtype=np.dtype('<u4'))

@@ -4,7 +4,9 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# A transfer layer for SiTcp Ethernet more: http://sitcp.bbtech.co.jp
+# A transfer layer for SiTCP Ethernet. More information: http://sitcp.bbtech.co.jp
+#
+
 import logging
 
 import socket
@@ -44,7 +46,8 @@ class SiTcp(SiTransferLayer):
         self._tcp_read_buff = None
 
     def reset(self):
-        self._tcp_read_buff = array('B')
+        with self._tcp_lock:
+            self._tcp_read_buff = array('B')
 
     def reset_fifo(self):
         with self._tcp_lock:
@@ -60,7 +63,7 @@ class SiTcp(SiTransferLayer):
         # self._sock_udp.setblocking(0)
         self._sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # start readout thread if TCP connection is set
-        if(self._init['tcp_connection']):
+        if self._init['tcp_connection']:
             self._sock_tcp.connect((self._init['ip'], self._init['tcp_port']))
             self._sock_tcp.setblocking(0)
             self._tcp_readout_thread = Thread(target=self._tcp_readout, name='TcpReadoutThread', kwargs={})
@@ -75,30 +78,34 @@ class SiTcp(SiTransferLayer):
         if not ready[0]:
             raise IOError('SiTcp:_write_single - Timeout')
         ack = self._sock_udp.recv(1024)
-        if(len(ack) < 8):
+        if len(ack) < 8:
             raise IOError('SiTcp:_write_single - Packet is too short')
-        if(array('B', ack)[8:] != data):
+        if array('B', ack)[8:] != data:
+            print data, array('B', ack)[8:]
             raise IOError('SiTcp:_write_single - Data error')
-        if((0x0f & ord(ack[1])) != 0x8):
+        if (0x0f & ord(ack[1])) != 0x8:
             raise IOError('SiTcp:_write_single - Bus error')
-        if(ord(ack[2]) != self.RBCP_ID):
+        if ord(ack[2]) != self.RBCP_ID:
             raise IOError('SiTcp:_write_single - Wrong ID')
 
     def write(self, addr, data):
         if addr < self.BASE_DATA_TCP:
+
+            def chunks(array, max_len):
+                index = 0
+                while index < len(array):
+                    yield array[index: index + max_len]
+                    index += max_len
+
+            buff = array('B', data)
             with self._udp_lock:
-                buff = array('B', data)
-                def chunks(array, max_len):
-                    index = 0
-                    while index < len(array):
-                        yield array[index: index + max_len]
-                        index += max_len
                 new_addr = addr
                 for req in chunks(buff, self.RBCP_MAX_SIZE):
                     self._write_single(new_addr, req)
                     new_addr += len(req)
         elif addr < self.BASE_FAKE_FIFO_TCP:
-            self._sock_tcp.sendall(data)  # chunking?
+            with self._tcp_lock:
+                self._sock_tcp.sendall(data)  # chunking?
         # resetting SiTcp buffer
         # the buffer may contain random (?) data words after setting
         # up of the TCP socket and stating of the readout thread
@@ -114,18 +121,19 @@ class SiTcp(SiTransferLayer):
         if not ready[0]:
             raise IOError('SiTcp:_read_single - Timeout')
         ack = self._sock_udp.recv(4096)
-        if(len(ack) != size + 8):
+        if len(ack) != size + 8:
+            print len(ack), size + 8
             raise IOError('SiTcp:_read_single - Wrong packet size')
-        if((0x0f & ord(ack[1])) != 0x8):
+        if (0x0f & ord(ack[1])) != 0x8:
             raise IOError('SiTcp:_read_single - Bus error')
-        if(ord(ack[2]) != self.RBCP_ID):
+        if ord(ack[2]) != self.RBCP_ID:
             raise IOError('SiTcp:_read_single - Wrong ID')
         return array('B', ack[8:])
 
     def read(self, addr, size):
         if addr < self.BASE_DATA_TCP:
+            ret = array('B')
             with self._udp_lock:
-                ret = array('B')
                 if size > self.RBCP_MAX_SIZE:
                     new_addr = addr
                     next_size = self.RBCP_MAX_SIZE
@@ -145,7 +153,7 @@ class SiTcp(SiTransferLayer):
             del sram_fifo
             return array('B', chr(version))
         else:  # this is to fake a HL fifo. Is there better way? Definitely...
-            if(size == 4):
+            if size == 4:
                 return array('B', struct.pack('I', self._get_tcp_data_size()))
             else:
                 return array('B', '\x00' * size)  # FIXME: workaround for SRAM module registers
@@ -153,8 +161,8 @@ class SiTcp(SiTransferLayer):
 
     def _tcp_readout(self):
         while True:
-            ready = select.select([self._sock_tcp], [], [], 1.0)
-            if(ready[0]):
+            ready = select.select([self._sock_tcp], [], [], 0.1)
+            if ready[0]:
                 with self._tcp_lock:
                     data = self._sock_tcp.recv(1024 * 8 * 64)
                     self._tcp_read_buff.extend(array('B', data))
