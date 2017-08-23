@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *~
 *.swp
+*.py~
 
 # C extensions
 *.so
@@ -52,8 +53,8 @@ firmware/modules/chipscope/*
 
 examples/mmc3_eth/firmware/vivado/*
 !examples/mmc3_eth/firmware/vivado/*.xpr
-examples/mmc3_eth/firmware/src/SiTCP
+examples/mmc3_eth/firmware/src/SiTCP/*
 
 examples/mio3_eth_gpac/firmware/vivado/*
 !examples/mio3_eth_gpac/firmware/vivado/*.xpr
-examples/mio3_eth_gpac/firmware/src/SiTCP
+examples/mio3_eth_gpac/firmware/src/SiTCP/*

@@ -8,12 +8,12 @@
 transfer_layer:
   - name  : INTF
     type  : SiTcp
-    init:      
+    init:
         ip : "192.168.10.16"
         udp_port : 4660
         tcp_port : 24
         tcp_connection : True
-        
+
 hw_drivers:
   - name      : GPIO_DRV
     type      : gpio
