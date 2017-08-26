@@ -54,31 +54,22 @@ module mmc3_eth_core(
         .BUS_WR(BUS_WR),
         .IO(GPIO)
     );
-
+    wire EN;
+    assign EN = GPIO[0];
 
     reg [31:0] datasource;
     reg fifo_write;
-    assign FIFO_WRITE = fifo_write;
+    assign FIFO_WRITE = !fifo_full & EN;
     reg [31:0] fifo_data_out;
     assign FIFO_DATA = fifo_data_out;
 
-/* -------  Main FSM  ------- */
-    always@ (posedge BUS_CLK)
-        begin
-        // FIFO handshake
-        if(FIFO_NEXT) begin
-            if(!fifo_full) begin
-                fifo_data_out <= datasource;
-                datasource <= datasource + 1;
-                fifo_write <= 1'b1;
-                end
-            else
-                fifo_write <= 1'b0;
-        end
-        else begin
-            datasource <= 'd0;
-            fifo_write <= 1'b0;
-        end
-    end
 
+    always@ (posedge BUS_CLK)
+        if(!EN)
+            fifo_data_out <= 0;
+        else if(FIFO_WRITE)
+            fifo_data_out <= fifo_data_out + 1;
+            
+     
+ 
 endmodule
