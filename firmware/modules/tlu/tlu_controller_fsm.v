@@ -533,7 +533,7 @@ end
 // time stamp
 always @ (posedge TRIGGER_CLK)
 begin
-    if (RESET | TLU_RESET_FLAG)
+    if (RESET | (TLU_RESET_FLAG & TRIGGER_MODE != 2'b00))
         TIMESTAMP <= {(TIMESTAMP_N_OF_BIT){1'b0}};
     else
         TIMESTAMP <= TIMESTAMP + 1;
