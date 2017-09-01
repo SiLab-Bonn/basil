@@ -42,6 +42,7 @@ class SiTcp(SiTransferLayer):
         self._sock_tcp = None
         self._udp_lock = Lock()
         self._tcp_lock = Lock()
+        self._tcp_readout_interval = 0.05
         self._tcp_readout_thread = None
         self._tcp_read_buff = None
 
@@ -162,7 +163,7 @@ class SiTcp(SiTransferLayer):
     def _tcp_readout(self):
         while True:
             try:  # TODO: temporary fix
-                ready = select.select([self._sock_tcp], [], [], 0.1)
+                ready = select.select([self._sock_tcp], [], [], self._tcp_readout_interval)
                 if ready[0]:
                     with self._tcp_lock:
                         data = self._sock_tcp.recv(1024 * 8 * 64)
