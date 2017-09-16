@@ -1,0 +1,13 @@
+transfer_layer:
+  - name     : Serial
+    type     : Serial
+    init     :
+        port     : COM10
+        read_termination : "\x03"
+        baudrate : 9600
+        timeout : 0.1
+
+hw_drivers:
+  - name      : MotorStage
+    type      : mercury
+    interface : Serial
