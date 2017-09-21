@@ -50,7 +50,7 @@ module tlu_controller
     output wire                 TLU_BUSY,
     output wire                 TLU_CLOCK,
 
-    output wire     [31:0]      TIMESTAMP
+    output wire     [TIMESTAMP_N_OF_BIT-1:0]      TIMESTAMP
 );
 
 wire IP_RD, IP_WR;
