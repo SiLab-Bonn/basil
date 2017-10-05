@@ -295,7 +295,7 @@ begin
 
             IDLE:
             begin
-                if (TRIGGER_FLAG)
+                if (TRIGGER_FLAG && TRIGGER_THRESHOLD != 0)
                     TIMESTAMP_DATA <= TIMESTAMP[31:0];
                 if (TRIGGER_ENABLE == 1'b1
                     && TRIGGER == 1'b1
@@ -350,8 +350,10 @@ begin
                 FIFO_PREEMPT_REQ <= 1'b1;
                 TRIGGER_DATA_WRITE <= 1'b0;
                 // get timestamp closest to the trigger
+                if (state != next && TRIGGER_THRESHOLD == 0) begin
+                    TIMESTAMP_DATA <= TIMESTAMP[31:0];
+                end
                 if (state != next) begin
-                //    TIMESTAMP_DATA <= TIMESTAMP;
                     TRIGGER_COUNTER_DATA <= TRIGGER_COUNTER;
                 end
                 TLU_BUSY <= 1'b1;
@@ -373,8 +375,10 @@ begin
                 FIFO_PREEMPT_REQ <= 1'b1;
                 TRIGGER_DATA_WRITE <= 1'b0;
                 // get timestamp closest to the trigger
+                if (state != next && TRIGGER_THRESHOLD == 0) begin
+                    TIMESTAMP_DATA <= TIMESTAMP[31:0];
+                end
                 if (state != next) begin
-                //    TIMESTAMP_DATA <= TIMESTAMP;
                     TRIGGER_COUNTER_DATA <= TRIGGER_COUNTER;
                 end
                 TLU_BUSY <= 1'b1;
