@@ -98,7 +98,7 @@ assign RX_ENABLED = CONF_EN_RX;
 
 always @(posedge BUS_CLK) begin
     if(RST)
-        status_regs <= 8'b0000_0100; // enable Rx by default
+        status_regs <= 8'b0000_0000; // disable Rx by default
     else if(BUS_WR && BUS_ADD == 2)
         status_regs <= BUS_DATA_IN;
 end
