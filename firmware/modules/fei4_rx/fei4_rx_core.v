@@ -123,7 +123,7 @@ always @ (posedge BUS_CLK) begin
 end
 
 wire ready_rec;
-assign RX_READY = (ready_rec==1'b1 && CONF_EN_RX==1'b1) ? 1'b1 : 1'b0;
+assign RX_READY = (ready_rec==1'b1) ? 1'b1 : 1'b0;
 assign RX_8B10B_DECODER_ERR = (decoder_err_cnt!=8'b0);
 assign RX_FIFO_OVERFLOW_ERR = (lost_err_cnt!=8'b0);
 
