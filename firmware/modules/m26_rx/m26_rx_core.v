@@ -1,12 +1,12 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 `timescale 1ps/1ps
 `default_nettype none
- 
+
 module m26_rx_core
 #(
     parameter ABUSWIDTH = 16,
@@ -28,21 +28,21 @@ module m26_rx_core
     input wire BUS_RST,
     input wire BUS_WR,
     input wire BUS_RD,
-    
+
     input wire [31:0] TIMESTAMP,
-    
+
     output wire LOST_ERROR
-); 
+);
 
 localparam VERSION = 1;
 
-//output format #ID (as parameter IDENTYFIER + 1 frame start + 16 bit data) 
+//output format #ID (as parameter IDENTYFIER + 1 frame start + 16 bit data)
 
 wire SOFT_RST;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 
 wire RST;
-assign RST = BUS_RST | SOFT_RST; 
+assign RST = BUS_RST | SOFT_RST;
 
 reg CONF_EN;
 reg CONF_TIMESTAMP_HEADER;
@@ -82,43 +82,43 @@ assign RST_SYNC = RST_SOFT_SYNC;
 
 wire CONF_EN_SYNC;
 assign CONF_EN_SYNC  = CONF_EN;
- 
-wire MKD_RX_IO; 
+
+wire MKD_RX_IO;
 IDDR IDDR_inst_mkd (
-   .Q1(), 
-   .Q2(MKD_RX_IO), 
-   .C(CLK_RX),   
-   .CE(1'b1), 
-   .D(MKD_RX), 
+   .Q1(),
+   .Q2(MKD_RX_IO),
+   .C(CLK_RX),
+   .CE(1'b1),
+   .D(MKD_RX),
    .R(1'b0),
-   .S(1'b0) 
+   .S(1'b0)
 );
 
 wire [1:0] DATA_RX_IO;
 IDDR IDDR_inst_rx0 (
-   .Q1(), 
-   .Q2(DATA_RX_IO[0]), 
-   .C(CLK_RX),   
-   .CE(1'b1), 
-   .D(DATA_RX[0]), 
+   .Q1(),
+   .Q2(DATA_RX_IO[0]),
+   .C(CLK_RX),
+   .CE(1'b1),
+   .D(DATA_RX[0]),
    .R(1'b0),
-   .S(1'b0) 
+   .S(1'b0)
 );
 
 IDDR IDDR_inst_rx1 (
-   .Q1(), 
-   .Q2(DATA_RX_IO[1]), 
-   .C(CLK_RX),   
-   .CE(1'b1), 
-   .D(DATA_RX[1]), 
+   .Q1(),
+   .Q2(DATA_RX_IO[1]),
+   .C(CLK_RX),
+   .CE(1'b1),
+   .D(DATA_RX[1]),
    .R(1'b0),
-   .S(1'b0) 
+   .S(1'b0)
 );
 
 reg [4:0] MKD_DLY;
 always@(posedge CLK_RX)
     MKD_DLY[4:0] <= {MKD_DLY[3:0], MKD_RX_IO};
-    
+
 reg [4:0] DATA1_DLY;
 always@(posedge CLK_RX)
     DATA1_DLY[4:0] <= {DATA1_DLY[3:0], DATA_RX_IO[1]};
@@ -134,7 +134,7 @@ wire [15:0] DATA [1:0];
 m26_rx_ch m26_rx_ch0(
     .RST(RST_SYNC), .CLK_RX(CLK_RX), .MKD_RX(MKD_DLY[0]), .DATA_RX(DATA0_DLY[0]),
     .WRITE(WRITE[0]), .FRAME_START(FRAME_START), .DATA(DATA[0])
-); 
+);
 
 m26_rx_ch m26_rx_ch1(
     .RST(RST_SYNC), .CLK_RX(CLK_RX), .MKD_RX(MKD_DLY[4]), .DATA_RX(DATA1_DLY[4]),
@@ -205,18 +205,18 @@ cdc_syncfifo #(.DSIZE(18), .ASIZE(3)) cdc_syncfifo_i
 );
 
 gerneric_fifo #(.DATA_SIZE(18), .DEPTH(1024))  fifo_i
-( .clk(BUS_CLK), .reset(RST), 
+( .clk(BUS_CLK), .reset(RST),
     .write(!cdc_fifo_empty),
-    .read(FIFO_READ), 
-    .data_in(cdc_data_out), 
-    .full(fifo_full), 
-    .empty(FIFO_EMPTY), 
-    .data_out(FIFO_DATA[17:0]), .size() 
+    .read(FIFO_READ),
+    .data_in(cdc_data_out),
+    .full(fifo_full),
+    .empty(FIFO_EMPTY),
+    .data_out(FIFO_DATA[17:0]), .size()
 );
 
-assign FIFO_DATA[19:18]  =  0; 
-assign FIFO_DATA[23:20]  =  IDENTYFIER[3:0]; 
-assign FIFO_DATA[31:24]  =  HEADER[7:0]; 
+assign FIFO_DATA[19:18] = 0;
+assign FIFO_DATA[23:20] = IDENTYFIER[3:0];
+assign FIFO_DATA[31:24] = HEADER[7:0];
 
 assign LOST_ERROR = LOST_DATA_CNT != 0;
 
