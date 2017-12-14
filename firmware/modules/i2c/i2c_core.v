@@ -9,7 +9,8 @@
 
 module i2c_core #(
     parameter ABUSWIDTH = 16,
-    parameter MEM_BYTES = 1
+    parameter MEM_BYTES = 1,
+    parameter FORCE_SDA_READBACK_ZERO = 0
 )(
     input wire BUS_CLK,
     input wire BUS_RST,
@@ -308,7 +309,7 @@ assign I2C_SCL = SCL ? 1'bz : 1'b0;
 
 always@(posedge I2C_CLK)
     if(div_cnt == 1)
-        SDA_READBACK <= I2C_SDA;
+        SDA_READBACK <= FORCE_SDA_READBACK_ZERO ? 0 : I2C_SDA;
         
 always@(posedge I2C_CLK)
     if(div_cnt == 3)
