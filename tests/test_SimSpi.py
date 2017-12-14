@@ -17,44 +17,44 @@ from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
 cnfg_yaml = """
 transfer_layer:
-  - name  : intf
+  - name  : INTF
     type  : SiSim
     init:
         host : localhost
         port  : 12345
 
 hw_drivers:
-  - name      : gpio
+  - name      : GPIO
     type      : gpio
-    interface : intf
+    interface : INTF
     base_addr : 0x0000
     size      : 8
 
-  - name      : spi
+  - name      : SPI
     type      : spi
-    interface : intf
+    interface : INTF
     base_addr : 0x1000
 
-  - name      : spi_rx
+  - name      : SPI_RX
     type      : fast_spi_rx
-    interface : intf
+    interface : INTF
     base_addr : 0x2000
 
   - name      : PULSE_GEN
     type      : pulse_gen
-    interface : intf
+    interface : INTF
     base_addr : 0x3000
 
-  - name      : fifo
-    type      : sram_fifo
-    interface : intf
+  - name      : FIFO
+    type      : bram_fifo
+    interface : INTF
     base_addr : 0x8000
     base_data_addr: 0x80000000
 
 registers:
   - name        : CONTROL
     type        : StdRegister
-    hw_driver   : gpio
+    hw_driver   : GPIO
     size        : 8
     fields:
       - name    : OUT
@@ -71,59 +71,59 @@ class TestSimSpi(unittest.TestCase):
         self.chip.init()
 
     def test_io(self):
-        size = self.chip['spi'].get_size()
-        self.chip['gpio'].reset()
+        size = self.chip['SPI'].get_SIZE()
+        self.chip['GPIO'].reset()
         self.assertEqual(size, 16 * 8)
 
-        self.chip['spi'].set_data(range(16))
-        ret = self.chip['spi'].get_data(size=16, addr=0)  # to read back what was written
+        self.chip['SPI'].set_data(range(16))
+        ret = self.chip['SPI'].get_data(size=16, addr=0)  # to read back what was written
         self.assertEqual(ret.tolist(), range(16))
 
-        self.chip['spi'].set_data(range(16))
-        ret = self.chip['spi'].get_data(addr=0)  # to read back what was written
+        self.chip['SPI'].set_data(range(16))
+        ret = self.chip['SPI'].get_data(addr=0)  # to read back what was written
         self.assertEqual(ret.tolist(), range(16))
 
-        self.chip['spi'].start()
-        while(not self.chip['spi'].is_done()):
+        self.chip['SPI'].start()
+        while(not self.chip['SPI'].is_ready):
             pass
 
-        ret = self.chip['spi'].get_data()  # read back what was received (looped)
+        ret = self.chip['SPI'].get_data()  # read back what was received (looped)
         self.assertEqual(ret.tolist(), range(16))
 
         # ext_start
-        self.chip['spi'].set_en(1)
-        self.assertEqual(self.chip['spi'].get_en(), 1)
+        self.chip['SPI'].set_en(1)
+        self.assertEqual(self.chip['SPI'].get_en(), 1)
 
-        self.chip['PULSE_GEN'].set_delay(1)
-        self.chip['PULSE_GEN'].set_width(1 + size)
-        self.chip['PULSE_GEN'].set_repeat(1)
-        self.assertEqual(self.chip['PULSE_GEN'].get_delay(), 1)
-        self.assertEqual(self.chip['PULSE_GEN'].get_width(), 1 + size)
-        self.assertEqual(self.chip['PULSE_GEN'].get_repeat(), 1)
+        self.chip['PULSE_GEN'].set_DELAY(1)
+        self.chip['PULSE_GEN'].set_WIDTH(1 + size)
+        self.chip['PULSE_GEN'].set_REPEAT(1)
+        self.assertEqual(self.chip['PULSE_GEN'].get_DELAY(), 1)
+        self.assertEqual(self.chip['PULSE_GEN'].get_WIDTH(), 1 + size)
+        self.assertEqual(self.chip['PULSE_GEN'].get_REPEAT(), 1)
 
         self.chip['PULSE_GEN'].start()
-        while(not self.chip['PULSE_GEN'].is_done()):
+        while(not self.chip['PULSE_GEN'].is_ready):
             pass
 
-        ret = self.chip['spi'].get_data()  # read back what was received (looped)
+        ret = self.chip['SPI'].get_data()  # read back what was received (looped)
         self.assertEqual(ret.tolist(), range(16))
 
-        # spi_rx
-        ret = self.chip['spi_rx'].get_en()
+        # SPI_RX
+        ret = self.chip['SPI_RX'].get_en()
         self.assertEqual(ret, False)
 
-        self.chip['spi_rx'].set_en(True)
-        ret = self.chip['spi_rx'].get_en()
+        self.chip['SPI_RX'].set_en(True)
+        ret = self.chip['SPI_RX'].get_en()
         self.assertEqual(ret, True)
 
-        self.chip['spi'].start()
-        while(not self.chip['spi'].is_done()):
+        self.chip['SPI'].start()
+        while(not self.chip['SPI'].is_ready):
             pass
 
-        ret = self.chip['fifo'].get_fifo_size()
+        ret = self.chip['FIFO'].get_FIFO_SIZE()
         self.assertEqual(ret, 32)
 
-        ret = self.chip['fifo'].get_data()
+        ret = self.chip['FIFO'].get_data()
 
         data0 = ret.astype(np.uint8)
         data1 = np.right_shift(ret, 8).astype(np.uint8)

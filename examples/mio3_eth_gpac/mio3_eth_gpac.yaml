@@ -6,7 +6,7 @@
 #
 
 transfer_layer:
-  - name  : intf
+  - name  : INTF
     type  : SiTcp
     init:
         ip : "192.168.10.16"
@@ -15,20 +15,20 @@ transfer_layer:
         tcp_connection : True
 
 hw_drivers:
-  - name      : gpio_drv
+  - name      : GPIO_DRV
     type      : gpio
-    interface : intf
+    interface : INTF
     base_addr : 0x1000
     size      : 32
 
-  - name      : i2c
+  - name      : I2C
     type      : i2c
-    interface : intf
+    interface : INTF
     base_addr : 0x2000
 
   - name      : GPAC
     type      : GPAC
-    hw_driver : i2c
+    hw_driver : I2C
     base_addr : 0x00000
     init:
         no_calibration : False
@@ -36,7 +36,7 @@ hw_drivers:
 registers:
   - name        : CONTROL
     type        : StdRegister
-    hw_driver   : gpio_drv
+    hw_driver   : GPIO_DRV
     size        : 8
     fields:
       - name    : LED
@@ -48,4 +48,3 @@ registers:
     hw_driver   : GPAC
     arg_names   : [ value ]
     arg_add     : { 'channel': 'PWR0'}
-

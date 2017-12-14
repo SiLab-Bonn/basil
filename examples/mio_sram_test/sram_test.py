@@ -24,11 +24,11 @@ def test_sram(count=10000):
         # chip['CONTROL']['COUNTER_EN'] = 0
         # chip['CONTROL'].write()
 
-        chip['pulse'].set_delay(1)
-        chip['pulse'].set_width((k + 1) % 3000)
-        chip['pulse'].start()
+        chip['PULSE'].set_DELAY(1)
+        chip['PULSE'].set_WIDTH((k + 1) % 3000)
+        chip['PULSE'].START
 
-        ret = chip['fifo'].get_data()
+        ret = chip['FIFO'].get_data()
 
         x = np.arange(i * 4, (i + ret.shape[0]) * 4, dtype=np.uint8)
         x.dtype = np.uint32
@@ -36,7 +36,7 @@ def test_sram(count=10000):
 
         ok = np.alltrue(ret == x)
 
-        # print 'OK?', ok, ret.shape[0], i, k, chip['fifo'].get_read_error_counter()
+        # print 'OK?', ok, ret.shape[0], i, k, chip['FIFO'].get_read_error_counter()
         if not ok:
             error += 1
 
@@ -53,9 +53,9 @@ def test_direct(count=10000):
         chip['CONTROL'].write()
 
         size = (k + 1) % 5000
-        base_data_addr = chip['fifo']._conf['base_data_addr']
+        base_data_addr = chip['FIFO']._conf['base_data_addr']
 
-        ret = chip['intf'].read(base_data_addr, size=size)
+        ret = chip['USB'].read(base_data_addr, size=size)
 
         x = np.arange(i, i + size, dtype=np.uint8)
         i += size
@@ -77,8 +77,8 @@ def test_register(count=10000):
     error = 0
     for i in range(count):
         data = np.array([(i * 4 + 3) % 255, (i * 4 + 2) % 255, (i * 4 + 1) % 255, (i * 4) % 255])
-        chip['gpio_pattern_drv'].set_data(data)
-        ret = chip['gpio_pattern_drv'].get_data()
+        chip['GPIO_PATTERN_DRV'].set_data(data)
+        ret = chip['GPIO_PATTERN_DRV'].get_data()
 
         ok = np.alltrue(data == ret)
 

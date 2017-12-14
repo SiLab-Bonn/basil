@@ -283,9 +283,9 @@ always @ (*) begin
             end
         else begin
             if(END_SEQ_REP)
-                CMD_MEM_ADD = (CONF_START_REPEAT_CMD_CLK+1)/8;
+                CMD_MEM_ADD = (CONF_START_REPEAT_CMD_CLK+1'b1)/8;
             else
-                CMD_MEM_ADD = (cnt+1)/8;
+                CMD_MEM_ADD = (cnt+1'b1)/8;
         end
     else
         CMD_MEM_ADD = 0; //no latch

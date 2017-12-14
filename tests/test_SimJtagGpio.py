@@ -16,34 +16,34 @@ from basil.RL.StdRegister import StdRegister
 
 cnfg_yaml = """
 transfer_layer:
-  - name  : intf
+  - name  : INTF
     type  : SiSim
     init:
         host : localhost
         port  : 12345
 
 hw_drivers:
-  - name      : gpio_jtag
+  - name      : GPIO_JTAG
     type      : gpio
-    interface : intf
+    interface : INTF
     base_addr : 0x0000
     size      : 8
 
-  - name      : jtag
+  - name      : JTAG
     type      : JtagGpio
-    hw_driver : gpio_jtag
+    hw_driver : GPIO_JTAG
     base_addr : 0x0000
     size      : 8
 
-  - name      : gpio_dev2
+  - name      : GPIO_DEV2
     type      : gpio
-    interface : intf
+    interface : INTF
     base_addr : 0x1000
     size      : 32
 
-  - name      : gpio_dev1
+  - name      : GPIO_DEV1
     type      : gpio
-    interface : intf
+    interface : INTF
     base_addr : 0x2000
     size      : 32
 
@@ -189,52 +189,52 @@ class TestSimJtagGpio(unittest.TestCase):
         self.chip.set_configuration(init_yaml)
         self.assertEqual(dev1ret[:], self.chip['DEV1'][:])
 
-        self.chip['jtag'].reset()
+        self.chip['JTAG'].reset()
 
         # IR CODE
-        ret = self.chip['jtag'].scan_ir([ID_CODE] * 2)
+        ret = self.chip['JTAG'].scan_ir([ID_CODE] * 2)
         self.assertEqual(ret, [ret_ir] * 2)
 
         # ID CODE
         id_code = BitLogic.from_value(0x149B51C3, fmt='I')
-        ret = self.chip['jtag'].scan_dr(['0' * 32] * 2)
+        ret = self.chip['JTAG'].scan_dr(['0' * 32] * 2)
         self.assertEqual(ret, [id_code] * 2)
 
         # BYPASS + ID CODE
         bypass_code = BitLogic('0')
-        ret = self.chip['jtag'].scan_ir([ID_CODE, BYPASS])
+        ret = self.chip['JTAG'].scan_ir([ID_CODE, BYPASS])
         self.assertEqual(ret, [ret_ir] * 2)
-        ret = self.chip['jtag'].scan_dr(['0' * 32, '1'])
+        ret = self.chip['JTAG'].scan_dr(['0' * 32, '1'])
         self.assertEqual(ret, [id_code, bypass_code])
 
-        ret = self.chip['jtag'].scan_ir([BYPASS, ID_CODE])
+        ret = self.chip['JTAG'].scan_ir([BYPASS, ID_CODE])
         self.assertEqual(ret, [ret_ir] * 2)
-        ret = self.chip['jtag'].scan_dr(['1', '0' * 32])
+        ret = self.chip['JTAG'].scan_dr(['1', '0' * 32])
         self.assertEqual(ret, [bypass_code, id_code])
 
         # DEBUG
-        ret = self.chip['jtag'].scan_ir([DEBUG, DEBUG])
+        ret = self.chip['JTAG'].scan_ir([DEBUG, DEBUG])
         self.assertEqual(ret, [ret_ir] * 2)
 
-        self.chip['jtag'].scan_dr(['1' * 32, '0' * 1 + '1' * 30 + '0' * 1])
-        ret = self.chip['jtag'].scan_dr(['0' * 32, '1' * 32])
+        self.chip['JTAG'].scan_dr(['1' * 32, '0' * 1 + '1' * 30 + '0' * 1])
+        ret = self.chip['JTAG'].scan_dr(['0' * 32, '1' * 32])
         self.assertEqual(ret, [BitLogic('1' * 32), BitLogic('0' * 1 + '1' * 30 + '0' * 1)])
-        ret = self.chip['jtag'].scan_dr(['0' * 32, '0' * 32])
+        ret = self.chip['JTAG'].scan_dr(['0' * 32, '0' * 32])
         self.assertEqual(ret, [BitLogic('0' * 32), BitLogic('1' * 32)])
 
         # SHIT IN DEV REG/DEBUG
-        self.chip['jtag'].scan_dr([self.chip['DEV1'][:], self.chip['DEV2'][:]])
+        self.chip['JTAG'].scan_dr([self.chip['DEV1'][:], self.chip['DEV2'][:]])
 
         # GPIO RETURN
-        dev1ret.frombytes(self.chip['gpio_dev1'].get_data())
+        dev1ret.frombytes(self.chip['GPIO_DEV1'].get_data())
         self.assertEqual(dev1ret[:], self.chip['DEV1'][:])
 
         self.assertFalse(dev1ret[:] == self.chip['DEV2'][:])
-        dev1ret.frombytes(self.chip['gpio_dev2'].get_data())
+        dev1ret.frombytes(self.chip['GPIO_DEV2'].get_data())
         self.assertEqual(dev1ret[:], self.chip['DEV2'][:])
 
         # JTAG RETURN
-        ret = self.chip['jtag'].scan_dr(['0' * 32, '0' * 32])
+        ret = self.chip['JTAG'].scan_dr(['0' * 32, '0' * 32])
         dev1ret.set(ret[0])
         self.assertEqual(dev1ret[:], self.chip['DEV1'][:])
 
@@ -242,23 +242,23 @@ class TestSimJtagGpio(unittest.TestCase):
         self.assertEqual(dev1ret[:], self.chip['DEV2'][:])
 
         # REPEATING REGISTER
-        self.chip['jtag'].scan_dr([self.chip['DEV'][:]])
-        ret1 = self.chip['jtag'].scan_dr([self.chip['DEV'][:]])
-        self.chip['jtag'].scan_dr([self.chip['DEV1'][:], self.chip['DEV2'][:]])
-        ret2 = self.chip['jtag'].scan_dr([self.chip['DEV1'][:] + self.chip['DEV2'][:]])
-        ret3 = self.chip['jtag'].scan_dr([self.chip['DEV1'][:] + self.chip['DEV2'][:]])
+        self.chip['JTAG'].scan_dr([self.chip['DEV'][:]])
+        ret1 = self.chip['JTAG'].scan_dr([self.chip['DEV'][:]])
+        self.chip['JTAG'].scan_dr([self.chip['DEV1'][:], self.chip['DEV2'][:]])
+        ret2 = self.chip['JTAG'].scan_dr([self.chip['DEV1'][:] + self.chip['DEV2'][:]])
+        ret3 = self.chip['JTAG'].scan_dr([self.chip['DEV1'][:] + self.chip['DEV2'][:]])
         self.assertEqual(ret1[:], ret2[:])
         self.assertEqual(ret2[:], ret3[:])
 
         # REPEATING SETTING
-        self.chip['jtag'].scan_dr(['1' * 32 + '0' * 32])
-        ret = self.chip['jtag'].scan_dr(['0' * 32 + '0' * 32])
+        self.chip['JTAG'].scan_dr(['1' * 32 + '0' * 32])
+        ret = self.chip['JTAG'].scan_dr(['0' * 32 + '0' * 32])
 
         self.chip['DEV'].set(ret[0])
         self.assertEqual(self.chip['DEV'][:], BitLogic('0' * 32 + '1' * 32))
 
-        self.chip['jtag'].scan_dr([self.chip['DEV1'][:] + self.chip['DEV2'][:]])
-        ret = self.chip['jtag'].scan_dr([self.chip['DEV1'][:] + self.chip['DEV2'][:]])
+        self.chip['JTAG'].scan_dr([self.chip['DEV1'][:] + self.chip['DEV2'][:]])
+        ret = self.chip['JTAG'].scan_dr([self.chip['DEV1'][:] + self.chip['DEV2'][:]])
 
         self.chip['DEV'].set(ret[0])
         self.assertEqual(self.chip['DEV'][:], self.chip['DEV1'][:] + self.chip['DEV2'][:])

@@ -193,7 +193,7 @@ always@(posedge BUS_CLK) begin
     if(RST)
         CONF_READ_ERROR <= 0;
     else if(empty && USB_READ && CONF_READ_ERROR != 8'hff)
-        CONF_READ_ERROR <= CONF_READ_ERROR +1;
+        CONF_READ_ERROR <= CONF_READ_ERROR +1'b1;
 end
 
 
@@ -259,15 +259,15 @@ always@(posedge BUS_CLK) begin
 end
 
 assign empty = (wr_pointer == rd_pointer);
-assign full = ((wr_pointer==(DEPTH-1) && rd_pointer==0) ||  (wr_pointer!=(DEPTH-1) && wr_pointer+1 == rd_pointer) ); 
+assign full = ((wr_pointer==(DEPTH-1) && rd_pointer==0) ||  (wr_pointer!=(DEPTH-1) && wr_pointer+1'b1 == rd_pointer) ); 
 
 always@(posedge BUS_CLK) begin
     if(RST)
         full_ff <= 0;
     else if(read_sram && !empty)
-        full_ff <= ((wr_pointer==(DEPTH-1) && next_rd_pointer==0) ||  (wr_pointer!=(DEPTH-1) && wr_pointer+1 == next_rd_pointer) );
+        full_ff <= ((wr_pointer==(DEPTH-1) && next_rd_pointer==0) ||  (wr_pointer!=(DEPTH-1) && wr_pointer+1'b1 == next_rd_pointer) );
     else if(write_sram && !full)
-        full_ff <= ((next_wr_pointer==(DEPTH-1) && rd_pointer==0) ||  (next_wr_pointer!=(DEPTH-1) && next_wr_pointer+1 == rd_pointer) );
+        full_ff <= ((next_wr_pointer==(DEPTH-1) && rd_pointer==0) ||  (next_wr_pointer!=(DEPTH-1) && next_wr_pointer+1'b1 == rd_pointer) );
 end
 
 
@@ -278,7 +278,7 @@ always @ (posedge BUS_CLK) begin //(*) begin
     begin
         if(wr_pointer >= rd_pointer)
             if(read_state == READ_NOP_SRAM)
-                CONF_SIZE <= wr_pointer - rd_pointer+1;
+                CONF_SIZE <= wr_pointer - rd_pointer+1'b1;
             else
                 CONF_SIZE <= wr_pointer - rd_pointer;
         else
@@ -293,9 +293,9 @@ assign FIFO_READ_ERROR = (CONF_READ_ERROR != 0);
 always @(posedge BUS_CLK) begin
     if(RST)
         FIFO_NEAR_FULL <= 1'b0;
-    else if (((((FIFO_ALMOST_FULL_VALUE+1)*DEPTH)>>8) <= CONF_SIZE) || (FIFO_ALMOST_FULL_VALUE == 8'b0 && CONF_SIZE >= 0))
+    else if (((((FIFO_ALMOST_FULL_VALUE+1'b1)*DEPTH)>>8) <= CONF_SIZE) || (FIFO_ALMOST_FULL_VALUE == 8'b0 && CONF_SIZE >= 0))
         FIFO_NEAR_FULL <= 1'b1;
-    else if (((((FIFO_ALMOST_EMPTY_VALUE+1)*DEPTH)>>8) >= CONF_SIZE && FIFO_ALMOST_EMPTY_VALUE != 8'b0) || CONF_SIZE == 0)
+    else if (((((FIFO_ALMOST_EMPTY_VALUE+1'b1)*DEPTH)>>8) >= CONF_SIZE && FIFO_ALMOST_EMPTY_VALUE != 8'b0) || CONF_SIZE == 0)
         FIFO_NEAR_FULL <= 1'b0;
 end
 

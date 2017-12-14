@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -21,12 +21,12 @@ module fei4_rx_core
     output wire RX_READY,
     output wire RX_8B10B_DECODER_ERR,
     output wire RX_FIFO_OVERFLOW_ERR,
-    
+
     input wire FIFO_CLK,
     input wire FIFO_READ,
     output wire FIFO_EMPTY,
     output wire [31:0] FIFO_DATA,
-    
+
     output wire RX_FIFO_FULL,
     output wire RX_ENABLED,
 
@@ -81,17 +81,12 @@ assign RST = BUS_RST_FLAG | SOFT_RST_FLAG;
 wire RX_RST_FLAG;
 assign RX_RST_FLAG = ~RX_RST_FF2 & RX_RST_FF;
 
-wire ready_rec;
 wire [15:0] fifo_size; // BUS_ADD==3, 4
 reg [15:0] fifo_size_buf;
 wire [7:0] decoder_err_cnt; // BUS_ADD==5
 reg [7:0] decoder_err_cnt_buf;
 wire [7:0] lost_err_cnt; // BUS_ADD==6
 reg [7:0] lost_err_cnt_buf;
-
-assign RX_READY = (ready_rec==1'b1) ? 1'b1 : 1'b0;
-assign RX_8B10B_DECODER_ERR = (decoder_err_cnt!=8'b0);
-assign RX_FIFO_OVERFLOW_ERR = (lost_err_cnt!=8'b0);
 
 reg [7:0] status_regs;
 
@@ -103,7 +98,7 @@ assign RX_ENABLED = CONF_EN_RX;
 
 always @(posedge BUS_CLK) begin
     if(RST)
-        status_regs <= 8'b0000_0100; // enable Rx by default
+        status_regs <= 8'b0000_0000; // disable Rx by default
     else if(BUS_WR && BUS_ADD == 2)
         status_regs <= BUS_DATA_IN;
 end
@@ -126,6 +121,11 @@ always @ (posedge BUS_CLK) begin
             BUS_DATA_OUT <= 8'b0;
     end
 end
+
+wire ready_rec;
+assign RX_READY = (ready_rec==1'b1) ? 1'b1 : 1'b0;
+assign RX_8B10B_DECODER_ERR = (decoder_err_cnt!=8'b0);
+assign RX_FIFO_OVERFLOW_ERR = (lost_err_cnt!=8'b0);
 
 wire [23:0] FE_DATA;
 wire [7:0] DATA_HEADER;

@@ -30,7 +30,7 @@ class Serial(TransferLayer):
         self.write_termination = self._init.get('write_termination', self.read_termination)
         self.timeout = self._init.get('timeout', None)  # timeout of 0 returns immediately
 
-        self._port = serial.Serial(**{key: value for key, value in self._init.items() if key not in ("read_termination", "read_termination")})
+        self._port = serial.Serial(**{key: value for key, value in self._init.items() if key not in ("read_termination", "write_termination")})
 
     def close(self):
         self._port.close()

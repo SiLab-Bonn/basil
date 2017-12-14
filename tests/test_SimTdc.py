@@ -13,7 +13,7 @@ from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
 cnfg_yaml = """
 transfer_layer:
-  - name  : intf
+  - name  : INTF
     type  : SiSim
     init:
         host : localhost
@@ -22,18 +22,18 @@ transfer_layer:
 hw_drivers:
   - name      : SEQ_GEN
     type      : seq_gen
-    interface : intf
+    interface : INTF
     mem_size  : 65535
     base_addr : 0x0000
 
   - name      : TDC
     type      : tdc_s3
-    interface : intf
+    interface : INTF
     base_addr : 0x8000
 
-  - name      : SRAM
-    type      : sram_fifo
-    interface : intf
+  - name      : FIFO
+    type      : bram_fifo
+    interface : INTF
     base_addr : 0x8100
     base_data_addr : 0x80000000
 
@@ -80,11 +80,11 @@ class TestSimTlu(unittest.TestCase):
             self.chip['SEQ']['TDC_IN'][0:length] = True
             self.chip['SEQ'].write(length)
             self.chip['SEQ'].START
-            while(not self.chip['SEQ'].is_done()):
+            while(not self.chip['SEQ'].is_ready):
                 pass
-            self.assertEqual(self.chip['SRAM'].get_fifo_int_size(), 1)
+            self.assertEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 1)
 
-            data = self.chip['SRAM'].get_data()
+            data = self.chip['FIFO'].get_data()
             self.assertEqual(data[0], (index << 12) + length)
 
     def test_tdc_overflow(self):
@@ -97,11 +97,11 @@ class TestSimTlu(unittest.TestCase):
             self.chip['SEQ']['TDC_IN'][0:length] = True
             self.chip['SEQ'].write(length)
             self.chip['SEQ'].START
-            while(not self.chip['SEQ_GEN'].is_done()):
+            while(not self.chip['SEQ_GEN'].is_ready):
                 pass
-            self.assertEqual(self.chip['SRAM'].get_fifo_int_size(), 1)
+            self.assertEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 1)
 
-            data = self.chip['SRAM'].get_data()
+            data = self.chip['FIFO'].get_data()
             self.assertEqual(data[0], (index << 12) + min(length, 4095))  # overflow 12bit
 
 #     def test_tdc_delay(self):

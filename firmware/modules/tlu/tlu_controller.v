@@ -1,20 +1,22 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+
 `timescale 1ps/1ps
 `default_nettype none
 
 module tlu_controller
 #(
     parameter       BASEADDR = 16'h0000,
-    parameter       HIGHADDR = 16'h0000, 
+    parameter       HIGHADDR = 16'h0000,
     parameter       ABUSWIDTH = 16,
     parameter       DIVISOR = 8,
     parameter       WIDTH = 8,
-    parameter       TLU_TRIGGER_MAX_CLOCK_CYCLES = 17
+    parameter       TLU_TRIGGER_MAX_CLOCK_CYCLES = 17,
+    parameter       TIMESTAMP_N_OF_BIT = 32
 )
 (
     input wire                  BUS_CLK,
@@ -23,28 +25,32 @@ module tlu_controller
     inout wire      [7:0]       BUS_DATA,
     input wire                  BUS_RD,
     input wire                  BUS_WR,
-    
+
     input wire                  TRIGGER_CLK, // clock of the TLU FSM, usually connect clock of command sequencer here
-    
+
     input wire                  FIFO_READ,
     output wire                 FIFO_EMPTY,
     output wire     [31:0]      FIFO_DATA,
-    
+
     output wire                 FIFO_PREEMPT_REQ,
-    
+
+    output wire                 TRIGGER_ENABLED,
+    output wire [WIDTH-1:0]     TRIGGER_SELECTED,
+    output wire                 TLU_ENABLED,
+
     input wire  [WIDTH-1:0]     TRIGGER,
     input wire  [WIDTH-1:0]     TRIGGER_VETO,
-    
+
     input wire                  EXT_TRIGGER_ENABLE,
     input wire                  TRIGGER_ACKNOWLEDGE,
     output wire                 TRIGGER_ACCEPTED_FLAG,
-    
+
     input wire                  TLU_TRIGGER,
     input wire                  TLU_RESET,
     output wire                 TLU_BUSY,
     output wire                 TLU_CLOCK,
-    
-    output wire     [31:0]      TIMESTAMP
+
+    output wire     [TIMESTAMP_N_OF_BIT-1:0]      TIMESTAMP
 );
 
 wire IP_RD, IP_WR;
@@ -74,7 +80,8 @@ tlu_controller_core #(
     .DIVISOR(DIVISOR),
     .ABUSWIDTH(ABUSWIDTH),
     .TLU_TRIGGER_MAX_CLOCK_CYCLES(TLU_TRIGGER_MAX_CLOCK_CYCLES),
-    .WIDTH(WIDTH)
+    .WIDTH(WIDTH),
+    .TIMESTAMP_N_OF_BIT(TIMESTAMP_N_OF_BIT)
 ) i_tlu_controller_core (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
@@ -94,11 +101,14 @@ tlu_controller_core #(
 
     .TRIGGER(TRIGGER),
     .TRIGGER_VETO(TRIGGER_VETO),
+    .TRIGGER_SELECTED(TRIGGER_SELECTED),
 
     .EXT_TRIGGER_ENABLE(EXT_TRIGGER_ENABLE),
     .TRIGGER_ACKNOWLEDGE(TRIGGER_ACKNOWLEDGE),
     .TRIGGER_ACCEPTED_FLAG(TRIGGER_ACCEPTED_FLAG),
-    
+
+    .TRIGGER_ENABLED(TRIGGER_ENABLED),
+    .TLU_ENABLED(TLU_ENABLED),
     .TLU_TRIGGER(TLU_TRIGGER),
     .TLU_RESET(TLU_RESET),
     .TLU_BUSY(TLU_BUSY),

@@ -49,7 +49,7 @@ class tlu(RegisterHardwareLayer):
                   'TRIGGER_LOW_TIMEOUT_ERROR_COUNTER': {'descr': {'addr': 31, 'size': 8, 'properties': ['ro']}},
                   'TLU_TRIGGER_ACCEPT_ERROR_COUNTER': {'descr': {'addr': 32, 'size': 8, 'properties': ['ro']}},
                   'TRIGGER_THRESHOLD': {'descr': {'addr': 33, 'size': 8}}}
-    _require_version = "==9"
+    _require_version = "==10"
 
     def __init__(self, intf, conf):
         super(tlu, self).__init__(intf, conf)

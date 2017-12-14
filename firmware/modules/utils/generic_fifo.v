@@ -42,20 +42,20 @@ always@(posedge clk) begin
     if(reset)
         rd_ponter <= 0;
     else if(read && !empty) begin
-        if(rd_ponter == DEPTH-1)
+        if(rd_ponter == DEPTH-1'b1)
             rd_ponter <= 0;
         else
-            rd_ponter <= rd_ponter + 1;
+            rd_ponter <= rd_ponter + 1'b1;
     end
 end
 
 always@(*) begin
     rd_tmp = rd_ponter;
     if(read && !empty) begin
-        if(rd_ponter == DEPTH-1)
+        if(rd_ponter == DEPTH-1'b1)
             rd_tmp = 0;
         else
-            rd_tmp = rd_ponter + 1;
+            rd_tmp = rd_ponter + 1'b1;
     end
 end
 
@@ -63,7 +63,7 @@ always@(posedge clk) begin
     if(reset)
         wr_pointer <= 0;
     else if(write && !full) begin
-        if(wr_pointer == DEPTH-1)
+        if(wr_pointer == DEPTH-1'b1)
             wr_pointer <= 0;
         else
             wr_pointer <= wr_pointer + 1;
@@ -72,15 +72,15 @@ end
 
 always@(posedge clk)
     if(read && !empty)
-        if(rd_ponter == DEPTH-1)
+        if(rd_ponter == DEPTH-1'b1)
             empty <= (wr_pointer == 0);
         else
-            empty <= (wr_pointer == rd_ponter+1);
+            empty <= (wr_pointer == rd_ponter+1'b1);
     else
         empty <= empty_loc;
 
 assign empty_loc = (wr_pointer == rd_ponter);
-assign full = ((wr_pointer==(DEPTH-1) && rd_ponter==0) || (wr_pointer!=(DEPTH-1) && wr_pointer+1 == rd_ponter));
+assign full = ((wr_pointer==(DEPTH-1'b1) && rd_ponter==0) || (wr_pointer!=(DEPTH-1'b1) && wr_pointer+1'b1 == rd_ponter));
 
 always@(posedge clk)
     if(write && !full)

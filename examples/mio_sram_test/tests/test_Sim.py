@@ -55,7 +55,7 @@ class TestSram(unittest.TestCase):
         for _ in range(10):
             self.chip['CONTROL'].write()
 
-        ret = self.chip['fifo'].get_data()
+        ret = self.chip['FIFO'].get_data()
 
         self.chip['CONTROL']['COUNTER_EN'] = 1
         self.chip['CONTROL'].write()
@@ -65,14 +65,14 @@ class TestSram(unittest.TestCase):
         for _ in range(10):
             self.chip['CONTROL'].write()
 
-        ret = np.hstack((ret, self.chip['fifo'].get_data()))
+        ret = np.hstack((ret, self.chip['FIFO'].get_data()))
 
         x = np.arange(175 * 4, dtype=np.uint8)
         x.dtype = np.uint32
 
         self.assertTrue(np.alltrue(ret == x))
 
-        self.chip['fifo'].reset()
+        self.chip['FIFO'].reset()
 
         self.chip['CONTROL']['COUNTER_EN'] = 1
         self.chip['CONTROL'].write()
@@ -83,7 +83,7 @@ class TestSram(unittest.TestCase):
         self.chip['CONTROL'].write()
         self.chip['CONTROL'].write()
 
-        ret = np.hstack((ret, self.chip['fifo'].get_data()))
+        ret = np.hstack((ret, self.chip['FIFO'].get_data()))
 
         x = np.arange(245 * 4, dtype=np.uint8)
         x.dtype = np.uint32
@@ -95,7 +95,7 @@ class TestSram(unittest.TestCase):
         self.chip['CONTROL'].write()
 
         for _ in range(2):
-            self.chip['fifo'].get_fifo_size()
+            self.chip['FIFO'].get_FIFO_SIZE()
 
         self.chip['CONTROL']['COUNTER_EN'] = 0
         self.chip['CONTROL'].write()
@@ -103,11 +103,11 @@ class TestSram(unittest.TestCase):
         for _ in range(10):
             self.chip['CONTROL'].write()
 
-        size = self.chip['fifo'].get_fifo_size()
+        size = self.chip['FIFO'].get_FIFO_SIZE()
         self.assertEqual(size, 512)
 
-        ret = self.chip['fifo'].get_data()
-        ret = np.hstack((ret, self.chip['fifo'].get_data()))
+        ret = self.chip['FIFO'].get_data()
+        ret = np.hstack((ret, self.chip['FIFO'].get_data()))
 
         x = np.arange(203 * 4, dtype=np.uint8)
         x.dtype = np.uint32
@@ -119,7 +119,7 @@ class TestSram(unittest.TestCase):
         self.chip['CONTROL'].write()
 
         for _ in range(20):
-            self.chip['fifo'].get_fifo_size()
+            self.chip['FIFO'].get_FIFO_SIZE()
 
         self.chip['CONTROL']['COUNTER_EN'] = 0
         self.chip['CONTROL'].write()
@@ -127,20 +127,20 @@ class TestSram(unittest.TestCase):
         for _ in range(10):
             self.chip['CONTROL'].write()
 
-        ret = self.chip['fifo'].get_data()
-        while(self.chip['fifo'].get_fifo_size()):
-            ret = np.hstack((ret, self.chip['fifo'].get_data()))
+        ret = self.chip['FIFO'].get_data()
+        while(self.chip['FIFO'].get_FIFO_SIZE()):
+            ret = np.hstack((ret, self.chip['FIFO'].get_data()))
 
         x = np.arange((128 + 1023) * 4, dtype=np.uint8)
         x.dtype = np.uint32
 
         self.assertTrue(np.alltrue(ret == x))
 
-        self.chip['pulse'].set_delay(1)
-        self.chip['pulse'].set_width(1)
-        self.chip['pulse'].start()
+        self.chip['PULSE'].set_DELAY(1)
+        self.chip['PULSE'].set_WIDTH(1)
+        self.chip['PULSE'].start()
 
-        ret = self.chip['fifo'].get_data()
+        ret = self.chip['FIFO'].get_data()
         x = np.arange((128 + 1023) * 4, (128 + 1023 + 1) * 4, dtype=np.uint8)
         x.dtype = np.uint32
 
@@ -148,15 +148,15 @@ class TestSram(unittest.TestCase):
 
     def test_single(self):
 
-        self.chip['pulse'].set_delay(1)
-        self.chip['pulse'].set_width(1)
-        self.chip['pulse'].start()
+        self.chip['PULSE'].set_DELAY(1)
+        self.chip['PULSE'].set_WIDTH(1)
+        self.chip['PULSE'].start()
 
-        self.assertEqual(self.chip['fifo'].get_data().tolist(), [0x03020100])
+        self.assertEqual(self.chip['FIFO'].get_data().tolist(), [0x03020100])
 
-        self.chip['pulse'].start()
+        self.chip['PULSE'].start()
 
-        self.assertEqual(self.chip['fifo'].get_data().tolist(), [0x07060504])
+        self.assertEqual(self.chip['FIFO'].get_data().tolist(), [0x07060504])
 
     def test_pattern(self):
         self.chip['PATTERN'] = 0xaa5555aa
@@ -169,31 +169,31 @@ class TestSram(unittest.TestCase):
         for _ in range(5):
             self.chip['CONTROL'].write()
 
-        self.assertEqual(self.chip['fifo'].get_data().tolist(), [0xaa5555aa] * 35)
+        self.assertEqual(self.chip['FIFO'].get_data().tolist(), [0xaa5555aa] * 35)
 
     def test_direct(self):
         self.chip['CONTROL']['COUNTER_DIRECT'] = 1
         self.chip['CONTROL'].write()
 
         size = 648
-        base_data_addr = self.chip['fifo']._conf['base_data_addr']
+        base_data_addr = self.chip['FIFO']._conf['base_data_addr']
 
-        ret = self.chip['intf'].read(base_data_addr, size=size)
-        ret = np.hstack((ret, self.chip['intf'].read(base_data_addr, size=size)))
+        ret = self.chip['USB'].read(base_data_addr, size=size)
+        ret = np.hstack((ret, self.chip['USB'].read(base_data_addr, size=size)))
 
         x = np.arange(size * 2, dtype=np.uint8)
         self.assertEqual(ret.tolist(), x.tolist())
 
     def test_continouse(self):
-        self.chip['pulse'].set_delay(35)
-        self.chip['pulse'].set_width(3)
-        self.chip['pulse'].set_repeat(0)
-        self.chip['pulse'].start()
+        self.chip['PULSE'].set_DELAY(35)
+        self.chip['PULSE'].set_WIDTH(3)
+        self.chip['PULSE'].set_repeat(0)
+        self.chip['PULSE'].start()
 
         i = 0
         error = False
         for _ in range(100):
-            ret = self.chip['fifo'].get_data()
+            ret = self.chip['FIFO'].get_data()
 
             x = np.arange(i * 4, (i + ret.shape[0]) * 4, dtype=np.uint8)
             x.dtype = np.uint32

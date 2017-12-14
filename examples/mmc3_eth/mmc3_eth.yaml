@@ -6,33 +6,33 @@
 #
 
 transfer_layer:
-  - name  : intf
+  - name  : INTF
     type  : SiTcp
-    init:      
+    init:
         ip : "192.168.10.16"
         udp_port : 4660
         tcp_port : 24
         tcp_connection : True
-        
+
 hw_drivers:
-  - name      : gpio_drv
+  - name      : GPIO_DRV
     type      : gpio
-    interface : intf
+    interface : INTF
     base_addr : 0x1000
     size      : 8
 
-  - name      : SRAM
-    type      : sram_fifo
-    interface : intf
+  - name      : FIFO
+    type      : sitcp_fifo
+    interface : INTF
     base_addr : 0x200000000
     base_data_addr : 0x100000000
 
 registers:
-  - name        : GPIO_LED
+  - name        : CONTROL
     type        : StdRegister
-    hw_driver   : gpio_drv
+    hw_driver   : GPIO_DRV
     size        : 8
     fields:
-      - name    : LED
-        size    : 8
-        offset  : 7
+      - name    : EN
+        size    : 1
+        offset  : 0

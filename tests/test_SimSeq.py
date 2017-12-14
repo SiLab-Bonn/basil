@@ -13,7 +13,7 @@ from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
 cnfg_yaml = """
 transfer_layer:
-  - name  : intf
+  - name  : INTF
     type  : SiSim
     init:
         host : localhost
@@ -22,18 +22,18 @@ transfer_layer:
 hw_drivers:
   - name      : PULSE_GEN
     type      : pulse_gen
-    interface : intf
+    interface : INTF
     base_addr : 0x0000
 
   - name      : SEQ_GEN
     type      : seq_gen
-    interface : intf
+    interface : INTF
     mem_size  : 8192
     base_addr : 0x1000
 
   - name      : SEQ_REC
     type      : seq_rec
-    interface : intf
+    interface : INTF
     mem_size  : 8192
     base_addr : 0x3000
 
@@ -91,42 +91,42 @@ class TestSimSeq(unittest.TestCase):
         self.assertEqual(ret.tolist(), pattern)
 
         rec_size = 16 * 4 + 8
-        self.chip['SEQ_REC'].set_en_ext_start(True)
+        self.chip['SEQ_REC'].set_EN_EXT_START(True)
         self.chip['SEQ_REC'].set_size(rec_size)
 
-        self.chip['PULSE_GEN'].set_delay(1)
-        self.chip['PULSE_GEN'].set_width(1)
+        self.chip['PULSE_GEN'].set_DELAY(1)
+        self.chip['PULSE_GEN'].set_WIDTH(1)
 
-        self.assertEqual(self.chip['PULSE_GEN'].get_delay(), 1)
-        self.assertEqual(self.chip['PULSE_GEN'].get_width(), 1)
+        self.assertEqual(self.chip['PULSE_GEN'].get_DELAY(), 1)
+        self.assertEqual(self.chip['PULSE_GEN'].get_WIDTH(), 1)
 
-        self.chip['SEQ'].set_repeat(4)
-        self.chip['SEQ'].set_en_ext_start(True)
+        self.chip['SEQ'].set_REPEAT(4)
+        self.chip['SEQ'].set_EN_EXT_START(True)
         self.chip['SEQ'].set_size(16)
-        # self.chip['SEQ'].start()
+        # self.chip['SEQ'].START
 
-        self.chip['PULSE_GEN'].start()
+        self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ'].is_done()):
+        while(not self.chip['SEQ'].is_ready):
             pass
 
         ret = self.chip['SEQ_REC'].get_data(size=rec_size)
         self.assertEqual(ret.tolist(), [0x0] * 2 + pattern * 4 + [0x80] * 6)  # 2 clk delay + pattern x4 + 6 x last pattern
 
         #
-        self.chip['SEQ'].set_repeat_start(12)
-        self.chip['PULSE_GEN'].start()
+        self.chip['SEQ'].set_REPEAT_START(12)
+        self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ'].is_done()):
+        while(not self.chip['SEQ'].is_ready):
             pass
 
         ret = self.chip['SEQ_REC'].get_data(size=rec_size)
         self.assertEqual(ret.tolist(), [0x80] * 2 + pattern + pattern[12:] * 3 + [0x80] * 3 * 12 + [0x80] * 6)  # 2 clk delay 0x80 > from last pattern + ...
 
         self.chip['SEQ'].set_wait(4)
-        self.chip['PULSE_GEN'].start()
+        self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ'].is_done()):
+        while(not self.chip['SEQ'].is_ready):
             pass
 
         ret = self.chip['SEQ_REC'].get_data(size=rec_size)
@@ -138,9 +138,9 @@ class TestSimSeq(unittest.TestCase):
         self.chip['SEQ_REC'].set_size(rec_size)
         self.chip['SEQ'].set_clk_divide(3)
         self.chip['SEQ'].set_wait(3)
-        self.chip['PULSE_GEN'].start()
+        self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ'].is_done()):
+        while(not self.chip['SEQ'].is_ready):
             pass
 
         ret = self.chip['SEQ_REC'].get_data(size=rec_size)
@@ -153,9 +153,9 @@ class TestSimSeq(unittest.TestCase):
 
         #
         self.chip['SEQ'].set_wait(0)
-        self.chip['PULSE_GEN'].start()
+        self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ'].is_done()):
+        while(not self.chip['SEQ'].is_ready):
             pass
 
         ret = self.chip['SEQ_REC'].get_data(size=rec_size)
@@ -169,15 +169,15 @@ class TestSimSeq(unittest.TestCase):
         # nested loop test
         pattern = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
         self.chip['SEQ'].set_data(pattern)
-        self.chip['SEQ'].set_repeat(4)
-        self.chip['SEQ'].set_repeat_start(2)
-        self.chip['SEQ'].set_nested_start(8)
-        self.chip['SEQ'].set_nested_stop(12)
-        self.chip['SEQ'].set_nested_repeat(3)
-        self.chip['SEQ'].set_clk_divide(1)
-        self.chip['PULSE_GEN'].start()
+        self.chip['SEQ'].set_REPEAT(4)
+        self.chip['SEQ'].set_REPEAT_START(2)
+        self.chip['SEQ'].set_NESTED_START(8)
+        self.chip['SEQ'].set_NESTED_STOP(12)
+        self.chip['SEQ'].set_NESTED_REPEAT(3)
+        self.chip['SEQ'].set_CLK_DIV(1)
+        self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ'].is_done()):
+        while(not self.chip['SEQ'].is_ready):
             pass
 
         exp_pattern = [0x10, 0x10]
