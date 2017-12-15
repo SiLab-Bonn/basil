@@ -12,7 +12,7 @@ module i2c #(
     parameter HIGHADDR = 16'h0000,
     parameter ABUSWIDTH = 16,
     parameter MEM_BYTES = 1,
-    parameter FORCE_SDA_READBACK_ZERO = 0
+    parameter IGNORE_ACK = 0
 )(
     input wire                 BUS_CLK,
     input wire                 BUS_RST,
@@ -53,7 +53,7 @@ i2c_core
 #(
     .ABUSWIDTH(ABUSWIDTH),
     .MEM_BYTES(MEM_BYTES),
-    .FORCE_SDA_READBACK_ZERO(FORCE_SDA_READBACK_ZERO)
+    .FORCE_SDA_READBACK_ZERO(IGNORE_ACK)
 )
 i_i2c_core (
     .BUS_CLK(BUS_CLK),
