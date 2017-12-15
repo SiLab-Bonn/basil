@@ -38,21 +38,21 @@ class Mercury(HardwareLayer):
     def read(self):
         answer = self._intf._readline()  # the read termination string has to be set to \x03
         return answer
-    
+
     def _write_command(self, command, address=None):
         if address:
             self.write(bytearray.fromhex("01%d" % (address + 30))  + command)
         else:
             for a in self._adresses:
                 self.write(bytearray.fromhex("01%d" % (a + 30))  + command)
-    
+
     def get_address(self, address):
         self._write_command("TB", address)
         return self.read()
-    
+
     def set_position(self, value, address=None):
         self._write_command("MA%d" % value)
-        
+
     def get_position(self, address=None):
         self._write_command("TP")
         return int(self.read()[3:-3])

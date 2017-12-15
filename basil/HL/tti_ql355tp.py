@@ -4,25 +4,26 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
+import time
 
 import binascii
-import time
+
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 
 
 class ttiQl355tp(HardwareLayer):
 
-    '''
+    ''' HL for the TTi QL3335TP.
     '''
 
     def __init__(self, intf, conf):
         self.debug=0
         super(ttiQl355tp, self).__init__(intf, conf)
-        
+
     def init(self):
         self._intf.init()
-        
+
     def write(self,command):
         if self.debug==1:
              print "ttiTp355tp.write() %s"%command
@@ -48,10 +49,10 @@ class ttiQl355tp(HardwareLayer):
         elif isinstance(channel,int):
             cmd="OP%d %d"%(channel,int(on))
         self.write(cmd)
-        
+
     def get_info(self):
         return self.ask("*IDN?")
-       
+
     def get_current(self,channel):
         """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
         ret=self.ask("I%dO?"%channel)
@@ -59,7 +60,7 @@ class ttiQl355tp(HardwareLayer):
             print "ttiQl355tp.get_current() format error",ret
             return None
         return float(ret[:-1])
-      
+
     def get_voltage(self,channel):
         """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
         ret=self.ask("V%dO?"%channel)
@@ -67,7 +68,7 @@ class ttiQl355tp(HardwareLayer):
             print "ttiQl355tp.get_voltage() format error",ret
             return None
         return float(ret[:-1])
-      
+
     def get_set_voltage(self,channel):
         """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
         ret=self.ask("V%d?"%channel)
@@ -75,7 +76,7 @@ class ttiQl355tp(HardwareLayer):
             print "ttiQl355tp.get_voltage() format error",ret
             return None
         return float(ret[3:])
-        
+
     def get_current_limit(self,channel):
         """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
         ret=self.ask("I%d?"%channel)
@@ -83,14 +84,13 @@ class ttiQl355tp(HardwareLayer):
             print "ttiQl355tp.get_current_limit() format error",ret
             return None
         return float(ret[3:])
-      
+
     def set_voltage(self, value, channel=1):
         """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
         cmd="V%d %f"%(channel,value)
         self.write(cmd)
-        
+
     def set_current_limit(self, value, channel=1):
         """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
         cmd="I%d %f"%(channel,value)
-        self.write(cmd)   
-      
+        self.write(cmd)
