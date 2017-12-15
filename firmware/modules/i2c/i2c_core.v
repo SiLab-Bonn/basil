@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -19,7 +19,7 @@ module i2c_core #(
     input wire BUS_RD,
     input wire BUS_WR,
     output reg [7:0] BUS_DATA_OUT,
-    
+
     input wire I2C_CLK,
     inout wire I2C_SDA,
     inout wire I2C_SCL
@@ -52,7 +52,7 @@ always @(posedge BUS_CLK) begin
         status_regs[7] <= 0;
     end
     else if(BUS_WR && BUS_ADD < 8)
-        status_regs[BUS_ADD[2:0]] <= BUS_DATA_IN; 
+        status_regs[BUS_ADD[2:0]] <= BUS_DATA_IN;
 end
 
 wire [7:0] I2C_ADD;
@@ -93,7 +93,7 @@ always @ (posedge BUS_CLK) begin
     end
 end
 
-reg [7:0] OUT_MEM;    
+reg [7:0] OUT_MEM;
 always @(*) begin
     if(PREV_BUS_ADD < 8)
         BUS_DATA_OUT = BUS_DATA_OUT_REG;
@@ -104,7 +104,7 @@ always @(*) begin
 end
 
 wire BUS_MEM_EN;
-wire [ABUSWIDTH-1:0] BUS_MEM_ADD; 
+wire [ABUSWIDTH-1:0] BUS_MEM_ADD;
 
 assign BUS_MEM_EN = (BUS_WR | BUS_RD) & BUS_ADD >= 8;
 assign BUS_MEM_ADD = BUS_ADD-8;
@@ -124,7 +124,7 @@ wire WE_MEM_I2C;
 
 reg [2:0] bit_count;
 reg [15:0] byte_count;
-wire [15:0] MEM_I2_WR; 
+wire [15:0] MEM_I2_WR;
 reg [1:0] div_cnt;
 
 reg [7:0] DATA_BYTE;
@@ -176,13 +176,13 @@ assign CONF_MODE = I2C_ADD[0];
 always @ (*) begin
     next_state = state; //default
     case(state)
-        STATE_IDLE: 
+        STATE_IDLE:
             if(START_FSM)
                 next_state = STATE_START;
         STATE_START:
                 next_state = STATE_ADDR;
         STATE_ADDR:
-            if(bit_count==7) 
+            if(bit_count==7)
                 next_state = STATE_AACK;
         STATE_AACK:
             if(SDA_READBACK==0) begin
@@ -250,7 +250,7 @@ reg SCL_D0;
 always @ (*) begin
     SDA_D0 = 1;
     SCL_D0 = 1;
-    
+
     case(state)
         STATE_START:
             begin
@@ -289,7 +289,7 @@ end
 wire SLAVE_ACK;
 
 wire NO_ACK;
-assign NO_ACK = ((state == STATE_AACK & SDA_READBACK) | (state == STATE_DACK_W & SDA_READBACK)) & div_cnt == 3;  
+assign NO_ACK = ((state == STATE_AACK & SDA_READBACK) | (state == STATE_DACK_W & SDA_READBACK)) & div_cnt == 3;
 
 reg SDA;
 always@(posedge I2C_CLK)
@@ -310,11 +310,11 @@ assign I2C_SCL = SCL ? 1'bz : 1'b0;
 always@(posedge I2C_CLK)
     if(div_cnt == 1)
         SDA_READBACK <= IGNORE_ACK ? 0 : I2C_SDA;
-        
+
 always@(posedge I2C_CLK)
     if(div_cnt == 3)
         DATA_BYTE_READBCK[7-bit_count] <= I2C_SDA;
-   
+
 wire DONE;
 assign DONE = (state == STATE_STOP);
 
@@ -331,8 +331,8 @@ always @(posedge BUS_CLK)
         CONF_DONE <= 1;
 
 wire NO_ACK_SYNC;
-cdc_pulse_sync ack_pulse_sync (.clk_in(I2C_CLK), .pulse_in(NO_ACK), .clk_out(BUS_CLK), .pulse_out(NO_ACK_SYNC));        
-        
+cdc_pulse_sync ack_pulse_sync (.clk_in(I2C_CLK), .pulse_in(NO_ACK), .clk_out(BUS_CLK), .pulse_out(NO_ACK_SYNC));
+
 always @(posedge BUS_CLK)
     if(RST)
         CONF_NO_ACK <= 0;
@@ -340,6 +340,6 @@ always @(posedge BUS_CLK)
         CONF_NO_ACK <= 0;
     else if(NO_ACK_SYNC)
         CONF_NO_ACK <= 1;
-        
-        
+
+
 endmodule
