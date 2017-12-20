@@ -6,7 +6,6 @@
 #
 
 import logging
-import string
 
 from basil.HL.HardwareLayer import HardwareLayer
 
