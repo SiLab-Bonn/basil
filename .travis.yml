@@ -18,13 +18,15 @@ before_install:
   - sudo apt-get update
 
 install:
-
   # conda
-  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - wget http://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh
   - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH=$HOME/miniconda/bin:$PATH
+  - export PATH="$HOME/miniconda/bin:$PATH"
   - conda update --yes conda
-  - conda install --yes numpy bitarray nose pyyaml coverage
+  - conda update --yes --all
+  - conda info -a
+  - conda create --yes -n test-environment python=$TRAVIS_PYTHON_VERSION numpy bitarray nose pyyaml coverage
+  - source activate test-environment
   - pip install pyvisa pyvisa-sim coveralls cocotb
 
   # iverilog
