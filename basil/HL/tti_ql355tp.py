@@ -22,6 +22,9 @@ class ttiQl355tp(HardwareLayer):
         super(ttiQl355tp, self).__init__(intf, conf)
 
     def init(self):
+        pass
+    
+    def reinit(self):
         self._intf.init()
 
     def write(self,command):
