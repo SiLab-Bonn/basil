@@ -83,6 +83,7 @@ class MIO_PLL(HardwareLayer):
         self.CY22150_ADD = self.CY22150_BASE_ADDR
 
     def init(self):
+        super(MIO_PLL, self).init()
         self._set_register_value(self.CY22150_ADD_CLKOE, self.CY22150_LCLK1_EN)    # enable LCLK1 output
         self._set_register_value(self.CY22150_ADD_INPDRV, self.CY22150_DEF_INPDRV) # reference clock frequency range
         self._set_register_value(self.CY22150_DEF_INPCAP, 0)                  # no load capacitors

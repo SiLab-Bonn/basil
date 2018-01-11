@@ -56,6 +56,7 @@ class GpioPca9554(HardwareLayer):
         self.GPIO_CFG = 0x00
 
     def init(self):
+        super(GpioPca9554, self).init()
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_CFG, self.GPIO_CFG))
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_OUT, 0x00))
 
@@ -208,6 +209,8 @@ class I2cAnalogChannel(AdcMax11644, DacDac7578, MuxPca9540B):
         self.power_gpio = PowerGpio(intf, conf)
 
     def init(self):
+        super(I2cAnalogChannel, self).init()
+
         # setup PWR GPIO
         MuxPca9540B._set_i2c_mux(self, self.I2CBUS_DAC)
         self.power_gpio.init()

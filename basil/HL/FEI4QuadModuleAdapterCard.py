@@ -144,6 +144,7 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
         )
 
     def init(self):
+        super(FEI4QuadModuleAdapterCard, self).init()
         self._setup_adc(self.SETUP_FLAGS_BI)
         self.read_eeprom_calibration()
         self.set_current_limit('CH1', 1.0)

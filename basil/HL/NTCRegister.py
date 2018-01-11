@@ -27,6 +27,7 @@ class NTCRegister(HardwareLayer):
         super(NTCRegister, self).__init__(intf, conf)
 
     def init(self):
+        super(NTCRegister, self).init()
         if "NTC_type" not in self._conf:
             self._conf["NTC_type"] = "TDK_NTCG16H"
 

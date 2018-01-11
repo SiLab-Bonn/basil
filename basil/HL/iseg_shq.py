@@ -44,6 +44,7 @@ class IsegShq(HardwareLayer):
         super(IsegShq, self).__init__(intf, conf)
 
     def init(self):
+        super(IsegShq, self).init()
         self.iseg = IsegShqCom(port_num=self._init['port'])
         self.iseg.init_iseg()
         for ch in self.iseg.channel_list:
