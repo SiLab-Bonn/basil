@@ -698,7 +698,6 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
     def init(self):
         # init DACs and ADCs
         super(GPAC, self).init()
-
         self._init.setdefault('no_calibration', False)
         # read calibration
         if not self._init['no_calibration']:
