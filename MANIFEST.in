@@ -4,4 +4,3 @@ recursive-include examples *
 recursive-include firmware *
 recursive-include tests *
 recursive-include basil *.yaml
-global-exclude *.pyc .project .pydevproject build
