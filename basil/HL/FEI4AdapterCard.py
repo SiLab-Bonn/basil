@@ -320,6 +320,7 @@ class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
         )
 
     def init(self):
+        super(FEI4AdapterCard, self).init()
         self._setup_adc(self.SETUP_FLAGS)
 
         self._init.setdefault('no_calibration', False)

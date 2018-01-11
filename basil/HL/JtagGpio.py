@@ -50,7 +50,7 @@ fields:
         # self.TD0 = 0
 
     def init(self):
-        pass
+        super(JtagGpio, self).init()
 
     def reset(self):
         self.reg['RESETB'] = 0

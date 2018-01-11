@@ -25,7 +25,8 @@ class sensirionEKH4(HardwareLayer):
         super(sensirionEKH4, self).__init__(intf, conf)
 
     def init(self):
-        self.read() ## clear trash 
+        super(sensirionEKH4, self).init()
+        self.read() ## clear trash
         self.ask(r"7e230200013102010c25010e2601033a7e")  # set readout every second
 
     def write(self,command):

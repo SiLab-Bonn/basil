@@ -44,6 +44,7 @@ class binderMK53(HardwareLayer):
         super(binderMK53, self).__init__(intf, conf)
 
     def init(self):
+        super(binderMK53, self).init()
         self.slave_address = self._init['address']  # set the device address
         self.min_temp = self._init['min_temp']  # define the minimum temperature one can set, for safety
         self.max_temp = self._init['max_temp']  # define the maximum temperature one can set, for safety

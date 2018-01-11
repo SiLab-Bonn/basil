@@ -14,7 +14,7 @@ class FadcConf(HardwareLayer):
         super(FadcConf, self).__init__(intf, conf)
 
     def init(self):
-
+        super(FadcConf, self).init()
         logging.info("Initializing FADC Configuration...")
 
         self._intf.set_data([0x00, 0x10])  # RESET ADC
