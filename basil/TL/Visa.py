@@ -9,6 +9,8 @@ import logging
 
 from basil.TL.TransferLayer import TransferLayer
 
+logger = logging.getLogger(__name__)
+
 
 class Visa(TransferLayer):
     '''Transfer layer for a Virtual Instrument Software Architecture (VISA) provided by pyVisa.
@@ -30,9 +32,9 @@ class Visa(TransferLayer):
         backend = self._init.get('backend', '')  # Empty string means std. backend (NI VISA)
         rm = visa.ResourceManager(backend)
         try:
-            logging.info('BASIL VISA TL with %s backend found the following devices: %s', backend, ", ".join(rm.list_resources()))
+            logger.info('BASIL VISA TL with %s backend found the following devices: %s', backend, ", ".join(rm.list_resources()))
         except NotImplementedError:  # some backends do not always implement the list_resources function
-            logging.info('BASIL VISA TL with %s backend', backend)
+            logger.info('BASIL VISA TL with %s backend', backend)
         self._resource = rm.open_resource(**{key: value for key, value in self._init.items() if key not in ("backend",)})
 
     def close(self):

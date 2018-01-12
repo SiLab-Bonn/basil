@@ -19,6 +19,8 @@ from threading import RLock as Lock
 
 from basil.TL.SiTransferLayer import SiTransferLayer
 
+logger = logging.getLogger(__name__)
+
 
 class SiTcp(SiTransferLayer):
     '''SiTcp transport layer.
@@ -113,7 +115,7 @@ class SiTcp(SiTransferLayer):
         elif addr == self.BASE_FAKE_FIFO_TCP:
             self.reset_fifo()
         else:
-            logging.warning("SiTcp:write - Invalid address %s" % hex(addr))
+            logger.warning("SiTcp:write - Invalid address %s" % hex(addr))
 
     def _read_single(self, addr, size):
         request = array('B', struct.pack('>BBBBI', self.RBCP_VER, self.RBCP_CMD_RD, self.RBCP_ID, size, addr))
@@ -158,7 +160,7 @@ class SiTcp(SiTransferLayer):
                 return array('B', struct.pack('I', self._get_tcp_data_size()))
             else:
                 return array('B', '\x00' * size)  # FIXME: workaround for SRAM module registers
-#                 logging.warning("SiTcp:read - Invalid address %s" % hex(addr))
+#                 logger.warning("SiTcp:read - Invalid address %s" % hex(addr))
 
     def _tcp_readout(self):
         while True:

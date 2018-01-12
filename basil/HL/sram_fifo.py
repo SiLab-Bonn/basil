@@ -12,6 +12,8 @@ import numpy as np
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
+logger = logging.getLogger(__name__)
+
 
 class sram_fifo(RegisterHardwareLayer):
     '''SRAM FIFO controller interface for sram_fifo FPGA module.
@@ -46,7 +48,7 @@ class sram_fifo(RegisterHardwareLayer):
         fifo_size : int
             FIFO size in units of bytes (8 bit).
         '''
-        logging.warning("Deprecated: Use get_FIFO_SIZE()")
+        logger.warning("Deprecated: Use get_FIFO_SIZE()")
         return self.FIFO_SIZE
 
     @property
@@ -70,7 +72,7 @@ class sram_fifo(RegisterHardwareLayer):
         fifo_size : int
             FIFO size in units of integers (32 bit).
         '''
-        logging.warning("Deprecated: Use get_FIFO_INT_SIZE()")
+        logger.warning("Deprecated: Use get_FIFO_INT_SIZE()")
         return self.FIFO_INT_SIZE
 
     def get_FIFO_INT_SIZE(self):
@@ -91,7 +93,7 @@ class sram_fifo(RegisterHardwareLayer):
         fifo_size : int
             Read error counter (read attempts when SRAM is empty).
         '''
-        logging.warning("Deprecated: Use get_READ_ERROR_COUNTER()")
+        logger.warning("Deprecated: Use get_READ_ERROR_COUNTER()")
         return self.READ_ERROR_COUNTER
 
     def get_data(self):
@@ -106,7 +108,7 @@ class sram_fifo(RegisterHardwareLayer):
         fifo_int_size_2 = self.FIFO_INT_SIZE
         if fifo_int_size_1 > fifo_int_size_2:
             fifo_int_size = fifo_int_size_2  # use smaller chunk
-            logging.warning("Reading wrong FIFO size. Expected: %d <= %d" % (fifo_int_size_1, fifo_int_size_2))
+            logger.warning("Reading wrong FIFO size. Expected: %d <= %d" % (fifo_int_size_1, fifo_int_size_2))
         else:
             fifo_int_size = fifo_int_size_1  # use smaller chunk
         return np.frombuffer(self._intf.read(self._conf['base_data_addr'], size=4 * fifo_int_size), dtype=np.dtype('<u4'))  # size in number of bytes
@@ -114,5 +116,5 @@ class sram_fifo(RegisterHardwareLayer):
     def get_size(self):
         ''' *Deprecated*
         '''
-        logging.warning("Deprecated: Use get_FIFO_SIZE()")
+        logger.warning("Deprecated: Use get_FIFO_SIZE()")
         return self.FIFO_SIZE
