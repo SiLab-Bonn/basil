@@ -4,8 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-import logging
-
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 

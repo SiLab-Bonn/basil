@@ -4,8 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-
-import logging
 import os
 from importlib import import_module
 from inspect import getmembers, isclass
@@ -14,6 +12,12 @@ import sys
 import warnings
 from collections import OrderedDict
 
+# FIXME: Bad practice
+# Logger settings should not be defined in a module, but once by the
+# application developer. Thus outside of basil. Otherwise multiple calls to
+# the basic config are possible. This is left here at the moment for backward
+# compatibility and since our logging format is the same everywhere (?).
+import logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
 
 
