@@ -9,6 +9,8 @@ import logging
 
 from basil.HL.HardwareLayer import HardwareLayer
 
+logger = logging.getLogger(__name__)
+
 
 class MIO_PLL(HardwareLayer):
     '''
@@ -171,9 +173,9 @@ class MIO_PLL(HardwareLayer):
                                             self.chg_pump = 4;
                         ftest = self.fref * self.p_total / self.q_total * 1 / self.div
                         fvco  = self.fref * self.p_total / self.q_total
-                        logging.info('PLL frequency set to ' + str(ftest) + ' MHz' + ' (VCO @ ' + str(fvco) + ' MHz)')
+                        logger.info('PLL frequency set to ' + str(ftest) + ' MHz' + ' (VCO @ ' + str(fvco) + ' MHz)')
                         return True
-        logging.error('MIO_PLL: Could not find PLL parameters')
+        logger.error('MIO_PLL: Could not find PLL parameters')
         return False
 
     def _updateRegisters(self):

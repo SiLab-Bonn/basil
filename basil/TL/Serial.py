@@ -10,6 +10,8 @@ import serial
 
 from basil.TL.TransferLayer import TransferLayer
 
+logger = logging.getLogger(__name__)
+
 
 class Serial(TransferLayer):
     '''Transfer layer of serial device using the pySerial module.
@@ -48,7 +50,7 @@ class Serial(TransferLayer):
 
     def query(self, data):
         if self._port.inWaiting():
-            logging.warning("Found %d bytes in the input buffer of interface %s which will be flushed" % (self._port.inWaiting(), self.name))
+            logger.warning("Found %d bytes in the input buffer of interface %s which will be flushed" % (self._port.inWaiting(), self.name))
             self._port.flushInput()
         self.write(data)
         return self._readline()

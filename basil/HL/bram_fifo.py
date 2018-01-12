@@ -12,6 +12,8 @@ import numpy as np
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
+logger = logging.getLogger(__name__)
+
 
 class bram_fifo(RegisterHardwareLayer):
     '''BRAM FIFO controller interface for bram_fifo FPGA module.
@@ -67,7 +69,7 @@ class bram_fifo(RegisterHardwareLayer):
         fifo_int_size_2 = self.FIFO_INT_SIZE
         if fifo_int_size_1 > fifo_int_size_2:
             fifo_int_size = fifo_int_size_2  # use smaller chunk
-            logging.warning("Reading wrong FIFO size. Expected: %d <= %d" % (fifo_int_size_1, fifo_int_size_2))
+            logger.warning("Reading wrong FIFO size. Expected: %d <= %d" % (fifo_int_size_1, fifo_int_size_2))
         else:
             fifo_int_size = fifo_int_size_1  # use smaller chunk
         return np.frombuffer(self._intf.read(self._conf['base_data_addr'], size=4 * fifo_int_size), dtype=np.dtype('<u4'))  # size in number of bytes

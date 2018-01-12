@@ -17,6 +17,8 @@ from cocotb.triggers import RisingEdge
 from Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
 from cocotb.binary import BinaryValue
 
+logger = logging.getLogger(__name__)
+
 
 def get_bus():
     bus_name_path = os.getenv("SIMULATION_BUS", "basil.utils.sim.BasilBusDriver")
@@ -37,7 +39,7 @@ def socket_test(dut, debug=False):
     port = os.getenv("SIMULATION_PORT", '12345')
 
     if debug:
-        dut._log.setLevel(logging.DEBUG)
+        logger.setLevel(logging.DEBUG)
 
     bus = get_bus()(dut)
 

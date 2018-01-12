@@ -11,6 +11,8 @@ import math
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
+logger = logging.getLogger(__name__)
+
 
 class NTCRegister(HardwareLayer):
     """ Register class for NTCRegister
@@ -31,7 +33,7 @@ class NTCRegister(HardwareLayer):
         if "NTC_type" not in self._conf:
             self._conf["NTC_type"] = "TDK_NTCG16H"
 
-        logging.debug("Initializing NTC " + self._conf["NTC_type"] + " on channel " + self._conf["arg_add"]["channel"])
+        logger.debug("Initializing NTC " + self._conf["NTC_type"] + " on channel " + self._conf["arg_add"]["channel"])
 
         if self._conf["NTC_type"] == "TDK_NTCG16H":
             self.R_RATIO = np.array([18.85, 14.429, 11.133, 8.656, 6.779, 5.346, 4.245, 3.393, 2.728, 2.207, 1.796, 1.47, 1.209, 1.0, 0.831, 0.694, 0.583, 0.491, 0.416, 0.354, 0.302, 0.259, 0.223, 0.192, 0.167, 0.145, 0.127, 0.111, 0.0975, 0.086, 0.076, 0.0674, 0.0599, 0.0534])
@@ -60,7 +62,7 @@ class NTCRegister(HardwareLayer):
             j = arg[0]
 
         k = 1.0 / (math.log(r_ratio / self.R_RATIO[j]) / self.B_CONST[j] + 1 / self.TEMP[j])[0]
-        logging.info("Temperature (C): %f", k - 273.15)
+        logger.info("Temperature (C): %f", k - 273.15)
 
         if unit == "C":
             return k - 273.15
