@@ -62,7 +62,7 @@ class RegisterHardwareLayer(HardwareLayer):
             version = str(self.VERSION)
         else:
             version = None
-        logger.debug("Initializing %s (firmware version: %s), module %s, base_addr %s" % (self.name, version if 'VERSION' in self._registers else 'n/a', self.__class__.__module__, hex(self._base_addr)))
+        logger.info("Initializing %s (firmware version: %s), module %s, base_addr %s" % (self.name, version if 'VERSION' in self._registers else 'n/a', self.__class__.__module__, hex(self._base_addr)))
         if self._require_version and not eval(version + self._require_version):
             raise Exception("FPGA module %s does not satisfy version requirements (read: %s, require: %s)" % (self.__class__.__module__, version, self._require_version.strip()))
         for reg, value in self._registers.iteritems():
