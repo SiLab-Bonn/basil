@@ -165,11 +165,14 @@ class SiTcp(SiTransferLayer):
 
     def _tcp_readout(self):
         while not self._stop:
-            ready = select.select([self._sock_tcp], [], [], self._tcp_readout_interval)
-            if ready[0]:
-                with self._tcp_lock:
-                    data = self._sock_tcp.recv(1024 * 8 * 64)
-                    self._tcp_read_buff.extend(array('B', data))
+            try: # TODO: temporary fix
+                ready = select.select([self._sock_tcp], [], [], self._tcp_readout_interval)
+                if ready[0]:
+                    with self._tcp_lock:
+                        data = self._sock_tcp.recv(1024 * 8 * 64)
+                        self._tcp_read_buff.extend(array('B', data))
+            except AttributeError:
+                pass
 
     def _get_tcp_data_size(self):
         with self._tcp_lock:
