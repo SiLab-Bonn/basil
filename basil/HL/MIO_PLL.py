@@ -93,7 +93,7 @@ class MIO_PLL(HardwareLayer):
         self.setFrequency(self.pll_frequency)
 
     def close(self):
-         self._set_register_value(self.CY22150_ADD_CLKOE, 0)  # disable LCLK1 output
+        self._set_register_value(self.CY22150_ADD_CLKOE, 0)  # disable LCLK1 output
 
     def setFrequency(self, value):  # value in MHz
         if float(value) < 0.08 or float(value) > 200.0:
