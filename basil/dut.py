@@ -125,12 +125,19 @@ class Dut(Base):
             catch_exception_on_init(item)
 
     def close(self):
+        def catch_exception_on_close(mod):
+            if not mod.is_initialized():
+                try:
+                    mod.close()
+                except:
+                    pass
+
         for item in self._registers.itervalues():
-            item.close()
+            catch_exception_on_close(item)
         for item in self._hardware_layer.itervalues():
-            item.close()
+            catch_exception_on_close(item)
         for item in self._transfer_layer.itervalues():
-            item.close()
+            catch_exception_on_close(item)
 
     def set_configuration(self, conf):
         conf = self._open_conf(conf)
