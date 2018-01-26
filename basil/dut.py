@@ -78,7 +78,7 @@ class Base(object):
             return False
 
     def close(self):
-        pass
+        self._initialized = False
 
     def set_configuration(self, conf):
         raise NotImplementedError("set_configuration() not implemented")
@@ -125,11 +125,11 @@ class Dut(Base):
             catch_exception_on_init(item)
 
     def close(self):
-        for item in self._transfer_layer.itervalues():
+        for item in self._registers.itervalues():
             item.close()
         for item in self._hardware_layer.itervalues():
             item.close()
-        for item in self._registers.itervalues():
+        for item in self._transfer_layer.itervalues():
             item.close()
 
     def set_configuration(self, conf):

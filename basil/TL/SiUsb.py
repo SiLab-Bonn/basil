@@ -94,4 +94,5 @@ class SiUsb(SiTransferLayer):
         return conf
 
     def close(self):
+        super(SiUsb, self).close()
         self._sidev.dispose()
