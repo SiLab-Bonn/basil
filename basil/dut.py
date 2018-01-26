@@ -126,7 +126,7 @@ class Dut(Base):
 
     def close(self):
         def catch_exception_on_close(mod):
-            if not mod.is_initialized():
+            if mod.is_initialized:
                 try:
                     mod.close()
                 except:
