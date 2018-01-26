@@ -4,7 +4,9 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-# An interface to HDL simulator thatnks to cocotb [http://cocotb.readthedocs.org/]
+# An interface to cocotb [http://cocotb.readthedocs.org/],
+# a coroutine based cosimulation library for writing VHDL and
+# Verilog testbenches in Python.
 #
 
 import socket
