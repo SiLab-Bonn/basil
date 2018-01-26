@@ -15,7 +15,7 @@ from basil.TL.SiTransferLayer import SiTransferLayer
 logger = logging.getLogger(__name__)
 
 
-class SiUsb(SiTransferLayer):
+class SiUsb3(SiTransferLayer):
     '''SiLab USB3 device
     '''
     BASE_ADDRESS_I2C = 0x00000
@@ -28,11 +28,11 @@ class SiUsb(SiTransferLayer):
     HIGH_ADDRESS_BLOCK = 0xffffffffffffffff
 
     def __init__(self, conf):
-        super(SiUsb, self).__init__(conf)
+        super(SiUsb3, self).__init__(conf)
         self._sidev = None
 
     def init(self):
-        super(SiUsb, self).init()
+        super(SiUsb3, self).init()
         self._init.setdefault('board_id', None)
         self._init.setdefault('avoid_download', False)
         if self._init['board_id'] and int(self._init['board_id']) >= 0:
@@ -89,5 +89,5 @@ class SiUsb(SiTransferLayer):
         return conf
 
     def close(self):
-        super(SiUsb, self).close()
+        super(SiUsb3, self).close()
         self._sidev.dispose()
