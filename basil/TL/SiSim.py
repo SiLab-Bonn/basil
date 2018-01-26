@@ -72,4 +72,5 @@ class SiSim(SiTransferLayer):
         return array.array('B', resp.data)
 
     def close(self):
+        super(SiSim, self).close()
         self._sock.close()

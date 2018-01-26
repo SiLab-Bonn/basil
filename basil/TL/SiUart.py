@@ -105,5 +105,6 @@ class SiUart(TransferLayer):
         raise Exception("Read serial port failed")
 
     def close(self):
+        super(SiUart, self).close()
         self._ser.close()
         logger.debug("_serial _port closed successfully")

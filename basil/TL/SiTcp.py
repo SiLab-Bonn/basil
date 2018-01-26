@@ -187,6 +187,7 @@ class SiTcp(SiTransferLayer):
         return ret
     
     def close(self):
+        super(SiTcp, self).close()
         self._stop = True
         self._tcp_readout_thread.join()
         self._sock_udp.close()

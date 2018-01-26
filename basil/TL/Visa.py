@@ -38,6 +38,7 @@ class Visa(TransferLayer):
         self._resource = rm.open_resource(**{key: value for key, value in self._init.items() if key not in ("backend",)})
 
     def close(self):
+        super(Visa, self).close()
         self._resource.close()
 
     def write(self, data):
