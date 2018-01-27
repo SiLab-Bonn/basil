@@ -130,7 +130,8 @@ class Dut(Base):
                 try:
                     mod.close()
                 except:
-                    pass
+                    # restore status after close() failed
+                    mod._is_initialized = True
 
         for item in self._registers.itervalues():
             catch_exception_on_close(item)
