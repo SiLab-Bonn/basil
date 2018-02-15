@@ -15,6 +15,8 @@ import string
 from basil.HL.HardwareLayer import HardwareLayer
 from basil.HL.FEI4AdapterCard import Eeprom24Lc128
 
+logger = logging.getLogger(__name__)
+
 
 class MuxPca9540B(HardwareLayer):
     '''PCA 9540B
@@ -56,6 +58,7 @@ class GpioPca9554(HardwareLayer):
         self.GPIO_CFG = 0x00
 
     def init(self):
+        super(GpioPca9554, self).init()
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_CFG, self.GPIO_CFG))
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_OUT, 0x00))
 
@@ -208,6 +211,8 @@ class I2cAnalogChannel(AdcMax11644, DacDac7578, MuxPca9540B):
         self.power_gpio = PowerGpio(intf, conf)
 
     def init(self):
+        super(I2cAnalogChannel, self).init()
+
         # setup PWR GPIO
         MuxPca9540B._set_i2c_mux(self, self.I2CBUS_DAC)
         self.power_gpio.init()
@@ -695,14 +700,13 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
     def init(self):
         # init DACs and ADCs
         super(GPAC, self).init()
-
         self._init.setdefault('no_calibration', False)
         # read calibration
         if not self._init['no_calibration']:
             self.read_eeprom_calibration()
-            logging.info('Found adapter card: {}'.format('%s with ID %s' % ('General Purpose Analog Card', self.get_id())))
+            logger.info('Found adapter card: {}'.format('%s with ID %s' % ('General Purpose Analog Card', self.get_id())))
         else:
-            logging.info('GPAC: Skeeping calibration.')
+            logger.info('GPAC: Skeeping calibration.')
 
         # setup current limit and current source
         self.set_current_limit('PWR0', 0.1)
@@ -880,5 +884,5 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
         # if value is greater than maximum dac value, set it to maximum and output an error message
         if value > 4095:
             value = 4095
-            logging.warning('%s DAC value reached maximum value', channel)
+            logger.warning('%s DAC value reached maximum value', channel)
         I2cAnalogChannel._set_dac_value(self, value=value, **self._ch_map[channel]['DAC'])

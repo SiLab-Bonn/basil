@@ -11,6 +11,8 @@ from pyiseg import IsegShqCom, status_words
 
 from basil.HL.HardwareLayer import HardwareLayer
 
+logger = logging.getLogger(__name__)
+
 
 class IsegShq(HardwareLayer):
     '''Python interface for ISEG SHQ series
@@ -44,6 +46,7 @@ class IsegShq(HardwareLayer):
         super(IsegShq, self).__init__(intf, conf)
 
     def init(self):
+        super(IsegShq, self).init()
         self.iseg = IsegShqCom(port_num=self._init['port'])
         self.iseg.init_iseg()
         for ch in self.iseg.channel_list:
@@ -68,7 +71,7 @@ class IsegShq(HardwareLayer):
         if ramp_speed:
             self.write_v_ramp(self, channel=channel, ramp_speed=ramp_speed)
         self.iseg.write_v_set(channel, raw)
-        logging.info('Ramping voltage...')
+        logger.info('Ramping voltage...')
         self.iseg.write_start_ramp(channel)
         while True:
             status = self.iseg.read_status_word(channel=channel)
@@ -77,9 +80,9 @@ class IsegShq(HardwareLayer):
             elif status == 'ON':
                 break
             else:
-                logging.warning('CH%d: ramping voltage failed with status %s (%s)', channel, status, status_words[status])
+                logger.warning('CH%d: ramping voltage failed with status %s (%s)', channel, status, status_words[status])
                 break
-        logging.info('Finished ramping voltage')
+        logger.info('Finished ramping voltage')
 
     def get_voltage(self, channel, unit='V'):
         raw = self.iseg.read_voltage(channel)
@@ -114,6 +117,6 @@ class IsegShq(HardwareLayer):
             if status == 'ON' or status == 'OFF':
                 break
             if loop_cnt >= 3:
-                logging.warning('CH%d: status %s (%s) after trip reset', channel, status, status_words[status])
+                logger.warning('CH%d: status %s (%s) after trip reset', channel, status, status_words[status])
                 break
             loop_cnt += 1

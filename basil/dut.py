@@ -4,8 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-
-import logging
 import os
 from importlib import import_module
 from inspect import getmembers, isclass
@@ -14,6 +12,12 @@ import sys
 import warnings
 from collections import OrderedDict
 
+# FIXME: Bad practice
+# Logger settings should not be defined in a module, but once by the
+# application developer. Thus outside of basil. Otherwise multiple calls to
+# the basic config are possible. This is left here at the moment for backward
+# compatibility and since our logging format is the same everywhere (?).
+import logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
 
 
@@ -74,7 +78,7 @@ class Base(object):
             return False
 
     def close(self):
-        pass
+        self._initialized = False
 
     def set_configuration(self, conf):
         raise NotImplementedError("set_configuration() not implemented")
@@ -121,12 +125,20 @@ class Dut(Base):
             catch_exception_on_init(item)
 
     def close(self):
-        for item in self._transfer_layer.itervalues():
-            item.close()
-        for item in self._hardware_layer.itervalues():
-            item.close()
+        def catch_exception_on_close(mod):
+            if mod.is_initialized:
+                try:
+                    mod.close()
+                except:
+                    # restore status after close() failed
+                    mod._is_initialized = True
+
         for item in self._registers.itervalues():
-            item.close()
+            catch_exception_on_close(item)
+        for item in self._hardware_layer.itervalues():
+            catch_exception_on_close(item)
+        for item in self._transfer_layer.itervalues():
+            catch_exception_on_close(item)
 
     def set_configuration(self, conf):
         conf = self._open_conf(conf)

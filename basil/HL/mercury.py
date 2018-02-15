@@ -4,8 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-import logging
-
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 
@@ -25,6 +23,7 @@ class Mercury(HardwareLayer):
         super(Mercury, self).__init__(intf, conf)
 
     def init(self):
+        super(Mercury, self).init()
         self._adresses = []
         for a in range(16):  # Check all possible addresses
             self.write(bytearray.fromhex("01%d" % (a + 30))  + "TB")  # Tell board address

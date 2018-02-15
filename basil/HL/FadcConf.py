@@ -7,6 +7,8 @@
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 import logging
 
+logger = logging.getLogger(__name__)
+
 
 class FadcConf(HardwareLayer):
 
@@ -14,8 +16,8 @@ class FadcConf(HardwareLayer):
         super(FadcConf, self).__init__(intf, conf)
 
     def init(self):
-
-        logging.info("Initializing FADC Configuration...")
+        super(FadcConf, self).init()
+        logger.info("Initializing FADC Configuration...")
 
         self._intf.set_data([0x00, 0x10])  # RESET ADC
         self._intf.start()
@@ -33,14 +35,12 @@ class FadcConf(HardwareLayer):
             pass
 
     def enable_pattern(self, pattern):
-        
-        self._intf.set_data([0x03, 0x80 | ((pattern & 0x3f00) >> 8 )]) 
+        self._intf.set_data([0x03, 0x80 | ((pattern & 0x3f00) >> 8 )])
         self._intf.start()
         while not self._intf.is_done():
             pass
 
-        self._intf.set_data([0x04, pattern & 0xff]) 
+        self._intf.set_data([0x04, pattern & 0xff])
         self._intf.start()
         while not self._intf.is_done():
             pass
-        

@@ -19,6 +19,8 @@ from threading import RLock as Lock
 
 from basil.TL.SiTransferLayer import SiTransferLayer
 
+logger = logging.getLogger(__name__)
+
 
 class SiTcp(SiTransferLayer):
     '''SiTcp transport layer.
@@ -69,6 +71,7 @@ class SiTcp(SiTransferLayer):
             self._sock_tcp.setblocking(0)
             self._tcp_readout_thread = Thread(target=self._tcp_readout, name='TcpReadoutThread', kwargs={})
             self._tcp_readout_thread.daemon = True  # exiting program even when thread is alive
+            self._stop = False
             self._tcp_readout_thread.start()
 
     def _write_single(self, addr, data):
@@ -113,7 +116,7 @@ class SiTcp(SiTransferLayer):
         elif addr == self.BASE_FAKE_FIFO_TCP:
             self.reset_fifo()
         else:
-            logging.warning("SiTcp:write - Invalid address %s" % hex(addr))
+            logger.warning("SiTcp:write - Invalid address %s" % hex(addr))
 
     def _read_single(self, addr, size):
         request = array('B', struct.pack('>BBBBI', self.RBCP_VER, self.RBCP_CMD_RD, self.RBCP_ID, size, addr))
@@ -158,18 +161,18 @@ class SiTcp(SiTransferLayer):
                 return array('B', struct.pack('I', self._get_tcp_data_size()))
             else:
                 return array('B', '\x00' * size)  # FIXME: workaround for SRAM module registers
-#                 logging.warning("SiTcp:read - Invalid address %s" % hex(addr))
+#                 logger.warning("SiTcp:read - Invalid address %s" % hex(addr))
 
     def _tcp_readout(self):
-        while True:
-            try:  # TODO: temporary fix
+        while not self._stop:
+            try: # TODO: temporary fix
                 ready = select.select([self._sock_tcp], [], [], self._tcp_readout_interval)
                 if ready[0]:
                     with self._tcp_lock:
                         data = self._sock_tcp.recv(1024 * 8 * 64)
                         self._tcp_read_buff.extend(array('B', data))
             except AttributeError:
-                break
+                pass
 
     def _get_tcp_data_size(self):
         with self._tcp_lock:
@@ -182,3 +185,10 @@ class SiTcp(SiTransferLayer):
             ret = self._tcp_read_buff[:ret_size]
             self._tcp_read_buff = self._tcp_read_buff[ret_size:]
         return ret
+    
+    def close(self):
+        super(SiTcp, self).close()
+        self._stop = True
+        self._tcp_readout_thread.join()
+        self._sock_udp.close()
+        self._sock_tcp.close()

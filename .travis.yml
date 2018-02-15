@@ -13,26 +13,32 @@ notifications:
     - pohl@physik.uni-bonn.de
 
 before_install:
-  # for iverilog
-  - sudo add-apt-repository -y ppa:team-electronics/ppa
-  - sudo apt-get update
+  # Install cocotb and iverilog for interface test
+#  - git clone https://github.com/potentialventures/cocotb
+#  - export COCOTB=$(pwd)/cocotb
+  # Build iverilog from source
+  - sudo apt-get install gperf
+  - git clone https://github.com/steveicarus/iverilog.git
+  - cd iverilog && autoconf && ./configure && make && sudo make install && cd ..
+  # Download iverilog from PPA
+#  - sudo add-apt-repository -y ppa:team-electronics/ppa
+#  - sudo apt-get -q update
+#  - sudo apt-get -q install iverilog-daily
+  # Download iverilog from conda-forge
+#  - conda config --add channels conda-forge
+#  - conda install iverilog
 
 install:
-
   # conda
-  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - wget http://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh
   - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH=$HOME/miniconda/bin:$PATH
+  - export PATH="$HOME/miniconda/bin:$PATH"
   - conda update --yes conda
-  - conda install --yes numpy bitarray nose pyyaml coverage
+  - conda update --yes --all
+  - conda info -a
+  - conda create --yes -n test-environment python=$TRAVIS_PYTHON_VERSION numpy bitarray nose pyyaml coverage
+  - source activate test-environment
   - pip install pyvisa pyvisa-sim coveralls cocotb
-
-  # iverilog
-  - sudo apt-get -y install iverilog-daily
-  # alternative:
-  #- conda config --add channels conda-forge
-  #- conda install iverilog
-
   # install basil
   - python setup.py develop
 
