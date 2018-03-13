@@ -84,8 +84,9 @@ class TestSimTimestampDiv(unittest.TestCase):
 
         # trigger timestamp
         repeat = 16
+        width = 0x18
         self.chip['PULSE_GEN'].set_delay(0x20+0x7)
-        self.chip['PULSE_GEN'].set_width(0x18)
+        self.chip['PULSE_GEN'].set_width(width)
         self.chip['PULSE_GEN'].set_repeat(repeat)
 
         self.chip['PULSE_GEN'].start()
@@ -94,35 +95,39 @@ class TestSimTimestampDiv(unittest.TestCase):
         
         ## get data from fifo
         ret = self.chip['fifo'].get_fifo_size()
-        print ret
         self.assertEqual(ret, 3*4*repeat)
 
         ret = self.chip['fifo'].get_data()
         self.assertEqual(len(ret), 3*repeat)
         for i,r in enumerate(ret):
-            print i,hex(r),
-            if i%3==2:
+            self.assertEqual(r&0xF0000000, 0x50000000)
+            self.assertEqual(r&0xF000000, 0x1000000*(3-i%3))
+            if self.debug==1:
+                print i,hex(r),
+                if i%3==2:
                 print
 
-        self.chip['timestamp_div']["ENABLE_TOT"]=1		
+        self.chip['timestamp_div']["ENABLE_TOT"]=1
         self.chip['PULSE_GEN'].start()
         while(not self.chip['PULSE_GEN'].is_done()):
             pass
-			
+
         ret = self.chip['fifo'].get_fifo_size()
-        print ret
         self.assertEqual(ret, 3*4*repeat)
 
         ret = self.chip['fifo'].get_data()
         self.assertEqual(len(ret), 3*repeat)
         for i,r in enumerate(ret):
-            print i,hex(r),
-            if i%3==2:
-                print
-
-        for i,r in enumerate(ret):
             self.assertEqual(r&0xF0000000, 0x50000000)
-            self.assertEqual(r&0xF000000, 0x1000000*(3-i))
+            self.assertEqual(r&0xF000000, 0x1000000*(3-i%3))
+            if i%3 ==0:
+                 self.assertEqual(r&0xFFFF00, 0x100*width)  ##ToT value
+            if self.debug==1:
+                print i,hex(r),
+                if i%3==2:
+                    print
+
+
 
 
 

@@ -104,7 +104,7 @@ module tb (
         .EXT_START(1'b0),
         .PULSE(PULSE)
     );
-	
+
     clock_divider #(
         .DIVISOR(4) 
     ) i_clock_divisor_spi (
@@ -114,10 +114,10 @@ module tb (
         .CLOCK(CLK40)
     ); 
     clock_multiplier #( .MULTIPLIER(2) ) i_clock_multiplier_two1(.CLK(BUS_CLK),.CLOCK(CLK320)); 
-	clock_multiplier #( .MULTIPLIER(2) ) i_clock_multiplier_two2(.CLK(CLK320),.CLOCK(CLK640)); 
+    clock_multiplier #( .MULTIPLIER(2) ) i_clock_multiplier_two2(.CLK(CLK320),.CLOCK(CLK640)); 
     assign CLK160 = BUS_CLK;
-	
-	always@(posedge CLK40)
+
+    always@(posedge CLK40)
         TIMESTAMP <= TIMESTAMP + 1;
 
 
@@ -129,7 +129,7 @@ module tb (
         .HIGHADDR(TIMESTAMP_HIGHADDR),
         .ABUSWIDTH(ABUSWIDTH),
         .IDENTIFIER(4'b0101),
-		.CLKDV(4)
+        .CLKDV(4)
     )  i_timestamp_div
     (
         .BUS_CLK(BUS_CLK),
