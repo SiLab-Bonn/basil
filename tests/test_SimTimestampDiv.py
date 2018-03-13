@@ -105,7 +105,7 @@ class TestSimTimestampDiv(unittest.TestCase):
             if self.debug==1:
                 print i,hex(r),
                 if i%3==2:
-                print
+                    print
 
         self.chip['timestamp_div']["ENABLE_TOT"]=1
         self.chip['PULSE_GEN'].start()

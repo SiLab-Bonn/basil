@@ -158,14 +158,14 @@ always@(posedge CLK40)
         WAITING_FOR_TRAILING <= 0;
     else if(RISING_EDGES_CNT > FALLING_EDGES_CNT)
         WAITING_FOR_TRAILING <= 1;
-		
+
 reg [67:0] LAST_RISING;
 always@(posedge CLK40)
     if(RST)
         LAST_RISING <= 0;
     else if (RISING_EDGES_CNT > 0)
         LAST_RISING <= {TIMESTAMP, RISING_POS};
-		
+
 reg [67:0] LAST_FALLING;
 always@(posedge CLK40)
     if(RST)
@@ -188,9 +188,9 @@ reg RISING_SYNC;
 always@(posedge CLK40)
     if(RST)
         WAITING_FOR_TRAILING_FF <= 3'b0;
-	else begin
+    else begin
         WAITING_FOR_TRAILING_FF <= {WAITING_FOR_TRAILING_FF[1:0], WAITING_FOR_TRAILING};
-	end
+    end
 assign RISING_SYNC = WAITING_FOR_TRAILING_FF[0] & ~WAITING_FOR_TRAILING_FF[1];
 assign FALLING_SYNC = ~WAITING_FOR_TRAILING_FF[0] & WAITING_FOR_TRAILING_FF[1];
 
