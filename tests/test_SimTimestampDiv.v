@@ -8,26 +8,29 @@
 
 
 `include "utils/bus_to_ip.v"
+`include "utils/clock_multiplier.v"
  
 `include "gpio/gpio.v"
 
 `include "pulse_gen/pulse_gen.v"
 `include "pulse_gen/pulse_gen_core.v"
-`include "utils/clock_multiplier.v"
    
 `include "bram_fifo/bram_fifo_core.v"
 `include "bram_fifo/bram_fifo.v"
 
-`include "timestamp/timestamp.v"
-`include "timestamp/timestamp_core.v"
+`include "timestamp_div/timestamp_div.v"
+`include "timestamp_div/timestamp_div_core.v"
 
 `include "utils/cdc_syncfifo.v"
 `include "utils/generic_fifo.v"
 `include "utils/cdc_pulse_sync.v"
 `include "utils/CG_MOD_pos.v"
 `include "utils/clock_divider.v"
+`include "utils/ddr_des.v"
+`include "utils/IDDR_sim.v"
 
 `include "utils/RAMB16_S1_S9_sim.v"
+
 
 module tb (
     input wire          BUS_CLK,
@@ -62,7 +65,7 @@ module tb (
     // MODULES //
 
     reg [63:0] TIMESTAMP;
-    wire [63:0] TIMESTAMP_OUT;
+	wire [63:0] TIMESTAMP_OUT;
     gpio
     #(
         .BASEADDR(GPIO_BASEADDR),
@@ -81,7 +84,7 @@ module tb (
         .IO(TIMESTAMP_OUT)
     );
     
-    wire CLK;
+    wire CLK640,CLK320,CLK160,CLK40;
     wire PULSE;
     pulse_gen
     #(
@@ -97,33 +100,37 @@ module tb (
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
     
-        .PULSE_CLK(CLK),
+        .PULSE_CLK(CLK640),
         .EXT_START(1'b0),
         .PULSE(PULSE)
     );
-   wire CLK640,CLK320,CLK160,CLK40;
-
-   clock_divider #(
-    .DIVISOR(4) 
-   ) i_clock_divisor_spi (
+	
+    clock_divider #(
+        .DIVISOR(4) 
+    ) i_clock_divisor_spi (
         .CLK(BUS_CLK),
         .RESET(1'b0),
         .CE(),
-        .CLOCK(CLK)
+        .CLOCK(CLK40)
     ); 
-
-    always@(posedge CLK)
+    clock_multiplier #( .MULTIPLIER(2) ) i_clock_multiplier_two1(.CLK(BUS_CLK),.CLOCK(CLK320)); 
+	clock_multiplier #( .MULTIPLIER(2) ) i_clock_multiplier_two2(.CLK(CLK320),.CLOCK(CLK640)); 
+    assign CLK160 = BUS_CLK;
+	
+	always@(posedge CLK40)
         TIMESTAMP <= TIMESTAMP + 1;
+
 
     wire FIFO_READ, FIFO_EMPTY;
     wire [31:0] FIFO_DATA;
-    timestamp
+    timestamp_div
     #(
         .BASEADDR(TIMESTAMP_BASEADDR),
         .HIGHADDR(TIMESTAMP_HIGHADDR),
         .ABUSWIDTH(ABUSWIDTH),
-        .IDENTIFIER(4'b0101) 
-    )  i_timestamp
+        .IDENTIFIER(4'b0101),
+		.CLKDV(4)
+    )  i_timestamp_div
     (
         .BUS_CLK(BUS_CLK),
         .BUS_RST(BUS_RST),
@@ -132,7 +139,9 @@ module tb (
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
         
-        .CLK(CLK),
+        .CLK40(CLK40),
+        .CLK160(CLK160),
+        .CLK320(CLK320),
         .DI(PULSE),
         .EXT_TIMESTAMP(TIMESTAMP),
         .TIMESTAMP_OUT(TIMESTAMP_OUT),
@@ -168,7 +177,7 @@ module tb (
     );
     
     initial begin
-        $dumpfile("timestamp.vcd");
+        $dumpfile("/tmp/timestamp_div.vcd");
         $dumpvars(0);
     end
     
