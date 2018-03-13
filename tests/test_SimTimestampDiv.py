@@ -100,7 +100,6 @@ class TestSimTimestampDiv(unittest.TestCase):
         ret = self.chip['fifo'].get_data()
         self.assertEqual(len(ret), 3*repeat)
         for i,r in enumerate(ret):
-        for i,r in enumerate(ret):
             print i,hex(r),
             if i%3==2:
                 print
