@@ -13,7 +13,7 @@ module timestamp_div
     parameter HIGHADDR = 16'h0000,
     parameter ABUSWIDTH = 16,
     parameter IDENTIFIER = 4'b0001,
-	parameter CLKDV = 4
+    parameter CLKDV = 4
 )(
     input wire BUS_CLK,
     input wire [ABUSWIDTH-1:0] BUS_ADD,
@@ -26,7 +26,7 @@ module timestamp_div
     input wire CLK160,
     input wire CLK40,
     input wire DI,
-	input wire [63:0] EXT_TIMESTAMP,
+    input wire [63:0] EXT_TIMESTAMP,
     output wire [63:0] TIMESTAMP_OUT,
     input wire EXT_ENABLE,
 
@@ -59,7 +59,7 @@ timestamp_div_core
 #(
     .ABUSWIDTH(ABUSWIDTH),
     .IDENTIFIER(IDENTIFIER),
-	.CLKDV(4)
+    .CLKDV(4)
 ) i_timestamp_div_core 
 (
     .BUS_CLK(BUS_CLK),                     
@@ -75,7 +75,7 @@ timestamp_div_core
     .CLK40(CLK40),
     .DI(DI),
     .TIMESTAMP_OUT(TIMESTAMP_OUT),
-	.EXT_TIMESTAMP(EXT_TIMESTAMP),
+    .EXT_TIMESTAMP(EXT_TIMESTAMP),
     .EXT_ENABLE(EXT_ENABLE),
 
     .FIFO_READ(FIFO_READ),
