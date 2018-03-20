@@ -39,7 +39,7 @@ localparam VERSION = 1;
 //output format:
 //31-28: ID, 27-24: 0x1, 23-0: 23-0th bit of timestamp data
 //31-28: ID, 27-24: 0x2, 23-0: 47-24th bit of timestamp data
-//31-28: ID, 27-24: 0x3, 23-8: tot 7-0: 55-48th bit timestamp data
+//31-28: ID, 27-24: 0x3, 23-8: tot 7-0: 55-48th bit of timestamp data
 
 wire SOFT_RST;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
@@ -48,15 +48,16 @@ wire RST;
 assign RST = BUS_RST | SOFT_RST; 
 
 reg CONF_EN, CONF_EXT_ENABLE;
-reg CONF_EXT_TIMESTAMP, CONF_EN_TOT;
+reg CONF_EXT_TIMESTAMP, CONF_EN_TOT,CONF_EN_INVERT;
 reg [7:0] LOST_DATA_CNT;
 
 always @(posedge BUS_CLK) begin
     if(RST) begin
         CONF_EN <= 0;
-		CONF_EXT_TIMESTAMP <=0;
-		CONF_EXT_ENABLE <= 0;
+        CONF_EXT_TIMESTAMP <=0;
+        CONF_EXT_ENABLE <= 0;
         CONF_EN_TOT <=0;
+		  CONF_EN_INVERT <=0;
     end
     else if(BUS_WR) begin
         if(BUS_ADD == 2)
@@ -64,6 +65,7 @@ always @(posedge BUS_CLK) begin
             CONF_EXT_TIMESTAMP <=BUS_DATA_IN[1];
             CONF_EXT_ENABLE <=BUS_DATA_IN[2];
             CONF_EN_TOT <=BUS_DATA_IN[3];
+            CONF_EN_INVERT <=BUS_DATA_IN[4];
     end
 end
 
@@ -72,7 +74,8 @@ always @(posedge BUS_CLK) begin
         if(BUS_ADD == 0)
             BUS_DATA_OUT <= VERSION;
         else if(BUS_ADD == 2)
-            BUS_DATA_OUT <= {4'b0,CONF_EN_TOT,CONF_EXT_ENABLE,CONF_EXT_TIMESTAMP,CONF_EN};
+            BUS_DATA_OUT <= {3'b0,CONF_EN_INVERT,
+				                 CONF_EN_TOT,CONF_EXT_ENABLE,CONF_EXT_TIMESTAMP,CONF_EN};
         else if(BUS_ADD == 3)
             BUS_DATA_OUT <= LOST_DATA_CNT;
         else
@@ -84,7 +87,7 @@ wire RST_SYNC;
 wire RST_SOFT_SYNC;
 cdc_pulse_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(CLK40), .pulse_out(RST_SOFT_SYNC));
 assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
-wire EN_SYNC;
+wire EN_SYNC; 
 assign EN_SYNC= CONF_EN | ( EXT_ENABLE & CONF_EXT_ENABLE);
 
 
@@ -99,23 +102,22 @@ wire RST_LONG;
 assign RST_LONG = sync_cnt[7];
 
 reg [63:0] INT_TIMESTAMP;
-reg [63:0] TIMESTAMP;
+wire [63:0] TIMESTAMP;
 always@(posedge CLK40) begin
     if(RST_SYNC)
         INT_TIMESTAMP <= 0;
     else
         INT_TIMESTAMP <= INT_TIMESTAMP + 1;
 end
-assign TIMESTAMP = CONF_EXT_ENABLE ?  EXT_TIMESTAMP: INT_TIMESTAMP;
+assign TIMESTAMP = CONF_EXT_TIMESTAMP ?  EXT_TIMESTAMP: INT_TIMESTAMP;
 
 // de-serialize
 wire [CLKDV*4-1:0] TDC, TDC_DES;
 reg  [CLKDV*4-1:0] TDC_DES_PREV;
 
 ddr_des #(.CLKDV(CLKDV)) iddr_des_tdc(.CLK2X(CLK320), .CLK(CLK160), .WCLK(CLK40), .IN(DI), .OUT(TDC), .OUT_FAST());
-wire EN_INVERT;
-assign EN_INVERT = 0;
-assign TDC_DES = EN_INVERT ? ~TDC : TDC;
+
+assign TDC_DES = CONF_EN_INVERT ? ~TDC : TDC;
 
 always @ (posedge CLK40)
     TDC_DES_PREV <= TDC_DES;
@@ -156,7 +158,7 @@ always@(posedge CLK40)
         WAITING_FOR_TRAILING <= 0;
     else if(RISING_EDGES_CNT < FALLING_EDGES_CNT)
         WAITING_FOR_TRAILING <= 0;
-    else if(RISING_EDGES_CNT > FALLING_EDGES_CNT)
+    else if( (RISING_EDGES_CNT > FALLING_EDGES_CNT) & EN_SYNC)
         WAITING_FOR_TRAILING <= 1;
 
 reg [67:0] LAST_RISING;
@@ -183,8 +185,8 @@ wire FALLING;
 assign FALLING = (FALLING_EDGES_CNT > 0);
 
 reg [2:0] WAITING_FOR_TRAILING_FF;
-reg FALLING_SYNC;
-reg RISING_SYNC;
+wire FALLING_SYNC;
+wire RISING_SYNC;
 always@(posedge CLK40)
     if(RST)
         WAITING_FOR_TRAILING_FF <= 3'b0;
