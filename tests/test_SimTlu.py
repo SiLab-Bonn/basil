@@ -51,7 +51,8 @@ registers:
 
 class TestSimTlu(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), 'test_SimTlu.v')])
+        cocotb_compile_and_run(
+            [os.path.join(os.path.dirname(__file__), 'test_SimTlu.v')])
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
@@ -102,7 +103,8 @@ class TestSimTlu(unittest.TestCase):
     def test_simple_trigger_threshold(self):
         self.chip['TLU'].TRIGGER_COUNTER = 0
         self.chip['TLU'].TRIGGER_MODE = 0
-        self.chip['TLU'].TRIGGER_SELECT = 4  # select short trigger (one clock cycle)
+        # select short trigger (one clock cycle)
+        self.chip['TLU'].TRIGGER_SELECT = 4
         self.chip['TLU'].TRIGGER_THRESHOLD = 1  # at least one clock cycle
         self.chip['TLU'].TRIGGER_ENABLE = True
 
@@ -189,10 +191,35 @@ class TestSimTlu(unittest.TestCase):
         self.assertEqual(data[2], 0x80000000 + 12)
         self.assertEqual(data[3], 0x80000000 + 13)
 
+    def test_manual_soft_trigger(self):
+        self.chip['TLU'].TRIGGER_COUNTER = 10
+        self.chip['TLU'].TRIGGER_MODE = 0
+        self.chip['TLU'].TRIGGER_SELECT = 0
+        self.chip['TLU'].TRIGGER_VETO_SELECT = 0
+        self.chip['TLU'].TRIGGER_ENABLE = True
+
+        for i in range(4):
+            self.chip['TLU'].SOFT_TRIGGER = 1
+
+            readings = 0
+            while(self.chip['FIFO'].get_FIFO_INT_SIZE() <= i and readings < 10000):
+                readings += 1
+
+        self.chip['TLU'].TRIGGER_ENABLE = False
+        self.assertGreaterEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 4)
+        self.assertGreaterEqual(self.chip['TLU'].TRIGGER_COUNTER, 14)
+
+        data = self.chip['FIFO'].get_data()
+        self.assertEqual(data[0], 0x80000000 + 10)
+        self.assertEqual(data[1], 0x80000000 + 11)
+        self.assertEqual(data[2], 0x80000000 + 12)
+        self.assertEqual(data[3], 0x80000000 + 13)
+
     def test_tlu_trigger_handshake(self):
         self.chip['TLU'].TRIGGER_COUNTER = 0
         self.chip['TLU'].TRIGGER_MODE = 3
-        self.chip['TLU'].TRIGGER_VETO_SELECT = 255  # not used when EN_TLU_VETO is False
+        # not used when EN_TLU_VETO is False
+        self.chip['TLU'].TRIGGER_VETO_SELECT = 255
         self.chip['TLU'].EN_TLU_VETO = 0
 #         self.chip['TLU'].DATA_FORMAT = 2
 #         self.chip['TLU'].TRIGGER_LOW_TIMEOUT = 5
@@ -221,7 +248,8 @@ class TestSimTlu(unittest.TestCase):
     def test_tlu_trigger_handshake_veto(self):
         self.chip['TLU'].TRIGGER_COUNTER = 0
         self.chip['TLU'].TRIGGER_MODE = 3
-        self.chip['TLU'].TRIGGER_VETO_SELECT = 255  # used when EN_TLU_VETO is True
+        # used when EN_TLU_VETO is True
+        self.chip['TLU'].TRIGGER_VETO_SELECT = 255
         self.chip['TLU'].EN_TLU_VETO = 1
         self.chip['TLU'].TRIGGER_ENABLE = True
         self.chip['GPIO'].set_data([0x01])  # enable trigger/TLU FSM
@@ -237,6 +265,7 @@ class TestSimTlu(unittest.TestCase):
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
+
 
 if __name__ == '__main__':
     unittest.main()
