@@ -48,7 +48,8 @@ class tlu(RegisterHardwareLayer):
                   'HANDSHAKE_BUSY_VETO_WAIT_CYCLES': {'descr': {'addr': 30, 'size': 8}},
                   'TRIGGER_LOW_TIMEOUT_ERROR_COUNTER': {'descr': {'addr': 31, 'size': 8, 'properties': ['ro']}},
                   'TLU_TRIGGER_ACCEPT_ERROR_COUNTER': {'descr': {'addr': 32, 'size': 8, 'properties': ['ro']}},
-                  'TRIGGER_THRESHOLD': {'descr': {'addr': 33, 'size': 8}}}
+                  'TRIGGER_THRESHOLD': {'descr': {'addr': 33, 'size': 8}},
+                  'SOFT_TRIGGER': {'descr': {'addr': 34, 'size': 8, 'properties': ['writeonly']}}}
     _require_version = "==10"
 
     def __init__(self, intf, conf):

@@ -92,6 +92,27 @@ flag_domain_crossing rst_flag_domain_crossing (
     .FLAG_OUT_CLK_B(RST_SYNC)
 );
 
+// Manual software trigger
+wire SOFT_TRG; // Address: 34
+assign SOFT_TRG = (BUS_ADD == 34 && BUS_WR);
+
+reg SOFT_TRG_FF, SOFT_TRG_FF2;
+always @(posedge BUS_CLK) begin
+    SOFT_TRG_FF <= SOFT_TRG;
+    SOFT_TRG_FF2 <= SOFT_TRG_FF;
+end
+
+wire SOFT_TRG_FLAG;
+assign SOFT_TRG_FLAG = ~SOFT_TRG_FF2 & SOFT_TRG_FF;
+
+wire SOFT_TRG_SYNC;
+flag_domain_crossing trg_flag_domain_crossing (
+    .CLK_A(BUS_CLK),
+    .CLK_B(TRIGGER_CLK),
+    .FLAG_IN_CLK_A(SOFT_TRG_FLAG),
+    .FLAG_OUT_CLK_B(SOFT_TRG_SYNC)
+);
+
 reg [7:0] status_regs[63:0];
 
 // reg 0 for SOFT_RST
@@ -466,7 +487,7 @@ begin
 end
 
 wire TRIGGER_FSM;
-assign TRIGGER_FSM = (TRIGGER_MODE_SYNC != 2'b00) ? TLU_TRIGGER_SYNC : TRIGGER_OR_SYNC; // RJ45 inputs tied to 1 if no connector is plugged in
+assign TRIGGER_FSM = (TRIGGER_MODE_SYNC != 2'b00) ? TLU_TRIGGER_SYNC : (SOFT_TRG_SYNC | TRIGGER_OR_SYNC); // RJ45 inputs tied to 1 if no connector is plugged in
 
 // Reset flag
 reg TLU_RESET_SYNC_FF;
