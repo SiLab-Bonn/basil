@@ -7,7 +7,7 @@ General purpose trigger module and EUDAQ Telescope/TLU communication module. Tri
 
 NOTE:
  1. TRIGGER_ENABLE register has to be set to true to enable trigger FSM.
- 2. TRIGGER_ENABLE and TRIGGER_ACKNOWLEDGE input signals needs to be synchronous to TRIGGER_CLOCK.
+ 2. EXT_TRIGGER_ENABLE and TRIGGER_ACKNOWLEDGE input signals needs to be synchronous to TRIGGER_CLOCK.
  3. Data words have the MSB always high to allow identification of trigger data words. The remaining 31 bits are data.
  4. All selected trigger inputs are ORed. Trigger inputs are connected to TRIGGER input. Trgger inputs are selected by applying a bit mask to TRIGGER_SELECT.
  5. All selected veto inputs are ORed. Veto inputs are connected to TRIGGER_VETO input. Veto inputs are selected by applying a bit mask to TRIGGER_VETO_SELECT.
