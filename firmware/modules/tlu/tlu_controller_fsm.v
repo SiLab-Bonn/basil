@@ -38,6 +38,7 @@ module tlu_controller_fsm
     input wire                  TRIGGER_ENABLE,
     input wire                  TRIGGER_ACKNOWLEDGE,
     output reg                  TRIGGER_ACCEPTED_FLAG,
+    input wire                  TIMESTAMP_RESET_FLAG,
 
     input wire [7:0]            TLU_TRIGGER_LOW_TIME_OUT,
 //    input wire [4:0]            TLU_TRIGGER_CLOCK_CYCLES,
@@ -546,7 +547,7 @@ end
 // time stamp
 always @ (posedge TRIGGER_CLK)
 begin
-    if (RESET || (TLU_RESET_FLAG && (TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11)))
+    if (RESET || (TLU_RESET_FLAG && (TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11)) || TIMESTAMP_RESET_FLAG)
         TIMESTAMP <= 0;
     else
         TIMESTAMP <= TIMESTAMP + 1;
