@@ -48,6 +48,7 @@ module tlu_controller_core
 
     input wire [WIDTH-1:0]      TRIGGER, // trigger input
     input wire [WIDTH-1:0]      TRIGGER_VETO, // veto input
+    input wire                  TIMESTAMP_RESET, // timestamp reset
 
     input wire                  EXT_TRIGGER_ENABLE, // enable trigger FSM
     input wire                  TRIGGER_ACKNOWLEDGE, // acknowledge signal/flag
@@ -384,6 +385,20 @@ three_stage_synchronizer three_stage_lemo_ext_veto_synchronizer_trg_clk (
     .IN(TRIGGER_VETO_OR),
     .OUT(TRIGGER_VETO_OR_SYNC)
 );
+
+wire TIMESTAMP_RESET_SYNC;
+three_stage_synchronizer three_stage_trigger_ts_reset_synchronizer (
+    .CLK(TRIGGER_CLK),
+    .IN(TIMESTAMP_RESET),
+    .OUT(TIMESTAMP_RESET_SYNC)
+);
+
+reg TIMESTAMP_RESET_SYNC_FF;
+always @ (posedge TRIGGER_CLK)
+    TIMESTAMP_RESET_SYNC_FF <= TIMESTAMP_RESET_SYNC;
+
+wire TIMESTAMP_RESET_FLAG;
+assign TIMESTAMP_RESET_FLAG = ~TIMESTAMP_RESET_SYNC_FF & TIMESTAMP_RESET_SYNC;
 
 wire [7:0] CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES_SYNC;
 three_stage_synchronizer #(
@@ -731,6 +746,7 @@ tlu_controller_fsm #(
     .TRIGGER_ENABLE(TRIGGER_ENABLE_FSM),
     .TRIGGER_ACKNOWLEDGE(TRIGGER_ACKNOWLEDGE_FSM),
     .TRIGGER_ACCEPTED_FLAG(TRIGGER_ACCEPTED_FLAG),
+    .TIMESTAMP_RESET_FLAG(TIMESTAMP_RESET_FLAG),
 
     .TLU_TRIGGER_LOW_TIME_OUT(TLU_TRIGGER_LOW_TIME_OUT_SYNC),
 //    .TLU_TRIGGER_CLOCK_CYCLES(TLU_TRIGGER_CLOCK_CYCLES_SYNC),
