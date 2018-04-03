@@ -6,10 +6,8 @@
 #
 
 import unittest
-import os,time,sys
-import yaml
-
-import numpy as np
+import os
+import time
 
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
@@ -71,11 +69,10 @@ class TestSimTimestampDiv(unittest.TestCase):
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
-        self.debug=0
 
     def test_io(self):
         self.chip['timestamp_div'].reset()
-        self.chip['timestamp_div']["ENABLE"]=1
+        self.chip['timestamp_div']["ENABLE"] = 1
         self.chip['gpio'].reset()
 
         self.chip['fifo'].reset()
@@ -85,58 +82,47 @@ class TestSimTimestampDiv(unittest.TestCase):
         # trigger timestamp
         repeat = 16
         width = 0x18
-        self.chip['PULSE_GEN'].set_delay(0x20+0x7)
+        self.chip['PULSE_GEN'].set_delay(0x20 + 0x7)
         self.chip['PULSE_GEN'].set_width(width)
         self.chip['PULSE_GEN'].set_repeat(repeat)
 
         self.chip['PULSE_GEN'].start()
         while(not self.chip['PULSE_GEN'].is_done()):
             pass
-        
-        ## get data from fifo
+
+        # get data from fifo
         ret = self.chip['fifo'].get_fifo_size()
-        self.assertEqual(ret, 3*4*repeat)
+        self.assertEqual(ret, 3 * 4 * repeat)
 
         ret = self.chip['fifo'].get_data()
-        self.assertEqual(len(ret), 3*repeat)
-        for i,r in enumerate(ret):
-            self.assertEqual(r&0xF0000000, 0x50000000)
-            self.assertEqual(r&0xF000000, 0x1000000*(3-i%3))
-            if self.debug==1:
-                print i,hex(r),
-                if i%3==2:
-                    print
+        self.assertEqual(len(ret), 3 * repeat)
+        for i, r in enumerate(ret):
+            self.assertEqual(r & 0xF0000000, 0x50000000)
+            self.assertEqual(r & 0xF000000, 0x1000000 * (3 - i % 3))
 
-        self.chip['timestamp_div']["ENABLE_TOT"]=1
+        self.chip['timestamp_div']["ENABLE_TOT"] = 1
         self.chip['PULSE_GEN'].start()
         while(not self.chip['PULSE_GEN'].is_done()):
             pass
 
         ret = self.chip['fifo'].get_fifo_size()
-        self.assertEqual(ret, 3*4*repeat)
+        self.assertEqual(ret, 3 * 4 * repeat)
 
         ret = self.chip['fifo'].get_data()
-        self.assertEqual(len(ret), 3*repeat)
-        for i,r in enumerate(ret):
-            self.assertEqual(r&0xF0000000, 0x50000000)
-            self.assertEqual(r&0xF000000, 0x1000000*(3-i%3))
-            if i%3 ==0:
-                 self.assertEqual(r&0xFFFF00, 0x100*width)  ##ToT value
-            if self.debug==1:
-                print i,hex(r),
-                if i%3==2:
-                    print
-
-
-
-
+        self.assertEqual(len(ret), 3 * repeat)
+        for i, r in enumerate(ret):
+            self.assertEqual(r & 0xF0000000, 0x50000000)
+            self.assertEqual(r & 0xF000000, 0x1000000 * (3 - i % 3))
+            if i % 3 == 0:
+                self.assertEqual(r & 0xFFFF00, 0x100 * width)  # ToT value
 
     def tearDown(self):
-	    time.sleep(2)
-	    self.chip.close()  # let it close connection and stop simulator
-	    time.sleep(2)
-	    cocotb_compile_clean()
-	    time.sleep(2)
+        time.sleep(2)
+        self.chip.close()  # let it close connection and stop simulator
+        time.sleep(2)
+        cocotb_compile_clean()
+        time.sleep(2)
+
 
 if __name__ == '__main__':
     unittest.main()

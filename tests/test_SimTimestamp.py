@@ -7,9 +7,6 @@
 
 import unittest
 import os
-import yaml
-
-import numpy as np
 
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
@@ -71,11 +68,10 @@ class TestSimTimestamp(unittest.TestCase):
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
-        self.debug=0
 
     def test_io(self):
         self.chip['timestamp'].reset()
-        self.chip['timestamp']["ENABLE"]=1
+        self.chip['timestamp']["ENABLE"] = 1
         self.chip['gpio'].reset()
 
         self.chip['fifo'].reset()
@@ -93,49 +89,32 @@ class TestSimTimestamp(unittest.TestCase):
         self.chip['PULSE_GEN'].start()
         while(not self.chip['PULSE_GEN'].is_done()):
             pass
-        
-        ## get data from fifo
+
+        # get data from fifo
         ret = self.chip['fifo'].get_fifo_size()
-        self.assertEqual(ret, 3*4)
+        self.assertEqual(ret, 3 * 4)
 
         ret = self.chip['fifo'].get_data()
         self.assertEqual(len(ret), 3)
 
-        ## check with gpio
+        # check with gpio
         ret2 = self.chip['gpio'].get_data()
         self.assertEqual(len(ret2), 8)
 
-        for i,r in enumerate(ret):
-            self.assertEqual(r&0xF0000000, 0x50000000)
-            self.assertEqual(r&0xF000000, 0x1000000*(3-i))
+        for i, r in enumerate(ret):
+            self.assertEqual(r & 0xF0000000, 0x50000000)
+            self.assertEqual(r & 0xF000000, 0x1000000 * (3 - i))
 
-        if self.debug:
-            print hex(ret[0]&0xFFFFFF) ,hex(0x10000*ret2[5]+0x100*ret2[6]+ret2[7])
-            print hex(ret[1]&0xFFFFFF) ,hex(0x10000*ret2[2]+0x100*ret2[3]+ret2[4])
-            print hex(ret[2]&0xFFFFFF) ,hex(0x100*ret2[0]+ret2[1])
-
-        self.assertEqual(ret[2]&0xFFFFFF,0x10000*ret2[5]+0x100*ret2[6]+ret2[7])
-        self.assertEqual(ret[1]&0xFFFFFF,0x10000*ret2[2]+0x100*ret2[3]+ret2[4])
-        self.assertEqual(ret[1]&0xFFFFFF,0x100*ret2[0]+ret2[1])
-
-    # def test_dut_iter(self):
-        # conf = yaml.safe_load(cnfg_yaml)
-
-        # def iter_conf():
-            # for item in conf['registers']:
-                # yield item
-            # for item in conf['hw_drivers']:
-                # yield item
-            # for item in conf['transfer_layer']:
-                # yield item
-
-        # for mod, mcnf in zip(self.chip, iter_conf()):
-            # self.assertEqual(mod.name, mcnf['name'])
-            # self.assertEqual(mod.__class__.__name__, mcnf['type'])
+        self.assertEqual(ret[2] & 0xFFFFFF, 0x10000 *
+                         ret2[5] + 0x100 * ret2[6] + ret2[7])
+        self.assertEqual(ret[1] & 0xFFFFFF, 0x10000 *
+                         ret2[2] + 0x100 * ret2[3] + ret2[4])
+        self.assertEqual(ret[1] & 0xFFFFFF, 0x100 * ret2[0] + ret2[1])
 
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
+
 
 if __name__ == '__main__':
     unittest.main()
