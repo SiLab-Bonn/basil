@@ -40,6 +40,7 @@ module tlu_controller
 
     input wire  [WIDTH-1:0]     TRIGGER,
     input wire  [WIDTH-1:0]     TRIGGER_VETO,
+    input wire                  TIMESTAMP_RESET,
 
     input wire                  EXT_TRIGGER_ENABLE,
     input wire                  TRIGGER_ACKNOWLEDGE,
@@ -101,6 +102,7 @@ tlu_controller_core #(
 
     .TRIGGER(TRIGGER),
     .TRIGGER_VETO(TRIGGER_VETO),
+    .TIMESTAMP_RESET(TIMESTAMP_RESET),
     .TRIGGER_SELECTED(TRIGGER_SELECTED),
 
     .EXT_TRIGGER_ENABLE(EXT_TRIGGER_ENABLE),
