@@ -129,7 +129,7 @@ class Dut(Base):
             if mod.is_initialized:
                 try:
                     mod.close()
-                except:
+                except Exception:  # if close() failed
                     # restore status after close() failed
                     mod._is_initialized = True
 
