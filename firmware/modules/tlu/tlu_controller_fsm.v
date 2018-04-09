@@ -42,7 +42,7 @@ module tlu_controller_fsm
 
     input wire [7:0]            TLU_TRIGGER_LOW_TIME_OUT,
 //    input wire [4:0]            TLU_TRIGGER_CLOCK_CYCLES,
-    input wire [3:0]            TLU_TRIGGER_DATA_DELAY,
+    input wire [7:0]            TLU_TRIGGER_DATA_DELAY,
     input wire                  TLU_TRIGGER_DATA_MSB_FIRST,
     input wire                  TLU_ENABLE_VETO,
     input wire                  TLU_RESET_FLAG,

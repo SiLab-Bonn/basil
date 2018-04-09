@@ -62,7 +62,7 @@ module tlu_controller_core
     output wire [TIMESTAMP_N_OF_BIT-1:0] TIMESTAMP
 );
 
-localparam VERSION = 10;
+localparam VERSION = 11;
 
 // Registers
 wire SOFT_RST; // Address: 0
@@ -123,8 +123,6 @@ wire TLU_TRIGGER_DATA_MSB_FIRST; // set endianness of TLU number
 assign TLU_TRIGGER_DATA_MSB_FIRST = status_regs[1][2];
 wire CONF_TRIGGER_ENABLE;
 assign CONF_TRIGGER_ENABLE = status_regs[1][3];
-wire [3:0] TLU_TRIGGER_DATA_DELAY;
-assign TLU_TRIGGER_DATA_DELAY = status_regs[1][7:4];
 wire [1:0] CONF_DATA_FORMAT;
 assign CONF_DATA_FORMAT = status_regs[2][1:0];
 wire TLU_ENABLE_RESET_TS;
@@ -147,6 +145,9 @@ wire [7:0] CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES;
 assign CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES = status_regs[30];
 wire [7:0] CONF_TRIGGER_THRESHOLD;
 assign CONF_TRIGGER_THRESHOLD = status_regs[33];
+// at address 34 is SOFT_TRIGGER
+wire [7:0] TLU_TRIGGER_DATA_DELAY;
+assign TLU_TRIGGER_DATA_DELAY = status_regs[35];
 
 always @(posedge BUS_CLK)
 begin
@@ -186,8 +187,10 @@ begin
         status_regs[31] <= 8'b0; // trigger low timeout error
         status_regs[32] <= 8'b0; // trigger accept error
         status_regs[33] <= 8'b0; // trigger threshold
+        // at address 34 is SOFT_TRIGGER
+        status_regs[35] <= 8'b0; // trigger data delay
     end
-    else if(BUS_WR && BUS_ADD < 34)
+    else if(BUS_WR && BUS_ADD < 36)
     begin
         status_regs[BUS_ADD[5:0]] <= BUS_DATA_IN;
     end
@@ -270,6 +273,9 @@ always @ (posedge BUS_CLK) begin
             BUS_DATA_OUT <= TLU_TRIGGER_ACCEPT_ERROR_CNT;
         else if (BUS_ADD == 33)
             BUS_DATA_OUT <= status_regs[33];
+        // at address 34 is SOFT_TRIGGER
+        else if (BUS_ADD == 35)
+            BUS_DATA_OUT <= status_regs[35];
         else
             BUS_DATA_OUT <= 0;
     end
@@ -314,9 +320,9 @@ three_stage_synchronizer #(
 );
 */
 
-wire [3:0] TLU_TRIGGER_DATA_DELAY_SYNC;
+wire [7:0] TLU_TRIGGER_DATA_DELAY_SYNC;
 three_stage_synchronizer #(
-    .WIDTH(4)
+    .WIDTH(8)
 ) three_stage_trigger_data_delay_synchronizer (
     .CLK(TRIGGER_CLK),
     .IN(TLU_TRIGGER_DATA_DELAY),
