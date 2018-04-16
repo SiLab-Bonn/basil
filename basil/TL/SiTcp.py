@@ -33,7 +33,7 @@ class SiTcp(SiTransferLayer):
     RBCP_MAX_SIZE = 255
 
     UDP_TIMEOUT = 10.0
-    UDP_RETRANSMIT_CNT = 0  # TODO
+    UDP_RETRANSMIT_CNT = 10  # TODO
 
     BASE_DATA_TCP = 0x100000000
     BASE_FAKE_FIFO_TCP = 0x200000000  # above this read will return size of local TCP fifo (4 bytes)
@@ -77,20 +77,26 @@ class SiTcp(SiTransferLayer):
     def _write_single(self, addr, data):
         request = array('B', struct.pack('>BBBBI', self.RBCP_VER, self.RBCP_CMD_WR, self.RBCP_ID, len(data), addr))
         request += data
-        self._sock_udp.sendto(request, (self._init['ip'], self._init['udp_port']))
-        ready = select.select([self._sock_udp], [], [], self.UDP_TIMEOUT)
-        if not ready[0]:
-            raise IOError('SiTcp:_write_single - Timeout')
-        ack = self._sock_udp.recv(1024)
-        if len(ack) < 8:
-            raise IOError('SiTcp:_write_single - Packet is too short')
-        if array('B', ack)[8:] != data:
-            print data, array('B', ack)[8:]
-            raise IOError('SiTcp:_write_single - Data error')
-        if (0x0f & ord(ack[1])) != 0x8:
-            raise IOError('SiTcp:_write_single - Bus error')
-        if ord(ack[2]) != self.RBCP_ID:
-            raise IOError('SiTcp:_write_single - Wrong ID')
+        retry_cnt = 0
+        while retry_cnt <= self.UDP_RETRANSMIT_CNT:
+            retry_cnt += 1
+            self._sock_udp.sendto(request, (self._init['ip'], self._init['udp_port']))
+            ready = select.select([self._sock_udp], [], [], self.UDP_TIMEOUT)
+            if not ready[0]:
+                logging.warning('SiTcp:_write_single - Timeout: UDP_RETRANSMIT_CNT=%d' % self.UDP_RETRANSMIT_CNT)
+                continue
+                #raise IOError('SiTcp:_write_single - Timeout')
+            ack = self._sock_udp.recv(1024)
+            if len(ack) < 8:
+                raise IOError('SiTcp:_write_single - Packet is too short')
+            if array('B', ack)[8:] != data:
+                print data, array('B', ack)[8:]
+                raise IOError('SiTcp:_write_single - Data error')
+            if (0x0f & ord(ack[1])) != 0x8:
+                raise IOError('SiTcp:_write_single - Bus error')
+            if ord(ack[2]) != self.RBCP_ID:
+                raise IOError('SiTcp:_write_single - Wrong ID')
+            break
 
     def write(self, addr, data):
         if addr < self.BASE_DATA_TCP:
