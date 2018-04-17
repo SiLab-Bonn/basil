@@ -130,7 +130,7 @@ class MIO_PLL(HardwareLayer):
             for self.div in range(2, 128):
                 q_d_f = self.q_total * self.div * fout;
                 if isinstance(q_d_f, (long, int)) and q_d_f > (15 * self.fref):  # = f0 * p
-                    if int(q_d_f) % int(self.fref == 0):  # p, q, and d found
+                    if int(q_d_f) % int(self.fref) == 0:  # p, q, and d found
                         self.p_total = q_d_f / self.fref
                         while self.p_total <= 16:  # counter constraint
                             self.p_total = self.p_total * 2
