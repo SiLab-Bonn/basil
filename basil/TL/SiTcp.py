@@ -171,7 +171,7 @@ class SiTcp(SiTransferLayer):
 
     def _tcp_readout(self):
         while not self._stop:
-            try: # TODO: temporary fix
+            try:  # TODO: temporary fix
                 ready = select.select([self._sock_tcp], [], [], self._tcp_readout_interval)
                 if ready[0]:
                     with self._tcp_lock:
@@ -191,7 +191,7 @@ class SiTcp(SiTransferLayer):
             ret = self._tcp_read_buff[:ret_size]
             self._tcp_read_buff = self._tcp_read_buff[ret_size:]
         return ret
-    
+
     def close(self):
         super(SiTcp, self).close()
         self._stop = True
