@@ -8,7 +8,7 @@
 `timescale 1ps / 1ps
 `default_nettype none
 
-module mmc3_m26_eth(
+module test_eth(
     input wire RESET_N,
     input wire clkin,
 
@@ -301,8 +301,10 @@ reg [7:0] status_regs[31:0];
 
 wire [7:0] SETUP;
 assign SETUP = status_regs[1];
-wire [31:0] TCP_WRITE_DLY;
-assign TCP_WRITE_DLY = {status_regs[9], status_regs[8], status_regs[7], status_regs[6]};
+wire [63:0] TEST_DATA;
+assign TEST_DATA = {status_regs[9], status_regs[8], status_regs[7], status_regs[6],status_regs[5], status_regs[4], status_regs[3], status_regs[2]};
+wire [15:0] TCP_WRITE_DLY;
+assign TCP_WRITE_DLY = {status_regs[15], status_regs[14]};
 
 always @(posedge BUS_CLK)
 begin
@@ -310,22 +312,36 @@ begin
     begin
         status_regs[0] <= 8'b0; // Version, Reset
         status_regs[1] <= 8'b0; // Setup
-        status_regs[2] <= 8'b0; // UDP write counter
-        status_regs[3] <= 8'b0; // UDP write counter
-        status_regs[4] <= 8'b0; // UDP write counter
-        status_regs[5] <= 8'b0; // UDP write counter
-        status_regs[6] <= 8'b0; // TCP write delay
-        status_regs[7] <= 8'b0; // TCP write delay
-        status_regs[8] <= 8'b0; // TCP write delay
-        status_regs[9] <= 8'b0; // TCP write delay
-        status_regs[10] <= 8'b0; // TCP write counter
-        status_regs[11] <= 8'b0; // TCP write counter
-        status_regs[12] <= 8'b0; // TCP write counter
-        status_regs[13] <= 8'b0; // TCP write counter
-        status_regs[14] <= 8'b0; // TCP failed write counter
-        status_regs[15] <= 8'b0; // TCP failed write counter
-        status_regs[16] <= 8'b0; // TCP failed write counter
-        status_regs[17] <= 8'b0; // TCP failed write counter
+        status_regs[2] <= 8'b0; // Test data
+        status_regs[3] <= 8'b0; // Test data
+        status_regs[4] <= 8'b0; // Test data
+        status_regs[5] <= 8'b0; // Test data
+        status_regs[6] <= 8'b0; // Test data
+        status_regs[7] <= 8'b0; // Test data
+        status_regs[8] <= 8'b0; // Test data
+        status_regs[9] <= 8'b0; // Test data
+        status_regs[10] <= 8'b0; // UDP write counter
+        status_regs[11] <= 8'b0; // UDP write counter
+        status_regs[12] <= 8'b0; // UDP write counter
+        status_regs[13] <= 8'b0; // UDP write counter
+        status_regs[14] <= 8'b0; // TCP write delay
+        status_regs[15] <= 8'b0; // TCP write delay
+        status_regs[16] <= 8'b0; // TCP write counter
+        status_regs[17] <= 8'b0; // TCP write counter
+        status_regs[18] <= 8'b0; // TCP write counter
+        status_regs[19] <= 8'b0; // TCP write counter
+        status_regs[20] <= 8'b0; // TCP write counter
+        status_regs[21] <= 8'b0; // TCP write counter
+        status_regs[22] <= 8'b0; // TCP write counter
+        status_regs[23] <= 8'b0; // TCP write counter
+        status_regs[24] <= 8'b0; // TCP failed write counter
+        status_regs[25] <= 8'b0; // TCP failed write counter
+        status_regs[26] <= 8'b0; // TCP failed write counter
+        status_regs[27] <= 8'b0; // TCP failed write counter
+        status_regs[28] <= 8'b0; // TCP failed write counter
+        status_regs[29] <= 8'b0; // TCP failed write counter
+        status_regs[30] <= 8'b0; // TCP failed write counter
+        status_regs[31] <= 8'b0; // TCP failed write counter
     end
     else if(BUS_WR && BUS_ADD < 32)
     begin
@@ -334,8 +350,8 @@ begin
 end
 
 reg [31:0] UDP_WRITE_CNT;
-reg [31:0] TCP_WRITE_CNT;
-reg [31:0] TCP_FAILED_WRITE_CNT;
+reg [63:0] TCP_WRITE_CNT;
+reg [63:0] TCP_FAILED_WRITE_CNT;
 
 reg [7:0] BUS_DATA_OUT;
 always @ (posedge BUS_CLK) begin
@@ -345,37 +361,65 @@ always @ (posedge BUS_CLK) begin
         else if (BUS_ADD == 1)
             BUS_DATA_OUT <= SETUP;
         else if (BUS_ADD == 2)
-            BUS_DATA_OUT <= UDP_WRITE_CNT[7:0];
+            BUS_DATA_OUT <= TEST_DATA[7:0];
         else if (BUS_ADD == 3)
-            BUS_DATA_OUT <= UDP_WRITE_CNT[15:8];
+            BUS_DATA_OUT <= TEST_DATA[15:8];
         else if (BUS_ADD == 4)
-            BUS_DATA_OUT <= UDP_WRITE_CNT[23:16];
+            BUS_DATA_OUT <= TEST_DATA[23:16];
         else if (BUS_ADD == 5)
-            BUS_DATA_OUT <= UDP_WRITE_CNT[31:24];
+            BUS_DATA_OUT <= TEST_DATA[31:24];
         else if (BUS_ADD == 6)
-            BUS_DATA_OUT <= TCP_WRITE_DLY[7:0];
+            BUS_DATA_OUT <= TEST_DATA[39:32];
         else if (BUS_ADD == 7)
-            BUS_DATA_OUT <= TCP_WRITE_DLY[15:8];
+            BUS_DATA_OUT <= TEST_DATA[47:40];
         else if (BUS_ADD == 8)
-            BUS_DATA_OUT <= TCP_WRITE_DLY[23:16];
+            BUS_DATA_OUT <= TEST_DATA[55:48];
         else if (BUS_ADD == 9)
-            BUS_DATA_OUT <= TCP_WRITE_DLY[31:24];
+            BUS_DATA_OUT <= TEST_DATA[63:56];
         else if (BUS_ADD == 10)
-            BUS_DATA_OUT <= TCP_WRITE_CNT[7:0];
+            BUS_DATA_OUT <= UDP_WRITE_CNT[7:0];
         else if (BUS_ADD == 11)
-            BUS_DATA_OUT <= TCP_WRITE_CNT[15:8];
+            BUS_DATA_OUT <= UDP_WRITE_CNT[15:8];
         else if (BUS_ADD == 12)
-            BUS_DATA_OUT <= TCP_WRITE_CNT[23:16];
+            BUS_DATA_OUT <= UDP_WRITE_CNT[23:16];
         else if (BUS_ADD == 13)
-            BUS_DATA_OUT <= TCP_WRITE_CNT[31:24];
+            BUS_DATA_OUT <= UDP_WRITE_CNT[31:24];
         else if (BUS_ADD == 14)
-            BUS_DATA_OUT <= TCP_FAILED_WRITE_CNT[7:0];
+            BUS_DATA_OUT <= TCP_WRITE_DLY[7:0];
         else if (BUS_ADD == 15)
-            BUS_DATA_OUT <= TCP_FAILED_WRITE_CNT[15:8];
+            BUS_DATA_OUT <= TCP_WRITE_DLY[15:8];
         else if (BUS_ADD == 16)
-            BUS_DATA_OUT <= TCP_FAILED_WRITE_CNT[23:16];
+            BUS_DATA_OUT <= TCP_WRITE_CNT[7:0];
         else if (BUS_ADD == 17)
+            BUS_DATA_OUT <= TCP_WRITE_CNT[15:8];
+        else if (BUS_ADD == 18)
+            BUS_DATA_OUT <= TCP_WRITE_CNT[23:16];
+        else if (BUS_ADD == 19)
+            BUS_DATA_OUT <= TCP_WRITE_CNT[31:24];
+        else if (BUS_ADD == 20)
+            BUS_DATA_OUT <= TCP_WRITE_CNT[39:32];
+        else if (BUS_ADD == 21)
+            BUS_DATA_OUT <= TCP_WRITE_CNT[47:40];
+        else if (BUS_ADD == 22)
+            BUS_DATA_OUT <= TCP_WRITE_CNT[55:48];
+        else if (BUS_ADD == 23)
+            BUS_DATA_OUT <= TCP_WRITE_CNT[63:56];
+        else if (BUS_ADD == 24)
+            BUS_DATA_OUT <= TCP_FAILED_WRITE_CNT[7:0];
+        else if (BUS_ADD == 25)
+            BUS_DATA_OUT <= TCP_FAILED_WRITE_CNT[15:8];
+        else if (BUS_ADD == 26)
+            BUS_DATA_OUT <= TCP_FAILED_WRITE_CNT[23:16];
+        else if (BUS_ADD == 27)
             BUS_DATA_OUT <= TCP_FAILED_WRITE_CNT[31:24];
+        else if (BUS_ADD == 28)
+            BUS_DATA_OUT <= TCP_FAILED_WRITE_CNT[39:32];
+        else if (BUS_ADD == 29)
+            BUS_DATA_OUT <= TCP_FAILED_WRITE_CNT[47:40];
+        else if (BUS_ADD == 30)
+            BUS_DATA_OUT <= TCP_FAILED_WRITE_CNT[55:48];
+        else if (BUS_ADD == 31)
+            BUS_DATA_OUT <= TCP_FAILED_WRITE_CNT[63:56];
         else
             BUS_DATA_OUT <= 0;
     end
@@ -397,18 +441,18 @@ always @(posedge BUS_CLK)
 begin
     if (RESET)
         UDP_WRITE_CNT <= 0;
-    else if (BUS_WR && BUS_ADD == 1)
+    else if (BUS_WR && (BUS_ADD >= 2 && BUS_ADD <= 9))
         UDP_WRITE_CNT <= UDP_WRITE_CNT + 1;
     else
         UDP_WRITE_CNT <= UDP_WRITE_CNT;
 end
 
-reg [31:0] TCP_WRITE_DLY_CNT;
+reg [15:0] TCP_WRITE_DLY_CNT;
 always @ (posedge BUS_CLK)
-    if ((TCP_WRITE_DLY_CNT == TCP_WRITE_DLY) | (TCP_WRITE_DLY == 0) | RESET)
+    if ((TCP_WRITE_DLY == 0) | RESET)
         TCP_WRITE_DLY_CNT <= 0;
-//    else if (TCP_WRITE_DLY_CNT == TCP_WRITE_DLY)
-//        TCP_WRITE_DLY_CNT <= TCP_WRITE_DLY_CNT;
+    else if (TCP_WRITE_DLY_CNT == TCP_WRITE_DLY)
+        TCP_WRITE_DLY_CNT <= 1;
     else
         TCP_WRITE_DLY_CNT <= TCP_WRITE_DLY_CNT + 1;
 
@@ -502,19 +546,49 @@ clock_divider #(
     .CLOCK(CLK_1HZ)
 );
 
-reg FIFO_FULL_SLOW, FIFO_WAS_EMPTY;
-always @ (posedge BUS_CLK)
-    if ((!FIFO_FULL && FIFO_FULL_SLOW) || (FIFO_WAS_EMPTY && FIFO_FULL_SLOW))
-        FIFO_WAS_EMPTY <= 1'b1;
-    else
-        FIFO_WAS_EMPTY <= 1'b0;
+wire CE_6HZ;
+clock_divider #(
+    .DIVISOR(22222222)
+) i_clock_divisor_133MHz_to_6Hz (
+    .CLK(BUS_CLK),
+    .RESET(1'b0),
+    .CE(CE_6HZ),
+    .CLOCK()
+);
 
-always @ (posedge BUS_CLK)
-    if (CE_1HZ)
-    begin
-        if (FIFO_FULL_SLOW && FIFO_WAS_EMPTY)
-            FIFO_FULL_SLOW <= 1'b0;
-        else if (FIFO_FULL)
+wire FIFO_FULL_SYNC;
+three_stage_synchronizer #(
+    .WIDTH(1)
+) three_stage_fifo_full_synchronizer (
+    .CLK(BUS_CLK),
+    .IN(FIFO_FULL),
+    .OUT(FIFO_FULL_SYNC)
+);
+
+reg FIFO_WAS_FULL;
+always @ (posedge BUS_CLK or posedge FIFO_FULL_SYNC)
+    if (CE_6HZ || FIFO_FULL_SYNC) begin
+        if (FIFO_FULL_SYNC)
+            FIFO_WAS_FULL <= 1'b1;
+        else
+            FIFO_WAS_FULL <= 1'b0;
+    end
+
+reg FIFO_WAS_ALMOST_EMPTY;
+always @ (posedge BUS_CLK or negedge FIFO_FULL_SYNC)
+    if (CE_6HZ || !FIFO_FULL_SYNC) begin
+        if (!FIFO_FULL_SYNC)
+            FIFO_WAS_ALMOST_EMPTY <= 1'b1;
+        else
+            FIFO_WAS_ALMOST_EMPTY <= 1'b0;
+    end
+
+reg FIFO_FULL_SLOW;
+always @ (posedge BUS_CLK or posedge FIFO_WAS_FULL or negedge FIFO_WAS_ALMOST_EMPTY)
+    if (CE_6HZ || (FIFO_WAS_FULL && !FIFO_WAS_ALMOST_EMPTY)) begin
+        if (FIFO_WAS_FULL && !FIFO_WAS_ALMOST_EMPTY)
+            FIFO_FULL_SLOW <= 1'b1;
+        else if (FIFO_WAS_FULL && !FIFO_FULL_SLOW)
             FIFO_FULL_SLOW <= 1'b1;
         else
             FIFO_FULL_SLOW <= 1'b0;
@@ -522,7 +596,7 @@ always @ (posedge BUS_CLK)
 
 assign LED[7:4] = 4'b1111;
 assign LED[0] = CLK_1HZ;
-assign LED[1] = FIFO_FULL_SLOW;
+assign LED[1] = ~FIFO_FULL_SLOW;
 assign LED[2] = 1'b1;
 assign LED[3] = 1'b1;
 
