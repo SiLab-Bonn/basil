@@ -49,6 +49,12 @@ class NTCRegister(HardwareLayer):
         else:
             raise ValueError('NTC_type %s is not supported.' % self._conf["NTC_type"])
 
+    def get_voltage(self, unit="V"):
+        return self._intf.get_current(self._conf["arg_add"]["channel"], unit=unit)
+    def get_current(self, unit="uA"):
+        return self._intf.get_current(self._conf["arg_add"]["channel"], unit=unit)
+    def set_current(self, value,unit="uA"):
+        return self._intf.set_current(self._conf["arg_add"]["channel"],value, unit=unit)
     def get_temperature(self, unit="K"):
         i = self._intf.get_current(self._conf["arg_add"]["channel"], unit="mA")
         v = self._intf.get_voltage(self._conf["arg_add"]["channel"], unit="mV")
