@@ -63,11 +63,14 @@ class SiTcp(SiTransferLayer):
         super(SiTcp, self).init()
         self.reset()
         self._sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        # self._sock_udp.setblocking(0)
+        self._sock_udp.connect((self._init['ip'], self._init['udp_port']))
+        # using select to monitor socket status, therefore the socket is set to blocking (default)
+        self._sock_udp.setblocking(0)
         self._sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # start readout thread if TCP connection is set
         if self._init['tcp_connection']:
             self._sock_tcp.connect((self._init['ip'], self._init['tcp_port']))
+            # using select to monitor socket status, therefore the socket is set to blocking (default)
             self._sock_tcp.setblocking(0)
             self._tcp_readout_thread = Thread(target=self._tcp_readout, name='TcpReadoutThread', kwargs={})
             self._tcp_readout_thread.daemon = True  # exiting program even when thread is alive
@@ -87,7 +90,7 @@ class SiTcp(SiTransferLayer):
             elif not wlist:
                 raise IOError('SiTcp:_write_single - Write timeout')
             else:
-                self._sock_udp.sendto(request, (self._init['ip'], self._init['udp_port']))
+                self._sock_udp.send(request)
                 retry_read_cnt = 0
                 while True:
                     retry_read_cnt += 1
@@ -101,8 +104,8 @@ class SiTcp(SiTransferLayer):
                     elif not rlist:
                         raise IOError('SiTcp:_write_single - Read timeout')
                     else:
-                        ack = self._sock_udp.recv(1024)
-                        if len(ack) < 8:
+                        ack = self._sock_udp.recv(len(request))
+                        if len(ack) != len(request):
                             raise IOError('SiTcp:_write_single - Packet is too short')
                         if array('B', ack)[8:] != data and retry_read_cnt <= self.UDP_RETRANSMIT_CNT:
                             logger.warning('SiTcp:_write_single - Data error - Expected: %s, Read: %s - Retry...' % (data, array('B', ack)[8:]))
@@ -153,7 +156,7 @@ class SiTcp(SiTransferLayer):
             elif not wlist:
                 raise IOError('SiTcp:_read_single - Write timeout')
             else:
-                self._sock_udp.sendto(request, (self._init['ip'], self._init['udp_port']))
+                self._sock_udp.send(request)
                 retry_read_cnt = 0
                 while True:
                     retry_read_cnt += 1
@@ -167,9 +170,8 @@ class SiTcp(SiTransferLayer):
                     elif not rlist:
                         raise IOError('SiTcp:_read_single - Read timeout')
                     else:
-                        ack = self._sock_udp.recv(4096)
+                        ack = self._sock_udp.recv(size + 8)
                         if len(ack) != size + 8:
-                            print len(ack), size + 8
                             raise IOError('SiTcp:_read_single - Wrong packet size')
                         if (0x0f & ord(ack[1])) != 0x8:
                             raise IOError('SiTcp:_read_single - Bus error')
@@ -214,7 +216,7 @@ class SiTcp(SiTransferLayer):
                 time_read = time()
                 if rlist:
                     with self._tcp_lock:
-                        data = self._sock_tcp.recv(1024 * 8 * 64)
+                        data = self._sock_tcp.recv(1024 * 8)
                         self._tcp_read_buff.extend(array('B', data))
             except AttributeError:
                 pass
