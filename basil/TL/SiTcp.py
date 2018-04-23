@@ -227,6 +227,7 @@ class SiTcp(SiTransferLayer):
     def _get_tcp_data(self, size):
         with self._tcp_lock:
             ret_size = min((size, self._get_tcp_data_size()))
+            ret_size = (ret_size - (ret_size % 4))  # modulo 4 bytes
             ret = self._tcp_read_buff[:ret_size]
             self._tcp_read_buff = self._tcp_read_buff[ret_size:]
         return ret
