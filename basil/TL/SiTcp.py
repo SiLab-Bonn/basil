@@ -236,4 +236,5 @@ class SiTcp(SiTransferLayer):
         self._stop = True
         self._tcp_readout_thread.join()
         self._sock_udp.close()
-        self._sock_tcp.close()
+        if self._init['tcp_connection']:
+            self._sock_tcp.close()
