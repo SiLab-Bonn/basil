@@ -15,6 +15,7 @@ import re
 from array import array
 from threading import Thread
 from threading import RLock as Lock
+from time import time
 
 from basil.TL.SiTransferLayer import SiTransferLayer
 
@@ -206,9 +207,11 @@ class SiTcp(SiTransferLayer):
 #                 logger.warning("SiTcp:read - Invalid address %s" % hex(addr))
 
     def _tcp_readout(self):
+        time_read = time()
         while not self._stop:
             try:  # this is in case close() was not called and the thread was forcibly stopped
-                rlist, _, _ = select.select([self._sock_tcp], [], [], self._tcp_readout_interval)
+                rlist, _, _ = select.select([self._sock_tcp], [], [], max(0.0, self._tcp_readout_interval + time_read - time()))
+                time_read = time()
                 if rlist:
                     with self._tcp_lock:
                         data = self._sock_tcp.recv(1024 * 8 * 64)
