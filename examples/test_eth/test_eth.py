@@ -147,12 +147,12 @@ class Test(object):
                 logging.info("Total amount transmitted: %.2f GB" % (self.total_tcp_data_words_read * 4 / 10.0**9))
             else:
                 logging.info("Total amount transmitted: %.2f MB" % (self.total_tcp_data_words_read * 4 / 10.0**6))
-            logging.info("Total average TCP read speed: %.2f Mbits/s" % (self.total_tcp_data_words_read * 32 / (self.time_stop - self.time_start) / 10.0**6))
+            logging.info("Total average TCP read speed: %.2f Mbit/s" % (self.total_tcp_data_words_read * 32 / (self.time_stop - self.time_start) / 10.0**6))
             if self.tcp_read_speeds:
                 if np.average(self.tcp_read_speeds) < 1.0:
-                    logging.info("TCP read speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f kbits/s" % (np.min(self.tcp_read_speeds) * 10**3, np.median(self.tcp_read_speeds) * 10**3, np.average(self.tcp_read_speeds) * 10**3, np.max(self.tcp_read_speeds) * 10**3))
+                    logging.info("TCP read speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f kbit/s" % (np.min(self.tcp_read_speeds) * 10**3, np.median(self.tcp_read_speeds) * 10**3, np.average(self.tcp_read_speeds) * 10**3, np.max(self.tcp_read_speeds) * 10**3))
                 else:
-                    logging.info("TCP read speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f Mbits/s" % (np.min(self.tcp_read_speeds), np.median(self.tcp_read_speeds), np.average(self.tcp_read_speeds), np.max(self.tcp_read_speeds)))
+                    logging.info("TCP read speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f Mbit/s" % (np.min(self.tcp_read_speeds), np.median(self.tcp_read_speeds), np.average(self.tcp_read_speeds), np.max(self.tcp_read_speeds)))
 
         if test_udp:
             logging.info("UDP transfer statistics:")
@@ -165,12 +165,12 @@ class Test(object):
                 logging.info("Total amount transmitted: %.2f GB" % (self.total_udp_read_write_cnt * 8 / 10.0**9))
             else:
                 logging.info("Total amount transmitted: %.2f MB" % (self.total_udp_read_write_cnt * 8 / 10.0**6))
-            logging.info("Total average UDP read/write speed: %.2f Mbits/s" % (self.total_udp_read_write_cnt * 64 / (self.time_stop - self.time_start) / 10.0**6))
+            logging.info("Total average UDP read/write speed: %.2f Mbit/s" % (self.total_udp_read_write_cnt * 64 / (self.time_stop - self.time_start) / 10.0**6))
             if self.udp_read_write_speeds:
                 if np.average(self.udp_read_write_speeds) < 1.0:
-                    logging.info("UDP read/write speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f kbits/s" % (np.min(self.udp_read_write_speeds) * 10**3, np.median(self.udp_read_write_speeds) * 10**3, np.average(self.udp_read_write_speeds) * 10**3, np.max(self.udp_read_write_speeds) * 10**3))
+                    logging.info("UDP read/write speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f kbit/s" % (np.min(self.udp_read_write_speeds) * 10**3, np.median(self.udp_read_write_speeds) * 10**3, np.average(self.udp_read_write_speeds) * 10**3, np.max(self.udp_read_write_speeds) * 10**3))
                 else:
-                    logging.info("UDP read/write speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f Mbits/s" % (np.min(self.udp_read_write_speeds), np.median(self.udp_read_write_speeds), np.average(self.udp_read_write_speeds), np.max(self.udp_read_write_speeds)))
+                    logging.info("UDP read/write speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f Mbit/s" % (np.min(self.udp_read_write_speeds), np.median(self.udp_read_write_speeds), np.average(self.udp_read_write_speeds), np.max(self.udp_read_write_speeds)))
 
         # close DUT
         self.dut.close()
