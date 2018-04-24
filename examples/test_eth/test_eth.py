@@ -77,7 +77,7 @@ class Test(object):
         self.stop_thread.set()
         signal.signal(signal.SIGINT, signal.SIG_DFL)  # setting default handler
 
-    def start(self, test_tcp=True, test_udp=True, tcp_write_delay=6, monitor_interval=1.0):
+    def start(self, test_tcp=True, test_udp=True, tcp_write_delay=6, monitor_interval=1.0, deadline=None):
         if not test_tcp and not test_udp:
             return
         self.test_tcp = test_tcp
@@ -120,7 +120,8 @@ class Test(object):
         self.time_stop = self.time_start + 1.0
         # while loop for signal handler
         while not self.stop_thread.wait(0.05):
-            pass
+            if deadline and self.time_start + deadline < time.time():
+                self.signal_handler(None, None)
         self.mon_t.join()
         self.mon_t = None
         logging.info("Stopped Monitor thread")
@@ -271,7 +272,8 @@ class Test(object):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description='Testing MMC3 Ethernet Interface %s\nExample: python test_eth.py -t 1.0 -d 6 --no-udp --no-tcp', formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('-t', '--time', type=float, metavar='<interval time>', action='store', help='time interval for the monitor')
+    parser.add_argument('-w', '--deadline', type=float, metavar='<deadline>', action='store', help='timeout in seconds before application exits')
+    parser.add_argument('-i', '--interval', type=float, metavar='<interval time>', action='store', help='time interval in seconds for the monitor')
     parser.add_argument('-d', '--delay', type=int, metavar='<clock cycles>', action='store', help='clock cycles between TCP writes')
     parser.add_argument('--no_udp', dest='no_udp', action='store_true', help='disable UDP tests')
     parser.add_argument('--no_tcp', dest='no_tcp', action='store_true', help='disable TCP tests')
@@ -280,8 +282,10 @@ if __name__ == "__main__":
 
     config = {}
 
-    if args.time is not None:
-        config["monitor_interval"] = args.time
+    if args.deadline is not None:
+        config["deadline"] = args.deadline
+    if args.interval is not None:
+        config["monitor_interval"] = args.interval
     if args.delay is not None:
         config["tcp_write_delay"] = args.delay
     if args.no_udp:
