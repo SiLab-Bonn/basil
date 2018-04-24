@@ -25,12 +25,11 @@ logger = logging.getLogger(__name__)
 class SiTcp(SiTransferLayer):
     '''SiTcp transport layer.
     '''
-
+    # UDP(RBCP) interface
     RBCP_VER = 0xff
     RBCP_CMD_WR = 0x80
     RBCP_CMD_RD = 0xC0
-    RBCP_ID = 0xa5
-    RBCP_MAX_SIZE = 255
+    RBCP_MAX_SIZE = 255  # bytes
 
     UDP_TIMEOUT = 1.0
     UDP_RETRANSMIT_CNT = 3  # TODO
@@ -47,6 +46,7 @@ class SiTcp(SiTransferLayer):
         self._tcp_readout_interval = 0.05
         self._tcp_readout_thread = None
         self._tcp_read_buff = None
+        self.RBCP_ID = 0
 
     def reset(self):
         with self._tcp_lock:
@@ -78,10 +78,21 @@ class SiTcp(SiTransferLayer):
             self._tcp_readout_thread.start()
 
     def _write_single(self, addr, data):
-        request = array('B', struct.pack('>BBBBI', self.RBCP_VER, self.RBCP_CMD_WR, self.RBCP_ID, len(data), addr))
-        request += data
         retry_write_cnt = 0
         while True:
+            if self.RBCP_ID >= 255:
+                self.RBCP_ID = 0
+            else:
+                self.RBCP_ID += 1
+            request = array('B', struct.pack('>BBBBI', self.RBCP_VER, self.RBCP_CMD_WR, self.RBCP_ID, len(data), addr))
+            request += data
+            while True:
+                rlist, _, _ = select.select([self._sock_udp], [], [], 0.0)
+                if rlist:
+                    ack = self._sock_udp.recv(1024)
+                    logger.warning('SiTcp:_write_single - Pending data before send - Message ID: current: %d, read: %d' % (self.RBCP_ID, ord(ack[2])))
+                else:
+                    break
             retry_write_cnt += 1
             _, wlist, _ = select.select([], [self._sock_udp], [], self.UDP_TIMEOUT)
             if not wlist and retry_write_cnt <= self.UDP_RETRANSMIT_CNT:
@@ -95,27 +106,46 @@ class SiTcp(SiTransferLayer):
                 while True:
                     retry_read_cnt += 1
                     rlist, _, _ = select.select([self._sock_udp], [], [], self.UDP_TIMEOUT)
-                    if not rlist and retry_read_cnt <= self.UDP_RETRANSMIT_CNT:
-                        logger.warning('SiTcp:_write_single - Read timeout - Retry...')
-                        continue
-                    elif not rlist and retry_write_cnt <= self.UDP_RETRANSMIT_CNT:
-                        logger.warning('SiTcp:_write_single - Read timeout - Retry write...')
-                        break
-                    elif not rlist:
-                        raise IOError('SiTcp:_write_single - Read timeout')
-                    else:
-                        ack = self._sock_udp.recv(len(request))
-                        if len(ack) != len(request):
-                            raise IOError('SiTcp:_write_single - Packet is too short')
-                        if array('B', ack)[8:] != data and retry_read_cnt <= self.UDP_RETRANSMIT_CNT:
-                            logger.warning('SiTcp:_write_single - Data error - Expected: %s, Read: %s - Retry...' % (data, array('B', ack)[8:]))
+                    if not rlist:
+                        if retry_read_cnt <= self.UDP_RETRANSMIT_CNT:
+                            logger.warning('SiTcp:_write_single - Read timeout - Retry...')
                             continue
-                        elif array('B', ack)[8:] != data:
-                            raise IOError('SiTcp:_write_single - Data error - Expected: %s, Read: %s' % (data, array('B', ack)[8:]))
+                        elif retry_write_cnt <= self.UDP_RETRANSMIT_CNT:
+                            logger.warning('SiTcp:_write_single - Read timeout - Retry write...')
+                            break
+                        else:
+                            raise IOError('SiTcp:_write_single - Read timeout')
+                    else:
+                        ack = self._sock_udp.recv(1024)
+                        if ord(ack[2]) != self.RBCP_ID:
+                            if retry_read_cnt <= self.UDP_RETRANSMIT_CNT:
+                                logger.warning('SiTcp:_write_single - Wrong ID - Retry...')
+                                continue
+                            elif retry_write_cnt <= self.UDP_RETRANSMIT_CNT:
+                                logger.warning('SiTcp:_write_single - Wrong ID - Retry write...')
+                                break
+                            else:
+                                raise IOError('SiTcp:_write_single - Wrong ID')
+                        if array('B', ack)[8:] != data:
+                            if retry_read_cnt <= self.UDP_RETRANSMIT_CNT:
+                                logger.warning('SiTcp:_write_single - Data error - expected: %s, read: %s - Retry...' % (data, array('B', ack)[8:]))
+                                continue
+                            if retry_write_cnt <= self.UDP_RETRANSMIT_CNT:
+                                logger.warning('SiTcp:_write_single - Data error - expected: %s, read: %s - Retry write...' % (data, array('B', ack)[8:]))
+                                break
+                            else:
+                                raise IOError('SiTcp:_write_single - Data error - expected: %s, read: %s' % (data, array('B', ack)[8:]))
+                        if len(ack) != len(request):
+                            raise IOError('SiTcp:_write_single - Wrong message size')
                         if (0x0f & ord(ack[1])) != 0x8:
                             raise IOError('SiTcp:_write_single - Bus error')
-                        if ord(ack[2]) != self.RBCP_ID:
-                            raise IOError('SiTcp:_write_single - Wrong ID')
+                        while True:
+                            rlist, _, _ = select.select([self._sock_udp], [], [], 0.0)
+                            if rlist:
+                                ack = self._sock_udp.recv(1024)
+                                logger.warning('SiTcp:_write_single - Pending data after recv - Message ID: current: %d, read: %d' % (self.RBCP_ID, ord(ack[2])))
+                            else:
+                                break
                         return
 
     def write(self, addr, data):
@@ -145,9 +175,20 @@ class SiTcp(SiTransferLayer):
             logger.warning("SiTcp:write - Invalid address %s" % hex(addr))
 
     def _read_single(self, addr, size):
-        request = array('B', struct.pack('>BBBBI', self.RBCP_VER, self.RBCP_CMD_RD, self.RBCP_ID, size, addr))
         retry_write_cnt = 0
         while True:
+            if self.RBCP_ID >= 255:
+                self.RBCP_ID = 0
+            else:
+                self.RBCP_ID += 1
+            request = array('B', struct.pack('>BBBBI', self.RBCP_VER, self.RBCP_CMD_RD, self.RBCP_ID, size, addr))
+            while True:
+                rlist, _, _ = select.select([self._sock_udp], [], [], 0.0)
+                if rlist:
+                    ack = self._sock_udp.recv(1024)
+                    logger.warning('SiTcp:_read_single - Pending data before send - Message ID: current: %d, read: %d' % (self.RBCP_ID, ord(ack[2])))
+                else:
+                    break
             retry_write_cnt += 1
             _, wlist, _ = select.select([], [self._sock_udp], [], self.UDP_TIMEOUT)
             if not wlist and retry_write_cnt <= self.UDP_RETRANSMIT_CNT:
@@ -161,22 +202,46 @@ class SiTcp(SiTransferLayer):
                 while True:
                     retry_read_cnt += 1
                     rlist, _, _ = select.select([self._sock_udp], [], [], self.UDP_TIMEOUT)
-                    if not rlist and retry_read_cnt <= self.UDP_RETRANSMIT_CNT:
-                        logger.warning('SiTcp:_read_single - Read timeout - Retry...')
-                        continue
-                    elif not rlist and retry_write_cnt <= self.UDP_RETRANSMIT_CNT:
-                        logger.warning('SiTcp:_read_single - Read timeout - Retry write...')
-                        break
-                    elif not rlist:
-                        raise IOError('SiTcp:_read_single - Read timeout')
+                    if not rlist:
+                        if retry_read_cnt <= self.UDP_RETRANSMIT_CNT:
+                            logger.warning('SiTcp:_read_single - Read timeout - Retry...')
+                            continue
+                        elif retry_write_cnt <= self.UDP_RETRANSMIT_CNT:
+                            logger.warning('SiTcp:_read_single - Read timeout - Retry write...')
+                            break
+                        else:
+                            raise IOError('SiTcp:_read_single - Read timeout')
                     else:
-                        ack = self._sock_udp.recv(size + 8)
+                        ack = self._sock_udp.recv(1024)
+                        if ord(ack[2]) != self.RBCP_ID:
+                            if retry_read_cnt <= self.UDP_RETRANSMIT_CNT:
+                                logger.warning('SiTcp:_read_single - Wrong ID - Retry...')
+                                continue
+                            elif retry_write_cnt <= self.UDP_RETRANSMIT_CNT:
+                                logger.warning('SiTcp:_read_single - Wrong ID - Retry write...')
+                                break
+                            else:
+                                raise IOError('SiTcp:_read_single - Wrong ID')
+                        if array('B', ack)[3:8] != request[3:]:
+                            if retry_read_cnt <= self.UDP_RETRANSMIT_CNT:
+                                logger.warning('SiTcp:_read_single - Data error - expected: %s, read: %s - Retry...' % (request[3:], array('B', ack)[8:]))
+                                continue
+                            elif retry_write_cnt <= self.UDP_RETRANSMIT_CNT:
+                                logger.warning('SiTcp:_read_single - Data error - expected: %s, read: %s - Retry write...' % (request[3:], array('B', ack)[8:]))
+                                break
+                            else:
+                                raise IOError('SiTcp:_read_single - Data error - expected: %s, read: %s' % (request[3:], array('B', ack)[8:]))
                         if len(ack) != size + 8:
-                            raise IOError('SiTcp:_read_single - Wrong packet size')
+                            raise IOError('SiTcp:_read_single - Wrong message size')
                         if (0x0f & ord(ack[1])) != 0x8:
                             raise IOError('SiTcp:_read_single - Bus error')
-                        if ord(ack[2]) != self.RBCP_ID:
-                            raise IOError('SiTcp:_read_single - Wrong ID')
+                        while True:
+                            rlist, _, _ = select.select([self._sock_udp], [], [], 0.0)
+                            if rlist:
+                                ack = self._sock_udp.recv(1024)
+                                logger.warning('SiTcp:_read_single - Pending data after recv - Message ID: current: %d, read: %d' % (self.RBCP_ID, ord(ack[2])))
+                            else:
+                                break
                         return array('B', ack[8:])
 
     def read(self, addr, size):
