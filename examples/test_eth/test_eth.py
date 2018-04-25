@@ -137,11 +137,11 @@ class Test(object):
         # some statistics
         logging.info("Total time: %s" % (str(datetime.timedelta(seconds=self.time_stop - self.time_start))))
         if test_tcp:
-            logging.info("TCP transfer statistics:")
-            logging.info("TCP total data error counter: %d" % self.total_tcp_err_cnt)
-            logging.info("TCP total data words: read: %d, expected: %d" % (self.dut['REGISTERS'].TCP_WRITE_CNT, self.total_tcp_data_words_read))
-            logging.info("TCP total data words failed: %d" % self.dut['REGISTERS'].TCP_FAILED_WRITE_CNT)
+            logging.info("=== TCP transfer statistics ===")
+            logging.info("TCP data error counter: %d" % self.total_tcp_err_cnt)
             logging.info("TCP exception counter: %d" % self.tcp_exception_cnt)
+            logging.info("TCP write busy counter: %d" % self.dut['REGISTERS'].TCP_FAILED_WRITE_CNT)
+            logging.info("TCP data words: read: %d, expected: %d" % (self.dut['REGISTERS'].TCP_WRITE_CNT, self.total_tcp_data_words_read))
             if self.total_tcp_data_words_read * 4 / 10.0**6 > 1000000:
                 logging.info("Total amount transmitted: %.2f TB" % (self.total_tcp_data_words_read * 4 / 10.0**12))
             elif self.total_tcp_data_words_read * 4 / 10.0**6 > 1000:
@@ -156,10 +156,10 @@ class Test(object):
                     logging.info("TCP read speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f Mbit/s" % (np.min(self.tcp_read_speeds), np.median(self.tcp_read_speeds), np.average(self.tcp_read_speeds), np.max(self.tcp_read_speeds)))
 
         if test_udp:
-            logging.info("UDP transfer statistics:")
-            logging.info("UDP total data words failed: %d" % self.total_udp_err_cnt)
-            logging.info("UDP total read/write counter: read: %d, expected: %d" % (self.dut['REGISTERS'].UDP_WRITE_CNT, self.total_udp_read_write_cnt * 8))
+            logging.info("=== UDP transfer statistics ===")
+            logging.info("UDP data error counter: %d" % self.total_udp_err_cnt)
             logging.info("UDP exception counter: %d" % self.udp_exception_cnt)
+            logging.info("UDP read/write counter: read: %d, expected: %d" % (self.dut['REGISTERS'].UDP_WRITE_CNT, self.total_udp_read_write_cnt * 8))
             if self.total_udp_read_write_cnt * 8 / 10.0**6 > 1000000:
                 logging.info("Total amount transmitted: %.2f TB" % (self.total_udp_read_write_cnt * 8 / 10.0**12))
             elif self.total_udp_read_write_cnt * 8 / 10.0**6 > 1000:
