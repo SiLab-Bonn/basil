@@ -42,8 +42,8 @@ always@(posedge BUS_CLK) begin
 end
 
 assign BUS_ADD = RBCP_ADDR;
-assign BUS_WR = RBCP_WE; //tofix
-assign BUS_RD = RBCP_RE;
+assign BUS_WR = RBCP_WE & RBCP_ACT;
+assign BUS_RD = RBCP_RE & RBCP_ACT;
 
 assign BUS_DATA = BUS_WR ? RBCP_WD[7:0]: 8'bz;
 assign RBCP_RD[7:0] = BUS_WR ? 8'bz : BUS_DATA;
