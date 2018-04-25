@@ -425,7 +425,7 @@ always @ (posedge BUS_CLK) begin
     end
 end
 
-wire FIFO_FULL;
+
 reg BUS_READ;
 always @ (posedge BUS_CLK)
     if (BUS_RD & BUS_ADD < 32)
@@ -456,58 +456,114 @@ always @ (posedge BUS_CLK)
     else
         TCP_WRITE_DLY_CNT <= TCP_WRITE_DLY_CNT + 1;
 
-reg [31:0] TCP_WRITE_DATA;
-reg TRIGGER_FIFO_WRITE, TRIGGER_FIFO_WRITE_FF;
+reg [31:0] GEN_TCP_DATA;
+reg GEN_TCP_DATA_WRITE, GEN_TCP_DATA_WRITE_FF;
 always @ (posedge BUS_CLK)
-    TRIGGER_FIFO_WRITE_FF <= TRIGGER_FIFO_WRITE;
+    GEN_TCP_DATA_WRITE_FF <= GEN_TCP_DATA_WRITE;
 
 always @ (posedge BUS_CLK)
     if (TCP_WRITE_DLY == 0 || RESET)
-        TCP_WRITE_DATA <= 0;
-    else if (TRIGGER_FIFO_WRITE_FF)
-        TCP_WRITE_DATA <= TCP_WRITE_DATA + 1;
+        GEN_TCP_DATA <= 0;
+    else if (GEN_TCP_DATA_WRITE_FF)
+        GEN_TCP_DATA <= GEN_TCP_DATA + 1;
     else
-        TCP_WRITE_DATA <= TCP_WRITE_DATA;
+        GEN_TCP_DATA <= GEN_TCP_DATA;
 
+wire GEN_TCP_DATA_FULL;
+wire GEN_TCP_DATA_READ_GRANT;
 always @ (posedge BUS_CLK)
     if (RESET)
     begin
-        TRIGGER_FIFO_WRITE <= 1'b0;
+        GEN_TCP_DATA_WRITE <= 1'b0;
         TCP_WRITE_CNT <= 0;
         TCP_FAILED_WRITE_CNT <= 0;
     end
     else if (TCP_WRITE_DLY == 0)
     begin
-        TRIGGER_FIFO_WRITE <= 1'b0;
+        GEN_TCP_DATA_WRITE <= 1'b0;
         TCP_WRITE_CNT <= TCP_WRITE_CNT;
         TCP_FAILED_WRITE_CNT <= TCP_FAILED_WRITE_CNT;
     end
-    else if (TCP_WRITE_DLY == TCP_WRITE_DLY_CNT && !FIFO_FULL)
+    else if (TCP_WRITE_DLY == TCP_WRITE_DLY_CNT && !GEN_TCP_DATA_FULL)
     begin
-        TRIGGER_FIFO_WRITE <= 1'b1;
+        GEN_TCP_DATA_WRITE <= 1'b1;
         TCP_WRITE_CNT <= TCP_WRITE_CNT + 1;
         TCP_FAILED_WRITE_CNT <= TCP_FAILED_WRITE_CNT;
     end
-    else if (TCP_WRITE_DLY == TCP_WRITE_DLY_CNT && FIFO_FULL)
+    else if (TCP_WRITE_DLY == TCP_WRITE_DLY_CNT && GEN_TCP_DATA_FULL)
     begin
-        TRIGGER_FIFO_WRITE <= 1'b0;
+        GEN_TCP_DATA_WRITE <= 1'b0;
         TCP_WRITE_CNT <= TCP_WRITE_CNT;
         TCP_FAILED_WRITE_CNT <= TCP_FAILED_WRITE_CNT + 1;
     end
     else
     begin
-        TRIGGER_FIFO_WRITE <= 1'b0;
+        GEN_TCP_DATA_WRITE <= 1'b0;
         TCP_WRITE_CNT <= TCP_WRITE_CNT;
         TCP_FAILED_WRITE_CNT <= TCP_FAILED_WRITE_CNT;
     end
 
+wire gen_tcp_data_wfull;
+assign GEN_TCP_DATA_FULL = gen_tcp_data_wfull;
+wire gen_tcp_data_cdc_fifo_write;
+assign gen_tcp_data_cdc_fifo_write = GEN_TCP_DATA_WRITE;
+wire gen_tcp_data_fifo_full, gen_tcp_data_cdc_fifo_empty;
+
+wire [31:0] gen_tcp_data_cdc_data_out;
+cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) cdc_syncfifo_gen_tcp_data
+(
+    .rdata(gen_tcp_data_cdc_data_out),
+    .wfull(gen_tcp_data_wfull),
+    .rempty(gen_tcp_data_cdc_fifo_empty),
+    .wdata(GEN_TCP_DATA),
+    .winc(gen_tcp_data_cdc_fifo_write), .wclk(BUS_CLK), .wrst(BUS_RST),
+    .rinc(!gen_tcp_data_fifo_full), .rclk(BUS_CLK), .rrst(BUS_RST)
+);
+
+wire GEN_TCP_DATA_FIFO_READ, GEN_TCP_DATA_FIFO_EMPTY;
+wire [31:0] GEN_TCP_FIFO_DATA;
+gerneric_fifo #(.DATA_SIZE(32), .DEPTH(8))  fifo_gen_tcp_data
+(
+    .reset(BUS_RST),
+    .clk(BUS_CLK),
+    .write(!gen_tcp_data_cdc_fifo_empty),
+    .read(GEN_TCP_DATA_FIFO_READ),
+    .data_in(gen_tcp_data_cdc_data_out),
+    .full(gen_tcp_data_fifo_full),
+    .empty(GEN_TCP_DATA_FIFO_EMPTY),
+    .data_out(GEN_TCP_FIFO_DATA),
+    .size()
+);
+
 wire ARB_READY_OUT, ARB_WRITE_OUT;
 wire [31:0] ARB_DATA_OUT;
+wire [1:0] READ_GRANT;
 
-assign ARB_WRITE_OUT =  TRIGGER_FIFO_WRITE;
-assign ARB_DATA_OUT = TCP_WRITE_DATA;
+rrp_arbiter #(
+    .WIDTH(2)
+) i_rrp_arbiter (
+    .RST(BUS_RST),
+    .CLK(BUS_CLK),
+
+    .WRITE_REQ({1'b0, ~GEN_TCP_DATA_FIFO_EMPTY}),
+    .HOLD_REQ({2'b0}),
+    .DATA_IN({32'b0, GEN_TCP_FIFO_DATA}),
+    .READ_GRANT(READ_GRANT),
+
+    .READY_OUT(ARB_READY_OUT),
+    .WRITE_OUT(ARB_WRITE_OUT),
+    .DATA_OUT(ARB_DATA_OUT)
+);
+
+
+wire RECV_TCP_DATA_FIFO_READ;
+assign GEN_TCP_DATA_FIFO_READ = READ_GRANT[0];
+assign RECV_TCP_DATA_FIFO_READ = READ_GRANT[1];
+//assign ARB_WRITE_OUT =  GEN_TCP_DATA_WRITE;
+//assign ARB_DATA_OUT = GEN_TCP_DATA;
 
 //cdc_fifo is for timing reasons
+wire FIFO_FULL;
 wire [31:0] cdc_data_out;
 wire full_32to8, cdc_fifo_empty;
 cdc_syncfifo #(.DSIZE(32), .ASIZE(3)) cdc_syncfifo_i
