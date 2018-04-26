@@ -163,7 +163,9 @@ class SiTcp(SiTransferLayer):
             elif not wlist:
                 raise IOError('SiTcp:_write_single - Write timeout')
             else:
-                self._sock_udp.send(request)
+                total_sent = self._sock_udp.send(request)
+                if total_sent != len(request):
+                    raise IOError('SiTcp:_write_single - Socket broken')
                 retry_read_cnt = 0
                 while True:
                     retry_read_cnt += 1
@@ -265,7 +267,9 @@ class SiTcp(SiTransferLayer):
             elif not wlist:
                 raise IOError('SiTcp:_read_single - Write timeout')
             else:
-                self._sock_udp.send(request)
+                total_sent = self._sock_udp.send(request)
+                if total_sent != len(request):
+                    raise IOError('SiTcp:_read_single - Socket broken')
                 retry_read_cnt = 0
                 while True:
                     retry_read_cnt += 1
