@@ -228,8 +228,6 @@ class Test(object):
         time_read = time.time()
         while not self.stop_thread.wait(max(0.0, self.tcp_readout_delay - time_read + time.time())) or fifo_was_empty < 1:
             time_read = time.time()
-            if self.stop_thread.is_set():
-                self.dut['REGISTERS'].TCP_WRITE_DLY = 0
             try:
                 fifo_data = self.dut['SITCP_FIFO'].get_data()
             except Exception as e:
@@ -240,7 +238,7 @@ class Test(object):
                     self.total_tcp_data_words_read += fifo_data.shape[0]
                     if fifo_data[0] != fifo_data_last_value + 1:
                         logging.warning("TCP not increased by 1 between readouts")
-                        self.total_tcp_err_cnt += (np.abs(fifo_data[0] - fifo_data_last_value + 1))
+                        self.total_tcp_err_cnt += 1
                     err_cnt = np.count_nonzero(np.diff(fifo_data) != 1)
                     if err_cnt:
                         logging.warning("TCP data not increased by 1: errors=%d" % err_cnt)
