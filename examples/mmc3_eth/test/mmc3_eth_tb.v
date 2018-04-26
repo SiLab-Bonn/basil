@@ -1,9 +1,11 @@
-`timescale 1ps / 1ps
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University
+ * Copyright (c) All rights reserved
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+
+`timescale 1ps / 1ps
 
 `include "firmware/src/mmc3_eth_core.v"
 `include "gpio/gpio.v"

@@ -1,12 +1,12 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 `timescale 1ps/1ps
 `default_nettype none
- 
+
 module bram_fifo_core
 #(
     parameter                   DEPTH = 32'h8000,
@@ -21,17 +21,17 @@ module bram_fifo_core
     input wire                  BUS_RD,
     input wire                  BUS_WR,
     output reg [7:0]            BUS_DATA_OUT,
-    
+
     input wire                  BUS_RD_DATA,
     output reg [31:0]           BUS_DATA_OUT_DATA,
     input wire                  BUS_WR_DATA,
     input wire [31:0]           BUS_DATA_IN_DATA,
 
-    
+
     output wire                 FIFO_READ_NEXT_OUT,
     input wire                  FIFO_EMPTY_IN,
     input wire [31:0]           FIFO_DATA,
-    
+
     output wire                 FIFO_NOT_EMPTY,
     output wire                 FIFO_FULL,
     output reg                  FIFO_NEAR_FULL,
@@ -119,13 +119,13 @@ assign FIFO_READ_NEXT_OUT = !FULL_BUF;
 `include "../includes/log2func.v"
 localparam POINTER_SIZE = `CLOG2(DEPTH);
 
-gerneric_fifo #(.DATA_SIZE(32), .DEPTH(DEPTH))  i_buf_fifo
-( .clk(BUS_CLK), .reset(RST), 
+gerneric_fifo #(.DATA_SIZE(32), .DEPTH(DEPTH)) i_buf_fifo
+( .clk(BUS_CLK), .reset(RST),
     .write(!FIFO_EMPTY_IN || BUS_WR_DATA),
-    .read(BUS_RD_DATA), 
-    .data_in(BUS_WR_DATA ? BUS_DATA_IN_DATA : FIFO_DATA), 
-    .full(FULL_BUF), 
-    .empty(FIFO_EMPTY_IN_BUF), 
+    .read(BUS_RD_DATA),
+    .data_in(BUS_WR_DATA ? BUS_DATA_IN_DATA : FIFO_DATA),
+    .full(FULL_BUF),
+    .empty(FIFO_EMPTY_IN_BUF),
     .data_out(FIFO_DATA_BUF[31:0]), .size(CONF_SIZE[POINTER_SIZE-1:0])
 );
 assign CONF_SIZE[31:POINTER_SIZE] = 0;
@@ -142,7 +142,7 @@ always@(posedge BUS_CLK) begin
         CONF_READ_ERROR <= 0;
     else if(FIFO_EMPTY_IN_BUF && BUS_RD_DATA && CONF_READ_ERROR != 8'hff)
         CONF_READ_ERROR <= CONF_READ_ERROR +1;
-end  
+end
 
 always @(posedge BUS_CLK) begin
     if(RST)

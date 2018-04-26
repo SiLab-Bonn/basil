@@ -50,7 +50,7 @@ class SiLibUsbBusDriver(BusDriver):
     @cocotb.coroutine
     def init(self):
         # Defaults
-        #self.bus.BUS_RST<= 1
+        # self.bus.BUS_RST<= 1
         self.bus.RD_B <= 1
         self.bus.WR_B <= 1
         self.bus.ADD <= 0
@@ -115,7 +115,6 @@ class SiLibUsbBusDriver(BusDriver):
         self.bus.RD_B <= 0
         yield ReadOnly()
         result = self.bus.BUS_DATA.value.integer
-        # print "read_external result", result
         yield RisingEdge(self.clock)
         self.bus.RD_B <= 1
 
@@ -124,7 +123,6 @@ class SiLibUsbBusDriver(BusDriver):
         self.bus.ADD <= self._x
 
         yield RisingEdge(self.clock)
-        #result = self.bus.BUS_DATA.value.integer
 
         for _ in range(5):
             yield RisingEdge(self.clock)
@@ -176,7 +174,6 @@ class SiLibUsbBusDriver(BusDriver):
         self.bus.FSTROBE <= 1
         yield ReadOnly()
         result = self.bus.FD.value.integer
-        #print "fast_block_read result", result
         yield RisingEdge(self.clock)
         self.bus.FREAD <= 0
         self.bus.FSTROBE <= 0

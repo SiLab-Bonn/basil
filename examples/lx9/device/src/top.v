@@ -1,6 +1,7 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 
@@ -10,29 +11,29 @@ module top (
 
     input wire ETH_COL,
     input wire ETH_CRS,
-    
+
     output wire ETH_MDC,
     inout wire ETH_MDIO,
     output wire ETH_RESET_n,
-    
+
     input wire ETH_RX_CLK,
     input wire [3:0] ETH_RX_D,
     input wire ETH_RX_DV,
     input wire ETH_RX_ER,
-   
-    input wire ETH_TX_CLK, 
+
+    input wire ETH_TX_CLK,
     output wire [3:0] ETH_TX_D,
     output wire ETH_TX_EN,
-    
+
     output wire [3:0] GPIO_LED,
     input wire [3:0] GPIO_DIP
 );
 
     wire CLKFBOUT, CLKOUT0, CLKOUT1, CLKOUT2, CLKOUT3, CLKOUT4, CLKFBIN, LOCKED;
     wire RST, BUS_CLK, BUS_RST, SPI_CLK;
-    
+
    PLL_BASE #(
-      .BANDWIDTH("OPTIMIZED"),             // "HIGH", "LOW" or "OPTIMIZED" 
+      .BANDWIDTH("OPTIMIZED"),             // "HIGH", "LOW" or "OPTIMIZED"
       .CLKFBOUT_MULT(20),                   // Multiply value for all CLKOUT clock outputs (1-64)
       .CLKFBOUT_PHASE(0.0),                // Phase offset in degrees of the clock feedback output (0.0-360.0).
       .CLKIN_PERIOD(25.0),                  // Input clock period in ns to ps resolution (i.e. 33.333 is 30
@@ -41,8 +42,8 @@ module top (
       .CLKOUT0_DIVIDE(16), //40 - 20div
       .CLKOUT1_DIVIDE(32), //25
       .CLKOUT2_DIVIDE(80), //10
-      .CLKOUT3_DIVIDE(32), 
-      .CLKOUT4_DIVIDE(32), 
+      .CLKOUT3_DIVIDE(32),
+      .CLKOUT4_DIVIDE(32),
       .CLKOUT5_DIVIDE(20),
       // CLKOUT0_DUTY_CYCLE - CLKOUT5_DUTY_CYCLE: Duty cycle for CLKOUT# clock output (0.01-0.99).
       .CLKOUT0_DUTY_CYCLE(0.5),
@@ -59,7 +60,7 @@ module top (
       .CLKOUT4_PHASE(0.0),
       .CLKOUT5_PHASE(0.0),
       .CLK_FEEDBACK("CLKFBOUT"),           // Clock source to drive CLKFBIN ("CLKFBOUT" or "CLKOUT0")
-      .COMPENSATION("SYSTEM_SYNCHRONOUS"), // "SYSTEM_SYNCHRONOUS", "SOURCE_SYNCHRONOUS", "EXTERNAL" 
+      .COMPENSATION("SYSTEM_SYNCHRONOUS"), // "SYSTEM_SYNCHRONOUS", "SOURCE_SYNCHRONOUS", "EXTERNAL"
       .DIVCLK_DIVIDE(1),                   // Division value for all output clocks (1-52)
       .REF_JITTER(0.1),                    // Reference Clock Jitter in UI (0.000-0.999).
       .RESET_ON_LOSS_OF_LOCK("FALSE")      // Must be set to FALSE
@@ -78,7 +79,7 @@ module top (
       .CLKIN(USER_CLOCK),       // 1-bit input: Clock input
       .RST(USER_RESET)            // 1-bit input: Reset input
    );
-   
+
     wire RX_CLK, TX_CLK;
     assign RST = USER_RESET | !LOCKED;
     assign CLKFBIN = CLKFBOUT;//BUFG BUFG_FB (  .O(CLKFBIN),  .I(CLKFBOUT) );
@@ -86,7 +87,7 @@ module top (
     BUFG BUFG_ETH_RX_CLK (  .O(RX_CLK),  .I(ETH_RX_CLK) );
     BUFG BUFG_SPI(  .O(SPI_CLK),  .I(CLKOUT2) );
     BUFG BUFG_ETH_TX_CLK (  .O(TX_CLK),  .I(ETH_TX_CLK) );
-    
+
     wire EEPROM_CS, EEPROM_SK, EEPROM_DI;
     wire TCP_CLOSE_REQ;
     wire RBCP_ACT, RBCP_WE, RBCP_RE;
@@ -98,7 +99,7 @@ module top (
     wire TCP_TX_FULL;
     wire TCP_TX_WR;
     wire [7:0] TCP_TX_DATA;
-     
+
     wire   mdio_gem_i;
     wire   mdio_gem_o;
     wire   mdio_gem_t;
@@ -126,7 +127,7 @@ module top (
     // MII interface
       .GMII_RSTn(ETH_RESET_n)            ,    // out    : PHY reset
       .GMII_1000M(1'b0)            ,    // in    : GMII mode (0:MII, 1:GMII)
-      // TX 
+      // TX
       .GMII_TX_CLK(TX_CLK)            ,    // in    : Tx clock
       .GMII_TX_EN(ETH_TX_EN)            ,    // out    : Tx enable
       .GMII_TXD({ETH_TX_D_NO,ETH_TX_D})            ,    // out    : Tx data[7:0]
@@ -177,12 +178,12 @@ module top (
     wire BUS_WR, BUS_RD;
     wire [31:0] BUS_ADD;
     wire [7:0] BUS_DATA;
-    
+
     rbcp_to_bus irbcp_to_bus(
-    
+
     .BUS_RST(BUS_RST),
     .BUS_CLK(BUS_CLK),
-    
+
     .RBCP_ACT(RBCP_ACT),
     .RBCP_ADDR(RBCP_ADDR),
     .RBCP_WD(RBCP_WD),
@@ -190,34 +191,34 @@ module top (
     .RBCP_RE(RBCP_RE),
     .RBCP_ACK(RBCP_ACK),
     .RBCP_RD(RBCP_RD),
-    
+
     .BUS_WR(BUS_WR),
     .BUS_RD(BUS_RD),
     .BUS_ADD(BUS_ADD),
     .BUS_DATA(BUS_DATA)
   );
-    
+
     //MODULE ADREESSES
     localparam GPIO_BASEADDR = 32'h0000_0000;
     localparam GPIO_HIGHADDR = 32'h0000_000f;
-    
+
     localparam FIFO_BASEADDR = 32'h0020;                    // 0x0020
     localparam FIFO_HIGHADDR = FIFO_BASEADDR + 15;          // 0x002f
-    
-    localparam FAST_SR_AQ_BASEADDR = 32'h0100;                    
+
+    localparam FAST_SR_AQ_BASEADDR = 32'h0100;
     localparam FAST_SR_AQ_HIGHADDR = FAST_SR_AQ_BASEADDR + 15;
-    
-    localparam TDC_BASEADDR = 32'h0200;                    
-    localparam TDC_HIGHADDR = TDC_BASEADDR + 15; 
+
+    localparam TDC_BASEADDR = 32'h0200;
+    localparam TDC_HIGHADDR = TDC_BASEADDR + 15;
 
     localparam SEQ_GEN_BASEADDR = 32'h1000;                      //0x1000
     localparam SEQ_GEN_HIGHADDR = SEQ_GEN_BASEADDR + 16 + 32'h1fff;   //0x300f
-    
-     
+
+
     // MODULES //
-    gpio 
-    #( 
-        .BASEADDR(GPIO_BASEADDR), 
+    gpio
+    #(
+        .BASEADDR(GPIO_BASEADDR),
         .HIGHADDR(GPIO_HIGHADDR),
         .ABUSWIDTH(32),
         .IO_WIDTH(8),
@@ -232,15 +233,15 @@ module top (
         .BUS_WR(BUS_WR),
         .IO({GPIO_DIP, GPIO_LED})
     );
-     
+
     wire [7:0] SEQ_OUT;
-    seq_gen 
-    #( 
-        .BASEADDR(SEQ_GEN_BASEADDR), 
+    seq_gen
+    #(
+        .BASEADDR(SEQ_GEN_BASEADDR),
         .HIGHADDR(SEQ_GEN_HIGHADDR),
         .ABUSWIDTH(32),
-        .MEM_BYTES(8*1024), 
-        .OUT_BITS(8) 
+        .MEM_BYTES(8*1024),
+        .OUT_BITS(8)
     ) i_seq_gen
     (
         .BUS_CLK(BUS_CLK),
@@ -249,21 +250,21 @@ module top (
         .BUS_DATA(BUS_DATA),
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
-    
+
         .SEQ_CLK(SPI_CLK),
         .SEQ_OUT(SEQ_OUT)
     );
     wire SR_IN, GLOBAL_SR_EN, GLOBAL_CTR_LD, GLOBAL_DAC_LD, PIXEL_SR_EN, INJECT;
     wire GLOBAL_SR_CLK, PIXEL_SR_CLK;
     assign SR_IN                = SEQ_OUT[0];
-    assign GLOBAL_SR_EN         = SEQ_OUT[1];   
-    assign GLOBAL_CTR_LD        = SEQ_OUT[2];   
-    assign GLOBAL_DAC_LD        = SEQ_OUT[3];     
+    assign GLOBAL_SR_EN         = SEQ_OUT[1];
+    assign GLOBAL_CTR_LD        = SEQ_OUT[2];
+    assign GLOBAL_DAC_LD        = SEQ_OUT[3];
     assign PIXEL_SR_EN          = SEQ_OUT[4];
     assign INJECT               = SEQ_OUT[5];
- 
+
     OFDDRRSE GLOBAL_SR_GC (
-        .CE(GLOBAL_SR_EN), 
+        .CE(GLOBAL_SR_EN),
         .C0(~SPI_CLK),
         .C1(SPI_CLK),
         .D0(1'b1),
@@ -274,7 +275,7 @@ module top (
     );
 
     OFDDRRSE PIXEL_SR_GC (
-        .CE(PIXEL_SR_EN), 
+        .CE(PIXEL_SR_EN),
         .C0(~SPI_CLK),
         .C1(SPI_CLK),
         .D0(1'b1),
@@ -283,16 +284,16 @@ module top (
         .S(1'b0),
         .Q(PIXEL_SR_CLK)
     );
- 
+
     wire [31:0] FIFO_DATA_SPI_RX;
     wire FIFO_EMPTY_SPI_RX;
     wire FIFO_READ_SPI_RX;
     wire PIXEL_SR_OUT;
     assign PIXEL_SR_OUT = SR_IN;
-    
-    fast_spi_rx 
-    #(         
-        .BASEADDR(FAST_SR_AQ_BASEADDR), 
+
+    fast_spi_rx
+    #(
+        .BASEADDR(FAST_SR_AQ_BASEADDR),
         .HIGHADDR(FAST_SR_AQ_HIGHADDR)
     ) i_pixel_sr_fast_rx
     (
@@ -302,17 +303,17 @@ module top (
         .BUS_DATA(BUS_DATA),
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
-        
+
         .SCLK(~SPI_CLK),
         .SDI(PIXEL_SR_OUT),
         .SEN(PIXEL_SR_EN),
-    
+
         .FIFO_READ(FIFO_READ_SPI_RX),
         .FIFO_EMPTY(FIFO_EMPTY_SPI_RX),
         .FIFO_DATA(FIFO_DATA_SPI_RX)
 
-    ); 
-    
+    );
+
     wire TDC_FIFO_READ;
     wire TDC_FIFO_EMPTY;
     wire [31:0] TDC_FIFO_DATA;
@@ -321,15 +322,15 @@ module top (
 
     wire ARB_READY_OUT, ARB_WRITE_OUT;
     wire [31:0] ARB_DATA_OUT;
-     
-    rrp_arbiter 
-    #( 
+
+    rrp_arbiter
+    #(
         .WIDTH(2)
     ) i_rrp_arbiter
     (
         .RST(BUS_RST),
         .CLK(BUS_CLK),
-    
+
         .WRITE_REQ({~FIFO_EMPTY_SPI_RX, ~TDC_FIFO_EMPTY}),
         .HOLD_REQ({2'b0}),
         .DATA_IN({FIFO_DATA_SPI_RX, TDC_FIFO_DATA}),
@@ -339,12 +340,12 @@ module top (
         .WRITE_OUT(ARB_WRITE_OUT),
         .DATA_OUT(ARB_DATA_OUT)
     );
-    
+
     wire FIFO_EMPTY, FIFO_FULL;
     fifo_32_to_8 #(.DEPTH(4*1024)) i_data_fifo (
         .RST(BUS_RST),
         .CLK(BUS_CLK),
-        
+
         .WRITE(ARB_WRITE_OUT),
         .READ(TCP_TX_WR),
         .DATA_IN(ARB_DATA_OUT),
@@ -354,5 +355,5 @@ module top (
     );
     assign ARB_READY_OUT = !FIFO_FULL;
     assign TCP_TX_WR = !TCP_TX_FULL && !FIFO_EMPTY;
-    
+
 endmodule

@@ -2,7 +2,7 @@
 
 module mio3_eth_gpac
 (
-  
+
   input wire RESET_N,
   input wire clkin,
 
@@ -297,7 +297,7 @@ module mio3_eth_gpac
         .HIGHADDR(I2C_HIGHADDR),
         .ABUSWIDTH(ABUSWIDTH),
         .MEM_BYTES(64)
-    )  i_i2c
+    ) i_i2c
     (
         .BUS_CLK(BUS_CLK),
         .BUS_RST(BUS_RST),
