@@ -371,6 +371,18 @@ class SiTcp(SiTransferLayer):
             self._tcp_read_buff = self._tcp_read_buff[ret_size:]
         return ret
 
+    def _send_tcp_data(self, data):
+        total_sent = 0
+        while not self._stop:
+            _, wlist, _ = select.select([], [self._sock_tcp], [], self._tcp_readout_interval)
+            if wlist:
+                sent = self._sock_tcp.send(data[total_sent:])
+                if sent == 0:
+                    raise IOError('SiTcp:_send_tcp_data - Socket broken')
+                total_sent += sent
+                if total_sent == len(data):
+                    break
+
     def close(self):
         super(SiTcp, self).close()
         self._stop = True

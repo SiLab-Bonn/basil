@@ -108,6 +108,13 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PPRDIR/../../../../firmware/modules/utils/fifo_8_to_32.v">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PPRDIR/../../../../firmware/modules/utils/generic_fifo.v">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>

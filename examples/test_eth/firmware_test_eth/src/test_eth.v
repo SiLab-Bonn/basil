@@ -176,6 +176,7 @@ wire [7:0] RBCP_WD, RBCP_RD;
 wire [31:0] RBCP_ADDR;
 wire TCP_RX_WR;
 wire [7:0] TCP_RX_DATA;
+reg [11:0] TCP_RX_WC;
 wire RBCP_ACK;
 wire SiTCP_RST;
 
@@ -232,7 +233,7 @@ WRAP_SiTCP_GMII_XC7K_32K sitcp(
     .TCP_CLOSE_REQ(TCP_CLOSE_REQ)        ,    // out    : Connection close request
     .TCP_CLOSE_ACK(TCP_CLOSE_REQ)        ,    // in    : Acknowledge for closing
     // FIFO I/F
-    .TCP_RX_WC(1'b1)            ,    // in    : Rx FIFO write count[15:0] (Unused bits should be set 1)
+    .TCP_RX_WC({4'b1111, TCP_RX_WC})            ,    // in    : Rx FIFO write count[15:0] (Unused bits should be set 1)
     .TCP_RX_WR(TCP_RX_WR)            ,    // out    : Write enable
     .TCP_RX_DATA(TCP_RX_DATA)            ,    // out    : Write data[7:0]
     .TCP_TX_FULL(TCP_TX_FULL)            ,    // out    : Almost full flag
@@ -275,7 +276,6 @@ rbcp_to_bus irbcp_to_bus(
 
 // -------  MODULE ADREESSES  ------- //
 
-
 // Registers
 wire SOFT_RST; // Address: 0
 assign SOFT_RST = (BUS_ADD == 0 && BUS_WR);
@@ -297,7 +297,7 @@ assign BUS_RST_FLAG = BUS_RST_FF2 & ~BUS_RST_FF; // trailing edge
 wire RESET;
 assign RESET = BUS_RST_FLAG | SOFT_RST_FLAG;
 
-reg [7:0] status_regs[31:0];
+reg [7:0] status_regs[39:0];
 
 wire [7:0] SETUP;
 assign SETUP = status_regs[1];
@@ -342,16 +342,25 @@ begin
         status_regs[29] <= 8'b0; // TCP failed write counter
         status_regs[30] <= 8'b0; // TCP failed write counter
         status_regs[31] <= 8'b0; // TCP failed write counter
+        status_regs[32] <= 8'b0; // TCP recv write counter
+        status_regs[33] <= 8'b0; // TCP recv write counter
+        status_regs[34] <= 8'b0; // TCP recv write counter
+        status_regs[35] <= 8'b0; // TCP recv write counter
+        status_regs[36] <= 8'b0; // TCP recv write counter
+        status_regs[37] <= 8'b0; // TCP recv write counter
+        status_regs[38] <= 8'b0; // TCP recv write counter
+        status_regs[39] <= 8'b0; // TCP recv write counter
     end
-    else if(BUS_WR && BUS_ADD < 32)
+    else if(BUS_WR && BUS_ADD < 40)
     begin
-        status_regs[BUS_ADD[4:0]] <= BUS_DATA;
+        status_regs[BUS_ADD[5:0]] <= BUS_DATA;
     end
 end
 
 reg [31:0] UDP_WRITE_CNT;
 reg [63:0] TCP_WRITE_CNT;
 reg [63:0] TCP_FAILED_WRITE_CNT;
+reg [63:0] TCP_RCV_WRITE_CNT;
 
 reg [7:0] BUS_DATA_OUT;
 always @ (posedge BUS_CLK) begin
@@ -420,6 +429,22 @@ always @ (posedge BUS_CLK) begin
             BUS_DATA_OUT <= TCP_FAILED_WRITE_CNT[55:48];
         else if (BUS_ADD == 31)
             BUS_DATA_OUT <= TCP_FAILED_WRITE_CNT[63:56];
+        else if (BUS_ADD == 32)
+            BUS_DATA_OUT <= TCP_RCV_WRITE_CNT[7:0];
+        else if (BUS_ADD == 33)
+            BUS_DATA_OUT <= TCP_RCV_WRITE_CNT[15:8];
+        else if (BUS_ADD == 34)
+            BUS_DATA_OUT <= TCP_RCV_WRITE_CNT[23:16];
+        else if (BUS_ADD == 35)
+            BUS_DATA_OUT <= TCP_RCV_WRITE_CNT[31:24];
+        else if (BUS_ADD == 36)
+            BUS_DATA_OUT <= TCP_RCV_WRITE_CNT[39:32];
+        else if (BUS_ADD == 37)
+            BUS_DATA_OUT <= TCP_RCV_WRITE_CNT[47:40];
+        else if (BUS_ADD == 38)
+            BUS_DATA_OUT <= TCP_RCV_WRITE_CNT[55:48];
+        else if (BUS_ADD == 39)
+            BUS_DATA_OUT <= TCP_RCV_WRITE_CNT[63:56];
         else
             BUS_DATA_OUT <= 0;
     end
@@ -428,7 +453,7 @@ end
 
 reg BUS_READ;
 always @ (posedge BUS_CLK)
-    if (BUS_RD & BUS_ADD < 32)
+    if (BUS_RD & BUS_ADD < 40)
         BUS_READ <= 1;
     else
         BUS_READ <= 0;
@@ -436,6 +461,50 @@ always @ (posedge BUS_CLK)
 assign BUS_DATA[7:0] = BUS_READ ? BUS_DATA_OUT : 8'hzz;
 
 // Test registers
+
+wire recv_tcp_data_wfull;
+wire RECV_TCP_DATA_FULL;
+assign RECV_TCP_DATA_FULL = recv_tcp_data_wfull;
+wire recv_tcp_data_cdc_fifo_write;
+assign recv_tcp_data_cdc_fifo_write = TCP_RX_WR & ~RECV_TCP_DATA_FULL;
+wire recv_tcp_data_fifo_full, recv_tcp_data_cdc_fifo_empty;
+
+wire [7:0] recv_tcp_data_cdc_data_out;
+cdc_syncfifo #(.DSIZE(8), .ASIZE(3)) cdc_syncfifo_recv_tcp_data
+(
+    .rdata(recv_tcp_data_cdc_data_out),
+    .wfull(recv_tcp_data_wfull),
+    .rempty(recv_tcp_data_cdc_fifo_empty),
+    .wdata(TCP_RX_DATA),
+    .winc(recv_tcp_data_cdc_fifo_write), .wclk(BUS_CLK), .wrst(RESET),
+    .rinc(!recv_tcp_data_fifo_full), .rclk(BUS_CLK), .rrst(RESET)
+);
+
+always @ (posedge BUS_CLK)
+    if(RESET) begin
+        TCP_RCV_WRITE_CNT <= 0;
+        TCP_RX_WC <= 0;
+    end else if(recv_tcp_data_cdc_fifo_write) begin
+        TCP_RCV_WRITE_CNT <= TCP_RCV_WRITE_CNT + 1;
+        TCP_RX_WC <= TCP_RX_WC + 1;
+    end else begin
+        TCP_RCV_WRITE_CNT <= TCP_RCV_WRITE_CNT;
+        TCP_RX_WC <= 0;
+    end
+
+wire RECV_TCP_DATA_FIFO_READ, RECV_TCP_DATA_FIFO_EMPTY;
+wire [31:0] RECV_TCP_FIFO_DATA;
+fifo_8_to_32 #(.DEPTH(1024)) fifo_recv_tcp_data_i (
+    .RST(RESET),
+    .CLK(BUS_CLK),
+    .WRITE(!recv_tcp_data_cdc_fifo_empty),
+    .READ(RECV_TCP_DATA_FIFO_READ),
+    .DATA_IN(recv_tcp_data_cdc_data_out),
+    .FULL(recv_tcp_data_fifo_full),
+    .EMPTY(RECV_TCP_DATA_FIFO_EMPTY),
+    .DATA_OUT(RECV_TCP_FIFO_DATA)
+);
+
 
 always @(posedge BUS_CLK)
 begin
@@ -510,21 +579,21 @@ assign gen_tcp_data_cdc_fifo_write = GEN_TCP_DATA_WRITE;
 wire gen_tcp_data_fifo_full, gen_tcp_data_cdc_fifo_empty;
 
 wire [31:0] gen_tcp_data_cdc_data_out;
-cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) cdc_syncfifo_gen_tcp_data
+cdc_syncfifo #(.DSIZE(32), .ASIZE(3)) cdc_syncfifo_send_tcp_data_i
 (
     .rdata(gen_tcp_data_cdc_data_out),
     .wfull(gen_tcp_data_wfull),
     .rempty(gen_tcp_data_cdc_fifo_empty),
     .wdata(GEN_TCP_DATA),
-    .winc(gen_tcp_data_cdc_fifo_write), .wclk(BUS_CLK), .wrst(BUS_RST),
-    .rinc(!gen_tcp_data_fifo_full), .rclk(BUS_CLK), .rrst(BUS_RST)
+    .winc(gen_tcp_data_cdc_fifo_write), .wclk(BUS_CLK), .wrst(RESET),
+    .rinc(!gen_tcp_data_fifo_full), .rclk(BUS_CLK), .rrst(RESET)
 );
 
 wire GEN_TCP_DATA_FIFO_READ, GEN_TCP_DATA_FIFO_EMPTY;
 wire [31:0] GEN_TCP_FIFO_DATA;
-gerneric_fifo #(.DATA_SIZE(32), .DEPTH(8))  fifo_gen_tcp_data
+gerneric_fifo #(.DATA_SIZE(32), .DEPTH(8))  fifo_send_tcp_data_i
 (
-    .reset(BUS_RST),
+    .reset(RESET),
     .clk(BUS_CLK),
     .write(!gen_tcp_data_cdc_fifo_empty),
     .read(GEN_TCP_DATA_FIFO_READ),
@@ -542,12 +611,12 @@ wire [1:0] READ_GRANT;
 rrp_arbiter #(
     .WIDTH(2)
 ) i_rrp_arbiter (
-    .RST(BUS_RST),
+    .RST(RESET),
     .CLK(BUS_CLK),
 
-    .WRITE_REQ({1'b0, ~GEN_TCP_DATA_FIFO_EMPTY}),
+    .WRITE_REQ({~RECV_TCP_DATA_FIFO_EMPTY, ~GEN_TCP_DATA_FIFO_EMPTY}),
     .HOLD_REQ({2'b0}),
-    .DATA_IN({32'b0, GEN_TCP_FIFO_DATA}),
+    .DATA_IN({RECV_TCP_FIFO_DATA, GEN_TCP_FIFO_DATA}),
     .READ_GRANT(READ_GRANT),
 
     .READY_OUT(ARB_READY_OUT),
@@ -555,8 +624,6 @@ rrp_arbiter #(
     .DATA_OUT(ARB_DATA_OUT)
 );
 
-
-wire RECV_TCP_DATA_FIFO_READ;
 assign GEN_TCP_DATA_FIFO_READ = READ_GRANT[0];
 assign RECV_TCP_DATA_FIFO_READ = READ_GRANT[1];
 //assign ARB_WRITE_OUT =  GEN_TCP_DATA_WRITE;
@@ -572,14 +639,14 @@ cdc_syncfifo #(.DSIZE(32), .ASIZE(3)) cdc_syncfifo_i
     .wfull(FIFO_FULL),
     .rempty(cdc_fifo_empty),
     .wdata(ARB_DATA_OUT),
-    .winc(ARB_WRITE_OUT), .wclk(BUS_CLK), .wrst(BUS_RST),
-    .rinc(!full_32to8), .rclk(BUS_CLK), .rrst(BUS_RST)
+    .winc(ARB_WRITE_OUT), .wclk(BUS_CLK), .wrst(RESET),
+    .rinc(!full_32to8), .rclk(BUS_CLK), .rrst(RESET)
 );
 assign ARB_READY_OUT = !FIFO_FULL;
 
 wire FIFO_EMPTY;
 fifo_32_to_8 #(.DEPTH(256*1024)) i_data_fifo (
-    .RST(BUS_RST),
+    .RST(RESET),
     .CLK(BUS_CLK),
 
     .WRITE(!cdc_fifo_empty),

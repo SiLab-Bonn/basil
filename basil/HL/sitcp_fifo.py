@@ -4,6 +4,9 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
+import struct
+import array
+
 import numpy as np
 
 from basil.HL.HardwareLayer import HardwareLayer
@@ -56,7 +59,7 @@ class sitcp_fifo(HardwareLayer):
             super(sitcp_fifo, self).__setattr__(name, value)
 
     def get_data(self):
-        ''' Reading data from SiTCP FIFO.
+        ''' Reading data from SiTCP FIFO (via TCP).
 
         Returns
         -------
@@ -67,3 +70,14 @@ class sitcp_fifo(HardwareLayer):
         fifo_int_size = (fifo_size - (fifo_size % 4)) / 4
         data = self._intf._get_tcp_data(fifo_int_size * 4)
         return np.frombuffer(data, dtype=np.dtype('<u4'))
+
+    def set_data(self, data):
+        ''' Sending data to via TCP.
+
+        Parameters
+        ----------
+        data : array
+            Array of unsigned integers (32 bit).
+        '''
+        data = array.array('B', struct.unpack("{}B".format(len(data) * 4), struct.pack("{}I".format(len(data)), *data)))
+        self._intf._send_tcp_data(data)

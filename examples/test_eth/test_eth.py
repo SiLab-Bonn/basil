@@ -53,7 +53,8 @@ class test_eth(RegisterHardwareLayer):
         'UDP_WRITE_CNT': {'descr': {'addr': 10, 'size': 32, 'offset': 0}},
         'TCP_WRITE_DLY': {'default': 0, 'descr': {'addr': 14, 'size': 16, 'offset': 0}},
         'TCP_WRITE_CNT': {'descr': {'addr': 16, 'size': 64, 'offset': 0, 'properties': ['readonly']}},
-        'TCP_FAILED_WRITE_CNT': {'descr': {'addr': 24, 'size': 64, 'offset': 0, 'properties': ['readonly']}}
+        'TCP_FAILED_WRITE_CNT': {'descr': {'addr': 24, 'size': 64, 'offset': 0, 'properties': ['readonly']}},
+        'TCP_RECV_WRITE_CNT': {'descr': {'addr': 32, 'size': 64, 'offset': 0, 'properties': ['readonly']}}
     }
 
 
@@ -141,7 +142,7 @@ class Test(object):
             logging.info("TCP data error counter: %d" % self.total_tcp_err_cnt)
             logging.info("TCP exception counter: %d" % self.tcp_exception_cnt)
             logging.info("TCP write busy counter: %d" % self.dut['REGISTERS'].TCP_FAILED_WRITE_CNT)
-            logging.info("TCP data words: read: %d, expected: %d" % (self.dut['REGISTERS'].TCP_WRITE_CNT, self.total_tcp_data_words_read))
+            logging.info("TCP data words: read: %d, expected: %d" % (self.dut['REGISTERS'].TCP_WRITE_CNT * 4 + self.dut['REGISTERS'].TCP_RECV_WRITE_CNT, self.total_tcp_data_words_read * 4))
             if self.total_tcp_data_words_read * 4 / 10.0**6 > 1000000:
                 logging.info("Total amount transmitted: %.2f TB" % (self.total_tcp_data_words_read * 4 / 10.0**12))
             elif self.total_tcp_data_words_read * 4 / 10.0**6 > 1000:
