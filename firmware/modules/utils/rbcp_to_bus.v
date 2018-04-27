@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -11,7 +11,7 @@
 module rbcp_to_bus (
     input wire BUS_RST,
     input wire BUS_CLK,
-    
+
     input wire RBCP_ACT,
     input wire [31:0] RBCP_ADDR,
     input wire [7:0] RBCP_WD,
@@ -19,12 +19,12 @@ module rbcp_to_bus (
     input wire RBCP_RE,
     output reg RBCP_ACK,
     output wire [7:0] RBCP_RD,
-    
+
     output wire          BUS_WR,
     output wire          BUS_RD,
     output wire [31:0]   BUS_ADD,
-    inout wire [7:0]    BUS_DATA
-    
+    inout wire  [7:0]    BUS_DATA
+
     //FUTURE
     //input wire BUS_ACK_REQ
     //input wire BUS_ACK
@@ -53,12 +53,12 @@ wire [35:0] control_bus;
 chipscope_icon ichipscope_icon
 (
     .CONTROL0(control_bus)
-); 
+);
 
-chipscope_ila ichipscope_ila 
+chipscope_ila ichipscope_ila
 (
     .CONTROL(control_bus),
-    .CLK(BUS_CLK), 
+    .CLK(BUS_CLK),
     .TRIG0({BUS_ADD[7:0], RBCP_ACK, RBCP_WD, RBCP_RD, BUS_RD, BUS_WR})
 
 );
