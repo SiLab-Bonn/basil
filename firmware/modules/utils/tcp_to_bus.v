@@ -9,26 +9,44 @@
 `default_nettype none
 
 module tcp_to_bus (
-    input wire BUS_RST,
-    input wire BUS_CLK,
+    input wire           BUS_RST,
+    input wire           BUS_CLK,
 
     // SiTCP TCP RX
-    output reg [15:0] TCP_RX_WC, // Rx FIFO write count[15:0] (Unused bits should be set 1)
-    input wire        TCP_RX_WR, // Write enable
-    input wire [7:0]  TCP_RX_DATA, // Write data[7:0]
-    //input wire TCP_TX_FULL, // Almost full flag
-    //output wire TCP_TX_WR, // Write enable
-    //output reg TCP_TX_DATA, // Write data[7:0]
+    output reg  [15:0]   TCP_RX_WC, // Rx FIFO write count[15:0] (Unused bits should be set 1)
+    input wire           TCP_RX_WR, // Write enable
+    input wire  [7:0]    TCP_RX_DATA, // Write data[7:0]
+    //input wire           TCP_TX_FULL, // Almost full flag
+    //output wire          TCP_TX_WR, // Write enable
+    //output reg           TCP_TX_DATA, // Write data[7:0]
+
+    // SiTCP RBCP (UDP)
+    input wire           RBCP_ACT,
+    input wire  [31:0]   RBCP_ADDR,
+    input wire  [7:0]    RBCP_WD,
+    input wire           RBCP_WE,
+    input wire           RBCP_RE,
+    output reg           RBCP_ACK,
+    output wire [7:0]    RBCP_RD,
 
     // BUS
     output wire          BUS_WR,
-    //output wire          BUS_RD,
-    output reg  [31:0]   BUS_ADD,
-    output wire [7:0]    BUS_DATA,
+    output wire          BUS_RD,
+    output wire [31:0]   BUS_ADD,
+    inout wire  [7:0]    BUS_DATA,
 
     output reg           INVALID
 );
 
+
+// TCP
+
+wire TCP_RESET;
+reg [15:0] LENGTH;
+reg [15:0] BYTE_CNT;
+reg [31:0] TCP_TO_BUS_ADD;
+reg [15:0] RX_DATA_255_CNT;
+wire TCP_TO_BUS_WR;
 
 always@(posedge BUS_CLK)
     if(BUS_RST) begin
@@ -39,9 +57,6 @@ always@(posedge BUS_CLK)
         TCP_RX_WC <= 0;
     end
 
-wire TCP_RESET;
-reg [15:0] LENGTH;
-reg [15:0] BYTE_CNT;
 always@(posedge BUS_CLK)
     if(BUS_RST) begin
         BYTE_CNT <= 0;
@@ -64,12 +79,11 @@ always@(posedge BUS_CLK)
         INVALID <= 1'b0;
     // check for correct length, substract header size 6
     // check for correct max. address
-    else if (({TCP_RX_DATA, LENGTH[7:0]} > 65529 && BYTE_CNT == 1) || ((LENGTH + {TCP_RX_DATA, BUS_ADD[23:0]} > 33'h1_0000_0000) && BYTE_CNT == 5))
+    else if (({TCP_RX_DATA, LENGTH[7:0]} > 65529 && BYTE_CNT == 1) || ((LENGTH + {TCP_RX_DATA, TCP_TO_BUS_ADD[23:0]} > 33'h1_0000_0000) && BYTE_CNT == 5))
         INVALID <= 1'b1;
     else
         INVALID <= INVALID;
 
-reg [15:0] RX_DATA_255_CNT;
 always@(posedge BUS_CLK)
     if(BUS_RST) begin
         RX_DATA_255_CNT <= 0;
@@ -94,25 +108,48 @@ always@(posedge BUS_CLK)
         LENGTH <= LENGTH;
     end
 
-assign BUS_WR = (TCP_RX_WR && BYTE_CNT > 5 && !INVALID) ? 1'b1 : 1'b0;
+assign TCP_TO_BUS_WR = (TCP_RX_WR && BYTE_CNT > 5 && !INVALID) ? 1'b1 : 1'b0;
 
-  always@(posedge BUS_CLK)
+always@(posedge BUS_CLK)
     if(BUS_RST) begin
-        BUS_ADD <= 0;
+        TCP_TO_BUS_ADD <= 0;
     end else if(TCP_RX_WR && BYTE_CNT == 2) begin
-        BUS_ADD[7:0] <= TCP_RX_DATA;
+        TCP_TO_BUS_ADD[7:0] <= TCP_RX_DATA;
     end else if(TCP_RX_WR && BYTE_CNT == 3) begin
-        BUS_ADD[15:8] <= TCP_RX_DATA;
+        TCP_TO_BUS_ADD[15:8] <= TCP_RX_DATA;
     end else if(TCP_RX_WR && BYTE_CNT == 4) begin
-        BUS_ADD[23:16] <= TCP_RX_DATA;
+        TCP_TO_BUS_ADD[23:16] <= TCP_RX_DATA;
     end else if(TCP_RX_WR && BYTE_CNT == 5) begin
-        BUS_ADD[31:24] <= TCP_RX_DATA;
+        TCP_TO_BUS_ADD[31:24] <= TCP_RX_DATA;
     end else if(TCP_RX_WR && BYTE_CNT > 5) begin
-        BUS_ADD <= BUS_ADD + 1;
+        TCP_TO_BUS_ADD <= TCP_TO_BUS_ADD + 1;
     end else begin
-        BUS_ADD <= BUS_ADD;
+        TCP_TO_BUS_ADD <= TCP_TO_BUS_ADD;
     end
 
-assign BUS_DATA = (BUS_WR) ? TCP_RX_DATA : 8'bz;
+
+// RBCP
+wire RBCP_TO_BUS_WR;
+
+always@(posedge BUS_CLK) begin
+    if(BUS_RST)
+        RBCP_ACK <= 0;
+    else begin
+        if (RBCP_ACK == 1)
+            RBCP_ACK <= 0;
+        else
+            RBCP_ACK <= (RBCP_WE | RBCP_RE) & ~TCP_TO_BUS_WR;
+    end
+end
+
+assign RBCP_TO_BUS_WR = RBCP_WE & RBCP_ACT;
+assign RBCP_RD[7:0] = BUS_WR ? 8'bz : BUS_DATA;
+
+
+// BUS
+assign BUS_WR = TCP_TO_BUS_WR | RBCP_TO_BUS_WR;
+assign BUS_RD = RBCP_RE & RBCP_ACT & ~TCP_TO_BUS_WR;
+assign BUS_ADD = (TCP_TO_BUS_WR) ? TCP_TO_BUS_ADD : RBCP_ADDR;
+assign BUS_DATA = (BUS_WR) ? ((TCP_TO_BUS_WR) ? TCP_RX_DATA : RBCP_WD) : 8'bz;
 
 endmodule

@@ -25,34 +25,34 @@ logger = logging.getLogger(__name__)
 class SiTcp(SiTransferLayer):
     '''SiTcp transport layer.transport
 
-    UDP (RBCP) Header
+    UDP (RBCP) Header+Data
 
     Bit 7         Bit 0
     +-----------------+
     |  Ver.  |  Type  |
-    |-----------------|
+    +-----------------+
     |   CMD  |  FLAG  |
-    |-----------------|
+    +-----------------+
     |        ID       |
-    |-----------------|
+    +-----------------+
     |   Data Length   |
-    |-----------------|
+    +-----------------+
     | Address [31:24] |
-    |-----------------|
+    +-----------------+
     | Address [23:16] |
-    |-----------------|
+    +-----------------+
     | Address [15:8]  |
-    |-----------------|
+    +-----------------+
     | Address [7:0]   |
-    |-----------------|
+    +-----------------+
     |      Data 0     |
-    |-----------------|
+    +-----------------+
     |      Data 1     |
-    |-----------------|
+    +-----------------+
     |       ...       |
-    |-----------------|
+    +-----------------+
     |     Data N-1    |
-    |-----------------|
+    +-----------------+
     |      Data N     | (N max. 255)
     +-----------------+
 
@@ -84,6 +84,37 @@ class SiTcp(SiTransferLayer):
     |  0  |    Error   |   0:Normal  |
     |     |            | 1:Bus Error |
     +-----+------------+-------------+
+
+
+    TCP to BUS Header+Data
+
+    Bit 7         Bit 0
+    +-----------------+
+    |   Length [7:0]  |
+    +-----------------+
+    |   Length [15:8] |
+    +-----------------+
+    | Address [7:0]   |
+    +-----------------+
+    | Address [15:8]  |
+    +-----------------+
+    | Address [23:16] |
+    +-----------------+
+    | Address [31:24] |
+    +-----------------+
+    |      Data 0     |
+    +-----------------+
+    |      Data 1     |
+    +-----------------+
+    |       ...       |
+    +-----------------+
+    |  Data Length-1  |
+    +-----------------+
+    |   Data Length   | (Length max. 65529)
+    +-----------------+
+
+    TCP to BUS reset sequence (in case of status invalid): 65535 * 0xff + 6 * 0x00
+
     '''
     # UDP(RBCP) interface
     RBCP_VER = 0xff
@@ -218,19 +249,18 @@ class SiTcp(SiTransferLayer):
 
     def write(self, addr, data):
         if addr < self.BASE_DATA_TCP:
-
-            def chunks(array, max_len):
-                index = 0
-                while index < len(array):
-                    yield array[index: index + max_len]
-                    index += max_len
-
-            buff = array('B', data)
-            with self._udp_lock:
-                new_addr = addr
-                for req in chunks(buff, self.RBCP_MAX_SIZE):
-                    self._write_single(new_addr, req)
-                    new_addr += len(req)
+            if self._sock_tcp is not None and 'tcp_to_bus' in self._init and self._init['tcp_to_bus']:
+                arr = array('B', struct.pack('<II', len(data), addr))
+                arr += data
+                with self._udp_lock:
+                    self._send_tcp_data(arr)
+            else:
+                buff = array('B', data)
+                with self._udp_lock:
+                    new_addr = addr
+                    for req in chunks(buff, self.RBCP_MAX_SIZE):
+                        self._write_single(new_addr, req)
+                        new_addr += len(req)
         elif addr < self.BASE_FAKE_FIFO_TCP:
             with self._tcp_lock:
                 self._sock_tcp.sendall(data)  # chunking?
@@ -387,6 +417,10 @@ class SiTcp(SiTransferLayer):
                 if total_sent == len(data):
                     break
 
+    def _reset_tcp_to_bus(self, data):
+        self._send_tcp_data(array('B', [255] * 65535))
+        self._send_tcp_data(array('B', [0] * 6))
+
     def close(self):
         super(SiTcp, self).close()
         self._stop = True
@@ -394,3 +428,10 @@ class SiTcp(SiTransferLayer):
         self._sock_udp.close()
         if self._init['tcp_connection']:
             self._sock_tcp.close()
+
+
+def chunks(array, max_len):
+    index = 0
+    while index < len(array):
+        yield array[index: index + max_len]
+        index += max_len
