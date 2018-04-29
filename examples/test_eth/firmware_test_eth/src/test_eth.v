@@ -176,7 +176,8 @@ wire [7:0] RBCP_WD, RBCP_RD;
 wire [31:0] RBCP_ADDR;
 wire TCP_RX_WR;
 wire [7:0] TCP_RX_DATA;
-reg [11:0] TCP_RX_WC;
+//reg  [15:0] TCP_RX_WC;
+wire  [15:0] TCP_RX_WC;
 wire RBCP_ACK;
 wire SiTCP_RST;
 
@@ -233,7 +234,7 @@ WRAP_SiTCP_GMII_XC7K_32K sitcp(
     .TCP_CLOSE_REQ(TCP_CLOSE_REQ)        ,    // out    : Connection close request
     .TCP_CLOSE_ACK(TCP_CLOSE_REQ)        ,    // in    : Acknowledge for closing
     // FIFO I/F
-    .TCP_RX_WC({4'b1111, TCP_RX_WC})            ,    // in    : Rx FIFO write count[15:0] (Unused bits should be set 1)
+    .TCP_RX_WC(TCP_RX_WC)            ,    // in    : Rx FIFO write count[15:0] (Unused bits should be set 1)
     .TCP_RX_WR(TCP_RX_WR)            ,    // out    : Write enable
     .TCP_RX_DATA(TCP_RX_DATA)            ,    // out    : Write data[7:0]
     .TCP_TX_FULL(TCP_TX_FULL)            ,    // out    : Almost full flag
@@ -254,11 +255,16 @@ WRAP_SiTCP_GMII_XC7K_32K sitcp(
 wire BUS_WR, BUS_RD, BUS_RST;
 wire [31:0] BUS_ADD;
 wire [7:0] BUS_DATA;
+wire INVALID;
 assign BUS_RST = SiTCP_RST;
 
-rbcp_to_bus irbcp_to_bus(
+tcp_to_bus itcp_to_bus(
     .BUS_RST(BUS_RST),
     .BUS_CLK(BUS_CLK),
+
+    .TCP_RX_WC(TCP_RX_WC),
+    .TCP_RX_WR(TCP_RX_WR),
+    .TCP_RX_DATA(TCP_RX_DATA),
 
     .RBCP_ACT(RBCP_ACT),
     .RBCP_ADDR(RBCP_ADDR),
@@ -271,7 +277,9 @@ rbcp_to_bus irbcp_to_bus(
     .BUS_WR(BUS_WR),
     .BUS_RD(BUS_RD),
     .BUS_ADD(BUS_ADD),
-    .BUS_DATA(BUS_DATA)
+    .BUS_DATA(BUS_DATA),
+
+    .INVALID(INVALID)
 );
 
 // -------  MODULE ADREESSES  ------- //
@@ -458,7 +466,7 @@ always @ (posedge BUS_CLK)
     else
         BUS_READ <= 0;
 
-assign BUS_DATA[7:0] = BUS_READ ? BUS_DATA_OUT : 8'hzz;
+assign BUS_DATA = BUS_READ ? BUS_DATA_OUT : 8'hzz;
 
 // Test registers
 
@@ -466,7 +474,7 @@ wire recv_tcp_data_wfull;
 wire RECV_TCP_DATA_FULL;
 assign RECV_TCP_DATA_FULL = recv_tcp_data_wfull;
 wire recv_tcp_data_cdc_fifo_write;
-assign recv_tcp_data_cdc_fifo_write = TCP_RX_WR & ~RECV_TCP_DATA_FULL;
+assign recv_tcp_data_cdc_fifo_write = 1'b0; //TCP_RX_WR & ~RECV_TCP_DATA_FULL;
 wire recv_tcp_data_fifo_full, recv_tcp_data_cdc_fifo_empty;
 
 wire [7:0] recv_tcp_data_cdc_data_out;
@@ -483,13 +491,13 @@ cdc_syncfifo #(.DSIZE(8), .ASIZE(3)) cdc_syncfifo_recv_tcp_data
 always @ (posedge BUS_CLK)
     if(RESET) begin
         TCP_RCV_WRITE_CNT <= 0;
-        TCP_RX_WC <= 0;
+        //TCP_RX_WC <= 0;
     end else if(recv_tcp_data_cdc_fifo_write) begin
         TCP_RCV_WRITE_CNT <= TCP_RCV_WRITE_CNT + 1;
-        TCP_RX_WC <= TCP_RX_WC + 1;
+        //TCP_RX_WC <= TCP_RX_WC + 1;
     end else begin
         TCP_RCV_WRITE_CNT <= TCP_RCV_WRITE_CNT;
-        TCP_RX_WC <= 0;
+        //TCP_RX_WC <= 0;
     end
 
 wire RECV_TCP_DATA_FIFO_READ, RECV_TCP_DATA_FIFO_EMPTY;
@@ -720,7 +728,7 @@ always @ (posedge BUS_CLK or posedge FIFO_WAS_FULL or negedge FIFO_WAS_ALMOST_EM
 assign LED[7:4] = 4'b1111;
 assign LED[0] = CLK_1HZ;
 assign LED[1] = ~FIFO_FULL_SLOW;
-assign LED[2] = 1'b1;
+assign LED[2] = ~INVALID;
 assign LED[3] = 1'b1;
 
 endmodule

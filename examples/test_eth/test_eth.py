@@ -24,6 +24,7 @@ transfer_layer:
         udp_port : 4660
         tcp_port : 24
         tcp_connection : True
+        tcp_to_bus : True
 
 hw_drivers:
   - name      : SITCP_FIFO
