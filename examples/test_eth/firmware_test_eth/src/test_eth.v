@@ -177,7 +177,7 @@ wire [31:0] RBCP_ADDR;
 wire TCP_RX_WR;
 wire [7:0] TCP_RX_DATA;
 //reg  [15:0] TCP_RX_WC;
-wire  [15:0] TCP_RX_WC;
+wire [15:0] TCP_RX_WC;
 wire RBCP_ACK;
 wire SiTCP_RST;
 
