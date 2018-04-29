@@ -24,7 +24,9 @@ module tcp_to_bus (
     output wire          BUS_WR,
     //output wire          BUS_RD,
     output reg  [31:0]   BUS_ADD,
-    output wire [7:0]    BUS_DATA
+    output wire [7:0]    BUS_DATA,
+
+    output reg           INVALID
 );
 
 
@@ -37,20 +39,20 @@ always@(posedge BUS_CLK)
         TCP_RX_WC <= 0;
     end
 
-reg INVALID;
+wire TCP_RESET;
 reg [15:0] LENGTH;
-reg [15:0] byte_cnt;
+reg [15:0] BYTE_CNT;
 always@(posedge BUS_CLK)
     if(BUS_RST) begin
-        byte_cnt <= 0;
-    end else if(INVALID && !TCP_RX_WR) begin
-        byte_cnt <= 0;
-    end else if((byte_cnt >= 5) && ((byte_cnt - 5) == LENGTH)) begin
-        byte_cnt <= 0;
+        BYTE_CNT <= 0;
+    end else if(INVALID || TCP_RESET) begin
+        BYTE_CNT <= 0;
+    end else if((BYTE_CNT >= 5) && ((BYTE_CNT - 5) == LENGTH)) begin
+        BYTE_CNT <= 0;
     end else if(TCP_RX_WR) begin
-        byte_cnt <= byte_cnt + 1;
+        BYTE_CNT <= BYTE_CNT + 1;
     end else begin
-        byte_cnt <= byte_cnt;
+        BYTE_CNT <= BYTE_CNT;
     end
 
 // invalid signal will prevent from writing to BUS
@@ -58,40 +60,54 @@ always@(posedge BUS_CLK)
 always@(posedge BUS_CLK)
     if (BUS_RST)
         INVALID <= 1'b0;
-    if (!TCP_RX_WR)
+    else if (TCP_RESET)
         INVALID <= 1'b0;
     // check for correct length, substract header size 6
     // check for correct max. address
-    else if (({TCP_RX_DATA, LENGTH[7:0]} > 65529 && byte_cnt == 1) || ((LENGTH + {TCP_RX_DATA, BUS_ADD[23:0]} > 33'h1_0000_0000) && byte_cnt == 5))
+    else if (({TCP_RX_DATA, LENGTH[7:0]} > 65529 && BYTE_CNT == 1) || ((LENGTH + {TCP_RX_DATA, BUS_ADD[23:0]} > 33'h1_0000_0000) && BYTE_CNT == 5))
         INVALID <= 1'b1;
     else
         INVALID <= INVALID;
 
+reg [15:0] RX_DATA_255_CNT;
+always@(posedge BUS_CLK)
+    if(BUS_RST) begin
+        RX_DATA_255_CNT <= 0;
+    end else if(TCP_RX_WR && ~&TCP_RX_DATA) begin // TCP data is not 255
+        RX_DATA_255_CNT <= 0;
+    end else if(TCP_RX_WR && &TCP_RX_DATA && ~&RX_DATA_255_CNT) begin // TCP data is 255
+        RX_DATA_255_CNT <= RX_DATA_255_CNT + 1;
+    end else begin
+        RX_DATA_255_CNT <= RX_DATA_255_CNT;
+    end
+
+assign TCP_RESET = (&TCP_RX_DATA && RX_DATA_255_CNT == 16'hff_fe && TCP_RX_WR) || ((&TCP_RX_DATA && &RX_DATA_255_CNT && TCP_RX_WR));
+
 always@(posedge BUS_CLK)
     if(BUS_RST) begin
         LENGTH <= 0;
-    end else if(TCP_RX_WR && byte_cnt == 0) begin
+    end else if(TCP_RX_WR && BYTE_CNT == 0) begin
         LENGTH[7:0] <= TCP_RX_DATA;
-    end else if(TCP_RX_WR && byte_cnt == 1) begin
+    end else if(TCP_RX_WR && BYTE_CNT == 1) begin
         LENGTH[15:8] <= TCP_RX_DATA;
     end else begin
         LENGTH <= LENGTH;
     end
 
-assign BUS_WR = (TCP_RX_WR && byte_cnt > 5 && !INVALID) ? 1'b1 : 1'b0;
+assign BUS_WR = (TCP_RX_WR && BYTE_CNT > 5 && !INVALID) ? 1'b1 : 1'b0;
 
   always@(posedge BUS_CLK)
     if(BUS_RST) begin
         BUS_ADD <= 0;
-    end else if(TCP_RX_WR && byte_cnt == 2) begin
+    end else if(TCP_RX_WR && BYTE_CNT == 2) begin
         BUS_ADD[7:0] <= TCP_RX_DATA;
-    end else if(TCP_RX_WR && byte_cnt == 3) begin
+    end else if(TCP_RX_WR && BYTE_CNT == 3) begin
         BUS_ADD[15:8] <= TCP_RX_DATA;
-    end else if(TCP_RX_WR && byte_cnt == 4) begin
+    end else if(TCP_RX_WR && BYTE_CNT == 4) begin
         BUS_ADD[23:16] <= TCP_RX_DATA;
-    end else if(TCP_RX_WR && byte_cnt == 5) begin
+    end else if(TCP_RX_WR && BYTE_CNT == 5) begin
         BUS_ADD[31:24] <= TCP_RX_DATA;
-    end else if(TCP_RX_WR && byte_cnt > 5) begin
+    end else if(TCP_RX_WR && BYTE_CNT > 5) begin
         BUS_ADD <= BUS_ADD + 1;
     end else begin
         BUS_ADD <= BUS_ADD;
