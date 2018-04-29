@@ -153,13 +153,19 @@ class SiTcp(SiTransferLayer):
     def init(self):
         super(SiTcp, self).init()
         self.reset()
+        if 'ip' not in self._init:
+            raise ValueError('Parameter \'ip\' missing.')
+        if 'udp_port' not in self._init:
+            raise ValueError('Parameter \'udp_port\' missing.')
         self._sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sock_udp.connect((self._init['ip'], self._init['udp_port']))
         # using select to monitor socket status, therefore the socket is set to blocking (default)
         self._sock_udp.setblocking(0)
-        self._sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # start readout thread if TCP connection is set
-        if self._init['tcp_connection']:
+        if 'tcp_connection' in self._init and self._init['tcp_connection']:
+            if 'tcp_port' not in self._init:
+                raise ValueError('Parameter \'tcp_port\' missing.')
+            self._sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self._sock_tcp.connect((self._init['ip'], self._init['tcp_port']))
             # using select to monitor socket status, therefore the socket is set to blocking (default)
             self._sock_tcp.setblocking(0)
@@ -167,6 +173,9 @@ class SiTcp(SiTransferLayer):
             self._tcp_readout_thread.daemon = True  # exiting program even when thread is alive
             self._stop = False
             self._tcp_readout_thread.start()
+            #self._reset_tcp_to_bus()
+        else:
+            self._sock_tcp = None
 
     def _write_single(self, addr, data):
         retry_write_cnt = 0
@@ -250,7 +259,7 @@ class SiTcp(SiTransferLayer):
     def write(self, addr, data):
         if addr < self.BASE_DATA_TCP:
             if self._sock_tcp is not None and 'tcp_to_bus' in self._init and self._init['tcp_to_bus']:
-                arr = array('B', struct.pack('<II', len(data), addr))
+                arr = array('B', struct.pack('<HI', len(data), addr))
                 arr += data
                 with self._udp_lock:
                     self._send_tcp_data(arr)
@@ -417,7 +426,7 @@ class SiTcp(SiTransferLayer):
                 if total_sent == len(data):
                     break
 
-    def _reset_tcp_to_bus(self, data):
+    def _reset_tcp_to_bus(self):
         self._send_tcp_data(array('B', [255] * 65535))
         self._send_tcp_data(array('B', [0] * 6))
 

@@ -148,7 +148,7 @@ assign RBCP_RD[7:0] = BUS_WR ? 8'bz : BUS_DATA;
 
 // BUS
 assign BUS_WR = TCP_TO_BUS_WR | RBCP_TO_BUS_WR;
-assign BUS_RD = RBCP_RE & RBCP_ACT & ~TCP_TO_BUS_WR;
+assign BUS_RD = RBCP_RE & RBCP_ACT & ~BUS_WR;
 assign BUS_ADD = (TCP_TO_BUS_WR) ? TCP_TO_BUS_ADD : RBCP_ADDR;
 assign BUS_DATA = (BUS_WR) ? ((TCP_TO_BUS_WR) ? TCP_RX_DATA : RBCP_WD) : 8'bz;
 
