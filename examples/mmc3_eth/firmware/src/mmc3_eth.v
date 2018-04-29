@@ -338,5 +338,4 @@ always@ (posedge BUS_CLK)
 
 end
 
-
 endmodule

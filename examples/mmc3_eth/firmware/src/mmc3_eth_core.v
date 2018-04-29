@@ -1,15 +1,12 @@
-`timescale 1ns / 1ps
-
 /**
  * ------------------------------------------------------------
  * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-
+`timescale 1ns / 1ps
 
 module mmc3_eth_core(
-
     input wire RESET_N,
 
     // clocks from PLL clock buffers
@@ -30,7 +27,7 @@ module mmc3_eth_core(
     output wire [31:0]  FIFO_DATA,
 
     output wire [7:0]   GPIO
-    );
+);
 
 
 /* -------  MODULE ADREESSES  ------- */
@@ -69,7 +66,5 @@ module mmc3_eth_core(
             fifo_data_out <= 0;
         else if(FIFO_WRITE)
             fifo_data_out <= fifo_data_out + 1;
-            
-     
- 
+
 endmodule
