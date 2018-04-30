@@ -49,9 +49,16 @@ class Mercury(HardwareLayer):
         self._write_command("TB", address)
         return self.read()
 
-    def set_position(self, value, address=None):
-        self._write_command("MA%d" % value)
-
     def get_position(self, address=None):
         self._write_command("TP")
         return int(self.read()[3:-3])
+    
+    def get_channel(self, address=None):
+        self._write_command("TS", address)
+        return self.read()
+   
+    def set_position(self, value, address=None):
+        self._write_command("MA%d" % value, address)
+    
+    def move_relative(self, value, address=None):
+        self._write_command("MR%d" % value, address)  
