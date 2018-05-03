@@ -173,7 +173,8 @@ class SiTcp(SiTransferLayer):
             self._tcp_readout_thread.daemon = True  # exiting program even when thread is alive
             self._stop = False
             self._tcp_readout_thread.start()
-            #self._reset_tcp_to_bus()
+            if 'tcp_to_bus' in self._init and self._init['tcp_to_bus']:
+                self._reset_tcp_to_bus()
         else:
             self._sock_tcp = None
 
