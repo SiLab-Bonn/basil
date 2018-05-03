@@ -34,7 +34,7 @@ module m26_rx_core
     output wire LOST_ERROR
 );
 
-localparam VERSION = 1;
+localparam VERSION = 2;
 
 //output format #ID (as parameter IDENTYFIER + 1 frame start + 16 bit data)
 
@@ -44,21 +44,21 @@ assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 wire RST;
 assign RST = BUS_RST | SOFT_RST;
 
-reg CONF_EN;
-reg CONF_TIMESTAMP_HEADER;
+reg [7:0] status_regs [1:0];
 
 always @(posedge BUS_CLK) begin
     if(RST) begin
-        CONF_EN <= 0;
-        CONF_TIMESTAMP_HEADER <= 1'b1;
+        status_regs[0] <= 0;
+        status_regs[1] <= 8'b0000_0010;
     end
-    else if(BUS_WR) begin
-        if(BUS_ADD == 2) begin
-            CONF_EN <= BUS_DATA_IN[0];
-            CONF_TIMESTAMP_HEADER <= BUS_DATA_IN[1];
-        end
-    end
+    else if(BUS_WR && BUS_ADD < 2)
+        status_regs[BUS_ADD[0]] <= BUS_DATA_IN;
 end
+
+wire CONF_EN;
+assign CONF_EN = status_regs[1][0];
+wire CONF_TIMESTAMP_HEADER;
+assign CONF_TIMESTAMP_HEADER = status_regs[1][1];
 
 reg [7:0] LOST_DATA_CNT;
 
@@ -66,9 +66,9 @@ always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if(BUS_ADD == 0)
             BUS_DATA_OUT <= VERSION;
+        else if(BUS_ADD == 1)
+            BUS_DATA_OUT <= status_regs[1];
         else if(BUS_ADD == 2)
-            BUS_DATA_OUT <= {6'b0, CONF_TIMESTAMP_HEADER, CONF_EN};
-        else if(BUS_ADD == 3)
             BUS_DATA_OUT <= LOST_DATA_CNT;
         else
             BUS_DATA_OUT <= 8'b0;
@@ -123,16 +123,16 @@ reg [4:0] DATA1_DLY;
 always@(posedge CLK_RX)
     DATA1_DLY[4:0] <= {DATA1_DLY[3:0], DATA_RX_IO[1]};
 
-reg [4:0] DATA0_DLY;
+reg DATA0_DLY;
 always@(posedge CLK_RX)
-    DATA0_DLY[4:0] <= {DATA0_DLY[3:0], DATA_RX_IO[0]};
+    DATA0_DLY <= DATA_RX_IO[0];
 
 wire [1:0] WRITE;
 wire FRAME_START, FRAME_START1;
 wire [15:0] DATA [1:0];
 
 m26_rx_ch m26_rx_ch0(
-    .RST(RST_SYNC), .CLK_RX(CLK_RX), .MKD_RX(MKD_DLY[0]), .DATA_RX(DATA0_DLY[0]),
+    .RST(RST_SYNC), .CLK_RX(CLK_RX), .MKD_RX(MKD_DLY[0]), .DATA_RX(DATA0_DLY),
     .WRITE(WRITE[0]), .FRAME_START(FRAME_START), .DATA(DATA[0])
 );
 
