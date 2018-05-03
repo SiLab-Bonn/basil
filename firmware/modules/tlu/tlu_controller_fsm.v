@@ -143,7 +143,7 @@ assign TLU_TRIGGER_ACCEPT_ERROR_FLAG = ~TLU_TRIGGER_ACCEPT_ERROR_FF & TLU_TRIGGE
 reg     [2:0]   state;
 reg     [2:0]   next;
 
-parameter   [2:0]
+localparam   [2:0]
     IDLE                                = 3'b000,
     SEND_COMMAND                        = 3'b001,
     SEND_COMMAND_WAIT_FOR_TRIGGER_LOW   = 3'b010,
