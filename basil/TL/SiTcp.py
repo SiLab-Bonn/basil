@@ -260,7 +260,7 @@ class SiTcp(SiTransferLayer):
         if addr < self.BASE_DATA_TCP:
             if self._sock_tcp is not None and 'tcp_to_bus' in self._init and self._init['tcp_to_bus']:
                 arr = array('B', struct.pack('<HI', len(data), addr))
-                arr += data
+                arr += array('B', data)
                 with self._udp_lock:
                     self._send_tcp_data(arr)
             else:
