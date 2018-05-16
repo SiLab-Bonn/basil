@@ -1,23 +1,23 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 `timescale 1ps/1ps
 `default_nettype none
- 
+
 module bram_fifo
 #(
     parameter   BASEADDR = 32'h0000,
     parameter   HIGHADDR = 32'h0000,
     parameter   ABUSWIDTH = 32,
-    
+
     parameter   BASEADDR_DATA = 32'h0000,
     parameter   HIGHADDR_DATA = 32'h0000,
-        
+
     parameter   DEPTH = 32'h8000*8,
-    
+
     parameter   FIFO_ALMOST_FULL_THRESHOLD = 95, // in percent
     parameter   FIFO_ALMOST_EMPTY_THRESHOLD = 5 // in percent
 ) (
@@ -32,7 +32,7 @@ module bram_fifo
     output wire                 FIFO_READ_NEXT_OUT,
     input wire                  FIFO_EMPTY_IN,
     input wire [31:0]           FIFO_DATA,
-    
+
     output wire                 FIFO_NOT_EMPTY,
     output wire                 FIFO_FULL,
     output wire                 FIFO_NEAR_FULL,
@@ -82,7 +82,7 @@ bram_fifo_core
     .FIFO_ALMOST_FULL_THRESHOLD(FIFO_ALMOST_FULL_THRESHOLD),
     .FIFO_ALMOST_EMPTY_THRESHOLD(FIFO_ALMOST_EMPTY_THRESHOLD),
     .ABUSWIDTH(ABUSWIDTH)
-) i_bram_fifo 
+) i_bram_fifo
 (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
@@ -91,16 +91,16 @@ bram_fifo_core
     .BUS_RD(IP_RD),
     .BUS_WR(IP_WR),
     .BUS_DATA_OUT(IP_DATA_OUT),
-     
+
     .BUS_RD_DATA(IP_RD_DATA),
     .BUS_WR_DATA(IP_WR_DATA),
     .BUS_DATA_IN_DATA(IP_DATA_IN_DATA),
     .BUS_DATA_OUT_DATA(IP_DATA_OUT_DATA),
-        
+
     .FIFO_READ_NEXT_OUT(FIFO_READ_NEXT_OUT),
     .FIFO_EMPTY_IN(FIFO_EMPTY_IN),
     .FIFO_DATA(FIFO_DATA),
-    
+
     .FIFO_NOT_EMPTY(FIFO_NOT_EMPTY),
     .FIFO_FULL(FIFO_FULL),
     .FIFO_NEAR_FULL(FIFO_NEAR_FULL),

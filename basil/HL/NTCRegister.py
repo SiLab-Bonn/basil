@@ -6,8 +6,9 @@
 #
 
 import logging
-import numpy as np
 import math
+
+import numpy as np
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
@@ -25,6 +26,7 @@ class NTCRegister(HardwareLayer):
             arg_names   : [value]
             arg_add     : {'channel': 'ISRC0'}
     """
+
     def __init__(self, intf, conf):
         super(NTCRegister, self).__init__(intf, conf)
 
@@ -48,6 +50,15 @@ class NTCRegister(HardwareLayer):
             self._intf.set_current(self._conf["arg_add"]["channel"], -50, unit="uA")
         else:
             raise ValueError('NTC_type %s is not supported.' % self._conf["NTC_type"])
+
+    def get_voltage(self, unit="V"):
+        return self._intf.get_current(self._conf["arg_add"]["channel"], unit=unit)
+
+    def get_current(self, unit="uA"):
+        return self._intf.get_current(self._conf["arg_add"]["channel"], unit=unit)
+
+    def set_current(self, value, unit="uA"):
+        return self._intf.set_current(self._conf["arg_add"]["channel"], value, unit=unit)
 
     def get_temperature(self, unit="K"):
         i = self._intf.get_current(self._conf["arg_add"]["channel"], unit="mA")

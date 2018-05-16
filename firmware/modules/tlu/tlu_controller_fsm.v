@@ -38,10 +38,11 @@ module tlu_controller_fsm
     input wire                  TRIGGER_ENABLE,
     input wire                  TRIGGER_ACKNOWLEDGE,
     output reg                  TRIGGER_ACCEPTED_FLAG,
+    input wire                  TIMESTAMP_RESET_FLAG,
 
     input wire [7:0]            TLU_TRIGGER_LOW_TIME_OUT,
 //    input wire [4:0]            TLU_TRIGGER_CLOCK_CYCLES,
-    input wire [3:0]            TLU_TRIGGER_DATA_DELAY,
+    input wire [7:0]            TLU_TRIGGER_DATA_DELAY,
     input wire                  TLU_TRIGGER_DATA_MSB_FIRST,
     input wire                  TLU_ENABLE_VETO,
     input wire                  TLU_RESET_FLAG,
@@ -142,7 +143,7 @@ assign TLU_TRIGGER_ACCEPT_ERROR_FLAG = ~TLU_TRIGGER_ACCEPT_ERROR_FF & TLU_TRIGGE
 reg     [2:0]   state;
 reg     [2:0]   next;
 
-parameter   [2:0]
+localparam   [2:0]
     IDLE                                = 3'b000,
     SEND_COMMAND                        = 3'b001,
     SEND_COMMAND_WAIT_FOR_TRIGGER_LOW   = 3'b010,
@@ -546,7 +547,7 @@ end
 // time stamp
 always @ (posedge TRIGGER_CLK)
 begin
-    if (RESET || (TLU_RESET_FLAG && (TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11)))
+    if (RESET || (TLU_RESET_FLAG && (TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11)) || TIMESTAMP_RESET_FLAG)
         TIMESTAMP <= 0;
     else
         TIMESTAMP <= TIMESTAMP + 1;

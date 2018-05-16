@@ -1,12 +1,13 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) SILAB , Physics Institute of Bonn University 
+ * Copyright (c) All rights reserved
+ * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 
 `timescale 1ps / 1ps
 
- 
+
 `include "utils/bus_to_ip.v"
 
 `include "i2c/i2c.v"
@@ -21,7 +22,7 @@
 
 
 module i2c_slave_model (
-    input wire SCL, 
+    input wire SCL,
     inout wire SDA
 );
 
@@ -31,12 +32,12 @@ reg START;
 
 //initial START = 1;
 
-always@(negedge SDA or negedge SCL)    
+always@(negedge SDA or negedge SCL)
     if(~SCL)
         START <= 0;
     else
         START <= 1;
-    
+
 reg [7:0] REC_ADDRESS;
 
 
@@ -63,7 +64,7 @@ always @ (*) begin
         STATE_IDLE:
             next_state = state;
         STATE_ADDR:
-            if(bit_count==7) 
+            if(bit_count==7)
                 next_state = STATE_AACK;
         STATE_AACK:
             if(REC_ADDRESS[7:1] == ADDRESS) begin
@@ -129,7 +130,7 @@ assign MEM_WE = next_state == STATE_DACK_W & byte_count != 0;
 
 always @ (posedge SCL or posedge START)
     if(MEM_WE) begin
-        mem[mem_addr] <= BYTE_DATA_IN;    
+        mem[mem_addr] <= BYTE_DATA_IN;
 end
 
 wire [7:0] BYTE_DATA_OUT;
@@ -144,7 +145,7 @@ always @ (negedge SCL)
     SDAR <= SDA_PRE;
 
 assign SDA = SDAR ? 1'bz : 1'b0;
-    
+
 endmodule
 
 
@@ -156,20 +157,20 @@ module tb (
     input wire          BUS_RD,
     input wire          BUS_WR,
     output wire         BUS_BYTE_ACCESS
-);   
+);
 
     // MODULE ADREESSES //
     localparam I2C_BASEADDR = 32'h1000;
-    localparam I2C_HIGHADDR = 32'h2000-1; 
-    
+    localparam I2C_HIGHADDR = 32'h2000-1;
+
     localparam ABUSWIDTH = 32;
     assign BUS_BYTE_ACCESS = BUS_ADD < 32'h8000_0000 ? 1'b1 : 1'b0;
-    
-    
+
+
     wire I2C_CLK;
-    
+
     clock_divider #(
-    .DIVISOR(4) 
+    .DIVISOR(4)
     ) i_clock_divisor_spi (
         .CLK(BUS_CLK),
         .RESET(1'b0),
@@ -178,17 +179,17 @@ module tb (
     );
 
     wire SDA, SCL;
-    
-    pullup  isda (SDA); 
-    pullup  iscl (SCL); 
-    
-    i2c 
-    #( 
-        .BASEADDR(I2C_BASEADDR), 
+
+    pullup  isda (SDA);
+    pullup  iscl (SCL);
+
+    i2c
+    #(
+        .BASEADDR(I2C_BASEADDR),
         .HIGHADDR(I2C_HIGHADDR),
         .ABUSWIDTH(ABUSWIDTH),
-        .MEM_BYTES(32) 
-    )  i_i2c
+        .MEM_BYTES(32)
+    ) i_i2c
     (
         .BUS_CLK(BUS_CLK),
         .BUS_RST(BUS_RST),
@@ -196,14 +197,14 @@ module tb (
         .BUS_DATA(BUS_DATA[7:0]),
         .BUS_RD(BUS_RD),
         .BUS_WR(BUS_WR),
-    
+
         .I2C_CLK(I2C_CLK),
         .I2C_SDA(SDA),
         .I2C_SCL(SCL)
     );
 
     i2c_slave_model ii2c_slave_model (.SDA(SDA), .SCL(SCL));
-    
+
     initial begin
         $dumpfile("i2c.vcd");
         $dumpvars(0);

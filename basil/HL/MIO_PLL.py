@@ -77,7 +77,6 @@ class MIO_PLL(HardwareLayer):
     fref = CY22150_FREF_FX
     pll_frequency = 40  # some default
 
-
     def __init__(self, intf, conf):
         super(MIO_PLL, self).__init__(intf, conf)
 
@@ -115,22 +114,22 @@ class MIO_PLL(HardwareLayer):
         fout = fref * (p_total / q_total) * (1 / div)
 
         p_total = 2 * ((p_counter + 4) + p_0)     [16..1023]
-	    q_total = q_counter + 2                   [2..129]
-	    div = [2,(3),4..127]
+        q_total = q_counter + 2                   [2..129]
+        div = [2,(3),4..127]
 
-	    constraints:
+        constraints:
 
-	    f_ref * p_total / q_total = [100..400] MHz
-	    f_ref / q_total > 0.25 MHz
+        f_ref * p_total / q_total = [100..400] MHz
+        f_ref / q_total > 0.25 MHz
         '''
         for self.q_counter in range(128):
             self.q_total = self.q_counter + 2
             if (self.fref / self.q_total) < 0.25:  # PLL constraint
                 break
             for self.div in range(2, 128):
-                q_d_f = self.q_total * self.div * fout;
+                q_d_f = self.q_total * self.div * fout
                 if isinstance(q_d_f, (long, int)) and q_d_f > (15 * self.fref):  # = f0 * p
-                    if int(q_d_f) % int(self.fref == 0):  # p, q, and d found
+                    if int(q_d_f) % int(self.fref) == 0:  # p, q, and d found
                         self.p_total = q_d_f / self.fref
                         while self.p_total <= 16:  # counter constraint
                             self.p_total = self.p_total * 2
@@ -149,14 +148,14 @@ class MIO_PLL(HardwareLayer):
 
                         if self.div == 2:
                             self.clk1SRC = 0x02
-                            self.div1N   = 4
+                            self.div1N = 4
                         else:
                             if self.div == 3:
                                 self.clk1SRC = 0x03
-                                self.div1N   = 6
+                                self.div1N = 6
                             else:
                                 self.clk1SRC = 0x01
-                                self.div1N   = self.div
+                                self.div1N = self.div
 
                         if self.p_total <= 44:
                             self.chg_pump = 0
@@ -171,9 +170,9 @@ class MIO_PLL(HardwareLayer):
                                         self.chg_pump = 3
                                     else:
                                         if self.p_total <= 1023:
-                                            self.chg_pump = 4;
+                                            self.chg_pump = 4
                         ftest = self.fref * self.p_total / self.q_total * 1 / self.div
-                        fvco  = self.fref * self.p_total / self.q_total
+                        fvco = self.fref * self.p_total / self.q_total
                         logger.info('PLL frequency set to ' + str(ftest) + ' MHz' + ' (VCO @ ' + str(fvco) + ' MHz)')
                         return True
         logger.error('MIO_PLL: Could not find PLL parameters')
@@ -192,10 +191,10 @@ class MIO_PLL(HardwareLayer):
         temp = (0xff & int(self.p_counter))
         self._set_register_value(self.CY22150_ADD_PB, temp)  # p divider
 
-        temp =((0x01 & self.p_0) << 7 ) | (0x07f & self.q_counter)
+        temp = ((0x01 & self.p_0) << 7) | (0x07f & self.q_counter)
         self._set_register_value(self.CY22150_ADD_PO_Q, temp)  # p_0 & q divider
 
-        temp = (self.clk1SRC << 5) | (self.clk2SRC << 2) | (( 0x03 & self.clk3SRC) >> 1)
+        temp = (self.clk1SRC << 5) | (self.clk2SRC << 2) | ((0x03 & self.clk3SRC) >> 1)
         self._set_register_value(self.CY22150_ADD_XS1, temp)  # clock source
 
         temp = (self.clk3SRC << 7) | (self.clk4SRC << 4) | (self.clk5SRC << 1) | ((0x01 & self.clk6SRC) >> 2)

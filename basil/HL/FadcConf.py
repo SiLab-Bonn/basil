@@ -4,8 +4,10 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 
-from basil.HL.RegisterHardwareLayer import HardwareLayer
 import logging
+
+from basil.HL.RegisterHardwareLayer import HardwareLayer
+
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +37,7 @@ class FadcConf(HardwareLayer):
             pass
 
     def enable_pattern(self, pattern):
-        self._intf.set_data([0x03, 0x80 | ((pattern & 0x3f00) >> 8 )])
+        self._intf.set_data([0x03, 0x80 | ((pattern & 0x3f00) >> 8)])
         self._intf.start()
         while not self._intf.is_done():
             pass

@@ -32,7 +32,6 @@ class tlu(RegisterHardwareLayer):
                   'TRIGGER_MODE': {'descr': {'addr': 1, 'size': 2, 'offset': 0}},
                   'TRIGGER_DATA_MSB_FIRST': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},
                   'TRIGGER_ENABLE': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},
-                  'TRIGGER_DATA_DELAY': {'descr': {'addr': 1, 'size': 4, 'offset': 4}},
                   'DATA_FORMAT': {'descr': {'addr': 2, 'size': 2, 'offset': 0}},
                   'EN_TLU_RESET_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 5}},
                   'EN_TLU_VETO': {'descr': {'addr': 2, 'size': 1, 'offset': 6}},
@@ -48,8 +47,10 @@ class tlu(RegisterHardwareLayer):
                   'HANDSHAKE_BUSY_VETO_WAIT_CYCLES': {'descr': {'addr': 30, 'size': 8}},
                   'TRIGGER_LOW_TIMEOUT_ERROR_COUNTER': {'descr': {'addr': 31, 'size': 8, 'properties': ['ro']}},
                   'TLU_TRIGGER_ACCEPT_ERROR_COUNTER': {'descr': {'addr': 32, 'size': 8, 'properties': ['ro']}},
-                  'TRIGGER_THRESHOLD': {'descr': {'addr': 33, 'size': 8}}}
-    _require_version = "==10"
+                  'TRIGGER_THRESHOLD': {'descr': {'addr': 33, 'size': 8}},
+                  'SOFT_TRIGGER': {'descr': {'addr': 34, 'size': 8, 'properties': ['writeonly']}},
+                  'TRIGGER_DATA_DELAY': {'descr': {'addr': 35, 'size': 8}}}
+    _require_version = "==11"
 
     def __init__(self, intf, conf):
         super(tlu, self).__init__(intf, conf)

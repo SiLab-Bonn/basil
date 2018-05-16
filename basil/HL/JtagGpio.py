@@ -77,14 +77,12 @@ fields:
         return self._scan(data)
 
     def scan_dr(self, data):
-
         self.reg['TMS'] = 1
         self._write()  # select dr
 
         return self._scan(data)
 
     def _scan(self, data):
-
         self.reg['TMS'] = 0
         self._write()  # capture
 
@@ -101,7 +99,7 @@ fields:
                     self.reg['TMS'] = 1  # exit1
                 self.reg['TDI'] = data[dev][bit]
                 dev_ret[bit] = ret_bit
-                if bit == size-1 and dev == size_dev-1: #lest bit
+                if bit == size - 1 and dev == size_dev - 1:  # last bit
                     self._write()
                 else:
                     ret_bit = self._write(tdo=True)
@@ -117,7 +115,6 @@ fields:
         return ret
 
     def _write(self, tck=True, tdo=False):
-
         self._intf.set_data(self.reg.tobytes())
 
         if(tck):

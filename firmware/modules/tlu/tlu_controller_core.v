@@ -48,6 +48,7 @@ module tlu_controller_core
 
     input wire [WIDTH-1:0]      TRIGGER, // trigger input
     input wire [WIDTH-1:0]      TRIGGER_VETO, // veto input
+    input wire                  TIMESTAMP_RESET, // timestamp reset
 
     input wire                  EXT_TRIGGER_ENABLE, // enable trigger FSM
     input wire                  TRIGGER_ACKNOWLEDGE, // acknowledge signal/flag
@@ -61,7 +62,7 @@ module tlu_controller_core
     output wire [TIMESTAMP_N_OF_BIT-1:0] TIMESTAMP
 );
 
-localparam VERSION = 10;
+localparam VERSION = 11;
 
 // Registers
 wire SOFT_RST; // Address: 0
@@ -92,6 +93,27 @@ flag_domain_crossing rst_flag_domain_crossing (
     .FLAG_OUT_CLK_B(RST_SYNC)
 );
 
+// Manual software trigger
+wire SOFT_TRG; // Address: 34
+assign SOFT_TRG = (BUS_ADD == 34 && BUS_WR);
+
+reg SOFT_TRG_FF, SOFT_TRG_FF2;
+always @(posedge BUS_CLK) begin
+    SOFT_TRG_FF <= SOFT_TRG;
+    SOFT_TRG_FF2 <= SOFT_TRG_FF;
+end
+
+wire SOFT_TRG_FLAG;
+assign SOFT_TRG_FLAG = ~SOFT_TRG_FF2 & SOFT_TRG_FF;
+
+wire SOFT_TRG_SYNC;
+flag_domain_crossing trg_flag_domain_crossing (
+    .CLK_A(BUS_CLK),
+    .CLK_B(TRIGGER_CLK),
+    .FLAG_IN_CLK_A(SOFT_TRG_FLAG),
+    .FLAG_OUT_CLK_B(SOFT_TRG_SYNC)
+);
+
 reg [7:0] status_regs[63:0];
 
 // reg 0 for SOFT_RST
@@ -101,8 +123,6 @@ wire TLU_TRIGGER_DATA_MSB_FIRST; // set endianness of TLU number
 assign TLU_TRIGGER_DATA_MSB_FIRST = status_regs[1][2];
 wire CONF_TRIGGER_ENABLE;
 assign CONF_TRIGGER_ENABLE = status_regs[1][3];
-wire [3:0] TLU_TRIGGER_DATA_DELAY;
-assign TLU_TRIGGER_DATA_DELAY = status_regs[1][7:4];
 wire [1:0] CONF_DATA_FORMAT;
 assign CONF_DATA_FORMAT = status_regs[2][1:0];
 wire TLU_ENABLE_RESET_TS;
@@ -125,6 +145,9 @@ wire [7:0] CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES;
 assign CONF_TLU_HANDSHAKE_BUSY_VETO_WAIT_CYCLES = status_regs[30];
 wire [7:0] CONF_TRIGGER_THRESHOLD;
 assign CONF_TRIGGER_THRESHOLD = status_regs[33];
+// at address 34 is SOFT_TRIGGER
+wire [7:0] TLU_TRIGGER_DATA_DELAY;
+assign TLU_TRIGGER_DATA_DELAY = status_regs[35];
 
 always @(posedge BUS_CLK)
 begin
@@ -164,8 +187,10 @@ begin
         status_regs[31] <= 8'b0; // trigger low timeout error
         status_regs[32] <= 8'b0; // trigger accept error
         status_regs[33] <= 8'b0; // trigger threshold
+        // at address 34 is SOFT_TRIGGER
+        status_regs[35] <= 8'b0; // trigger data delay
     end
-    else if(BUS_WR && BUS_ADD < 34)
+    else if(BUS_WR && BUS_ADD < 36)
     begin
         status_regs[BUS_ADD[5:0]] <= BUS_DATA_IN;
     end
@@ -248,6 +273,9 @@ always @ (posedge BUS_CLK) begin
             BUS_DATA_OUT <= TLU_TRIGGER_ACCEPT_ERROR_CNT;
         else if (BUS_ADD == 33)
             BUS_DATA_OUT <= status_regs[33];
+        // at address 34 is SOFT_TRIGGER
+        else if (BUS_ADD == 35)
+            BUS_DATA_OUT <= status_regs[35];
         else
             BUS_DATA_OUT <= 0;
     end
@@ -292,9 +320,9 @@ three_stage_synchronizer #(
 );
 */
 
-wire [3:0] TLU_TRIGGER_DATA_DELAY_SYNC;
+wire [7:0] TLU_TRIGGER_DATA_DELAY_SYNC;
 three_stage_synchronizer #(
-    .WIDTH(4)
+    .WIDTH(8)
 ) three_stage_trigger_data_delay_synchronizer (
     .CLK(TRIGGER_CLK),
     .IN(TLU_TRIGGER_DATA_DELAY),
@@ -363,6 +391,20 @@ three_stage_synchronizer three_stage_lemo_ext_veto_synchronizer_trg_clk (
     .IN(TRIGGER_VETO_OR),
     .OUT(TRIGGER_VETO_OR_SYNC)
 );
+
+wire TIMESTAMP_RESET_SYNC;
+three_stage_synchronizer three_stage_trigger_ts_reset_synchronizer (
+    .CLK(TRIGGER_CLK),
+    .IN(TIMESTAMP_RESET),
+    .OUT(TIMESTAMP_RESET_SYNC)
+);
+
+reg TIMESTAMP_RESET_SYNC_FF;
+always @ (posedge TRIGGER_CLK)
+    TIMESTAMP_RESET_SYNC_FF <= TIMESTAMP_RESET_SYNC;
+
+wire TIMESTAMP_RESET_FLAG;
+assign TIMESTAMP_RESET_FLAG = ~TIMESTAMP_RESET_SYNC_FF & TIMESTAMP_RESET_SYNC;
 
 wire [7:0] CONF_TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES_SYNC;
 three_stage_synchronizer #(
@@ -466,7 +508,7 @@ begin
 end
 
 wire TRIGGER_FSM;
-assign TRIGGER_FSM = (TRIGGER_MODE_SYNC != 2'b00) ? TLU_TRIGGER_SYNC : TRIGGER_OR_SYNC; // RJ45 inputs tied to 1 if no connector is plugged in
+assign TRIGGER_FSM = (TRIGGER_MODE_SYNC != 2'b00) ? TLU_TRIGGER_SYNC : (SOFT_TRG_SYNC | TRIGGER_OR_SYNC); // RJ45 inputs tied to 1 if no connector is plugged in
 
 // Reset flag
 reg TLU_RESET_SYNC_FF;
@@ -710,6 +752,7 @@ tlu_controller_fsm #(
     .TRIGGER_ENABLE(TRIGGER_ENABLE_FSM),
     .TRIGGER_ACKNOWLEDGE(TRIGGER_ACKNOWLEDGE_FSM),
     .TRIGGER_ACCEPTED_FLAG(TRIGGER_ACCEPTED_FLAG),
+    .TIMESTAMP_RESET_FLAG(TIMESTAMP_RESET_FLAG),
 
     .TLU_TRIGGER_LOW_TIME_OUT(TLU_TRIGGER_LOW_TIME_OUT_SYNC),
 //    .TLU_TRIGGER_CLOCK_CYCLES(TLU_TRIGGER_CLOCK_CYCLES_SYNC),

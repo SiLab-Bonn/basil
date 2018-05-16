@@ -23,4 +23,3 @@ channel 7:
     get_voltage : ROUT:OPEN ALL;:ROUT:CLOS (@7);:MEAS:VOLT?
 channel 8:
     get_voltage : ROUT:OPEN ALL;:ROUT:CLOS (@8);:MEAS:VOLT?
-
