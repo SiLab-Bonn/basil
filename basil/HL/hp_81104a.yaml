@@ -14,4 +14,4 @@ on : OUTP1:NORM:STAT ON
 off : OUTP1:NORM:STAT OFF
 
 set_frequency : FREQ
-get_frequency : FREQ? 
+get_frequency : FREQ?
