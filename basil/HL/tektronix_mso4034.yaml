@@ -1,4 +1,4 @@
-# Device description for the Tektronix 4104B Mixed signal oscilloscope.
+# Device description for the Tektronix MSO4034 Mixed Signal Oscilloscope.
 # If you need other commands consider to add them here or
 # use dut._intf._resource.write()/query() to directly talk to the device
 

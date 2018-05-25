@@ -11,9 +11,7 @@ from basil.HL.scpi import scpi
 
 
 class agilent33250a(scpi):
-
-    '''Interface for Agilent 33250A SCPI device implementing additional functions.
-    Based in Tokos implementation.
+    '''Interface for Agilent 33250A Function/Arbitrary Waveform Generator implementing additional functionality.
     '''
 
     def __init__(self, intf, conf):
