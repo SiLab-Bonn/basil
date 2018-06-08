@@ -157,8 +157,13 @@ class SiTcp(SiTransferLayer):
             raise ValueError('Parameter \'ip\' missing.')
         if 'udp_port' not in self._init:
             raise ValueError('Parameter \'udp_port\' missing.')
+
+        connect_timeout = self._init.get('connect_timeout', 1)
+
         self._sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._sock_udp.settimeout(connect_timeout)
         self._sock_udp.connect((self._init['ip'], self._init['udp_port']))
+        self._sock_udp.settimeout(None)  # https://stackoverflow.com/questions/3432102/python-socket-connection-timeout
         # using select to monitor socket status, therefore the socket is set to blocking (default)
         self._sock_udp.setblocking(0)
         # start readout thread if TCP connection is set
@@ -166,7 +171,9 @@ class SiTcp(SiTransferLayer):
             if 'tcp_port' not in self._init:
                 raise ValueError('Parameter \'tcp_port\' missing.')
             self._sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self._sock_tcp.settimeout(connect_timeout)
             self._sock_tcp.connect((self._init['ip'], self._init['tcp_port']))
+            self._sock_tcp.settimeout(None)  # https://stackoverflow.com/questions/3432102/python-socket-connection-timeout
             # using select to monitor socket status, therefore the socket is set to blocking (default)
             self._sock_tcp.setblocking(0)
             self._tcp_readout_thread = Thread(target=self._tcp_readout, name='TcpReadoutThread', kwargs={})
