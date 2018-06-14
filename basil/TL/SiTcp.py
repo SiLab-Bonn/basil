@@ -122,8 +122,8 @@ class SiTcp(SiTransferLayer):
     RBCP_CMD_RD = 0xC0
     RBCP_MAX_SIZE = 255  # bytes
 
-    UDP_TIMEOUT = 1.0
-    UDP_RETRANSMIT_CNT = 3  # TODO
+    UDP_TIMEOUT = 1.0  # in seconds
+    UDP_RETRANSMIT_CNT = 3  # set retry counts
 
     BASE_DATA_TCP = 0x100000000
     BASE_FAKE_FIFO_TCP = 0x200000000  # above this read will return size of local TCP fifo (4 bytes)
