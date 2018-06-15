@@ -157,7 +157,7 @@ class SiTcp(SiTransferLayer):
             raise ValueError('Parameter \'ip\' missing.')
         if 'udp_port' not in self._init:  # check for UDP port
             raise ValueError('Parameter \'udp_port\' missing.')
-        connect_timeout = float(self._init.get('connect_timeout', 1.0))  # in seconds
+        connect_timeout = float(self._init.get('connect_timeout', 5.0))  # in seconds
 
         self._sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sock_udp.settimeout(connect_timeout)
