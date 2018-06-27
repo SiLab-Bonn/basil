@@ -10,7 +10,7 @@
 module tdc_s3_core
 #(
     parameter DATA_IDENTIFIER = 4'b0100,
-    parameter CLKDV = 4,
+    parameter CLKDV = 4, // factor of CLK160 to DV_CLK, minimal divider of 2
     parameter ABUSWIDTH = 16,
     parameter FAST_TDC = 1,
     parameter FAST_TRIGGER = 1
