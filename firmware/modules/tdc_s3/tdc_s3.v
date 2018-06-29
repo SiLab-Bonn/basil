@@ -14,7 +14,8 @@ module tdc_s3 #(
     parameter DATA_IDENTIFIER = 4'b0100,
     parameter ABUSWIDTH = 16,
     parameter FAST_TDC = 1,
-    parameter FAST_TRIGGER = 1
+    parameter FAST_TRIGGER = 1,
+    parameter BROADCAST = 0
 )(
     input wire BUS_CLK,
     input wire [ABUSWIDTH-1:0] BUS_ADD,
@@ -30,6 +31,9 @@ module tdc_s3 #(
     output wire TDC_OUT,
     input wire TRIG_IN,
     output wire TRIG_OUT,
+
+    input wire [CLKDV*4-1:0] FAST_TRIGGER_IN,
+    output wire [CLKDV*4-1:0] FAST_TRIGGER_OUT,
 
     input wire FIFO_READ,
     output wire FIFO_EMPTY,
@@ -68,7 +72,8 @@ tdc_s3_core #(
     .CLKDV(CLKDV),
     .ABUSWIDTH(ABUSWIDTH),
     .FAST_TDC(FAST_TDC),
-    .FAST_TRIGGER(FAST_TRIGGER)
+    .FAST_TRIGGER(FAST_TRIGGER),
+    .BROADCAST(BROADCAST)
 ) i_tdc_s3_core (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
@@ -85,6 +90,9 @@ tdc_s3_core #(
     .TDC_OUT(TDC_OUT),
     .TRIG_IN(TRIG_IN),
     .TRIG_OUT(TRIG_OUT),
+
+    .FAST_TRIGGER_IN(FAST_TRIGGER_IN),
+    .FAST_TRIGGER_OUT(FAST_TRIGGER_OUT),
 
     .FIFO_READ(FIFO_READ),
     .FIFO_EMPTY(FIFO_EMPTY),
