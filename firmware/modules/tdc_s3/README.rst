@@ -6,6 +6,16 @@
 Simple time to digital converter. This module digitizes (12 bit resolution) input pulse (TDC_IN) and calculates distance (8 bit resolution) between TDC_IN and TRIG_IN (e.g. trigger signal and hit).
 Calculated values (see data format, always 32-bit) are propagated to FIFO data interface.
 
+NOTE:
+ 1. Use BROADCAST parameter in order to share fast (640 MHz sampled) trigger signal with other tdc modules.
+ 2. TDC_IN needs to be longer than one cycle of CLK320, distance of TDC_IN and TRIG_IN needs to be longer than one clock cycle of DV_CLK.
+ 3. TRIG_IN needs to come before (at least one clock cycle of DV_CLK) TDC_IN.
+ 4. ARM_TDC and EXT_EN are assumed to be slower than DV_CLK.
+
+**Unit test/Example:**
+`test_SimTlu.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTdc.v>`_
+`test_SimTlu.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTdc.py>`_
+
 Data format (Standard)
     +-------------------------+--------------------------------------------------------+--------------------+
     | DATA IDENTIFIER (4 bit) |                 EVENT_COUNTER (16 bit)                 | TDC value (12 bit) |
@@ -18,17 +28,6 @@ Data format (in case of EN_TRIGGER_DIST)
     +-------------------------+----------------------+---------------------------------+--------------------+
     | DATA IDENTIFIER (4 bit) | TRIGGER DIST (8 bit) | TIMESTAMP/EVENT COUNTER (8 bit) | TDC value (12 bit) |
     +-------------------------+----------------------+---------------------------------+--------------------+
-
-NOTE:
- 1. Use BROADCAST parameter in order to share fast (640 MHz sampled) trigger signal with other tdc modules.
- 2. TDC_IN needs to be longer than one cycle of CLK320, distance of TDC_IN and TRIG_IN needs to be longer than one clock cycle of DV_CLK.
- 3. TRIG_IN needs to come before (at least one clock cycle of DV_CLK) TDC_IN.
- 4. ARM_TDC and EXT_EN are assumed to be slower than DV_CLK.
- 
-
-**Unit test/Example:**
-`test_SimTlu.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTdc.v>`_
-`test_SimTlu.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTdc.py>`_
 
 Parameters
     +------------------------------+---------------------+---------------------------------------------------------------------------------------------------------------------+
