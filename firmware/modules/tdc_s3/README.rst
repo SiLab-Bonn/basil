@@ -4,18 +4,17 @@
 =====================================
 
 Simple time to digital converter. This module digitizes (12 bit resolution) input pulse (TDC_IN) and calculates distance (8 bit resolution) between TDC_IN and TRIG_IN (e.g. trigger signal and hit).
-Calculated values are propagated to FIFO data interface.
+Calculated values (see data format, always 32-bit) are propagated to FIFO data interface.
 
-Data format (always 32-bit word):
-	if EN_WRITE_TIMESTAMP:
-    +-------------------------+--------------------------------------------------------+--------------------+
-    | DATA IDENTIFIER (4 bit) |                   TIMESTAMP (16 bit)                   | TDC value (12 bit) |
-    +-------------------------+--------------------------------------------------------+--------------------+
-    else:
+Data format (Standard)
     +-------------------------+--------------------------------------------------------+--------------------+
     | DATA IDENTIFIER (4 bit) |                 EVENT_COUNTER (16 bit)                 | TDC value (12 bit) |
     +-------------------------+--------------------------------------------------------+--------------------+
-    if EN_TRIGGER_DIST:
+Data format (in case of EN_WRITE_TIMESTAMP)
+    +-------------------------+--------------------------------------------------------+--------------------+
+    | DATA IDENTIFIER (4 bit) |                   TIMESTAMP (16 bit)                   | TDC value (12 bit) |
+    +-------------------------+--------------------------------------------------------+--------------------+
+Data format (in case of EN_TRIGGER_DIST)
     +-------------------------+----------------------+---------------------------------+--------------------+
     | DATA IDENTIFIER (4 bit) | TRIGGER DIST (8 bit) | TIMESTAMP/EVENT COUNTER (8 bit) | TDC value (12 bit) |
     +-------------------------+----------------------+---------------------------------+--------------------+
@@ -46,7 +45,7 @@ Parameters
     | BROADCAST                    | 0                   | If BROADCAST is 1, 640 MHz sampled trigger signal can be shared with other TDC modules.                             |
     +------------------------------+---------------------+---------------------------------------------------------------------------------------------------------------------+
 
-Pins--------------------
+Pins
     +--------------------------+---------------------+-----------------------+-------------------------------------------------------------------------------------------------+
     | Name                     | Size                | Direction             | Description                                                                                     |
     +==========================+=====================+=======================+=================================================================================================+
