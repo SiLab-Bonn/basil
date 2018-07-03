@@ -1,0 +1,20 @@
+# Device description for HP E3632A Powersupply.
+# set_ function expect a parameter, get_ function return a parameter.
+# Just the very basic commands are imlemented here.
+identifier : HEWLETT-PACKARD,E3632A,0,1.1-5.0-1.0
+on : OUTP ON
+off : OUTP OFF
+disp_on : DISP 1
+disp_off : DISP 0
+get_current : MEAS:CURR?
+set_current : SOUR:CURR
+set_voltage : SOUR:VOLT
+get_voltage : MEAS:VOLT?
+set_current_limit : CURR:PROT
+get_current_limit : CURR:PROT?
+set_voltage_limit : VOLT:PROT
+get_voltage_limit : VOLT:PROT?
+
+
+
+
