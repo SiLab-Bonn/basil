@@ -59,6 +59,7 @@ module tlu_controller_core
     output wire                 TLU_BUSY,
     output wire                 TLU_CLOCK,
 
+    input wire [TIMESTAMP_N_OF_BIT-1:0] EXT_TRG_TIMESTAMP,
     output wire [TIMESTAMP_N_OF_BIT-1:0] TIMESTAMP
 );
 
@@ -114,11 +115,13 @@ flag_domain_crossing trg_flag_domain_crossing (
     .FLAG_OUT_CLK_B(SOFT_TRG_SYNC)
 );
 
-reg [7:0] status_regs[63:0];
+reg [7:0] status_regs[71:0];
 
 // reg 0 for SOFT_RST
 wire [1:0] TRIGGER_MODE; // 2'b00 - standard trigger, 2'b01 - TLU no handshake, 2'b10 - TLU simple handshake, 2'b11 - TLU trigger data handshake
 assign TRIGGER_MODE = status_regs[1][1:0];
+wire USE_EXT_TIMESTAMP; //added for timestamp from external clock
+assign USE_EXT_TIMESTAMP = status_regs[1][4];
 wire TLU_TRIGGER_DATA_MSB_FIRST; // set endianness of TLU number
 assign TLU_TRIGGER_DATA_MSB_FIRST = status_regs[1][2];
 wire CONF_TRIGGER_ENABLE;
@@ -148,6 +151,7 @@ assign CONF_TRIGGER_THRESHOLD = status_regs[33];
 // at address 34 is SOFT_TRIGGER
 wire [7:0] TLU_TRIGGER_DATA_DELAY;
 assign TLU_TRIGGER_DATA_DELAY = status_regs[35];
+
 
 always @(posedge BUS_CLK)
 begin
@@ -189,6 +193,7 @@ begin
         status_regs[33] <= 8'b0; // trigger threshold
         // at address 34 is SOFT_TRIGGER
         status_regs[35] <= 8'b0; // trigger data delay
+
     end
     else if(BUS_WR && BUS_ADD < 36)
     begin
@@ -276,6 +281,8 @@ always @ (posedge BUS_CLK) begin
         // at address 34 is SOFT_TRIGGER
         else if (BUS_ADD == 35)
             BUS_DATA_OUT <= status_regs[35];
+//        else if (BUS_ADD == 36)
+//            BUS_DATA_OUT <= status_regs[36];
         else
             BUS_DATA_OUT <= 0;
     end
@@ -298,6 +305,15 @@ three_stage_synchronizer #(
     .CLK(TRIGGER_CLK),
     .IN(TRIGGER_MODE),
     .OUT(TRIGGER_MODE_SYNC)
+);
+
+wire USE_EXT_TIMESTAMP_SYNC;
+three_stage_synchronizer #(
+    .WIDTH(1)
+) three_stage_use_ext_ts_synchronizer (
+    .CLK(TRIGGER_CLK),
+    .IN(USE_EXT_TIMESTAMP),
+    .OUT(USE_EXT_TIMESTAMP_SYNC)
 );
 
 wire [7:0] TLU_TRIGGER_LOW_TIME_OUT_SYNC;
@@ -743,6 +759,8 @@ tlu_controller_fsm #(
     .TRIGGER_COUNTER_DATA(),
     .TRIGGER_COUNTER_SET(TRIGGER_COUNTER_SET_FLAG_SYNC),
     .TRIGGER_COUNTER_SET_VALUE(TRIGGER_COUNTER),
+    .USE_EXT_TIMESTAMP(USE_EXT_TIMESTAMP_SYNC), // enable usage of timestamp from external clock
+    .EXT_TRG_TIMESTAMP(EXT_TRG_TIMESTAMP),
 
     .TRIGGER_MODE(TRIGGER_MODE_SYNC),
     .TRIGGER_THRESHOLD(CONF_TRIGGER_THRESHOLD_SYNC),

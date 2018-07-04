@@ -29,6 +29,8 @@ module tlu_controller_fsm
     output reg [31:0]           TRIGGER_COUNTER_DATA,
     input wire                  TRIGGER_COUNTER_SET,
     input wire [31:0]           TRIGGER_COUNTER_SET_VALUE,
+    input wire                  USE_EXT_TIMESTAMP,
+    input wire [TIMESTAMP_N_OF_BIT-1:0] EXT_TRG_TIMESTAMP,
 
     input wire [1:0]            TRIGGER_MODE,
     input wire [7:0]            TRIGGER_THRESHOLD,
@@ -46,7 +48,7 @@ module tlu_controller_fsm
     input wire                  TLU_TRIGGER_DATA_MSB_FIRST,
     input wire                  TLU_ENABLE_VETO,
     input wire                  TLU_RESET_FLAG,
-
+    
     input wire [1:0]            CONF_DATA_FORMAT,
 
     output reg                  TLU_BUSY,
@@ -306,7 +308,10 @@ begin
             IDLE:
             begin
                 if (TRIGGER_FLAG && TRIGGER_THRESHOLD != 0)
-                    TIMESTAMP_DATA <= TIMESTAMP[31:0];
+                    if (USE_EXT_TIMESTAMP == 1'b1)
+                        TIMESTAMP_DATA <= EXT_TRG_TIMESTAMP[31:0]; // timestamp from external clock
+                    else
+                        TIMESTAMP_DATA <= TIMESTAMP[31:0]; 
                 if (TRIGGER_ENABLE == 1'b1
                     && TRIGGER == 1'b1
                     && (((TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11) && (counter_trigger_high != 0 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0))
