@@ -51,8 +51,8 @@ module tlu_controller
     output wire                 TLU_BUSY,
     output wire                 TLU_CLOCK,
     
-    input wire [TIMESTAMP_N_OF_BIT-1:0] EXT_TRG_TIMESTAMP,
-    output wire     [TIMESTAMP_N_OF_BIT-1:0]      TIMESTAMP
+    input wire  [TIMESTAMP_N_OF_BIT-1:0] EXT_TIMESTAMP,
+    output wire [TIMESTAMP_N_OF_BIT-1:0] TIMESTAMP
 );
 
 wire IP_RD, IP_WR;
@@ -117,6 +117,7 @@ tlu_controller_core #(
     .TLU_BUSY(TLU_BUSY),
     .TLU_CLOCK(TLU_CLOCK),
 
+    .EXT_TIMESTAMP(EXT_TIMESTAMP),
     .TIMESTAMP(TIMESTAMP)
 );
 

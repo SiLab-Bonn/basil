@@ -59,7 +59,7 @@ module tlu_controller_core
     output wire                 TLU_BUSY,
     output wire                 TLU_CLOCK,
 
-    input wire [TIMESTAMP_N_OF_BIT-1:0] EXT_TRG_TIMESTAMP,
+    input wire  [TIMESTAMP_N_OF_BIT-1:0] EXT_TIMESTAMP,
     output wire [TIMESTAMP_N_OF_BIT-1:0] TIMESTAMP
 );
 
@@ -115,17 +115,17 @@ flag_domain_crossing trg_flag_domain_crossing (
     .FLAG_OUT_CLK_B(SOFT_TRG_SYNC)
 );
 
-reg [7:0] status_regs[71:0];
+reg [7:0] status_regs[63:0];
 
 // reg 0 for SOFT_RST
 wire [1:0] TRIGGER_MODE; // 2'b00 - standard trigger, 2'b01 - TLU no handshake, 2'b10 - TLU simple handshake, 2'b11 - TLU trigger data handshake
 assign TRIGGER_MODE = status_regs[1][1:0];
-wire USE_EXT_TIMESTAMP; //added for timestamp from external clock
-assign USE_EXT_TIMESTAMP = status_regs[1][4];
 wire TLU_TRIGGER_DATA_MSB_FIRST; // set endianness of TLU number
 assign TLU_TRIGGER_DATA_MSB_FIRST = status_regs[1][2];
 wire CONF_TRIGGER_ENABLE;
 assign CONF_TRIGGER_ENABLE = status_regs[1][3];
+wire USE_EXT_TIMESTAMP; // timestamp from external source
+assign USE_EXT_TIMESTAMP = status_regs[1][4];
 wire [1:0] CONF_DATA_FORMAT;
 assign CONF_DATA_FORMAT = status_regs[2][1:0];
 wire TLU_ENABLE_RESET_TS;
@@ -760,7 +760,7 @@ tlu_controller_fsm #(
     .TRIGGER_COUNTER_SET(TRIGGER_COUNTER_SET_FLAG_SYNC),
     .TRIGGER_COUNTER_SET_VALUE(TRIGGER_COUNTER),
     .USE_EXT_TIMESTAMP(USE_EXT_TIMESTAMP_SYNC), // enable usage of timestamp from external clock
-    .EXT_TRG_TIMESTAMP(EXT_TRG_TIMESTAMP),
+    .EXT_TIMESTAMP(EXT_TIMESTAMP),
 
     .TRIGGER_MODE(TRIGGER_MODE_SYNC),
     .TRIGGER_THRESHOLD(CONF_TRIGGER_THRESHOLD_SYNC),
