@@ -29,7 +29,7 @@ module tlu_controller_fsm
     output reg [31:0]           TRIGGER_COUNTER_DATA,
     input wire                  TRIGGER_COUNTER_SET,
     input wire [31:0]           TRIGGER_COUNTER_SET_VALUE,
-    input wire                  USE_EXT_TIMESTAMP,
+    input wire                  CONF_EXT_TIMESTAMP,
     input wire [TIMESTAMP_N_OF_BIT-1:0] EXT_TIMESTAMP,
 
     input wire [1:0]            TRIGGER_MODE,
@@ -308,10 +308,10 @@ begin
             IDLE:
             begin
                 if (TRIGGER_FLAG && TRIGGER_THRESHOLD != 0)
-                    if (USE_EXT_TIMESTAMP == 1'b1)
+                    if (CONF_EXT_TIMESTAMP == 1'b1)
                         TIMESTAMP_DATA <= EXT_TIMESTAMP[31:0]; // timestamp from external source
                     else
-                        TIMESTAMP_DATA <= TIMESTAMP[31:0]; 
+                        TIMESTAMP_DATA <= TIMESTAMP[31:0];
                 if (TRIGGER_ENABLE == 1'b1
                     && TRIGGER == 1'b1
                     && (((TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11) && (counter_trigger_high != 0 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0))
@@ -366,10 +366,10 @@ begin
                 TRIGGER_DATA_WRITE <= 1'b0;
                 // get timestamp closest to the trigger
                 if (state != next && TRIGGER_THRESHOLD == 0) begin
-                    if (USE_EXT_TIMESTAMP == 1'b1)
+                    if (CONF_EXT_TIMESTAMP == 1'b1)
                         TIMESTAMP_DATA <= EXT_TIMESTAMP[31:0]; // timestamp from external source
                     else
-                        TIMESTAMP_DATA <= TIMESTAMP[31:0]; 
+                        TIMESTAMP_DATA <= TIMESTAMP[31:0];
                 end
                 if (state != next) begin
                     TRIGGER_COUNTER_DATA <= TRIGGER_COUNTER;
@@ -394,10 +394,10 @@ begin
                 TRIGGER_DATA_WRITE <= 1'b0;
                 // get timestamp closest to the trigger
                 if (state != next && TRIGGER_THRESHOLD == 0) begin
-                    if (USE_EXT_TIMESTAMP == 1'b1)
+                    if (CONF_EXT_TIMESTAMP == 1'b1)
                         TIMESTAMP_DATA <= EXT_TIMESTAMP[31:0]; // timestamp from external source
                     else
-                        TIMESTAMP_DATA <= TIMESTAMP[31:0]; 
+                        TIMESTAMP_DATA <= TIMESTAMP[31:0];
                 end
                 if (state != next) begin
                     TRIGGER_COUNTER_DATA <= TRIGGER_COUNTER;

@@ -124,8 +124,8 @@ wire TLU_TRIGGER_DATA_MSB_FIRST; // set endianness of TLU number
 assign TLU_TRIGGER_DATA_MSB_FIRST = status_regs[1][2];
 wire CONF_TRIGGER_ENABLE;
 assign CONF_TRIGGER_ENABLE = status_regs[1][3];
-wire USE_EXT_TIMESTAMP; // timestamp from external source
-assign USE_EXT_TIMESTAMP = status_regs[1][4];
+wire CONF_EXT_TIMESTAMP; // timestamp from external source
+assign CONF_EXT_TIMESTAMP = status_regs[1][4];
 wire [1:0] CONF_DATA_FORMAT;
 assign CONF_DATA_FORMAT = status_regs[2][1:0];
 wire TLU_ENABLE_RESET_TS;
@@ -151,7 +151,6 @@ assign CONF_TRIGGER_THRESHOLD = status_regs[33];
 // at address 34 is SOFT_TRIGGER
 wire [7:0] TLU_TRIGGER_DATA_DELAY;
 assign TLU_TRIGGER_DATA_DELAY = status_regs[35];
-
 
 always @(posedge BUS_CLK)
 begin
@@ -193,7 +192,6 @@ begin
         status_regs[33] <= 8'b0; // trigger threshold
         // at address 34 is SOFT_TRIGGER
         status_regs[35] <= 8'b0; // trigger data delay
-
     end
     else if(BUS_WR && BUS_ADD < 36)
     begin
@@ -281,8 +279,6 @@ always @ (posedge BUS_CLK) begin
         // at address 34 is SOFT_TRIGGER
         else if (BUS_ADD == 35)
             BUS_DATA_OUT <= status_regs[35];
-//        else if (BUS_ADD == 36)
-//            BUS_DATA_OUT <= status_regs[36];
         else
             BUS_DATA_OUT <= 0;
     end
@@ -307,13 +303,13 @@ three_stage_synchronizer #(
     .OUT(TRIGGER_MODE_SYNC)
 );
 
-wire USE_EXT_TIMESTAMP_SYNC;
+wire CONF_EXT_TIMESTAMP_SYNC;
 three_stage_synchronizer #(
     .WIDTH(1)
-) three_stage_use_ext_ts_synchronizer (
+) three_stage_conf_ext_ts_synchronizer (
     .CLK(TRIGGER_CLK),
-    .IN(USE_EXT_TIMESTAMP),
-    .OUT(USE_EXT_TIMESTAMP_SYNC)
+    .IN(CONF_EXT_TIMESTAMP),
+    .OUT(CONF_EXT_TIMESTAMP_SYNC)
 );
 
 wire [7:0] TLU_TRIGGER_LOW_TIME_OUT_SYNC;
@@ -759,7 +755,7 @@ tlu_controller_fsm #(
     .TRIGGER_COUNTER_DATA(),
     .TRIGGER_COUNTER_SET(TRIGGER_COUNTER_SET_FLAG_SYNC),
     .TRIGGER_COUNTER_SET_VALUE(TRIGGER_COUNTER),
-    .USE_EXT_TIMESTAMP(USE_EXT_TIMESTAMP_SYNC), // enable usage of timestamp from external clock
+    .CONF_EXT_TIMESTAMP(CONF_EXT_TIMESTAMP_SYNC), // enable usage of timestamp from external clock
     .EXT_TIMESTAMP(EXT_TIMESTAMP),
 
     .TRIGGER_MODE(TRIGGER_MODE_SYNC),
