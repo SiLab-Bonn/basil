@@ -60,12 +60,13 @@ always @(posedge BUS_CLK) begin
         CONF_EN_INVERT <= 0;
     end
     else if(BUS_WR) begin
-        if(BUS_ADD == 2)
+        if(BUS_ADD == 2) begin
             CONF_EN <= BUS_DATA_IN[0];
             CONF_EXT_TIMESTAMP <= BUS_DATA_IN[1];
             CONF_EXT_ENABLE <= BUS_DATA_IN[2];
             CONF_EN_TOT <= BUS_DATA_IN[3];
             CONF_EN_INVERT <= BUS_DATA_IN[4];
+        end
     end
 end
 
