@@ -55,10 +55,11 @@ always @(posedge BUS_CLK) begin
             CONF_EXT_ENABLE <= 0;
     end
     else if(BUS_WR) begin
-        if(BUS_ADD == 2)
+        if(BUS_ADD == 2) begin
             CONF_EN <= BUS_DATA_IN[0];
             CONF_EXT_TIMESTAMP <= BUS_DATA_IN[1];
             CONF_EXT_ENABLE <= BUS_DATA_IN[2];
+        end
     end
 end
 
@@ -67,7 +68,7 @@ always @(posedge BUS_CLK) begin
         if(BUS_ADD == 0)
             BUS_DATA_OUT <= VERSION;
         else if(BUS_ADD == 2)
-            BUS_DATA_OUT <= {6'b0,CONF_EXT_TIMESTAMP, CONF_EN};
+            BUS_DATA_OUT <= {5'b0, CONF_EXT_ENABLE, CONF_EXT_TIMESTAMP, CONF_EN};
         else if(BUS_ADD == 3)
             BUS_DATA_OUT <= LOST_DATA_CNT;
         else
