@@ -32,6 +32,7 @@ class tlu(RegisterHardwareLayer):
                   'TRIGGER_MODE': {'descr': {'addr': 1, 'size': 2, 'offset': 0}},
                   'TRIGGER_DATA_MSB_FIRST': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},
                   'TRIGGER_ENABLE': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},
+                  'USE_EXT_TIMESTAMP': {'descr': {'addr': 1, 'size': 1, 'offset': 4}},
                   'DATA_FORMAT': {'descr': {'addr': 2, 'size': 2, 'offset': 0}},
                   'EN_TLU_RESET_TIMESTAMP': {'descr': {'addr': 2, 'size': 1, 'offset': 5}},
                   'EN_TLU_VETO': {'descr': {'addr': 2, 'size': 1, 'offset': 6}},

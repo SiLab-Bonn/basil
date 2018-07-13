@@ -59,6 +59,7 @@ module tlu_controller_core
     output wire                 TLU_BUSY,
     output wire                 TLU_CLOCK,
 
+    input wire  [TIMESTAMP_N_OF_BIT-1:0] EXT_TIMESTAMP,
     output wire [TIMESTAMP_N_OF_BIT-1:0] TIMESTAMP
 );
 
@@ -123,6 +124,8 @@ wire TLU_TRIGGER_DATA_MSB_FIRST; // set endianness of TLU number
 assign TLU_TRIGGER_DATA_MSB_FIRST = status_regs[1][2];
 wire CONF_TRIGGER_ENABLE;
 assign CONF_TRIGGER_ENABLE = status_regs[1][3];
+wire CONF_EXT_TIMESTAMP; // timestamp from external source
+assign CONF_EXT_TIMESTAMP = status_regs[1][4];
 wire [1:0] CONF_DATA_FORMAT;
 assign CONF_DATA_FORMAT = status_regs[2][1:0];
 wire TLU_ENABLE_RESET_TS;
@@ -298,6 +301,15 @@ three_stage_synchronizer #(
     .CLK(TRIGGER_CLK),
     .IN(TRIGGER_MODE),
     .OUT(TRIGGER_MODE_SYNC)
+);
+
+wire CONF_EXT_TIMESTAMP_SYNC;
+three_stage_synchronizer #(
+    .WIDTH(1)
+) three_stage_conf_ext_ts_synchronizer (
+    .CLK(TRIGGER_CLK),
+    .IN(CONF_EXT_TIMESTAMP),
+    .OUT(CONF_EXT_TIMESTAMP_SYNC)
 );
 
 wire [7:0] TLU_TRIGGER_LOW_TIME_OUT_SYNC;
@@ -743,6 +755,8 @@ tlu_controller_fsm #(
     .TRIGGER_COUNTER_DATA(),
     .TRIGGER_COUNTER_SET(TRIGGER_COUNTER_SET_FLAG_SYNC),
     .TRIGGER_COUNTER_SET_VALUE(TRIGGER_COUNTER),
+    .CONF_EXT_TIMESTAMP(CONF_EXT_TIMESTAMP_SYNC), // enable usage of timestamp from external clock
+    .EXT_TIMESTAMP(EXT_TIMESTAMP),
 
     .TRIGGER_MODE(TRIGGER_MODE_SYNC),
     .TRIGGER_THRESHOLD(CONF_TRIGGER_THRESHOLD_SYNC),
