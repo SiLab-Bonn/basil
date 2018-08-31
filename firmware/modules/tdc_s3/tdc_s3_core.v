@@ -383,6 +383,8 @@ generate
          else begin
              // use inputs from broadcasting
              assign TRIG = FAST_TRIGGER_IN;
+             assign FAST_TRIGGER_OUT = FAST_TRIGGER_IN;
+             assign TRIG_OUT = 0;
         end
     end
     else begin
@@ -414,6 +416,7 @@ generate
         
         // assigning TRIG output
         assign TRIG_OUT = TRIG_IN;
+        assign FAST_TRIGGER_OUT = TRIG_DES_OUT;
     end
 endgenerate
 
