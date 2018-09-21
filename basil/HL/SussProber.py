@@ -29,22 +29,31 @@ class SussProber(HardwareLayer):
         if speed:
             self._intf.write('MoveChuckPosition %1.1f %1.1f R Y %d' % (dx, dy, speed))
         else:
+            print 'MoveChuckPosition %1.1f %1.1f R Y' % (dx, dy)
             self._intf.write('MoveChuckPosition %1.1f %1.1f R Y' % (dx, dy))
 
     def get_position(self):
         ''' Read chuck position (x, y, z)'''
-        reply = self._intf.query('ReadChuckPosition Y Z')
-        return [float(i) for i in reply[3:].split()]
+        reply = self._intf.query('ReadChuckPosition Y H')
+        return [float(i) for i in reply[2:].split()]
 
     def goto_die(self, index_x, index_y):
         ''' Move chuck to wafer map chip index'''
-        self._intf.write('35 %d %d' % (index_x, index_y))
+        self._intf.write('StepNextDie %d %d' % (index_x, index_y))
+        
+    def goto_next_die(self):
+        ''' Move chuck to next die from wafer map'''
+        self._intf.write('StepNextDie')
+
+    def goto_first_die(self):
+        ''' Move chuck to first die from wafer map'''
+        self._intf.write('StepFirstDie')
 
     def get_die(self):
         ''' Move chuck to wafer map chip index'''
-        reply = self._intf.query('43')
-        if 'Invalid' not in reply:  # No wafer map loaded
-            return [float(i) for i in reply[3:].split()]
+        reply = self._intf.query('ReadMapPosition')
+        values = reply[2:].split(' ')
+        return (values[0], values[1])
 
     def contact(self):
         ''' Move chuck to contact z position'''
@@ -53,3 +62,7 @@ class SussProber(HardwareLayer):
     def separate(self):
         ''' Move chuck to separation z position'''
         self._intf.write('MoveChuckSeparation')
+        
+    def load(self):
+        ''' Move chuck to load z position'''
+        self._intf.write('MoveChuckLoad')
