@@ -29,7 +29,6 @@ class SussProber(HardwareLayer):
         if speed:
             self._intf.write('MoveChuckPosition %1.1f %1.1f R Y %d' % (dx, dy, speed))
         else:
-            print 'MoveChuckPosition %1.1f %1.1f R Y' % (dx, dy)
             self._intf.write('MoveChuckPosition %1.1f %1.1f R Y' % (dx, dy))
 
     def get_position(self):
