@@ -13,7 +13,8 @@ module tdc_s3_core
     parameter CLKDV = 4, // factor of CLK160 to DV_CLK, minimal divider of 2
     parameter ABUSWIDTH = 16,
     parameter FAST_TDC = 1,
-    parameter FAST_TRIGGER = 1
+    parameter FAST_TRIGGER = 1,
+    parameter BROADCAST = 0  // set this in order to use broadcast mode (640 MHz sampled trigger signal is shared with other TDC modules)
 )(
     input wire CLK320,
     input wire CLK160,
@@ -22,6 +23,10 @@ module tdc_s3_core
     output wire TDC_OUT, // sampled with 320MHz, kept high for at least DV_CLK
     input wire TRIG_IN,
     output wire TRIG_OUT,
+
+    // input/output trigger signals for broadcasting mode
+    input wire [CLKDV*4-1:0] FAST_TRIGGER_IN, // input for effective 640MHz sampled trigger signal,set BROADCAST in order to use this as FAST TRIGGER signal (broadcast)
+    output wire [CLKDV*4-1:0] FAST_TRIGGER_OUT, // outgoing effective 640MHz sampled trigger signal, can be used to share it with other TDC module (broadcast)
 
     input wire FIFO_READ,
     output wire FIFO_EMPTY,
@@ -367,10 +372,20 @@ wire [CLKDV*4-1:0] TRIG, TRIG_DES;
 
 generate
     if (FAST_TRIGGER==1) begin
-    	wire [1:0] TRIG_FAST;
-        ddr_des #(.CLKDV(CLKDV)) iddr_des_trig(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TRIG_IN), .OUT(TRIG), .OUT_FAST(TRIG_FAST));
-        // assigning TRIG output, getting effective 2x CLK320 (640MHz) sampling of leading edge
-        assign TRIG_OUT = CONF_EN_INVERT_TRIGGER ? &TRIG_FAST : |TRIG_FAST;
+        if (BROADCAST==0) begin
+            wire [1:0] TRIG_FAST;
+            ddr_des #(.CLKDV(CLKDV)) iddr_des_trig(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TRIG_IN), .OUT(TRIG), .OUT_FAST(TRIG_FAST));
+            // assigning TRIG output, getting effective 2x CLK320 (640MHz) sampling of leading edge
+            assign TRIG_OUT = CONF_EN_INVERT_TRIGGER ? &TRIG_FAST : |TRIG_FAST;
+            // set output wires from ddr deserializer in order to fed them out for broadcasting to other TDC modules
+            assign FAST_TRIGGER_OUT = TRIG;
+         end
+         else begin
+             // use inputs from broadcasting
+             assign TRIG = FAST_TRIGGER_IN;
+             assign FAST_TRIGGER_OUT = FAST_TRIGGER_IN;
+             assign TRIG_OUT = 0;
+        end
     end
     else begin
         reg [1:0] TRIGGER_DDRQ_DLY;
@@ -401,6 +416,7 @@ generate
         
         // assigning TRIG output
         assign TRIG_OUT = TRIG_IN;
+        assign FAST_TRIGGER_OUT = TRIG_DES_OUT;
     end
 endgenerate
 
