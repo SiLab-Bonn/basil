@@ -42,7 +42,7 @@ module tlu_controller_core
     output reg                  FIFO_PREEMPT_REQ, // FIFO hold request
 
 
-    output wire                 TRIGGER_ENABLED,
+    output reg                  TRIGGER_ENABLED,
     output wire [WIDTH-1:0]     TRIGGER_SELECTED,
     output wire                 TLU_ENABLED,
 
@@ -721,14 +721,22 @@ always @ (posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         TRIGGER_ENABLE_FSM <= 1'b0;
-    else if ((CONF_TRIGGER_ENABLE_SYNC == 1'b1) && !TRIGGER_LIMIT_REACHED_SYNC)
+    else if (CONF_TRIGGER_ENABLE_SYNC && !TRIGGER_LIMIT_REACHED_SYNC)
         TRIGGER_ENABLE_FSM <= 1'b1;
     else
         TRIGGER_ENABLE_FSM <= 1'b0;
 end
 
-assign TRIGGER_ENABLED = TRIGGER_ENABLE_FSM;
-assign TLU_ENABLED = (TRIGGER_ENABLE_FSM && TRIGGER_MODE_SYNC != 2'b00);
+always @ (posedge TRIGGER_CLK)
+begin
+    if (RST_SYNC)
+        TRIGGER_ENABLED <= 1'b0;
+    else if (CONF_TRIGGER_ENABLE_SYNC && !TRIGGER_LIMIT_REACHED_SYNC)
+        TRIGGER_ENABLED <= 1'b1;
+    else if ((!CONF_TRIGGER_ENABLE_SYNC && !TLU_BUSY) || (TRIGGER_LIMIT_REACHED_SYNC && !TLU_BUSY))
+        TRIGGER_ENABLED <= 1'b0;
+end
+assign TLU_ENABLED = (TRIGGER_ENABLED && TRIGGER_MODE_SYNC != 2'b00);
 
 wire FIFO_PREEMPT_REQ_TRIGGER_CLK, FIFO_PREEMPT_REQ_BUS_CLK;
 three_stage_synchronizer three_stage_fifo_preempt_req_synchronizer (
