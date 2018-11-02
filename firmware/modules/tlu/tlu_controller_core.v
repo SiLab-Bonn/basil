@@ -202,7 +202,8 @@ end
 // read reg
 reg [7:0] LOST_DATA_CNT; // BUS_ADD==0
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK, CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF; // BUS_ADD==4 - 7
-reg [31:0] TRIGGER_COUNTER, TRIGGER_COUNTER_BUF; // BUS_ADD==8 - 11
+reg [31:0] TRIGGER_COUNTER; // BUS_ADD==8 - 11
+reg [23:0] TRIGGER_COUNTER_BUF_8_31;
 reg [7:0] TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT;
 reg [7:0] TLU_TRIGGER_ACCEPT_ERROR_CNT;
 
@@ -227,11 +228,11 @@ always @ (posedge BUS_CLK) begin
         else if (BUS_ADD == 8)
             BUS_DATA_OUT <= TRIGGER_COUNTER[7:0];
         else if (BUS_ADD == 9)
-            BUS_DATA_OUT <= TRIGGER_COUNTER_BUF[15:8];
+            BUS_DATA_OUT <= TRIGGER_COUNTER_BUF_8_31[7:0];
         else if (BUS_ADD == 10)
-            BUS_DATA_OUT <= TRIGGER_COUNTER_BUF[23:16];
+            BUS_DATA_OUT <= TRIGGER_COUNTER_BUF_8_31[15:8];
         else if (BUS_ADD == 11)
-            BUS_DATA_OUT <= TRIGGER_COUNTER_BUF[31:24];
+            BUS_DATA_OUT <= TRIGGER_COUNTER_BUF_8_31[23:16];
         else if (BUS_ADD == 12)
             BUS_DATA_OUT <= LOST_DATA_CNT;
         else if (BUS_ADD == 13)
@@ -619,15 +620,16 @@ begin
 end
 
 wire TRIGGER_COUNTER_SET;
-reg TRIGGER_COUNTER_SET_FF;
+reg TRIGGER_COUNTER_SET_FF, TRIGGER_COUNTER_SET_FF2;
 assign TRIGGER_COUNTER_SET = (BUS_ADD == 11 && BUS_WR);
 
 always @ (posedge BUS_CLK)
 begin
     TRIGGER_COUNTER_SET_FF <= TRIGGER_COUNTER_SET;
+    TRIGGER_COUNTER_SET_FF2 <= TRIGGER_COUNTER_SET_FF;
 end
 wire TRIGGER_COUNTER_SET_FLAG;
-assign TRIGGER_COUNTER_SET_FLAG = ~TRIGGER_COUNTER_SET_FF & TRIGGER_COUNTER_SET;
+assign TRIGGER_COUNTER_SET_FLAG = ~TRIGGER_COUNTER_SET_FF2 & TRIGGER_COUNTER_SET_FF;
 
 wire TRIGGER_COUNTER_SET_FLAG_SYNC;
 flag_domain_crossing trigger_counter_set_flag_domain_crossing (
@@ -637,16 +639,24 @@ flag_domain_crossing trigger_counter_set_flag_domain_crossing (
     .FLAG_OUT_CLK_B(TRIGGER_COUNTER_SET_FLAG_SYNC)
 );
 
+// write trigger counter
 always @ (posedge BUS_CLK)
 begin
     if (RST)
         TRIGGER_COUNTER <= 32'b0;
     else if (TRIGGER_COUNTER_SET)
         TRIGGER_COUNTER <= {BUS_DATA_IN, status_regs[10], status_regs[9], status_regs[8]};
-    else if (TRIGGER_ACCEPTED_FLAG_BUS_CLK == 1'b1)
+    else if (TRIGGER_ACCEPTED_FLAG_BUS_CLK)
         TRIGGER_COUNTER <= TRIGGER_COUNTER + 1;
-    //else if (ENABLE_TLU_FLAG_BUS_CLK == 1'b1)
-    //    TRIGGER_COUNTER <= 32'b0;
+end
+
+// read trigger counter
+always @ (posedge BUS_CLK)
+begin
+    if (RST)
+        TRIGGER_COUNTER_BUF_8_31 <= 32'b0;
+    else if (BUS_ADD == 8 && BUS_RD)
+        TRIGGER_COUNTER_BUF_8_31 <= TRIGGER_COUNTER[31:8];
 end
 
 // trigger counter
@@ -655,7 +665,7 @@ always @ (posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         TRIGGER_COUNTER_SYNC <= 32'b0;
-    else if(TRIGGER_COUNTER_SET_FLAG_SYNC==1'b1)
+    else if(TRIGGER_COUNTER_SET_FLAG_SYNC)
         TRIGGER_COUNTER_SYNC <= TRIGGER_COUNTER;
     else if(TRIGGER_ACCEPTED_FLAG)
         TRIGGER_COUNTER_SYNC <= TRIGGER_COUNTER_SYNC + 1;
@@ -666,15 +676,16 @@ wire TRIGGER_ACKNOWLEDGE_FSM;
 assign TRIGGER_ACKNOWLEDGE_FSM = (EXT_TRIGGER_ENABLE == 1'b1) ? TRIGGER_ACKNOWLEDGE : TRIGGER_ACCEPTED_FLAG;
 
 wire TRIGGER_COUNTER_MAX_SET;
-reg TRIGGER_COUNTER_MAX_SET_FF;
+reg TRIGGER_COUNTER_MAX_SET_FF, TRIGGER_COUNTER_MAX_SET_FF2;
 assign TRIGGER_COUNTER_MAX_SET = (BUS_ADD == 28 && BUS_WR);
 
 always @ (posedge BUS_CLK)
 begin
     TRIGGER_COUNTER_MAX_SET_FF <= TRIGGER_COUNTER_MAX_SET;
+    TRIGGER_COUNTER_MAX_SET_FF2 <= TRIGGER_COUNTER_MAX_SET_FF;
 end
 wire TRIGGER_COUNTER_MAX_SET_FLAG;
-assign TRIGGER_COUNTER_MAX_SET_FLAG = ~TRIGGER_COUNTER_MAX_SET_FF & TRIGGER_COUNTER_MAX_SET;
+assign TRIGGER_COUNTER_MAX_SET_FLAG = ~TRIGGER_COUNTER_MAX_SET_FF2 & TRIGGER_COUNTER_MAX_SET_FF;
 
 wire TRIGGER_COUNTER_MAX_SET_FLAG_SYNC;
 flag_domain_crossing trigger_counter_max_set_flag_domain_crossing (
@@ -690,7 +701,7 @@ always @ (posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         TRIGGER_COUNTER_MAX_SYNC <= 32'b0;
-    else if(TRIGGER_COUNTER_MAX_SET_FLAG_SYNC==1'b1)
+    else if(TRIGGER_COUNTER_MAX_SET_FLAG_SYNC)
         TRIGGER_COUNTER_MAX_SYNC <= TRIGGER_COUNTER_MAX;
 end
 
@@ -718,14 +729,6 @@ end
 
 assign TRIGGER_ENABLED = TRIGGER_ENABLE_FSM;
 assign TLU_ENABLED = (TRIGGER_ENABLE_FSM && TRIGGER_MODE_SYNC != 2'b00);
-
-always @ (posedge BUS_CLK)
-begin
-    if (RST)
-        TRIGGER_COUNTER_BUF <= 32'b0;
-    else if (BUS_ADD == 8 && BUS_RD)
-        TRIGGER_COUNTER_BUF <= TRIGGER_COUNTER;
-end
 
 wire FIFO_PREEMPT_REQ_TRIGGER_CLK, FIFO_PREEMPT_REQ_BUS_CLK;
 three_stage_synchronizer three_stage_fifo_preempt_req_synchronizer (
