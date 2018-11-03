@@ -122,8 +122,8 @@ class SiTcp(SiTransferLayer):
     RBCP_CMD_RD = 0xC0
     RBCP_MAX_SIZE = 255  # bytes
 
-    UDP_TIMEOUT = 1.0
-    UDP_RETRANSMIT_CNT = 3  # TODO
+    UDP_TIMEOUT = 1.0  # in seconds
+    UDP_RETRANSMIT_CNT = 3  # set retry counts
 
     BASE_DATA_TCP = 0x100000000
     BASE_FAKE_FIFO_TCP = 0x200000000  # above this read will return size of local TCP fifo (4 bytes)
@@ -153,12 +153,16 @@ class SiTcp(SiTransferLayer):
     def init(self):
         super(SiTcp, self).init()
         self.reset()
-        if 'ip' not in self._init:
+        if 'ip' not in self._init:  # check for IP address
             raise ValueError('Parameter \'ip\' missing.')
-        if 'udp_port' not in self._init:
+        if 'udp_port' not in self._init:  # check for UDP port
             raise ValueError('Parameter \'udp_port\' missing.')
+        connect_timeout = float(self._init.get('connect_timeout', 5.0))  # in seconds
+
         self._sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._sock_udp.settimeout(connect_timeout)
         self._sock_udp.connect((self._init['ip'], self._init['udp_port']))
+        self._sock_udp.settimeout(None)  # https://stackoverflow.com/questions/3432102/python-socket-connection-timeout
         # using select to monitor socket status, therefore the socket is set to blocking (default)
         self._sock_udp.setblocking(0)
         # start readout thread if TCP connection is set
@@ -166,7 +170,9 @@ class SiTcp(SiTransferLayer):
             if 'tcp_port' not in self._init:
                 raise ValueError('Parameter \'tcp_port\' missing.')
             self._sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self._sock_tcp.settimeout(connect_timeout)
             self._sock_tcp.connect((self._init['ip'], self._init['tcp_port']))
+            self._sock_tcp.settimeout(None)  # https://stackoverflow.com/questions/3432102/python-socket-connection-timeout
             # using select to monitor socket status, therefore the socket is set to blocking (default)
             self._sock_tcp.setblocking(0)
             self._tcp_readout_thread = Thread(target=self._tcp_readout, name='TcpReadoutThread', kwargs={})

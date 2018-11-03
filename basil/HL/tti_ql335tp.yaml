@@ -1,4 +1,4 @@
-# Device description for the TTi QL335 power supply series.
+# Device description for the TTi QL335 Power Supply.
 identifier : QL355TP
 on : OPALL 1
 off : OPALL 0

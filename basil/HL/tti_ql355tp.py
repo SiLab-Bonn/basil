@@ -89,3 +89,7 @@ class ttiQl355tp(HardwareLayer):
         """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
         cmd = "I%d %f" % (channel, value)
         self.write(cmd)
+
+    def reset_trip(self):
+        cmd = "TRIPRST"
+        self.write(cmd)

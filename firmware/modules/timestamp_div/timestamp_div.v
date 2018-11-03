@@ -1,12 +1,12 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 `timescale 1ps/1ps
 `default_nettype none
- 
+
 module timestamp_div
 #(
     parameter BASEADDR = 16'h0000,
@@ -21,7 +21,7 @@ module timestamp_div
     input wire BUS_RST,
     input wire BUS_WR,
     input wire BUS_RD,
-    
+
     input wire CLK320,
     input wire CLK160,
     input wire CLK40,
@@ -33,8 +33,8 @@ module timestamp_div
     input wire FIFO_READ,
     output wire FIFO_EMPTY,
     output wire [31:0] FIFO_DATA
- 
-); 
+
+);
 
 wire IP_RD, IP_WR;
 wire [ABUSWIDTH-1:0] IP_ADD;
@@ -55,21 +55,21 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i
     .IP_DATA_OUT(IP_DATA_OUT)
 );
 
-timestamp_div_core 
+timestamp_div_core
 #(
     .ABUSWIDTH(ABUSWIDTH),
     .IDENTIFIER(IDENTIFIER),
     .CLKDV(4)
-) i_timestamp_div_core 
+) i_timestamp_div_core
 (
-    .BUS_CLK(BUS_CLK),                     
-    .BUS_RST(BUS_RST),                  
-    .BUS_ADD(IP_ADD),                    
-    .BUS_DATA_IN(IP_DATA_IN),                    
-    .BUS_RD(IP_RD),                    
-    .BUS_WR(IP_WR),                    
+    .BUS_CLK(BUS_CLK),
+    .BUS_RST(BUS_RST),
+    .BUS_ADD(IP_ADD),
+    .BUS_DATA_IN(IP_DATA_IN),
+    .BUS_RD(IP_RD),
+    .BUS_WR(IP_WR),
     .BUS_DATA_OUT(IP_DATA_OUT),
-      
+
     .CLK320(CLK320),
     .CLK160(CLK160),
     .CLK40(CLK40),
