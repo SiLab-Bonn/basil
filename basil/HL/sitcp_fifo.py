@@ -22,7 +22,7 @@ class sitcp_fifo(HardwareLayer):
 
     def __getitem__(self, name):
         if name == "RESET":
-            self._intf.reset_fifo()  # returns None
+            self._intf.reset()  # returns None
         elif name == 'VERSION':
             return self._version
         elif name == 'FIFO_SIZE':
@@ -32,7 +32,7 @@ class sitcp_fifo(HardwareLayer):
 
     def __setitem__(self, name, value):
         if name == "RESET":
-            self._intf.reset_fifo()
+            self._intf.reset()
         else:
             super(sitcp_fifo, self).__setitem__(name, value)
 
