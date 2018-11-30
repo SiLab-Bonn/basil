@@ -2,11 +2,9 @@
 
 This example shows how to control a GPIO module and how to receive data via the Ethernet interface.
 
-The firmware makes use of the free SiTcp Ethernet module ([general website][url1], [community website with downloads and documentation][url2]). Put the extracted files in */firmware/src/SiTCP*.
+The firmware makes use of the free SiTcp Ethernet module ([SiTCP netlist on Github][url1]). Put the extracted files in */firmware/src/SiTCP*.
 
-[url1]: https://translate.google.de/translate?hl=de&sl=ja&tl=en&u=http%3A%2F%2Fresearch.kek.jp%2Fpeople%2Fuchida%2Ftechnologies%2FSiTCP%2F
-
-[url2]: https://sitcp.bbtech.co.jp/
+[url1]: https://github.com/BeeBeansTechnologies/SiTCP_Netlist_for_Kintex7
 
 1. Data transfer is started by setting a bit [0] in the GPIO.
 2. FPGA starts to send data from a 32 bit counter, as fast as possible through a FIFO.
