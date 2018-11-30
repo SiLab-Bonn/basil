@@ -29,6 +29,8 @@ module tlu_controller_fsm
     output reg [31:0]           TRIGGER_COUNTER_DATA,
     input wire                  TRIGGER_COUNTER_SET,
     input wire [31:0]           TRIGGER_COUNTER_SET_VALUE,
+    input wire                  CONF_EXT_TIMESTAMP,
+    input wire [TIMESTAMP_N_OF_BIT-1:0] EXT_TIMESTAMP,
 
     input wire [1:0]            TRIGGER_MODE,
     input wire [7:0]            TRIGGER_THRESHOLD,
@@ -38,10 +40,11 @@ module tlu_controller_fsm
     input wire                  TRIGGER_ENABLE,
     input wire                  TRIGGER_ACKNOWLEDGE,
     output reg                  TRIGGER_ACCEPTED_FLAG,
+    input wire                  TIMESTAMP_RESET_FLAG,
 
     input wire [7:0]            TLU_TRIGGER_LOW_TIME_OUT,
 //    input wire [4:0]            TLU_TRIGGER_CLOCK_CYCLES,
-    input wire [3:0]            TLU_TRIGGER_DATA_DELAY,
+    input wire [7:0]            TLU_TRIGGER_DATA_DELAY,
     input wire                  TLU_TRIGGER_DATA_MSB_FIRST,
     input wire                  TLU_ENABLE_VETO,
     input wire                  TLU_RESET_FLAG,
@@ -64,14 +67,23 @@ module tlu_controller_fsm
 always@(*)
 begin
     if(TRIGGER_MODE == 2'b11) // TLU trigger number
-        TRIGGER_DATA[31:0] = {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]};
+    begin
+        if(CONF_DATA_FORMAT == 2'b01) // time stamp only
+            TRIGGER_DATA[31:0] = {1'b1, TIMESTAMP_DATA[30:0]};
+        else if(CONF_DATA_FORMAT == 2'b10) // combined
+            TRIGGER_DATA[31:0] = {1'b1, TIMESTAMP_DATA[14:0], TLU_TRIGGER_NUMBER_DATA[15:0]};
+        else
+            TRIGGER_DATA[31:0] = {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]};
+    end
     else // internally generated trigger number
-        TRIGGER_DATA[31:0] = {1'b1, TRIGGER_COUNTER_DATA[30:0]};
-
-    if(CONF_DATA_FORMAT == 2'b01) // time stamp only
-        TRIGGER_DATA[31:0] = {1'b1, TIMESTAMP_DATA[30:0]};
-    else if(CONF_DATA_FORMAT == 2'b10) // combined
-        TRIGGER_DATA[31:16] = {1'b1, TIMESTAMP_DATA[14:0]};
+    begin
+        if(CONF_DATA_FORMAT == 2'b01) // time stamp only
+            TRIGGER_DATA[31:0] = {1'b1, TIMESTAMP_DATA[30:0]};
+        else if(CONF_DATA_FORMAT == 2'b10) // combined
+            TRIGGER_DATA[31:0] = {1'b1, TIMESTAMP_DATA[14:0], TRIGGER_COUNTER_DATA[15:0]};
+        else
+            TRIGGER_DATA[31:0] = {1'b1, TRIGGER_COUNTER_DATA[30:0]};
+    end
 end
 
 // shift register, serial to parallel, length of TLU_TRIGGER_MAX_CLOCK_CYCLES
@@ -133,7 +145,7 @@ assign TLU_TRIGGER_ACCEPT_ERROR_FLAG = ~TLU_TRIGGER_ACCEPT_ERROR_FF & TLU_TRIGGE
 reg     [2:0]   state;
 reg     [2:0]   next;
 
-parameter   [2:0]
+localparam   [2:0]
     IDLE                                = 3'b000,
     SEND_COMMAND                        = 3'b001,
     SEND_COMMAND_WAIT_FOR_TRIGGER_LOW   = 3'b010,
@@ -151,7 +163,7 @@ begin
 end
 
 // combinational always block, blocking assignments
-always @ (state or TRIGGER_ACKNOWLEDGE or TRIGGER_ACKNOWLEDGED or FIFO_ACKNOWLEDGE or FIFO_ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_ENABLE_FLAG or TRIGGER_FLAG or TRIGGER or TRIGGER_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock /*or TLU_TRIGGER_CLOCK_CYCLES*/ or counter_sr_wait_cycles or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or TRIGGER_ACCEPT or TLU_TRIGGER_HANDSHAKE_ACCEPT or TRIGGER_THRESHOLD or TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES or TLU_TRIGGER_MAX_CLOCK_CYCLES or DIVISOR)
+always @ (state or TRIGGER_ACKNOWLEDGE or TRIGGER_ACKNOWLEDGED or FIFO_ACKNOWLEDGE or FIFO_ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_ENABLE_FLAG or TRIGGER_FLAG or TRIGGER or TRIGGER_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock /*or TLU_TRIGGER_CLOCK_CYCLES*/ or counter_sr_wait_cycles or counter_trigger_high or counter_tlu_handshake_veto or counter_trigger_low_time_out or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or TRIGGER_ACCEPT or TLU_TRIGGER_HANDSHAKE_ACCEPT or TRIGGER_THRESHOLD or TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES or TLU_TRIGGER_MAX_CLOCK_CYCLES or DIVISOR)
 begin
     case (state)
 
@@ -295,8 +307,11 @@ begin
 
             IDLE:
             begin
-                if (TRIGGER_FLAG)
-                    TIMESTAMP_DATA <= TIMESTAMP[31:0];
+                if (TRIGGER_FLAG && TRIGGER_THRESHOLD != 0)
+                    if (CONF_EXT_TIMESTAMP == 1'b1)
+                        TIMESTAMP_DATA <= EXT_TIMESTAMP[31:0]; // timestamp from external source
+                    else
+                        TIMESTAMP_DATA <= TIMESTAMP[31:0];
                 if (TRIGGER_ENABLE == 1'b1
                     && TRIGGER == 1'b1
                     && (((TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11) && (counter_trigger_high != 0 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0))
@@ -350,8 +365,13 @@ begin
                 FIFO_PREEMPT_REQ <= 1'b1;
                 TRIGGER_DATA_WRITE <= 1'b0;
                 // get timestamp closest to the trigger
+                if (state != next && TRIGGER_THRESHOLD == 0) begin
+                    if (CONF_EXT_TIMESTAMP == 1'b1)
+                        TIMESTAMP_DATA <= EXT_TIMESTAMP[31:0]; // timestamp from external source
+                    else
+                        TIMESTAMP_DATA <= TIMESTAMP[31:0];
+                end
                 if (state != next) begin
-                //    TIMESTAMP_DATA <= TIMESTAMP;
                     TRIGGER_COUNTER_DATA <= TRIGGER_COUNTER;
                 end
                 TLU_BUSY <= 1'b1;
@@ -373,8 +393,13 @@ begin
                 FIFO_PREEMPT_REQ <= 1'b1;
                 TRIGGER_DATA_WRITE <= 1'b0;
                 // get timestamp closest to the trigger
+                if (state != next && TRIGGER_THRESHOLD == 0) begin
+                    if (CONF_EXT_TIMESTAMP == 1'b1)
+                        TIMESTAMP_DATA <= EXT_TIMESTAMP[31:0]; // timestamp from external source
+                    else
+                        TIMESTAMP_DATA <= TIMESTAMP[31:0];
+                end
                 if (state != next) begin
-                //    TIMESTAMP_DATA <= TIMESTAMP;
                     TRIGGER_COUNTER_DATA <= TRIGGER_COUNTER;
                 end
                 TLU_BUSY <= 1'b1;
@@ -533,8 +558,8 @@ end
 // time stamp
 always @ (posedge TRIGGER_CLK)
 begin
-    if (RESET | TLU_RESET_FLAG)
-        TIMESTAMP <= {(TIMESTAMP_N_OF_BIT){1'b0}};
+    if (RESET || (TLU_RESET_FLAG && (TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11)) || TIMESTAMP_RESET_FLAG)
+        TIMESTAMP <= 0;
     else
         TIMESTAMP <= TIMESTAMP + 1;
 end

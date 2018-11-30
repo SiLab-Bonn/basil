@@ -40,6 +40,7 @@ module tlu_controller
 
     input wire  [WIDTH-1:0]     TRIGGER,
     input wire  [WIDTH-1:0]     TRIGGER_VETO,
+    input wire                  TIMESTAMP_RESET,
 
     input wire                  EXT_TRIGGER_ENABLE,
     input wire                  TRIGGER_ACKNOWLEDGE,
@@ -49,8 +50,9 @@ module tlu_controller
     input wire                  TLU_RESET,
     output wire                 TLU_BUSY,
     output wire                 TLU_CLOCK,
-
-    output wire     [31:0]      TIMESTAMP
+    
+    input wire  [TIMESTAMP_N_OF_BIT-1:0] EXT_TIMESTAMP,
+    output wire [TIMESTAMP_N_OF_BIT-1:0] TIMESTAMP
 );
 
 wire IP_RD, IP_WR;
@@ -101,6 +103,7 @@ tlu_controller_core #(
 
     .TRIGGER(TRIGGER),
     .TRIGGER_VETO(TRIGGER_VETO),
+    .TIMESTAMP_RESET(TIMESTAMP_RESET),
     .TRIGGER_SELECTED(TRIGGER_SELECTED),
 
     .EXT_TRIGGER_ENABLE(EXT_TRIGGER_ENABLE),
@@ -114,6 +117,7 @@ tlu_controller_core #(
     .TLU_BUSY(TLU_BUSY),
     .TLU_CLOCK(TLU_CLOCK),
 
+    .EXT_TIMESTAMP(EXT_TIMESTAMP),
     .TIMESTAMP(TIMESTAMP)
 );
 

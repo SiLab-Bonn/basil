@@ -97,7 +97,7 @@ class cmd_seq(RegisterHardwareLayer):
 
     def set_output_enable(self, value):
         self.OUTPUT_ENABLE = value
-        
+
     def set_data(self, data, addr=0):
         if self._cmd_mem_size < len(data):
             raise ValueError('Size of data (%d bytes) is too big for memory (%d bytes)' % (len(data), self._cmd_mem_size))

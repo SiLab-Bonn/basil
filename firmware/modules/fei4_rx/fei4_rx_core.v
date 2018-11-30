@@ -98,7 +98,7 @@ assign RX_ENABLED = CONF_EN_RX;
 
 always @(posedge BUS_CLK) begin
     if(RST)
-        status_regs <= 8'b0000_0100; // enable Rx by default
+        status_regs <= 8'b0000_0000; // disable Rx by default
     else if(BUS_WR && BUS_ADD == 2)
         status_regs <= BUS_DATA_IN;
 end
@@ -123,7 +123,7 @@ always @ (posedge BUS_CLK) begin
 end
 
 wire ready_rec;
-assign RX_READY = (ready_rec==1'b1 && CONF_EN_RX==1'b1) ? 1'b1 : 1'b0;
+assign RX_READY = (ready_rec==1'b1) ? 1'b1 : 1'b0;
 assign RX_8B10B_DECODER_ERR = (decoder_err_cnt!=8'b0);
 assign RX_FIFO_OVERFLOW_ERR = (lost_err_cnt!=8'b0);
 

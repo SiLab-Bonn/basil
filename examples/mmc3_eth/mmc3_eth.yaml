@@ -28,11 +28,11 @@ hw_drivers:
     base_data_addr : 0x100000000
 
 registers:
-  - name        : GPIO_LED
+  - name        : CONTROL
     type        : StdRegister
     hw_driver   : GPIO_DRV
     size        : 8
     fields:
-      - name    : LED
-        size    : 8
-        offset  : 7
+      - name    : EN
+        size    : 1
+        offset  : 0

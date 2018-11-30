@@ -7,7 +7,7 @@ General purpose trigger module and EUDAQ Telescope/TLU communication module. Tri
 
 NOTE:
  1. TRIGGER_ENABLE register has to be set to true to enable trigger FSM.
- 2. TRIGGER_ENABLE and TRIGGER_ACKNOWLEDGE input signals needs to be synchronous to TRIGGER_CLOCK.
+ 2. EXT_TRIGGER_ENABLE and TRIGGER_ACKNOWLEDGE input signals needs to be synchronous to TRIGGER_CLOCK.
  3. Data words have the MSB always high to allow identification of trigger data words. The remaining 31 bits are data.
  4. All selected trigger inputs are ORed. Trigger inputs are connected to TRIGGER input. Trgger inputs are selected by applying a bit mask to TRIGGER_SELECT.
  5. All selected veto inputs are ORed. Veto inputs are connected to TRIGGER_VETO input. Veto inputs are selected by applying a bit mask to TRIGGER_VETO_SELECT.
@@ -60,6 +60,8 @@ Pins
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
     | TRIGGER_VETO             | WIDTH (max. 32)     |  input (async)        | external veto (see also WIDTH parameter)             |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
+    | TIMESTAMP_RESET          | 1                   |  input (async)        | resetting timestamp counter                          |
+    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
     | EXT_TRIGGER_ENABLE       | 1                   |  input (sync)         | enables sync with other external devices/modules     |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
     | TRIGGER_ACKNOWLEDGE      | 1                   |  input (sync)         | signal/flag from external devices/modules if ready   |
@@ -76,7 +78,9 @@ Pins
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
     | TLU_CLOCK                | 1                   |  output               | TLU clock output                                     |
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
-    | TIMESTAMP                | 32                  |  output               | timestamp counter provided for other devices/modules |
+    | EXT_TIMESTAMP            | TIMESTAMP_N_OF_BIT  |  input (sync)         | timestamp from external source (optional)            |
+    +--------------------------+---------------------+-----------------------+------------------------------------------------------+
+    | TIMESTAMP                | TIMESTAMP_N_OF_BIT  |  output (sync)        | internal timestamp provided for other devices/modules|
     +--------------------------+---------------------+-----------------------+------------------------------------------------------+
 
 Registers
@@ -93,11 +97,11 @@ Registers
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
     | TRIGGER_ENABLE                         | 1                                | [3]    | r/w   | 0           | enable trigger FSM                                    |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
-    | TRIGGER_DATA_DELAY                     | 1                                | [7:4]  | r/w   | 0           | additional TLU data delay for longer cables           |
+    | USE_EXT_TIMESTAMP                      | 1                                | [4]    | r/w   | 0           | use timestamp from EXT_TIMESTAMP input                |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
     | DATA_FORMAT                            | 2                                | [1:0]  | r/w   | 0           | format of trigger number output                       |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
-    | EN_TLU_RESET_TIMESTAMP                 | 2                                | [5]    | r/w   | 0           | reset time stamp to 0 on TLU reset                    |
+    | EN_TLU_RESET_TIMESTAMP                 | 2                                | [5]    | r/w   | 0           | reset time stamp to 0 on TLU reset (handsh. mode only)|
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
     | EN_TLU_VETO                            | 2                                | [6]    | r/w   | 0           | assert TLU veto when external veto                    |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
@@ -127,3 +131,8 @@ Registers
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
     | TRIGGER_THRESHOLD                      | 33                               | [7:0]  | r/w   | 0           | trigger minimum length in TLU clock cycles            |
     +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
+    | SOFT_TRIGGER                           | 34                               | [7:0]  | wo    | n/a         | manual software trigger (requires TRIGGER_MODE=0)     |
+    +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
+    | TRIGGER_DATA_DELAY                     | 35                               | [7:0]  | r/w   | 0           | additional TLU data delay for longer cables           |
+    +----------------------------------------+----------------------------------+--------+-------+-------------+-------------------------------------------------------+
+

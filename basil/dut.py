@@ -4,8 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-
-import logging
 import os
 from importlib import import_module
 from inspect import getmembers, isclass
@@ -14,6 +12,12 @@ import sys
 import warnings
 from collections import OrderedDict
 
+# FIXME: Bad practice
+# Logger settings should not be defined in a module, but once by the
+# application developer. Thus outside of basil. Otherwise multiple calls to
+# the basic config are possible. This is left here at the moment for backward
+# compatibility and since our logging format is the same everywhere (?).
+import logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
 
 
@@ -74,7 +78,7 @@ class Base(object):
             return False
 
     def close(self):
-        pass
+        self._initialized = False
 
     def set_configuration(self, conf):
         raise NotImplementedError("set_configuration() not implemented")
@@ -121,12 +125,20 @@ class Dut(Base):
             catch_exception_on_init(item)
 
     def close(self):
-        for item in self._transfer_layer.itervalues():
-            item.close()
-        for item in self._hardware_layer.itervalues():
-            item.close()
+        def catch_exception_on_close(mod):
+            if mod.is_initialized:
+                try:
+                    mod.close()
+                except Exception:  # if close() failed
+                    # restore status after close() failed
+                    mod._is_initialized = True
+
         for item in self._registers.itervalues():
-            item.close()
+            catch_exception_on_close(item)
+        for item in self._hardware_layer.itervalues():
+            catch_exception_on_close(item)
+        for item in self._transfer_layer.itervalues():
+            catch_exception_on_close(item)
 
     def set_configuration(self, conf):
         conf = self._open_conf(conf)
@@ -232,41 +244,32 @@ class Dut(Base):
 
     def _factory(self, importname, *args, **kargs):
         splitted_import_name = importname.split('.')
-        if len(splitted_import_name) > 2:
-            mod_name = '.'.join(splitted_import_name[2:])  # remove "basil.RL." etc.
-        else:
-            mod_name = None
 
-        def is_base_class(item):
+        def is_basil_base_class(item):
             return isclass(item) and issubclass(item, Base) and item.__module__ == importname
 
         try:
             mod = import_module(importname)
         except ImportError:  # give it another try
-            exc = sys.exc_info()  # temporarily save exception
-            if mod_name:
-                try:
-                    mod = import_module(mod_name)
-                except ImportError:
-                    raise exc[0], exc[1], exc[2]  # raise previous error
-                else:
-                    importname = mod_name
-            else:  # finally raise exception
+            if len(splitted_import_name) > 2 and splitted_import_name[0] == 'basil':
+                importname = '.'.join(splitted_import_name[2:])  # remove "basil.RL." etc.
+                mod = import_module(importname)
+            else:  # raise initial exception
                 raise
-        clsmembers = getmembers(mod, is_base_class)
-        if len(clsmembers) > 1:
-            for clsmember in clsmembers:
-                if mod_name == clsmember[0]:
-                    cls = clsmember[1]
+        basil_base_classes = getmembers(mod, is_basil_base_class)
+        cls = None
+        if not basil_base_classes:  # found no base class
+            raise ValueError('Found no matching class in %s.' % importname)
+        elif len(basil_base_classes) > 1:  # found more than 1 base class
+            mod_name = splitted_import_name[-1]
+            for basil_base_class in basil_base_classes:
+                if mod_name == basil_base_class[0]:  # check for base class name
+                    cls = basil_base_class[1]
                     break
-                else:
-                    cls = None
             if cls is None:
                 raise ValueError('Found more than one matching class in %s.' % importname)
-        elif not len(clsmembers):
-            raise ValueError('Found no matching class in %s.' % importname)
-        else:
-            cls = clsmembers[0][1]
+        else:  # found single class
+            cls = basil_base_classes[0][1]
         return cls(*args, **kargs)
 
     def __getitem__(self, item):

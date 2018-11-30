@@ -16,6 +16,8 @@ module clock_divider_sim
 integer cnt;
 initial cnt = 0;
 
+wire [31:0] DIV;
+assign DIV = DIVISOR;
 always@(posedge CLK)
     if(cnt == DIVISOR -1)
         cnt <= 0;
@@ -30,7 +32,7 @@ initial begin
             CLOCK = 1;
             
         if(cnt == DIVISOR/2-1) begin
-            if(DIVISOR % 2 == 1) @(negedge CLK);
+            if(DIV[0] == 1) @(negedge CLK);
             CLOCK = 0;
         end
         

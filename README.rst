@@ -2,7 +2,7 @@
 Basil
 ===============================================
 
-|travis-status|  |rtd-status|  |landscape-status|  |Gitter-status|
+|travis-status|  |rtd-status|  |landscape-status|
 
 .. |travis-status| image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=development
     :target: https://travis-ci.org/SiLab-Bonn/basil
@@ -15,11 +15,7 @@ Basil
 .. |landscape-status| image:: https://landscape.io/github/SiLab-Bonn/basil/development/landscape.svg?style=flat
    :target: https://landscape.io/github/SiLab-Bonn/basil/development
    :alt: Code Health
-   
-.. |Gitter-status| image:: https://badges.gitter.im/Join%20Chat.svg
-   :target: https://gitter.im/SiLab-Bonn/basil?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
-   :alt: Gitter
-  
+
 Basil is a modular data acquisition system and system testing framework in Python.
 
 It also provides generic FPGA firmware modules for different hardware platforms and drivers for wide range of lab appliances.
@@ -46,7 +42,7 @@ or install via PyPI into the Python's site-packages folder (for non-developers):
 
     pip install basil_daq==version
 
-where version is a version number (e.g. 2.4.6)
+where version is a version number (e.g., 2.4.14)
 
 or install from git, when no PyPI package is available (for non-developers):
 
@@ -54,7 +50,7 @@ or install from git, when no PyPI package is available (for non-developers):
 
     pip install git+https://github.com/SiLab-Bonn/basil.git@branch
 
-where branch is a branch name (e.g. master or v2.4.6).
+where branch is a branch name or tag (e.g., master or v2.4.14).
 
 Check `.travis.yml <.travis.yml>`_ for installation/testing hints.
 

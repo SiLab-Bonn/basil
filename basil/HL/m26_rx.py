@@ -14,10 +14,10 @@ class m26_rx(RegisterHardwareLayer):
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
                   'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
-                  'EN': {'descr': {'addr': 2, 'size': 1, 'offset': 0}},
-                  'TIMESTAMP_HEADER': {'descr': {'addr': 2, 'size': 1, 'offset': 1}},
-                  'LOST_COUNT': {'descr': {'addr': 3, 'size': 8, 'properties': ['ro']}}}
-    _require_version = "==1"
+                  'EN': {'descr': {'addr': 1, 'size': 1, 'offset': 0}},
+                  'TIMESTAMP_HEADER': {'descr': {'addr': 1, 'size': 1, 'offset': 1}},
+                  'LOST_COUNT': {'descr': {'addr': 2, 'size': 8, 'properties': ['ro']}}}
+    _require_version = "==2"
 
     def __init__(self, intf, conf):
         super(m26_rx, self).__init__(intf, conf)

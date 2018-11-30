@@ -1,0 +1,14 @@
+transfer_layer:
+  - name     : Serial
+    type     : Serial
+    init     :
+        port     : /dev/ttyUSB0
+        write_termination : "\r\n"
+        read_termination : "\r\n"
+        baudrate : 38400
+        timeout : 2.0
+
+hw_drivers:
+  - name      : hot_n2
+    type      : bronkhorst_elflow
+    interface : Serial

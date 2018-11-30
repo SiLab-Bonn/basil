@@ -4,6 +4,7 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
+
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 
@@ -40,6 +41,7 @@ class weissSB22(HardwareLayer):
         super(weissSB22, self).__init__(intf, conf)
 
     def init(self):
+        super(weissSB22, self).init()
         self.slave_address = self._init['address']  # set the device address
         self.min_temp = self._init['min_temp']  # define the minimum temperature one can set, for safety
         self.max_temp = self._init['max_temp']  # define the maximum temperature one can set, for safety

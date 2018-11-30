@@ -6,6 +6,7 @@
 #
 
 import os
+
 from yaml import load, BaseLoader, scanner
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
@@ -39,9 +40,10 @@ class scpi(HardwareLayer):
             raise RuntimeError('Parsing error for ' + self._init['device'] + ' device description in file ' + device_desciption)
         except IOError:
             raise RuntimeError('Cannot find a device description for ' + self._init['device'] + '. Consider adding it!')
-        name = self.get_name()
-        if self._scpi_commands['identifier'] not in self.get_name():
-            raise RuntimeError('Wrong device description (' + self._init['device'] + ') loaded for ' + name)
+        if 'identifier' in self._scpi_commands and self._scpi_commands['identifier']:
+            name = self.get_name()
+            if self._scpi_commands['identifier'] not in name:
+                raise RuntimeError('Wrong device description (' + self._init['device'] + ') loaded for ' + name)
 
     def __getattr__(self, name):
         '''dynamically adding device specific commands
@@ -50,7 +52,7 @@ class scpi(HardwareLayer):
             channel = kwargs.pop('channel', None)
             try:
                 command = self._scpi_commands['channel %s' % channel][name] if channel is not None else self._scpi_commands[name]
-            except:
+            except Exception:
                 raise ValueError('SCPI command %s is not defined for device %s' % (name, self.name))
 
             name_split = name.split('_', 1)

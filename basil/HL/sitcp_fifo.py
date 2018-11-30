@@ -4,8 +4,8 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-
-import logging
+import struct
+import array
 
 import numpy as np
 
@@ -22,7 +22,7 @@ class sitcp_fifo(HardwareLayer):
 
     def __getitem__(self, name):
         if name == "RESET":
-            self._intf.reset_fifo()  # returns None
+            self._intf.reset()  # returns None
         elif name == 'VERSION':
             return self._version
         elif name == 'FIFO_SIZE':
@@ -32,7 +32,7 @@ class sitcp_fifo(HardwareLayer):
 
     def __setitem__(self, name, value):
         if name == "RESET":
-            self._intf.reset_fifo()
+            self._intf.reset()
         else:
             super(sitcp_fifo, self).__setitem__(name, value)
 
@@ -59,7 +59,7 @@ class sitcp_fifo(HardwareLayer):
             super(sitcp_fifo, self).__setattr__(name, value)
 
     def get_data(self):
-        ''' Reading data from SiTCP FIFO.
+        ''' Reading data from SiTCP FIFO (via TCP).
 
         Returns
         -------
@@ -70,3 +70,14 @@ class sitcp_fifo(HardwareLayer):
         fifo_int_size = (fifo_size - (fifo_size % 4)) / 4
         data = self._intf._get_tcp_data(fifo_int_size * 4)
         return np.frombuffer(data, dtype=np.dtype('<u4'))
+
+    def set_data(self, data):
+        ''' Sending data to via TCP.
+
+        Parameters
+        ----------
+        data : array
+            Array of unsigned integers (32 bit).
+        '''
+        data = array.array('B', struct.unpack("{}B".format(len(data) * 4), struct.pack("{}I".format(len(data)), *data)))
+        self._intf._send_tcp_data(data)

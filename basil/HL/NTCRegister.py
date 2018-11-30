@@ -6,10 +6,13 @@
 #
 
 import logging
-import numpy as np
 import math
 
+import numpy as np
+
 from basil.HL.RegisterHardwareLayer import HardwareLayer
+
+logger = logging.getLogger(__name__)
 
 
 class NTCRegister(HardwareLayer):
@@ -23,14 +26,16 @@ class NTCRegister(HardwareLayer):
             arg_names   : [value]
             arg_add     : {'channel': 'ISRC0'}
     """
+
     def __init__(self, intf, conf):
         super(NTCRegister, self).__init__(intf, conf)
 
     def init(self):
+        super(NTCRegister, self).init()
         if "NTC_type" not in self._conf:
             self._conf["NTC_type"] = "TDK_NTCG16H"
 
-        logging.debug("Initializing NTC " + self._conf["NTC_type"] + " on channel " + self._conf["arg_add"]["channel"])
+        logger.debug("Initializing NTC " + self._conf["NTC_type"] + " on channel " + self._conf["arg_add"]["channel"])
 
         if self._conf["NTC_type"] == "TDK_NTCG16H":
             self.R_RATIO = np.array([18.85, 14.429, 11.133, 8.656, 6.779, 5.346, 4.245, 3.393, 2.728, 2.207, 1.796, 1.47, 1.209, 1.0, 0.831, 0.694, 0.583, 0.491, 0.416, 0.354, 0.302, 0.259, 0.223, 0.192, 0.167, 0.145, 0.127, 0.111, 0.0975, 0.086, 0.076, 0.0674, 0.0599, 0.0534])
@@ -46,6 +51,15 @@ class NTCRegister(HardwareLayer):
         else:
             raise ValueError('NTC_type %s is not supported.' % self._conf["NTC_type"])
 
+    def get_voltage(self, unit="V"):
+        return self._intf.get_voltage(self._conf["arg_add"]["channel"], unit=unit)
+
+    def get_current(self, unit="uA"):
+        return self._intf.get_current(self._conf["arg_add"]["channel"], unit=unit)
+
+    def set_current(self, value, unit="uA"):
+        return self._intf.set_current(self._conf["arg_add"]["channel"], value, unit=unit)
+
     def get_temperature(self, unit="K"):
         i = self._intf.get_current(self._conf["arg_add"]["channel"], unit="mA")
         v = self._intf.get_voltage(self._conf["arg_add"]["channel"], unit="mV")
@@ -59,7 +73,7 @@ class NTCRegister(HardwareLayer):
             j = arg[0]
 
         k = 1.0 / (math.log(r_ratio / self.R_RATIO[j]) / self.B_CONST[j] + 1 / self.TEMP[j])[0]
-        logging.info("Temperature (C): %f", k - 273.15)
+        logger.info("Temperature (C): %f", k - 273.15)
 
         if unit == "C":
             return k - 273.15

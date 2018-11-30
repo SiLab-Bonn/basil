@@ -108,7 +108,8 @@ class TestSimM26(unittest.TestCase):
         self.chip['SEQ'].set_REPEAT(4)
         self.chip['SEQ'].set_SIZE(16 * (4 + 12))
 
-        self.chip['M26_RX'].set_en(True)
+        self.chip['M26_RX']['TIMESTAMP_HEADER'] = False
+        self.chip['M26_RX']['EN'] = True
 
         self.chip['SEQ'].start()
 
@@ -136,8 +137,8 @@ class TestSimM26(unittest.TestCase):
         np.testing.assert_array_equal(exp, ret)
 
         self.chip['M26_RX'].reset()
-        self.chip['M26_RX'].TIMESTAMP_HEADER = 1
-        self.chip['M26_RX'].set_en(True)
+        self.chip['M26_RX']['TIMESTAMP_HEADER'] = True  # default
+        self.chip['M26_RX']['EN'] = True
         self.chip['FIFO'].get_data()
         self.chip['SEQ'].start()
 

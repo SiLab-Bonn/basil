@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -21,7 +21,7 @@ module sram_fifo_core
     input wire                  BUS_RD,
     input wire                  BUS_WR,
     output reg [7:0]            BUS_DATA_OUT,
-    
+
     output wire [19:0]          SRAM_A,
     inout wire [15:0]           SRAM_IO,
     output wire                 SRAM_BHE_B,
@@ -29,14 +29,14 @@ module sram_fifo_core
     output wire                 SRAM_CE1_B,
     output wire                 SRAM_OE_B,
     output wire                 SRAM_WE_B,
-    
+
     input wire                  USB_READ,
     output wire [7:0]           USB_DATA,
-    
+
     output wire                 FIFO_READ_NEXT_OUT,
     input wire                  FIFO_EMPTY_IN,
     input wire [31:0]           FIFO_DATA,
-    
+
     output wire                 FIFO_NOT_EMPTY,
     output wire                 FIFO_FULL,
     output reg                  FIFO_NEAR_FULL,
@@ -121,14 +121,14 @@ wire FULL_BUF;
 
 assign FIFO_READ_NEXT_OUT = !FULL_BUF;
 
-gerneric_fifo #(.DATA_SIZE(32), .DEPTH(1024))  i_buf_fifo
-( .clk(BUS_CLK), .reset(RST), 
+gerneric_fifo #(.DATA_SIZE(32), .DEPTH(1024)) i_buf_fifo
+( .clk(BUS_CLK), .reset(RST),
     .write(!FIFO_EMPTY_IN),
-    .read(FIFO_READ_NEXT_OUT_BUF), 
-    .data_in(FIFO_DATA), 
-    .full(FULL_BUF), 
-    .empty(FIFO_EMPTY_IN_BUF), 
-    .data_out(FIFO_DATA_BUF[31:0]), .size() 
+    .read(FIFO_READ_NEXT_OUT_BUF),
+    .data_in(FIFO_DATA),
+    .full(FULL_BUF),
+    .empty(FIFO_EMPTY_IN_BUF),
+    .data_out(FIFO_DATA_BUF[31:0]), .size()
 );
 
 
@@ -149,7 +149,7 @@ always@(posedge BUS_CLK)
         byte_to_read <= 0;
     else if(usb_read_dly)
         byte_to_read <= !byte_to_read;
-    
+
 localparam READ_TRY_SRAM = 3, READ_SRAM = 0,  READ_NOP_SRAM = 2;
 reg [1:0] read_state, read_state_next;
 always@(posedge BUS_CLK)
@@ -160,9 +160,9 @@ always@(posedge BUS_CLK)
 
 always@(*) begin
     read_state_next = read_state;
-    
+
     case(read_state)
-        READ_TRY_SRAM: 
+        READ_TRY_SRAM:
             if(!empty)
                 read_state_next = READ_SRAM;
         READ_SRAM:
@@ -193,7 +193,7 @@ always@(posedge BUS_CLK) begin
     if(RST)
         CONF_READ_ERROR <= 0;
     else if(empty && USB_READ && CONF_READ_ERROR != 8'hff)
-        CONF_READ_ERROR <= CONF_READ_ERROR +1;
+        CONF_READ_ERROR <= CONF_READ_ERROR +1'b1;
 end
 
 
@@ -205,7 +205,7 @@ always @ (*) begin
        write_sram = 1;
    else
        write_sram = 0;
-       
+
     if(!FIFO_EMPTY_IN_BUF && !full && !read_sram && wr_pointer[0]==1)
        FIFO_READ_NEXT_OUT_BUF = 1;
     else
@@ -217,7 +217,7 @@ assign DATA_TO_SRAM = wr_pointer[0]==0 ? FIFO_DATA_BUF[15:0] : FIFO_DATA_BUF[31:
 
 //CG_MOD_neg icg(.ck_in(BUS_CLK270), .enable(write_sram), .ck_out(SRAM_WE_B));
 
-ODDR WE_INST (.D1(~write_sram), .D2(1'b1), 
+ODDR WE_INST (.D1(~write_sram), .D2(1'b1),
               .C(~BUS_CLK), .CE(1'b1), .R(1'b0), .S(1'b0),
               .Q(SRAM_WE_B) );
 
@@ -259,15 +259,15 @@ always@(posedge BUS_CLK) begin
 end
 
 assign empty = (wr_pointer == rd_pointer);
-assign full = ((wr_pointer==(DEPTH-1) && rd_pointer==0) ||  (wr_pointer!=(DEPTH-1) && wr_pointer+1 == rd_pointer) ); 
+assign full = ((wr_pointer==(DEPTH-1) && rd_pointer==0) ||  (wr_pointer!=(DEPTH-1) && wr_pointer+1'b1 == rd_pointer) );
 
 always@(posedge BUS_CLK) begin
     if(RST)
         full_ff <= 0;
     else if(read_sram && !empty)
-        full_ff <= ((wr_pointer==(DEPTH-1) && next_rd_pointer==0) ||  (wr_pointer!=(DEPTH-1) && wr_pointer+1 == next_rd_pointer) );
+        full_ff <= ((wr_pointer==(DEPTH-1) && next_rd_pointer==0) ||  (wr_pointer!=(DEPTH-1) && wr_pointer+1'b1 == next_rd_pointer) );
     else if(write_sram && !full)
-        full_ff <= ((next_wr_pointer==(DEPTH-1) && rd_pointer==0) ||  (next_wr_pointer!=(DEPTH-1) && next_wr_pointer+1 == rd_pointer) );
+        full_ff <= ((next_wr_pointer==(DEPTH-1) && rd_pointer==0) ||  (next_wr_pointer!=(DEPTH-1) && next_wr_pointer+1'b1 == rd_pointer) );
 end
 
 
@@ -278,7 +278,7 @@ always @ (posedge BUS_CLK) begin //(*) begin
     begin
         if(wr_pointer >= rd_pointer)
             if(read_state == READ_NOP_SRAM)
-                CONF_SIZE <= wr_pointer - rd_pointer+1;
+                CONF_SIZE <= wr_pointer - rd_pointer+1'b1;
             else
                 CONF_SIZE <= wr_pointer - rd_pointer;
         else
@@ -293,9 +293,9 @@ assign FIFO_READ_ERROR = (CONF_READ_ERROR != 0);
 always @(posedge BUS_CLK) begin
     if(RST)
         FIFO_NEAR_FULL <= 1'b0;
-    else if (((((FIFO_ALMOST_FULL_VALUE+1)*DEPTH)>>8) <= CONF_SIZE) || (FIFO_ALMOST_FULL_VALUE == 8'b0 && CONF_SIZE >= 0))
+    else if (((((FIFO_ALMOST_FULL_VALUE+1'b1)*DEPTH)>>8) <= CONF_SIZE) || (FIFO_ALMOST_FULL_VALUE == 8'b0 && CONF_SIZE >= 0))
         FIFO_NEAR_FULL <= 1'b1;
-    else if (((((FIFO_ALMOST_EMPTY_VALUE+1)*DEPTH)>>8) >= CONF_SIZE && FIFO_ALMOST_EMPTY_VALUE != 8'b0) || CONF_SIZE == 0)
+    else if (((((FIFO_ALMOST_EMPTY_VALUE+1'b1)*DEPTH)>>8) >= CONF_SIZE && FIFO_ALMOST_EMPTY_VALUE != 8'b0) || CONF_SIZE == 0)
         FIFO_NEAR_FULL <= 1'b0;
 end
 

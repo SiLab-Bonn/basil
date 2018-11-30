@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -11,7 +11,8 @@ module i2c #(
     parameter BASEADDR = 16'h0000,
     parameter HIGHADDR = 16'h0000,
     parameter ABUSWIDTH = 16,
-    parameter MEM_BYTES = 1
+    parameter MEM_BYTES = 1,
+    parameter IGNORE_ACK = 0
 )(
     input wire                 BUS_CLK,
     input wire                 BUS_RST,
@@ -24,7 +25,7 @@ module i2c #(
     inout wire I2C_SDA,
     inout wire I2C_SCL
 );
-     
+
 wire IP_RD, IP_WR;
 wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
@@ -48,10 +49,11 @@ bus_to_ip #(
 );
 
 
-i2c_core 
+i2c_core
 #(
     .ABUSWIDTH(ABUSWIDTH),
-    .MEM_BYTES(MEM_BYTES)
+    .MEM_BYTES(MEM_BYTES),
+    .IGNORE_ACK(IGNORE_ACK)
 )
 i_i2c_core (
     .BUS_CLK(BUS_CLK),

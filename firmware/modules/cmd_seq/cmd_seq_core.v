@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -20,7 +20,7 @@ module cmd_seq_core
     input wire                  BUS_RD,
     input wire                  BUS_WR,
     output reg [7:0]            BUS_DATA_OUT,
-    
+
     output wire [OUTPUTS-1:0]   CMD_CLK_OUT,
     input wire                  CMD_CLK_IN,
     input wire                  CMD_EXT_START_FLAG,
@@ -106,7 +106,7 @@ always @(posedge BUS_CLK) begin
         status_regs[4] <= 0;
         status_regs[5] <= 8'd1; // CONF_REPEAT_COUNT, repeat once by default
         status_regs[6] <= 0;
-        status_regs[7] <= 0; 
+        status_regs[7] <= 0;
         status_regs[8] <= 0;
         status_regs[9] <= 0; // CONF_START_REPEAT
         status_regs[10] <= 0;
@@ -201,7 +201,7 @@ always @ (posedge BUS_CLK) begin
     if (BUS_WR && BUS_ADD >= 16)
         cmd_mem[BUS_ADD[10:0]-16] <= BUS_DATA_IN;
 end
-        
+
 reg [7:0] CMD_MEM_DATA;
 reg [10:0] CMD_MEM_ADD;
 always @(posedge CMD_CLK_IN)
@@ -283,9 +283,9 @@ always @ (*) begin
             end
         else begin
             if(END_SEQ_REP)
-                CMD_MEM_ADD = (CONF_START_REPEAT_CMD_CLK+1)/8;
+                CMD_MEM_ADD = (CONF_START_REPEAT_CMD_CLK+1'b1)/8;
             else
-                CMD_MEM_ADD = (cnt+1)/8;
+                CMD_MEM_ADD = (cnt+1'b1)/8;
         end
     else
         CMD_MEM_ADD = 0; //no latch
@@ -311,13 +311,13 @@ end
 wire cmd_data_ser;
 assign cmd_data_ser = send_word[7-((cnt-1)%8)];
 
-reg [7:0] cmd_data_neg;
-reg [7:0] cmd_data_pos;
+reg [OUTPUTS-1:0] cmd_data_neg;
+reg [OUTPUTS-1:0] cmd_data_pos;
 always @ (negedge CMD_CLK_IN)
-    cmd_data_neg <= {8{cmd_data_ser}} & CONF_OUTPUT_ENABLE;
+    cmd_data_neg <= {OUTPUTS{cmd_data_ser}} & CONF_OUTPUT_ENABLE[OUTPUTS-1:0];
 
 always @ (posedge CMD_CLK_IN)
-    cmd_data_pos <= {8{cmd_data_ser}} & CONF_OUTPUT_ENABLE;
+    cmd_data_pos <= {OUTPUTS{cmd_data_ser}} & CONF_OUTPUT_ENABLE[OUTPUTS-1:0];
 
 
 genvar k;
@@ -327,7 +327,7 @@ generate
             .Q(CMD_DATA[k]),
             .C(CMD_CLK_IN),
             .CE(1'b1),
-            .D1((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos[k] : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg[k] : ((CONF_OUTPUT_MODE == 2'b10) ? ~cmd_data_pos[k] :  cmd_data_pos[k]))), 
+            .D1((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos[k] : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg[k] : ((CONF_OUTPUT_MODE == 2'b10) ? ~cmd_data_pos[k] :  cmd_data_pos[k]))),
             .D2((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos[k] : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg[k] : ((CONF_OUTPUT_MODE == 2'b10) ?  cmd_data_pos[k] : ~cmd_data_pos[k]))),
             .R(1'b0),
             .S(1'b0)
@@ -336,7 +336,7 @@ generate
         ODDR CMD_CLK_FORWARDING_INST (
             .Q(CMD_CLK_OUT[k]),
             .C(CMD_CLK_IN),
-            .CE(1'b1), 
+            .CE(1'b1),
             .D1(1'b1),
             .D2(1'b0),
             .R(CONF_DIS_CLOCK_GATE),
