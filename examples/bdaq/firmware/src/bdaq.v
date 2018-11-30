@@ -11,14 +11,13 @@
  *   BDAQ53 (KX2) FPGA:  XC7K160T-2-FFG676-I    (select xc7k160tffg676-2)    Quad-SPI flash: S25FL512S
 **/
 
+`include "bdaq_core.v"
 `include "utils/rgmii_io.v"
 `include "utils/fifo_32_to_8.v"
 `include "utils/tcp_to_bus.v"
-`include "utils/clock_divider.v"
-`include "utils/cdc_syncfifo.v"
 `include "utils/generic_fifo.v"
 
-module cdr53bdaq(
+module bdaq(
     input wire RESET_BUTTON,
 
     input wire clkin,   // main fpga clock source (internally generated on KX2)
@@ -304,41 +303,79 @@ tcp_to_bus i_tcp_to_bus(
     .INVALID(INVALID)
 );
 
-// -------  MODULES for fast data readout(FIFO) - cdc_fifo is for timing reasons
-wire [31:0] cdc_data_out;
+
+// -------  MODULES for fast data readout(FIFO)
+wire fifo_empty, fifo_full, fifo_write;
 wire [31:0] FIFO_DATA;
-wire FIFO_WRITE, FIFO_EMPTY, FIFO_FULL;
-wire full_32to8, cdc_fifo_empty;
-
-cdc_syncfifo #(.DSIZE(32), .ASIZE(3)) cdc_syncfifo_i
-(
-    .rdata(cdc_data_out),
-    .wfull(FIFO_FULL),
-    .rempty(cdc_fifo_empty),
-    .wdata(FIFO_DATA),
-    .winc(FIFO_WRITE), .wclk(BUS_CLK), .wrst(BUS_RST),
-    .rinc(!full_32to8), .rclk(BUS_CLK), .rrst(BUS_RST)
-);
-
+reg fifo_next;
 
 fifo_32_to_8 #(.DEPTH(256*1024)) i_data_fifo (
     .RST(BUS_RST),
     .CLK(BUS_CLK),
 
-    .WRITE(!cdc_fifo_empty),
+    .WRITE(fifo_write),
     .READ(TCP_TX_WR),
-    .DATA_IN(cdc_data_out),
-    .FULL(full_32to8),
-    .EMPTY(FIFO_EMPTY),
+    .DATA_IN(FIFO_DATA),
+    .FULL(fifo_full),
+    .EMPTY(fifo_empty),
     .DATA_OUT(TCP_TX_DATA)
 );
 
-// draining the TCP-FIFO
-assign TCP_TX_WR = !TCP_TX_FULL && !FIFO_EMPTY;
+wire [7:0] GPIO;
 
 // Status LEDs
-wire [7:0] LED_int;
-assign LED_int = {TCP_OPEN_ACK, TCP_RX_WR, TCP_TX_WR, FIFO_FULL, 3'b0, LOCKED};
-assign LED = ~LED_int;
+assign LED = ~{TCP_OPEN_ACK, TCP_RX_WR, TCP_TX_WR, fifo_full, GPIO[2:0], LOCKED};
+
+
+// Core firmware module
+bdaq_core i_bdaq_core(
+    .RESET_N(RESET_N),
+
+    // clocks from PLL
+    .BUS_CLK(BUS_CLK), .CLK125TX(CLK125TX), .CLK125TX90(CLK125TX90), .CLK125RX(CLK125RX),
+    .PLL_LOCKED(LOCKED),
+
+    .BUS_RST(BUS_RST),
+    .BUS_ADD(BUS_ADD),
+    .BUS_DATA(BUS_DATA),
+    .BUS_RD(BUS_RD),
+    .BUS_WR(BUS_WR),
+    .BUS_BYTE_ACCESS(),
+
+    .fifo_empty(fifo_empty),
+    .fifo_full(fifo_full),
+    .FIFO_DATA(FIFO_DATA),
+    .FIFO_WRITE(fifo_write),
+    .GPIO(GPIO)
+    );
+
+
+assign TCP_TX_WR = !TCP_TX_FULL && !fifo_empty;
+
+reg ETH_START_SENDING, ETH_START_SENDING_temp, ETH_START_SENDING_LOCK;
+reg [31:0] datasource;
+
+/* -------  Main FSM  ------- */
+always@ (posedge BUS_CLK)
+    begin
+
+    // wait for start condition
+    ETH_START_SENDING <= GPIO[0];    //TCP_OPEN_ACK;
+
+    if(ETH_START_SENDING && !ETH_START_SENDING_temp)
+        ETH_START_SENDING_LOCK <= 1;
+    ETH_START_SENDING_temp <= ETH_START_SENDING;
+
+    // FIFO handshake
+    if(ETH_START_SENDING_LOCK)
+        fifo_next <= 1'b1;
+    else
+        fifo_next <= 1'b0;
+
+    // stop, if connection is closed by host
+    if(TCP_CLOSE_REQ || !GPIO[0]) begin
+        ETH_START_SENDING_LOCK <= 0;
+    end
+end
 
 endmodule

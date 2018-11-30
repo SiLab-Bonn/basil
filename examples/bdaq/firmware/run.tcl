@@ -15,7 +15,7 @@ set include_dirs [list $basil_dir/firmware/modules $basil_dir/firmware/modules/u
 file mkdir output reports
 
 proc read_design_files {} {
-    read_verilog src/cdr53bdaq.v
+    read_verilog src/bdaq.v
 
     read_edif SiTCP/SiTCP_XC7K_32K_BBT_V110.ngc
     read_verilog SiTCP/TIMER.v
@@ -31,7 +31,7 @@ proc run_bit { part board connector xdc_file size option} {
 
     global include_dirs
 
-    synth_design -top cdr53bdaq -include_dirs $include_dirs -verilog_define "$board=1" -verilog_define "$connector=1" -verilog_define "SYNTHESIS=1" -verilog_define "$option=1"
+    synth_design -top bdaq -include_dirs $include_dirs -verilog_define "$board=1" -verilog_define "$connector=1" -verilog_define "SYNTHESIS=1" -verilog_define "$option=1"
     opt_design
     place_design
     phys_opt_design
@@ -51,7 +51,7 @@ proc run_bit { part board connector xdc_file size option} {
 #
 
 #       FPGA type           board name	connector  	constraints file     flash size  option
-run_bit xc7k160tffg676-2    BDAQ53      ""          src/cdr53bdaq.xdc    64          ""
+run_bit xc7k160tffg676-2    BDAQ53      ""          src/bdaq.xdc    64          ""
 
 
 exit
