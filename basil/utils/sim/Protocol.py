@@ -79,8 +79,8 @@ class PickleInterface(ProtocolBase):
 
     def _get_next_obj(self, length):
         """Assumes we've already read the object length"""
-        string = ""
-        while len(string) < length:
-            string += self.sock.recv(length - len(string))
+        data = b''
+        while len(data) < length:
+            data += self.sock.recv(length - len(data))
 
-        return pickle.loads(string)
+        return pickle.loads(data)

@@ -14,7 +14,7 @@ import yaml
 
 import cocotb
 from cocotb.triggers import RisingEdge
-from Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
+from basil.utils.sim.Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
 from cocotb.binary import BinaryValue
 
 
@@ -125,7 +125,7 @@ def bringup_test(dut):
 
     ret = yield bus.read(0, 4)
 
-    print 'bus.read', ret
+    print('bus.read', ret)
 
     for _ in range(10):
         yield RisingEdge(bus.clock)

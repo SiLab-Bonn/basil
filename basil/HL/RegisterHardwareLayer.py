@@ -10,6 +10,7 @@ from copy import deepcopy
 import collections
 import array
 from collections import namedtuple
+from six import integer_types
 
 from basil.utils.BitLogic import BitLogic
 from basil.HL.HardwareLayer import HardwareLayer
@@ -46,9 +47,9 @@ class RegisterHardwareLayer(HardwareLayer):
         # require interface and base address
         self._intf = intf
         self._base_addr = conf['base_addr']
-        rv = namedtuple('_register_values', field_names=self._registers.iterkeys())
+        rv = namedtuple('_register_values', field_names=iter(self._registers.keys()))
         self._register_values = rv(*([None] * len(self._registers)))
-        for reg in self._registers.iterkeys():
+        for reg in self._registers.keys():
             if not reg.isupper():
                 raise ValueError("Register %s must be uppercase." % reg)
             self.add_property(reg)
@@ -65,7 +66,7 @@ class RegisterHardwareLayer(HardwareLayer):
         logger.info("Initializing %s (firmware version: %s), module %s, base_addr %s" % (self.name, version if 'VERSION' in self._registers else 'n/a', self.__class__.__module__, hex(self._base_addr)))
         if self._require_version and not eval(version + self._require_version):
             raise Exception("FPGA module %s does not satisfy version requirements (read: %s, require: %s)" % (self.__class__.__module__, version, self._require_version.strip()))
-        for reg, value in self._registers.iteritems():
+        for reg, value in self._registers.items():
             if reg in self._init:
                 self[reg] = self._init[reg]
             elif 'default' in value and not ('properties' in value['descr'] and [i for i in read_only if i in value['descr']['properties']]):
@@ -168,12 +169,12 @@ class RegisterHardwareLayer(HardwareLayer):
 
     def set_configuration(self, conf):
         if conf:
-            for reg, value in conf.iteritems():
+            for reg, value in conf.items():
                 self[reg] = value
 
     def get_configuration(self):
         conf = {}
-        for reg in self._registers.iterkeys():
+        for reg in self._registers.keys():
             descr = self._registers[reg]['descr']
             if not ('properties' in descr and [i for i in write_only if i in descr['properties']]) and not ('properties' in descr and [i for i in read_only if i in descr['properties']]):
                 conf[reg] = self[reg]
@@ -189,21 +190,21 @@ class RegisterHardwareLayer(HardwareLayer):
         def getter(self):
             try:
                 return self._get(attribute)
-            except Exception, e:
+            except Exception as e:
                 logger.error(e)
                 return None
 
         def setter(self, value):
             try:
                 return self._set(attribute, value)
-            except Exception, e:
+            except Exception as e:
                 logger.error(e)
                 return None
         # construct property attribute and add it to the class
         setattr(self.__class__, attribute, property(fget=getter, fset=setter, doc=attribute + ' register'))
 
     def set_default(self):
-        for reg, value in self._registers.iteritems():
+        for reg, value in self._registers.items():
             if 'default' in value and not ('properties' in value['descr'] and [i for i in read_only if i in self._registers[reg]['descr']['properties']]):
                 self._set(reg, value['default'])
 
@@ -247,7 +248,7 @@ class RegisterHardwareLayer(HardwareLayer):
             self._register_values = self._register_values._replace(**{reg: value})
         else:
             descr.setdefault('offset', 0)
-            value = value if isinstance(value, (int, long)) else int(value, base=2)
+            value = value if isinstance(value, integer_types) else int(value, base=2)
             try:
                 self.set_value(value, **descr)
             except ValueError:

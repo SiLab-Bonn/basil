@@ -44,7 +44,7 @@ registers:
         offset  : 7
       - name    : IN
         size    : 8
-        offset  : 14
+        offset  : 15
       - name    : TRI_IN
         size    : 4
         offset  : 19
@@ -73,11 +73,13 @@ class TestSimGpio(unittest.TestCase):
         self.assertEqual([0x33, 0x5a, 0x5a], ret)
         ret = self.chip['GPIO2'].get_data()
         self.assertEqual([0xa5, 0xcd], ret)
-        
+
     def test_io_register(self):
+
         self.chip['GPIO'].set_output_en([0xff, 0, 0])  # to remove 'z in simulation
 
         self.chip['GPIO']['OUT'] = 0xa5
+
         self.chip['GPIO'].write()
         ret = self.chip['GPIO'].get_data()
         self.assertEqual([0, 0xa5, 0xa5], ret)

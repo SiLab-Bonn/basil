@@ -93,11 +93,11 @@ class TestSimMMC3Eth(unittest.TestCase):
             time.sleep(0.01)
             tick = int(time.time() - start_time)
             if tick != tick_old:
-                print tick
+                print (tick)
                 tick_old = tick
 
             if doprint==True:
-                print data
+                print (data)
 
             for i in data:
                 if i<(len(data)-1): assert data[i] == data[i+1]-1   #Check, if received integers are increasing numbers
