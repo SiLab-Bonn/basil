@@ -39,7 +39,7 @@ install:
   - conda info -a
   - conda create --yes -n test-environment python=$TRAVIS_PYTHON_VERSION numpy bitarray nose pyyaml coverage
   - source activate test-environment
-  - pip install pyvisa pyvisa-sim coveralls cocotb
+  - pip install pyvisa pyvisa-sim coveralls cocotb=1.0.dev3
   # install basil
   - python setup.py develop
 
