@@ -120,7 +120,7 @@ class TestRegisterHardwareLayer(unittest.TestCase):
 
     def test_set_attribute_too_long_string(self):
         val = '11010101010101010'  # 17 bit
-        self.assertRaises(ValueError, self.dut['test_register']._set, 'REG3', value=val)
+        self.assertRaises(TypeError, self.dut['test_register']._set, 'REG3', value=val)
 
     def test_set_attribute_dict_access(self):
         self.dut['test_register']['REG1'] = 27306  # 27306
@@ -128,7 +128,7 @@ class TestRegisterHardwareLayer(unittest.TestCase):
 
     def test_set_attribute_too_big_val(self):
         val = 2 ** 16  # max 2 ** 16 - 1
-        self.assertRaises(ValueError, self.dut['test_register']._set, 'REG3', value=val)
+        self.assertRaises(TypeError, self.dut['test_register']._set, 'REG3', value=val)
 
     def test_set_by_function(self):
         self.dut['test_register'].set_REG1(27308)
@@ -193,7 +193,7 @@ class TestRegisterHardwareLayer(unittest.TestCase):
             self.dut['test_register'].set_NON_EXISTING(42)
 
     def test_wrong_size(self):
-        self.assertRaises(ValueError, self.dut['test_register'].set_value, 131, addr=0, size=7, offset=7)
+        self.assertRaises(TypeError, self.dut['test_register'].set_value, 131, addr=0, size=7, offset=7)
 
 if __name__ == '__main__':
     unittest.main()
