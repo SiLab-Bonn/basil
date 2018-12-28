@@ -43,7 +43,7 @@ class TrackRegister(RegisterLayer):
             size = self._conf["seq_size"]
 
         bv = bitarray(self._conf["seq_width"] * size)
-        for i in xrange(size):
+        for i in range(size):
             for track in self._conf['tracks']:
                 bit = 0
                 if self._conf["seq_width"] >= 8:
