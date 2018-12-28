@@ -36,7 +36,7 @@ class TestBitLogic(unittest.TestCase):
         self.assertEqual(bl, bitarray('10000101000101001111101100001000'[::-1] + '0' * 38))
 
     def test_from_value_with_int_bigger_than_size(self):
-        self.assertRaises(ValueError, BitLogic.from_value, 8, size=3, fmt='Q')
+        self.assertRaises(TypeError, BitLogic.from_value, 8, size=3, fmt='Q')
 
     def test_from_value_with_funny_size(self):
         self.assertRaises(TypeError, BitLogic.from_value, 8, size='123', fmt='Q')

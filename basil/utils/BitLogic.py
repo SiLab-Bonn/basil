@@ -42,11 +42,11 @@ class BitLogic(bitarray):
         Append from a int/long number.
         '''
         if size and value.bit_length() > size:
-            raise ValueError('Value is too big for given size')
+            raise TypeError('Value is too big for given size')
         self.frombytes(struct.pack(fmt, value))
         if size:
             if not isinstance(size, integer_types) or not size > 0:
-                raise ValueError('Size must be greater than zero')
+                raise TypeError('Size must be greater than zero')
             if size > self.length():
                 bitarray.extend(self, (size - self.length()) * [0])
             else:
@@ -58,7 +58,7 @@ class BitLogic(bitarray):
         '''
         format_size = struct.calcsize(fmt)
         if self.length() > format_size * 8:
-            raise ValueError('Cannot convert to number')
+            raise TypeError('Cannot convert to number')
         ba = self.copy()
         ba.extend((format_size * 8 - self.length()) * [0])
         return struct.unpack_from(fmt, ba.tobytes())[0]
