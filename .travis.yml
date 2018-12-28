@@ -4,7 +4,7 @@ python:
   - 3.7
 
 sudo: required
-dist: trusty
+dist: xenial
 
 notifications:
   slack: silab-bonn:nU3pnaHN3RJ6WRFrfjec9vPM
