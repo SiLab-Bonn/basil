@@ -67,7 +67,7 @@ class sitcp_fifo(HardwareLayer):
             Array of unsigned integers (32 bit).
         '''
         fifo_size = self._intf._get_tcp_data_size()
-        fifo_int_size = (fifo_size - (fifo_size % 4)) / 4
+        fifo_int_size = int((fifo_size - (fifo_size % 4)) / 4)
         data = self._intf._get_tcp_data(fifo_int_size * 4)
         return np.frombuffer(data, dtype=np.dtype('<u4'))
 
