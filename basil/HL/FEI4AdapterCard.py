@@ -5,7 +5,6 @@
 # ------------------------------------------------------------
 #
 
-from __future__ import division
 import logging
 from struct import pack, unpack_from, calcsize
 from array import array
@@ -169,7 +168,7 @@ class Fei4Dcs(object):
         kwargs = self._ch_map[channel]['ADCV']
         voltage_raw = self._get_adc_value(**kwargs)
 
-        voltage = (voltage_raw - self._ch_cal[channel]['ADCV']['offset']) // self._ch_cal[channel]['ADCV']['gain']
+        voltage = (voltage_raw - self._ch_cal[channel]['ADCV']['offset']) / self._ch_cal[channel]['ADCV']['gain']
 
         if unit == 'raw':
             return voltage_raw
@@ -188,7 +187,7 @@ class Fei4Dcs(object):
         voltage = self.get_voltage(channel)
 
         current_raw_iq = current_raw - (self._ch_cal[channel]['ADCI']['iq_offset'] + self._ch_cal[channel]['ADCI']['iq_gain'] * voltage)  # quiescent current (IQ) compensation
-        current = (current_raw_iq - self._ch_cal[channel]['ADCI']['offset']) // self._ch_cal[channel]['ADCI']['gain']
+        current = (current_raw_iq - self._ch_cal[channel]['ADCI']['offset']) / self._ch_cal[channel]['ADCI']['gain']
 
         if unit == 'raw':
             return current_raw
@@ -390,8 +389,8 @@ class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
         kwargs = self._ch_map[channel][sensor]
         temp_raw = self._get_adc_value(**kwargs)
 
-        v_adc = ((temp_raw - self._ch_cal.items()[0][1]['ADCV']['offset']) // self._ch_cal.items()[0][1]['ADCV']['gain'])  # voltage, VDDA1
-        k = self._ch_cal[channel][sensor]['R4'] // (self._ch_cal[channel][sensor]['R2'] + self._ch_cal[channel][sensor]['R4'])  # reference voltage divider
-        r_ntc = self._ch_cal[channel][sensor]['R1'] * (k - v_adc // self._ch_cal[channel][sensor]['VREF']) // (1 - k + v_adc // self._ch_cal[channel][sensor]['VREF'])  # NTC resistance
+        v_adc = ((temp_raw - self._ch_cal.items()[0][1]['ADCV']['offset']) / self._ch_cal.items()[0][1]['ADCV']['gain'])  # voltage, VDDA1
+        k = self._ch_cal[channel][sensor]['R4'] / (self._ch_cal[channel][sensor]['R2'] + self._ch_cal[channel][sensor]['R4'])  # reference voltage divider
+        r_ntc = self._ch_cal[channel][sensor]['R1'] * (k - v_adc / self._ch_cal[channel][sensor]['VREF']) / (1 - k + v_adc / self._ch_cal[channel][sensor]['VREF'])  # NTC resistance
 
-        return (self._ch_cal[channel][sensor]['B_NTC'] // (log(r_ntc) - log(self._ch_cal[channel][sensor]['R_NTC_25']) + self._ch_cal[channel][sensor]['B_NTC'] // self.T_KELVIN_25)) - self.T_KELVIN_0  # NTC temperature
+        return (self._ch_cal[channel][sensor]['B_NTC'] / (log(r_ntc) - log(self._ch_cal[channel][sensor]['R_NTC_25']) + self._ch_cal[channel][sensor]['B_NTC'] / self.T_KELVIN_25)) - self.T_KELVIN_0  # NTC temperature
