@@ -10,6 +10,8 @@ from bitarray import bitarray
 from basil.utils import utils
 from basil.RL.RegisterLayer import RegisterLayer
 
+from six.moves import range
+
 
 class TrackRegister(RegisterLayer):
     '''Tracking register
