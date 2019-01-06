@@ -5,7 +5,6 @@
 # ------------------------------------------------------------
 #
 
-from __future__ import division
 import logging
 from struct import pack, unpack_from, calcsize
 from array import array
@@ -218,11 +217,11 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
         kwargs = self._ch_map[channel]['NTC']
         temp_raw = self._get_adc_value(**kwargs)
 
-        v_adc = ((temp_raw - self._ch_cal[channel]['ADCV']['offset']) // self._ch_cal[channel]['ADCV']['gain'])  # voltage, VDDA1
-        k = self._ch_cal[channel]['NTC']['R4'] // (self._ch_cal[channel]['NTC']['R2'] + self._ch_cal[channel]['NTC']['R4'])  # reference voltage divider
-        r_ntc = self._ch_cal[channel]['NTC']['R1'] * (k - v_adc // self._ch_cal[channel]['NTC']['VREF']) // (1 - k + v_adc // self._ch_cal[channel]['NTC']['VREF'])  # NTC resistance
+        v_adc = ((temp_raw - self._ch_cal[channel]['ADCV']['offset']) / self._ch_cal[channel]['ADCV']['gain'])  # voltage, VDDA1
+        k = self._ch_cal[channel]['NTC']['R4'] / (self._ch_cal[channel]['NTC']['R2'] + self._ch_cal[channel]['NTC']['R4'])  # reference voltage divider
+        r_ntc = self._ch_cal[channel]['NTC']['R1'] * (k - v_adc / self._ch_cal[channel]['NTC']['VREF']) / (1 - k + v_adc / self._ch_cal[channel]['NTC']['VREF'])  # NTC resistance
 
-        return (self._ch_cal[channel]['NTC']['B_NTC'] * self.T_KELVIN_25) // (self._ch_cal[channel]['NTC']['B_NTC'] + self.T_KELVIN_25 * log(r_ntc // self._ch_cal[channel]['NTC']['R_NTC_25'])) - self.T_KELVIN_0  # NTC temperature
+        return (self._ch_cal[channel]['NTC']['B_NTC'] * self.T_KELVIN_25) / (self._ch_cal[channel]['NTC']['B_NTC'] + self.T_KELVIN_25 * log(r_ntc / self._ch_cal[channel]['NTC']['R_NTC_25'])) - self.T_KELVIN_0  # NTC temperature
 
     def set_current_limit(self, channel, value, unit='A'):
         '''Setting current limit
