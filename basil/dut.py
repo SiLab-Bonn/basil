@@ -11,7 +11,7 @@ from yaml import safe_load
 import sys
 import warnings
 from collections import OrderedDict
-from six import string_types
+from six import string_types, iteritems, itervalues
 
 # FIXME: Bad practice
 # Logger settings should not be defined in a module, but once by the
@@ -118,13 +118,13 @@ class Dut(Base):
             except NotImplementedError:
                 pass
 
-        for item in self._transfer_layer.values():
+        for item in itervalues(self._transfer_layer):
             update_init(item)
             catch_exception_on_init(item)
-        for item in self._hardware_layer.values():
+        for item in itervalues(self._hardware_layer):
             update_init(item)
             catch_exception_on_init(item)
-        for item in self._registers.values():
+        for item in itervalues(self._registers):
             update_init(item)
             catch_exception_on_init(item)
 
@@ -137,17 +137,17 @@ class Dut(Base):
                     # restore status after close() failed
                     mod._is_initialized = True
 
-        for item in self._registers.values():
+        for item in itervalues(self._registers):
             catch_exception_on_close(item)
-        for item in self._hardware_layer.values():
+        for item in itervalues(self._hardware_layer):
             catch_exception_on_close(item)
-        for item in self._transfer_layer.values():
+        for item in itervalues(self._transfer_layer):
             catch_exception_on_close(item)
 
     def set_configuration(self, conf):
         conf = self._open_conf(conf)
         if conf:
-            for item, item_conf in conf.items():
+            for item, item_conf in iteritems(conf):
                 if item != 'conf_path':
                     try:
                         self[item].set_configuration(item_conf)
@@ -156,17 +156,17 @@ class Dut(Base):
 
     def get_configuration(self):
         conf = {}
-        for key, value in self._registers.items():
+        for key, value in iteritems(self._registers):
             try:
                 conf[key] = value.get_configuration()
             except NotImplementedError:
                 conf[key] = {}
-        for key, value in self._hardware_layer.items():
+        for key, value in iteritems(self._hardware_layer):
             try:
                 conf[key] = value.get_configuration()
             except NotImplementedError:
                 conf[key] = {}
-        for key, value in self._transfer_layer.items():
+        for key, value in iteritems(self._transfer_layer):
             try:
                 conf[key] = value.get_configuration()
             except NotImplementedError:
@@ -304,11 +304,11 @@ class Dut(Base):
         return modules
 
     def __iter__(self):
-        for item in self._registers.values():
+        for item in itervalues(self._registers):
             yield item
-        for item in self._hardware_layer.values():
+        for item in itervalues(self._hardware_layer):
             yield item
-        for item in self._transfer_layer.values():
+        for item in itervalues(self._transfer_layer):
             yield item
 
     # TODO:
