@@ -20,7 +20,7 @@ Communicate via a socket to the simulator
 import socket
 import array
 
-from Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
+from basil.utils.sim.Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
 
 __version__ = "0.0.3"
 
