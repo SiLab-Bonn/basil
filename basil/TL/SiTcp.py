@@ -146,7 +146,7 @@ class SiTcp(SiTransferLayer):
     def reset_fifo(self):
         with self._tcp_lock:
             fifo_size = self._get_tcp_data_size()
-            fifo_int_size = (fifo_size - (fifo_size % 4)) / 4
+            fifo_int_size = int((fifo_size - (fifo_size % 4)) / 4)
             del_size = fifo_int_size * 4
             self._tcp_read_buff = self._tcp_read_buff[del_size:]
 
