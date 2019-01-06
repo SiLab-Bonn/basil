@@ -23,7 +23,7 @@ def logging(fn):
 
 def bitvector_to_byte_array(bitvector):
     bsize = len(bitvector)
-    size_bytes = ((bsize - 1) / 8) + 1
+    size_bytes = int(((bsize - 1) / 8) + 1)
     bs = array.array('B', bitvector.vector.tostring())[0:size_bytes]
     bitstream_swap = ''
     lsbits = lambda b: (b * 0x0202020202 & 0x010884422010) % 1023
