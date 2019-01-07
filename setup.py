@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+from os import path, walk
 
 author = 'Tomasz Hemperek, Jens Janssen, David-Leon Pohl'
 author_email = 'hemperek@uni-bonn.de, janssen@physik.uni-bonn.de, pohl@physik.uni-bonn.de'
@@ -21,6 +22,13 @@ with open('VERSION') as version_file:
 with open('requirements.txt') as f:
     install_requires = f.read().splitlines()
 
+def package_files(directory):
+    paths = []
+    for (fpath, directories, filenames) in walk(directory):
+        for filename in filenames:
+            paths.append(path.join('..', fpath, filename))
+    return paths
+
 setup(
     name='basil_daq',
     version=version,
@@ -34,6 +42,6 @@ setup(
     author_email=author_email,
     packages=find_packages(),
     include_package_data=True,  # accept all data files and directories matched by MANIFEST.in or found in source control
-    package_data={'': ['*.yaml']},
+    package_data={'': ['*.yaml'], 'basil': package_files('basil/firmware')},
     platforms='any'
 )
