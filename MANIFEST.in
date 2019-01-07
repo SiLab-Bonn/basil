@@ -1,6 +1,6 @@
 include README.* VERSION LICENSE.txt requirements.txt
 recursive-include docs *
 recursive-include examples *
-recursive-include firmware *
+recursive-include basil/firmware *
 recursive-include tests *
 recursive-include basil *.yaml
