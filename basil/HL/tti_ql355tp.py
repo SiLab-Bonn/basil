@@ -5,6 +5,7 @@
 # ------------------------------------------------------------
 #
 
+from __future__ import print_function
 import time
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
@@ -34,7 +35,7 @@ class ttiQl355tp(HardwareLayer):
     def read(self):
         ret = self._intf.read()
         if ret[-2:] != "\r\n":
-            print "ttiTp355tp.read() terminator error"
+            print("ttiTp355tp.read() terminator error")
         return ret[:-2]
 
     def set_enable(self, on, channel=1):
@@ -52,7 +53,7 @@ class ttiQl355tp(HardwareLayer):
         """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
         ret = self.ask("I%dO?" % channel)
         if ret[-1] != "A":
-            print "ttiQl355tp.get_current() format error", ret
+            print("ttiQl355tp.get_current() format error", ret)
             return None
         return float(ret[:-1])
 
@@ -60,7 +61,7 @@ class ttiQl355tp(HardwareLayer):
         """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
         ret = self.ask("V%dO?" % channel)
         if ret[-1] != "V":
-            print "ttiQl355tp.get_voltage() format error", ret
+            print("ttiQl355tp.get_voltage() format error", ret)
             return None
         return float(ret[:-1])
 
@@ -68,7 +69,7 @@ class ttiQl355tp(HardwareLayer):
         """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
         ret = self.ask("V%d?" % channel)
         if ret[:3] != "V%d " % channel:
-            print "ttiQl355tp.get_voltage() format error", ret
+            print("ttiQl355tp.get_voltage() format error", ret)
             return None
         return float(ret[3:])
 
@@ -76,7 +77,7 @@ class ttiQl355tp(HardwareLayer):
         """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
         ret = self.ask("I%d?" % channel)
         if ret[:3] != "I%d " % channel:
-            print "ttiQl355tp.get_current_limit() format error", ret
+            print("ttiQl355tp.get_current_limit() format error", ret)
             return None
         return float(ret[3:])
 

@@ -8,6 +8,7 @@
 import logging
 
 from basil.HL.HardwareLayer import HardwareLayer
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +129,7 @@ class MIO_PLL(HardwareLayer):
                 break
             for self.div in range(2, 128):
                 q_d_f = self.q_total * self.div * fout
-                if isinstance(q_d_f, (long, int)) and q_d_f > (15 * self.fref):  # = f0 * p
+                if isinstance(q_d_f, six.integer_types) and q_d_f > (15 * self.fref):  # = f0 * p
                     if int(q_d_f) % int(self.fref) == 0:  # p, q, and d found
                         self.p_total = q_d_f / self.fref
                         while self.p_total <= 16:  # counter constraint
