@@ -93,11 +93,11 @@ class TestSimBDAQ53Eth(unittest.TestCase):
             time.sleep(0.01)
             tick = int(time.time() - start_time)
             if tick != tick_old:
-                print tick
+                print(tick)
                 tick_old = tick
 
             if doprint==True:
-                print data
+                print(data)
 
             for i in data:
                 if i<(len(data)-1): assert data[i] == data[i+1]-1   #Check, if received integers are increasing numbers
@@ -107,7 +107,7 @@ class TestSimBDAQ53Eth(unittest.TestCase):
                 break
 
         total_len_bits = total_len*32   #32-bit ints to bits
-        print ('Bits received:', total_len_bits, '  data rate:', round((total_len_bits/1e6/testduration),2), ' Mbit/s')
+        print('Bits received:', total_len_bits, '  data rate:', round((total_len_bits/1e6/testduration),2), ' Mbit/s')
 
         self.chip['GPIO_LED']['LED'] = 0x00  #stop data source
         self.chip['GPIO_LED'].write()
