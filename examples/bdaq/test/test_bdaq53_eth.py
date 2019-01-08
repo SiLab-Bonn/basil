@@ -12,40 +12,6 @@ import time
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
-
-cnfg_yaml = """
-transfer_layer:
-  - name  : INTF
-    type  : SiSim
-    init:
-        host : localhost
-        port  : 12345
-
-hw_drivers:
-  - name      : GPIO_DRV
-    type      : gpio
-    interface : INTF
-    base_addr : 0x1000
-    size      : 8
-
-  - name      : FIFO
-    type      : bram_fifo
-    interface : INTF
-    base_addr : 0x8000
-    base_data_addr: 0x80000000
-
-registers:
-  - name        : GPIO_LED
-    type        : StdRegister
-    hw_driver   : GPIO_DRV
-    size        : 8
-    fields:
-      - name    : LED
-        size    : 8
-        offset  : 7
-"""
-
-
 doprint=True
 IntsToReceive=1000
 
@@ -60,18 +26,16 @@ class TestSimBDAQ53Eth(unittest.TestCase):
            include_dirs = (proj_dir, proj_dir + '/firmware/src')
         )
 
-        '''
-        with open("test_bdaq53_eth.yaml") as conf_file:
+        with open("bdaq53_eth.yaml") as conf_file:
             try:
                 conf = yaml.load(conf_file)
             except yaml.YAMLError as exception:
                 print(exception)
 
-        conf['transfer_layer'][0]['type']
+        cnfg['transfer_layer'][0]['type'] = 'SiSim'
 
-        self.chip = Dut(conf)
-        self.chip.init()
-        '''
+        cnfg['hw_drivers'].append({'name': 'fifo', 'type': 'sram_fifo',
+                                   'interface': 'intf', 'base_addr': 0x8000, 'base_data_addr': 0x80000000})
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
