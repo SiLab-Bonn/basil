@@ -3,7 +3,7 @@
 # Reads data for a couple of seconds and displays the data rate
 #
 # Copyright (c) All rights reserved
-# SiLab, Institute of Physics, University of Bonn
+# SiLab, Physics Institute, University of Bonn
 # ------------------------------------------------------------
 #
 import logging
@@ -14,7 +14,7 @@ import numpy as np
 from basil.dut import Dut
 
 
-chip = Dut("bdaq.yaml")
+chip = Dut("bdaq53_eth.yaml")
 chip.init()
 
 chip['CONTROL']['EN'] = 0
