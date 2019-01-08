@@ -7,6 +7,7 @@
 # ------------------------------------------------------------
 #
 import unittest
+import yaml
 import os, sys
 import time
 from basil.dut import Dut
@@ -26,18 +27,25 @@ class TestSimBDAQ53Eth(unittest.TestCase):
            include_dirs = (proj_dir, proj_dir + '/firmware/src')
         )
 
-        with open("bdaq53_eth.yaml") as conf_file:
+        with open("../bdaq53_eth.yaml") as conf_file:
             try:
                 conf = yaml.load(conf_file)
             except yaml.YAMLError as exception:
                 print(exception)
 
-        cnfg['transfer_layer'][0]['type'] = 'SiSim'
+        conf['transfer_layer'][0]['type'] = 'SiSim'
+        conf['transfer_layer'][0]['tcp_connection'] = 'False'
 
-        cnfg['hw_drivers'].append({'name': 'fifo', 'type': 'sram_fifo',
+#        conf['hw_drivers']['FIFO'] = ({'name': 'fifo',
+#                                       'type': 'sram_fifo',
+#                                       'interface': 'intf',
+#                                       'base_addr': 0x8000,
+#                                       'base_data_addr': 0x80000000})
+
+        conf['hw_drivers'].append({'name': 'FIFO', 'type': 'sram_fifo',
                                    'interface': 'intf', 'base_addr': 0x8000, 'base_data_addr': 0x80000000})
 
-        self.chip = Dut(cnfg_yaml)
+        self.chip = Dut(conf)
         self.chip.init()
 
 
@@ -48,8 +56,8 @@ class TestSimBDAQ53Eth(unittest.TestCase):
         tick_old = 0
         start_time = time.time()
 
-        self.chip['GPIO_LED']['LED'] = 0x01  #start data source
-        self.chip['GPIO_LED'].write()
+        self.chip['CONTROL']['EN'] = 0x01  #start data source
+        self.chip['CONTROL'].write()
 
         while time.time() - start_time < testduration:
             data = self.chip['FIFO'].get_data()
@@ -73,8 +81,8 @@ class TestSimBDAQ53Eth(unittest.TestCase):
         total_len_bits = total_len*32   #32-bit ints to bits
         print('Bits received:', total_len_bits, '  data rate:', round((total_len_bits/1e6/testduration),2), ' Mbit/s')
 
-        self.chip['GPIO_LED']['LED'] = 0x00  #stop data source
-        self.chip['GPIO_LED'].write()
+        self.chip['CONTROL']['EN'] = 0x00  #stop data source
+        self.chip['CONTROL'].write()
 
 
     def tearDown(self):

@@ -6,7 +6,7 @@
 #
 
 transfer_layer:
-  - name  : INTF
+  - name  : intf
     type  : SiTcp
     init:
         ip : "192.168.10.16"
@@ -17,13 +17,13 @@ transfer_layer:
 hw_drivers:
   - name      : GPIO_DRV
     type      : gpio
-    interface : INTF
+    interface : intf
     base_addr : 0x1000
     size      : 8
 
   - name      : FIFO
     type      : sitcp_fifo
-    interface : INTF
+    interface : intf
     base_addr : 0x200000000
     base_data_addr : 0x100000000
 
