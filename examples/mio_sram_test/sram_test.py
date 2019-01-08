@@ -4,6 +4,7 @@
 # ------------------------------------------------------------
 #
 
+from __future__ import print_function
 import numpy as np
 
 from basil.dut import Dut
@@ -89,6 +90,6 @@ def test_register(count=10000):
 
 
 if __name__ == "__main__":
-    print 'test_register ...', 'errors:', test_register()
-    print 'test_direct ...', 'errors:', test_direct()
-    print 'test_sram ...', 'errors:', test_sram()
+    print('test_register ...', 'errors:', test_register())
+    print('test_direct ...', 'errors:', test_direct())
+    print('test_sram ...', 'errors:', test_sram())

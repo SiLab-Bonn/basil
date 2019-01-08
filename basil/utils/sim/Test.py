@@ -7,6 +7,7 @@
 # Initial version by Chris Higgs <chris.higgs@potentialventures.com>
 #
 
+from __future__ import print_function
 import os
 import socket
 import logging
@@ -125,7 +126,7 @@ def bringup_test(dut):
 
     ret = yield bus.read(0, 4)
 
-    print('bus.read', ret)
+    print(('bus.read', ret))
 
     for _ in range(10):
         yield RisingEdge(bus.clock)
