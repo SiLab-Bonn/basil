@@ -28,28 +28,28 @@ hw_drivers:
 
 registers:
   - name        : TEST1
-    type        : StdRegister
+    type        : Register
     hw_driver   : spi_module
     size        : 32
 
   - name        : TEST2
-    type        : StdRegister
+    type        : Register
     hw_driver   : spi_module
     size        : 20
     fields  :
           - name     : VINJECT
             size     : 6
-            offset   : 19
+            offset   : 14
             bit_order: [5,4,3,1,0,2]
             default  : 0
           - name     : VPULSE
             size     : 6
-            offset   : 13
+            offset   : 8
           - name     : EN
             size     : 2
-            offset   : 7
+            offset   : 6
           - name     : COLUMN
-            offset   : 5
+            offset   : 0
             size     : 3
             repeat   : 2
             fields   :
@@ -58,9 +58,8 @@ registers:
                 offset   : 2
               - name     : DACR
                 size     : 2
-                offset   : 1
+                offset   : 0
 """
-
 
 class TestClass(unittest.TestCase):
 
@@ -192,12 +191,13 @@ class TestClass(unittest.TestCase):
 
         self.dut['TEST2']['COLUMN'][0]['EnR'] = 1
         self.dut['TEST2'].write()
-        mem[17] = 0x02
+        mem[18] = 0b01000000
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
         self.dut['TEST2']['COLUMN'][1]['DACR'] = 1
         self.dut['TEST2'].write()
-        mem[18] = 0x10
+
+        mem[18] = 0b11000000
         self.assertDictEqual(mem, self.dut['dummy_tl'].mem)
 
     def test_default(self):
