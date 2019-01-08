@@ -1,4 +1,4 @@
-### Ethernet example for the MMC3 hardware
+### Ethernet example for the BDAQ hardware
 
 This example shows how to control a GPIO module and how to receive data via the Ethernet interface.
 
@@ -11,4 +11,4 @@ The firmware makes use of the free SiTcp Ethernet module ([SiTCP netlist on Gith
 3. Python receives the data and counts bytes during a given time period.
 4. At the end, the average data rate is printed and the FPGA data source is stopped by clearing bit [0].
 
-Test for CocoTB available in */firmware/test*
+Test for CocoTB will be available in */firmware/test*
