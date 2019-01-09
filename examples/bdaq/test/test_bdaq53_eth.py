@@ -27,7 +27,7 @@ class TestSimBDAQ53Eth(unittest.TestCase):
            include_dirs = (proj_dir, proj_dir + '/firmware/src')
         )
 
-        with open("../bdaq53_eth.yaml") as conf_file:
+        with open(proj_dir + '/bdaq53_eth.yaml') as conf_file:
             try:
                 conf = yaml.load(conf_file)
             except yaml.YAMLError as exception:
