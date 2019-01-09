@@ -198,8 +198,8 @@ class SiTcp(SiTransferLayer):
                 if rlist:
                     # Read just enough for the header,
                     # remaining meassge data is lost.
-                    ack = self._sock_udp.recv(3)
-                    logger.warning('SiTcp:_write_single - Pending data before send - Message ID: current: %d, read: %d' % (self.RBCP_ID, ord(ack[2])))
+                    ack = bytearray(self._sock_udp.recv(3))
+                    logger.warning('SiTcp:_write_single - Pending data before send - Message ID: current: %d, read: %d' % (self.RBCP_ID, ack[2]))
                 else:
                     break
             retry_write_cnt += 1
@@ -229,8 +229,8 @@ class SiTcp(SiTransferLayer):
                     else:
                         # Recv buffer needs to be longer than message size,
                         # otherwise remaining message data is not read out and is lost.
-                        ack = self._sock_udp.recv(1024)
-                        if ord(ack[2]) != self.RBCP_ID:
+                        ack = bytearray(self._sock_udp.recv(1024))
+                        if ack[2] != self.RBCP_ID:
                             if retry_read_cnt <= self.UDP_RETRANSMIT_CNT:
                                 logger.warning('SiTcp:_write_single - Wrong ID - Retry...')
                                 continue
@@ -250,15 +250,15 @@ class SiTcp(SiTransferLayer):
                                 raise IOError('SiTcp:_write_single - Data error - expected: %s, read: %s' % (data, array('B', ack)[8:]))
                         if len(ack) != len(request):
                             raise IOError('SiTcp:_write_single - Wrong message size')
-                        if (0x0f & ord(ack[1])) != 0x8:
+                        if (0x0f & ack[1]) != 0x8:
                             raise IOError('SiTcp:_write_single - Bus error')
                         while True:
                             rlist, _, _ = select.select([self._sock_udp], [], [], 0.0)
                             if rlist:
                                 # Read just enough for the header,
                                 # remaining meassge data is lost.
-                                ack = self._sock_udp.recv(3)
-                                logger.warning('SiTcp:_write_single - Pending data after recv - Message ID: current: %d, read: %d' % (self.RBCP_ID, ord(ack[2])))
+                                ack = bytearray(self._sock_udp.recv(3))
+                                logger.warning('SiTcp:_write_single - Pending data after recv - Message ID: current: %d, read: %d' % (self.RBCP_ID, ack[2]))
                             else:
                                 break
                         return
@@ -301,8 +301,8 @@ class SiTcp(SiTransferLayer):
                 if rlist:
                     # Read just enough for the header,
                     # remaining meassge data is lost.
-                    ack = self._sock_udp.recv(3)
-                    logger.warning('SiTcp:_read_single - Pending data before send - Message ID: current: %d, read: %d' % (self.RBCP_ID, ord(ack[2])))
+                    ack = bytearray(self._sock_udp.recv(3))
+                    logger.warning('SiTcp:_read_single - Pending data before send - Message ID: current: %d, read: %d' % (self.RBCP_ID, ack[2]))
                 else:
                     break
             retry_write_cnt += 1
@@ -332,8 +332,8 @@ class SiTcp(SiTransferLayer):
                     else:
                         # Recv buffer needs to be longer than message size,
                         # otherwise remaining message data is not read out and is lost.
-                        ack = self._sock_udp.recv(1024)
-                        if ord(ack[2]) != self.RBCP_ID:
+                        ack = bytearray(self._sock_udp.recv(1024))
+                        if ack[2] != self.RBCP_ID:
                             if retry_read_cnt <= self.UDP_RETRANSMIT_CNT:
                                 logger.warning('SiTcp:_read_single - Wrong ID - Retry...')
                                 continue
@@ -353,15 +353,15 @@ class SiTcp(SiTransferLayer):
                                 raise IOError('SiTcp:_read_single - Data error - expected: %s, read: %s' % (request[3:], array('B', ack)[8:]))
                         if len(ack) != size + 8:
                             raise IOError('SiTcp:_read_single - Wrong message size')
-                        if (0x0f & ord(ack[1])) != 0x8:
+                        if (0x0f & ack[1]) != 0x8:
                             raise IOError('SiTcp:_read_single - Bus error')
                         while True:
                             rlist, _, _ = select.select([self._sock_udp], [], [], 0.0)
                             if rlist:
                                 # Read just enough for the header,
                                 # remaining meassge data is lost.
-                                ack = self._sock_udp.recv(3)
-                                logger.warning('SiTcp:_read_single - Pending data after recv - Message ID: current: %d, read: %d' % (self.RBCP_ID, ord(ack[2])))
+                                ack = bytearray(self._sock_udp.recv(3))
+                                logger.warning('SiTcp:_read_single - Pending data after recv - Message ID: current: %d, read: %d' % (self.RBCP_ID, ack[2]))
                             else:
                                 break
                         return array('B', ack[8:])
@@ -403,8 +403,8 @@ class SiTcp(SiTransferLayer):
                 time_read = time()
                 if rlist:
                     with self._tcp_lock:
-                        data = self._sock_tcp.recv(1024 * 8)
-                        self._tcp_read_buff.extend(array('B', data))
+                        data = bytearray(self._sock_tcp.recv(1024 * 8))
+                        self._tcp_read_buff.extend(data)
             except AttributeError:
                 pass
 
