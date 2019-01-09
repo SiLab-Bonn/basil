@@ -47,7 +47,7 @@ class Serial(TransferLayer):
     def read(self, size=None):
         if size is None:
             return self._readline()
-        return self._port.read(size)
+        return bytearray(self._port.read(size))
 
     def query(self, data):
         if self._port.inWaiting():
@@ -71,4 +71,4 @@ class Serial(TransferLayer):
             data += character
             if not character:
                 break
-        return bytes(data)
+        return data
