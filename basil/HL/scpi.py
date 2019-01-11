@@ -41,7 +41,7 @@ class scpi(HardwareLayer):
         except IOError:
             raise RuntimeError('Cannot find a device description for ' + self._init['device'] + '. Consider adding it!')
         if 'identifier' in self._scpi_commands and self._scpi_commands['identifier']:
-            name = str(self.get_name())
+            name = self.get_name()
             if self._scpi_commands['identifier'] not in name:
                 raise RuntimeError('Wrong device description (' + self._init['device'] + ') loaded for ' + name)
 
