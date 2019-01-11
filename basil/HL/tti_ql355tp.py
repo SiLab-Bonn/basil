@@ -60,7 +60,7 @@ class ttiQl355tp(HardwareLayer):
     def get_voltage(self, channel):
         """ channel: 1=OP1, 2=OP2, AUX is not supported"""
         ret = self.ask("V%dO?" % channel)
-        if ret[-1] != b"V":
+        if ret[-1] != "V":
             print("ttiQl355tp.get_voltage() format error", ret)
             return None
         return float(ret[:-1])
