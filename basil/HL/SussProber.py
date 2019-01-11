@@ -33,7 +33,7 @@ class SussProber(HardwareLayer):
 
     def get_position(self):
         ''' Read chuck position (x, y, z)'''
-        reply = str(self._intf.query('ReadChuckPosition Y H'))[14:]
+        reply = self._intf.query('ReadChuckPosition Y H')[2:]
         return [float(i) for i in reply.split()]
 
     def goto_die(self, index_x, index_y):
@@ -51,7 +51,7 @@ class SussProber(HardwareLayer):
     def get_die(self):
         ''' Move chuck to wafer map chip index'''
         reply = self._intf.query('ReadMapPosition')
-        values = str(reply)[14:].split(' ')
+        values = reply[2:].split(' ')
         return (int(values[0]), int(values[1]))
 
     def contact(self):
