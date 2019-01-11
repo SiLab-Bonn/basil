@@ -40,9 +40,9 @@ class Serial(TransferLayer):
 
     def write(self, data):
         if self.write_termination is None:
-            self._port.write(bytes(data))
+            self._port.write(bytes(data, 'ascii'))
         else:
-            self._port.write(bytes(data + self.write_termination))
+            self._port.write(bytes(data + self.write_termination, 'ascii'))
 
     def read(self, size=None):
         if size is None:
