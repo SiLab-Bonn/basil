@@ -10,7 +10,7 @@
 #
 
 
-set basil_dir [exec python -c "import basil, os; print str(os.path.dirname(os.path.dirname(basil.__file__)))"]
+set basil_dir [exec python -c "import basil, os; print str(os.path.dirname(basil.__file__))"]
 set include_dirs [list $basil_dir/firmware/modules $basil_dir/firmware/modules/utils]
 
 file mkdir output reports
