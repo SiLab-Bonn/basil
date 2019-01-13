@@ -40,14 +40,14 @@ class Serial(TransferLayer):
 
     def write(self, data):
         if self.write_termination is None:
-            self._port.write(bytes(data))
+            self._port.write(bytes(data, 'utf-8'))
         else:
-            self._port.write(bytes(data + self.write_termination))
+            self._port.write(bytes(data + self.write_termination, 'utf-8'))
 
     def read(self, size=None):
         if size is None:
             return self._readline()
-        return self._port.read(size)
+        return bytearray(self._port.read(size))
 
     def query(self, data):
         if self._port.inWaiting():
@@ -71,4 +71,4 @@ class Serial(TransferLayer):
             data += character
             if not character:
                 break
-        return bytes(data)
+        return data.decode('utf-8')

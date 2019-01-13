@@ -6,6 +6,7 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
+from __future__ import print_function
 import unittest
 import os, sys
 import time
@@ -107,7 +108,7 @@ class TestSimMMC3Eth(unittest.TestCase):
                 break
 
         total_len_bits = total_len*32   #32-bit ints to bits
-        print ('Bits received:', total_len_bits, '  data rate:', round((total_len_bits/1e6/testduration),2), ' Mbit/s')
+        print(('Bits received:', total_len_bits, '  data rate:', round((total_len_bits/1e6/testduration),2), ' Mbit/s'))
 
         self.chip['GPIO_LED']['LED'] = 0x00  #stop data source
         self.chip['GPIO_LED'].write()

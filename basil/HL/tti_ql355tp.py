@@ -5,6 +5,7 @@
 # ------------------------------------------------------------
 #
 
+from __future__ import print_function
 import time
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
@@ -34,7 +35,7 @@ class ttiQl355tp(HardwareLayer):
     def read(self):
         ret = self._intf.read()
         if ret[-2:] != "\r\n":
-            print "ttiTp355tp.read() terminator error"
+            print("ttiTp355tp.read() terminator error")
         return ret[:-2]
 
     def set_enable(self, on, channel=1):
@@ -49,44 +50,44 @@ class ttiQl355tp(HardwareLayer):
         return self.ask("*IDN?")
 
     def get_current(self, channel):
-        """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
+        """ channel: 1=OP1, 2=OP2, AUX is not supported"""
         ret = self.ask("I%dO?" % channel)
         if ret[-1] != "A":
-            print "ttiQl355tp.get_current() format error", ret
+            print("ttiQl355tp.get_current() format error", ret)
             return None
         return float(ret[:-1])
 
     def get_voltage(self, channel):
-        """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
+        """ channel: 1=OP1, 2=OP2, AUX is not supported"""
         ret = self.ask("V%dO?" % channel)
         if ret[-1] != "V":
-            print "ttiQl355tp.get_voltage() format error", ret
+            print("ttiQl355tp.get_voltage() format error", ret)
             return None
         return float(ret[:-1])
 
     def get_set_voltage(self, channel):
-        """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
+        """ channel: 1=OP1, 2=OP2, AUX is not supported"""
         ret = self.ask("V%d?" % channel)
         if ret[:3] != "V%d " % channel:
-            print "ttiQl355tp.get_voltage() format error", ret
+            print("ttiQl355tp.get_voltage() format error", ret)
             return None
         return float(ret[3:])
 
     def get_current_limit(self, channel):
-        """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
+        """ channel: 1=OP1, 2=OP2, AUX is not supported"""
         ret = self.ask("I%d?" % channel)
         if ret[:3] != "I%d " % channel:
-            print "ttiQl355tp.get_current_limit() format error", ret
+            print("ttiQl355tp.get_current_limit() format error", ret)
             return None
         return float(ret[3:])
 
     def set_voltage(self, value, channel=1):
-        """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
+        """ channel: 1=OP1, 2=OP2, AUX is not supported"""
         cmd = "V%d %f" % (channel, value)
         self.write(cmd)
 
     def set_current_limit(self, value, channel=1):
-        """ channel: 1=OP1, 2=OP2, AUX is not suppoted"""
+        """ channel: 1=OP1, 2=OP2, AUX is not supported"""
         cmd = "I%d %f" % (channel, value)
         self.write(cmd)
 

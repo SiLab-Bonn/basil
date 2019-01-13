@@ -119,7 +119,7 @@ class binderMK53(HardwareLayer):
             raise RuntimeWarning('Checksum of read data wrong')
         n_words = n_bytes >> 1
         words = []
-        for word in xrange(n_words):
+        for word in range(n_words):
             words.extend(struct.unpack('>H', msgbytes[3 + word * 2:5 + word * 2]))
         return words
 
@@ -168,8 +168,8 @@ class binderMK53(HardwareLayer):
     def _calc_crc16(self, msg):
         crc = 0xffff
         for byte in msg:
-            crc ^= ord(byte)
-            for _ in xrange(8):  # loop bits
+            crc ^= byte
+            for _ in range(8):  # loop bits
                 sbit = crc & 1
                 crc >>= 1
                 crc ^= sbit * 0xA001

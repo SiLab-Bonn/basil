@@ -17,6 +17,7 @@ Communicate via a socket to the simulator
 
 """
 
+from __future__ import print_function
 import socket
 import array
 
@@ -84,8 +85,8 @@ class SiUSBDevice(object):
         self._iface.send(req)
 
     def WriteI2C(self, address, data):
-        print 'SiUSBDevice:WriteI2C', address, data  # raise NotImplementedError("To be implemented.")
+        print('SiUSBDevice:WriteI2C', address, data)  # raise NotImplementedError("To be implemented.")
 
     def ReadI2C(self, address, size):
-        print 'SiUSBDevice:ReadI2C'  # raise NotImplementedError("To be implemented.")
+        print('SiUSBDevice:ReadI2C')  # raise NotImplementedError("To be implemented.")
         return array.array('B', range(size))
