@@ -28,8 +28,10 @@ class Serial(TransferLayer):
         Plus termination string parameter eol
         '''
         super(Serial, self).init()
-        self.read_termination = bytes(self._init.get('read_termination', None), 'utf-8')
+        self.read_termination = self._init.get('read_termination', None)
         self.write_termination = self._init.get('write_termination', self.read_termination)
+        self.read_termination = bytes(self.read_termination, 'utf-8')
+        self.write_termination = bytes(self.write_termination, 'utf-8')
         self.timeout = self._init.get('timeout', None)  # timeout of 0 returns immediately
 
         self._port = serial.Serial(**{key: value for key, value in self._init.items() if key not in ("read_termination", "write_termination")})
@@ -42,7 +44,7 @@ class Serial(TransferLayer):
         if self.write_termination is None:
             self._port.write(bytes(data, 'utf-8'))
         else:
-            self._port.write(bytes(data + self.write_termination, 'utf-8'))
+            self._port.write(bytes(data, 'utf-8') + self.write_termination)
 
     def read(self, size=None):
         if size is None:
