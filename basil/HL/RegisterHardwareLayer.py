@@ -12,6 +12,7 @@ import array
 from collections import namedtuple
 from six import integer_types
 
+from basil.utils.utils import tobytes
 from basil.utils.BitLogic import BitLogic
 from basil.HL.HardwareLayer import HardwareLayer
 
@@ -104,7 +105,7 @@ class RegisterHardwareLayer(HardwareLayer):
         else:
             ret = self._intf.read(self._base_addr + addr + div_offset, size=div_size)
             reg = BitLogic()
-            reg.frombytes(ret.tostring())
+            reg.frombytes(tobytes(ret))
         reg[size + mod_offset - 1:mod_offset] = value
         self._intf.write(self._base_addr + addr + div_offset, data=array.array('B', reg.tobytes()))
 
@@ -131,7 +132,7 @@ class RegisterHardwareLayer(HardwareLayer):
             div_size += 1
         ret = self._intf.read(self._base_addr + addr + div_offset, size=div_size)
         reg = BitLogic()
-        reg.frombytes(ret.tostring())
+        reg.frombytes(tobytes(ret))
         return reg[size + mod_offset - 1:mod_offset].tovalue()
 
     def set_bytes(self, data, addr, **kwargs):

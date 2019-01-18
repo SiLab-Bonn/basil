@@ -25,7 +25,7 @@ def logging(fn):
 def bitvector_to_byte_array(bitvector):
     bsize = len(bitvector)
     size_bytes = int(((bsize - 1) / 8) + 1)
-    bs = array.array('B', bitvector.vector.tostring())[0:size_bytes]
+    bs = tobytes(array.array('B', bitvector.vector))[0:size_bytes]
     bitstream_swap = ''
     lsbits = lambda b: (b * 0x0202020202 & 0x010884422010) % 1023
     for b in bs:
@@ -39,3 +39,13 @@ def bitarray_to_byte_array(bitarr):
     bs = np.fromstring(ba.tobytes(), dtype=np.uint8)  # byte padding happens here, bitarray.tobytes()
     bs = (bs * 0x0202020202 & 0x010884422010) % 1023
     return array.array('B', bs.astype(np.uint8))
+
+# Python 2/3 compatibility function for array.tobytes function
+try:
+    array.tobytes
+except AttributeError:
+    def tobytes(v):
+        return v.tostring()
+else:
+    def tobytes(v):
+        return v.tobytes()

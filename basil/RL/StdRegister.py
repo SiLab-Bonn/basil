@@ -171,7 +171,7 @@ class StdRegister(RegisterLayer):
 
     def frombytes(self, value):
         bl_value = BitLogic()
-        bl_value.frombytes(array.array('B', value)[::-1].tostring())
+        bl_value.frombytes(utils.tobytes(array.array('B', value)[::-1]))
         self._deconstruct_reg(bl_value[self._conf['size']:])
 
     def get_configuration(self):
