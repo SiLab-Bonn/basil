@@ -43,9 +43,9 @@ def bitarray_to_byte_array(bitarr):
 # Python 2/3 compatibility function for array.tobytes function
 try:
     array.tobytes
-except AttributeError:
+except AttributeError:  # Python 2
     def tobytes(v):
         return v.tostring()
-else:
+else:  # Python 3
     def tobytes(v):
         return v.tobytes()
