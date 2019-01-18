@@ -6,7 +6,8 @@
 #
 
 from __future__ import print_function
-import array
+from array import array
+
 import numpy as np
 from bitarray import bitarray
 
