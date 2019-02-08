@@ -66,6 +66,5 @@ class Dummy(SiTransferLayer):
         array : array
             Data (byte array) read from memory. Returns 0 for each byte if it hasn't been written to.
         '''
-        logger.debug("Dummy SiTransferLayer.read addr: %s size: %s" %
-                      (hex(addr), size))
+        logger.debug("Dummy SiTransferLayer.read addr: %s size: %s" % (hex(addr), size))
         return array.array('B', [self.mem[curr_addr] if curr_addr in self.mem else 0 for curr_addr in range(addr, addr + size)])

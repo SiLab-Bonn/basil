@@ -61,8 +61,8 @@ class SiUart(TransferLayer):
         if "OK" in self._ser.readall():
             logger.debug("Addr is okay")
 
-        l = array.array('B', 'l') + array.array('B', pack("<I", len(data)))
-        self._ser.write(l)
+        length_bytes = array.array('B', 'l') + array.array('B', pack("<I", len(data)))
+        self._ser.write(length_bytes)
         if "OK" in self._ser.readall():
             logger.debug("Length is okay")
 
@@ -87,8 +87,8 @@ class SiUart(TransferLayer):
         if "OK" in self._ser.readall():
             logger.debug("Addr is okay")
 
-        l = array.array('B', 'l') + array.array('B', pack("<I", size))
-        self._ser.write(l)
+        length_bytes = array.array('B', 'l') + array.array('B', pack("<I", size))
+        self._ser.write(length_bytes)
         if "OK" in self._ser.readall():
             logger.debug("Length is okay")
 

@@ -15,4 +15,3 @@ dut = Dut('mercury_pyserial.yaml')
 dut.init()
 print(dut["MotorStage"].get_position())
 # dut["MotorStage"].set_position(100000)
-

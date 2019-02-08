@@ -43,7 +43,7 @@ class Base(object):
 
     def _open_conf(self, conf):
         def isFile(f):
-            return isinstance(f,file) if sys.version_info[0] == 2 else hasattr(f, 'read')    
+            return isinstance(f, file) if sys.version_info[0] == 2 else hasattr(f, 'read')
 
         conf_dict = {}
         if not conf:

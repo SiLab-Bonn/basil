@@ -6,8 +6,10 @@
 #
 
 import struct
+
 from bitarray import bitarray
 from six import integer_types
+
 
 class BitLogic(bitarray):
     def __new__(cls, *args, **kwargs):
