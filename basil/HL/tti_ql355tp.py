@@ -12,7 +12,7 @@ from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 
 class ttiQl355tp(HardwareLayer):
-    ''' HL for the TTi QL3335TP.
+    ''' HL for the TTi QL355TP.
     '''
 
     def __init__(self, intf, conf):
@@ -46,7 +46,7 @@ class ttiQl355tp(HardwareLayer):
             cmd = "OP%d %d" % (channel, int(on))
         self.write(cmd)
 
-    def get_info(self):
+    def get_name(self):
         return self.ask("*IDN?")
 
     def get_current(self, channel):
