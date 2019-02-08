@@ -48,3 +48,14 @@ script:
 
 after_success:
   - coveralls
+
+deploy:
+  provider: pypi
+  user: davidlp
+  password:
+    secure: EWWzZuUU5hJAd9iVPr4kPYbs1wbm7D8eVU596GUH8ZI/Q4seXsYeL+Pi++FI6M268qNUGJuVsvWbU5S+/E74VmIeU3b0n6BNSfUas0tSqMmazN/Sj0iMtGJ3Tll5Z7JfPK2RbZfBvSHN5T9W5RXz7M2US0x88ATrNVt3iuRNqWQ=
+  on:
+    tags: true
+    repo: SiLab-Bonn/basil
+  skip_existing: true
+  distributions: sdist bdist_wheel
