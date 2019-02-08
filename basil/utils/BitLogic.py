@@ -6,7 +6,9 @@
 #
 
 import struct
+
 from bitarray import bitarray
+from six import integer_types
 
 
 class BitLogic(bitarray):
@@ -42,11 +44,11 @@ class BitLogic(bitarray):
         Append from a int/long number.
         '''
         if size and value.bit_length() > size:
-            raise ValueError('Value is too big for given size')
+            raise TypeError('Value is too big for given size')
         self.frombytes(struct.pack(fmt, value))
         if size:
-            if not isinstance(size, (int, long)) or not size > 0:
-                raise ValueError('Size must be greater than zero')
+            if not isinstance(size, integer_types) or not size > 0:
+                raise TypeError('Size must be greater than zero')
             if size > self.length():
                 bitarray.extend(self, (size - self.length()) * [0])
             else:
@@ -58,7 +60,7 @@ class BitLogic(bitarray):
         '''
         format_size = struct.calcsize(fmt)
         if self.length() > format_size * 8:
-            raise ValueError('Cannot convert to number')
+            raise TypeError('Cannot convert to number')
         ba = self.copy()
         ba.extend((format_size * 8 - self.length()) * [0])
         return struct.unpack_from(fmt, ba.tobytes())[0]
@@ -84,7 +86,7 @@ class BitLogic(bitarray):
             # item is bit string
             _ = int(item, base=2)
         except TypeError:
-            if type(item) in (int, long):
+            if isinstance(item, integer_types):
                 # item is number, bool
                 slc = self._swap_slice_indices(key, make_slice=True)
                 size = slc.stop - slc.start

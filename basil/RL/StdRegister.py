@@ -10,7 +10,7 @@ import array
 from basil.RL.RegisterLayer import RegisterLayer
 from basil.utils.BitLogic import BitLogic
 from basil.utils import utils
-
+from six import integer_types
 
 class StdRegister(RegisterLayer):
     def __init__(self, driver, conf):
@@ -67,7 +67,7 @@ class StdRegister(RegisterLayer):
                 for i, bit in enumerate(self._get_field_config(key)['bit_order']):
                     new_val[len(self._fields[key]) - 1 - i] = self._fields[key][bit]
                 self._fields[key] = new_val
-        elif isinstance(key, (int, long)):
+        elif isinstance(key, integer_types):
             reg = self._construct_reg()
             reg[key] = value
             self._deconstruct_reg(reg)
@@ -171,7 +171,7 @@ class StdRegister(RegisterLayer):
 
     def frombytes(self, value):
         bl_value = BitLogic()
-        bl_value.frombytes(array.array('B', value)[::-1].tostring())
+        bl_value.frombytes(utils.tobytes(array.array('B', value)[::-1]))
         self._deconstruct_reg(bl_value[self._conf['size']:])
 
     def get_configuration(self):
@@ -195,11 +195,11 @@ class StdRegister(RegisterLayer):
             return str(reg[:])
 
     def set_configuration(self, conf):
-        for name, value in conf.iteritems():
+        for name, value in conf.items():
             if name in self._fields:
                 if 'repeat' in self._fields_conf[name]:
                     for i, rep_val_dict in enumerate(value):
-                        for rep_name, rep_value in rep_val_dict.iteritems():
+                        for rep_name, rep_value in rep_val_dict.items():
                             self[name][i][rep_name] = rep_value
                 else:
                     self[name] = value

@@ -62,7 +62,7 @@ class sram_fifo(RegisterHardwareLayer):
         '''
         fifo_size = self.FIFO_SIZE
         # sometimes reading of FIFO size happens during writing to SRAM, but we want to have a multiplicity of 32 bits
-        return (fifo_size - (fifo_size % 4)) / 4
+        return int((fifo_size - (fifo_size % 4)) / 4)
 
     def get_fifo_int_size(self):
         ''' *Deprecated* Get FIFO size in units of integers (32 bit).

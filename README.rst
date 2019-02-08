@@ -42,7 +42,7 @@ or install via PyPI into the Python's site-packages folder (for non-developers):
 
     pip install basil_daq==version
 
-where version is a version number (e.g., 2.4.13)
+where version is a version number (e.g., 3.0.0)
 
 or install from git, when no PyPI package is available (for non-developers):
 
@@ -50,7 +50,7 @@ or install from git, when no PyPI package is available (for non-developers):
 
     pip install git+https://github.com/SiLab-Bonn/basil.git@branch
 
-where branch is a branch name or tag (e.g., master or v2.4.13).
+where branch is a branch name or tag (e.g., master or v3.0.0).
 
 Check `.travis.yml <.travis.yml>`_ for installation/testing hints.
 

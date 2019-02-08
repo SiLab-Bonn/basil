@@ -131,7 +131,7 @@ class weissSB22(HardwareLayer):
 
     def _calc_crc(self, msg):
         ASCII = "0123456789ABCDEF"
-        mod_256 = (-(sum(ord(i) for i in msg) % 256) & 0xFF)
+        mod_256 = (-(sum(i for i in msg) % 256) & 0xFF)
         lword = (mod_256 & 0xF0) >> 4
         hword = mod_256 & 0x0F
         return ASCII[lword] + ASCII[hword]

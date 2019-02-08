@@ -33,13 +33,13 @@ class SussProber(HardwareLayer):
 
     def get_position(self):
         ''' Read chuck position (x, y, z)'''
-        reply = self._intf.query('ReadChuckPosition Y H')
-        return [float(i) for i in reply[2:].split()]
+        reply = self._intf.query('ReadChuckPosition Y H')[2:]
+        return [float(i) for i in reply.split()]
 
     def goto_die(self, index_x, index_y):
         ''' Move chuck to wafer map chip index'''
         self._intf.write('StepNextDie %d %d' % (index_x, index_y))
-        
+
     def goto_next_die(self):
         ''' Move chuck to next die from wafer map'''
         self._intf.write('StepNextDie')
@@ -52,7 +52,7 @@ class SussProber(HardwareLayer):
         ''' Move chuck to wafer map chip index'''
         reply = self._intf.query('ReadMapPosition')
         values = reply[2:].split(' ')
-        return (values[0], values[1])
+        return (int(values[0]), int(values[1]))
 
     def contact(self):
         ''' Move chuck to contact z position'''
@@ -61,7 +61,7 @@ class SussProber(HardwareLayer):
     def separate(self):
         ''' Move chuck to separation z position'''
         self._intf.write('MoveChuckSeparation')
-        
+
     def load(self):
         ''' Move chuck to load z position'''
         self._intf.write('MoveChuckLoad')

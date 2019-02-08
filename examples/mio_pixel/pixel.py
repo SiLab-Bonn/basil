@@ -6,6 +6,7 @@
 #
 
 
+from __future__ import print_function
 import time
 
 import numpy as np
@@ -110,7 +111,7 @@ if __name__ == "__main__":
 
     # Set the output voltage on the pins
     chip['PWRAC'].set_voltage("VDDD1", 1.2)
-    print "VDDD1", chip['PWRAC'].get_voltage("VDDD1"), chip['PWRAC'].get_current("VDDD1")
+    print(("VDDD1", chip['PWRAC'].get_voltage("VDDD1"), chip['PWRAC'].get_current("VDDD1")))
 
     # settings for global register (to input into global SR)
     # can be an integer representing the binary number desired,
@@ -137,7 +138,7 @@ if __name__ == "__main__":
     chip['GLOBAL_REG']['vth'] = 0  # size = 8
     chip['GLOBAL_REG']['PrmpVbf'] = 0  # size = 8
 
-    print "program global register..."
+    print("program global register...")
     chip.program_global_reg()
 
     # settings for pixel register (to input into pixel SR)
@@ -147,14 +148,14 @@ if __name__ == "__main__":
     chip['PIXEL_REG'][:] = bitarray('10' * 64)
     chip['PIXEL_REG'][0] = 0
 
-    print "program pixel register..."
+    print("program pixel register...")
     chip.program_pixel_reg()
 
     # Get output size in bytes
-    print "chip['DATA'].get_FIFO_SIZE() = ", chip['DATA'].get_FIFO_SIZE()
+    print(("chip['DATA'].get_FIFO_SIZE() = ", chip['DATA'].get_FIFO_SIZE()))
 
     # Get output in bytes
-    print "chip['DATA'].get_data()"
+    print("chip['DATA'].get_data()")
     rxd = chip['DATA'].get_data()  # get data from sram fifo
 
     data0 = rxd.astype(np.uint8)  # Change type to unsigned int 8 bits and take from rxd only the last 8 bits
@@ -162,5 +163,5 @@ if __name__ == "__main__":
     data = np.reshape(np.vstack((data1, data0)), -1, order='F')  # data is now a 1 dimensional array of all bytes read from the FIFO
     bdata = np.unpackbits(data)
 
-    print "data = ", data
-    print "bdata = ", bdata
+    print(("data = ", data))
+    print(("bdata = ", bdata))

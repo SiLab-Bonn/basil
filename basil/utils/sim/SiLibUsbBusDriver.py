@@ -69,14 +69,14 @@ class SiLibUsbBusDriver(BusDriver):
         result = []
         if(address >= self.BASE_ADDRESS_I2C and address < self.HIGH_ADDRESS_I2C):
             self.entity._log.warning("I2C address space supported in simulation!")
-            for byte in xrange(size):
+            for byte in range(size):
                 result.append(0)
         elif(address >= self.BASE_ADDRESS_EXTERNAL and address < self.HIGH_ADDRESS_EXTERNAL):
-            for byte in xrange(size):
+            for byte in range(size):
                 val = yield self.read_external(address - self.BASE_ADDRESS_EXTERNAL + byte)
                 result.append(val)
         elif(address >= self.BASE_ADDRESS_BLOCK and address < self.HIGH_ADDRESS_BLOCK):
-            for byte in xrange(size):
+            for byte in range(size):
                 val = yield self.fast_block_read()
                 result.append(val)
         else:

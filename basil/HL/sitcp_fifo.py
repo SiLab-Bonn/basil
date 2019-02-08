@@ -22,7 +22,7 @@ class sitcp_fifo(HardwareLayer):
 
     def __getitem__(self, name):
         if name == "RESET":
-            self._intf.reset_fifo()  # returns None
+            self._intf.reset()  # returns None
         elif name == 'VERSION':
             return self._version
         elif name == 'FIFO_SIZE':
@@ -32,7 +32,7 @@ class sitcp_fifo(HardwareLayer):
 
     def __setitem__(self, name, value):
         if name == "RESET":
-            self._intf.reset_fifo()
+            self._intf.reset()
         else:
             super(sitcp_fifo, self).__setitem__(name, value)
 
@@ -67,7 +67,7 @@ class sitcp_fifo(HardwareLayer):
             Array of unsigned integers (32 bit).
         '''
         fifo_size = self._intf._get_tcp_data_size()
-        fifo_int_size = (fifo_size - (fifo_size % 4)) / 4
+        fifo_int_size = int((fifo_size - (fifo_size % 4)) / 4)
         data = self._intf._get_tcp_data(fifo_int_size * 4)
         return np.frombuffer(data, dtype=np.dtype('<u4'))
 

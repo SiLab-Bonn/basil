@@ -11,6 +11,7 @@ from yaml import safe_load
 import sys
 import warnings
 from collections import OrderedDict
+from six import string_types, iteritems, itervalues
 
 # FIXME: Bad practice
 # Logger settings should not be defined in a module, but once by the
@@ -41,10 +42,13 @@ class Base(object):
             self._update_init(self._conf['init'])
 
     def _open_conf(self, conf):
+        def isFile(f):
+            return isinstance(f, file) if sys.version_info[0] == 2 else hasattr(f, 'read')
+
         conf_dict = {}
         if not conf:
             pass
-        elif isinstance(conf, basestring):  # parse the first YAML document in a stream
+        elif isinstance(conf, string_types):  # parse the first YAML document in a stream
             if os.path.isfile(conf):
                 with open(conf, 'r') as f:
                     conf_dict.update(safe_load(f))
@@ -54,7 +58,7 @@ class Base(object):
                     conf_dict.update(safe_load(conf))
                 except ValueError:  # invalid path/filename
                     raise IOError("File not found: %s" % conf)
-        elif isinstance(conf, file):  # parse the first YAML document in a stream
+        elif isFile(conf):  # parse the first YAML document in a stream
             conf_dict.update(safe_load(conf))
             conf_dict.update(conf_path=conf.name)
         else:  # conf is already a dict
@@ -114,13 +118,13 @@ class Dut(Base):
             except NotImplementedError:
                 pass
 
-        for item in self._transfer_layer.itervalues():
+        for item in itervalues(self._transfer_layer):
             update_init(item)
             catch_exception_on_init(item)
-        for item in self._hardware_layer.itervalues():
+        for item in itervalues(self._hardware_layer):
             update_init(item)
             catch_exception_on_init(item)
-        for item in self._registers.itervalues():
+        for item in itervalues(self._registers):
             update_init(item)
             catch_exception_on_init(item)
 
@@ -133,17 +137,17 @@ class Dut(Base):
                     # restore status after close() failed
                     mod._is_initialized = True
 
-        for item in self._registers.itervalues():
+        for item in itervalues(self._registers):
             catch_exception_on_close(item)
-        for item in self._hardware_layer.itervalues():
+        for item in itervalues(self._hardware_layer):
             catch_exception_on_close(item)
-        for item in self._transfer_layer.itervalues():
+        for item in itervalues(self._transfer_layer):
             catch_exception_on_close(item)
 
     def set_configuration(self, conf):
         conf = self._open_conf(conf)
         if conf:
-            for item, item_conf in conf.iteritems():
+            for item, item_conf in iteritems(conf):
                 if item != 'conf_path':
                     try:
                         self[item].set_configuration(item_conf)
@@ -152,17 +156,17 @@ class Dut(Base):
 
     def get_configuration(self):
         conf = {}
-        for key, value in self._registers.iteritems():
+        for key, value in iteritems(self._registers):
             try:
                 conf[key] = value.get_configuration()
             except NotImplementedError:
                 conf[key] = {}
-        for key, value in self._hardware_layer.iteritems():
+        for key, value in iteritems(self._hardware_layer):
             try:
                 conf[key] = value.get_configuration()
             except NotImplementedError:
                 conf[key] = {}
-        for key, value in self._transfer_layer.iteritems():
+        for key, value in iteritems(self._transfer_layer):
             try:
                 conf[key] = value.get_configuration()
             except NotImplementedError:
@@ -300,11 +304,11 @@ class Dut(Base):
         return modules
 
     def __iter__(self):
-        for item in self._registers.itervalues():
+        for item in itervalues(self._registers):
             yield item
-        for item in self._hardware_layer.itervalues():
+        for item in itervalues(self._hardware_layer):
             yield item
-        for item in self._transfer_layer.itervalues():
+        for item in itervalues(self._transfer_layer):
             yield item
 
     # TODO:

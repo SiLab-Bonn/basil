@@ -8,10 +8,10 @@
 ''' This script shows how to use a Motor Stage
 '''
 
+from __future__ import print_function
 from basil.dut import Dut
 
 dut = Dut('mercury_pyserial.yaml')
 dut.init()
-print dut["MotorStage"].get_position()
+print(dut["MotorStage"].get_position())
 # dut["MotorStage"].set_position(100000)
-

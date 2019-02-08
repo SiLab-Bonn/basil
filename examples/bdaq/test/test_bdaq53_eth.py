@@ -3,78 +3,49 @@
 # Reads data for a couple of seconds and displays the data rate
 #
 # Copyright (c) All rights reserved
-# SiLab, Institute of Physics, University of Bonn
+# SiLab, Physics Institute, University of Bonn
 # ------------------------------------------------------------
 #
-from __future__ import print_function
 import unittest
+import yaml
 import os, sys
 import time
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
-
-cnfg_yaml = """
-transfer_layer:
-  - name  : INTF
-    type  : SiSim
-    init:
-        host : localhost
-        port  : 12345
-
-hw_drivers:
-  - name      : GPIO_DRV
-    type      : gpio
-    interface : INTF
-    base_addr : 0x1000
-    size      : 8
-
-  - name      : FIFO
-    type      : bram_fifo
-    interface : INTF
-    base_addr : 0x8000
-    base_data_addr: 0x80000000
-
-registers:
-  - name        : GPIO_LED
-    type        : StdRegister
-    hw_driver   : GPIO_DRV
-    size        : 8
-    fields:
-      - name    : LED
-        size    : 8
-        offset  : 7
-"""
-
-
 doprint=True
 IntsToReceive=1000
 
-class TestSimMMC3Eth(unittest.TestCase):
+class TestSimBDAQ53Eth(unittest.TestCase):
     def setUp(self):
         sys.path = [os.path.dirname(os.getcwd())] + sys.path
         proj_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
         cocotb_compile_and_run(
-           sim_files = [proj_dir + '/test/mmc3_eth_tb.v'],
+           sim_files = [proj_dir + '/test/bdaq53_eth_tb.v'],
            top_level = 'tb',
-           include_dirs = (proj_dir, proj_dir + '/src')
+           include_dirs = (proj_dir, proj_dir + '/firmware/src')
         )
 
-        '''
-        with open("test_mmc3_eth.yaml") as conf_file:
+        with open(proj_dir + '/bdaq53_eth.yaml') as conf_file:
             try:
                 conf = yaml.load(conf_file)
             except yaml.YAMLError as exception:
                 print(exception)
 
-        conf['transfer_layer'][0]['type']
+        conf['transfer_layer'][0]['type'] = 'SiSim'
+        conf['transfer_layer'][0]['tcp_connection'] = 'False'
+
+#        conf['hw_drivers']['FIFO'] = ({'name': 'fifo',
+#                                       'type': 'sram_fifo',
+#                                       'interface': 'intf',
+#                                       'base_addr': 0x8000,
+#                                       'base_data_addr': 0x80000000})
+
+        conf['hw_drivers'].append({'name': 'FIFO', 'type': 'sram_fifo',
+                                   'interface': 'intf', 'base_addr': 0x8000, 'base_data_addr': 0x80000000})
 
         self.chip = Dut(conf)
-        self.chip.init()
-        '''
-
-        self.chip = Dut(cnfg_yaml)
         self.chip.init()
 
 
@@ -85,8 +56,8 @@ class TestSimMMC3Eth(unittest.TestCase):
         tick_old = 0
         start_time = time.time()
 
-        self.chip['GPIO_LED']['LED'] = 0x01  #start data source
-        self.chip['GPIO_LED'].write()
+        self.chip['CONTROL']['EN'] = 0x01  #start data source
+        self.chip['CONTROL'].write()
 
         while time.time() - start_time < testduration:
             data = self.chip['FIFO'].get_data()
@@ -94,11 +65,11 @@ class TestSimMMC3Eth(unittest.TestCase):
             time.sleep(0.01)
             tick = int(time.time() - start_time)
             if tick != tick_old:
-                print (tick)
+                print(tick)
                 tick_old = tick
 
             if doprint==True:
-                print (data)
+                print(data)
 
             for i in data:
                 if i<(len(data)-1): assert data[i] == data[i+1]-1   #Check, if received integers are increasing numbers
@@ -108,10 +79,10 @@ class TestSimMMC3Eth(unittest.TestCase):
                 break
 
         total_len_bits = total_len*32   #32-bit ints to bits
-        print(('Bits received:', total_len_bits, '  data rate:', round((total_len_bits/1e6/testduration),2), ' Mbit/s'))
+        print('Bits received:', total_len_bits, '  data rate:', round((total_len_bits/1e6/testduration),2), ' Mbit/s')
 
-        self.chip['GPIO_LED']['LED'] = 0x00  #stop data source
-        self.chip['GPIO_LED'].write()
+        self.chip['CONTROL']['EN'] = 0x00  #stop data source
+        self.chip['CONTROL'].write()
 
 
     def tearDown(self):

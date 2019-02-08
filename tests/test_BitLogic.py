@@ -36,10 +36,10 @@ class TestBitLogic(unittest.TestCase):
         self.assertEqual(bl, bitarray('10000101000101001111101100001000'[::-1] + '0' * 38))
 
     def test_from_value_with_int_bigger_than_size(self):
-        self.assertRaises(ValueError, BitLogic.from_value, 8, size=3, fmt='Q')
+        self.assertRaises(TypeError, BitLogic.from_value, 8, size=3, fmt='Q')
 
     def test_from_value_with_funny_size(self):
-        self.assertRaises(ValueError, BitLogic.from_value, 8, size='123', fmt='Q')
+        self.assertRaises(TypeError, BitLogic.from_value, 8, size='123', fmt='Q')
 
     def test_from_value_with_size_smaller(self):
         bl = BitLogic.from_value(259, size=9, fmt='Q')
@@ -232,10 +232,13 @@ class TestBitLogic(unittest.TestCase):
 
     def test_set_slicing_and_indexing(self):
         bl = BitLogic('00000000')
-        bl[3:1] = True
+        bl[3:1] = True #same as 1
+        self.assertEqual(bl, bitarray('01000000'))
+        bl = BitLogic('00000000')
+        bl[3:1] = 0b111 
         self.assertEqual(bl, bitarray('01110000'))
         bl = BitLogic('11111111')
-        bl[3:1] = False
+        bl[3:1] = False #same as 0
         self.assertEqual(bl, bitarray('10001111'))
         bl = BitLogic('00000000')
         bl[3:1] = 1

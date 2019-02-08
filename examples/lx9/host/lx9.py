@@ -5,6 +5,7 @@
 # ------------------------------------------------------------
 #
 
+from __future__ import print_function
 import yaml
 import time
 import numpy as np
@@ -64,7 +65,7 @@ class Pixel(Dut):
         self['SEQ']['SHIFT_IN'][0:px_size] = self['PIXEL_REG'][:] # this will be shifted out
         self['SEQ']['PIXEL_SHIFT_EN'][0:px_size] = bitarray( px_size * '1') #this is to enable clock
         
-        print 'px_size', px_size
+        print('px_size', px_size)
         
         
         self._run_seq(px_size+1) #add 1 bit more so there is 0 at the end other way will stay high
@@ -85,7 +86,7 @@ class Pixel(Dut):
             
             while not self['SEQ'].get_done():
                 #time.sleep(0.1)
-                print "Wait for done..."
+                print("Wait for done...")
 
     def _clear_strobes(self):
         """
@@ -99,7 +100,7 @@ class Pixel(Dut):
         self['SEQ']['PIXEL_SHIFT_EN'].setall(False)
         self['SEQ']['INJECTION'].setall(False)
 
-print "Start"
+print("Start")
 
 stream = open("lx9.yaml", 'r')
 cnfg = yaml.load(stream)
@@ -139,7 +140,7 @@ chip['GLOBAL_REG']['PrmpVbnFol'] = 0# size = 8
 chip['GLOBAL_REG']['vth'] = 0# size = 8
 chip['GLOBAL_REG']['PrmpVbf'] = 0# size = 8
 
-print "program global register..."
+print("program global register...")
 chip.program_global_reg()
     
 #settings for pixel register (to input into pixel SR)
@@ -147,26 +148,26 @@ chip.program_global_reg()
 # or a bitarray (of the form bitarray("10101100")).
 
 chip['PIXEL_REG'][:] = bitarray('1111111010001100'*8)
-print chip['PIXEL_REG']
+print(chip['PIXEL_REG'])
 #chip['PIXEL_REG'][0] = 0
 
-print "program pixel register..."
+print("program pixel register...")
 chip.program_pixel_reg()
 
 time.sleep(0.5)
 # Get output size in bytes
-print "chip['DATA'].get_FIFO_SIZE() = ", chip['DATA'].get_FIFO_SIZE()
+print("chip['DATA'].get_FIFO_SIZE() = ", chip['DATA'].get_FIFO_SIZE())
 
 rxd = chip['DATA'].get_data() #get data from sram fifo
-print rxd
+print(rxd)
 
 data0 = rxd.astype(np.uint8) # Change type to unsigned int 8 bits and take from rxd only the last 8 bits
 data1 = np.right_shift(rxd, 8).astype(np.uint8) # Rightshift rxd 8 bits and take again last 8 bits
 data = np.reshape(np.vstack((data1, data0)), -1, order='F') # data is now a 1 dimensional array of all bytes read from the FIFO
 bdata = np.unpackbits(data)
 
-print "data = ", data
-print "bdata = ", bdata 
+print("data = ", data)
+print("bdata = ", bdata) 
     
 
 

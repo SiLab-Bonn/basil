@@ -11,7 +11,7 @@ import os
 
 
 def get_basil_dir():
-    return str(os.path.dirname(os.path.dirname(basil.__file__)))
+    return str(os.path.dirname(basil.__file__))
 
 
 def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test', sim_host='localhost', sim_port=12345, sim_bus='basil.utils.sim.BasilBusDriver',
@@ -27,14 +27,14 @@ def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test
 
     mkfile += "\n"
 
-    mkfile += "VERILOG_SOURCES = %s\n\n" % (" ".join(str(e) for e in sim_files))
+    mkfile += "VERILOG_SOURCES = %s\n\n" % (" ".join(os.path.abspath(str(e)) for e in sim_files))
 
     mkfile += "TOPLEVEL = %s\nMODULE   = %s\n\n" % (top_level, test_module)
 
-    mkfile += "COMPILE_ARGS = -D COCOTB_SIM=1 %s \n" % (" ".join('-I' + str(e) for e in include_dirs))
-    mkfile += "COMPILE_ARGS += %s \n\n" % (" ".join('-D' + str(e) for e in extra_defines))
+    mkfile += "ICARUS_INCLUDE_DIRS = %s \n" % (" ".join('-I' + str(e) for e in include_dirs))
+    mkfile += "ICARUS_DEFINES += %s \n\n" % (" ".join('-D' + str(e) for e in extra_defines))
 
-    mkfile += "NOT_ICARUS_DEFINES= +define+COCOTB_SIM=1 %s \n" % (" ".join('+define+' + str(e) for e in extra_defines))
+    mkfile += "NOT_ICARUS_DEFINES = %s \n" % (" ".join('+define+' + str(e) for e in extra_defines))
     mkfile += "NOT_ICARUS_INCLUDE_DIRS=+incdir+./ %s \n" % (" ".join('+incdir+' + str(e) for e in include_dirs))  # this is for modelsim better full path?
 
     mkfile += "\n"
@@ -47,10 +47,10 @@ export SIMULATION_PORT
 export SIMULATION_BUS
 export SIMULATION_END_ON_DISCONNECT
 
-#export COCOTB=$(shell cocotb-path)
-export COCOTB=$(shell SPHINX_BUILD=1 python -c "import cocotb; import os; print(os.path.dirname(os.path.dirname(os.path.abspath(cocotb.__file__))))")
+export COCOTB=$(shell cocotb-config --share)
+#export COCOTB=$(shell SPHINX_BUILD=1 python -c "import cocotb; import os; print(os.path.dirname(os.path.dirname(os.path.abspath(cocotb.__file__))))")
 export PYTHONPATH=$(shell python -c "from distutils import sysconfig; print(sysconfig.get_python_lib())"):$(COCOTB)
-export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:$(PYTHONLIBS)
+#export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:$(PYTHONLIBS)
 export PYTHONPATH=$(shell python -c "from distutils import sysconfig; print(sysconfig.get_python_lib())"):$(COCOTB)
 export PYTHONHOME=$(shell python -c "from distutils.sysconfig import get_config_var; print(get_config_var('prefix'))")
 
@@ -60,13 +60,10 @@ ifeq ($(SIM),questa)
 else ifeq ($(SIM),ius)
     EXTRA_ARGS +=$(NOT_ICARUS_DEFINES)
     EXTRA_ARGS +=$(NOT_ICARUS_INCLUDE_DIRS)
-else ifeq ($(SIM),icarus)
-    EXTRA_ARGS +=-g2012
 else
-    EXTRA_ARGS +=-g2012
+    EXTRA_ARGS +=$(ICARUS_DEFINES)
+    EXTRA_ARGS +=$(ICARUS_INCLUDE_DIRS)
 endif
-
-SIM_ARGS +=-fst
 
 TOPLEVEL_LANG?=verilog
 export TOPLEVEL_LANG
