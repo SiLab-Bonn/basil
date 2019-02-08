@@ -39,10 +39,10 @@ dut['Pulser'].set_voltage(0., 1., unit='V')
 print(dut['Pulser'].get_voltage(0, unit='mV'), 'mV')
 
 # Example for device with multiple channels
-dut = Dut('ttiql335tp_pyvisa.yaml')
+dut = Dut('ttiql355tp.yaml')
 dut.init()
-dut['PowerSupply'].get_name()
-dut['PowerSupply'].get_voltage(channel=1)
+print(dut['PowerSupply'].get_name())
+print(dut['PowerSupply'].get_voltage(channel=1))
 
 # Talk to a Keithley device via GPIB using NI VISA
 dut = Dut('keithley2000_pyvisa.yaml')

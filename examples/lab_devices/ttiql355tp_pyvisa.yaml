@@ -10,4 +10,4 @@ hw_drivers:
     type      : scpi
     interface : Visa
     init      :
-        device : TTi QL335TP
+        device : TTi QL355TP

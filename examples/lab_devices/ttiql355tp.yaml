@@ -13,6 +13,6 @@ transfer_layer:
         bytesize : 8
 
 hw_drivers:
-  - name      : power
+  - name      : PowerSupply
     type      : tti_ql355tp
     interface : Serial
