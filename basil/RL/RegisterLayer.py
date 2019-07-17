@@ -5,7 +5,7 @@
 # ------------------------------------------------------------
 #
 
-from collections import Callable
+from collections.abc import Callable
 
 from basil.dut import Base
 
