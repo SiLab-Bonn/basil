@@ -32,7 +32,7 @@ hw_drivers:
 class TestSimScpi(unittest.TestCase):
 
     def setUp(self):
-        self.cfg = yaml.load(cnfg_yaml)
+        self.cfg = yaml.safe_load(cnfg_yaml)
         self.device = Dut(self.cfg)
         self.device.init()
 

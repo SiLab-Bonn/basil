@@ -175,7 +175,7 @@ class TestSimJtagGpio(unittest.TestCase):
         ret_ir = BitLogic('0101')
 
         # TEST REG INIT
-        dev1ret = StdRegister(driver=None, conf=yaml.load(gpio_yaml))
+        dev1ret = StdRegister(driver=None, conf=yaml.safe_load(gpio_yaml))
         dev1ret.init()
         dev1ret['F1'] = 0x1
         dev1ret['F2'] = 0x2f

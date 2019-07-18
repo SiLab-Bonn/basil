@@ -29,7 +29,7 @@ class TestSimBDAQ53Eth(unittest.TestCase):
 
         with open(proj_dir + '/bdaq53_eth.yaml') as conf_file:
             try:
-                conf = yaml.load(conf_file)
+                conf = yaml.safe_load(conf_file)
             except yaml.YAMLError as exception:
                 print(exception)
 

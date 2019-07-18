@@ -38,7 +38,7 @@ class TestSram(unittest.TestCase):
         )
 
         with open(os.path.join(os.path.dirname(__file__), '../sram_test.yaml'), 'r') as f:
-            cnfg = yaml.load(f)
+            cnfg = yaml.safe_load(f)
 
         # change to simulation interface
         cnfg['transfer_layer'][0]['type'] = 'SiSim'

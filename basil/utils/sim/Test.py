@@ -47,7 +47,7 @@ def socket_test(dut, debug=False):
     sim_modules = []
     sim_modules_data = os.getenv("SIMULATION_MODULES", "")
     if sim_modules_data:
-        sim_modules_yml = yaml.load(sim_modules_data)
+        sim_modules_yml = yaml.safe_load(sim_modules_data)
         for mod in sim_modules_yml:
             mod_import = import_driver(mod)
             kargs = dict(sim_modules_yml[mod])
