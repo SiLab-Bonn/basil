@@ -40,7 +40,7 @@ fields:
     def __init__(self, intf, conf):
         super(JtagGpio, self).__init__(intf, conf)
 
-        cfg = yaml.load(self.jtag_gpio_yaml)
+        cfg = yaml.safe_load(self.jtag_gpio_yaml)
         self.reg = StdRegister(driver=None, conf=cfg)
 
         # self.RESETB = 0

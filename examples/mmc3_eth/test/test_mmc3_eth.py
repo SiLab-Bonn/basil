@@ -64,7 +64,7 @@ class TestSimMMC3Eth(unittest.TestCase):
         '''
         with open("test_mmc3_eth.yaml") as conf_file:
             try:
-                conf = yaml.load(conf_file)
+                conf = yaml.safe_load(conf_file)
             except yaml.YAMLError as exception:
                 print(exception)
 

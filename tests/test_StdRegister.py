@@ -66,7 +66,7 @@ class TestClass(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.cnfg = yaml.load(cnfg_yaml)
+        cls.cnfg = yaml.safe_load(cnfg_yaml)
         cls.dut = Dut(cls.cnfg)
         cls.dut['spi_module']._require_version = "==2"
         cls.dut.init()

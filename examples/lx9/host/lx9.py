@@ -103,7 +103,7 @@ class Pixel(Dut):
 print("Start")
 
 stream = open("lx9.yaml", 'r')
-cnfg = yaml.load(stream)
+cnfg = yaml.safe_load(stream)
 chip = Pixel(cnfg)
 chip.init()
 
