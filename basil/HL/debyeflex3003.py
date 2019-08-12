@@ -104,27 +104,27 @@ class debyeflex3003(HardwareLayer):
             self.write("CS:{:1d}".format(shutter))
             logging.info("Closed shutter number {:1d}".format(shutter))
 
-    def start_timer(self, timer=1):
-        """Start the timer with the given number (corresponds to shutter number)
+    def activate_timer(self, shutter=1):
+        """Activate the timer for a given shutter number
         """
-        if not isinstance(timer, int):
-            raise TypeError("Invalid type for timer number")
-        elif timer > 4 or timer < 1:
-            raise ValueError("Invalid value for timer number")
+        if not isinstance(shutter, int):
+            raise TypeError("Invalid type for shutter number")
+        elif shutter > 4 or shutter < 1:
+            raise ValueError("Invalid value for shutter number")
         else:
-            self.write("TS:{:1d}".format(timer))
-            logging.info("Started timer number {:1d}".format(timer))
+            self.write("TS:{:1d}".format(shutter))
+            logging.info("Started timer number {:1d}".format(shutter))
 
-    def stop_timer(self, timer=1):
-        """Stop the timer with the given number (corresponds to shutter number)
+    def deactivate_timer(self, shutter=1):
+        """Deactivate the timer for a given shutter number
         """
-        if not isinstance(timer, int):
-            raise TypeError("Invalid type for timer number")
-        elif timer > 4 or timer < 1:
-            raise ValueError("Invalid value for timer number")
+        if not isinstance(shutter, int):
+            raise TypeError("Invalid type for shutter number")
+        elif shutter > 4 or shutter < 1:
+            raise ValueError("Invalid value for shutter number")
         else:
-            self.write("TE:{:1d}".format(timer))
-            logging.info("Stopped timer number {:1d}".format(timer))
+            self.write("TE:{:1d}".format(shutter))
+            logging.info("Stopped timer number {:1d}".format(shutter))
 
     def set_timer(self, timer=1, dur=3600):
         """Set the timer with the given number (corresponds to shutter number) to the given duration (in s)
@@ -184,3 +184,4 @@ class debyeflex3003(HardwareLayer):
         response = self.read()
         status = bin(int(response[7:10]))[2:].zfill(8)  # Convert response to 8 char long string of binary values
         logging.info("Status word {:02d}: {:8s}".format(status_word, status))
+        return status
