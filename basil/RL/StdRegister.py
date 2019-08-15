@@ -120,8 +120,7 @@ class StdRegister(RegisterLayer):
                 self._drv.start()
 
     def read(self):
-        raise NotImplementedError("Not implemented")
-#         return self._drv.get_data()
+        raise NotImplementedError("read() not implemented")
 
     def _construct_reg(self):
 
