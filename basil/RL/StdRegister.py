@@ -12,6 +12,7 @@ from basil.utils.BitLogic import BitLogic
 from basil.utils import utils
 from six import integer_types
 
+
 class StdRegister(RegisterLayer):
     def __init__(self, driver, conf):
         super(StdRegister, self).__init__(driver, conf)
