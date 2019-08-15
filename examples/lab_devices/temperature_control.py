@@ -11,7 +11,7 @@ The Sensition sensors are read using the Sensirion EK-H4 multiplexer box from th
 For the communication with the Binder MK 53 also  a serial TL has to be used (http://www.binder-world.com).
 '''
 
-from __future__ import print_function
+
 from basil.dut import Dut
 
 # Sensirion sensor readout

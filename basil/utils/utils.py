@@ -5,7 +5,7 @@
 # ------------------------------------------------------------
 #
 
-from __future__ import print_function
+
 from array import array
 
 import numpy as np
@@ -14,7 +14,7 @@ from bitarray import bitarray
 
 def logging(fn):
     def wrapped(*args, **kargs):
-        print(('loging:', locals()))
+        print('loging: {}'.format(locals()))
 #         if args:
 #             print("loging: arguments: " + str(args))
 #         if kargs:

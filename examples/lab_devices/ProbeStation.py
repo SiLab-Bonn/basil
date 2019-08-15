@@ -18,7 +18,7 @@ application, pbrs232.exe) to a virtual one.
 This virtual one is then used to steer the probe station within BASIL.
 '''
 
-from __future__ import print_function
+
 from basil.dut import Dut
 
 dut = Dut('suss_pa_200.yaml')

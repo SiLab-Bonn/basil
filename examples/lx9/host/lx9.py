@@ -65,7 +65,7 @@ class Pixel(Dut):
         self['SEQ']['SHIFT_IN'][0:px_size] = self['PIXEL_REG'][:]  # this will be shifted out
         self['SEQ']['PIXEL_SHIFT_EN'][0:px_size] = bitarray(px_size * '1')  # this is to enable clock
 
-        print('px_size', px_size)
+        print('px_size = {}'.format(px_size))
 
         self._run_seq(px_size + 1)  # add 1 bit more so there is 0 at the end other way will stay high
 
@@ -156,7 +156,7 @@ chip.program_pixel_reg()
 
 time.sleep(0.5)
 # Get output size in bytes
-print("chip['DATA'].get_FIFO_SIZE() = ", chip['DATA'].get_FIFO_SIZE())
+print("chip['DATA'].get_FIFO_SIZE() = {}".format(chip['DATA'].get_FIFO_SIZE()))
 
 rxd = chip['DATA'].get_data()  # get data from sram fifo
 print(rxd)
@@ -166,5 +166,5 @@ data1 = np.right_shift(rxd, 8).astype(np.uint8)  # Rightshift rxd 8 bits and tak
 data = np.reshape(np.vstack((data1, data0)), -1, order='F')  # data is now a 1 dimensional array of all bytes read from the FIFO
 bdata = np.unpackbits(data)
 
-print("data = ", data)
-print("bdata = ", bdata)
+print("data = {}".format(data))
+print("bdata = {}".format(bdata))
