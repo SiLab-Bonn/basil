@@ -16,8 +16,8 @@ transfer_layer:
     type     : Visa
     init     :
         resource_name : ASRL1::INSTR
-        read_termination : "\n"
-        write_termination : "\r\n"
+        read_termination : "\\n"
+        write_termination : "\\r\\n"
         backend : "@sim"
 
 hw_drivers:
