@@ -97,9 +97,10 @@ class PowerGpio(GpioPca9554):
         self.PCA9554_ADD = self.POWER_GPIO_ADD
         self.GPIO_CFG = self.POWER_GPIO_CFG
         self._init.setdefault('no_power_reset', False)
+
     def init(self):
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_CFG, self.GPIO_CFG))
-        if self._init['no_power_reset']==False:
+        if self._init['no_power_reset'] is False:
             logging.info("########GPAC            ##########")
             logging.info("########POWER RESET!!!!!##########")
             self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_OUT, 0x00))
