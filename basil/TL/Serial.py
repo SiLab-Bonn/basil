@@ -47,13 +47,13 @@ class Serial(TransferLayer):
         if self.write_termination is None:
             try:
                 self._port.write(bytes(data, 'utf-8'))
-            except TypeError:
+            except TypeError:  # Python 2.7
                 self._port.write(bytes(data))
         else:
             try:
                 self._port.write(bytes(data, 'utf-8') + self.write_termination)
-            except TypeError:
-                self._port.write(bytes(data + self.write_termination, 'utf-8'))
+            except TypeError:  # Python 2.7
+                self._port.write(bytes(data + self.write_termination))
 
     def read(self, size=None):
         if size is None:
