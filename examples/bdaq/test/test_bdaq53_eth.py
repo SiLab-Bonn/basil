@@ -82,7 +82,7 @@ class TestSimBDAQ53Eth(unittest.TestCase):
                 break
 
         total_len_bits = total_len * 32  # 32-bit ints to bits
-        print(('Bits received:', total_len_bits, 'Data rate:', round((total_len_bits / 1e6 / testduration), 2), 'Mbit/s'))
+        print('Bits received: {}; Data rate: {}Mbit/s'.format(total_len_bits, round((total_len_bits / 1e6 / testduration), 2)))
 
         self.chip['CONTROL']['EN'] = 0x00  # stop data source
         self.chip['CONTROL'].write()

@@ -24,7 +24,7 @@ class debyeflex3003(HardwareLayer):
     def read(self):
         ret = self._intf.read()
         if ret[-1:] != "\r":
-            print("debyeflex3003.read() terminator error")
+            print("debyeflex3003.read() termination error")
         return ret[1:-1]
 
     def write(self, cmd):

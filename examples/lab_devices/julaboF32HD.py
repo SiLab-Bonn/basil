@@ -12,8 +12,8 @@ from basil.dut import Dut
 
 dut = Dut('julaboF32HD.yaml')
 dut.init()
-print("ID", dut["chiller"].get_identifier())
-print("status", dut["chiller"].get_status())
+print("ID: {}".format(dut["chiller"].get_identifier()))
+print("Status: {}".format(dut["chiller"].get_status()))
 
 # start
 # set menu->confiuration->setpoint->rs232

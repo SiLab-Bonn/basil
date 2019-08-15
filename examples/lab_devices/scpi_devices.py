@@ -12,7 +12,7 @@
     all laboratory devices (> 90%) over TCP, RS232, USB, GPIB (Windows only so far).
     '''
 
-from __future__ import print_function
+
 from basil.dut import Dut
 
 # Talk to a Keithley device via serial port using pySerial
@@ -36,7 +36,7 @@ dut.init()
 print(dut['Pulser'].get_info())
 # Some additional implemented methods for this device
 dut['Pulser'].set_voltage(0., 1., unit='V')
-print(dut['Pulser'].get_voltage(0, unit='mV'), 'mV')
+print("{}{}".format(dut['Pulser'].get_voltage(0, unit='mV'), 'mV'))
 
 # Example for device with multiple channels
 dut = Dut('ttiql355tp.yaml')
