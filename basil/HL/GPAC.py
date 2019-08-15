@@ -729,7 +729,7 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
         header = self.get_format()
         if header == self.HEADER_GPAC:
             data = self._read_eeprom(self.CAL_DATA_ADDR, size=calcsize(self.CAL_DATA_GPAC_FORMAT))
-            for idx, channel in enumerate(self._ch_cal.iterkeys()):
+            for idx, channel in enumerate(self._ch_cal.keys()):
                 ch_data = data[idx * calcsize(self.CAL_DATA_CH_GPAC_FORMAT):(idx + 1) * calcsize(self.CAL_DATA_CH_GPAC_FORMAT)]
                 values = unpack_from(self.CAL_DATA_CH_GPAC_FORMAT, ch_data)
                 self._ch_cal[channel]['name'] = "".join([c for c in values[0] if (c in string.printable)])  # values[0].strip()
