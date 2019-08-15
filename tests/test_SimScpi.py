@@ -54,5 +54,6 @@ class TestSimScpi(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.device['Pulser'].unknown_function()
 
+
 if __name__ == '__main__':
     unittest.main()
