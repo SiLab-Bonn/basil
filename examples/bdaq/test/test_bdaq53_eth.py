@@ -6,15 +6,19 @@
 # SiLab, Physics Institute, University of Bonn
 # ------------------------------------------------------------
 #
-import unittest
-import yaml
-import os, sys
+import os
+import sys
 import time
+import yaml
+import unittest
+
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
-doprint=True
-IntsToReceive=1000
+
+doprint = True
+IntsToReceive = 1000
+
 
 class TestSimBDAQ53Eth(unittest.TestCase):
     def setUp(self):
@@ -22,9 +26,9 @@ class TestSimBDAQ53Eth(unittest.TestCase):
         proj_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
         cocotb_compile_and_run(
-           sim_files = [proj_dir + '/test/bdaq53_eth_tb.v'],
-           top_level = 'tb',
-           include_dirs = (proj_dir, proj_dir + '/firmware/src')
+            sim_files=[proj_dir + '/test/bdaq53_eth_tb.v'],
+            top_level='tb',
+            include_dirs=(proj_dir, proj_dir + '/firmware/src')
         )
 
         with open(proj_dir + '/bdaq53_eth.yaml') as conf_file:
@@ -48,7 +52,6 @@ class TestSimBDAQ53Eth(unittest.TestCase):
         self.chip = Dut(conf)
         self.chip.init()
 
-
     def test(self):
         testduration = 10
         total_len = 0
@@ -56,7 +59,7 @@ class TestSimBDAQ53Eth(unittest.TestCase):
         tick_old = 0
         start_time = time.time()
 
-        self.chip['CONTROL']['EN'] = 0x01  #start data source
+        self.chip['CONTROL']['EN'] = 0x01  # start data source
         self.chip['CONTROL'].write()
 
         while time.time() - start_time < testduration:
@@ -68,22 +71,21 @@ class TestSimBDAQ53Eth(unittest.TestCase):
                 print(tick)
                 tick_old = tick
 
-            if doprint==True:
+            if doprint:
                 print(data)
 
             for i in data:
-                if i<(len(data)-1): assert data[i] == data[i+1]-1   #Check, if received integers are increasing numbers
-
+                if i < (len(data) - 1):
+                    assert data[i] == data[i + 1] - 1  # Check, if received integers are increasing numbers
 
             if total_len >= IntsToReceive:
                 break
 
-        total_len_bits = total_len*32   #32-bit ints to bits
-        print('Bits received:', total_len_bits, '  data rate:', round((total_len_bits/1e6/testduration),2), ' Mbit/s')
+        total_len_bits = total_len * 32  # 32-bit ints to bits
+        print(('Bits received:', total_len_bits, 'Data rate:', round((total_len_bits / 1e6 / testduration), 2), 'Mbit/s'))
 
-        self.chip['CONTROL']['EN'] = 0x00  #stop data source
+        self.chip['CONTROL']['EN'] = 0x00  # stop data source
         self.chip['CONTROL'].write()
-
 
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator

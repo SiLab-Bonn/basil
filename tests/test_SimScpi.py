@@ -10,7 +10,7 @@ import yaml
 
 from basil.dut import Dut
 
-cnfg_yaml = r"""
+cnfg_yaml = '''
 transfer_layer:
   - name     : Visa
     type     : Visa
@@ -26,7 +26,7 @@ hw_drivers:
     interface : Visa
     init      :
         device : scpi sim device
-"""
+'''
 
 
 class TestSimScpi(unittest.TestCase):
@@ -40,11 +40,11 @@ class TestSimScpi(unittest.TestCase):
         self.device.close()
 
     def test_read(self):
-        self.assertEqual(self.device['Pulser'].get_frequency(), u'100.00')
+        self.assertEqual(self.device['Pulser'].get_frequency(), '100.00')
 
     def test_write(self):
         self.device['Pulser'].set_on(1)
-        self.assertEqual(self.device['Pulser'].get_on(), u'OK')
+        self.assertEqual(self.device['Pulser'].get_on(), 'OK')
 
     def test_invalid_parameter(self):
         with self.assertRaises(ValueError):
