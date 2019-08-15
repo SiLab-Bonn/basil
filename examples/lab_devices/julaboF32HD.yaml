@@ -11,9 +11,9 @@ transfer_layer:
         xonxoff : True  ### software handshake on
         rtscts : False
         dsrdtr : False
-        
+
 
 hw_drivers:
-  - name      : tiller
+  - name      : chiller
     type      : julaboF32HD
     interface : Serial

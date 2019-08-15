@@ -5,20 +5,17 @@
 # ------------------------------------------------------------
 #
 
-''' Example how to use the tiller.
+''' Example how to use the chiller.
 '''
-
-import time
 
 from basil.dut import Dut
 
 dut = Dut('julaboF32HD.yaml')
-dev.init()
-print "ID",dev["tiller"].get_identifier()
-print "status",dev["tiller"].get_status()
+dut.init()
+print("ID", dut["chiller"].get_identifier())
+print("status", dut["chiller"].get_status())
 
-### start
-### set menu->confiuration->setpoint->rs232 
-dev["tiller"].start_thermostat()
-dev["tiller"].get_status()
-
+# start
+# set menu->confiuration->setpoint->rs232
+dut["chiller"].start_thermostat()
+dut["chiller"].get_status()
