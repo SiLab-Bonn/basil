@@ -18,10 +18,10 @@ class agilent33250a(scpi):
         super(agilent33250a, self).__init__(intf, conf)
 
     def set_repeat(self, repeat):
-        raise NotImplementedError("Not implemented")
+        raise NotImplementedError("set_repeat() not implemented")
 
     def get_repeat(self, repeat):
-        raise NotImplementedError("Not implemented")
+        raise NotImplementedError("get_repeat() not implemented")
 
     def set_voltage(self, low, high=0.75, unit='mV'):
         if unit == 'raw':

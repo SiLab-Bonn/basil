@@ -11,7 +11,6 @@ from array import array
 from collections import OrderedDict
 from math import log
 import string
-import abc
 
 from basil.HL.HardwareLayer import HardwareLayer
 
@@ -115,14 +114,12 @@ class Eeprom24Lc128(HardwareLayer):
         return data
 
     def _write_eeprom(self, address, data):
-        raise NotImplementedError()
+        raise NotImplementedError("_write_eeprom() not implemented")
 
 
 class Fei4Dcs(object):
     '''FEI4AdapterCard interface
     '''
-
-    __metaclass__ = abc.ABCMeta
 
     # EEPROM
     HEADER_ADDR = 0
@@ -210,17 +207,14 @@ class Fei4Dcs(object):
         ret = self._read_eeprom(self.ID_ADDR, size=calcsize(self.ID_FORMAT))
         return unpack_from(self.ID_FORMAT, ret)[0]
 
-    @abc.abstractmethod
     def _get_adc_value(self, channel):
-        pass
+        raise NotImplementedError("_get_adc_value() not implemented")
 
-    @abc.abstractmethod
     def _set_dac_value(self, channel, value):
-        pass
+        raise NotImplementedError("_set_dac_value() not implemented")
 
-    @abc.abstractmethod
     def _read_eeprom(self, address, size):
-        pass
+        raise NotImplementedError("_read_eeprom() not implemented")
 
 
 class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):

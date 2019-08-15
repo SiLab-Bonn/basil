@@ -21,7 +21,7 @@ class HardwareLayer(Base):
 
     @property
     def is_ready(self):
-        raise NotImplementedError
+        raise NotImplementedError("is_ready() not implemented")
 
     def wait_for_ready(self, timeout=None, times=None, delay=None, delay_between=None, abort=None):
         '''Determine the ready state of the device and wait until device is ready.

@@ -5,8 +5,6 @@
 # ------------------------------------------------------------
 #
 
-import abc
-
 from basil.dut import Base
 
 
@@ -14,7 +12,6 @@ class TransferLayer(Base):
     '''Transfer Layer implements minimum API needed access to hardware.
     On error ``raise IOError``.
     '''
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, conf):
         super(TransferLayer, self).__init__(conf)
@@ -24,15 +21,13 @@ class TransferLayer(Base):
         '''
         super(TransferLayer, self).init()
 
-    @abc.abstractmethod
     def read(self):
         '''Read access.
 
         :rtype: None
         '''
-        pass
+        raise NotImplementedError("read() not implemented")
 
-    @abc.abstractmethod
     def write(self, data):
         '''Write access.
 
@@ -41,4 +36,4 @@ class TransferLayer(Base):
         :rtype: None
 
         '''
-        pass
+        raise NotImplementedError("write() not implemented")
