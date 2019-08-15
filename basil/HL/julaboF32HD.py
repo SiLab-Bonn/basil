@@ -26,7 +26,7 @@ class julaboF32HD(HardwareLayer):
     def read(self):
         ret = self._intf.read()
         if len(ret) < 2 or ret[-2:] != "\r\n":
-            print("julabo.read() terminator error")
+            logging.warning("read() termination error")
         return ret[:-2]
 
     def write(self, cmd):

@@ -29,7 +29,7 @@ class Arduino(HardwareLayer):
             channel = 99  # All channels are internally channel 99
 
         if channel < 2 or (channel > 13 and channel != 99):
-            raise ValueError('Arduino supports only 14 IOs and pins 0 and 1 are blocked by Serial communication. %d is out of range' % channel)
+            raise ValueError('Arduino supports only 14 IOs and pins 0 and 1 are blocked by Serial communication. %d is out of range.' % channel)
 
         self._intf.write('GPIO%d %d\r\n' % (channel, value))
 

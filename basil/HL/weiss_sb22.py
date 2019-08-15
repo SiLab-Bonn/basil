@@ -90,9 +90,9 @@ class weissSB22(HardwareLayer):
 
     def set_temperature(self, temperature):
         if temperature < self.min_temp:
-            raise RuntimeWarning('Set temperature %f is lower than minimum allowed temperature %f', temperature, self.min_temp)
+            raise RuntimeWarning('Set temperature %f is lower than minimum allowed temperature %f' % (temperature, self.min_temp))
         if temperature > self.max_temp:
-            raise RuntimeWarning('Set temperature %f is higher than maximum allowed temperature %f', temperature, self.max_temp)
+            raise RuntimeWarning('Set temperature %f is higher than maximum allowed temperature %f' % (temperature, self.max_temp))
         self._temperature = temperature
         msg = '%dT%05.1fF%02dR%s' % (self.slave_address, self._temperature, self._humidity, self._digital_ch)
         self.write(msg)
@@ -100,9 +100,9 @@ class weissSB22(HardwareLayer):
 
     def set_humidity(self, humidity):
         if humidity < self.min_humidity:
-            raise RuntimeWarning('Set humidity %f is lower than minimum allowed humidity %f', humidity, self.min_humidity)
+            raise RuntimeWarning('Set humidity %f is lower than minimum allowed humidity %f' % (humidity, self.min_humidity))
         if humidity > self.max_humidity:
-            raise RuntimeWarning('Set humidity %f is higher than maximum allowed humidity %f', humidity, self.max_humidity)
+            raise RuntimeWarning('Set humidity %f is higher than maximum allowed humidity %f' % (humidity, self.max_humidity))
         self._humidity = humidity
         msg = '%dT%05.1fF%02dR%s' % (self.slave_address, self._temperature, self._humidity, self._digital_ch)
         self.write(msg)
@@ -122,12 +122,12 @@ class weissSB22(HardwareLayer):
         if len(answer) > 6:  # error codes are not in the ackowledge strings
             error_code = int(answer[20:22]) if answer[20:22] != '--' else 0
             if error_code > 0:
-                raise RuntimeError('Climate chamber error %d: %s', error_code, self._ERROR_CODES[error_code])
+                raise RuntimeError('Climate chamber error %d: %s' % (error_code, self._ERROR_CODES[error_code]))
         else:  # ack answer
             if answer[2] != '\x06':
                 raise RuntimeError('Data transmission not ackowledged')
         if int(answer[1]) != self.slave_address:
-            raise RuntimeError('Climate chamber address %s instead of %d', answer[1], self.slave_address)
+            raise RuntimeError('Climate chamber address %s instead of %d' % (answer[1], self.slave_address))
 
     def _calc_crc(self, msg):
         ASCII = "0123456789ABCDEF"
