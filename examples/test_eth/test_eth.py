@@ -257,7 +257,7 @@ class Test(object):
         time_read = time.time()
         while not self.stop_thread.wait(max(0.0, self.udp_readout_delay - time_read + time.time())):
             time_read = time.time()
-            write_value = long(np.random.randint(2**64, size=None, dtype=np.uint64))  # random.randint(0, 2**64 - 1)
+            write_value = int(np.random.randint(2**64, size=None, dtype=np.uint64))  # random.randint(0, 2**64 - 1)
             try:
                 self.dut['REGISTERS'].TEST_DATA = write_value
             except Exception as e:
