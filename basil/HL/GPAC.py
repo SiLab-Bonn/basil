@@ -15,6 +15,7 @@ import string
 from basil.HL.HardwareLayer import HardwareLayer
 from basil.HL.FEI4AdapterCard import Eeprom24Lc128
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -101,12 +102,12 @@ class PowerGpio(GpioPca9554):
     def init(self):
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_CFG, self.GPIO_CFG))
         if self._init['no_power_reset'] is False:
-            logging.info("########GPAC            ##########")
-            logging.info("########POWER RESET!!!!!##########")
+            logger.info("########GPAC            ##########")
+            logger.info("########POWER RESET!!!!!##########")
             self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_OUT, 0x00))
         else:
-            logging.info("########GPAC                 #####")
-            logging.info("########SKIPPING POWER RESET #####")
+            logger.info("########GPAC                 #####")
+            logger.info("########SKIPPING POWER RESET #####")
 
 
 class AdcMuxGpio(GpioPca9554):

@@ -11,6 +11,9 @@ import time
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 
+logger = logging.getLogger(__name__)
+
+
 class julaboF32HD(HardwareLayer):
     ''' Driver for the Julabo F32-HD chiller.
     A simple protocol via RS 232 serial port is used with 4800 baud rate.
@@ -26,7 +29,7 @@ class julaboF32HD(HardwareLayer):
     def read(self):
         ret = self._intf.read()
         if len(ret) < 2 or ret[-2:] != "\r\n":
-            logging.warning("read() termination error")
+            logger.warning("read() termination error")
         return ret[:-2]
 
     def write(self, cmd):
@@ -60,13 +63,13 @@ class julaboF32HD(HardwareLayer):
         '''
         self.write("status")
         ret = self.read()
-        logging.debug("status:{:s}".format(ret))
+        logger.debug("status:{:s}".format(ret))
         try:
             tmp = ret.split(" ", 1)
             status = int(tmp[0])
             status_str = tmp[1:]
         except (ValueError, AttributeError):
-            logging.warning("get_status() wrong format: {}".format(repr(ret)))
+            logger.warning("get_status() wrong format: {}".format(repr(ret)))
             status = -99
             status_str = ret
         return status, status_str

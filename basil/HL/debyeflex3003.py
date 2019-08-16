@@ -5,8 +5,12 @@
 # ------------------------------------------------------------
 #
 
-from basil.HL.RegisterHardwareLayer import HardwareLayer
 import logging
+
+from basil.HL.RegisterHardwareLayer import HardwareLayer
+
+
+logger = logging.getLogger(__name__)
 
 
 class debyeflex3003(HardwareLayer):
@@ -24,7 +28,7 @@ class debyeflex3003(HardwareLayer):
     def read(self):
         ret = self._intf.read()
         if ret[-1:] != "\r":
-            print("debyeflex3003.read() termination error")
+            logger.warning("debyeflex3003.read() termination error")
         return ret[1:-1]
 
     def write(self, cmd):
@@ -51,7 +55,7 @@ class debyeflex3003(HardwareLayer):
             raise ValueError("Illegal value for tube current (0 - 80 mA)")
         else:
             self.write("SC:{:02d}".format(int(curr)))
-            logging.info("Set tube current to {:.1f} mA".format(self.get_nominal_current()))
+            logger.info("Set tube current to {:.1f} mA".format(self.get_nominal_current()))
 
     def get_nominal_voltage(self):
         """Read nominal voltage in kV.
@@ -74,7 +78,7 @@ class debyeflex3003(HardwareLayer):
             raise ValueError("Illegal value for tube voltage (0 - 60 kV)")
         else:
             self.write("SV:{:02d}".format(vol))
-            logging.info("Set tube voltage to {:.1f} kV".format(self.get_nominal_voltage()))
+            logger.info("Set tube voltage to {:.1f} kV".format(self.get_nominal_voltage()))
 
     def set_highvoltage_on(self):
         self.write("HV:1")
@@ -91,7 +95,7 @@ class debyeflex3003(HardwareLayer):
             raise ValueError("Invalid value for shutter number")
         else:
             self.write("OS:{:1d}".format(shutter))
-            logging.info("Opened shutter number {:1d}".format(shutter))
+            logger.info("Opened shutter number {:1d}".format(shutter))
 
     def close_shutter(self, shutter=1):
         """Close the shutter with given number. Only shuttter=1 supported from hardware currently
@@ -102,7 +106,7 @@ class debyeflex3003(HardwareLayer):
             raise ValueError("Invalid value for shutter number")
         else:
             self.write("CS:{:1d}".format(shutter))
-            logging.info("Closed shutter number {:1d}".format(shutter))
+            logger.info("Closed shutter number {:1d}".format(shutter))
 
     def activate_timer(self, shutter=1):
         """Activate the timer for a given shutter number
@@ -113,7 +117,7 @@ class debyeflex3003(HardwareLayer):
             raise ValueError("Invalid value for shutter number")
         else:
             self.write("TS:{:1d}".format(shutter))
-            logging.info("Started timer number {:1d}".format(shutter))
+            logger.info("Started timer number {:1d}".format(shutter))
 
     def deactivate_timer(self, shutter=1):
         """Deactivate the timer for a given shutter number
@@ -124,7 +128,7 @@ class debyeflex3003(HardwareLayer):
             raise ValueError("Invalid value for shutter number")
         else:
             self.write("TE:{:1d}".format(shutter))
-            logging.info("Stopped timer number {:1d}".format(shutter))
+            logger.info("Stopped timer number {:1d}".format(shutter))
 
     def set_timer(self, timer=1, dur=3600):
         """Set the timer with the given number (corresponds to shutter number) to the given duration (in s)
@@ -141,7 +145,7 @@ class debyeflex3003(HardwareLayer):
             s = (dur % 3600) % 60
             self.write("TP:{:1d},{:02d},{:02d},{:02d}".format(timer, h, m, s))
             time = self.get_nominal_time(timer)
-            logging.info("Set timer number {:1d} to {:02d}:{:02d}:{:02d} (HH:MM:SS)".format(
+            logger.info("Set timer number {:1d} to {:02d}:{:02d}:{:02d} (HH:MM:SS)".format(
                 timer, time // 3600, (time % 3600) // 60, (time % 3600) % 60)
             )
 
@@ -183,5 +187,5 @@ class debyeflex3003(HardwareLayer):
         self.write("SR:{:02d}".format(status_word))
         response = self.read()
         status = bin(int(response[7:10]))[2:].zfill(8)  # Convert response to 8 char long string of binary values
-        logging.info("Status word {:02d}: {:8s}".format(status_word, status))
+        logger.info("Status word {:02d}: {:8s}".format(status_word, status))
         return status
