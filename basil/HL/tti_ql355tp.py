@@ -5,10 +5,13 @@
 # ------------------------------------------------------------
 #
 
-
+import logging
 import time
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
+
+
+logger = logging.getLogger(__name__)
 
 
 class ttiQl355tp(HardwareLayer):
@@ -35,7 +38,7 @@ class ttiQl355tp(HardwareLayer):
     def read(self):
         ret = self._intf.read()
         if ret[-2:] != "\r\n":
-            print("ttiTp355tp.read() termination error")
+            logger.warning("ttiTp355tp.read() termination error")
         return ret[:-2]
 
     def set_enable(self, on, channel=1):
@@ -53,7 +56,7 @@ class ttiQl355tp(HardwareLayer):
         """ channel: 1=OP1, 2=OP2, AUX is not supported"""
         ret = self.ask("I%dO?" % channel)
         if ret[-1] != "A":
-            print("ttiQl355tp.get_current() format error: %s" % ret)
+            logger.warning("ttiQl355tp.get_current() format error: %s" % ret)
             return None
         return float(ret[:-1])
 
@@ -61,7 +64,7 @@ class ttiQl355tp(HardwareLayer):
         """ channel: 1=OP1, 2=OP2, AUX is not supported"""
         ret = self.ask("V%dO?" % channel)
         if ret[-1] != "V":
-            print("ttiQl355tp.get_voltage() format error: %s" % ret)
+            logger.warning("ttiQl355tp.get_voltage() format error: %s" % ret)
             return None
         return float(ret[:-1])
 
@@ -69,7 +72,7 @@ class ttiQl355tp(HardwareLayer):
         """ channel: 1=OP1, 2=OP2, AUX is not supported"""
         ret = self.ask("V%d?" % channel)
         if ret[:3] != "V%d " % channel:
-            print("ttiQl355tp.get_voltage() format error: %s" % ret)
+            logger.warning("ttiQl355tp.get_voltage() format error: %s" % ret)
             return None
         return float(ret[3:])
 
@@ -77,7 +80,7 @@ class ttiQl355tp(HardwareLayer):
         """ channel: 1=OP1, 2=OP2, AUX is not supported"""
         ret = self.ask("I%d?" % channel)
         if ret[:3] != "I%d " % channel:
-            print("ttiQl355tp.get_current_limit() format error: %s" % ret)
+            logger.warning("ttiQl355tp.get_current_limit() format error: %s" % ret)
             return None
         return float(ret[3:])
 
