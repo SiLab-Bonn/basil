@@ -46,7 +46,10 @@ install:
 script:
   - nosetests --with-coverage --cover-package=basil  tests/test_*.py examples/*/*/test_*.py
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
-  - if [ "$BRANCH" == "development" ]; then flake8-diff origin/master; else flake8-diff origin/development; fi  # check code style flaws of changed lines against upstream
+  # Check code style flaws of changed lines
+  - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+  - git fetch
+  - if [ "$BRANCH" == "development" ]; then flake8-diff origin/master; else flake8-diff origin/development; fi
 
 after_success:
   - coveralls
