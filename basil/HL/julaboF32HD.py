@@ -65,7 +65,7 @@ class julaboF32HD(HardwareLayer):
             tmp = ret.split(" ", 1)
             status = int(tmp[0])
             status_str = tmp[1:]
-        except IndexError:
+        except (ValueError, AttributeError):
             logging.warning("get_status() wrong format: {}".format(repr(ret)))
             status = -99
             status_str = ret
