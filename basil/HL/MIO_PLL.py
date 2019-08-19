@@ -176,7 +176,7 @@ class MIO_PLL(HardwareLayer):
                         fvco = self.fref * self.p_total / self.q_total
                         logger.info('PLL frequency set to ' + str(ftest) + ' MHz' + ' (VCO @ ' + str(fvco) + ' MHz)')
                         return True
-        logger.error('MIO_PLL: Could not find PLL parameters for '+ str(fout) + ' MHz)')
+        logger.error('MIO_PLL: Could not find PLL parameters for {}MHz'.format(fout))
         return False
 
     def _updateRegisters(self):

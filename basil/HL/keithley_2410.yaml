@@ -10,19 +10,18 @@ set_voltage : SOUR:VOLT
 get_voltage : MEAS:VOLT?
 set_current_limit : SENS:CURR:PROT
 get_current_limit : SENS:CURR:PROT?
-set_voltage_limit : SENS:VOLT:PROT 
+set_voltage_limit : SENS:VOLT:PROT
 get_voltage_limit : SENS:VOLT:PROT?
 source_volt : SOUR:FUNC VOLT
 source_current : SOUR:FUNC CURR
 get_source_mode : SOUR:FUNC?
 set_current_autorange : SOUR:CURR:RANG:AUTO ON
 get_current_autorange : SOUR:CURR:RANG:AUTO?
-set_voltage_range: SOUR:VOLT:RANGE 
+set_voltage_range: SOUR:VOLT:RANGE
 four_wire_on: SYST:RSEN ON
 four_wire_off: SYST:RSEN OFF
 get_remote_sense: SYST:RSEN?
 set_current_sense_range: SENS:CURR:RANGE
 get_current_sense_range: SENS:CURR:RANGE?
 get_reading: READ?
-set_current_nlpc: SENS:CURR:NPLC 
-
+set_current_nlpc: SENS:CURR:NPLC
