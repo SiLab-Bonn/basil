@@ -5,7 +5,10 @@
 # ------------------------------------------------------------
 #
 
-from collections import Callable
+try:
+    from collections.abc import Callable  # noqa
+except ImportError:
+    from collections import Callable  # noqa
 
 from basil.dut import Base
 
