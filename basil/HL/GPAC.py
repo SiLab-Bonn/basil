@@ -102,12 +102,10 @@ class PowerGpio(GpioPca9554):
     def init(self):
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_CFG, self.GPIO_CFG))
         if self._init['no_power_reset'] is False:
-            logger.info("########GPAC            ##########")
-            logger.info("########POWER RESET!!!!!##########")
+            logger.info("GPAC: power reset")
             self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_OUT, 0x00))
         else:
-            logger.info("########GPAC                 #####")
-            logger.info("########SKIPPING POWER RESET #####")
+            logger.info("GPAC: skipping power reset")
 
 
 class AdcMuxGpio(GpioPca9554):
@@ -716,9 +714,9 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
         # read calibration
         if not self._init['no_calibration']:
             self.read_eeprom_calibration()
-            logger.info('Found adapter card: {}'.format('%s with ID %s' % ('General Purpose Analog Card', self.get_id())))
+            logger.info('Found adapter card: {} with ID {}'.format('General Purpose Analog Card (GPAC)', self.get_id()))
         else:
-            logger.info('GPAC: Skeeping calibration.')
+            logger.info('General Purpose Analog Card (GPAC): skip reading calibration parameters from EEPROM')
 
         # setup current limit and current source
         self.set_current_limit('PWR0', 0.1)

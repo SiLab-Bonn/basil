@@ -152,9 +152,9 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
         # read calibration
         if not self._init['no_calibration']:
             self.read_eeprom_calibration()
-            logger.info('Found adapter card: {}'.format('%s with ID %s' % ('Single Chip Adapter Card', self.get_id())))
+            logger.info('Found adapter card: {} with ID {}'.format('FEI4 Quad Module Adapter Card', self.get_id()))
         else:
-            logger.info('FEI4QuadModuleAdapterCard: Using default calibration.')
+            logger.info('FEI4 Quad Module Adapter Card: skip reading calibration parameters from EEPROM')
 
         # setting up default current limit
         for ch_name in self._ch_cal.keys():

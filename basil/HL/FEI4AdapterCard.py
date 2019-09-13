@@ -323,9 +323,9 @@ class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
         # read calibration
         if not self._init['no_calibration']:
             self.read_eeprom_calibration()
-            logger.info('Found adapter card: {}'.format('%s with ID %s' % ('Single Chip Adapter Card', self.get_id())))
+            logger.info('Found adapter card: {}'.format('%s with ID %s' % ('FEI4 Single Chip Adapter Card', self.get_id())))
         else:
-            logger.info('FEI4AdapterCard: Using default calibration.')
+            logger.info('FEI4 Single Chip Adapter Card: skip reading calibration parameters from EEPROM')
 
     def read_eeprom_calibration(self, temperature=False):  # use default values for temperature, EEPROM values are usually not calibrated and random
         '''Reading EEPROM calibration for power regulators and temperature
