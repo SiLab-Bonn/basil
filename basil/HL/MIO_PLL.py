@@ -129,8 +129,8 @@ class MIO_PLL(HardwareLayer):
                 break
             for self.div in range(2, 128):
                 q_d_f = self.q_total * self.div * fout
-                if isinstance(q_d_f, six.integer_types) and q_d_f > (15 * self.fref):  # = f0 * p
-                    if int(q_d_f) % int(self.fref) == 0:  # p, q, and d found
+                if float(q_d_f).is_integer() and q_d_f > (15 * self.fref):  # = f0 * p
+                    if (int(q_d_f) % int(self.fref)) == 0:  # p, q, and d found
                         self.p_total = q_d_f / self.fref
                         while self.p_total <= 16:  # counter constraint
                             self.p_total = self.p_total * 2
@@ -176,7 +176,7 @@ class MIO_PLL(HardwareLayer):
                         fvco = self.fref * self.p_total / self.q_total
                         logger.info('PLL frequency set to ' + str(ftest) + ' MHz' + ' (VCO @ ' + str(fvco) + ' MHz)')
                         return True
-        logger.error('MIO_PLL: Could not find PLL parameters')
+        logger.error('MIO_PLL: Could not find PLL parameters for {}MHz'.format(fout))
         return False
 
     def _updateRegisters(self):

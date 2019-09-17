@@ -44,7 +44,7 @@ class SiUsb(SiTransferLayer):
             if not devices:
                 raise IOError('Can\'t find USB board. Connect or reset USB board!')
             else:
-                logger.info('Found USB board(s): {}'.format(', '.join(('%s with ID %s (FW %s)' % (device.board_name, list(filter(type(device.board_id).isdigit, device.board_id)), list(filter(type(device.fw_version).isdigit, device.fw_version)))) for device in devices)))
+                logger.info('Found USB board(s): {}'.format(', '.join(('%s with ID %s (FW %s)' % (device.board_name, "".join(filter(str.isdigit, device.board_id)), "".join(filter(str.isdigit, device.fw_version)))) for device in devices)))
                 if len(devices) > 1:
                     raise ValueError('Please specify ID of USB board')
                 self._sidev = devices[0]

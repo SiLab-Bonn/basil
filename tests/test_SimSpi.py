@@ -88,7 +88,7 @@ class TestSimSpi(unittest.TestCase):
             pass
 
         ret = self.chip['SPI'].get_data()  # read back what was received (looped)
-        self.assertEqual(ret.tolist(),  list(range(16)))
+        self.assertEqual(ret.tolist(), list(range(16)))
 
         # ext_start
         self.chip['SPI'].set_en(1)
@@ -128,7 +128,7 @@ class TestSimSpi(unittest.TestCase):
         data0 = ret.astype(np.uint8)
         data1 = np.right_shift(ret, 8).astype(np.uint8)
         data = np.reshape(np.vstack((data1, data0)), -1, order='F')
-        self.assertEqual(data.tolist(),  list(range(16)))
+        self.assertEqual(data.tolist(), list(range(16)))
 
     def test_dut_iter(self):
         conf = yaml.safe_load(cnfg_yaml)
@@ -148,6 +148,7 @@ class TestSimSpi(unittest.TestCase):
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
+
 
 if __name__ == '__main__':
     unittest.main()

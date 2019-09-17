@@ -11,10 +11,7 @@ from basil.RL.StdRegister import StdRegister
 from basil.utils.BitLogic import BitLogic
 
 
-class JtagGpio(HardwareLayer):
-    '''GPIO based JTAG interface
-    '''
-    jtag_gpio_yaml = """
+jtag_gpio_yaml = """
 name        : GPIO
 type        : StdRegister
 driver      : None
@@ -37,10 +34,15 @@ fields:
     offset  : 4
 """
 
+
+class JtagGpio(HardwareLayer):
+    '''GPIO based JTAG interface
+    '''
+
     def __init__(self, intf, conf):
         super(JtagGpio, self).__init__(intf, conf)
 
-        cfg = yaml.load(self.jtag_gpio_yaml)
+        cfg = yaml.safe_load(jtag_gpio_yaml)
         self.reg = StdRegister(driver=None, conf=cfg)
 
         # self.RESETB = 0

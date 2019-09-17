@@ -37,14 +37,19 @@ install:
   - conda update --yes conda
   - conda update --yes --all
   - conda info -a
-  - conda create --yes -n test-environment python=$TRAVIS_PYTHON_VERSION numpy bitarray nose pyyaml coverage six
+  - conda create --yes -n test-environment python=$TRAVIS_PYTHON_VERSION numpy bitarray nose pyyaml coverage six flake8
   - source activate test-environment
-  - pip install pyvisa pyvisa-sim coveralls cocotb==1.0.dev3
+  - pip install pyvisa pyvisa-sim coveralls cocotb==1.2.0 flake8-diff
   # install basil
   - python setup.py develop
 
 script:
   - nosetests --with-coverage --cover-package=basil  tests/test_*.py examples/*/*/test_*.py
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+  # Check code style flaws of changed lines
+  - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+  - git fetch
+  - if [ "$BRANCH" == "development" ]; then flake8-diff origin/master; else flake8-diff origin/development; fi
 
 after_success:
   - coveralls
@@ -57,4 +62,5 @@ deploy:
   on:
     tags: true
     repo: SiLab-Bonn/basil
+  skip_existing: true
   distributions: sdist bdist_wheel

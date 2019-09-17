@@ -11,7 +11,6 @@ from array import array
 from collections import OrderedDict
 from math import log
 import string
-import abc
 
 from basil.HL.HardwareLayer import HardwareLayer
 
@@ -115,14 +114,12 @@ class Eeprom24Lc128(HardwareLayer):
         return data
 
     def _write_eeprom(self, address, data):
-        raise NotImplementedError()
+        raise NotImplementedError("_write_eeprom() not implemented")
 
 
 class Fei4Dcs(object):
     '''FEI4AdapterCard interface
     '''
-
-    __metaclass__ = abc.ABCMeta
 
     # EEPROM
     HEADER_ADDR = 0
@@ -210,17 +207,14 @@ class Fei4Dcs(object):
         ret = self._read_eeprom(self.ID_ADDR, size=calcsize(self.ID_FORMAT))
         return unpack_from(self.ID_FORMAT, ret)[0]
 
-    @abc.abstractmethod
     def _get_adc_value(self, channel):
-        pass
+        raise NotImplementedError("_get_adc_value() not implemented")
 
-    @abc.abstractmethod
     def _set_dac_value(self, channel, value):
-        pass
+        raise NotImplementedError("_set_dac_value() not implemented")
 
-    @abc.abstractmethod
     def _read_eeprom(self, address, size):
-        pass
+        raise NotImplementedError("_read_eeprom() not implemented")
 
 
 class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
@@ -329,9 +323,9 @@ class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
         # read calibration
         if not self._init['no_calibration']:
             self.read_eeprom_calibration()
-            logger.info('Found adapter card: {}'.format('%s with ID %s' % ('Single Chip Adapter Card', self.get_id())))
+            logger.info('Found adapter card: {}'.format('%s with ID %s' % ('FEI4 Single Chip Adapter Card', self.get_id())))
         else:
-            logger.info('FEI4AdapterCard: Using default calibration.')
+            logger.info('FEI4 Single Chip Adapter Card: skip reading calibration parameters from EEPROM')
 
     def read_eeprom_calibration(self, temperature=False):  # use default values for temperature, EEPROM values are usually not calibrated and random
         '''Reading EEPROM calibration for power regulators and temperature
@@ -339,10 +333,10 @@ class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
         header = self.get_format()
         if header == self.HEADER_V1:
             data = self._read_eeprom(self.CAL_DATA_ADDR, size=calcsize(self.CAL_DATA_V1_FORMAT))
-            for idx, channel in enumerate(self._ch_cal.iterkeys()):
+            for idx, channel in enumerate(self._ch_cal.keys()):
                 ch_data = data[idx * calcsize(self.CAL_DATA_CH_V1_FORMAT):(idx + 1) * calcsize(self.CAL_DATA_CH_V1_FORMAT)]
                 values = unpack_from(self.CAL_DATA_CH_V1_FORMAT, ch_data)
-                self._ch_cal[channel]['name'] = "".join([c for c in values[0] if (c in string.printable)])  # values[0].strip()
+                self._ch_cal[channel]['name'] = "".join([c for c in values[0].decode('utf-8', errors='ignore') if (c in string.printable)])  # values[0].strip()
                 self._ch_cal[channel]['default'] = values[1]
                 self._ch_cal[channel]['ADCI']['gain'] = values[2]
                 self._ch_cal[channel]['ADCI']['offset'] = values[3]
@@ -389,7 +383,7 @@ class FEI4AdapterCard(AdcMax1239, DacMax520, Eeprom24Lc128, Fei4Dcs):
         kwargs = self._ch_map[channel][sensor]
         temp_raw = self._get_adc_value(**kwargs)
 
-        v_adc = ((temp_raw - self._ch_cal.items()[0][1]['ADCV']['offset']) / self._ch_cal.items()[0][1]['ADCV']['gain'])  # voltage, VDDA1
+        v_adc = ((temp_raw - list(self._ch_cal.items())[0][1]['ADCV']['offset']) / list(self._ch_cal.items())[0][1]['ADCV']['gain'])  # voltage, VDDA1
         k = self._ch_cal[channel][sensor]['R4'] / (self._ch_cal[channel][sensor]['R2'] + self._ch_cal[channel][sensor]['R4'])  # reference voltage divider
         r_ntc = self._ch_cal[channel][sensor]['R1'] * (k - v_adc / self._ch_cal[channel][sensor]['VREF']) / (1 - k + v_adc / self._ch_cal[channel][sensor]['VREF'])  # NTC resistance
 

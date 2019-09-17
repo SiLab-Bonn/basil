@@ -6,12 +6,18 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-from __future__ import print_function
-import unittest
-import os, sys
+
+import os
+import sys
 import time
+import unittest
+
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
+
+
+doprint = True
+IntsToReceive = 1000
 
 
 cnfg_yaml = """
@@ -47,24 +53,21 @@ registers:
 """
 
 
-doprint=True
-IntsToReceive=1000
-
 class TestSimMMC3Eth(unittest.TestCase):
     def setUp(self):
         sys.path = [os.path.dirname(os.getcwd())] + sys.path
         proj_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
         cocotb_compile_and_run(
-           sim_files = [proj_dir + '/test/mmc3_eth_tb.v'],
-           top_level = 'tb',
-           include_dirs = (proj_dir, proj_dir + '/src')
+            sim_files=[proj_dir + '/test/mmc3_eth_tb.v'],
+            top_level='tb',
+            include_dirs=(proj_dir, proj_dir + '/src')
         )
 
         '''
         with open("test_mmc3_eth.yaml") as conf_file:
             try:
-                conf = yaml.load(conf_file)
+                conf = yaml.safe_load(conf_file)
             except yaml.YAMLError as exception:
                 print(exception)
 
@@ -77,7 +80,6 @@ class TestSimMMC3Eth(unittest.TestCase):
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
 
-
     def test(self):
         testduration = 10
         total_len = 0
@@ -85,7 +87,7 @@ class TestSimMMC3Eth(unittest.TestCase):
         tick_old = 0
         start_time = time.time()
 
-        self.chip['GPIO_LED']['LED'] = 0x01  #start data source
+        self.chip['GPIO_LED']['LED'] = 0x01  # start data source
         self.chip['GPIO_LED'].write()
 
         while time.time() - start_time < testduration:
@@ -97,22 +99,21 @@ class TestSimMMC3Eth(unittest.TestCase):
                 print (tick)
                 tick_old = tick
 
-            if doprint==True:
+            if doprint:
                 print (data)
 
             for i in data:
-                if i<(len(data)-1): assert data[i] == data[i+1]-1   #Check, if received integers are increasing numbers
-
+                if i < (len(data) - 1):
+                    assert data[i] == data[i + 1] - 1  # Check, if received integers are increasing numbers
 
             if total_len >= IntsToReceive:
                 break
 
-        total_len_bits = total_len*32   #32-bit ints to bits
-        print(('Bits received:', total_len_bits, '  data rate:', round((total_len_bits/1e6/testduration),2), ' Mbit/s'))
+        total_len_bits = total_len * 32  # 32-bit ints to bits
+        print('Bits received: {}; Data rate: {}Mbit/s'.format(total_len_bits, round((total_len_bits / 1e6 / testduration), 2)))
 
-        self.chip['GPIO_LED']['LED'] = 0x00  #stop data source
+        self.chip['GPIO_LED']['LED'] = 0x00  # stop data source
         self.chip['GPIO_LED'].write()
-
 
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator

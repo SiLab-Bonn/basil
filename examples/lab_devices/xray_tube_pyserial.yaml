@@ -1,0 +1,13 @@
+transfer_layer:
+  - name     : Serial
+    type     : Serial
+    init     :
+        port     : /dev/ttyUSB0
+        read_termination : "\r"
+        baudrate : 9600
+        timeout : 2.0
+
+hw_drivers:
+  - name      : xray_tube
+    type      : debyeflex3003
+    interface : Serial

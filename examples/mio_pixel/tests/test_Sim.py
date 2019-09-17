@@ -56,7 +56,7 @@ class TestPixel(unittest.TestCase):
         )
 
         with open(os.path.join(os.path.dirname(__file__), '../pixel.yaml'), 'r') as f:
-            cnfg = yaml.load(f)
+            cnfg = yaml.safe_load(f)
 
         # change to simulation interface
         cnfg['transfer_layer'][0]['type'] = 'SiSim'

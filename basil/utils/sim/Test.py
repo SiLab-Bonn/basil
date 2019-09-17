@@ -7,7 +7,7 @@
 # Initial version by Chris Higgs <chris.higgs@potentialventures.com>
 #
 
-from __future__ import print_function
+
 import os
 import socket
 import logging
@@ -47,7 +47,7 @@ def socket_test(dut, debug=False):
     sim_modules = []
     sim_modules_data = os.getenv("SIMULATION_MODULES", "")
     if sim_modules_data:
-        sim_modules_yml = yaml.load(sim_modules_data)
+        sim_modules_yml = yaml.safe_load(sim_modules_data)
         for mod in sim_modules_yml:
             mod_import = import_driver(mod)
             kargs = dict(sim_modules_yml[mod])
@@ -126,7 +126,7 @@ def bringup_test(dut):
 
     ret = yield bus.read(0, 4)
 
-    print(('bus.read', ret))
+    print('bus.read {}'.format(ret))
 
     for _ in range(10):
         yield RisingEdge(bus.clock)

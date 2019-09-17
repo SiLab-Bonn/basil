@@ -6,7 +6,7 @@
 #
 
 
-from __future__ import print_function
+
 import time
 
 import numpy as np
@@ -111,7 +111,7 @@ if __name__ == "__main__":
 
     # Set the output voltage on the pins
     chip['PWRAC'].set_voltage("VDDD1", 1.2)
-    print(("VDDD1", chip['PWRAC'].get_voltage("VDDD1"), chip['PWRAC'].get_current("VDDD1")))
+    print("VDDD1 = {}V/{}A".format(chip['PWRAC'].get_voltage("VDDD1"), chip['PWRAC'].get_current("VDDD1")))
 
     # settings for global register (to input into global SR)
     # can be an integer representing the binary number desired,
@@ -152,7 +152,7 @@ if __name__ == "__main__":
     chip.program_pixel_reg()
 
     # Get output size in bytes
-    print(("chip['DATA'].get_FIFO_SIZE() = ", chip['DATA'].get_FIFO_SIZE()))
+    print("chip['DATA'].get_FIFO_SIZE() = {}".format(chip['DATA'].get_FIFO_SIZE()))
 
     # Get output in bytes
     print("chip['DATA'].get_data()")
@@ -163,5 +163,5 @@ if __name__ == "__main__":
     data = np.reshape(np.vstack((data1, data0)), -1, order='F')  # data is now a 1 dimensional array of all bytes read from the FIFO
     bdata = np.unpackbits(data)
 
-    print(("data = ", data))
-    print(("bdata = ", bdata))
+    print("data = {}".format(data))
+    print("bdata = {}".format(bdata))

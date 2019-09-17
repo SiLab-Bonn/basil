@@ -152,12 +152,12 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
         # read calibration
         if not self._init['no_calibration']:
             self.read_eeprom_calibration()
-            logger.info('Found adapter card: {}'.format('%s with ID %s' % ('Single Chip Adapter Card', self.get_id())))
+            logger.info('Found adapter card: {} with ID {}'.format('FEI4 Quad Module Adapter Card', self.get_id()))
         else:
-            logger.info('FEI4QuadModuleAdapterCard: Using default calibration.')
+            logger.info('FEI4 Quad Module Adapter Card: skip reading calibration parameters from EEPROM')
 
         # setting up default current limit
-        for ch_name in self._ch_cal.iterkeys():
+        for ch_name in self._ch_cal.keys():
             self.set_current_limit(ch_name, 1.0)
         logger.info('Found adapter card: {}'.format('%s with ID %s' % ('Quad Module Adapter Card', self.get_id())))
 
@@ -167,10 +167,10 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
         header = self.get_format()
         if header == self.HEADER_V2:
             data = self._read_eeprom(self.CAL_DATA_ADDR, size=calcsize(self.CAL_DATA_V2_FORMAT))
-            for idx, channel in enumerate(self._ch_cal.iterkeys()):
+            for idx, channel in enumerate(self._ch_cal.keys()):
                 ch_data = data[idx * calcsize(self.CAL_DATA_CH_V2_FORMAT):(idx + 1) * calcsize(self.CAL_DATA_CH_V2_FORMAT)]
                 values = unpack_from(self.CAL_DATA_CH_V2_FORMAT, ch_data)
-                self._ch_cal[channel]['name'] = "".join([c for c in values[0] if (c in string.printable)])  # values[0].strip()
+                self._ch_cal[channel]['name'] = "".join([c for c in values[0].decode('utf-8', errors='ignore') if (c in string.printable)])  # values[0].strip()
                 self._ch_cal[channel]['default'] = values[1]
                 self._ch_cal[channel]['ADCI']['gain'] = values[2]
                 self._ch_cal[channel]['ADCI']['offset'] = values[3]

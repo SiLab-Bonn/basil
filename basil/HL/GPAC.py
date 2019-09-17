@@ -15,6 +15,7 @@ import string
 from basil.HL.HardwareLayer import HardwareLayer
 from basil.HL.FEI4AdapterCard import Eeprom24Lc128
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -96,6 +97,15 @@ class PowerGpio(GpioPca9554):
         super(PowerGpio, self).__init__(intf, conf)
         self.PCA9554_ADD = self.POWER_GPIO_ADD
         self.GPIO_CFG = self.POWER_GPIO_CFG
+        self._init.setdefault('no_power_reset', False)
+
+    def init(self):
+        self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_CFG, self.GPIO_CFG))
+        if self._init['no_power_reset'] is False:
+            logger.info("GPAC: power reset")
+            self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_OUT, 0x00))
+        else:
+            logger.info("GPAC: skipping power reset")
 
 
 class AdcMuxGpio(GpioPca9554):
@@ -704,9 +714,9 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
         # read calibration
         if not self._init['no_calibration']:
             self.read_eeprom_calibration()
-            logger.info('Found adapter card: {}'.format('%s with ID %s' % ('General Purpose Analog Card', self.get_id())))
+            logger.info('Found adapter card: {} with ID {}'.format('General Purpose Analog Card (GPAC)', self.get_id()))
         else:
-            logger.info('GPAC: Skeeping calibration.')
+            logger.info('General Purpose Analog Card (GPAC): skip reading calibration parameters from EEPROM')
 
         # setup current limit and current source
         self.set_current_limit('PWR0', 0.1)
@@ -719,10 +729,10 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
         header = self.get_format()
         if header == self.HEADER_GPAC:
             data = self._read_eeprom(self.CAL_DATA_ADDR, size=calcsize(self.CAL_DATA_GPAC_FORMAT))
-            for idx, channel in enumerate(self._ch_cal.iterkeys()):
+            for idx, channel in enumerate(self._ch_cal.keys()):
                 ch_data = data[idx * calcsize(self.CAL_DATA_CH_GPAC_FORMAT):(idx + 1) * calcsize(self.CAL_DATA_CH_GPAC_FORMAT)]
                 values = unpack_from(self.CAL_DATA_CH_GPAC_FORMAT, ch_data)
-                self._ch_cal[channel]['name'] = "".join([c for c in values[0] if (c in string.printable)])  # values[0].strip()
+                self._ch_cal[channel]['name'] = "".join([c for c in values[0].decode('utf-8', errors='ignore') if (c in string.printable)])  # values[0].strip()
                 self._ch_cal[channel]['default'] = values[1]
                 self._ch_cal[channel]['min'] = values[2]
                 self._ch_cal[channel]['max'] = values[3]

@@ -73,9 +73,9 @@ class binderMK53(HardwareLayer):
 
     def set_temperature(self, temperature):
         if temperature < self.min_temp:
-            raise RuntimeWarning('Set temperature %f is lower than minimum allowed temperature %f', temperature, self.min_temp)
+            raise RuntimeWarning('Set temperature %f is lower than minimum allowed temperature %f' % (temperature, self.min_temp))
         if temperature > self.max_temp:
-            raise RuntimeWarning('Set temperature %f is higher than maximum allowed temperature %f', temperature, self.max_temp)
+            raise RuntimeWarning('Set temperature %f is higher than maximum allowed temperature %f' % (temperature, self.max_temp))
         self.write(ADDR_MANSETPT, self._encode_float(temperature))
         self.write(ADDR_BASICSETPT, self._encode_float(temperature))
 
@@ -86,7 +86,7 @@ class binderMK53(HardwareLayer):
         resp = self._intf.read(exp_length)
         is_err, err_code = self._parse_error_response(resp)
         if is_err:
-            RuntimeWarning('Error code %d: %s', err_code[err_code])
+            raise RuntimeWarning('Error code %d: %s' % (err_code, ERROR_CODES[err_code]))
         data = self._parse_read_response(resp)
         return data
 
@@ -98,22 +98,22 @@ class binderMK53(HardwareLayer):
 
         is_err, err_code = self._parse_error_response(resp)
         if is_err:
-            RuntimeWarning('Error code %d: %s', err_code[err_code])
+            raise RuntimeWarning('Error code %d: %s' % (err_code, ERROR_CODES[err_code]))
         resp_addr, resp_words = self._parse_write_response(resp)
         if not (resp_addr == addr) and (resp_words == len(value)):
             raise RuntimeWarning('Write check failed')
 
     def _parse_read_response(self, msgbytes):
         if len(msgbytes) < 3:
-            raise RuntimeWarning('Read data is too short', len(msgbytes))
+            raise RuntimeWarning('Read data is too short: %d' % len(msgbytes))
         _, func, n_bytes = struct.unpack('>BBB', msgbytes[:3])
         if func not in [FUNCTION_READN, FUNCTION_READN_ALT]:
             raise RuntimeWarning('Wrong function returned')
         if n_bytes & 1:
             raise RuntimeWarning("Odd number of bytes read")
         if len(msgbytes) < 5 + n_bytes:
-            raise RuntimeWarning('Read data is too short', len(msgbytes))
-        crc, = struct.unpack('<H', msgbytes[3 + n_bytes:5 + n_bytes])
+            raise RuntimeWarning('Read data is too short: %d' % len(msgbytes))
+        crc = struct.unpack('<H', msgbytes[3 + n_bytes:5 + n_bytes])
         checkcrc = self._calc_crc16(msgbytes[:3 + n_bytes])
         if crc != checkcrc:
             raise RuntimeWarning('Checksum of read data wrong')
@@ -125,8 +125,8 @@ class binderMK53(HardwareLayer):
 
     def _parse_write_response(self, msgbytes):
         if len(msgbytes) < 8:
-            raise RuntimeWarning('Message too short', len(msgbytes))
-        crc, = struct.unpack('<H', msgbytes[6:8])
+            raise RuntimeWarning('Message too short: %d' % len(msgbytes))
+        crc = struct.unpack('<H', msgbytes[6:8])
         _, func, addr, value = struct.unpack('>BBHH', msgbytes[:6])
         if func != FUNCTION_WRITEN:
             raise RuntimeWarning('Wrong write function returned')
@@ -138,13 +138,13 @@ class binderMK53(HardwareLayer):
     def _parse_error_response(self, msgbytes):  # string -> (bool, int)
         if len(msgbytes) < 5:
             return False, None
-        crc, = struct.unpack('<h', msgbytes[3:5])
+        crc = struct.unpack('<H', msgbytes[3:5])
         _, func, ecode = struct.unpack('>BBB', msgbytes[:3])
         if not func & 0x80:
             return False, None
         checkcrc = self._calc_crc16(msgbytes[:3])
         if crc != checkcrc:
-            raise RuntimeWarning(crc, checkcrc, msgbytes)
+            raise RuntimeWarning('CRC Error: %s - %s (bytes: %s)' % (str(crc), str(checkcrc), str(msgbytes)))
         return True, ecode
 
     def _make_write_request(self, addr, words):

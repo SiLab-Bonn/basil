@@ -22,6 +22,7 @@ with open('VERSION') as version_file:
 with open('requirements.txt') as f:
     install_requires = f.read().splitlines()
 
+
 def package_files(directory):
     paths = []
     for (fpath, directories, filenames) in walk(directory):
@@ -29,9 +30,11 @@ def package_files(directory):
             paths.append(path.join('..', fpath, filename))
     return paths
 
+
 setup(
     name='basil_daq',
     version=version,
+    python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*',
     description='Basil - a data acquisition and system testing framework',
     url='https://github.com/SiLab-Bonn/basil',
     license='BSD 3-Clause ("BSD New" or "BSD Simplified") License',

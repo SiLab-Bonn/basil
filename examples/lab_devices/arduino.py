@@ -17,5 +17,5 @@ dut.init()
 
 time.sleep(1)  # Wait for Arduino to reset
 
-dut['Arduino'].set_output(channel=13, 1)
-dut['Arduino'].set_output(channel='ALL', 'OFF')
+dut['Arduino'].set_output(channel=13, value=1)
+dut['Arduino'].set_output(channel='ALL', value='OFF')

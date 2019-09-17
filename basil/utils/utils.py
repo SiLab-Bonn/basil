@@ -5,7 +5,7 @@
 # ------------------------------------------------------------
 #
 
-from __future__ import print_function
+
 from array import array
 
 import numpy as np
@@ -14,7 +14,7 @@ from bitarray import bitarray
 
 def logging(fn):
     def wrapped(*args, **kargs):
-        print(('loging:', locals()))
+        print('loging: {}'.format(locals()))
 #         if args:
 #             print("loging: arguments: " + str(args))
 #         if kargs:
@@ -23,12 +23,15 @@ def logging(fn):
     return wrapped
 
 
+def lsbits(b):
+    return (b * 0x0202020202 & 0x010884422010) % 1023
+
+
 def bitvector_to_byte_array(bitvector):
     bsize = len(bitvector)
     size_bytes = int(((bsize - 1) / 8) + 1)
     bs = tobytes(array('B', bitvector.vector))[0:size_bytes]
     bitstream_swap = ''
-    lsbits = lambda b: (b * 0x0202020202 & 0x010884422010) % 1023
     for b in bs:
         bitstream_swap += chr(lsbits(b))
     return array('B', bitstream_swap)

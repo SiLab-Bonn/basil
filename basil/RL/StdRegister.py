@@ -12,6 +12,7 @@ from basil.utils.BitLogic import BitLogic
 from basil.utils import utils
 from six import integer_types
 
+
 class StdRegister(RegisterLayer):
     def __init__(self, driver, conf):
         super(StdRegister, self).__init__(driver, conf)
@@ -120,8 +121,7 @@ class StdRegister(RegisterLayer):
                 self._drv.start()
 
     def read(self):
-        raise NotImplementedError("Not implemented")
-#         return self._drv.get_data()
+        raise NotImplementedError("read() not implemented")
 
     def _construct_reg(self):
 
