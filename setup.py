@@ -22,12 +22,14 @@ with open('VERSION') as version_file:
 with open('requirements.txt') as f:
     install_requires = f.read().splitlines()
 
+
 def package_files(directory):
     paths = []
     for (fpath, directories, filenames) in walk(directory):
         for filename in filenames:
             paths.append(path.join('..', fpath, filename))
     return paths
+
 
 setup(
     name='basil_daq',
