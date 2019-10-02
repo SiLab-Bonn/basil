@@ -5,7 +5,6 @@
 # ------------------------------------------------------------
 #
 
-import yaml
 import logging
 
 from basil.HL.HardwareLayer import HardwareLayer
