@@ -10,6 +10,7 @@ import logging
 from basil.HL.HardwareLayer import HardwareLayer
 from basil.RL.StdRegister import StdRegister
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -40,7 +41,7 @@ class si570(HardwareLayer):
         RECALL = self._intf.read(0xBA, 1)
         self._intf.write(0xBA, [135] + [RECALL[0] | 0b1])
 
-    def frequency_change(self, freq):
+    def frequency_change(self, freq):  # freq in MHz
         f0 = 156.25
 
         self.reset()
@@ -50,7 +51,7 @@ class si570(HardwareLayer):
         fxtal = float(f0 * HS_DIV * N1) / (float(RFREQ) / 2 ** 28)
 
         new_fdco = freq * HS_DIV * N1
-        print(new_fdco)
+
         if 4850.0 > new_fdco or new_fdco > 5670.0:
             logger.debug("Si570: large frequency change, recalculating HSDIV, N1")
             found_new_values = False
@@ -76,7 +77,6 @@ class si570(HardwareLayer):
         new_RFREQ = int(new_RFREQ_freq * 2 ** 28)
 
         self.modify_register(HS_DIV, N1, new_RFREQ)
-
         logger.info(
             "Changed Si570 reference frequency to %s MHz", new_fdco / (HS_DIV * N1)
         )
