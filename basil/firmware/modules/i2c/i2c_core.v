@@ -47,7 +47,7 @@ always @(posedge BUS_CLK) begin
         status_regs[2] <= 0; //addr
         status_regs[3] <= MEM_BYTES[7:0]; //size
         status_regs[4] <= MEM_BYTES[15:8]; //size
-        status_regs[5] <= 0; //size2
+        status_regs[5] <= 0;
         status_regs[6] <= 0;
         status_regs[7] <= 0;
     end
@@ -70,13 +70,16 @@ assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
 reg CONF_DONE;
 reg CONF_NO_ACK;
 
+wire CONF_NO_STOP;
+assign CONF_NO_STOP = status_regs[5][0];
+
 reg [7:0] BUS_DATA_OUT_REG;
 always @ (posedge BUS_CLK) begin
     if(BUS_RD) begin
         if(BUS_ADD == 0)
             BUS_DATA_OUT_REG <= VERSION;
         else if(BUS_ADD == 1)
-            BUS_DATA_OUT_REG <= {6'b0, CONF_NO_ACK, CONF_DONE};
+            BUS_DATA_OUT_REG <= {5'b0, CONF_NO_STOP, CONF_NO_ACK, CONF_DONE};
         else if(BUS_ADD == 6)
             BUS_DATA_OUT_REG <= MEM_BYTES[7:0];
         else if(BUS_ADD == 7)
@@ -202,16 +205,23 @@ always @ (*) begin
         STATE_DACK_W:
             begin
                 if(byte_count == CONF_SIZE) begin
+                    if(CONF_NO_STOP)
+                        next_state = STATE_IDLE;
+                    else begin
                     if(SDA_READBACK==0)
                         next_state = STATE_STOP;
                     else
                         next_state = STATE_IDLE;
+                end
                 end
                 else
                     next_state = STATE_DATA_W;
             end
         STATE_DACK_R:
             if(byte_count == CONF_SIZE)
+                if(CONF_NO_STOP)
+                    next_state = STATE_IDLE;
+                else
                 next_state = STATE_STOP;
             else
                 next_state = STATE_DATA_R;
@@ -316,7 +326,7 @@ always@(posedge I2C_CLK)
         DATA_BYTE_READBCK[7-bit_count] <= I2C_SDA;
 
 wire DONE;
-assign DONE = (state == STATE_STOP);
+assign DONE = ((state == STATE_STOP) | (CONF_NO_STOP & ((state == STATE_DACK_W) | (state == STATE_DACK_R))));
 
 wire DONE_SYNC;
 cdc_pulse_sync done_pulse_sync (.clk_in(I2C_CLK), .pulse_in(DONE), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));

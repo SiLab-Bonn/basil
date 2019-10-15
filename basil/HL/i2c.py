@@ -17,8 +17,9 @@ class i2c(RegisterHardwareLayer):
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
                   'NO_ACK': {'descr': {'addr': 1, 'size': 1, 'offset': 1, 'properties': ['ro']}},
-                  'SIZE': {'descr': {'addr': 3, 'size': 16}},
                   'ADDR': {'descr': {'addr': 2, 'size': 8}},
+                  'SIZE': {'descr': {'addr': 3, 'size': 16}},
+                  'NO_STOP': {'descr': {'addr': 5, 'size': 1}},
                   'MEM_BYTES': {'descr': {'addr': 6, 'size': 16}},
                   }
 
@@ -76,6 +77,12 @@ class i2c(RegisterHardwareLayer):
 
     def get_done(self):
         return self.is_ready
+
+    def set_nostop(self, value):
+        self.NO_STOP = value
+
+    def get_nostop(self, value):
+        return self.NO_STOP
 
     def set_data(self, data, addr=0):
         if self._mem_size < len(data):
