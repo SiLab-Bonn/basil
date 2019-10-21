@@ -261,15 +261,15 @@ always @ (posedge BUS_CLK) begin
             BUS_DATA_OUT <= status_regs[24];
         else if (BUS_ADD == 25)
             BUS_DATA_OUT <= status_regs[25];
-		else if (BUS_ADD == 26)
+        else if (BUS_ADD == 26)
             BUS_DATA_OUT <= status_regs[26];
-		else if (BUS_ADD == 27)
+        else if (BUS_ADD == 27)
             BUS_DATA_OUT <= status_regs[27];
-		else if (BUS_ADD == 28)
+        else if (BUS_ADD == 28)
             BUS_DATA_OUT <= status_regs[28];
-		else if (BUS_ADD == 29)
+        else if (BUS_ADD == 29)
             BUS_DATA_OUT <= status_regs[29];
-		else if (BUS_ADD == 30)
+        else if (BUS_ADD == 30)
             BUS_DATA_OUT <= status_regs[30];
         else if (BUS_ADD == 31)
             BUS_DATA_OUT <= TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT;

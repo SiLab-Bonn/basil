@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -40,8 +40,8 @@ always@(posedge clk_out) begin
     out_sync[2] <= out_sync[1];
 end
 
-assign pulse_out = !out_sync[2] && out_sync[1];	
-    
+assign pulse_out = !out_sync[2] && out_sync[1];
+
 reg [1:0] aq_sync_ff;
 always@(posedge clk_in) begin
     aq_sync_ff[0] <= out_sync[2];

@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  *
@@ -9,19 +9,19 @@
  *  $Author::                    $:
  *  $Date::                      $:
  */
- 
+
 module SiLibUSB (input FCLK);
 
   reg         RD_B;
   reg         WR_B;
   tri         [7:0] DATA;
   reg         [15:0] ADD;
-  
+
   reg FREAD;
   reg FSTROBE;
   reg FMODE;
   tri [7:0] FD;
-  
+
   reg [7:0] DATA_T;
   assign DATA = ~WR_B ? DATA_T : 8'bzzzz_zzzz;
   initial begin
@@ -31,9 +31,9 @@ module SiLibUSB (input FCLK);
     FREAD = 0;
     FSTROBE = 0;
     FMODE = 0;
-        
-  end  
-  
+
+  end
+
     task ReadExternal;
         input [15:0]  ADDIN;
         output [7:0]  DATAOUT;
@@ -83,7 +83,7 @@ module SiLibUSB (input FCLK);
             @(posedge FCLK);
             WR_B = 1;
             ADD = 16'hxxxx;
-            DATA_T = 16'hxxxx;   
+            DATA_T = 16'hxxxx;
             repeat (5)
                 @(posedge FCLK);
 
@@ -100,8 +100,6 @@ module SiLibUSB (input FCLK);
              #1 FREAD <= 0; FSTROBE = 0;
              @(posedge FCLK);
         end
-    endtask	
-    
+    endtask
+
 endmodule
-    
- 
