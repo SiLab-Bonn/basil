@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -15,9 +15,9 @@ module FX3_IF (
     input wire fx3_clk,  // FX3 generates user clock
     output reg fx3_rdy, // will be monitored by FPGA internally during READ
     output reg fx3_ack,
-    output reg fx3_rd_finish,		
+    output reg fx3_rd_finish,
     input wire fx3_rst,
-    
+
     output wire         BUS_CLK,  // FX3 generates user clock
     output wire         BUS_RST,
     output reg          BUS_WR,
@@ -25,7 +25,7 @@ module FX3_IF (
     output reg [31:0]   BUS_ADD,
     inout wire [31:0]   BUS_DATA,
     input wire          BUS_BYTE_ACCESS,
-    
+
     input wire FLAG1,
     input wire FLAG2
 
@@ -56,7 +56,7 @@ assign BUS_RST = fx3_rst;
 
 // clock buffer
 IBUFG #(
-      .IBUF_LOW_PWR("TRUE"),  // Low power (TRUE) vs. performance (FALSE) setting for referenced I/O standards 
+      .IBUF_LOW_PWR("TRUE"),  // Low power (TRUE) vs. performance (FALSE) setting for referenced I/O standards
       .IOSTANDARD("DEFAULT")  // Specify the input I/O standard
    ) IBUFG_inst (
       .O(BUS_CLK), // Clock buffer output
@@ -70,69 +70,69 @@ wire [1:0] BYTE;
 assign BYTE = ReqCount[1:0]-1;
 
 reg WR_BYTE;
-         
+
 always@ (posedge BUS_CLK)
     DATA_BYTE_RD[BYTE] <= DataOut[7:0];
 
 reg RD_FINISH;
 // output register
 always @ (posedge BUS_CLK)
-begin 
- 	fx3_ack <= RD_VALID; // will be generated during RD_ADDR_INC
- 	fx3_rd_finish <= RD_FINISH;
- 	
-	fx3_rdy <= RDY;
-	
-	if(BUS_RST)
-	   DATA_MISO <= 0;
-	else if(BUS_BYTE_ACCESS) begin
-	   if(BYTE==0)
-	       DATA_MISO <= { {3{8'b0}}, DataOut[7:0]};
-	   else if(BYTE==1)
-	       DATA_MISO <= { {2{8'b0}}, DataOut[7:0], DATA_BYTE_RD[0]};
-	   else if(BYTE==2)
-	       DATA_MISO <= {8'b0, DataOut[7:0], DATA_BYTE_RD[1], DATA_BYTE_RD[0]};
-	   else
-	       DATA_MISO <= {DataOut[7:0], DATA_BYTE_RD[2], DATA_BYTE_RD[1], DATA_BYTE_RD[0]};
+begin
+    fx3_ack <= RD_VALID; // will be generated during RD_ADDR_INC
+    fx3_rd_finish <= RD_FINISH;
+
+    fx3_rdy <= RDY;
+
+    if(BUS_RST)
+       DATA_MISO <= 0;
+    else if(BUS_BYTE_ACCESS) begin
+       if(BYTE==0)
+           DATA_MISO <= { {3{8'b0}}, DataOut[7:0]};
+       else if(BYTE==1)
+           DATA_MISO <= { {2{8'b0}}, DataOut[7:0], DATA_BYTE_RD[0]};
+       else if(BYTE==2)
+           DATA_MISO <= {8'b0, DataOut[7:0], DATA_BYTE_RD[1], DATA_BYTE_RD[0]};
+       else
+           DATA_MISO <= {DataOut[7:0], DATA_BYTE_RD[2], DATA_BYTE_RD[1], DATA_BYTE_RD[0]};
     end
-	else
-	   DATA_MISO <= DataOut;
+    else
+       DATA_MISO <= DataOut;
 end
 
 reg first_word_written_check;
 
 // input register
 always @ (posedge BUS_CLK)
-begin 
- 	if(BUS_BYTE_ACCESS)
- 	   BUS_WR <= (fx3_wr | WR_BYTE);
- 	else
- 	   BUS_WR <= fx3_wr;
- 	OE <= fx3_oe;
- 	CS <= fx3_cs;
- 	FLAG1_reg <= FLAG1;
+begin
+    if(BUS_BYTE_ACCESS)
+       BUS_WR <= (fx3_wr | WR_BYTE);
+    else
+       BUS_WR <= fx3_wr;
+    OE <= fx3_oe;
+    CS <= fx3_cs;
+    FLAG1_reg <= FLAG1;
     FLAG2_reg <= FLAG2;
-    
+
     if(!CS | !BUS_BYTE_ACCESS)
         first_word_written_check <= 0;
-    
- 	if(BUS_BYTE_ACCESS & (fx3_wr | BUS_WR) & ((ReqCount+1) < ReqCountLimit)) begin
- 	   if(((ReqCount[1:0]==0)|(ReqCount[1:0]==3)) & (!first_word_written_check)) begin
- 	       {DATA_BYTE_WR[2], DATA_BYTE_WR[1], DATA_BYTE_WR[0], DataIn[7:0]} <= DATA_MOSI;
+
+    if(BUS_BYTE_ACCESS & (fx3_wr | BUS_WR) & ((ReqCount+1) < ReqCountLimit)) begin
+       if(((ReqCount[1:0]==0)|(ReqCount[1:0]==3)) & (!first_word_written_check)) begin
+           {DATA_BYTE_WR[2], DATA_BYTE_WR[1], DATA_BYTE_WR[0], DataIn[7:0]} <= DATA_MOSI;
            first_word_written_check <= 1;
- 	   end
- 	   else if((ReqCount[1:0]==0) & first_word_written_check) begin
- 	       DataIn[7:0] <= DATA_BYTE_WR[0];
- 	       first_word_written_check <= 0;
- 	   end
- 	   else if(ReqCount[1:0]==1)
+       end
+       else if((ReqCount[1:0]==0) & first_word_written_check) begin
+           DataIn[7:0] <= DATA_BYTE_WR[0];
+           first_word_written_check <= 0;
+       end
+       else if(ReqCount[1:0]==1)
            DataIn[7:0] <= DATA_BYTE_WR[1];
        else if(ReqCount[1:0]==2)
            DataIn[7:0] <= DATA_BYTE_WR[2];
-	end
-	else
-	   DataIn <= DATA_MOSI;
-	
+    end
+    else
+       DataIn <= DATA_MOSI;
+
 end
 
 parameter IDLE        = 0;
@@ -151,7 +151,7 @@ always @ (posedge BUS_CLK)
       state <= IDLE;
     else
       state <= next_state;
-      
+
 always @ (*) begin
     case(state)
         IDLE :
@@ -164,7 +164,7 @@ always @ (*) begin
         IN_COUNT :
             if (OE)
                 next_state = RD_ADDR_INC;
-            else if (BUS_WR)      
+            else if (BUS_WR)
                 next_state = WR_ADDR_INC;
             else
                 next_state = WAIT;
@@ -176,7 +176,7 @@ always @ (*) begin
                 else if ((ReqCount+1) == ReqCountLimit)
                     next_state = IDLE;
             end
-            else 
+            else
             begin
                 if (BUS_WR)
                     next_state = WR_ADDR_INC;
@@ -184,7 +184,7 @@ always @ (*) begin
                     next_state = IDLE;
             end
         RD_ADDR_INC :
-            if (OE & (ReqCount != ReqCountLimit)) 
+            if (OE & (ReqCount != ReqCountLimit))
                 next_state = RD_ADDR_INC;
             else if (ReqCount == ReqCountLimit)
                 next_state = FINISH_RD;
@@ -205,7 +205,7 @@ end
 
 always @ (posedge BUS_CLK)
 begin
-    if (BUS_RST) 
+    if (BUS_RST)
     begin
         BUS_ADD <= 32'd0;
         ReqCountLimit <= 32'd0;
@@ -237,12 +237,12 @@ begin
                 BUS_RD <= 1;
             else if (BUS_WR)
             begin
-                if(BUS_BYTE_ACCESS) 
+                if(BUS_BYTE_ACCESS)
                 begin
                     BUS_ADD[31:0] <= BUS_ADD[31:0] + 1;
                     ReqCount <= ReqCount + 1;
                 end
-                else 
+                else
                     BUS_ADD[31:0] <= BUS_ADD[31:0] + 4;
             end
             else
@@ -254,11 +254,11 @@ begin
                     RDY <= 1;
                 if (fx3_wr & BUS_BYTE_ACCESS)
                     WR_BYTE <= 1; // "Or" with WR - to keep WR high even when fx3_wr is low during BYTE_ACCESS
-            end 
+            end
         end
         else if (state == WR_ADDR_INC)
         begin
-            if(BUS_BYTE_ACCESS) 
+            if(BUS_BYTE_ACCESS)
             begin
                 if (BUS_WR & ((ReqCount+1) != ReqCountLimit))
                 begin
@@ -269,7 +269,7 @@ begin
                     else
                         RDY <= 0;
                 end
-                
+
                 if (ReqCount+2 >= ReqCountLimit)
                     WR_BYTE <= 0;
             end
@@ -279,7 +279,7 @@ begin
         end
         else if (state == RD_ADDR_INC)
         begin
-            if (OE & (ReqCount != ReqCountLimit))  
+            if (OE & (ReqCount != ReqCountLimit))
             begin
                 if(BUS_BYTE_ACCESS)
                 begin
@@ -289,7 +289,7 @@ begin
                         BUS_RD <= 0;
                     else
                         BUS_RD <= 1;
-                  
+
                     if(ReqCount[1:0] == 2'b11 || ReqCount + 1 == ReqCountLimit)
                         RD_VALID <= 1;
                     else
@@ -312,7 +312,7 @@ begin
                 BUS_RD <= 0;
                 RD_VALID <= 0;
                 RD_FINISH <= 1;
-            end  
+            end
         end
         else if (state == FINISH_RD)
             ;
@@ -322,7 +322,7 @@ begin
                 BUS_RD <= 1;
             else if (BUS_WR)
             begin
-                if(BUS_BYTE_ACCESS) 
+                if(BUS_BYTE_ACCESS)
                 begin
                     BUS_ADD[31:0] <= BUS_ADD[31:0] + 1;
                     ReqCount <= ReqCount + 1;
@@ -330,7 +330,7 @@ begin
                     if(ReqCountLimit == 2)
                         WR_BYTE <= 0; // WR deasserts with 1 cycle delay after WR_BYTE deasserts
                 end
-                else 
+                else
                     BUS_ADD[31:0] <= BUS_ADD[31:0] + 4;
             end
             else if (fx3_wr & BUS_BYTE_ACCESS)
@@ -346,20 +346,20 @@ end
 
 // tristate buffer for bus
 generate
-for (gen = 0; gen < 32; gen = gen + 1) 
-	begin : tri_buf // 32 bit databus
-		IOBUF #(
-			.DRIVE(12), // Specify the output drive strength
-			.IBUF_LOW_PWR("FALSE"),  // Low Power - "TRUE", High Performance = "FALSE" 
-			.IOSTANDARD("LVCMOS33"), // Specify the I/O standard
-			.SLEW("FAST") // Specify the output slew rate
-		) IOBUF_inst (
-			.O(DATA_MOSI[gen]),     // Buffer output
-			.IO(fx3_bus[gen]),   // Buffer inout port (connect directly to top-level port)
-			.I(DATA_MISO[gen]),     // Buffer input
-			.T(!(fx3_oe & fx3_cs))      // 3-state enable input, high=input, low=output
-		);
-	end
+for (gen = 0; gen < 32; gen = gen + 1)
+    begin : tri_buf // 32 bit databus
+        IOBUF #(
+            .DRIVE(12), // Specify the output drive strength
+            .IBUF_LOW_PWR("FALSE"),  // Low Power - "TRUE", High Performance = "FALSE"
+            .IOSTANDARD("LVCMOS33"), // Specify the I/O standard
+            .SLEW("FAST") // Specify the output slew rate
+        ) IOBUF_inst (
+            .O(DATA_MOSI[gen]),     // Buffer output
+            .IO(fx3_bus[gen]),   // Buffer inout port (connect directly to top-level port)
+            .I(DATA_MISO[gen]),     // Buffer input
+            .T(!(fx3_oe & fx3_cs))      // 3-state enable input, high=input, low=output
+        );
+    end
 endgenerate
 
 endmodule

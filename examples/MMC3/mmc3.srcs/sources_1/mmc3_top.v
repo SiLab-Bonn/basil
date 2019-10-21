@@ -9,19 +9,19 @@
 
 module mmc3_top(
 // FX 3 interface
-	input wire fx3_pclk_100MHz,
-(* IOB = "FORCE" *)  input wire fx3_wr,  // force IOB register
-(* IOB = "FORCE" *)	 input wire fx3_cs, // async. signal
-(* IOB = "FORCE" *)	 input wire fx3_oe, // async. signal
-	input wire fx3_rst,// async. signal from FX3, active high
-(* IOB = "FORCE" *)  output wire fx3_ack,// force IOB register
-(* IOB = "FORCE" *)	 output wire fx3_rdy,// force IOB register
+    input wire fx3_pclk_100MHz,
+(* IOB = "FORCE" *) input wire fx3_wr, // force IOB register
+(* IOB = "FORCE" *) input wire fx3_cs, // async. signal
+(* IOB = "FORCE" *) input wire fx3_oe, // async. signal
+    input wire fx3_rst, // async. signal from FX3, active high
+(* IOB = "FORCE" *) output wire fx3_ack, // force IOB register
+(* IOB = "FORCE" *) output wire fx3_rdy, // force IOB register
     output wire reset_fx3,
     inout wire [31:0] fx3_bus, // 32 bit databus
 
 // 200 MHz oscillator
     input  wire  sys_clk_p,
-	input  wire  sys_clk_n,
+    input  wire  sys_clk_n,
 
 // 100 Mhz oscillator
     input  wire  Clk100,
@@ -389,10 +389,10 @@ Reg1_inst (
     .RD(RD),
     .Addr(Addr),
     .CLK(CLK_100MHz),
-	  .Q(Reg1),
+    .Q(Reg1),
     .RB(DataOut),
-		.RDYB(RDYB),
-		.RD_VALID_N(ACKB),
+    .RDYB(RDYB),
+    .RD_VALID_N(ACKB),
     .RST(RST)
     );
 
@@ -405,10 +405,10 @@ Reg2_inst (
     .RD(RD),
     .Addr(Addr),
     .CLK(CLK_100MHz),
-	  .Q(Reg2),
+    .Q(Reg2),
     .RB(DataOut),
-		.RDYB(RDYB),
-		.RD_VALID_N(ACKB),
+    .RDYB(RDYB),
+    .RD_VALID_N(ACKB),
     .RST(RST)
     );
 
@@ -422,10 +422,10 @@ BRAM_Test_inst (
     .CLK(CLK_100MHz),
     .DataOut(DataOut),
     .Addr(Addr[31:0]),
-		.RDYB(RDYB),
-		.RD_VALID_N(ACKB),
-//	.DMA_RDY(DMA_RDY),
-	.RST(RST)
+    .RDYB(RDYB),
+    .RD_VALID_N(ACKB),
+//    .DMA_RDY(DMA_RDY),
+    .RST(RST)
     );
 
 DDR3_256_8  #(
@@ -465,6 +465,6 @@ DDR3_256_8_inst (
 //    .DMA_RDY(DMA_RDY),
     .CS_FX3(CS_FX3),
     .FLAG2_reg(FLAG2_reg)
-    );	*/
+    );*/
 
 endmodule

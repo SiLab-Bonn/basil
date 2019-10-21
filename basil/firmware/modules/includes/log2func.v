@@ -1,14 +1,14 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 
 `ifdef _IVERILOG_
-	`define CLOG2 $clog2
+  `define CLOG2 $clog2
 `else
-	function integer clog2;
+  function integer clog2;
     input integer value;
     reg [31:0] shifted;
     integer res;
@@ -23,7 +23,7 @@
           clog2 = res;
         end
     end
-	endfunction
+  endfunction
 
-	`define CLOG2 clog2
-`endif 
+  `define CLOG2 clog2
+`endif
