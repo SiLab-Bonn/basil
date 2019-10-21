@@ -1,12 +1,12 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 `timescale 1ps/1ps
 `default_nettype none
- 
+
 
 module cdc_syncfifo #(
     parameter DSIZE = 34,
@@ -19,7 +19,7 @@ module cdc_syncfifo #(
     input wire winc, wclk, wrst,
     input wire rinc, rclk, rrst
 );
-    
+
 wire [ASIZE-1:0] waddr, raddr;
 wire [ASIZE:0] wptr, rptr, wq2_rptr, rq2_wptr;
 
@@ -59,8 +59,8 @@ parameter DATASIZE = 34, // Memory data word widt
     input wire [ADDRSIZE-1:0] waddr, raddr,
     input wire wclken, wfull, wclk
 );
-        
-        
+
+
 //`ifdef VENDORRAM
 //
 //    // instantiation of a vendor's dual-port RAM
@@ -77,12 +77,12 @@ reg [DATASIZE-1:0] cdc_mem [0:DEPTH-1];
 
 assign rdata = cdc_mem[raddr];
 //always @(posedge wclk)
-//	rdata <= mem[raddr];
-    
+// rdata <= mem[raddr];
+
 always @(posedge wclk)
     if (wclken && !wfull) cdc_mem[waddr] <= wdata;
-        
-//`endif
+
+// endif
 
 endmodule
 
@@ -97,7 +97,7 @@ module rptr_empty #(
     input wire [ADDRSIZE :0] rq2_wptr,
     input wire rinc, rclk, rrst
 );
-    
+
 reg [ADDRSIZE:0] rbin;
 wire [ADDRSIZE:0] rgraynext, rbinnext;
 //-------------------
@@ -107,7 +107,7 @@ wire [ADDRSIZE:0] rgraynext, rbinnext;
 always @(posedge rclk)
     if (rrst) {rbin, rptr} <= 0;
     else {rbin, rptr} <= {rbinnext, rgraynext};
-    
+
 // Memory read-address pointer (okay to use binary to address memory)
 assign raddr = rbin[ADDRSIZE-1:0];
 assign rbinnext = rbin + (rinc & ~rempty);
@@ -121,7 +121,7 @@ assign rempty_val = (rgraynext == rq2_wptr);
 always @(posedge rclk)
     if (rrst) rempty <= 1'b1;
     else rempty <= rempty_val;
-        
+
 endmodule
 
 module wptr_full #(
@@ -157,7 +157,7 @@ assign wfull_val = (wgraynext=={~wq2_rptr[ADDRSIZE:ADDRSIZE-1], wq2_rptr[ADDRSIZ
 always @(posedge wclk)
     if (wrst) wfull <= 1'b0;
     else wfull <= wfull_val;
-        
+
 endmodule
 
 module cdc_sync_r2w #(
@@ -173,7 +173,7 @@ reg [ADDRSIZE:0] cdc_sync_wq1_rptr;
 always @(posedge wclk)
     if (wrst) {wq2_rptr,cdc_sync_wq1_rptr} <= 0;
     else {wq2_rptr,cdc_sync_wq1_rptr} <= {cdc_sync_wq1_rptr,rptr};
-        
+
 endmodule
 
 module cdc_sync_w2r #(

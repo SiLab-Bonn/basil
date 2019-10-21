@@ -66,7 +66,7 @@ module tb (
     // MODULES //
 
     reg [63:0] TIMESTAMP;
-	wire [63:0] TIMESTAMP_OUT;
+    wire [63:0] TIMESTAMP_OUT;
     gpio
     #(
         .BASEADDR(GPIO_BASEADDR),

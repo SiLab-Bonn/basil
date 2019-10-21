@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -42,7 +42,7 @@ module tdc_s3_core
 
     input wire ARM_TDC, // enable TDC for single measurement, assuming signal slower than DV_CLK
     input wire EXT_EN, // enable TDC for a fixed time period (signal needs to be asserted to enable TDC) e.g. for occupancy measurements, assuming signal slower than DV_CLK
-    
+
     input wire [15:0] TIMESTAMP
 );
 
@@ -52,10 +52,10 @@ localparam VERSION = 2;
 // the TDC counter has a overflow bin: TDC value is 0 when an overflow occurs
 
 wire SOFT_RST;
-assign SOFT_RST = (BUS_ADD==0 && BUS_WR); 
+assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 
 wire RST;
-assign RST = BUS_RST | SOFT_RST; 
+assign RST = BUS_RST | SOFT_RST;
 
 reg [7:0] status_regs[1:0];
 
@@ -128,7 +128,7 @@ wire [CLKDV*4-1:0] TDC, TDC_DES;
 
 generate
     if (FAST_TDC==1) begin
-    	wire [1:0] TDC_FAST;
+        wire [1:0] TDC_FAST;
         ddr_des #(.CLKDV(CLKDV)) iddr_des_tdc(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TDC_IN), .OUT(TDC), .OUT_FAST(TDC_FAST));
         // assigning TDC output, getting effective 2x CLK320 (640MHz) sampling of leading edge
         assign TDC_OUT = CONF_EN_INVERT_TDC ? &TDC_FAST : |TDC_FAST;
@@ -145,7 +145,7 @@ generate
          reg [3:0] TDC_DDRQ_DATA_BUF;
         always@(posedge CLK320)
             TDC_DDRQ_DATA_BUF[3:0] <= TDC_DDRQ_DATA[3:0];
-            
+
         reg [3:0] TDC_DATA_IN;
         always@(posedge CLK160)
             TDC_DATA_IN[3:0] <= TDC_DDRQ_DATA_BUF[3:0];
@@ -157,9 +157,9 @@ generate
         reg [CLKDV*4-1:0] TDC_DES_OUT;
         always@(posedge DV_CLK)
             TDC_DES_OUT <= TDC_DATA_IN_SR;
-        
+
         assign TDC = TDC_DES_OUT;
-        
+
         // assigning TDC output
         assign TDC_OUT = TDC_IN;
     end
@@ -232,7 +232,7 @@ always@(posedge BUS_CLK) begin
         sync_cnt <= 120;
     else if(sync_cnt != 100)
         sync_cnt <= sync_cnt +1;
-end 
+end
 
 wire RST_LONG;
 assign RST_LONG = sync_cnt[7];
@@ -399,7 +399,7 @@ generate
          reg [3:0] TRIGGER_DDRQ_DATA_BUF;
         always@(posedge CLK320)
             TRIGGER_DDRQ_DATA_BUF[3:0] <= TRIGGER_DDRQ_DATA[3:0];
-            
+
         reg [3:0] TRIGGER_DATA_IN;
         always@(posedge CLK160)
             TRIGGER_DATA_IN[3:0] <= TRIGGER_DDRQ_DATA_BUF[3:0];
@@ -407,13 +407,13 @@ generate
         reg [CLKDV*4-1:0] TRIGGER_DATA_IN_SR;
         always@(posedge CLK160)
             TRIGGER_DATA_IN_SR <= {TRIGGER_DATA_IN_SR[CLKDV*4-5:0],TRIGGER_DATA_IN[3:0]};
-        
+
         reg [CLKDV*4-1:0] TRIG_DES_OUT;
         always@(posedge DV_CLK)
             TRIG_DES_OUT <= TRIGGER_DATA_IN_SR;
-        
+
         assign TRIG = TRIG_DES_OUT;
-        
+
         // assigning TRIG output
         assign TRIG_OUT = TRIG_IN;
         assign FAST_TRIGGER_OUT = TRIG_DES_OUT;
