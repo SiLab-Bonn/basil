@@ -1,5 +1,14 @@
+from pkg_resources import get_distribution, DistributionNotFound
 import collections
 import yaml
+
+
+__version__ = None  # required for initial installation
+
+try:
+    __version__ = get_distribution("basil_daq").version
+except DistributionNotFound:
+    __version__ = "(local)"
 
 
 # Have OrderedDict
