@@ -1,15 +1,10 @@
 
 create_clock -period 10.000 -name clkin -add [get_ports clkin]
 create_clock -period 8.000 -name rgmii_rxc -add [get_ports rgmii_rxc]
+set_clock_groups -asynchronous \
+-group [get_clocks -include_generated_clocks clkin] \
+-group rgmii_rxc
 
-set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks rgmii_rxc]
-set_false_path -from [get_clocks rgmii_rxc] -to [get_clocks BUS_CLK_PLL]
-set_false_path -from [get_clocks CLK125PLLTX] -to [get_clocks BUS_CLK_PLL]
-set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks CLK125PLLTX]
-set_false_path -from [get_clocks CLK125PLLTX90] -to [get_clocks BUS_CLK_PLL]
-set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks CLK125PLLTX90]
-
-#NET "Clk100" 				LOC =  "AA3" | IOSTANDARD = "LVCMOS15"; 100MHz
 set_property PACKAGE_PIN AA3 [get_ports clkin]
 set_property IOSTANDARD LVCMOS15 [get_ports clkin]
 
@@ -76,3 +71,6 @@ set_property PACKAGE_PIN P23 [get_ports {LED[7]}]
 set_property IOSTANDARD LVCMOS25 [get_ports LED*]
 set_property SLEW SLOW [get_ports LED*]
 
+
+set_false_path -from [get_pins GMII_1000M_reg/C]
+set_false_path -to [get_ports LED*]
