@@ -216,7 +216,7 @@ WRAP_SiTCP_GMII_XC7K_32K #(
     .USR_REG_X3F()            ,    // out    : Stored at 0xFFFF_FF3F
     // MII interface
     .GMII_RSTn(phy_rst_n)            ,    // out    : PHY reset
-    .GMII_1000M(1'b1)            ,    // in    : GMII mode (0:MII, 1:GMII)
+    .GMII_1000M(GMII_1000M)            ,    // in    : GMII mode (0:MII, 1:GMII)
     // TX
     .GMII_TX_CLK(MII_TX_CLK)            ,    // in    : Tx clock
     .GMII_TX_EN(gmii_tx_en)            ,    // out    : Tx enable

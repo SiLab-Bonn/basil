@@ -1,10 +1,3 @@
-
-create_clock -period 10.000 -name clkin -add [get_ports clkin]
-create_clock -period 8.000 -name rgmii_rxc -add [get_ports rgmii_rxc]
-set_clock_groups -asynchronous \
--group [get_clocks -include_generated_clocks clkin] \
--group rgmii_rxc
-
 set_property PACKAGE_PIN AA3 [get_ports clkin]
 set_property IOSTANDARD LVCMOS15 [get_ports clkin]
 
@@ -72,5 +65,23 @@ set_property IOSTANDARD LVCMOS25 [get_ports LED*]
 set_property SLEW SLOW [get_ports LED*]
 
 
+create_clock -period 10.000 -name clkin -add [get_ports clkin]
+create_clock -period 8.000 -name rgmii_rxc -add [get_ports rgmii_rxc]
+set_clock_groups -asynchronous \
+-group [get_clocks -include_generated_clocks clkin] \
+-group rgmii_rxc
+set_clock_groups -logically_exclusive \
+-group rgmii_rxc \
+-group {CLK125_PLL CLK125_90_PLL}
+
+
 set_false_path -from [get_pins GMII_1000M_reg/C]
 set_false_path -to [get_ports LED*]
+
+
+set_property BITSTREAM.CONFIG.UNUSEDPIN PULLUP [current_design]
+set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
+set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
+set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design]
+set_property CONFIG_VOLTAGE 3.3 [current_design]
+set_property CFGBVS VCCO [current_design]
