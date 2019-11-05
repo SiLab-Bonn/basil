@@ -22,13 +22,13 @@ module ddr_des
 
 wire [1:0] DDRQ;
 IDDR IDDR_inst (
-   .Q1(DDRQ[1]), // 1-bit output for positive edge of clock 
-   .Q2(DDRQ[0]), // 1-bit output for negative edge of clock
-   .C(CLK2X), // 1-bit clock input
-   .CE(1'b1), // 1-bit clock enable input
-   .D(IN), // 1-bit DDR data input
-   .R(1'b0), // 1-bit reset
-   .S(1'b0) // 1-bit set
+    .Q1(DDRQ[1]), // 1-bit output for positive edge of clock
+    .Q2(DDRQ[0]), // 1-bit output for negative edge of clock
+    .C(CLK2X), // 1-bit clock input
+    .CE(1'b1), // 1-bit clock enable input
+    .D(IN), // 1-bit DDR data input
+    .R(1'b0), // 1-bit reset
+    .S(1'b0) // 1-bit set
 );
 
 assign OUT_FAST = DDRQ;

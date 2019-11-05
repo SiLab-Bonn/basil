@@ -9,7 +9,7 @@
 
 
 module cdc_syncfifo #(
-    parameter DSIZE = 34,
+    parameter DSIZE = 32,
     parameter ASIZE = 2
 ) (
     output wire [DSIZE-1:0] rdata,
@@ -23,30 +23,60 @@ module cdc_syncfifo #(
 wire [ASIZE-1:0] waddr, raddr;
 wire [ASIZE:0] wptr, rptr, wq2_rptr, rq2_wptr;
 
-cdc_sync_r2w #(.ADDRSIZE(ASIZE)) sync_r2w_inst (.wq2_rptr(wq2_rptr), .rptr(rptr),
-    .wclk(wclk), .wrst(wrst));
+cdc_sync_r2w #(
+    .ADDRSIZE(ASIZE)
+) sync_r2w_inst (
+    .wq2_rptr(wq2_rptr),
+    .rptr(rptr),
+    .wclk(wclk),
+    .wrst(wrst)
+);
 
-cdc_sync_w2r #(.ADDRSIZE(ASIZE)) sync_w2r_inst (.rq2_wptr(rq2_wptr), .wptr(wptr),
-    .rclk(rclk), .rrst(rrst));
+cdc_sync_w2r #(
+    .ADDRSIZE(ASIZE)
+) sync_w2r_inst (
+    .rq2_wptr(rq2_wptr),
+    .wptr(wptr),
+    .rclk(rclk),
+    .rrst(rrst)
+);
 
-cdc_fifomem #(.DATASIZE(DSIZE), .ADDRSIZE(ASIZE)) cdc_fifomem_inst
-(.rdata(rdata), .wdata(wdata),
-    .waddr(waddr), .raddr(raddr),
-    .wclken(winc), .wfull(wfull),
-    .wclk(wclk));
-
-rptr_empty #(.ADDRSIZE(ASIZE)) rptr_empty_inst
-(.rempty(rempty),
+cdc_fifomem #(
+    .DATASIZE(DSIZE),
+    .ADDRSIZE(ASIZE)
+) cdc_fifomem_inst (
+    .rdata(rdata),
+    .wdata(wdata),
+    .waddr(waddr),
     .raddr(raddr),
-    .rptr(rptr), .rq2_wptr(rq2_wptr),
-    .rinc(rinc), .rclk(rclk),
-    .rrst(rrst));
+    .wclken(winc),
+    .wfull(wfull),
+    .wclk(wclk)
+);
 
-wptr_full #(.ADDRSIZE(ASIZE)) wptr_full_inst
-(.wfull(wfull), .waddr(waddr),
-    .wptr(wptr), .wq2_rptr(wq2_rptr),
-    .winc(winc), .wclk(wclk),
-    .wrst(wrst));
+rptr_empty #(
+    .ADDRSIZE(ASIZE)
+) rptr_empty_inst (
+    .rempty(rempty),
+    .raddr(raddr),
+    .rptr(rptr),
+    .rq2_wptr(rq2_wptr),
+    .rinc(rinc),
+    .rclk(rclk),
+    .rrst(rrst)
+);
+
+wptr_full #(
+    .ADDRSIZE(ASIZE)
+) wptr_full_inst (
+    .wfull(wfull),
+    .waddr(waddr),
+    .wptr(wptr),
+    .wq2_rptr(wq2_rptr),
+    .winc(winc),
+    .wclk(wclk),
+    .wrst(wrst)
+);
 
 endmodule
 
