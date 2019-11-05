@@ -27,8 +27,7 @@ module tlu_controller_fsm
     output reg [31:0]           TLU_TRIGGER_NUMBER_DATA,
 
     output reg [31:0]           TRIGGER_COUNTER_DATA,
-    input wire                  TRIGGER_COUNTER_SET,
-    input wire [31:0]           TRIGGER_COUNTER_SET_VALUE,
+    input wire [31:0]           TRIGGER_COUNTER,
     input wire                  CONF_EXT_TIMESTAMP,
     input wire [TIMESTAMP_N_OF_BIT-1:0] EXT_TIMESTAMP,
 
@@ -125,7 +124,6 @@ integer counter_tlu_clock;
 integer counter_sr_wait_cycles;
 integer n; // for for-loop
 reg TRIGGER_ACKNOWLEDGED, FIFO_ACKNOWLEDGED;
-reg [31:0] TRIGGER_COUNTER;
 reg TLU_TRIGGER_LOW_TIMEOUT_ERROR;
 reg TLU_TRIGGER_ACCEPT_ERROR;
 
@@ -562,17 +560,6 @@ begin
         TIMESTAMP <= 0;
     else
         TIMESTAMP <= TIMESTAMP + 1;
-end
-
-// trigger counter
-always @ (posedge TRIGGER_CLK)
-begin
-    if (RESET)
-        TRIGGER_COUNTER <= 32'b0;
-    else if(TRIGGER_COUNTER_SET==1'b1)
-        TRIGGER_COUNTER <= TRIGGER_COUNTER_SET_VALUE;
-    else if(TRIGGER_ACCEPTED_FLAG)
-        TRIGGER_COUNTER <= TRIGGER_COUNTER + 1;
 end
 
 // Chipscope
