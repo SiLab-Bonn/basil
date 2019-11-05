@@ -18,6 +18,7 @@
 
 `include "utils/cdc_syncfifo.v"
 `include "utils/generic_fifo.v"
+`include "utils/cdc_pulse_sync.v"
 `include "utils/3_stage_synchronizer.v"
 `include "utils/flag_domain_crossing.v"
 
