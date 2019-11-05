@@ -13,7 +13,6 @@ module fifo_8_to_32 #(
 )(
     input wire CLK,
     input wire RST,
-
     input wire WRITE,
     input wire READ,
     input wire [7:0] DATA_IN,
@@ -27,8 +26,10 @@ wire FIFO_EMPTY_8;
 wire FIFO_READ_8;
 wire [7:0] FIFO_DATA_OUT_8;
 
-gerneric_fifo #(.DATA_SIZE(8), .DEPTH(DEPTH * 4)) fifo_8_i
-(
+gerneric_fifo #(
+    .DATA_SIZE(8),
+    .DEPTH(DEPTH * 4)
+) fifo_8_i (
     .clk(CLK),
     .reset(RST),
     .write(WRITE),
@@ -93,8 +94,10 @@ always@(posedge CLK)
 
 assign FIFO_DATA_IN_32 = DATA_BUF;
 
-gerneric_fifo #(.DATA_SIZE(32), .DEPTH(DEPTH)) fifo_32_i
-(
+gerneric_fifo #(
+    .DATA_SIZE(32),
+    .DEPTH(DEPTH)
+) fifo_32_i (
     .clk(CLK),
     .reset(RST),
     .write(FIFO_WRITE_32),

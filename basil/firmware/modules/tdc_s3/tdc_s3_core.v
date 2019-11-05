@@ -14,7 +14,7 @@ module tdc_s3_core
     parameter ABUSWIDTH = 16,
     parameter FAST_TDC = 1,
     parameter FAST_TRIGGER = 1,
-    parameter BROADCAST = 0  // set this in order to use broadcast mode (640 MHz sampled trigger signal is shared with other TDC modules)
+    parameter BROADCAST = 0  // set this in order to receive the TDC trigger via FAST_TRIGGER_IN (640 MHz sampled TDC trigger signal is shared with other TDC modules)
 )(
     input wire CLK320,
     input wire CLK160,
@@ -25,7 +25,7 @@ module tdc_s3_core
     output wire TRIG_OUT,
 
     // input/output trigger signals for broadcasting mode
-    input wire [CLKDV*4-1:0] FAST_TRIGGER_IN, // input for effective 640MHz sampled trigger signal,set BROADCAST in order to use this as FAST TRIGGER signal (broadcast)
+    input wire [CLKDV*4-1:0] FAST_TRIGGER_IN, // input for effective 640MHz sampled trigger signal, set BROADCAST in order to use this as FAST TRIGGER signal (broadcast)
     output wire [CLKDV*4-1:0] FAST_TRIGGER_OUT, // outgoing effective 640MHz sampled trigger signal, can be used to share it with other TDC module (broadcast)
 
     input wire FIFO_READ,
@@ -565,15 +565,20 @@ cdc_syncfifo #(
     .wfull(wfull),
     .rempty(cdc_fifo_empty),
     .wdata(cdc_data),
-    .winc(cdc_fifo_write), .wclk(DV_CLK), .wrst(RST_LONG),
-    .rinc(!fifo_full), .rclk(BUS_CLK), .rrst(RST_LONG)
+    .winc(cdc_fifo_write),
+    .wclk(DV_CLK),
+    .wrst(RST_LONG),
+    .rinc(!fifo_full),
+    .rclk(BUS_CLK),
+    .rrst(RST_LONG)
 );
 
 gerneric_fifo #(
     .DATA_SIZE(32),
     .DEPTH(512)
 ) fifo_i (
-    .clk(BUS_CLK), .reset(RST_LONG | BUS_RST),
+    .clk(BUS_CLK),
+    .reset(RST_LONG | BUS_RST),
     .write(!cdc_fifo_empty),
     .read(FIFO_READ),
     .data_in(cdc_data_out),

@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -8,12 +8,12 @@
 `default_nettype none
 
 
-module ddr_des 
+module ddr_des
 #(
     parameter CLKDV = 4
 )(
-    input wire CLK2X, 
-    input wire CLK, 
+    input wire CLK2X,
+    input wire CLK,
     input wire WCLK,
     input wire IN,
     output reg [CLKDV*4-1:0] OUT,

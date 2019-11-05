@@ -608,8 +608,10 @@ cdc_syncfifo #(.DSIZE(32), .ASIZE(3)) cdc_syncfifo_send_tcp_data_i
 
 wire GEN_TCP_DATA_FIFO_READ, GEN_TCP_DATA_FIFO_EMPTY;
 wire [31:0] GEN_TCP_FIFO_DATA;
-gerneric_fifo #(.DATA_SIZE(32), .DEPTH(8))  fifo_send_tcp_data_i
-(
+gerneric_fifo #(
+    .DATA_SIZE(32),
+    .DEPTH(8)
+) fifo_send_tcp_data_i (
     .reset(RESET),
     .clk(BUS_CLK),
     .write(!gen_tcp_data_cdc_fifo_empty),

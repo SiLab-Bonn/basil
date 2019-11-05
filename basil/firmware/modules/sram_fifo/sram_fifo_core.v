@@ -121,14 +121,19 @@ wire FULL_BUF;
 
 assign FIFO_READ_NEXT_OUT = !FULL_BUF;
 
-gerneric_fifo #(.DATA_SIZE(32), .DEPTH(1024)) i_buf_fifo
-( .clk(BUS_CLK), .reset(RST),
+gerneric_fifo #(
+    .DATA_SIZE(32),
+    .DEPTH(1024)
+) i_buf_fifo (
+    .clk(BUS_CLK),
+    .reset(RST),
     .write(!FIFO_EMPTY_IN),
     .read(FIFO_READ_NEXT_OUT_BUF),
     .data_in(FIFO_DATA),
     .full(FULL_BUF),
     .empty(FIFO_EMPTY_IN_BUF),
-    .data_out(FIFO_DATA_BUF[31:0]), .size()
+    .data_out(FIFO_DATA_BUF[31:0]),
+    .size()
 );
 
 

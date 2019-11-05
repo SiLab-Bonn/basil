@@ -50,9 +50,9 @@ module decode_8b10b (datain, dispin, dataout, dispout, code_err, disp_err);
   wire p40 = ai & bi & ci & di;
   wire p04 = !ai & !bi & !ci & !di;
 
-  wire disp6a = p31 | (p22 & dispin) ; // pos disp if p22 and was pos, or p31.
-  wire disp6a2 = p31 & dispin ;  // disp is ++ after 4 bits
-  wire disp6a0 = p13 & ! dispin ; // -- disp after 4 bits
+  wire disp6a = p31 | (p22 & dispin); // pos disp if p22 and was pos, or p31.
+  wire disp6a2 = p31 & dispin;  // disp is ++ after 4 bits
+  wire disp6a0 = p13 & ! dispin; // -- disp after 4 bits
 
   wire disp6b = (((ei & ii & ! disp6a0) | (disp6a & (ei | ii)) | disp6a2 |
       (ei & ii & di)) & (ei | ii | di));
