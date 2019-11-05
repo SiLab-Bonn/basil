@@ -222,8 +222,12 @@ cdc_syncfifo_i(
     .wfull(wfull),
     .rempty(cdc_fifo_empty),
     .wdata(cdc_data_in),
-    .winc(cdc_fifo_write), .wclk(CLK40), .wrst(RST_LONG),
-    .rinc(cdc_fifo_read), .rclk(BUS_CLK), .rrst(RST_LONG)
+    .winc(cdc_fifo_write),
+    .wclk(CLK40),
+    .wrst(RST_LONG),
+    .rinc(cdc_fifo_read),
+    .rclk(BUS_CLK),
+    .rrst(RST_LONG)
 );
 
 reg [1:0] byte2_cnt, byte2_cnt_prev;
