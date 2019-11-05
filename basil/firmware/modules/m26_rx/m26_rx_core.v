@@ -85,34 +85,34 @@ assign CONF_EN_SYNC  = CONF_EN;
 
 wire MKD_RX_IO;
 IDDR IDDR_inst_mkd (
-   .Q1(),
-   .Q2(MKD_RX_IO),
-   .C(CLK_RX),
-   .CE(1'b1),
-   .D(MKD_RX),
-   .R(1'b0),
-   .S(1'b0)
+    .Q1(),
+    .Q2(MKD_RX_IO),
+    .C(CLK_RX),
+    .CE(1'b1),
+    .D(MKD_RX),
+    .R(1'b0),
+    .S(1'b0)
 );
 
 wire [1:0] DATA_RX_IO;
 IDDR IDDR_inst_rx0 (
-   .Q1(),
-   .Q2(DATA_RX_IO[0]),
-   .C(CLK_RX),
-   .CE(1'b1),
-   .D(DATA_RX[0]),
-   .R(1'b0),
-   .S(1'b0)
+    .Q1(),
+    .Q2(DATA_RX_IO[0]),
+    .C(CLK_RX),
+    .CE(1'b1),
+    .D(DATA_RX[0]),
+    .R(1'b0),
+    .S(1'b0)
 );
 
 IDDR IDDR_inst_rx1 (
-   .Q1(),
-   .Q2(DATA_RX_IO[1]),
-   .C(CLK_RX),
-   .CE(1'b1),
-   .D(DATA_RX[1]),
-   .R(1'b0),
-   .S(1'b0)
+    .Q1(),
+    .Q2(DATA_RX_IO[1]),
+    .C(CLK_RX),
+    .CE(1'b1),
+    .D(DATA_RX[1]),
+    .R(1'b0),
+    .S(1'b0)
 );
 
 reg [4:0] MKD_DLY;
@@ -132,19 +132,24 @@ wire FRAME_START, FRAME_START1;
 wire [15:0] DATA [1:0];
 
 m26_rx_ch m26_rx_ch0(
-    .RST(RST_SYNC), .CLK_RX(CLK_RX), .MKD_RX(MKD_DLY[0]), .DATA_RX(DATA0_DLY),
-    .WRITE(WRITE[0]), .FRAME_START(FRAME_START), .DATA(DATA[0])
+    .RST(RST_SYNC),
+    .CLK_RX(CLK_RX),
+    .MKD_RX(MKD_DLY[0]),
+    .DATA_RX(DATA0_DLY),
+    .WRITE(WRITE[0]),
+    .FRAME_START(FRAME_START),
+    .DATA(DATA[0])
 );
 
 m26_rx_ch m26_rx_ch1(
-    .RST(RST_SYNC), .CLK_RX(CLK_RX), .MKD_RX(MKD_DLY[4]), .DATA_RX(DATA1_DLY[4]),
-    .WRITE(WRITE[1]), .FRAME_START(FRAME_START1), .DATA(DATA[1])
+    .RST(RST_SYNC),
+    .CLK_RX(CLK_RX),
+    .MKD_RX(MKD_DLY[4]),
+    .DATA_RX(DATA1_DLY[4]),
+    .WRITE(WRITE[1]),
+    .FRAME_START(FRAME_START1),
+    .DATA(DATA[1])
 );
-
-//ila_0 ila(
-//    .clk(CLK_RX),
-//    .probe0({FRAME_START, WRITE, DATA[1], DATA[0]})
-//);
 
 reg [31:0] TIMESTAMP_save;
 always@(posedge CLK_RX)
@@ -194,24 +199,35 @@ always@(posedge CLK_RX) begin
 end
 
 wire [17:0] cdc_data_out;
-cdc_syncfifo #(.DSIZE(18), .ASIZE(3)) cdc_syncfifo_i
-(
+cdc_syncfifo #(
+    .DSIZE(18),
+    .ASIZE(3)
+) cdc_syncfifo_i (
     .rdata(cdc_data_out),
     .wfull(wfull),
     .rempty(cdc_fifo_empty),
     .wdata(cdc_data),
-    .winc(cdc_fifo_write), .wclk(CLK_RX), .wrst(RST_SYNC),
-    .rinc(!fifo_full), .rclk(BUS_CLK), .rrst(RST)
+    .winc(cdc_fifo_write),
+    .wclk(CLK_RX),
+    .wrst(RST_SYNC),
+    .rinc(!fifo_full),
+    .rclk(BUS_CLK),
+    .rrst(RST)
 );
 
-gerneric_fifo #(.DATA_SIZE(18), .DEPTH(1024))  fifo_i
-( .clk(BUS_CLK), .reset(RST),
+gerneric_fifo #(
+    .DATA_SIZE(18),
+    .DEPTH(1024)
+) fifo_i (
+    .clk(BUS_CLK),
+    .reset(RST),
     .write(!cdc_fifo_empty),
     .read(FIFO_READ),
     .data_in(cdc_data_out),
     .full(fifo_full),
     .empty(FIFO_EMPTY),
-    .data_out(FIFO_DATA[17:0]), .size()
+    .data_out(FIFO_DATA[17:0]),
+    .size()
 );
 
 assign FIFO_DATA[19:18] = 0;
