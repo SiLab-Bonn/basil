@@ -41,29 +41,20 @@ module fei4_rx_core
 
 localparam VERSION = 3;
 
-// 0 - soft reset
-// 1 - status
-// 2-3 fifo size
-// 4 - decoder_err_cnt
-// 5 - lost_err_cnt
-
-// reset sync and registers
-// when write to addr = 0 then reset
+// writing to register 0 asserts soft reset
 wire SOFT_RST;
-assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
-reg RST_FF, RST_FF2;
-always @(posedge BUS_CLK) begin
-    RST_FF <= SOFT_RST;
-    RST_FF2 <= RST_FF;
-end
+assign SOFT_RST = (BUS_ADD == 0 && BUS_WR);
 
-reg BUS_RST_FF, BUS_RST_FF2;
+// reset sync
+reg SOFT_RST_FF, SOFT_RST_FF2, BUS_RST_FF, BUS_RST_FF2;
 always @(posedge BUS_CLK) begin
+    SOFT_RST_FF <= SOFT_RST;
+    SOFT_RST_FF2 <= SOFT_RST_FF;
     BUS_RST_FF <= BUS_RST;
     BUS_RST_FF2 <= BUS_RST_FF;
 end
 
-// reset sync only
+// writing to register 1 asserts reset RX only
 wire RX_RST;
 assign RX_RST = (BUS_ADD==1 && BUS_WR);
 reg RX_RST_FF, RX_RST_FF2;
@@ -73,20 +64,33 @@ always @(posedge BUS_CLK) begin
 end
 
 wire SOFT_RST_FLAG;
-assign SOFT_RST_FLAG = ~RST_FF2 & RST_FF;
+assign SOFT_RST_FLAG = ~SOFT_RST_FF2 & SOFT_RST_FF;
 wire BUS_RST_FLAG;
 assign BUS_RST_FLAG = BUS_RST_FF2 & ~BUS_RST_FF; // trailing edge
-wire RST;
-assign RST = BUS_RST_FLAG | SOFT_RST_FLAG;
+wire RST_FLAG;
+assign RST_FLAG = BUS_RST_FLAG | SOFT_RST_FLAG;
 wire RX_RST_FLAG;
 assign RX_RST_FLAG = ~RX_RST_FF2 & RX_RST_FF;
 
-wire [15:0] fifo_size; // BUS_ADD==3, 4
-reg [15:0] fifo_size_buf;
+reg RECEIVER_RST;
+always @(posedge BUS_CLK) begin
+    RECEIVER_RST <= RST_FLAG | RX_RST_FLAG;
+end
+
+// registers
+// 0 - soft reset
+// 1 - RX reset
+// 2 - status
+// 3-4 fifo size
+// 5 - decoder_err_cnt
+// 6 - lost_err_cnt
+wire rx_ready_buf_read;
+reg [15:0] fifo_size_buf; // BUS_ADD==3
+reg [7:0] fifo_size_buf_read; // BUS_ADD==4
 wire [7:0] decoder_err_cnt; // BUS_ADD==5
-reg [7:0] decoder_err_cnt_buf;
+reg [7:0] decoder_err_cnt_buf_read;
 wire [7:0] lost_err_cnt; // BUS_ADD==6
-reg [7:0] lost_err_cnt_buf;
+reg [7:0] lost_err_cnt_buf_read;
 
 reg [7:0] status_regs;
 
@@ -97,7 +101,7 @@ assign CONF_EN_RX = status_regs[2];
 assign RX_ENABLED = CONF_EN_RX;
 
 always @(posedge BUS_CLK) begin
-    if(RST)
+    if(RST_FLAG)
         status_regs <= 8'b0000_0000; // disable Rx by default
     else if(BUS_WR && BUS_ADD == 2)
         status_regs <= BUS_DATA_IN;
@@ -108,24 +112,78 @@ always @ (posedge BUS_CLK) begin
         if(BUS_ADD == 0)
             BUS_DATA_OUT <= VERSION;
         else if(BUS_ADD == 2)
-            BUS_DATA_OUT <= {status_regs[7:1], RX_READY};
+            BUS_DATA_OUT <= {status_regs[7:1], rx_ready_buf_read};
         else if(BUS_ADD == 3)
-            BUS_DATA_OUT <= fifo_size[7:0];
+            BUS_DATA_OUT <= fifo_size_buf[7:0];
         else if(BUS_ADD == 4)
-            BUS_DATA_OUT <= fifo_size_buf[15:8];
+            BUS_DATA_OUT <= fifo_size_buf_read[7:0];
         else if(BUS_ADD == 5)
-            BUS_DATA_OUT <= decoder_err_cnt_buf;
+            BUS_DATA_OUT <= decoder_err_cnt_buf_read;
         else if(BUS_ADD == 6)
-            BUS_DATA_OUT <= lost_err_cnt_buf;
+            BUS_DATA_OUT <= lost_err_cnt_buf_read;
         else
             BUS_DATA_OUT <= 8'b0;
     end
 end
 
+
+wire CONF_EN_INVERT_RX_DATA_FCLK;
+three_stage_synchronizer conf_en_invert_rx_data_synchronizer_rx_clk (
+    .CLK(RX_CLK),
+    .IN(CONF_EN_INVERT_RX_DATA),
+    .OUT(CONF_EN_INVERT_RX_DATA_FCLK)
+);
+
+wire CONF_EN_RX_WCLK;
+three_stage_synchronizer conf_en_rx_synchronizer_data_clk (
+    .CLK(DATA_CLK),
+    .IN(CONF_EN_RX),
+    .OUT(CONF_EN_RX_WCLK)
+);
+
 wire ready_rec;
-assign RX_READY = (ready_rec==1'b1) ? 1'b1 : 1'b0;
-assign RX_8B10B_DECODER_ERR = (decoder_err_cnt!=8'b0);
-assign RX_FIFO_OVERFLOW_ERR = (lost_err_cnt!=8'b0);
+three_stage_synchronizer rx_ready_synchronizer_bus_clk (
+    .CLK(BUS_CLK),
+    .IN(ready_rec),
+    .OUT(rx_ready_buf_read)
+);
+
+three_stage_synchronizer rx_ready_synchronizer_data_clk (
+    .CLK(DATA_CLK),
+    .IN(ready_rec),
+    .OUT(RX_READY)
+);
+
+reg RX_8B10B_DECODER_ERR_BUS_CLK;
+always @(posedge BUS_CLK) begin
+    if(decoder_err_cnt_buf_read != 8'b0) begin
+        RX_8B10B_DECODER_ERR_BUS_CLK <= 1;
+    end else begin
+        RX_8B10B_DECODER_ERR_BUS_CLK <= 0;
+    end
+end
+
+three_stage_synchronizer decoder_err_synchronizer_data_clk (
+    .CLK(DATA_CLK),
+    .IN(RX_8B10B_DECODER_ERR_BUS_CLK),
+    .OUT(RX_8B10B_DECODER_ERR)
+);
+
+reg RX_FIFO_OVERFLOW_ERR_BUS_CLK;
+always @(posedge BUS_CLK) begin
+    if(lost_err_cnt_buf_read != 8'b0) begin
+        RX_FIFO_OVERFLOW_ERR_BUS_CLK <= 1;
+    end else begin
+        RX_FIFO_OVERFLOW_ERR_BUS_CLK <= 0;
+    end
+end
+
+three_stage_synchronizer lost_err_synchronizer_data_clk (
+    .CLK(DATA_CLK),
+    .IN(RX_FIFO_OVERFLOW_ERR_BUS_CLK),
+    .OUT(RX_FIFO_OVERFLOW_ERR)
+);
+
 
 wire [23:0] FE_DATA;
 wire [7:0] DATA_HEADER;
@@ -133,26 +191,83 @@ assign DATA_HEADER = DATA_IDENTIFIER;
 assign FIFO_DATA = {DATA_HEADER, FE_DATA};
 
 
+wire [15:0] fifo_size;
+reg [15:0] fifo_size_gray;
+always@(posedge FIFO_CLK)
+    fifo_size_gray <=  (fifo_size>>1) ^ fifo_size;
+
+reg [15:0] fifo_size_cdc0, fifo_size_cdc1, fifo_size_bus_clk;
+always@(posedge BUS_CLK) begin
+    fifo_size_cdc0 <= fifo_size_gray;
+    fifo_size_cdc1 <= fifo_size_cdc0;
+end
+
+integer gbi_fifo_size;
+always@(*) begin
+    fifo_size_bus_clk[15] = fifo_size_cdc1[15];
+    for(gbi_fifo_size = 14; gbi_fifo_size >= 0; gbi_fifo_size = gbi_fifo_size - 1) begin
+        fifo_size_bus_clk[gbi_fifo_size] = fifo_size_cdc1[gbi_fifo_size] ^ fifo_size_bus_clk[gbi_fifo_size + 1];
+    end
+end
+
 always @ (posedge BUS_CLK)
 begin
+    fifo_size_buf <= fifo_size_bus_clk;
     if (BUS_ADD == 3 && BUS_RD)
-        fifo_size_buf <= fifo_size;
+        fifo_size_buf_read[7:0] <= fifo_size_buf[15:8];
+end
+
+reg [7:0] decoder_err_cnt_gray;
+always@(posedge DATA_CLK)
+    decoder_err_cnt_gray <=  (decoder_err_cnt>>1) ^ decoder_err_cnt;
+
+reg [7:0] decoder_err_cnt_cdc0, decoder_err_cnt_cdc1, decoder_err_cnt_bus_clk;
+always@(posedge BUS_CLK) begin
+    decoder_err_cnt_cdc0 <= decoder_err_cnt_gray;
+    decoder_err_cnt_cdc1 <= decoder_err_cnt_cdc0;
+end
+
+integer gbi_decoder_err_cnt;
+always@(*) begin
+    decoder_err_cnt_bus_clk[7] = decoder_err_cnt_cdc1[7];
+    for(gbi_decoder_err_cnt = 6; gbi_decoder_err_cnt >= 0; gbi_decoder_err_cnt = gbi_decoder_err_cnt - 1) begin
+        decoder_err_cnt_bus_clk[gbi_decoder_err_cnt] = decoder_err_cnt_cdc1[gbi_decoder_err_cnt] ^ decoder_err_cnt_bus_clk[gbi_decoder_err_cnt + 1];
+    end
 end
 
 always @ (posedge BUS_CLK)
 begin
-    decoder_err_cnt_buf <= decoder_err_cnt;
+    decoder_err_cnt_buf_read <= decoder_err_cnt_bus_clk;
+end
+
+reg [7:0] lost_err_cnt_gray;
+always@(posedge DATA_CLK)
+    lost_err_cnt_gray <=  (lost_err_cnt>>1) ^ lost_err_cnt;
+
+reg [7:0] lost_err_cnt_cdc0, lost_err_cnt_cdc1, lost_err_cnt_bus_clk;
+always@(posedge BUS_CLK) begin
+    lost_err_cnt_cdc0 <= lost_err_cnt_gray;
+    lost_err_cnt_cdc1 <= lost_err_cnt_cdc0;
+end
+
+integer gbi_lost_err_cnt;
+always@(*) begin
+    lost_err_cnt_bus_clk[7] = lost_err_cnt_cdc1[7];
+    for(gbi_lost_err_cnt = 6; gbi_lost_err_cnt >= 0; gbi_lost_err_cnt = gbi_lost_err_cnt - 1) begin
+        lost_err_cnt_bus_clk[gbi_lost_err_cnt] = lost_err_cnt_cdc1[gbi_lost_err_cnt] ^ lost_err_cnt_bus_clk[gbi_lost_err_cnt + 1];
+    end
 end
 
 always @ (posedge BUS_CLK)
 begin
-    lost_err_cnt_buf <= lost_err_cnt;
+    lost_err_cnt_buf_read <= lost_err_cnt_bus_clk;
 end
+
 
 receiver_logic #(
     .DSIZE(DSIZE)
 ) ireceiver_logic (
-    .RESET(RST | RX_RST_FLAG),
+    .RESET(RECEIVER_RST),
     .WCLK(DATA_CLK),
     .FCLK(RX_CLK),
     .FCLK2X(RX_CLK2X),
@@ -161,13 +276,13 @@ receiver_logic #(
     .read(FIFO_READ),
     .data(FE_DATA),
     .empty(FIFO_EMPTY),
-    .full(RX_FIFO_FULL),
+    .rx_fifo_full(RX_FIFO_FULL),
     .rec_sync_ready(ready_rec),
     .lost_err_cnt(lost_err_cnt),
     .decoder_err_cnt(decoder_err_cnt),
     .fifo_size(fifo_size),
-    .invert_rx_data(CONF_EN_INVERT_RX_DATA),
-    .enable_rx(CONF_EN_RX),
+    .invert_rx_data(CONF_EN_INVERT_RX_DATA_FCLK),
+    .enable_rx(CONF_EN_RX_WCLK),
     .FIFO_CLK(FIFO_CLK)
 );
 
