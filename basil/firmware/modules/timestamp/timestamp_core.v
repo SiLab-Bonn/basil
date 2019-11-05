@@ -154,16 +154,20 @@ end
 
 wire [63:0] cdc_data_out;
 wire cdc_fifo_read;
-cdc_syncfifo
-#(.DSIZE(64), .ASIZE(8))
- cdc_syncfifo_i
-(
+cdc_syncfifo #(
+    .DSIZE(64),
+    .ASIZE(8)
+) cdc_syncfifo_i (
     .rdata(cdc_data_out),
     .wfull(wfull),
     .rempty(cdc_fifo_empty),
     .wdata(cdc_data_in),
-    .winc(cdc_fifo_write), .wclk(CLK), .wrst(RST_LONG),
-    .rinc(cdc_fifo_read), .rclk(BUS_CLK), .rrst(RST_LONG)
+    .winc(cdc_fifo_write),
+    .wclk(CLK),
+    .wrst(RST_LONG),
+    .rinc(cdc_fifo_read),
+    .rclk(BUS_CLK),
+    .rrst(RST_LONG)
 );
 
 reg [1:0] byte2_cnt, byte2_cnt_prev;
