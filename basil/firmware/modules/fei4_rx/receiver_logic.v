@@ -21,7 +21,7 @@ module receiver_logic
     input wire              read,
     output wire  [23:0]     data,
     output wire             empty,
-    output wire             full,
+    output reg              rx_fifo_full,
     output wire             rec_sync_ready,
     output reg  [7:0]       lost_err_cnt,
     output reg  [7:0]       decoder_err_cnt,
@@ -47,13 +47,13 @@ flag_domain_crossing reset_domain_crossing_fclk_inst (
     .FLAG_OUT_CLK_B(RESET_FCLK)
 );
 
-reg enable_rx_buf, enable_rx_buf2, enable_rx_wclk;
-always @ (posedge WCLK)
-begin
-    enable_rx_buf <= enable_rx;
-    enable_rx_buf2 <= enable_rx_buf;
-    enable_rx_wclk <= enable_rx_buf2;
-end
+wire RESET_FIFO_CLK;
+flag_domain_crossing reset_domain_crossing_fifo_clk_inst (
+    .CLK_A(BUS_CLK),
+    .CLK_B(FIFO_CLK),
+    .FLAG_IN_CLK_A(RESET),
+    .FLAG_OUT_CLK_B(RESET_FIFO_CLK)
+);
 
 // data to clock phase alignment
 wire RX_DATA_SYNC; //, USEAOUT, USEBOUT, USECOUT, USEDOUT;
@@ -70,6 +70,12 @@ sync_master sync_master_inst(
     .sdataout(RX_DATA_SYNC)
 );
 
+reg RX_DATA_SYNC_BUF, RX_DATA_SYNC_BUF2;
+always @(posedge FCLK) begin
+    RX_DATA_SYNC_BUF <= RX_DATA_SYNC;
+    RX_DATA_SYNC_BUF2 <= RX_DATA_SYNC_BUF;
+end
+
 // 8b/10b record sync
 wire [9:0] data_8b10b;
 reg decoder_err;
@@ -77,7 +83,7 @@ rec_sync #(
     .DSIZE(DSIZE)
 ) rec_sync_inst (
     .reset(RESET_WCLK),
-    .datain(invert_rx_data ? ~RX_DATA_SYNC : RX_DATA_SYNC),
+    .datain(invert_rx_data ? ~RX_DATA_SYNC_BUF2 : RX_DATA_SYNC_BUF2),
     .data(data_8b10b),
     .WCLK(WCLK),
     .FCLK(FCLK),
@@ -86,7 +92,7 @@ rec_sync #(
 );
 
 wire write_8b10b;
-assign write_8b10b = rec_sync_ready & enable_rx_wclk;
+assign write_8b10b = rec_sync_ready & enable_rx;
 
 reg [9:0] data_to_dec;
 integer i;
@@ -200,22 +206,28 @@ wire [23:0] cdc_data_out;
 wire [23:0] wdata;
 assign wdata = {data_dec_in[0],data_dec_in[1],data_dec_in[2]};
 
-// generate delayed and long reset
-reg [5:0] rst_cnt;
-always@(posedge BUS_CLK) begin
-    if(RESET)
-        rst_cnt <= 5'd8;
-    else if(rst_cnt != 5'd7)
-        rst_cnt <= rst_cnt +1;
-end
-wire rst_long = rst_cnt[5];
-reg cdc_sync_ff;
-always @(posedge WCLK) begin
-    cdc_sync_ff <= rst_long;
+// generate long reset
+reg [5:0] rst_cnt_wclk;
+reg RST_LONG_WCLK;
+always@(posedge WCLK) begin
+    if (RESET_WCLK)
+        rst_cnt_wclk <= 6'b11_1111; // start value
+    else if (rst_cnt_wclk != 0)
+        rst_cnt_wclk <= rst_cnt_wclk - 1;
+    RST_LONG_WCLK <= |rst_cnt_wclk;
 end
 
-//assign FIFO_CLK = BUS_CLK;
+reg [5:0] rst_cnt_fifo_clk;
+reg RST_LONG_FIFO_CLK;
+always@(posedge FIFO_CLK) begin
+    if (RESET_FIFO_CLK)
+        rst_cnt_fifo_clk <= 6'b11_1111; // start value
+    else if (rst_cnt_fifo_clk != 0)
+        rst_cnt_fifo_clk <= rst_cnt_fifo_clk - 1;
+    RST_LONG_FIFO_CLK <= |rst_cnt_fifo_clk;
+end
 
+wire full;
 cdc_syncfifo #(
     .DSIZE(24),
     .ASIZE(2)
@@ -226,31 +238,35 @@ cdc_syncfifo #(
     .wdata(wdata),
     .winc(write_dec_in),
     .wclk(WCLK),
-    .wrst(cdc_sync_ff),
+    .wrst(RST_LONG_WCLK),
     .rinc(!full),
     .rclk(FIFO_CLK),
-    .rrst(rst_long)
+    .rrst(RST_LONG_FIFO_CLK)
 );
 
-wire [10:0] fifo_size_int;
+wire [9:0] fifo_size_int;
 
 gerneric_fifo #(
     .DATA_SIZE(24),
-    .DEPTH(2048)
+    .DEPTH(1024)
 ) fifo_i (
     .clk(FIFO_CLK),
-    .reset(rst_long),
+    .reset(RST_LONG_FIFO_CLK),
     .write(!cdc_fifo_empty),
     .read(read),
     .data_in(cdc_data_out),
     .full(full),
     .empty(empty),
-    .data_out(data), 
+    .data_out(data),
     .size(fifo_size_int)
 );
 
 always @(posedge FIFO_CLK) begin
-    fifo_size <= {5'b0, fifo_size_int};
+    rx_fifo_full <= full;
+end
+
+always @(posedge FIFO_CLK) begin
+    fifo_size <= {6'b0, fifo_size_int};
 end
 
 `ifdef SYNTHESIS_NOT

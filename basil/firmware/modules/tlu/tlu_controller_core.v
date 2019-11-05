@@ -65,22 +65,21 @@ module tlu_controller_core
 
 localparam VERSION = 11;
 
-// Registers
-wire SOFT_RST; // Address: 0
+// writing to register 0 asserts soft reset
+wire SOFT_RST;
 assign SOFT_RST = (BUS_ADD == 0 && BUS_WR);
 
 // reset sync
-// when writing to addr = 0 then reset
-reg RST_FF, RST_FF2, BUS_RST_FF, BUS_RST_FF2;
+reg SOFT_RST_FF, SOFT_RST_FF2, BUS_RST_FF, BUS_RST_FF2;
 always @(posedge BUS_CLK) begin
-    RST_FF <= SOFT_RST;
-    RST_FF2 <= RST_FF;
+    SOFT_RST_FF <= SOFT_RST;
+    SOFT_RST_FF2 <= SOFT_RST_FF;
     BUS_RST_FF <= BUS_RST;
     BUS_RST_FF2 <= BUS_RST_FF;
 end
 
 wire SOFT_RST_FLAG;
-assign SOFT_RST_FLAG = ~RST_FF2 & RST_FF;
+assign SOFT_RST_FLAG = ~SOFT_RST_FF2 & SOFT_RST_FF;
 wire BUS_RST_FLAG;
 assign BUS_RST_FLAG = BUS_RST_FF2 & ~BUS_RST_FF; // trailing edge
 wire RST;
@@ -94,8 +93,8 @@ flag_domain_crossing rst_flag_domain_crossing (
     .FLAG_OUT_CLK_B(RST_SYNC)
 );
 
-// Manual software trigger
-wire SOFT_TRG; // Address: 34
+// writing to register 34 asserts software trigger
+wire SOFT_TRG;
 assign SOFT_TRG = (BUS_ADD == 34 && BUS_WR);
 
 reg SOFT_TRG_FF, SOFT_TRG_FF2;
@@ -108,14 +107,14 @@ wire SOFT_TRG_FLAG;
 assign SOFT_TRG_FLAG = ~SOFT_TRG_FF2 & SOFT_TRG_FF;
 
 wire SOFT_TRG_SYNC;
-flag_domain_crossing trg_flag_domain_crossing (
+flag_domain_crossing soft_trg_flag_domain_crossing (
     .CLK_A(BUS_CLK),
     .CLK_B(TRIGGER_CLK),
     .FLAG_IN_CLK_A(SOFT_TRG_FLAG),
     .FLAG_OUT_CLK_B(SOFT_TRG_SYNC)
 );
 
-reg [7:0] status_regs[63:0];
+reg [7:0] status_regs[35:0];
 
 // reg 0 for SOFT_RST
 wire [1:0] TRIGGER_MODE; // 2'b00 - standard trigger, 2'b01 - TLU no handshake, 2'b10 - TLU simple handshake, 2'b11 - TLU trigger data handshake
@@ -200,7 +199,7 @@ begin
 end
 
 // read reg
-reg [7:0] LOST_DATA_CNT; // BUS_ADD==0
+reg [7:0] lost_data_cnt_buf_read; // BUS_ADD==0
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK, CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF; // BUS_ADD==4 - 7
 reg [31:0] TRIGGER_COUNTER; // BUS_ADD==8 - 11
 reg [23:0] TRIGGER_COUNTER_BUF_8_31;
@@ -234,7 +233,7 @@ always @ (posedge BUS_CLK) begin
         else if (BUS_ADD == 11)
             BUS_DATA_OUT <= TRIGGER_COUNTER_BUF_8_31[23:16];
         else if (BUS_ADD == 12)
-            BUS_DATA_OUT <= LOST_DATA_CNT;
+            BUS_DATA_OUT <= lost_data_cnt_buf_read;
         else if (BUS_ADD == 13)
             BUS_DATA_OUT <= status_regs[13];
         else if (BUS_ADD == 14)
@@ -311,6 +310,15 @@ three_stage_synchronizer #(
     .CLK(TRIGGER_CLK),
     .IN(CONF_EXT_TIMESTAMP),
     .OUT(CONF_EXT_TIMESTAMP_SYNC)
+);
+
+wire [1:0] CONF_DATA_FORMAT_SYNC;
+three_stage_synchronizer #(
+    .WIDTH(2)
+) three_stage_conf_data_format_synchronizer (
+    .CLK(TRIGGER_CLK),
+    .IN(CONF_DATA_FORMAT),
+    .OUT(CONF_DATA_FORMAT_SYNC)
 );
 
 wire [7:0] TLU_TRIGGER_LOW_TIME_OUT_SYNC;
@@ -675,35 +683,15 @@ end
 wire TRIGGER_ACKNOWLEDGE_FSM;
 assign TRIGGER_ACKNOWLEDGE_FSM = (EXT_TRIGGER_ENABLE == 1'b1) ? TRIGGER_ACKNOWLEDGE : TRIGGER_ACCEPTED_FLAG;
 
-wire TRIGGER_COUNTER_MAX_SET;
-reg TRIGGER_COUNTER_MAX_SET_FF, TRIGGER_COUNTER_MAX_SET_FF2;
-assign TRIGGER_COUNTER_MAX_SET = (BUS_ADD == 28 && BUS_WR);
-
-always @ (posedge BUS_CLK)
-begin
-    TRIGGER_COUNTER_MAX_SET_FF <= TRIGGER_COUNTER_MAX_SET;
-    TRIGGER_COUNTER_MAX_SET_FF2 <= TRIGGER_COUNTER_MAX_SET_FF;
-end
-wire TRIGGER_COUNTER_MAX_SET_FLAG;
-assign TRIGGER_COUNTER_MAX_SET_FLAG = ~TRIGGER_COUNTER_MAX_SET_FF2 & TRIGGER_COUNTER_MAX_SET_FF;
-
-wire TRIGGER_COUNTER_MAX_SET_FLAG_SYNC;
-flag_domain_crossing trigger_counter_max_set_flag_domain_crossing (
-    .CLK_A(BUS_CLK),
-    .CLK_B(TRIGGER_CLK),
-    .FLAG_IN_CLK_A(TRIGGER_COUNTER_MAX_SET_FLAG),
-    .FLAG_OUT_CLK_B(TRIGGER_COUNTER_MAX_SET_FLAG_SYNC)
-);
-
 // trigger counter max
-reg [31:0] TRIGGER_COUNTER_MAX_SYNC;
-always @ (posedge TRIGGER_CLK)
-begin
-    if (RST_SYNC)
-        TRIGGER_COUNTER_MAX_SYNC <= 32'b0;
-    else if(TRIGGER_COUNTER_MAX_SET_FLAG_SYNC)
-        TRIGGER_COUNTER_MAX_SYNC <= TRIGGER_COUNTER_MAX;
-end
+wire [31:0] TRIGGER_COUNTER_MAX_SYNC;
+three_stage_synchronizer #(
+    .WIDTH(32)
+) three_stage_trigger_counter_max_synchronizer (
+    .CLK(TRIGGER_CLK),
+    .IN(TRIGGER_COUNTER_MAX),
+    .OUT(TRIGGER_COUNTER_MAX_SYNC)
+);
 
 reg TRIGGER_LIMIT_REACHED_SYNC;
 always @ (posedge TRIGGER_CLK)
@@ -826,7 +814,7 @@ tlu_controller_fsm #(
     .TLU_ENABLE_VETO(TLU_ENABLE_VETO_SYNC),
     .TLU_RESET_FLAG(TLU_RESET_FLAG_SYNC),
 
-    .CONF_DATA_FORMAT(CONF_DATA_FORMAT),
+    .CONF_DATA_FORMAT(CONF_DATA_FORMAT_SYNC),
 
     .TLU_BUSY(TLU_BUSY),
     .TLU_CLOCK_ENABLE(TLU_CLOCK_ENABLE),
@@ -839,27 +827,61 @@ tlu_controller_fsm #(
     .TLU_TRIGGER_ACCEPT_ERROR_FLAG(TLU_TRIGGER_ACCEPT_ERROR_FLAG)
 );
 
-reg [7:0] rst_cnt;
+// generate long reset
+reg [5:0] rst_cnt;
+reg RST_LONG;
 always@(posedge BUS_CLK) begin
     if (RST)
-        rst_cnt <= 8'b1111_1111; // start value
+        rst_cnt <= 6'b11_1111; // start value
     else if (rst_cnt != 0)
         rst_cnt <= rst_cnt - 1;
+    RST_LONG <= |rst_cnt;
 end
 
-wire RST_LONG;
-assign RST_LONG = |rst_cnt;
+reg [5:0] rst_cnt_sync;
+reg RST_LONG_SYNC;
+always@(posedge TRIGGER_CLK) begin
+    if (RST_SYNC)
+        rst_cnt_sync <= 6'b11_1111; // start value
+    else if (rst_cnt_sync != 0)
+        rst_cnt_sync <= rst_cnt_sync - 1;
+    RST_LONG_SYNC <= |rst_cnt_sync;
+end
 
 wire wfull;
 wire cdc_fifo_write;
 assign cdc_fifo_write = !wfull && TRIGGER_DATA_WRITE;
 wire fifo_full, cdc_fifo_empty;
 
+reg [7:0] LOST_DATA_CNT;
 always@(posedge TRIGGER_CLK) begin
     if(RST_SYNC)
         LOST_DATA_CNT <= 0;
     else if (wfull && TRIGGER_DATA_WRITE && LOST_DATA_CNT != -1)
         LOST_DATA_CNT <= LOST_DATA_CNT + 1;
+end
+
+reg [7:0] lost_data_cnt_gray;
+always@(posedge TRIGGER_CLK)
+    lost_data_cnt_gray <=  (LOST_DATA_CNT>>1) ^ LOST_DATA_CNT;
+
+reg [7:0] lost_data_cnt_cdc0, lost_data_cnt_cdc1, lost_data_cnt_bus_clk;
+always@(posedge BUS_CLK) begin
+    lost_data_cnt_cdc0 <= lost_data_cnt_gray;
+    lost_data_cnt_cdc1 <= lost_data_cnt_cdc0;
+end
+
+integer gbi_lost_err_cnt;
+always@(*) begin
+    lost_data_cnt_bus_clk[7] = lost_data_cnt_cdc1[7];
+    for(gbi_lost_err_cnt = 6; gbi_lost_err_cnt >= 0; gbi_lost_err_cnt = gbi_lost_err_cnt - 1) begin
+        lost_data_cnt_bus_clk[gbi_lost_err_cnt] = lost_data_cnt_cdc1[gbi_lost_err_cnt] ^ lost_data_cnt_bus_clk[gbi_lost_err_cnt + 1];
+    end
+end
+
+always @ (posedge BUS_CLK)
+begin
+    lost_data_cnt_buf_read <= lost_data_cnt_bus_clk;
 end
 
 wire [31:0] cdc_data_out;
@@ -873,7 +895,7 @@ cdc_syncfifo #(
     .wdata(TRIGGER_DATA),
     .winc(cdc_fifo_write),
     .wclk(TRIGGER_CLK),
-    .wrst(RST_LONG),
+    .wrst(RST_LONG_SYNC),
     .rinc(!fifo_full),
     .rclk(BUS_CLK),
     .rrst(RST_LONG)
@@ -884,7 +906,7 @@ gerneric_fifo #(
     .DEPTH(8)
 ) fifo_i (
     .clk(BUS_CLK),
-    .reset(RST_LONG | BUS_RST),
+    .reset(RST_LONG),
     .write(!cdc_fifo_empty),
     .read(FIFO_READ),
     .data_in(cdc_data_out),
