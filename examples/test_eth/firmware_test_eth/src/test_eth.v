@@ -104,7 +104,7 @@ PLLE2_BASE #(
 );
 
 wire BUS_CLK;
-BUFG BUFG_inst_BUS_CLK(.O(BUS_CLK), .I(BUS_CLK_PLL));  // 133.3MHz
+BUFG BUFG_inst_BUS_CLK (.O(BUS_CLK), .I(BUS_CLK_PLL));  // 133.3MHz
 
 assign RST = !RESET_N | !LOCKED | !LOCKED2;
 
@@ -129,10 +129,10 @@ wire duplex_status;
 reg GMII_1000M;
 
 wire MII_TX_CLK, MII_TX_CLK_90;
-BUFGMUX GMIIMUX(.O(MII_TX_CLK), .I0(rgmii_rxc), .I1(CLK125_PLL), .S(GMII_1000M));
-BUFGMUX GMIIMUX90(.O(MII_TX_CLK_90), .I0(rgmii_rxc), .I1(CLK125_90_PLL), .S(GMII_1000M));
+BUFGMUX GMIIMUX (.O(MII_TX_CLK), .I0(rgmii_rxc), .I1(CLK125_PLL), .S(GMII_1000M));
+BUFGMUX GMIIMUX90 (.O(MII_TX_CLK_90), .I0(rgmii_rxc), .I1(CLK125_90_PLL), .S(GMII_1000M));
 
-rgmii_io rgmii(
+rgmii_io rgmii (
     .rgmii_txd(rgmii_txd),
     .rgmii_tx_ctl(rgmii_tx_ctl),
     .rgmii_txc(rgmii_txc),
@@ -171,11 +171,12 @@ always@(posedge BUS_CLK or posedge RST)begin
 end
 
 // Instantiate tri-state buffer for MDIO
-IOBUF i_iobuf_mdio(
+IOBUF i_iobuf_mdio (
     .O(mdio_gem_i),
     .IO(mdio_phy_mdio),
     .I(mdio_gem_o),
-    .T(mdio_gem_t));
+    .T(mdio_gem_t)
+);
 
 wire EEPROM_CS, EEPROM_SK, EEPROM_DI;
 wire TCP_CLOSE_REQ;
@@ -267,7 +268,7 @@ wire [7:0] BUS_DATA;
 wire INVALID;
 assign BUS_RST = SiTCP_RST;
 
-tcp_to_bus itcp_to_bus(
+tcp_to_bus itcp_to_bus (
     .BUS_RST(BUS_RST),
     .BUS_CLK(BUS_CLK),
 
@@ -688,6 +689,16 @@ clock_divider #(
     .CLOCK(CLK_1HZ)
 );
 
+wire CLK_3HZ;
+clock_divider #(
+    .DIVISOR(13333333)
+) i_clock_divisor_40MHz_to_3Hz (
+    .CLK(CLK40),
+    .RESET(1'b0),
+    .CE(),
+    .CLOCK(CLK_3HZ)
+);
+
 wire CE_6HZ;
 clock_divider #(
     .DIVISOR(22222222)
@@ -736,10 +747,10 @@ always @ (posedge BUS_CLK or posedge FIFO_WAS_FULL or negedge FIFO_WAS_ALMOST_EM
             FIFO_FULL_SLOW <= 1'b0;
     end
 
-assign LED[7:4] = ~{clock_speed, duplex_status, |clock_speed & link_status};
+assign LED[7:4] = ~{clock_speed, duplex_status, (|clock_speed & link_status & (GMII_1000M ? CLK_1HZ : CLK_3HZ)) | INVALID};
 assign LED[0] = CLK_1HZ;
 assign LED[1] = ~FIFO_FULL_SLOW;
-assign LED[2] = ~INVALID;
+assign LED[2] = 1'b1;
 assign LED[3] = 1'b1;
 
 endmodule
