@@ -51,7 +51,7 @@ wptr_full #(.ADDRSIZE(ASIZE)) wptr_full_inst
 endmodule
 
 module cdc_fifomem #(
-parameter DATASIZE = 34, // Memory data word widt
+    parameter DATASIZE = 32, // Memory data word width
     parameter ADDRSIZE = 2 // Number of mem address
 ) (
     output wire [DATASIZE-1:0] rdata,

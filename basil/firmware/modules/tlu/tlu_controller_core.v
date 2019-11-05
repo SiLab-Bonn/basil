@@ -298,7 +298,7 @@ assign TRIGGER_SELECTED = TRIGGER_SELECT[WIDTH-1:0];
 wire [1:0] TRIGGER_MODE_SYNC;
 three_stage_synchronizer #(
     .WIDTH(2)
-) three_stage_tlu_mode_synchronizer (
+) three_stage_trigger_mode_synchronizer (
     .CLK(TRIGGER_CLK),
     .IN(TRIGGER_MODE),
     .OUT(TRIGGER_MODE_SYNC)
@@ -863,19 +863,28 @@ always@(posedge TRIGGER_CLK) begin
 end
 
 wire [31:0] cdc_data_out;
-cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) cdc_syncfifo_i
-(
+cdc_syncfifo #(
+    .DSIZE(32),
+    .ASIZE(2)
+) cdc_syncfifo_i (
     .rdata(cdc_data_out),
     .wfull(wfull),
     .rempty(cdc_fifo_empty),
     .wdata(TRIGGER_DATA),
-    .winc(cdc_fifo_write), .wclk(TRIGGER_CLK), .wrst(RST_LONG),
-    .rinc(!fifo_full), .rclk(BUS_CLK), .rrst(RST_LONG)
+    .winc(cdc_fifo_write),
+    .wclk(TRIGGER_CLK),
+    .wrst(RST_LONG),
+    .rinc(!fifo_full),
+    .rclk(BUS_CLK),
+    .rrst(RST_LONG)
 );
 
-gerneric_fifo #(.DATA_SIZE(32), .DEPTH(8))  fifo_i
-(
-    .clk(BUS_CLK), .reset(RST_LONG | BUS_RST),
+gerneric_fifo #(
+    .DATA_SIZE(32),
+    .DEPTH(8)
+) fifo_i (
+    .clk(BUS_CLK),
+    .reset(RST_LONG | BUS_RST),
     .write(!cdc_fifo_empty),
     .read(FIFO_READ),
     .data_in(cdc_data_out),

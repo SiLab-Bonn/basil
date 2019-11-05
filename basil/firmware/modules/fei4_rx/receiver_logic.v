@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -104,7 +104,7 @@ always@(posedge WCLK) begin
         dispin <= dispout;
     // if(RESET_WCLK)
         // dispin <= 1'b0;
-    // else 
+    // else
         // if(write_8b10b)
             // dispin <= ~dispout;
         // else
@@ -142,7 +142,7 @@ always@(posedge WCLK) begin
     else
         if(decoder_err && write_8b10b && decoder_err_cnt != 8'hff)
             decoder_err_cnt <= decoder_err_cnt + 1;
-        else 
+        else
             decoder_err_cnt <= decoder_err_cnt;
 end
 
@@ -173,7 +173,7 @@ always@(posedge WCLK) begin
             data_dec_in[byte_sel] <= dec_data;
 end
 
-reg write_dec_in; 
+reg write_dec_in;
 always@(posedge WCLK) begin
     if(RESET_WCLK)
         write_dec_in <= 0;

@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -40,14 +40,14 @@ localparam VERSION = 1;
 // 0 - soft reset
 // 1 - start/status
 
-//TODO: 
+//TODO:
 // - external trigger /rising falling
 
 wire SOFT_RST;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 
 wire RST;
-assign RST = BUS_RST | SOFT_RST; 
+assign RST = BUS_RST | SOFT_RST;
 
 reg [7:0] status_regs [15:0];
 
@@ -92,7 +92,7 @@ reg CONF_DONE;
 
 wire [7:0] BUS_STATUS_OUT;
 assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
-    
+
 always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if(BUS_ADD == 0)
@@ -122,7 +122,7 @@ always@(posedge BUS_CLK) begin
         sync_cnt <= 120;
     else if(sync_cnt != 100)
         sync_cnt <= sync_cnt +1;
-end  
+end
 wire RST_LONG;
 assign RST_LONG = sync_cnt[7];
 
@@ -207,7 +207,7 @@ always@(posedge ADC_ENC)
 always@(*) begin
     dly_addr_read = dly_addr_write - CONF_SAMPEL_DLY;
     ADC_IN_DLY = CONF_SAMPEL_DLY == 0 ? ADC_IN : adc_dly_mem;
-end     
+end
 //
 
 always@(posedge ADC_ENC) begin
@@ -243,24 +243,36 @@ always@(*) begin
 end
 
 wire [31:0] cdc_data_out;
-cdc_syncfifo #(.DSIZE(32), .ASIZE(3)) cdc_syncfifo_i
-(
+cdc_syncfifo #(
+    .DSIZE(32),
+    .ASIZE(3)
+) cdc_syncfifo_i (
     .rdata(cdc_data_out),
     .wfull(wfull),
     .rempty(cdc_fifo_empty),
     .wdata(data_to_fifo), //.wdata({ADC_SYNC,2'd0,ADC_SYNC,14'd0,adc_des}),
-    .winc(cdc_fifo_write), .wclk(ADC_ENC), .wrst(RST_LONG),
-    .rinc(!fifo_full), .rclk(BUS_CLK), .rrst(RST_LONG)
+    .winc(cdc_fifo_write),
+    .wclk(ADC_ENC),
+    .wrst(RST_LONG),
+    .rinc(!fifo_full),
+    .rclk(BUS_CLK),
+    .rrst(RST_LONG)
 );
 
-gerneric_fifo #(.DATA_SIZE(32), .DEPTH(1024))  fifo_i
-( .clk(BUS_CLK), .reset(RST_LONG | BUS_RST), 
+gerneric_fifo #(
+    .DATA_SIZE(32),
+    .DEPTH(1024)
+) fifo_i (
+    .clk(BUS_CLK),
+    .reset(RST_LONG | BUS_RST),
     .write(!cdc_fifo_empty),
-    .read(FIFO_READ), 
-    .data_in(cdc_data_out), 
-    .full(fifo_full), 
-    .empty(FIFO_EMPTY), 
-    .data_out(FIFO_DATA[31:0]), .size());
+    .read(FIFO_READ),
+    .data_in(cdc_data_out),
+    .full(fifo_full),
+    .empty(FIFO_EMPTY),
+    .data_out(FIFO_DATA[31:0]),
+    .size()
+);
 
 //assign FIFO_DATA[31:30]  = 0;
 

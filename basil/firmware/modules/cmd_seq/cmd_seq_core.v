@@ -10,7 +10,7 @@
 module cmd_seq_core
 #(
     parameter                   ABUSWIDTH = 16,
-    parameter                   OUTPUTS = 1,
+    parameter                   OUTPUTS = 1,  // from (0 : 8]
     parameter                   CMD_MEM_SIZE = 2048
 ) (
     input wire                  BUS_CLK,
@@ -31,6 +31,18 @@ module cmd_seq_core
 );
 
 localparam VERSION = 1;
+
+generate
+if (OUTPUTS > 8) begin
+    illegal_outputs_parameter non_existing_module();
+end
+endgenerate
+// IEEE Std 1800-2009
+// generate
+// if (CONDITION > MAX_ALLOWED) begin
+//     $error("%m ** Illegal Condition ** CONDITION(%d) > MAX_ALLOWED(%d)", CONDITION, MAX_ALLOWED);
+// end
+// endgenerate
 
 wire SOFT_RST; //0
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);

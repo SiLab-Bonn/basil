@@ -1,12 +1,12 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 `timescale 1ps/1ps
 `default_nettype none
- 
+
 module fast_spi_rx_core
 #(
     parameter ABUSWIDTH = 16,
@@ -27,17 +27,17 @@ module fast_spi_rx_core
     input wire BUS_RST,
     input wire BUS_WR,
     input wire BUS_RD
-); 
+);
 
 localparam VERSION = 0;
 
-//output format #ID (as parameter IDENTYFIER + 12 id-frame + 16 bit data) 
+//output format #ID (as parameter IDENTYFIER + 12 id-frame + 16 bit data)
 
 wire SOFT_RST;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 
 wire RST;
-assign RST = BUS_RST | SOFT_RST; 
+assign RST = BUS_RST | SOFT_RST;
 
 reg CONF_EN;
 
@@ -80,7 +80,7 @@ always@(posedge BUS_CLK) begin
         sync_cnt <= 120;
     else if(sync_cnt != 100)
         sync_cnt <= sync_cnt +1;
-end 
+end
 
 wire RST_LONG;
 assign RST_LONG = sync_cnt[7];
@@ -139,24 +139,35 @@ wire [31:0] cdc_data;
 assign cdc_data = {IDENTYFIER, frame_cnt[11:0], spi_data};
 
 wire [31:0] cdc_data_out;
-cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) cdc_syncfifo_i
-(
+cdc_syncfifo #(
+    .DSIZE(32),
+    .ASIZE(2)
+) cdc_syncfifo_i (
     .rdata(cdc_data_out),
     .wfull(wfull),
     .rempty(cdc_fifo_empty),
     .wdata(cdc_data),
-    .winc(cdc_fifo_write), .wclk(SCLK), .wrst(RST_LONG),
-    .rinc(!fifo_full), .rclk(BUS_CLK), .rrst(RST_LONG)
+    .winc(cdc_fifo_write),
+    .wclk(SCLK),
+    .wrst(RST_LONG),
+    .rinc(!fifo_full),
+    .rclk(BUS_CLK),
+    .rrst(RST_LONG)
 );
 
-gerneric_fifo #(.DATA_SIZE(32), .DEPTH(1024))  fifo_i
-( .clk(BUS_CLK), .reset(RST_LONG | BUS_RST), 
+gerneric_fifo #(
+    .DATA_SIZE(32),
+    .DEPTH(1024)
+) fifo_i (
+    .clk(BUS_CLK),
+    .reset(RST_LONG | BUS_RST),
     .write(!cdc_fifo_empty),
-    .read(FIFO_READ), 
-    .data_in(cdc_data_out), 
-    .full(fifo_full), 
-    .empty(FIFO_EMPTY), 
-    .data_out(FIFO_DATA[31:0]), .size() 
+    .read(FIFO_READ),
+    .data_in(cdc_data_out),
+    .full(fifo_full),
+    .empty(FIFO_EMPTY),
+    .data_out(FIFO_DATA[31:0]),
+    .size()
 );
 
 //assign FIFO_DATA[31:30]  = 0;
