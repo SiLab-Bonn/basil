@@ -51,12 +51,35 @@ localparam VERSION = 2;
 // output format: 4-bit DATA_IDENTIFIER (parameter) + 16 bit event counter + 12 bit TDC data
 // the TDC counter has a overflow bin: TDC value is 0 when an overflow occurs
 
+// writing to register 0 asserts soft reset
 wire SOFT_RST;
-assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
+assign SOFT_RST = (BUS_ADD == 0 && BUS_WR);
 
+// reset sync
+reg SOFT_RST_FF, SOFT_RST_FF2, BUS_RST_FF, BUS_RST_FF2;
+always @(posedge BUS_CLK) begin
+    SOFT_RST_FF <= SOFT_RST;
+    SOFT_RST_FF2 <= SOFT_RST_FF;
+    BUS_RST_FF <= BUS_RST;
+    BUS_RST_FF2 <= BUS_RST_FF;
+end
+
+wire SOFT_RST_FLAG;
+assign SOFT_RST_FLAG = ~SOFT_RST_FF2 & SOFT_RST_FF;
+wire BUS_RST_FLAG;
+assign BUS_RST_FLAG = BUS_RST_FF2 & ~BUS_RST_FF; // trailing edge
 wire RST;
-assign RST = BUS_RST | SOFT_RST;
+assign RST = BUS_RST_FLAG | SOFT_RST_FLAG;
 
+wire RST_DV_CLK;
+flag_domain_crossing rst_flag_domain_crossing_dv_clk (
+    .CLK_A(BUS_CLK),
+    .CLK_B(DV_CLK),
+    .FLAG_IN_CLK_A(RST),
+    .FLAG_OUT_CLK_B(RST_DV_CLK)
+);
+
+// registers
 reg [7:0] status_regs[1:0];
 
 wire CONF_EN; // ENABLE BUS_ADD==1 BIT==0
@@ -75,8 +98,9 @@ wire CONF_EN_INVERT_TDC; // BUS_ADD==1 BIT==6
 assign CONF_EN_INVERT_TDC = status_regs[1][6];
 wire CONF_EN_INVERT_TRIGGER; // BUS_ADD==1 BIT==7
 assign CONF_EN_INVERT_TRIGGER = status_regs[1][7];
-reg [7:0] LOST_DATA_CNT; // BUS_ADD==0
-reg [31:0] EVENT_CNT, EVENT_CNT_BUF; // BUS_ADD==2 - 3
+reg [7:0] lost_data_cnt_buf_read; // BUS_ADD==0
+reg [31:0] event_cnt_buf; // BUS_ADD==2
+reg [23:0] event_cnt_buf_read; // BUS_ADD==3 - 5
 
 always @(posedge BUS_CLK) begin
     if(RST) begin
@@ -94,34 +118,92 @@ always @(posedge BUS_CLK) begin
         else if(BUS_ADD == 1)
             BUS_DATA_OUT <= status_regs[1];
         else if(BUS_ADD == 2)
-            BUS_DATA_OUT <= EVENT_CNT[7:0];
+            BUS_DATA_OUT <= event_cnt_buf[7:0];
         else if(BUS_ADD == 3)
-            BUS_DATA_OUT <= EVENT_CNT_BUF[15:8];
+            BUS_DATA_OUT <= event_cnt_buf_read[7:0];
         else if(BUS_ADD == 4)
-            BUS_DATA_OUT <= EVENT_CNT_BUF[23:16];
+            BUS_DATA_OUT <= event_cnt_buf_read[15:8];
         else if(BUS_ADD == 5)
-            BUS_DATA_OUT <= EVENT_CNT_BUF[31:24];
+            BUS_DATA_OUT <= event_cnt_buf_read[23:16];
         else if(BUS_ADD == 6)
-            BUS_DATA_OUT <= LOST_DATA_CNT;
+            BUS_DATA_OUT <= lost_data_cnt_buf_read;
         else
             BUS_DATA_OUT <= 0;
     end
 end
 
-always @ (posedge BUS_CLK) begin
-    if (RST)
-        EVENT_CNT_BUF <= 32'b0;
-    else if (BUS_ADD == 2 && BUS_RD)
-            EVENT_CNT_BUF <= EVENT_CNT;
+wire CONF_EN_DV_CLK;
+three_stage_synchronizer conf_en_three_stage_synchronizer_dv_clk (
+    .CLK(DV_CLK),
+    .IN(CONF_EN | (CONF_EN_EXT & EXT_EN)),
+    .OUT(CONF_EN_DV_CLK)
+);
+
+wire ARM_TDC_CLK160;
+three_stage_synchronizer three_stage_arm_tdc_synchronizer_clk_160 (
+    .CLK(CLK160),
+    .IN(ARM_TDC),
+    .OUT(ARM_TDC_CLK160)
+);
+
+reg ARM_TDC_CLK160_FF;
+always@(posedge CLK160) begin
+    ARM_TDC_CLK160_FF <= ARM_TDC_CLK160;
 end
 
-wire RST_SYNC;
-flag_domain_crossing cmd_rst_flag_domain_crossing (
-    .CLK_A(BUS_CLK),
+wire ARM_TDC_FLAG_CLK160;
+assign ARM_TDC_FLAG_CLK160 = ~ARM_TDC_CLK160_FF & ARM_TDC_CLK160;
+
+wire ARM_TDC_FLAG_DV_CLK;
+flag_domain_crossing arm_tdc_flag_domain_crossing (
+    .CLK_A(CLK160),
     .CLK_B(DV_CLK),
-    .FLAG_IN_CLK_A(RST),
-    .FLAG_OUT_CLK_B(RST_SYNC)
+    .FLAG_IN_CLK_A(ARM_TDC_FLAG_CLK160),
+    .FLAG_OUT_CLK_B(ARM_TDC_FLAG_DV_CLK)
 );
+
+wire CONF_EN_ARM_TDC_DV_CLK;
+three_stage_synchronizer conf_en_arm_conf_en_synchronizer_dv_clk (
+    .CLK(DV_CLK),
+    .IN(CONF_EN_ARM_TDC),
+    .OUT(CONF_EN_ARM_TDC_DV_CLK)
+);
+
+wire CONF_EN_WRITE_TS_DV_CLK;
+three_stage_synchronizer conf_en_write_ts_synchronizer_dv_clk (
+    .CLK(DV_CLK),
+    .IN(CONF_EN_WRITE_TS),
+    .OUT(CONF_EN_WRITE_TS_DV_CLK)
+);
+
+wire CONF_EN_TRIG_DIST_DV_CLK;
+three_stage_synchronizer conf_en_trig_dist_synchronizer_dv_clk (
+    .CLK(DV_CLK),
+    .IN(CONF_EN_TRIG_DIST),
+    .OUT(CONF_EN_TRIG_DIST_DV_CLK)
+);
+
+wire CONF_EN_NO_WRITE_TRIG_ERR_DV_CLK;
+three_stage_synchronizer conf_en_no_write_trig_err_synchronizer_dv_clk (
+    .CLK(DV_CLK),
+    .IN(CONF_EN_NO_WRITE_TRIG_ERR),
+    .OUT(CONF_EN_NO_WRITE_TRIG_ERR_DV_CLK)
+);
+
+wire CONF_EN_INVERT_TDC_DV_CLK;
+three_stage_synchronizer conf_en_invert_tdc_synchronizer_dv_clk (
+    .CLK(DV_CLK),
+    .IN(CONF_EN_INVERT_TDC),
+    .OUT(CONF_EN_INVERT_TDC_DV_CLK)
+);
+
+wire CONF_EN_INVERT_TRIGGER_DV_CLK;
+three_stage_synchronizer conf_en_invert_trigger_synchronizer_dv_clk (
+    .CLK(DV_CLK),
+    .IN(CONF_EN_INVERT_TRIGGER),
+    .OUT(CONF_EN_INVERT_TRIGGER_DV_CLK)
+);
+
 
 // de-serialize
 wire [CLKDV*4-1:0] TDC, TDC_DES;
@@ -131,7 +213,7 @@ generate
         wire [1:0] TDC_FAST;
         ddr_des #(.CLKDV(CLKDV)) iddr_des_tdc(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TDC_IN), .OUT(TDC), .OUT_FAST(TDC_FAST));
         // assigning TDC output, getting effective 2x CLK320 (640MHz) sampling of leading edge
-        assign TDC_OUT = CONF_EN_INVERT_TDC ? &TDC_FAST : |TDC_FAST;
+        assign TDC_OUT = CONF_EN_INVERT_TDC_DV_CLK ? &TDC_FAST : |TDC_FAST;
     end
     else begin
         reg [1:0] TDC_DDRQ_DLY;
@@ -165,7 +247,7 @@ generate
     end
 endgenerate
 
-assign TDC_DES = CONF_EN_INVERT_TDC ? ~TDC : TDC;
+assign TDC_DES = CONF_EN_INVERT_TDC_DV_CLK ? ~TDC : TDC;
 
 wire ZERO_DETECTED_TDC;
 assign ZERO_DETECTED_TDC = |(~TDC_DES); // asserted when one or more 0 occur
@@ -226,53 +308,6 @@ always @ (*) begin
         NEW_TDC = 1;
 end
 
-reg [7:0] sync_cnt;
-always@(posedge BUS_CLK) begin
-    if(RST)
-        sync_cnt <= 120;
-    else if(sync_cnt != 100)
-        sync_cnt <= sync_cnt +1;
-end
-
-wire RST_LONG;
-assign RST_LONG = sync_cnt[7];
-
-wire CONF_EN_DV_CLK;
-three_stage_synchronizer conf_en_three_stage_synchronizer_DV_CLK (
-    .CLK(DV_CLK),
-    .IN(CONF_EN | (CONF_EN_EXT & EXT_EN)),
-    .OUT(CONF_EN_DV_CLK)
-);
-
-wire ARM_TDC_CLK160;
-three_stage_synchronizer three_stage_rj45_trigger_synchronizer_bus_clk (
-    .CLK(CLK160),
-    .IN(ARM_TDC),
-    .OUT(ARM_TDC_CLK160)
-);
-
-reg ARM_TDC_CLK160_FF;
-always@(posedge CLK160) begin
-    ARM_TDC_CLK160_FF <= ARM_TDC_CLK160;
-end
-
-wire ARM_TDC_FLAG_CLK160;
-assign ARM_TDC_FLAG_CLK160 = ~ARM_TDC_CLK160_FF & ARM_TDC_CLK160;
-
-wire ARM_TDC_FLAG_DV_CLK;
-flag_domain_crossing arm_tdc_flag_domain_crossing (
-    .CLK_A(CLK160),
-    .CLK_B(DV_CLK),
-    .FLAG_IN_CLK_A(ARM_TDC_FLAG_CLK160),
-    .FLAG_OUT_CLK_B(ARM_TDC_FLAG_DV_CLK)
-);
-
-wire CONF_EN_ARM_TDC_DV_CLK;
-three_stage_synchronizer conf_en_arm_three_stage_synchronizer_DV_CLK (
-    .CLK(DV_CLK),
-    .IN(CONF_EN_ARM_TDC),
-    .OUT(CONF_EN_ARM_TDC_DV_CLK)
-);
 
 reg [1:0] state, next_state;
 localparam      IDLE  = 2'b00,
@@ -280,7 +315,7 @@ localparam      IDLE  = 2'b00,
                 COUNT = 2'b10;
 
 always @ (posedge DV_CLK)
-    if (RST_SYNC)
+    if (RST_DV_CLK)
       state <= IDLE;
     else
       state <= next_state;
@@ -322,7 +357,7 @@ assign START = ((state == IDLE && next_state == COUNT) || (state == ARMED && nex
 
 reg [15:0] CURR_TIMESTAMP;
 always @ (posedge DV_CLK)
-    if (RST_SYNC)
+    if (RST_DV_CLK)
         CURR_TIMESTAMP <= 16'b0;
     else if (START)
         CURR_TIMESTAMP <= TIMESTAMP;
@@ -337,7 +372,7 @@ always @ (*)
 reg [12:0] TDC_PRE; // overflow bit
 initial TDC_PRE = 0;
 always @ (posedge DV_CLK)
-    if(RST_SYNC || FINISH)
+    if(RST_DV_CLK || FINISH)
         TDC_PRE <= 0;
     else if(START)
         if (TDC_ERR)
@@ -355,12 +390,38 @@ always @ (posedge DV_CLK)
 wire [11:0] TDC_VAL;
 assign TDC_VAL = (TDC_ERR || TDC_PRE==0) ? 0 : (TDC_PRE+ONES_TDC>13'b0_1111_1111_1111) ? 13'b0_1111_1111_1111 : (NEW_TDC) ? TDC_PRE : TDC_PRE+ONES_TDC;
 
+reg [31:0] EVENT_CNT;
 initial EVENT_CNT = 0;
 always @ (posedge DV_CLK)
-    if(RST_SYNC)
+    if(RST_DV_CLK)
         EVENT_CNT <= 0;
     else if (FINISH)
         EVENT_CNT <= EVENT_CNT + 1;
+
+reg [31:0] event_cnt_gray;
+always@(posedge DV_CLK)
+    event_cnt_gray <=  (EVENT_CNT>>1) ^ EVENT_CNT;
+
+reg [31:0] event_cnt_cdc0, event_cnt_cdc1, event_cnt_bus_clk;
+always@(posedge BUS_CLK) begin
+    event_cnt_cdc0 <= event_cnt_gray;
+    event_cnt_cdc1 <= event_cnt_cdc0;
+end
+
+integer gbi_event_cnt;
+always@(*) begin
+    event_cnt_bus_clk[31] = event_cnt_cdc1[31];
+    for(gbi_event_cnt = 30; gbi_event_cnt >= 0; gbi_event_cnt = gbi_event_cnt - 1) begin
+        event_cnt_bus_clk[gbi_event_cnt] = event_cnt_cdc1[gbi_event_cnt] ^ event_cnt_bus_clk[gbi_event_cnt + 1];
+    end
+end
+
+always @ (posedge BUS_CLK)
+begin
+    event_cnt_buf <= event_cnt_bus_clk;
+    if (BUS_ADD == 2 && BUS_RD)
+        event_cnt_buf_read[23:0] <= event_cnt_buf[31:8];
+end
 
 
 /*
@@ -376,7 +437,7 @@ generate
             wire [1:0] TRIG_FAST;
             ddr_des #(.CLKDV(CLKDV)) iddr_des_trig(.CLK2X(CLK320), .CLK(CLK160), .WCLK(DV_CLK), .IN(TRIG_IN), .OUT(TRIG), .OUT_FAST(TRIG_FAST));
             // assigning TRIG output, getting effective 2x CLK320 (640MHz) sampling of leading edge
-            assign TRIG_OUT = CONF_EN_INVERT_TRIGGER ? &TRIG_FAST : |TRIG_FAST;
+            assign TRIG_OUT = CONF_EN_INVERT_TRIGGER_DV_CLK ? &TRIG_FAST : |TRIG_FAST;
             // set output wires from ddr deserializer in order to fed them out for broadcasting to other TDC modules
             assign FAST_TRIGGER_OUT = TRIG;
          end
@@ -420,7 +481,7 @@ generate
     end
 endgenerate
 
-assign TRIG_DES = CONF_EN_INVERT_TRIGGER ? ~TRIG : TRIG;
+assign TRIG_DES = CONF_EN_INVERT_TRIGGER_DV_CLK ? ~TRIG : TRIG;
 
 reg TRIG_DES_BUF_0;
 always @ (posedge DV_CLK)
@@ -488,7 +549,7 @@ always @ (*)
 reg CNT_TRIG;
 initial CNT_TRIG = 0;
 always @ (posedge DV_CLK)
-    if (RST_SYNC)
+    if (RST_DV_CLK)
       CNT_TRIG <= 0;
     else if (NEW_TDC==1)
       CNT_TRIG <= 0;
@@ -513,7 +574,7 @@ end
 reg [8:0] TRIG_DIST; // overflow bit
 initial TRIG_DIST = 255;
 always @ (posedge DV_CLK) begin
-    if (RST_SYNC || (FINISH/* && !NEW_TRIG*/))
+    if (RST_DV_CLK || (FINISH/* && !NEW_TRIG*/))
         TRIG_DIST <= 255;
     else if (NEW_TRIG)
         if (TRIG_ERR || CNT_TRIG==1 || TDC_ERR)
@@ -535,27 +596,71 @@ end
 
 wire wfull;
 wire cdc_fifo_write;
-assign cdc_fifo_write = !wfull && FINISH==1 && !(CONF_EN_TRIG_DIST==1 && CONF_EN_NO_WRITE_TRIG_ERR==1 && TRIG_DIST==255);
+assign cdc_fifo_write = !wfull && FINISH==1 && !(CONF_EN_TRIG_DIST_DV_CLK==1 && CONF_EN_NO_WRITE_TRIG_ERR_DV_CLK==1 && TRIG_DIST==255);
 
 reg [31:0] cdc_data;
 always @ (*) begin
-    if(CONF_EN_WRITE_TS)
+    if(CONF_EN_WRITE_TS_DV_CLK)
         cdc_data = {DATA_IDENTIFIER, CURR_TIMESTAMP, TDC_VAL};
     else
         cdc_data = {DATA_IDENTIFIER, EVENT_CNT[15:0], TDC_VAL};
-    if(CONF_EN_TRIG_DIST)
+    if(CONF_EN_TRIG_DIST_DV_CLK)
         cdc_data[27:20] = TRIG_DIST[7:0];
 end
 
+reg [7:0] LOST_DATA_CNT;
 always@(posedge DV_CLK) begin
-    if(RST_SYNC)
+    if(RST_DV_CLK)
         LOST_DATA_CNT <= 0;
     else if (wfull && FINISH && LOST_DATA_CNT != -1)
         LOST_DATA_CNT <= LOST_DATA_CNT + 1;
 end
 
-wire fifo_full, cdc_fifo_empty;
+reg [7:0] lost_data_cnt_gray;
+always@(posedge DV_CLK)
+    lost_data_cnt_gray <=  (LOST_DATA_CNT>>1) ^ LOST_DATA_CNT;
 
+reg [7:0] lost_data_cnt_cdc0, lost_data_cnt_cdc1, lost_data_cnt_bus_clk;
+always@(posedge BUS_CLK) begin
+    lost_data_cnt_cdc0 <= lost_data_cnt_gray;
+    lost_data_cnt_cdc1 <= lost_data_cnt_cdc0;
+end
+
+integer gbi_lost_err_cnt;
+always@(*) begin
+    lost_data_cnt_bus_clk[7] = lost_data_cnt_cdc1[7];
+    for(gbi_lost_err_cnt = 6; gbi_lost_err_cnt >= 0; gbi_lost_err_cnt = gbi_lost_err_cnt - 1) begin
+        lost_data_cnt_bus_clk[gbi_lost_err_cnt] = lost_data_cnt_cdc1[gbi_lost_err_cnt] ^ lost_data_cnt_bus_clk[gbi_lost_err_cnt + 1];
+    end
+end
+
+always @ (posedge BUS_CLK)
+begin
+    lost_data_cnt_buf_read <= lost_data_cnt_bus_clk;
+end
+
+// generate long reset
+reg [5:0] rst_cnt;
+reg RST_LONG;
+always@(posedge BUS_CLK) begin
+    if (RST)
+        rst_cnt <= 6'b11_1111; // start value
+    else if (rst_cnt != 0)
+        rst_cnt <= rst_cnt - 1;
+    RST_LONG <= |rst_cnt;
+end
+
+reg [5:0] rst_cnt_dv_clk;
+reg RST_LONG_DV_CLK;
+always@(posedge DV_CLK) begin
+    if (RST_DV_CLK)
+        rst_cnt_dv_clk <= 6'b11_1111; // start value
+    else if (rst_cnt_dv_clk != 0)
+        rst_cnt_dv_clk <= rst_cnt_dv_clk - 1;
+    RST_LONG_DV_CLK <= |rst_cnt_dv_clk;
+end
+
+wire fifo_full, cdc_fifo_empty;
 wire [31:0] cdc_data_out;
 cdc_syncfifo #(
     .DSIZE(32),
@@ -567,7 +672,7 @@ cdc_syncfifo #(
     .wdata(cdc_data),
     .winc(cdc_fifo_write),
     .wclk(DV_CLK),
-    .wrst(RST_LONG),
+    .wrst(RST_LONG_DV_CLK),
     .rinc(!fifo_full),
     .rclk(BUS_CLK),
     .rrst(RST_LONG)
@@ -578,7 +683,7 @@ gerneric_fifo #(
     .DEPTH(512)
 ) fifo_i (
     .clk(BUS_CLK),
-    .reset(RST_LONG | BUS_RST),
+    .reset(RST_LONG),
     .write(!cdc_fifo_empty),
     .read(FIFO_READ),
     .data_in(cdc_data_out),

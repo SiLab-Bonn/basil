@@ -38,12 +38,35 @@ localparam VERSION = 2;
 
 //output format #ID (as parameter IDENTYFIER + 1 frame start + 16 bit data)
 
+// writing to register 0 asserts soft reset
 wire SOFT_RST;
-assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
+assign SOFT_RST = (BUS_ADD == 0 && BUS_WR);
 
+// reset sync
+reg SOFT_RST_FF, SOFT_RST_FF2, BUS_RST_FF, BUS_RST_FF2;
+always @(posedge BUS_CLK) begin
+    SOFT_RST_FF <= SOFT_RST;
+    SOFT_RST_FF2 <= SOFT_RST_FF;
+    BUS_RST_FF <= BUS_RST;
+    BUS_RST_FF2 <= BUS_RST_FF;
+end
+
+wire SOFT_RST_FLAG;
+assign SOFT_RST_FLAG = ~SOFT_RST_FF2 & SOFT_RST_FF;
+wire BUS_RST_FLAG;
+assign BUS_RST_FLAG = BUS_RST_FF2 & ~BUS_RST_FF; // trailing edge
 wire RST;
-assign RST = BUS_RST | SOFT_RST;
+assign RST = BUS_RST_FLAG | SOFT_RST_FLAG;
 
+wire RST_SYNC;
+flag_domain_crossing rst_flag_domain_crossing_clk_rx (
+    .CLK_A(BUS_CLK),
+    .CLK_B(CLK_RX),
+    .FLAG_IN_CLK_A(RST),
+    .FLAG_OUT_CLK_B(RST_SYNC)
+);
+
+// registers
 reg [7:0] status_regs [1:0];
 
 always @(posedge BUS_CLK) begin
@@ -75,13 +98,12 @@ always @(posedge BUS_CLK) begin
     end
 end
 
-wire RST_SYNC;
-wire RST_SOFT_SYNC;
-cdc_reset_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(CLK_RX), .pulse_out(RST_SOFT_SYNC));
-assign RST_SYNC = RST_SOFT_SYNC;
-
 wire CONF_EN_SYNC;
-assign CONF_EN_SYNC  = CONF_EN;
+three_stage_synchronizer conf_en_synchronizer_dv_clk (
+    .CLK(CLK_RX),
+    .IN(CONF_EN),
+    .OUT(CONF_EN_SYNC)
+);
 
 wire MKD_RX_IO;
 IDDR IDDR_inst_mkd (
@@ -198,6 +220,27 @@ always@(posedge CLK_RX) begin
     end
 end
 
+// generate long reset
+reg [5:0] rst_cnt;
+reg RST_LONG;
+always@(posedge BUS_CLK) begin
+    if (RST)
+        rst_cnt <= 6'b11_1111; // start value
+    else if (rst_cnt != 0)
+        rst_cnt <= rst_cnt - 1;
+    RST_LONG <= |rst_cnt;
+end
+
+reg [5:0] rst_cnt_sync;
+reg RST_LONG_SYNC;
+always@(posedge CLK_RX) begin
+    if (RST_SYNC)
+        rst_cnt_sync <= 6'b11_1111; // start value
+    else if (rst_cnt_sync != 0)
+        rst_cnt_sync <= rst_cnt_sync - 1;
+    RST_LONG_SYNC <= |rst_cnt_sync;
+end
+
 wire [17:0] cdc_data_out;
 cdc_syncfifo #(
     .DSIZE(18),
@@ -209,10 +252,10 @@ cdc_syncfifo #(
     .wdata(cdc_data),
     .winc(cdc_fifo_write),
     .wclk(CLK_RX),
-    .wrst(RST_SYNC),
+    .wrst(RST_LONG_SYNC),
     .rinc(!fifo_full),
     .rclk(BUS_CLK),
-    .rrst(RST)
+    .rrst(RST_LONG)
 );
 
 gerneric_fifo #(
@@ -220,7 +263,7 @@ gerneric_fifo #(
     .DEPTH(1024)
 ) fifo_i (
     .clk(BUS_CLK),
-    .reset(RST),
+    .reset(RST_LONG),
     .write(!cdc_fifo_empty),
     .read(FIFO_READ),
     .data_in(cdc_data_out),

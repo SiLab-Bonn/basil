@@ -107,7 +107,7 @@ wire [7:0] CONF_OUTPUT_ENABLE; //13
 // -(CONF_CMD_SIZE - CONF_START_REPEAT - CONF_STOP_REPEAT) must be greater than or equal to 2
 // - CONF_START_REPEAT must be greater than or equal to 2
 // - CONF_STOP_REPEAT must be greater than or equal to 2
-reg [7:0] status_regs [15:0];
+reg [7:0] status_regs [13:0];
 
 always @(posedge BUS_CLK) begin
     if(RST) begin
@@ -125,10 +125,8 @@ always @(posedge BUS_CLK) begin
         status_regs[11] <= 0;// CONF_STOP_REPEAT
         status_regs[12] <= 0;
         status_regs[13] <= 8'hff; //OUTPUT_EN
-        status_regs[14] <= 0;
-        status_regs[15] <= 0;
     end
-    else if(BUS_WR && BUS_ADD < 16)
+    else if(BUS_WR && BUS_ADD < 14)
         status_regs[BUS_ADD[3:0]] <= BUS_DATA_IN;
 end
 
@@ -139,16 +137,10 @@ assign CONF_STOP_REPEAT = {status_regs[12], status_regs[11]};
 assign CONF_OUTPUT_ENABLE = status_regs[13];
 
 assign CONF_DIS_CMD_PULSE = status_regs[2][4];
-assign CONF_DIS_CLOCK_GATE = status_regs[2][3]; // no clock domain crossing needed
-assign CONF_OUTPUT_MODE = status_regs[2][2:1]; // no clock domain crossing needed
+assign CONF_DIS_CLOCK_GATE = status_regs[2][3];
+assign CONF_OUTPUT_MODE = status_regs[2][2:1];
 assign CONF_EN_EXT_START = status_regs[2][0];
 
-wire CONF_DIS_CMD_PULSE_CMD_CLK;
-three_stage_synchronizer conf_dis_cmd_pulse_sync (
-    .CLK(CMD_CLK_IN),
-    .IN(CONF_DIS_CMD_PULSE),
-    .OUT(CONF_DIS_CMD_PULSE_CMD_CLK)
-);
 
 three_stage_synchronizer conf_en_ext_start_sync (
     .CLK(CMD_CLK_IN),
@@ -190,6 +182,38 @@ three_stage_synchronizer #(
     .CLK(CMD_CLK_IN),
     .IN(CONF_STOP_REPEAT),
     .OUT(CONF_STOP_REPEAT_CMD_CLK)
+);
+
+wire [OUTPUTS-1:0] CONF_OUTPUT_ENABLE_CMD_CLK;
+three_stage_synchronizer #(
+    .WIDTH(OUTPUTS)
+) conf_output_enable_sync (
+    .CLK(CMD_CLK_IN),
+    .IN(CONF_OUTPUT_ENABLE[OUTPUTS-1:0]),
+    .OUT(CONF_OUTPUT_ENABLE_CMD_CLK)
+);
+
+wire CONF_DIS_CMD_PULSE_CMD_CLK;
+three_stage_synchronizer conf_dis_cmd_pulse_sync (
+    .CLK(CMD_CLK_IN),
+    .IN(CONF_DIS_CMD_PULSE),
+    .OUT(CONF_DIS_CMD_PULSE_CMD_CLK)
+);
+
+wire CONF_DIS_CLOCK_GATE_CMD_CLK;
+three_stage_synchronizer conf_dis_clock_gate_sync (
+    .CLK(CMD_CLK_IN),
+    .IN(CONF_DIS_CLOCK_GATE),
+    .OUT(CONF_DIS_CLOCK_GATE_CMD_CLK)
+);
+
+wire [1:0] CONF_OUTPUT_MODE_CMD_CLK;
+three_stage_synchronizer #(
+    .WIDTH(2)
+) conf_output_mode_sync (
+    .CLK(CMD_CLK_IN),
+    .IN(CONF_OUTPUT_MODE),
+    .OUT(CONF_OUTPUT_MODE_CMD_CLK)
 );
 
 (* RAM_STYLE="{BLOCK}" *)
@@ -326,10 +350,10 @@ assign cmd_data_ser = send_word[7-((cnt-1)%8)];
 reg [OUTPUTS-1:0] cmd_data_neg;
 reg [OUTPUTS-1:0] cmd_data_pos;
 always @ (negedge CMD_CLK_IN)
-    cmd_data_neg <= {OUTPUTS{cmd_data_ser}} & CONF_OUTPUT_ENABLE[OUTPUTS-1:0];
+    cmd_data_neg <= {OUTPUTS{cmd_data_ser}} & CONF_OUTPUT_ENABLE_CMD_CLK;
 
 always @ (posedge CMD_CLK_IN)
-    cmd_data_pos <= {OUTPUTS{cmd_data_ser}} & CONF_OUTPUT_ENABLE[OUTPUTS-1:0];
+    cmd_data_pos <= {OUTPUTS{cmd_data_ser}} & CONF_OUTPUT_ENABLE_CMD_CLK;
 
 
 genvar k;
@@ -339,8 +363,8 @@ generate
             .Q(CMD_DATA[k]),
             .C(CMD_CLK_IN),
             .CE(1'b1),
-            .D1((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos[k] : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg[k] : ((CONF_OUTPUT_MODE == 2'b10) ? ~cmd_data_pos[k] :  cmd_data_pos[k]))),
-            .D2((CONF_OUTPUT_MODE == 2'b00) ? cmd_data_pos[k] : ((CONF_OUTPUT_MODE == 2'b01) ? cmd_data_neg[k] : ((CONF_OUTPUT_MODE == 2'b10) ?  cmd_data_pos[k] : ~cmd_data_pos[k]))),
+            .D1((CONF_OUTPUT_MODE_CMD_CLK == 2'b00) ? cmd_data_pos[k] : ((CONF_OUTPUT_MODE_CMD_CLK == 2'b01) ? cmd_data_neg[k] : ((CONF_OUTPUT_MODE_CMD_CLK == 2'b10) ? ~cmd_data_pos[k] :  cmd_data_pos[k]))),
+            .D2((CONF_OUTPUT_MODE_CMD_CLK == 2'b00) ? cmd_data_pos[k] : ((CONF_OUTPUT_MODE_CMD_CLK == 2'b01) ? cmd_data_neg[k] : ((CONF_OUTPUT_MODE_CMD_CLK == 2'b10) ?  cmd_data_pos[k] : ~cmd_data_pos[k]))),
             .R(1'b0),
             .S(1'b0)
         );
@@ -351,7 +375,7 @@ generate
             .CE(1'b1),
             .D1(1'b1),
             .D2(1'b0),
-            .R(CONF_DIS_CLOCK_GATE),
+            .R(CONF_DIS_CLOCK_GATE_CMD_CLK),
             .S(1'b0)
         );
     end
