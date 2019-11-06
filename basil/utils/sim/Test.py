@@ -8,15 +8,15 @@
 #
 
 
+import logging
 import os
 import socket
-import logging
 import yaml
 
 import cocotb
 from cocotb.triggers import RisingEdge
+
 from basil.utils.sim.Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
-from cocotb.binary import BinaryValue
 
 
 def get_bus():
@@ -56,8 +56,13 @@ def socket_test(dut, debug=False):
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind((host, int(port)))
-    s.listen(1)
+    try:
+        s.bind((host, int(port)))
+        s.listen(1)
+    except Exception:
+        s.close()
+        s = None
+        raise
 
     # start sim_modules
     for mod in sim_modules:
@@ -67,9 +72,9 @@ def socket_test(dut, debug=False):
 
     while True:
         dut._log.info("Waiting for incoming connection on %s:%d" % (host, int(port)))
-        client, sockname = s.accept()
-        dut._log.info("New connection from %s:%d" % (sockname[0], sockname[1]))
-        iface = PickleInterface(client)
+        clientsocket, socket_address = s.accept()
+        dut._log.info("New connection from %s:%d" % (socket_address[0], socket_address[1]))
+        iface = PickleInterface(clientsocket)
 
         while True:
             # uncomment for constantly advancing clock
@@ -78,8 +83,9 @@ def socket_test(dut, debug=False):
             try:
                 req = iface.try_recv()
             except EOFError:
-                dut._log.info("Remote client closed the connection")
-                client.close()
+                dut._log.info("Remote server closed the connection")
+                clientsocket.shutdown(socket.SHUT_RDWR)
+                clientsocket.close()
                 break
             if req is None:
                 continue
@@ -106,6 +112,9 @@ def socket_test(dut, debug=False):
 
         if(os.getenv("SIMULATION_END_ON_DISCONNECT")):
             break
+
+    s.shutdown(socket.SHUT_RDWR)
+    s.close()
 
 
 @cocotb.test(skip=True)
