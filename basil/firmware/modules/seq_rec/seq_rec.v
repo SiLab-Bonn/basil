@@ -36,6 +36,7 @@ bus_to_ip #(
     .HIGHADDR(HIGHADDR),
     .ABUSWIDTH(ABUSWIDTH)
 ) i_bus_to_ip (
+    .BUS_CLK(BUS_CLK),
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
     .BUS_ADD(BUS_ADD),

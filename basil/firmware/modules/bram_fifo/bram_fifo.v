@@ -48,6 +48,7 @@ bus_to_ip #(
     .HIGHADDR(HIGHADDR),
     .ABUSWIDTH(ABUSWIDTH)
 ) i_bus_to_ip_control (
+    .BUS_CLK(BUS_CLK),
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
     .BUS_ADD(BUS_ADD),
@@ -69,6 +70,7 @@ bus_to_ip #(
     .ABUSWIDTH(ABUSWIDTH),
     .DBUSWIDTH(32)
 ) i_bus_to_ip_data (
+    .BUS_CLK(BUS_CLK),
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
     .BUS_ADD(BUS_ADD),
