@@ -9,26 +9,29 @@
 
 
 module rbcp_to_bus (
-    input wire BUS_RST,
-    input wire BUS_CLK,
+    input wire           BUS_RST,
+    input wire           BUS_CLK,
 
-    input wire RBCP_ACT,
-    input wire [31:0] RBCP_ADDR,
-    input wire [7:0] RBCP_WD,
-    input wire RBCP_WE,
-    input wire RBCP_RE,
-    output reg RBCP_ACK,
-    output wire [7:0] RBCP_RD,
+    input wire           RBCP_ACT,
+    input wire  [31:0]   RBCP_ADDR,
+    input wire  [7:0]    RBCP_WD,
+    input wire           RBCP_WE,
+    input wire           RBCP_RE,
+    output reg           RBCP_ACK,
+    output reg  [7:0]    RBCP_RD,
 
     output wire          BUS_WR,
     output wire          BUS_RD,
     output wire [31:0]   BUS_ADD,
     inout wire  [7:0]    BUS_DATA
 
-    //FUTURE
+    // TODO
     //input wire BUS_ACK_REQ
     //input wire BUS_ACK
 );
+
+reg RBCP_TO_BUS_RD, RBCP_TO_BUS_RD_BUF;
+reg RBCP_TO_BUS_WR;
 
 always @(posedge BUS_CLK) begin
     if(BUS_RST)
@@ -37,31 +40,50 @@ always @(posedge BUS_CLK) begin
         if (RBCP_ACK == 1)
             RBCP_ACK <= 0;
         else
-            RBCP_ACK <= RBCP_WE | RBCP_RE;
+            RBCP_ACK <= (RBCP_TO_BUS_RD_BUF | RBCP_TO_BUS_WR);
     end
 end
 
-assign BUS_ADD = RBCP_ADDR;
-assign BUS_WR = RBCP_WE & RBCP_ACT;
-assign BUS_RD = RBCP_RE & RBCP_ACT;
+always@(posedge BUS_CLK) begin
+    if(RBCP_RE & RBCP_ACT) begin
+        RBCP_TO_BUS_RD <= 1'b1;
+    end else begin
+        RBCP_TO_BUS_RD <= 1'b0;
+    end
+end
 
-assign BUS_DATA = BUS_WR ? RBCP_WD[7:0]: 8'bz;
-assign RBCP_RD[7:0] = BUS_WR ? 8'bz : BUS_DATA;
+always@(posedge BUS_CLK) begin
+    RBCP_TO_BUS_RD_BUF <= RBCP_TO_BUS_RD;
+end
 
-/*
-wire [35:0] control_bus;
-chipscope_icon ichipscope_icon
-(
-    .CONTROL0(control_bus)
-);
+always@(posedge BUS_CLK) begin
+    if(RBCP_WE & RBCP_ACT) begin
+        RBCP_TO_BUS_WR <= 1'b1;
+    end else begin
+        RBCP_TO_BUS_WR <= 1'b0;
+    end
+end
 
-chipscope_ila ichipscope_ila
-(
-    .CONTROL(control_bus),
-    .CLK(BUS_CLK),
-    .TRIG0({BUS_ADD[7:0], RBCP_ACK, RBCP_WD, RBCP_RD, BUS_RD, BUS_WR})
+always@(posedge BUS_CLK) begin
+    RBCP_RD <= BUS_DATA;
+end
 
-);
- */
+reg [31:0] RBCP_ADDR_BUF;
+always@(posedge BUS_CLK) begin
+    RBCP_ADDR_BUF <= RBCP_ADDR;
+end
+
+reg [7:0] RBCP_WD_BUF;
+always@(posedge BUS_CLK) begin
+    RBCP_WD_BUF <= RBCP_WD;
+end
+
+
+// BUS
+assign BUS_WR = RBCP_TO_BUS_WR;
+assign BUS_RD = RBCP_TO_BUS_RD & ~BUS_WR;
+assign BUS_ADD = RBCP_ADDR_BUF;
+assign BUS_DATA = (BUS_WR) ? RBCP_WD_BUF : 8'bz;
+
 
 endmodule
