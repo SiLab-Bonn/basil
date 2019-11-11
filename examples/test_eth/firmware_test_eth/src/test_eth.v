@@ -689,24 +689,14 @@ clock_divider #(
     .CLOCK(CLK_1HZ)
 );
 
-wire CLK_3HZ;
+wire CLK_3HZ, CE_3HZ;
 clock_divider #(
-    .DIVISOR(13333333)
-) i_clock_divisor_40MHz_to_3Hz (
+    .DIVISOR(44444444)
+) i_clock_divisor_133MHz_to_3Hz (
     .CLK(CLK40),
     .RESET(1'b0),
-    .CE(),
+    .CE(CE_3HZ),
     .CLOCK(CLK_3HZ)
-);
-
-wire CE_6HZ;
-clock_divider #(
-    .DIVISOR(22222222)
-) i_clock_divisor_133MHz_to_6Hz (
-    .CLK(BUS_CLK),
-    .RESET(1'b0),
-    .CE(CE_6HZ),
-    .CLOCK()
 );
 
 wire FIFO_FULL_SYNC;
@@ -719,26 +709,28 @@ three_stage_synchronizer #(
 );
 
 reg FIFO_WAS_FULL;
-always @ (posedge BUS_CLK or posedge FIFO_FULL_SYNC)
-    if (CE_6HZ || FIFO_FULL_SYNC) begin
+always @ (posedge BUS_CLK or posedge FIFO_FULL_SYNC) begin
+    if (CE_3HZ || FIFO_FULL_SYNC) begin
         if (FIFO_FULL_SYNC)
             FIFO_WAS_FULL <= 1'b1;
         else
             FIFO_WAS_FULL <= 1'b0;
     end
+end
 
 reg FIFO_WAS_ALMOST_EMPTY;
-always @ (posedge BUS_CLK or negedge FIFO_FULL_SYNC)
-    if (CE_6HZ || !FIFO_FULL_SYNC) begin
+always @ (posedge BUS_CLK or negedge FIFO_FULL_SYNC) begin
+    if (CE_3HZ || !FIFO_FULL_SYNC) begin
         if (!FIFO_FULL_SYNC)
             FIFO_WAS_ALMOST_EMPTY <= 1'b1;
         else
             FIFO_WAS_ALMOST_EMPTY <= 1'b0;
     end
+end
 
 reg FIFO_FULL_SLOW;
-always @ (posedge BUS_CLK or posedge FIFO_WAS_FULL or negedge FIFO_WAS_ALMOST_EMPTY)
-    if (CE_6HZ || (FIFO_WAS_FULL && !FIFO_WAS_ALMOST_EMPTY)) begin
+always @ (posedge BUS_CLK or posedge FIFO_WAS_FULL or negedge FIFO_WAS_ALMOST_EMPTY) begin
+    if (CE_3HZ || (FIFO_WAS_FULL && !FIFO_WAS_ALMOST_EMPTY)) begin
         if (FIFO_WAS_FULL && !FIFO_WAS_ALMOST_EMPTY)
             FIFO_FULL_SLOW <= 1'b1;
         else if (FIFO_WAS_FULL && !FIFO_FULL_SLOW)
@@ -746,6 +738,7 @@ always @ (posedge BUS_CLK or posedge FIFO_WAS_FULL or negedge FIFO_WAS_ALMOST_EM
         else
             FIFO_FULL_SLOW <= 1'b0;
     end
+end
 
 assign LED[7:4] = ~{clock_speed, duplex_status, (|clock_speed & link_status & (GMII_1000M ? CLK_1HZ : CLK_3HZ)) | INVALID};
 assign LED[0] = ~CLK_1HZ;
