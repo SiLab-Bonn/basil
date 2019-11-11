@@ -748,7 +748,7 @@ always @ (posedge BUS_CLK or posedge FIFO_WAS_FULL or negedge FIFO_WAS_ALMOST_EM
     end
 
 assign LED[7:4] = ~{clock_speed, duplex_status, (|clock_speed & link_status & (GMII_1000M ? CLK_1HZ : CLK_3HZ)) | INVALID};
-assign LED[0] = CLK_1HZ;
+assign LED[0] = ~CLK_1HZ;
 assign LED[1] = ~FIFO_FULL_SLOW;
 assign LED[2] = 1'b1;
 assign LED[3] = 1'b1;
