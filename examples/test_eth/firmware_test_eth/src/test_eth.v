@@ -693,7 +693,7 @@ wire CLK_3HZ, CE_3HZ;
 clock_divider #(
     .DIVISOR(44444444)
 ) i_clock_divisor_133MHz_to_3Hz (
-    .CLK(CLK40),
+    .CLK(BUS_CLK),
     .RESET(1'b0),
     .CE(CE_3HZ),
     .CLOCK(CLK_3HZ)
