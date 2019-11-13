@@ -423,8 +423,8 @@ class SiTcp(SiTransferLayer):
                 time_read = time()
                 if rlist:
                     with self._tcp_lock:
-                        data = bytearray(self._sock_tcp.recv(1024 * 8))
-                        self._tcp_read_buff.extend(data)
+                        data = self._sock_tcp.recv(1024 * 8)
+                        self._tcp_read_buff.extend(array('B', data))
             except AttributeError:
                 pass
 
