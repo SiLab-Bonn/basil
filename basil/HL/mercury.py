@@ -50,7 +50,7 @@ class Mercury(HardwareLayer):
 
     def get_position(self, address=None):
         self._write_command("TP", address)
-        return int(self.read()[3:-3])
+        return int(self.read()[2:-3])
 
     def get_channel(self, address=None):
         self._write_command("TS", address)
