@@ -41,7 +41,7 @@ output reg [POINTER_SIZE-1:0] size;
 wire empty_loc;
 
 
-always@(posedge clk) begin
+always @(posedge clk) begin
     if(reset)
         rd_pointer <= 0;
     else if(read && !empty) begin
@@ -52,7 +52,7 @@ always@(posedge clk) begin
     end
 end
 
-always@(*) begin
+always @(*) begin
     rd_tmp = rd_pointer;
     if(read && !empty) begin
         if(rd_pointer == DEPTH-1'b1)
@@ -62,7 +62,7 @@ always@(*) begin
     end
 end
 
-always@(posedge clk) begin
+always @(posedge clk) begin
     if(reset)
         wr_pointer <= 0;
     else if(write && !full) begin
@@ -73,7 +73,7 @@ always@(posedge clk) begin
     end
 end
 
-always@(posedge clk)
+always @(posedge clk)
     if(read && !empty)
         if(rd_pointer == DEPTH-1'b1)
             empty <= (wr_pointer == 0);
@@ -85,15 +85,15 @@ always@(posedge clk)
 assign empty_loc = (wr_pointer == rd_pointer);
 assign full = ((wr_pointer==(DEPTH-1'b1) && rd_pointer==0) || (wr_pointer!=(DEPTH-1'b1) && wr_pointer+1'b1 == rd_pointer));
 
-always@(posedge clk)
+always @(posedge clk)
     if(write && !full)
         mem[wr_pointer] <= data_in;
 
-always@(posedge clk)
+always @(posedge clk)
     //if(read && !empty)
         data_out <= mem[rd_tmp];
 
-always @ (*) begin
+always @(*) begin
     if(wr_pointer >= rd_pointer)
         size = wr_pointer - rd_pointer;
     else

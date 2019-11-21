@@ -337,7 +337,7 @@ bram_fifo
 //assign led[7] = FIFO_NEAR_FULL;
 //assign led[8] = FIFO_READ_ERROR;
 
-/*always @ (posedge BUS_CLK)
+/*always @(posedge BUS_CLK)
 begin
 if (BUS_RST)
     begin

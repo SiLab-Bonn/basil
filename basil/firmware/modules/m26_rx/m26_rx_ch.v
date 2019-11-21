@@ -18,17 +18,17 @@ module m26_rx_ch
 );
 
 reg [15:0] mkd_sr;
-always@(posedge CLK_RX)
+always @(posedge CLK_RX)
     mkd_sr[15:0] <= {mkd_sr[14:0], MKD_RX};
 
 reg [15:0] data_sr;
-always@(posedge CLK_RX)
+always @(posedge CLK_RX)
     data_sr[15:0] <= {DATA_RX, data_sr[15:1]};
 
 assign FRAME_START = (mkd_sr[15:12] == 4'b1111);
 
 reg [15:0] data_cnt;
-always@(posedge CLK_RX)
+always @(posedge CLK_RX)
     if(RST)
         data_cnt <= 16'hffff;
     else if(FRAME_START)
@@ -37,7 +37,7 @@ always@(posedge CLK_RX)
         data_cnt <= data_cnt + 1;
 
 reg [15:0] data_len;
-always@(posedge CLK_RX)
+always @(posedge CLK_RX)
     if(RST)
         data_len <= 0;
     else if(data_cnt==31)

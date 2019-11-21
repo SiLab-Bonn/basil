@@ -79,20 +79,20 @@ module tb (
 
     //safe clock domain crossing synchronization
     reg [31:0] TIMESTAMP, timestamp_gray;
-    always@(posedge BUS_CLK)
+    always @(posedge BUS_CLK)
         TIMESTAMP <= 32'haa55bb44;
 
-    always@(posedge BUS_CLK)
+    always @(posedge BUS_CLK)
         timestamp_gray <=  (TIMESTAMP>>1) ^ TIMESTAMP;
 
     reg [31:0] timestamp_cdc0, timestamp_cdc1, timestamp_m26;
-    always@(posedge BUS_CLK) begin
+    always @(posedge BUS_CLK) begin
         timestamp_cdc0 <= timestamp_gray;
         timestamp_cdc1 <= timestamp_cdc0;
     end
 
     integer gbi;
-    always@(*) begin
+    always @(*) begin
         timestamp_m26[31] = timestamp_cdc1[31];
         for(gbi  =30; gbi >= 0; gbi = gbi -1) begin
             timestamp_m26[gbi] = timestamp_cdc1[gbi] ^ timestamp_m26[gbi+1];

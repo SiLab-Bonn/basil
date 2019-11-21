@@ -30,7 +30,7 @@ module rbcp_to_bus (
     //input wire BUS_ACK
 );
 
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(BUS_RST)
         RBCP_ACK <= 0;
     else begin

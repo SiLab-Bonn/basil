@@ -147,7 +147,7 @@ three_stage_synchronizer three_stage_arm_tdc_synchronizer_clk_160 (
 );
 
 reg ARM_TDC_CLK160_FF;
-always@(posedge CLK160) begin
+always @(posedge CLK160) begin
     ARM_TDC_CLK160_FF <= ARM_TDC_CLK160;
 end
 
@@ -217,27 +217,27 @@ generate
     end
     else begin
         reg [1:0] TDC_DDRQ_DLY;
-        always@(posedge CLK320)
+        always @(posedge CLK320)
             TDC_DDRQ_DLY[1:0] <= {TDC_IN, TDC_IN};
 
         reg [3:0] TDC_DDRQ_DATA;
-        always@(posedge CLK320)
+        always @(posedge CLK320)
             TDC_DDRQ_DATA[3:0] <= {TDC_DDRQ_DLY[1:0], {TDC_IN, TDC_IN}};
 
          reg [3:0] TDC_DDRQ_DATA_BUF;
-        always@(posedge CLK320)
+        always @(posedge CLK320)
             TDC_DDRQ_DATA_BUF[3:0] <= TDC_DDRQ_DATA[3:0];
 
         reg [3:0] TDC_DATA_IN;
-        always@(posedge CLK160)
+        always @(posedge CLK160)
             TDC_DATA_IN[3:0] <= TDC_DDRQ_DATA_BUF[3:0];
 
         reg [CLKDV*4-1:0] TDC_DATA_IN_SR;
-        always@(posedge CLK160)
+        always @(posedge CLK160)
             TDC_DATA_IN_SR <= {TDC_DATA_IN_SR[CLKDV*4-5:0],TDC_DATA_IN[3:0]};
 
         reg [CLKDV*4-1:0] TDC_DES_OUT;
-        always@(posedge DV_CLK)
+        always @(posedge DV_CLK)
             TDC_DES_OUT <= TDC_DATA_IN_SR;
 
         assign TDC = TDC_DES_OUT;
@@ -253,13 +253,13 @@ wire ZERO_DETECTED_TDC;
 assign ZERO_DETECTED_TDC = |(~TDC_DES); // asserted when one or more 0 occur
 
 reg TDC_DES_BUF_0;
-always @ (posedge DV_CLK)
+always @(posedge DV_CLK)
     TDC_DES_BUF_0 <= TDC_DES[0];
 
 // fix width for for loop
 reg [CLKDV*4+1:0] TDC_DES_WFIX;
 integer h;
-always @ (*) begin
+always @(*) begin
     TDC_DES_WFIX[CLKDV*4] = TDC_DES_BUF_0;
     TDC_DES_WFIX[CLKDV*4+1] = 0;
     for(h=0; h<CLKDV*4; h=h+1) begin
@@ -283,7 +283,7 @@ end
 reg [4:0] ALL_ONES_TDC, ONES_TDC, LENGTH_TDC;
 reg FOUND_TDC_EDGE;
 integer i;
-always @ (*) begin
+always @(*) begin
     ALL_ONES_TDC = 0;
     ONES_TDC = 0;
     LENGTH_TDC = 0;
@@ -302,7 +302,7 @@ always @ (*) begin
 end
 
 reg NEW_TDC;
-always @ (*) begin
+always @(*) begin
     NEW_TDC = 0;
     if (FOUND_TDC_EDGE)
         NEW_TDC = 1;
@@ -314,13 +314,13 @@ localparam      IDLE  = 2'b00,
                 ARMED = 2'b01,
                 COUNT = 2'b10;
 
-always @ (posedge DV_CLK)
+always @(posedge DV_CLK)
     if (RST_DV_CLK)
       state <= IDLE;
     else
       state <= next_state;
 
-always @ (*) begin
+always @(*) begin
     case(state)
         IDLE:
             if (NEW_TDC && CONF_EN_DV_CLK && !CONF_EN_ARM_TDC_DV_CLK)
@@ -356,14 +356,14 @@ wire START;
 assign START = ((state == IDLE && next_state == COUNT) || (state == ARMED && next_state == COUNT));
 
 reg [15:0] CURR_TIMESTAMP;
-always @ (posedge DV_CLK)
+always @(posedge DV_CLK)
     if (RST_DV_CLK)
         CURR_TIMESTAMP <= 16'b0;
     else if (START)
         CURR_TIMESTAMP <= TIMESTAMP;
 
 reg TDC_ERR;
-always @ (*)
+always @(*)
     if(ALL_ONES_TDC!=ONES_TDC)
         TDC_ERR <= 1;
     else
@@ -371,7 +371,7 @@ always @ (*)
 
 reg [12:0] TDC_PRE; // overflow bit
 initial TDC_PRE = 0;
-always @ (posedge DV_CLK)
+always @(posedge DV_CLK)
     if(RST_DV_CLK || FINISH)
         TDC_PRE <= 0;
     else if(START)
@@ -392,31 +392,31 @@ assign TDC_VAL = (TDC_ERR || TDC_PRE==0) ? 0 : (TDC_PRE+ONES_TDC>13'b0_1111_1111
 
 reg [31:0] EVENT_CNT;
 initial EVENT_CNT = 0;
-always @ (posedge DV_CLK)
+always @(posedge DV_CLK)
     if(RST_DV_CLK)
         EVENT_CNT <= 0;
     else if (FINISH)
         EVENT_CNT <= EVENT_CNT + 1;
 
 reg [31:0] event_cnt_gray;
-always@(posedge DV_CLK)
+always @(posedge DV_CLK)
     event_cnt_gray <=  (EVENT_CNT>>1) ^ EVENT_CNT;
 
 reg [31:0] event_cnt_cdc0, event_cnt_cdc1, event_cnt_bus_clk;
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     event_cnt_cdc0 <= event_cnt_gray;
     event_cnt_cdc1 <= event_cnt_cdc0;
 end
 
 integer gbi_event_cnt;
-always@(*) begin
+always @(*) begin
     event_cnt_bus_clk[31] = event_cnt_cdc1[31];
     for(gbi_event_cnt = 30; gbi_event_cnt >= 0; gbi_event_cnt = gbi_event_cnt - 1) begin
         event_cnt_bus_clk[gbi_event_cnt] = event_cnt_cdc1[gbi_event_cnt] ^ event_cnt_bus_clk[gbi_event_cnt + 1];
     end
 end
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     event_cnt_buf <= event_cnt_bus_clk;
     if (BUS_ADD == 2 && BUS_RD)
@@ -450,27 +450,27 @@ generate
     end
     else begin
         reg [1:0] TRIGGER_DDRQ_DLY;
-        always@(posedge CLK320)
+        always @(posedge CLK320)
             TRIGGER_DDRQ_DLY[1:0] <= {TRIG_IN, TRIG_IN};
 
         reg [3:0] TRIGGER_DDRQ_DATA;
-        always@(posedge CLK320)
+        always @(posedge CLK320)
             TRIGGER_DDRQ_DATA[3:0] <= {TRIGGER_DDRQ_DLY[1:0], {TRIG_IN, TRIG_IN}};
 
          reg [3:0] TRIGGER_DDRQ_DATA_BUF;
-        always@(posedge CLK320)
+        always @(posedge CLK320)
             TRIGGER_DDRQ_DATA_BUF[3:0] <= TRIGGER_DDRQ_DATA[3:0];
 
         reg [3:0] TRIGGER_DATA_IN;
-        always@(posedge CLK160)
+        always @(posedge CLK160)
             TRIGGER_DATA_IN[3:0] <= TRIGGER_DDRQ_DATA_BUF[3:0];
 
         reg [CLKDV*4-1:0] TRIGGER_DATA_IN_SR;
-        always@(posedge CLK160)
+        always @(posedge CLK160)
             TRIGGER_DATA_IN_SR <= {TRIGGER_DATA_IN_SR[CLKDV*4-5:0],TRIGGER_DATA_IN[3:0]};
 
         reg [CLKDV*4-1:0] TRIG_DES_OUT;
-        always@(posedge DV_CLK)
+        always @(posedge DV_CLK)
             TRIG_DES_OUT <= TRIGGER_DATA_IN_SR;
 
         assign TRIG = TRIG_DES_OUT;
@@ -484,13 +484,13 @@ endgenerate
 assign TRIG_DES = CONF_EN_INVERT_TRIGGER_DV_CLK ? ~TRIG : TRIG;
 
 reg TRIG_DES_BUF_0;
-always @ (posedge DV_CLK)
+always @(posedge DV_CLK)
     TRIG_DES_BUF_0 <= TRIG_DES[0];
 
 // fix width for for loop
 reg [CLKDV*4+1:0] TRIG_DES_WFIX;
 integer j;
-always@(*) begin
+always @(*) begin
     TRIG_DES_WFIX[CLKDV*4] = TRIG_DES_BUF_0;
     TRIG_DES_WFIX[CLKDV*4+1] = 0;
     for(j=0; j<CLKDV*4; j=j+1) begin
@@ -514,7 +514,7 @@ end
 reg [4:0] ALL_ONES_TRIG, ONES_TRIG, LENGTH_TRIG;
 reg FOUND_TRIG_EDGE;
 integer k;
-always @ (*) begin
+always @(*) begin
     ALL_ONES_TRIG = 0;
     ONES_TRIG = 0;
     LENGTH_TRIG = 0;
@@ -533,14 +533,14 @@ always @ (*) begin
 end
 
 reg NEW_TRIG;
-always @ (*) begin
+always @(*) begin
     NEW_TRIG = 0;
     if (FOUND_TRIG_EDGE)
         NEW_TRIG = 1;
 end
 
 reg TRIG_ERR;
-always @ (*)
+always @(*)
     if(ALL_ONES_TRIG!=ONES_TRIG || (LENGTH_TDC>LENGTH_TRIG && NEW_TRIG && NEW_TDC) || (state==COUNT && NEW_TRIG))
         TRIG_ERR <= 1;
     else
@@ -548,7 +548,7 @@ always @ (*)
 
 reg CNT_TRIG;
 initial CNT_TRIG = 0;
-always @ (posedge DV_CLK)
+always @(posedge DV_CLK)
     if (RST_DV_CLK)
       CNT_TRIG <= 0;
     else if (NEW_TDC==1)
@@ -558,7 +558,7 @@ always @ (posedge DV_CLK)
 
 reg [7:0] TRIG_CNT;
 initial TRIG_CNT = 0;
-always@(*) begin
+always @(*) begin
     if (CNT_TRIG==0 && NEW_TRIG==1 && NEW_TDC==1)
         TRIG_CNT = LENGTH_TRIG - LENGTH_TDC;
     else if (CNT_TRIG==0 && NEW_TRIG==1 && NEW_TDC==0)
@@ -573,7 +573,7 @@ end
 
 reg [8:0] TRIG_DIST; // overflow bit
 initial TRIG_DIST = 255;
-always @ (posedge DV_CLK) begin
+always @(posedge DV_CLK) begin
     if (RST_DV_CLK || (FINISH/* && !NEW_TRIG*/))
         TRIG_DIST <= 255;
     else if (NEW_TRIG)
@@ -599,7 +599,7 @@ wire cdc_fifo_write;
 assign cdc_fifo_write = !wfull && FINISH==1 && !(CONF_EN_TRIG_DIST_DV_CLK==1 && CONF_EN_NO_WRITE_TRIG_ERR_DV_CLK==1 && TRIG_DIST==255);
 
 reg [31:0] cdc_data;
-always @ (*) begin
+always @(*) begin
     if(CONF_EN_WRITE_TS_DV_CLK)
         cdc_data = {DATA_IDENTIFIER, CURR_TIMESTAMP, TDC_VAL};
     else
@@ -609,7 +609,7 @@ always @ (*) begin
 end
 
 reg [7:0] LOST_DATA_CNT;
-always@(posedge DV_CLK) begin
+always @(posedge DV_CLK) begin
     if(RST_DV_CLK)
         LOST_DATA_CNT <= 0;
     else if (wfull && FINISH && LOST_DATA_CNT != 8'b1111_1111)
@@ -617,24 +617,24 @@ always@(posedge DV_CLK) begin
 end
 
 reg [7:0] lost_data_cnt_gray;
-always@(posedge DV_CLK)
+always @(posedge DV_CLK)
     lost_data_cnt_gray <=  (LOST_DATA_CNT>>1) ^ LOST_DATA_CNT;
 
 reg [7:0] lost_data_cnt_cdc0, lost_data_cnt_cdc1, lost_data_cnt_bus_clk;
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     lost_data_cnt_cdc0 <= lost_data_cnt_gray;
     lost_data_cnt_cdc1 <= lost_data_cnt_cdc0;
 end
 
 integer gbi_lost_err_cnt;
-always@(*) begin
+always @(*) begin
     lost_data_cnt_bus_clk[7] = lost_data_cnt_cdc1[7];
     for(gbi_lost_err_cnt = 6; gbi_lost_err_cnt >= 0; gbi_lost_err_cnt = gbi_lost_err_cnt - 1) begin
         lost_data_cnt_bus_clk[gbi_lost_err_cnt] = lost_data_cnt_cdc1[gbi_lost_err_cnt] ^ lost_data_cnt_bus_clk[gbi_lost_err_cnt + 1];
     end
 end
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     lost_data_cnt_buf_read <= lost_data_cnt_bus_clk;
 end
@@ -642,7 +642,7 @@ end
 // generate long reset
 reg [5:0] rst_cnt;
 reg RST_LONG;
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if (RST)
         rst_cnt <= 6'b11_1111; // start value
     else if (rst_cnt != 0)
@@ -652,7 +652,7 @@ end
 
 reg [5:0] rst_cnt_dv_clk;
 reg RST_LONG_DV_CLK;
-always@(posedge DV_CLK) begin
+always @(posedge DV_CLK) begin
     if (RST_DV_CLK)
         rst_cnt_dv_clk <= 6'b11_1111; // start value
     else if (rst_cnt_dv_clk != 0)

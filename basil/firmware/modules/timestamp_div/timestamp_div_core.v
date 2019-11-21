@@ -92,7 +92,7 @@ assign EN_SYNC= CONF_EN | ( EXT_ENABLE & CONF_EXT_ENABLE);
 
 
 reg [7:0] sync_cnt;
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(RST)
         sync_cnt <= 120;
     else if(sync_cnt != 100)
@@ -103,7 +103,7 @@ assign RST_LONG = sync_cnt[7];
 
 reg [63:0] INT_TIMESTAMP;
 wire [63:0] TIMESTAMP;
-always@(posedge CLK40) begin
+always @(posedge CLK40) begin
     if(RST_SYNC)
         INT_TIMESTAMP <= 0;
     else
@@ -119,7 +119,7 @@ ddr_des #(.CLKDV(CLKDV)) iddr_des_tdc(.CLK2X(CLK320), .CLK(CLK160), .WCLK(CLK40)
 
 assign TDC_DES = CONF_EN_INVERT ? ~TDC : TDC;
 
-always @ (posedge CLK40)
+always @(posedge CLK40)
     TDC_DES_PREV <= TDC_DES;
 
 wire  [CLKDV*4:0] TDC_TO_COUNT;
@@ -130,7 +130,7 @@ reg [3:0] RISING_EDGES_CNT, FALLING_EDGES_CNT;
 reg [3:0] RISING_POS, FALLING_POS;
 
 integer i;
-always @ (*) begin
+always @(*) begin
     RISING_EDGES_CNT = 0;
     FALLING_EDGES_CNT = 0;
     RISING_POS = 0;
@@ -153,7 +153,7 @@ always @ (*) begin
 end
 
 reg WAITING_FOR_TRAILING;
-always@(posedge CLK40)
+always @(posedge CLK40)
     if(RST)
         WAITING_FOR_TRAILING <= 0;
     else if(RISING_EDGES_CNT < FALLING_EDGES_CNT)
@@ -162,14 +162,14 @@ always@(posedge CLK40)
         WAITING_FOR_TRAILING <= 1;
 
 reg [67:0] LAST_RISING;
-always@(posedge CLK40)
+always @(posedge CLK40)
     if(RST)
         LAST_RISING <= 0;
     else if (RISING_EDGES_CNT > 0)
         LAST_RISING <= {TIMESTAMP, RISING_POS};
 
 reg [67:0] LAST_FALLING;
-always@(posedge CLK40)
+always @(posedge CLK40)
     if(RST)
         LAST_FALLING <= 0;
     else if (FALLING_EDGES_CNT > 0)
@@ -187,7 +187,7 @@ assign FALLING = (FALLING_EDGES_CNT > 0);
 reg [2:0] WAITING_FOR_TRAILING_FF;
 wire FALLING_SYNC;
 wire RISING_SYNC;
-always@(posedge CLK40)
+always @(posedge CLK40)
     if(RST)
         WAITING_FOR_TRAILING_FF <= 3'b0;
     else begin
@@ -205,7 +205,7 @@ assign cdc_fifo_write = CONF_EN_TOT ? FALLING_SYNC:RISING_SYNC;
 wire fifo_full,fifo_write,cdc_fifo_empty;
 
 wire wfull;
-always@(posedge CLK40) begin
+always @(posedge CLK40) begin
     if(RST_SYNC)
         LOST_DATA_CNT <= 0;
     else if (wfull && cdc_fifo_write && LOST_DATA_CNT != 8'b1111_1111)
@@ -231,12 +231,12 @@ cdc_syncfifo_i(
 );
 
 reg [1:0] byte2_cnt, byte2_cnt_prev;
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     byte2_cnt_prev <= byte2_cnt;
 assign cdc_fifo_read = (byte2_cnt_prev==0 & byte2_cnt!=0);
 assign fifo_write = byte2_cnt_prev != 0;
 
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(RST)
         byte2_cnt <= 0;
     else if(!cdc_fifo_empty && !fifo_full && byte2_cnt == 0)
@@ -245,7 +245,7 @@ always@(posedge BUS_CLK)
         byte2_cnt <= byte2_cnt - 1;
 
 reg [71:0] data_buf;
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(cdc_fifo_read)
         data_buf <= cdc_data_out;
 

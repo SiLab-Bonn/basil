@@ -107,7 +107,7 @@ always @(posedge BUS_CLK) begin
         status_regs <= BUS_DATA_IN;
 end
 
-always @ (posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if(BUS_ADD == 0)
             BUS_DATA_OUT <= VERSION;
@@ -193,24 +193,24 @@ assign FIFO_DATA = {DATA_HEADER, FE_DATA};
 
 wire [15:0] fifo_size;
 reg [15:0] fifo_size_gray;
-always@(posedge FIFO_CLK)
+always @(posedge FIFO_CLK)
     fifo_size_gray <=  (fifo_size>>1) ^ fifo_size;
 
 reg [15:0] fifo_size_cdc0, fifo_size_cdc1, fifo_size_bus_clk;
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     fifo_size_cdc0 <= fifo_size_gray;
     fifo_size_cdc1 <= fifo_size_cdc0;
 end
 
 integer gbi_fifo_size;
-always@(*) begin
+always @(*) begin
     fifo_size_bus_clk[15] = fifo_size_cdc1[15];
     for(gbi_fifo_size = 14; gbi_fifo_size >= 0; gbi_fifo_size = gbi_fifo_size - 1) begin
         fifo_size_bus_clk[gbi_fifo_size] = fifo_size_cdc1[gbi_fifo_size] ^ fifo_size_bus_clk[gbi_fifo_size + 1];
     end
 end
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     fifo_size_buf <= fifo_size_bus_clk;
     if (BUS_ADD == 3 && BUS_RD)
@@ -218,47 +218,47 @@ begin
 end
 
 reg [7:0] decoder_err_cnt_gray;
-always@(posedge DATA_CLK)
+always @(posedge DATA_CLK)
     decoder_err_cnt_gray <=  (decoder_err_cnt>>1) ^ decoder_err_cnt;
 
 reg [7:0] decoder_err_cnt_cdc0, decoder_err_cnt_cdc1, decoder_err_cnt_bus_clk;
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     decoder_err_cnt_cdc0 <= decoder_err_cnt_gray;
     decoder_err_cnt_cdc1 <= decoder_err_cnt_cdc0;
 end
 
 integer gbi_decoder_err_cnt;
-always@(*) begin
+always @(*) begin
     decoder_err_cnt_bus_clk[7] = decoder_err_cnt_cdc1[7];
     for(gbi_decoder_err_cnt = 6; gbi_decoder_err_cnt >= 0; gbi_decoder_err_cnt = gbi_decoder_err_cnt - 1) begin
         decoder_err_cnt_bus_clk[gbi_decoder_err_cnt] = decoder_err_cnt_cdc1[gbi_decoder_err_cnt] ^ decoder_err_cnt_bus_clk[gbi_decoder_err_cnt + 1];
     end
 end
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     decoder_err_cnt_buf_read <= decoder_err_cnt_bus_clk;
 end
 
 reg [7:0] lost_err_cnt_gray;
-always@(posedge DATA_CLK)
+always @(posedge DATA_CLK)
     lost_err_cnt_gray <=  (lost_err_cnt>>1) ^ lost_err_cnt;
 
 reg [7:0] lost_err_cnt_cdc0, lost_err_cnt_cdc1, lost_err_cnt_bus_clk;
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     lost_err_cnt_cdc0 <= lost_err_cnt_gray;
     lost_err_cnt_cdc1 <= lost_err_cnt_cdc0;
 end
 
 integer gbi_lost_err_cnt;
-always@(*) begin
+always @(*) begin
     lost_err_cnt_bus_clk[7] = lost_err_cnt_cdc1[7];
     for(gbi_lost_err_cnt = 6; gbi_lost_err_cnt >= 0; gbi_lost_err_cnt = gbi_lost_err_cnt - 1) begin
         lost_err_cnt_bus_clk[gbi_lost_err_cnt] = lost_err_cnt_cdc1[gbi_lost_err_cnt] ^ lost_err_cnt_bus_clk[gbi_lost_err_cnt + 1];
     end
 end
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     lost_err_cnt_buf_read <= lost_err_cnt_bus_clk;
 end

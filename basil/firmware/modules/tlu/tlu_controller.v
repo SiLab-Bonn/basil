@@ -50,7 +50,7 @@ module tlu_controller
     input wire                  TLU_RESET,
     output wire                 TLU_BUSY,
     output wire                 TLU_CLOCK,
-    
+
     input wire  [TIMESTAMP_N_OF_BIT-1:0] EXT_TIMESTAMP,
     output wire [TIMESTAMP_N_OF_BIT-1:0] TIMESTAMP
 );

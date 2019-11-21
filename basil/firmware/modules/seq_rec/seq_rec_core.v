@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -20,7 +20,7 @@ module seq_rec_core
     parameter MEM_BYTES = 8*1024,
     parameter ABUSWIDTH = 16,
     parameter IN_BITS = 8 //4,8,16,32
-    
+
 )(
     BUS_CLK,
     BUS_RST,
@@ -33,7 +33,7 @@ module seq_rec_core
     SEQ_CLK,
     SEQ_IN,
     SEQ_EXT_START
-); 
+);
 
 localparam VERSION = 0;
 
@@ -96,7 +96,7 @@ wire [7:0] BUS_STATUS_OUT;
 assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
 
 reg [7:0] BUS_DATA_OUT_REG;
-always @ (posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(BUS_RD)
     begin
         if(BUS_ADD == 0)
@@ -115,12 +115,12 @@ always @ (posedge BUS_CLK) begin
 end
 
 reg [ABUSWIDTH-1:0]  PREV_BUS_ADD;
-always @ (posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         PREV_BUS_ADD <= BUS_ADD;
     end
 end
-    
+
 always @(*) begin
     if(PREV_BUS_ADD < 16)
         BUS_DATA_OUT = BUS_DATA_OUT_REG;
@@ -144,7 +144,7 @@ localparam IN_BYTES_WIDTH = `CLOG2(IN_BYTES);
 
 generate
     if (IN_BITS<=8) begin
-        assign memout_addra = BUS_ADD_MEM; 
+        assign memout_addra = BUS_ADD_MEM;
     end else begin
         assign memout_addra = {BUS_ADD_MEM[ADDR_SIZEA:IN_BYTES_WIDTH], {(IN_BYTES_WIDTH){1'b0}}} + (IN_BYTES-1) - BUS_ADD_MEM[IN_BYTES_WIDTH-1:0]; //Byte order
     end
@@ -159,38 +159,38 @@ generate
     if (IN_BITS==8) begin
         (* RAM_STYLE="{BLOCK}" *)
         reg [7:0] mem [(2**ADDR_SIZEA)-1:0];
-        
-        
+
+
         // synthesis translate_off
         //to make simulator happy (no X propagation)
         integer i;
-        initial 
+        initial
             for(i = 0; i < (2**ADDR_SIZEA); i = i + 1)
-                mem[i] = 0; 
+                mem[i] = 0;
         // synthesis translate_on
-        
+
         always @(posedge BUS_CLK) begin
             if (WEA)
                 mem[memout_addra] <= BUS_DATA_IN;
             BUS_IN_MEM <= mem[memout_addra];
         end
-            
+
         always @(posedge SEQ_CLK)
             if(WEB)
                 mem[memout_addrb] <= SEQ_IN;
-                                         
+
     end else begin
          wire [7:0] douta;
-          
+
         seq_rec_blk_mem memout(
-            .clka(BUS_CLK), .clkb(SEQ_CLK), .douta(douta), .doutb(), 
-            .wea(WEA), .web(WEB), .addra(memout_addra), .addrb(memout_addrb), 
+            .clka(BUS_CLK), .clkb(SEQ_CLK), .douta(douta), .doutb(),
+            .wea(WEA), .web(WEB), .addra(memout_addra), .addrb(memout_addrb),
             .dina(BUS_DATA_IN), .dinb(SEQ_IN)
         );
-        always@(*) begin
+        always @(*) begin
             BUS_IN_MEM = douta;
         end
-          
+
     end
 endgenerate
 
@@ -210,7 +210,7 @@ assign STOP_BIT = CONF_COUNT;
 wire START_SYNC_OR_TRIG;
 assign START_SYNC_OR_TRIG = START_SYNC | (CONF_EN_SEQ_EXT_START & SEQ_EXT_START);
 
-always @ (posedge SEQ_CLK)
+always @(posedge SEQ_CLK)
     if (RST_SYNC)
         out_bit_cnt <= 0;
     else if(START_SYNC_OR_TRIG)

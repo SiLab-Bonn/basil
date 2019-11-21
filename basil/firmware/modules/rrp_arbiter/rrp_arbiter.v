@@ -1,22 +1,22 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 `timescale 1ps/1ps
 `default_nettype none
- 
+
 //TODO: check with more then 1 hold/priority at a time
 
-module rrp_arbiter 
+module rrp_arbiter
 #(
     parameter WIDTH = 4
 )
 (
     input wire RST,
     input wire CLK,
-    
+
     input wire [WIDTH-1:0] WRITE_REQ, // round robin
     input wire [WIDTH-1:0] HOLD_REQ, // lower channels have higher priority, has to be high until read was granted
     input wire [WIDTH*32-1:0] DATA_IN,
@@ -25,7 +25,7 @@ module rrp_arbiter
     input wire READY_OUT,
     output wire WRITE_OUT,
     output wire [31:0] DATA_OUT
-    
+
 );
 
 //`include "../includes/log2func.v"
@@ -44,9 +44,9 @@ assign HOLD_REQ_OR = |HOLD_REQ;
 assign WRITE_OUT = |(WRITE_REQ & select & READ_GRANT);
 //assign WRITE_OUT = HOLD_REQ_OR ? WRITE_REQ[0] : WRITE_REQ_OR;
 
-always@(*) begin
+always @(*) begin
     select = prev_select;
-    if(HOLD_REQ_OR && !hold) begin       
+    if(HOLD_REQ_OR && !hold) begin
         m = 0;
         select = 1; // always start from lowest channel
         while(!(HOLD_REQ & select) && (m < WIDTH)) begin
@@ -68,14 +68,14 @@ always@(*) begin
     end
 end
 
-always@(posedge CLK) begin
+always @(posedge CLK) begin
     if(RST)
         prev_select <= (1 << (WIDTH - 1));
     else if (WRITE_REQ_OR & !hold)
         prev_select <= select;
 end
 
-always@(posedge CLK) begin
+always @(posedge CLK) begin
     if(RST)
         hold <= 0;
     else if(READY_OUT)

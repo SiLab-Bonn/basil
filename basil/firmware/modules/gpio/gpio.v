@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -16,7 +16,7 @@ module gpio
     parameter IO_DIRECTION = 0,
     parameter IO_TRI = 0
 )(
-    BUS_CLK, 
+    BUS_CLK,
     BUS_RST,
     BUS_ADD,
     BUS_DATA,
@@ -61,7 +61,7 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i
     .IP_WR(IP_WR),
     .IP_ADD(IP_ADD),
     .IP_DATA_IN(IP_DATA_IN),
-    .IP_DATA_OUT(IP_DATA_OUT) 
+    .IP_DATA_OUT(IP_DATA_OUT)
 );
 
 // CORE //
@@ -73,7 +73,7 @@ reg [7:0] INPUT_DATA [IO_BYTES-1:0];
 reg [7:0] OUTPUT_DATA [IO_BYTES-1:0]; //2
 reg [7:0] DIRECTION_DATA [IO_BYTES-1:0]; //3
 
-always @ (posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(IP_RD) begin
         if(IP_ADD == 0)
           IP_DATA_OUT <= VERSION;
@@ -86,7 +86,7 @@ always @ (posedge BUS_CLK) begin
     end
 end
 
-assign SOFT_RST = (IP_ADD==0 && IP_WR);  
+assign SOFT_RST = (IP_ADD==0 && IP_WR);
 
 wire RST;
 assign RST = BUS_RST | SOFT_RST;
@@ -120,7 +120,7 @@ generate
     end
 endgenerate
 
-always @ (*)
+always @(*)
     for(bi = 0; bi < IO_WIDTH; bi = bi + 1)
         INPUT_DATA[bi/8][bi%8] = IO[bi];
 

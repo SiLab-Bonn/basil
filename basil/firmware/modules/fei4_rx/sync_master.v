@@ -61,26 +61,26 @@ assign sdatad = {(dd0 && usedint)};
 //SRL16 sdd0(.D(dz2), .CLK(clk), .A0(ctrlint[0]), .A1(ctrlint[1]), .A2(1'b0), .A3(1'b0), .Q(dd0));
 
 reg [3:0] data_az2;
-always@(posedge clk)
+always @(posedge clk)
     data_az2[3:0] <= {data_az2[2:0], az2};
 assign aa0 = data_az2[ctrlint];
 
 reg [3:0] data_bz2;
-always@(posedge clk)
+always @(posedge clk)
     data_bz2[3:0] <= {data_bz2[2:0], bz2};
 assign bb0 = data_bz2[ctrlint];
 
 reg [3:0] data_cz2;
-always@(posedge clk)
+always @(posedge clk)
     data_cz2[3:0] <= {data_cz2[2:0], cz2};
 assign cc0 = data_cz2[ctrlint];
 
 reg [3:0] data_dz2;
-always@(posedge clk)
+always @(posedge clk)
     data_dz2[3:0] <= {data_dz2[2:0], dz2};
 assign dd0 = data_dz2[ctrlint];
 
-always @ (posedge clk or posedge rst) begin
+always @(posedge clk or posedge rst) begin
     if (rst) begin
         ctrlint <= 2'b10;
         useaint <= 1'b0; usebint <= 1'b0; usecint <= 1'b0; usedint <= 1'b0;
@@ -146,11 +146,11 @@ IDDR IDDR_inst (
 
 reg [1:0] DDRQ_DLY;
 
-always@(posedge clk_2x)
+always @(posedge clk_2x)
     DDRQ_DLY[1:0] <= DDRQ[1:0];
 
 reg [3:0] DDRQ_DATA;
-always@(posedge clk_2x)
+always @(posedge clk_2x)
     DDRQ_DATA[3:0] <= {DDRQ_DLY[1:0], DDRQ[1:0]};
 
 // *** do not touch code above ***
@@ -158,11 +158,11 @@ always@(posedge clk_2x)
 // 160MHz clock domain
 
 reg [3:0] DATA_IN;
-always@(posedge clk)
+always @(posedge clk)
     DATA_IN[3:0] <= {DDRQ_DATA[3:0]};
 
 reg [3:0] DATA_IN_DLY;
-always@(posedge clk)
+always @(posedge clk)
     DATA_IN_DLY[3:0] <= {DATA_IN[3:0]};
 
 assign az[0] = DATA_IN[3];

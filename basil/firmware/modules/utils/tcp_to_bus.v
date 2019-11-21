@@ -48,7 +48,7 @@ reg [31:0] TCP_TO_BUS_ADD;
 reg [15:0] RX_DATA_255_CNT;
 wire TCP_TO_BUS_WR;
 
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(BUS_RST) begin
         TCP_RX_WC <= 0;
     end else if(TCP_RX_WR) begin
@@ -57,7 +57,7 @@ always@(posedge BUS_CLK)
         TCP_RX_WC <= 0;
     end
 
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(BUS_RST) begin
         BYTE_CNT <= 0;
     end else if(INVALID || TCP_RESET) begin
@@ -72,7 +72,7 @@ always@(posedge BUS_CLK)
 
 // invalid signal will prevent from writing to BUS
 // invalid signal will be reset when TCP write request is de-asserted
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if (BUS_RST)
         INVALID <= 1'b0;
     else if (TCP_RESET)
@@ -84,7 +84,7 @@ always@(posedge BUS_CLK)
     else
         INVALID <= INVALID;
 
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(BUS_RST) begin
         RX_DATA_255_CNT <= 0;
     end else if(TCP_RX_WR && ~&TCP_RX_DATA) begin // TCP data is not 255
@@ -97,7 +97,7 @@ always@(posedge BUS_CLK)
 
 assign TCP_RESET = (&TCP_RX_DATA && RX_DATA_255_CNT == 16'hff_fe && TCP_RX_WR) || ((&TCP_RX_DATA && &RX_DATA_255_CNT && TCP_RX_WR));
 
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(BUS_RST) begin
         LENGTH <= 0;
     end else if(TCP_RX_WR && BYTE_CNT == 0) begin
@@ -110,7 +110,7 @@ always@(posedge BUS_CLK)
 
 assign TCP_TO_BUS_WR = (TCP_RX_WR && BYTE_CNT > 5 && !INVALID) ? 1'b1 : 1'b0;
 
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(BUS_RST) begin
         TCP_TO_BUS_ADD <= 0;
     end else if(TCP_RX_WR && BYTE_CNT == 2) begin
@@ -131,7 +131,7 @@ always@(posedge BUS_CLK)
 // RBCP
 wire RBCP_TO_BUS_WR;
 
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(BUS_RST)
         RBCP_ACK <= 0;
     else begin

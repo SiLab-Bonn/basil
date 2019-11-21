@@ -21,7 +21,7 @@ reg         FLAG_TOGGLE_CLK_A;
 initial     FLAG_TOGGLE_CLK_A = 0;
 reg [2:0]   SYNC_CLK_B;
 
-always @ (posedge CLK_A)
+always @(posedge CLK_A)
 begin
     if (FLAG_IN_CLK_A)
     begin
@@ -29,7 +29,7 @@ begin
     end
 end
 
-always @ (posedge CLK_B)
+always @(posedge CLK_B)
 begin
     SYNC_CLK_B <= {SYNC_CLK_B[1:0], FLAG_TOGGLE_CLK_A};
 end
