@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -15,7 +15,7 @@ module pulse_gen_rising (
 );
 
 reg ff;
-always@(posedge clk_in)
+always @(posedge clk_in)
     ff <= in;
 
 assign out = !ff && in;

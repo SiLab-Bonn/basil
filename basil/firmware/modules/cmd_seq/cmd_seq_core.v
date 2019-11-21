@@ -218,7 +218,7 @@ three_stage_synchronizer #(
 
 (* RAM_STYLE="{BLOCK}" *)
 reg [7:0] cmd_mem [CMD_MEM_SIZE-1:0];
-always @ (posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if(BUS_ADD == 0)
             BUS_DATA_OUT <= VERSION;
@@ -233,7 +233,7 @@ always @ (posedge BUS_CLK) begin
     end
 end
 
-always @ (posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if (BUS_WR && BUS_ADD >= 16)
         cmd_mem[BUS_ADD[10:0]-16] <= BUS_DATA_IN;
 end
@@ -254,24 +254,24 @@ reg [15:0] cnt;
 reg [31:0] repeat_cnt;
 reg [2:0] state, next_state;
 
-always @ (posedge CMD_CLK_IN)
+always @(posedge CMD_CLK_IN)
     if (RST_CMD_CLK)
       state <= WAIT;
     else
       state <= next_state;
 
 reg END_SEQ_REP_NEXT, END_SEQ_REP;
-always @ (*) begin
+always @(*) begin
     if(repeat_cnt < CONF_REPEAT_COUNT_CMD_CLK && cnt == CONF_CMD_SIZE_CMD_CLK-1-CONF_STOP_REPEAT_CMD_CLK && !END_SEQ_REP)
         END_SEQ_REP_NEXT = 1;
     else
         END_SEQ_REP_NEXT = 0;
 end
 
-always @ (posedge CMD_CLK_IN)
+always @(posedge CMD_CLK_IN)
     END_SEQ_REP <= END_SEQ_REP_NEXT;
 
-always @ (*) begin
+always @(*) begin
     case(state)
         WAIT : if(send_cmd)
                     next_state = SEND;
@@ -285,7 +285,7 @@ always @ (*) begin
     endcase
 end
 
-always @ (posedge CMD_CLK_IN) begin
+always @(posedge CMD_CLK_IN) begin
     if (RST_CMD_CLK)
         cnt <= 0;
     else if(state != next_state)
@@ -300,14 +300,14 @@ always @ (posedge CMD_CLK_IN) begin
         cnt <= cnt + 1;
 end
 
-always @ (posedge CMD_CLK_IN) begin
+always @(posedge CMD_CLK_IN) begin
     if (send_cmd || RST_CMD_CLK)
         repeat_cnt <= 1;
     else if(state == SEND && (cnt == CONF_CMD_SIZE_CMD_CLK || END_SEQ_REP) && repeat_cnt != 0)
         repeat_cnt <= repeat_cnt + 1;
 end
 
-always @ (*) begin
+always @(*) begin
     if(state != next_state && next_state == SEND)
         CMD_MEM_ADD = 0;
     else if(state == SEND)
@@ -329,7 +329,7 @@ end
 
 reg [7:0] send_word;
 
-always @ (posedge CMD_CLK_IN) begin
+always @(posedge CMD_CLK_IN) begin
     if(RST_CMD_CLK)
         send_word <= 0;
     else if(state == SEND) begin
@@ -349,10 +349,10 @@ assign cmd_data_ser = send_word[7-((cnt-1)%8)];
 
 reg [OUTPUTS-1:0] cmd_data_neg;
 reg [OUTPUTS-1:0] cmd_data_pos;
-always @ (negedge CMD_CLK_IN)
+always @(negedge CMD_CLK_IN)
     cmd_data_neg <= {OUTPUTS{cmd_data_ser}} & CONF_OUTPUT_ENABLE_CMD_CLK;
 
-always @ (posedge CMD_CLK_IN)
+always @(posedge CMD_CLK_IN)
     cmd_data_pos <= {OUTPUTS{cmd_data_ser}} & CONF_OUTPUT_ENABLE_CMD_CLK;
 
 
@@ -383,14 +383,14 @@ endgenerate
 
 
 // command start flag
-always @ (posedge CMD_CLK_IN)
+always @(posedge CMD_CLK_IN)
     if (state == SEND && cnt == (CONF_START_REPEAT_CMD_CLK + 1) && CONF_DIS_CMD_PULSE_CMD_CLK == 1'b0)
         CMD_START_FLAG <= 1'b1;
     else
         CMD_START_FLAG <= 1'b0;
 
 // ready signal
-always @ (posedge CMD_CLK_IN)
+always @(posedge CMD_CLK_IN)
     if (state == WAIT)
         CMD_READY <= 1'b1;
     else

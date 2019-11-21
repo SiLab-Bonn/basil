@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  *
@@ -68,7 +68,7 @@ reg    [7:0]    block_len_0[3:0];
 reg            op_done;
 
 wire  [31:0]    address_0;
-reg    [7:0]    address_0_0[3:0];        
+reg    [7:0]    address_0_0[3:0];
 
 //reg    [7:0]    test_mem [255:0];
 wire[7:0]    roger_word [2:0];
@@ -90,17 +90,17 @@ localparam      IDLE         =     0,        //idle :)
                 ROGER        =    5;        //confirms the reception
 
 ////////////////////////////// TAKTBLOCK /////////////////////////////////////
-always @(posedge clk or posedge UART_RST) 
+always @(posedge clk or posedge UART_RST)
     if (UART_RST)    begin
         STATE            <=    IDLE;
         end
     else begin
         STATE            <=    NEXTSTATE;
-        end 
+        end
         // END ALWAYS
-    
 
-////////////////////////////// Kombinatorischer Block /////////////////////////////////////    
+
+////////////////////////////// Kombinatorischer Block /////////////////////////////////////
 assign uart_busy = is_receiving || is_transmitting;
 
 //reset counter:
@@ -108,22 +108,22 @@ assign uart_busy = is_receiving || is_transmitting;
 //
 //always @(posedge clk) begin
 //    rst_counter <= rst_counter + 1;
-//    if(UART_RST or recv_error)    begin 
+//    if(UART_RST or recv_error)    begin
 //        rst_counter <= 0;
 //    end
 //end
 
 always @* begin
-    NEXTSTATE    =    IDLE;                        
-    //if (!uart_busy) 
-    
+    NEXTSTATE    =    IDLE;
+    //if (!uart_busy)
+
     case (STATE)
         IDLE:    begin
             if (received) begin
                 if (rx_byte ==8'h6c) begin            //    ascii "l"
                     $write(".........set length\n");
                     NEXTSTATE    =    SET_LEN;
-                end else if (rx_byte ==8'h61) begin        //    ascii "a"     
+                end else if (rx_byte ==8'h61) begin        //    ascii "a"
                     NEXTSTATE    =    SET_ADD;
                     $write(".........set address\n");
                 end else if (rx_byte==8'h72) begin         //    ascii "r"
@@ -135,25 +135,25 @@ always @* begin
                 end else
                     NEXTSTATE    =    IDLE;
             end
-        end    
+        end
         SET_LEN:begin
             if ((!uart_busy)&&op_done)
                 NEXTSTATE    =    ROGER;
             else
                 NEXTSTATE    =    SET_LEN;
-        end                    
+        end
         SET_ADD:begin
             if ((!uart_busy)&&op_done)
                 NEXTSTATE    =    ROGER;
             else
                 NEXTSTATE    =    SET_ADD;
-        end                    
+        end
         READ:    begin
             if ((!uart_busy)&&op_done)
                 NEXTSTATE    =    ROGER;
             else
                 NEXTSTATE    =    READ;
-        end                    
+        end
         WRITE: begin
             if ((!uart_busy)&&op_done)
                 NEXTSTATE    =    ROGER;
@@ -163,17 +163,17 @@ always @* begin
         ROGER: begin
             if ((!uart_busy)&&op_done) begin
                 NEXTSTATE    =    IDLE;
-                $write("ROGER\n");            
+                $write("ROGER\n");
             end else
                 NEXTSTATE    =    ROGER;
-        end            
+        end
         default: begin
             NEXTSTATE    =    IDLE;
-        end            
+        end
     endcase
 end // END ALWAYS
 
-////////////////////////////// Anweisungsblock /////////////////////////////////////    
+////////////////////////////// Anweisungsblock /////////////////////////////////////
 
 wire new_state_strobe;
 assign new_state_strobe = (STATE != NEXTSTATE);
@@ -190,7 +190,7 @@ always @(posedge clk or posedge UART_RST)
         address_0_0[2]    <=    0;
         address_0_0[1]    <=    0;
         address_0_0[0]    <=    0;
-        
+
         block_len_0[3]    <=    0;
         block_len_0[2]    <=    0;
         block_len_0[1]    <=    0;
@@ -204,7 +204,7 @@ always @(posedge clk or posedge UART_RST)
     end else begin
         case (STATE)
             IDLE:    begin
-            end    
+            end
             SET_LEN:begin
                 if (cnt > 3)
                     op_done    <=1;
@@ -213,7 +213,7 @@ always @(posedge clk or posedge UART_RST)
                     block_len_0[cnt]        <=    rx_byte;
                     cnt                        <=    cnt+1;
                 end
-            end                    
+            end
             SET_ADD:begin
                 if (cnt > 3)
                     op_done    <=1;
@@ -222,14 +222,14 @@ always @(posedge clk or posedge UART_RST)
                     address_0_0[cnt]        <=    rx_byte;
                     cnt                        <=    cnt+1;
                 end
-            end                    
+            end
             READ:    begin
                 //slow down the clk by 4 to get enogh time to update the value
                 //hence cnt/4 and cnt[1:0]==3
                 if(is_transmitting)
                     transmit <= 0;
                 else if (cnt/4 >= block_len)
-                    op_done  <= 1; 
+                    op_done  <= 1;
                 else if ((!is_transmitting)&&(!transmit)) begin
                     if (cnt[1:0]==3) begin
                     //    $write("transmitting the byte %d of value %d\n",cnt/4,tx_byte);
@@ -240,7 +240,7 @@ always @(posedge clk or posedge UART_RST)
                     cnt            <=    cnt + 1;
                     BUS_RD         <=    1;
                 end
-            end                    
+            end
             WRITE: begin
                 if (cnt >= block_len)
                     op_done    <=1;
@@ -248,7 +248,7 @@ always @(posedge clk or posedge UART_RST)
                     $write("setting the byte %d to value %d\n",cnt,rx_byte);
                     //test_mem[address_0+cnt]    <=    rx_byte;
                     BUS_ADD       <=    address_0+cnt;
-                    BUS_WR        <=    1;        
+                    BUS_WR        <=    1;
                     cnt           <=    cnt + 1;
                     data_o        <=    rx_byte;
                 end
@@ -258,14 +258,14 @@ always @(posedge clk or posedge UART_RST)
                     transmit <= 0;
                 else if (cnt > 2) begin
                     op_done    <=1;
-                end else if ((!is_transmitting)&&(!transmit)) begin                
+                end else if ((!is_transmitting)&&(!transmit)) begin
                     tx_byte                    <=    roger_word[cnt];
                     cnt                        <=    cnt + 1;
                     transmit <= 1;
                 end
-            end            
+            end
             default: begin
-            end            
+            end
         endcase // STATE
     end
 

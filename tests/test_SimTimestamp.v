@@ -114,7 +114,7 @@ module tb (
         .CLOCK(CLK)
     );
 
-    always@(posedge CLK)
+    always @(posedge CLK)
         TIMESTAMP <= TIMESTAMP + 1;
 
     wire FIFO_READ, FIFO_EMPTY;

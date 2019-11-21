@@ -18,7 +18,7 @@ initial cnt = 0;
 
 wire [31:0] DIV;
 assign DIV = DIVISOR;
-always@(posedge CLK)
+always @(posedge CLK)
     if(cnt == DIVISOR -1)
         cnt <= 0;
     else
@@ -26,21 +26,21 @@ always@(posedge CLK)
 
 initial begin
     CLOCK = 0;
-    forever begin    
+    forever begin
         @(posedge CLK);
         if(cnt == DIVISOR-1)
             CLOCK = 1;
-            
+
         if(cnt == DIVISOR/2-1) begin
             if(DIV[0] == 1) @(negedge CLK);
             CLOCK = 0;
         end
-        
+
     end
 end
 
 endmodule
-   
+
 module DCM
   #(   parameter CLKFX_MULTIPLY = 4,
        parameter CLKFX_DIVIDE   = 1,
@@ -61,7 +61,7 @@ module DCM
     CLK0, CLK180, CLK270, CLK2X, CLK2X180, CLK90,
     CLKDV, CLKFX, CLKFX180, LOCKED, PSDONE, STATUS,
     CLKFB, CLKIN, DSSEN, PSCLK, PSEN, PSINCDEC, RST);
-   
+
 
 input wire CLKFB, CLKIN, DSSEN;
 input wire PSCLK, PSEN, PSINCDEC, RST;
@@ -90,7 +90,7 @@ always @(posedge clk2x or negedge clk2x or negedge resetb) begin
      cnt <= 0;
   end else begin
      cnt <= cnt + 1;
-     if (!cnt[0]) clk90 <= ~clk90; 
+     if (!cnt[0]) clk90 <= ~clk90;
   end
 end
 assign CLK2X = clk2x;
@@ -102,12 +102,12 @@ generate
     end else begin
         wire CLKINM;
         clock_multiplier #( .MULTIPLIER(CLKFX_MULTIPLY) ) i_clock_multiplier(.CLK(CLKIN),.CLOCK(CLKINM));
-        clock_divider_sim #(.DIVISOR(CLKFX_DIVIDE)) i_clock_divisor_rx (.CLK(CLKINM), .CLOCK(CLKFX)); 
+        clock_divider_sim #(.DIVISOR(CLKFX_DIVIDE)) i_clock_divisor_rx (.CLK(CLKINM), .CLOCK(CLKFX));
 
     end
 endgenerate
 
-clock_divider_sim #(.DIVISOR(CLKDV_DIVIDE)) i_clock_divisor_dv (.CLK(CLKIN), .CLOCK(CLKDV)); 
+clock_divider_sim #(.DIVISOR(CLKDV_DIVIDE)) i_clock_divisor_dv (.CLK(CLKIN), .CLOCK(CLKDV));
 
 assign LOCKED = 1'b1;
 

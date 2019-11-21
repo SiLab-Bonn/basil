@@ -1,18 +1,18 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 `timescale 1ps/1ps
 `default_nettype none
- 
+
 module seq_rec
 #(
     parameter BASEADDR = 0,
     parameter HIGHADDR = 0,
     parameter ABUSWIDTH = 16,
-    
+
     parameter MEM_BYTES = 8*1024,
     parameter IN_BITS = 8
 )(

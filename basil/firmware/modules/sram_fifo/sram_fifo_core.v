@@ -85,7 +85,7 @@ reg [7:0] CONF_READ_ERROR; // read error count (read attempts when FIFO is empty
 reg [20:0] CONF_SIZE; // in units of 2 bytes (16 bit)
 assign CONF_SIZE_BYTE = CONF_SIZE * 2;
 
-always @ (posedge BUS_CLK) begin //(*) begin
+always @(posedge BUS_CLK) begin //(*) begin
     if(BUS_RD) begin
         if(BUS_ADD == 0)
             BUS_DATA_OUT <= VERSION;
@@ -108,7 +108,7 @@ always @ (posedge BUS_CLK) begin //(*) begin
     end
 end
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     if (BUS_ADD == 4 && BUS_RD)
         CONF_SIZE_BYTE_BUF <= CONF_SIZE_BYTE;
@@ -141,13 +141,13 @@ wire empty, full;
 reg [19:0] rd_pointer, next_rd_pointer, wr_pointer, next_wr_pointer;
 
 reg usb_read_dly;
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     usb_read_dly <= USB_READ;
 
 wire read_sram;
 
 reg byte_to_read;
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(RST)
         byte_to_read <= 0;
     else if(read_sram)
@@ -157,13 +157,13 @@ always@(posedge BUS_CLK)
 
 localparam READ_TRY_SRAM = 3, READ_SRAM = 0,  READ_NOP_SRAM = 2;
 reg [1:0] read_state, read_state_next;
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(RST)
         read_state <= READ_TRY_SRAM;
     else
         read_state <= read_state_next;
 
-always@(*) begin
+always @(*) begin
     read_state_next = read_state;
 
     case(read_state)
@@ -188,13 +188,13 @@ reg [15:0] sram_data_read;
 
 assign read_sram = (read_state == READ_SRAM);
 
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(read_sram)
         sram_data_read <= SRAM_IO;
 
 assign USB_DATA = byte_to_read ? sram_data_read[15:8] : sram_data_read[7:0];
 
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(RST)
         CONF_READ_ERROR <= 0;
     else if(empty && USB_READ && CONF_READ_ERROR != 8'hff)
@@ -205,7 +205,7 @@ end
 reg write_sram;
 reg full_ff;
 
-always @ (*) begin
+always @(*) begin
    if(!FIFO_EMPTY_IN_BUF && !full_ff && !read_sram)
        write_sram = 1;
    else
@@ -233,14 +233,14 @@ assign SRAM_BLE_B = 0;
 assign SRAM_CE1_B = 0;
 assign SRAM_OE_B = !read_sram;
 
-always @ (*) begin
+always @(*) begin
      if(rd_pointer == DEPTH-1)
         next_rd_pointer = 0;
      else
         next_rd_pointer = rd_pointer + 1;
 end
 
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(RST)
         rd_pointer <= 0;
     else if(read_sram && !empty) begin
@@ -248,14 +248,14 @@ always@(posedge BUS_CLK) begin
     end
 end
 
-always @ (*) begin
+always @(*) begin
     if(wr_pointer == DEPTH-1)
         next_wr_pointer = 0;
     else
         next_wr_pointer = wr_pointer + 1;
 end
 
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(RST)
         wr_pointer <= 0;
     else if(write_sram && !full) begin
@@ -266,7 +266,7 @@ end
 assign empty = (wr_pointer == rd_pointer);
 assign full = ((wr_pointer==(DEPTH-1) && rd_pointer==0) ||  (wr_pointer!=(DEPTH-1) && wr_pointer+1'b1 == rd_pointer) );
 
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(RST)
         full_ff <= 0;
     else if(read_sram && !empty)
@@ -276,7 +276,7 @@ always@(posedge BUS_CLK) begin
 end
 
 
-always @ (posedge BUS_CLK) begin //(*) begin
+always @(posedge BUS_CLK) begin //(*) begin
     if(RST)
         CONF_SIZE <= 0;
     else

@@ -536,7 +536,7 @@ module jtag_tap
    endtask
 
 
-   always @ ( posedge jtag_tck_i or negedge jtag_trstn_i )
+   always @( posedge jtag_tck_i or negedge jtag_trstn_i )
      begin
         // These 2 conditions must be combined in a single always block,
         // otherwise Verilator complains that current_state has 2 drivers,
@@ -556,12 +556,12 @@ module jtag_tap
           end
      end
 
-   always @ ( negedge jtag_tck_i )
+   always @( negedge jtag_tck_i )
      begin
         tck_negedge;
      end
 
-   always @ ( posedge jtag_trstn_i )
+   always @( posedge jtag_trstn_i )
      begin
         if ( TRACE_STATE_MACHINE_TRANSITIONS )
           $display( "%sAsync reset signal TRST deasserted (the value is now 1).", TRACE_PREFIX );

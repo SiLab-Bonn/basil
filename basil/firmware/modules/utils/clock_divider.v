@@ -1,13 +1,13 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 `timescale 1ps/1ps
 `default_nettype none
 
-// clock divider generating clock and clock enable 
+// clock divider generating clock and clock enable
 
 module clock_divider
 #(
@@ -28,7 +28,7 @@ initial CLOCK = 1'b0;
 initial CE = 1'b0;
 
 // clock enable
-always @ (posedge CLK or posedge RESET)
+always @(posedge CLK or posedge RESET)
     begin
         if (RESET == 1'b1)
             begin
@@ -46,8 +46,8 @@ always @ (posedge CLK or posedge RESET)
                     end
             end
     end
-    
-always @ (posedge CLK or posedge RESET)
+
+always @(posedge CLK or posedge RESET)
     begin
         if (RESET == 1'b1)
             begin
@@ -63,7 +63,7 @@ always @ (posedge CLK or posedge RESET)
     end
 
 // clock
-always @ (posedge CLK or posedge RESET)
+always @(posedge CLK or posedge RESET)
     begin
         if (RESET == 1'b1)
             begin
@@ -81,8 +81,8 @@ always @ (posedge CLK or posedge RESET)
                     end
             end
     end
-    
-always @ (posedge CLK or posedge RESET)
+
+always @(posedge CLK or posedge RESET)
     begin
         if (RESET == 1'b1)
             begin

@@ -41,16 +41,16 @@ reg [3:0] ADC_IN;
 
 // I/O BUFFERS
 
-always@(negedge ADC_CLK)
+always @(negedge ADC_CLK)
     ADC_DCO <= ADC_DCO_BUF;
 
-always@(negedge ADC_CLK)
+always @(negedge ADC_CLK)
     ADC_FCO <= ADC_FCO_BUF;
 
-always@(negedge ADC_CLK)
+always @(negedge ADC_CLK)
     ADC_IN <= ADC_IN_BUF;
 
-//always@(negedge ADC_CLK)
+//always @(negedge ADC_CLK)
 //    ADC_ENC_BUF <= ADC_ENC;
 assign ADC_ENC_BUF = ADC_ENC;
 
@@ -127,7 +127,7 @@ IBUFDS
 
 
 reg [1:0] fco_sync;
-always@(negedge ADC_CLK) begin
+always @(negedge ADC_CLK) begin
     fco_sync <= {fco_sync[0],ADC_FCO};
 end
 
@@ -135,7 +135,7 @@ wire adc_des_rst;
 assign adc_des_rst = fco_sync[0] & !fco_sync[1];
 
 reg [15:0] adc_des_cnt;
-always@(negedge ADC_CLK) begin
+always @(negedge ADC_CLK) begin
     if(adc_des_rst)
         adc_des_cnt[0] <= 1;
     else
@@ -151,17 +151,17 @@ genvar i;
 generate
     for (i = 0; i < 4; i = i + 1) begin: gen
         reg [13:0] adc_des;
-        always@(negedge ADC_CLK) begin
+        always @(negedge ADC_CLK) begin
             adc_des <= {adc_des[12:0],ADC_IN[i]};
         end
 
         reg [13:0] adc_des_syn;
-        always@(negedge ADC_CLK) begin
+        always @(negedge ADC_CLK) begin
             if(adc_load)
                 adc_des_syn <= adc_des;
         end
 
-        always@(posedge ADC_ENC)
+        always @(posedge ADC_ENC)
             adc_out_sync[i] <= adc_des_syn;
 
     end

@@ -61,7 +61,7 @@ module mmc3_eth_core(
     assign FIFO_DATA = fifo_data_out;
 
 
-    always@ (posedge BUS_CLK)
+    always @(posedge BUS_CLK)
         if(!EN)
             fifo_data_out <= 0;
         else if(FIFO_WRITE)

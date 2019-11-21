@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -23,7 +23,7 @@ reg         FLAG_TOGGLE_CLK_A;
 initial     FLAG_TOGGLE_CLK_A = 0;
 reg [2:0]   SYNC_CLK_B;
 
-always @ (posedge CLK_A)
+always @(posedge CLK_A)
 begin
     if (CLK_A_CE)
     begin
@@ -34,7 +34,7 @@ begin
     end
 end
 
-always @ (posedge CLK_B)
+always @(posedge CLK_B)
 begin
     if (CLK_B_CE)
     begin

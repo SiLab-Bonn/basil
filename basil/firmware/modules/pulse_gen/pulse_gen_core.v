@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -19,7 +19,7 @@ module pulse_gen_core
     input wire                      BUS_RD,
     input wire                      BUS_WR,
     output reg     [7:0]            BUS_DATA_OUT,
-    
+
     input wire PULSE_CLK,
     input wire EXT_START,
     output reg PULSE
@@ -35,7 +35,7 @@ reg [31:0] CONF_WIDTH;
 reg [31:0] CONF_REPEAT;
 reg CONF_DONE;
 
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if(BUS_ADD == 0)
             BUS_DATA_OUT <= VERSION;
@@ -142,7 +142,7 @@ assign LAST_CNT = CONF_DELAY + CONF_WIDTH;
 
 reg [31:0] REAPAT_CNT;
 
-always @ (posedge PULSE_CLK) begin
+always @(posedge PULSE_CLK) begin
     if (RST_SYNC)
         REAPAT_CNT <= 0;
     else if(START_SYNC || (EXT_START_SYNC && CONF_EN))
@@ -151,7 +151,7 @@ always @ (posedge PULSE_CLK) begin
         REAPAT_CNT <= REAPAT_CNT - 1;
 end
 
-always @ (posedge PULSE_CLK) begin
+always @(posedge PULSE_CLK) begin
     if (RST_SYNC)
         CNT <= 0; //IS THIS RIGHT?
     else if(START_SYNC || (EXT_START_SYNC && CONF_EN))
@@ -166,7 +166,7 @@ always @ (posedge PULSE_CLK) begin
         CNT <= CNT + 1;
 end
 
-always @ (posedge PULSE_CLK) begin
+always @(posedge PULSE_CLK) begin
     if(RST_SYNC || START_SYNC || (EXT_START_SYNC && CONF_EN))
         PULSE <= 0;
     else if(CNT == CONF_DELAY && CNT > 0)

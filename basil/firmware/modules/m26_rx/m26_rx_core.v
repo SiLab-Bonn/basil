@@ -138,15 +138,15 @@ IDDR IDDR_inst_rx1 (
 );
 
 reg [4:0] MKD_DLY;
-always@(posedge CLK_RX)
+always @(posedge CLK_RX)
     MKD_DLY[4:0] <= {MKD_DLY[3:0], MKD_RX_IO};
 
 reg [4:0] DATA1_DLY;
-always@(posedge CLK_RX)
+always @(posedge CLK_RX)
     DATA1_DLY[4:0] <= {DATA1_DLY[3:0], DATA_RX_IO[1]};
 
 reg DATA0_DLY;
-always@(posedge CLK_RX)
+always @(posedge CLK_RX)
     DATA0_DLY <= DATA_RX_IO[0];
 
 wire [1:0] WRITE;
@@ -174,7 +174,7 @@ m26_rx_ch m26_rx_ch1(
 );
 
 reg [31:0] TIMESTAMP_save;
-always@(posedge CLK_RX)
+always @(posedge CLK_RX)
     if(FRAME_START)
         TIMESTAMP_save <= TIMESTAMP;
 
@@ -184,7 +184,7 @@ wire cdc_fifo_write;
 reg data_lost_flag;
 
 reg [15:0] data_field;
-always@(*) begin
+always @(*) begin
     if(CONF_TIMESTAMP_HEADER & (WRITE[0] && FRAME_START))
         data_field = TIMESTAMP[15:0];
     else if(CONF_TIMESTAMP_HEADER & (WRITE[1] && FRAME_START1))
@@ -202,14 +202,14 @@ assign cdc_data[15:0] = data_field;
 assign cdc_fifo_write = |WRITE & CONF_EN_SYNC;
 
 wire wfull;
-always@(posedge CLK_RX) begin
+always @(posedge CLK_RX) begin
     if(RST_SYNC)
         LOST_DATA_CNT <= 0;
     else if (wfull && cdc_fifo_write && LOST_DATA_CNT != -1)
         LOST_DATA_CNT <= LOST_DATA_CNT +1;
 end
 
-always@(posedge CLK_RX) begin
+always @(posedge CLK_RX) begin
     if(RST_SYNC)
         data_lost_flag <= 0;
     else if (cdc_fifo_write) begin
@@ -223,7 +223,7 @@ end
 // generate long reset
 reg [5:0] rst_cnt;
 reg RST_LONG;
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if (RST)
         rst_cnt <= 6'b11_1111; // start value
     else if (rst_cnt != 0)
@@ -233,7 +233,7 @@ end
 
 reg [5:0] rst_cnt_sync;
 reg RST_LONG_SYNC;
-always@(posedge CLK_RX) begin
+always @(posedge CLK_RX) begin
     if (RST_SYNC)
         rst_cnt_sync <= 6'b11_1111; // start value
     else if (rst_cnt_sync != 0)

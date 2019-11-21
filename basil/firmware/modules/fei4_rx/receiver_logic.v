@@ -96,14 +96,14 @@ assign write_8b10b = rec_sync_ready & enable_rx;
 
 reg [9:0] data_to_dec;
 integer i;
-always @ (*) begin
+always @(*) begin
     for (i=0; i<10; i=i+1)
         data_to_dec[(10-1)-i] = data_8b10b[i];
 end
 
 reg dispin;
 wire dispout;
-always@(posedge WCLK) begin
+always @(posedge WCLK) begin
     if(RESET_WCLK)
         dispin <= 1'b0;
     else// if(write_8b10b)
@@ -129,7 +129,7 @@ decode_8b10b decode_8b10b_inst (
     .disp_err(disp_err)
 );
 
-always@(negedge WCLK) begin // avoid glitches from code_err or disp_err
+always @(negedge WCLK) begin // avoid glitches from code_err or disp_err
     if(RESET_WCLK)
         decoder_err <= 1'b0;
     else
@@ -142,7 +142,7 @@ end
 // DISP_ERR should always be combined
 // with CODE_ERR to detect all errors.
 
-always@(posedge WCLK) begin
+always @(posedge WCLK) begin
     if(RESET_WCLK)
         decoder_err_cnt <= 0;
     else
@@ -153,7 +153,7 @@ always@(posedge WCLK) begin
 end
 
 reg [2:0] byte_sel;
-always@(posedge WCLK) begin
+always @(posedge WCLK) begin
     if(RESET_WCLK || (write_8b10b && dec_k) || (write_8b10b && dec_k==0 && byte_sel==2))
         byte_sel <= 0;
     else if(write_8b10b)
@@ -168,7 +168,7 @@ always@(posedge WCLK) begin
 end
 
 reg [7:0] data_dec_in [2:0];
-always@(posedge WCLK) begin
+always @(posedge WCLK) begin
     for (i=0; i<3; i=i+1)
         data_dec_in[i] <= data_dec_in[i];
     if(RESET_WCLK)
@@ -180,7 +180,7 @@ always@(posedge WCLK) begin
 end
 
 reg write_dec_in;
-always@(posedge WCLK) begin
+always @(posedge WCLK) begin
     if(RESET_WCLK)
         write_dec_in <= 0;
     else
@@ -192,7 +192,7 @@ end
 
 wire cdc_fifo_full, cdc_fifo_empty;
 
-always@(posedge WCLK) begin
+always @(posedge WCLK) begin
     if(RESET_WCLK)
         lost_err_cnt <= 0;
     else
@@ -209,7 +209,7 @@ assign wdata = {data_dec_in[0],data_dec_in[1],data_dec_in[2]};
 // generate long reset
 reg [5:0] rst_cnt_wclk;
 reg RST_LONG_WCLK;
-always@(posedge WCLK) begin
+always @(posedge WCLK) begin
     if (RESET_WCLK)
         rst_cnt_wclk <= 6'b11_1111; // start value
     else if (rst_cnt_wclk != 0)
@@ -219,7 +219,7 @@ end
 
 reg [5:0] rst_cnt_fifo_clk;
 reg RST_LONG_FIFO_CLK;
-always@(posedge FIFO_CLK) begin
+always @(posedge FIFO_CLK) begin
     if (RESET_FIFO_CLK)
         rst_cnt_fifo_clk <= 6'b11_1111; // start value
     else if (rst_cnt_fifo_clk != 0)

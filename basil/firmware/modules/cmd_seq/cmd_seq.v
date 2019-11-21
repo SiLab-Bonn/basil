@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -21,7 +21,7 @@ module cmd_seq
     inout wire  [7:0]            BUS_DATA,
     input wire                   BUS_RD,
     input wire                   BUS_WR,
-    
+
     output wire [OUTPUTS-1:0]    CMD_CLK_OUT,
     input wire                   CMD_CLK_IN,
     input wire                   CMD_EXT_START_FLAG,
@@ -65,7 +65,7 @@ cmd_seq_core
     .BUS_RD(IP_RD),
     .BUS_WR(IP_WR),
     .BUS_DATA_OUT(IP_DATA_OUT),
-    
+
     .CMD_CLK_OUT(CMD_CLK_OUT),
     .CMD_CLK_IN(CMD_CLK_IN),
     .CMD_EXT_START_FLAG(CMD_EXT_START_FLAG),
