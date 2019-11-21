@@ -63,7 +63,7 @@ module tlu_controller_fsm
 
 //assign TRIGGER_DATA[31:0] = (WRITE_TIMESTAMP==1'b1) ? {1'b1, TIMESTAMP_DATA[30:0]} : ((TRIGGER_MODE==2'b11) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : ({1'b1, TRIGGER_COUNTER_DATA[30:0]}));
 
-always@(*)
+always @(*)
 begin
     if(TRIGGER_MODE == 2'b11) // TLU trigger number
     begin
@@ -87,7 +87,7 @@ end
 
 // shift register, serial to parallel, length of TLU_TRIGGER_MAX_CLOCK_CYCLES
 reg [((TLU_TRIGGER_MAX_CLOCK_CYCLES+1)*DIVISOR)-1:0] tlu_data_sr;
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
 begin
     if (RESET | TRIGGER_ACCEPTED_FLAG)
         tlu_data_sr <= 0;
@@ -97,7 +97,7 @@ end
 
 // Trigger flag
 reg TRIGGER_FF;
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
     TRIGGER_FF <= TRIGGER;
 
 wire TRIGGER_FLAG;
@@ -105,7 +105,7 @@ assign TRIGGER_FLAG = ~TRIGGER_FF & TRIGGER;
 
 // Trigger enable flag
 reg TRIGGER_ENABLE_FF;
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
     TRIGGER_ENABLE_FF <= TRIGGER_ENABLE;
 
 wire TRIGGER_ENABLE_FLAG;
@@ -128,13 +128,13 @@ reg TLU_TRIGGER_LOW_TIMEOUT_ERROR;
 reg TLU_TRIGGER_ACCEPT_ERROR;
 
 reg TLU_TRIGGER_LOW_TIMEOUT_ERROR_FF;
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
     TLU_TRIGGER_LOW_TIMEOUT_ERROR_FF <= TLU_TRIGGER_LOW_TIMEOUT_ERROR;
 
 assign TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG = ~TLU_TRIGGER_LOW_TIMEOUT_ERROR_FF & TLU_TRIGGER_LOW_TIMEOUT_ERROR;
 
 reg TLU_TRIGGER_ACCEPT_ERROR_FF;
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
     TLU_TRIGGER_ACCEPT_ERROR_FF <= TLU_TRIGGER_ACCEPT_ERROR;
 
 assign TLU_TRIGGER_ACCEPT_ERROR_FLAG = ~TLU_TRIGGER_ACCEPT_ERROR_FF & TLU_TRIGGER_ACCEPT_ERROR;
@@ -154,14 +154,14 @@ localparam   [2:0]
 
 
 // sequential always block, non-blocking assignments
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
 begin
     if (RESET)  state <= IDLE; // get D-FF for state
     else        state <= next;
 end
 
 // combinational always block, blocking assignments
-always @ (state or TRIGGER_ACKNOWLEDGE or TRIGGER_ACKNOWLEDGED or FIFO_ACKNOWLEDGE or FIFO_ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_ENABLE_FLAG or TRIGGER_FLAG or TRIGGER or TRIGGER_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock /*or TLU_TRIGGER_CLOCK_CYCLES*/ or counter_sr_wait_cycles or counter_trigger_high or counter_tlu_handshake_veto or counter_trigger_low_time_out or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or TRIGGER_ACCEPT or TLU_TRIGGER_HANDSHAKE_ACCEPT or TRIGGER_THRESHOLD or TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES or TLU_TRIGGER_MAX_CLOCK_CYCLES or DIVISOR)
+always @(state or TRIGGER_ACKNOWLEDGE or TRIGGER_ACKNOWLEDGED or FIFO_ACKNOWLEDGE or FIFO_ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_ENABLE_FLAG or TRIGGER_FLAG or TRIGGER or TRIGGER_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock /*or TLU_TRIGGER_CLOCK_CYCLES*/ or counter_sr_wait_cycles or counter_trigger_high or counter_tlu_handshake_veto or counter_trigger_low_time_out or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or TRIGGER_ACCEPT or TLU_TRIGGER_HANDSHAKE_ACCEPT or TRIGGER_THRESHOLD or TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES or TLU_TRIGGER_MAX_CLOCK_CYCLES or DIVISOR)
 begin
     case (state)
 
@@ -253,7 +253,7 @@ begin
 end
 
 // sequential always block, non-blocking assignments, registered outputs
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
 begin
     if (RESET) // get D-FF
     begin
@@ -554,7 +554,7 @@ begin
 end
 
 // time stamp
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
 begin
     if (RESET || (TLU_RESET_FLAG && (TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11)) || TIMESTAMP_RESET_FLAG)
         TIMESTAMP <= 0;

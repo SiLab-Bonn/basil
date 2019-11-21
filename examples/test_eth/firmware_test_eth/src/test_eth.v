@@ -162,7 +162,7 @@ rgmii_io rgmii (
 );
 
 //assign GMII_1000M = &clock_speed;
-always@(posedge BUS_CLK or posedge RST)begin
+always @(posedge BUS_CLK or posedge RST)begin
     if (RST) begin
         GMII_1000M <= 1'b0;
     end else begin
@@ -381,7 +381,7 @@ reg [63:0] TCP_FAILED_WRITE_CNT;
 reg [63:0] TCP_RCV_WRITE_CNT;
 
 reg [7:0] BUS_DATA_OUT;
-always @ (posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if (BUS_ADD == 0)
             BUS_DATA_OUT <= VERSION[7:0];
@@ -470,7 +470,7 @@ end
 
 
 reg BUS_READ;
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if (BUS_RD & BUS_ADD < 40)
         BUS_READ <= 1;
     else
@@ -498,7 +498,7 @@ cdc_syncfifo #(.DSIZE(8), .ASIZE(3)) cdc_syncfifo_recv_tcp_data
     .rinc(!recv_tcp_data_fifo_full), .rclk(BUS_CLK), .rrst(RESET)
 );
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(RESET) begin
         TCP_RCV_WRITE_CNT <= 0;
         //TCP_RX_WC <= 0;
@@ -535,7 +535,7 @@ begin
 end
 
 reg [15:0] TCP_WRITE_DLY_CNT;
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if ((TCP_WRITE_DLY == 0) | RESET)
         TCP_WRITE_DLY_CNT <= 0;
     else if (TCP_WRITE_DLY_CNT == TCP_WRITE_DLY)
@@ -545,10 +545,10 @@ always @ (posedge BUS_CLK)
 
 reg [31:0] GEN_TCP_DATA;
 reg GEN_TCP_DATA_WRITE, GEN_TCP_DATA_WRITE_FF;
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
     GEN_TCP_DATA_WRITE_FF <= GEN_TCP_DATA_WRITE;
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if (TCP_WRITE_DLY == 0 || RESET)
         GEN_TCP_DATA <= 0;
     else if (GEN_TCP_DATA_WRITE_FF)
@@ -558,7 +558,7 @@ always @ (posedge BUS_CLK)
 
 wire GEN_TCP_DATA_FULL;
 wire GEN_TCP_DATA_READ_GRANT;
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if (RESET)
     begin
         GEN_TCP_DATA_WRITE <= 1'b0;
@@ -709,7 +709,7 @@ three_stage_synchronizer #(
 );
 
 reg FIFO_WAS_FULL;
-always @ (posedge BUS_CLK or posedge FIFO_FULL_SYNC) begin
+always @(posedge BUS_CLK or posedge FIFO_FULL_SYNC) begin
     if (CE_3HZ || FIFO_FULL_SYNC) begin
         if (FIFO_FULL_SYNC)
             FIFO_WAS_FULL <= 1'b1;
@@ -719,7 +719,7 @@ always @ (posedge BUS_CLK or posedge FIFO_FULL_SYNC) begin
 end
 
 reg FIFO_WAS_ALMOST_EMPTY;
-always @ (posedge BUS_CLK or negedge FIFO_FULL_SYNC) begin
+always @(posedge BUS_CLK or negedge FIFO_FULL_SYNC) begin
     if (CE_3HZ || !FIFO_FULL_SYNC) begin
         if (!FIFO_FULL_SYNC)
             FIFO_WAS_ALMOST_EMPTY <= 1'b1;
@@ -729,7 +729,7 @@ always @ (posedge BUS_CLK or negedge FIFO_FULL_SYNC) begin
 end
 
 reg FIFO_FULL_SLOW;
-always @ (posedge BUS_CLK or posedge FIFO_WAS_FULL or negedge FIFO_WAS_ALMOST_EMPTY) begin
+always @(posedge BUS_CLK or posedge FIFO_WAS_FULL or negedge FIFO_WAS_ALMOST_EMPTY) begin
     if (CE_3HZ || (FIFO_WAS_FULL && !FIFO_WAS_ALMOST_EMPTY)) begin
         if (FIFO_WAS_FULL && !FIFO_WAS_ALMOST_EMPTY)
             FIFO_FULL_SLOW <= 1'b1;

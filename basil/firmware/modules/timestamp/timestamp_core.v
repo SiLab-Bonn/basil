@@ -84,7 +84,7 @@ wire EN_SYNC;
 assign EN_SYNC = CONF_EN | (EXT_ENABLE & CONF_EXT_ENABLE);
 
 reg [7:0] sync_cnt;
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(RST)
         sync_cnt <= 120;
     else if(sync_cnt != 100)
@@ -96,7 +96,7 @@ assign RST_LONG = sync_cnt[7];
 
 reg [1:0] DI_FF;
 wire DI_SYNC;
-always@(posedge CLK) begin
+always @(posedge CLK) begin
     if(RST_SYNC)
         DI_FF <=2'b0;
     else
@@ -105,7 +105,7 @@ end
 assign DI_SYNC = ~DI_FF[1] & DI_FF[0];
 
 reg [63:0] curr_timestamp;
-always@(posedge CLK) begin
+always @(posedge CLK) begin
     if(RST_SYNC)
         curr_timestamp <= 0;
     else
@@ -116,7 +116,7 @@ reg [63:0] timestamp_out;
 reg [1:0] cdc_fifo_write_reg;
 reg [3:0] bit_cnt;
 
-always@(posedge CLK) begin // TODO better fo separate cdc_fifo_write_reg?
+always @(posedge CLK) begin // TODO better fo separate cdc_fifo_write_reg?
     if(RST_SYNC | ~EN_SYNC) begin
         timestamp_out <= 0;
         cdc_fifo_write_reg <= 0;
@@ -145,7 +145,7 @@ assign cdc_fifo_write = cdc_fifo_write_reg[1];
 wire fifo_full,fifo_write,cdc_fifo_empty;
 
 wire wfull;
-always@(posedge CLK) begin
+always @(posedge CLK) begin
     if(RST_SYNC)
         LOST_DATA_CNT <= 0;
     else if (wfull && cdc_fifo_write && LOST_DATA_CNT != 8'b1111_1111)
@@ -171,12 +171,12 @@ cdc_syncfifo #(
 );
 
 reg [1:0] byte2_cnt, byte2_cnt_prev;
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     byte2_cnt_prev <= byte2_cnt;
 assign cdc_fifo_read = (byte2_cnt_prev==0 & byte2_cnt!=0);
 assign fifo_write = byte2_cnt_prev != 0;
 
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(RST)
         byte2_cnt <= 0;
     else if(!cdc_fifo_empty && !fifo_full && byte2_cnt == 0)
@@ -185,7 +185,7 @@ always@(posedge BUS_CLK)
         byte2_cnt <= byte2_cnt - 1;
 
 reg [63:0] data_buf;
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(cdc_fifo_read)
         data_buf <= cdc_data_out;
 

@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -32,7 +32,7 @@ assign CS_FPGA = ~ADD[15] & ADD[14];
 // generate read strobe which one clock cycle long
 // this is very important to prevent corrupted data
 reg RD_B_FF;
-always @ (posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     RD_B_FF <= RD_B;
 end
 assign BUS_RD = ~RD_B & RD_B_FF;

@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -13,16 +13,16 @@ module reset_gen #(
 ) (
     CLK,
     RST
-); 
+);
 
 input wire CLK;
 output wire RST;
 
 reg [7:0] rst_cnt;
- 
+
 initial rst_cnt = CNT;
 
-always@(posedge CLK)
+always @(posedge CLK)
      if(rst_cnt != 0)
         rst_cnt <= rst_cnt -1;
 

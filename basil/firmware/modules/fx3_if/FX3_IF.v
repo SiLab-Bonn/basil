@@ -71,12 +71,12 @@ assign BYTE = ReqCount[1:0]-1;
 
 reg WR_BYTE;
 
-always@ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
     DATA_BYTE_RD[BYTE] <= DataOut[7:0];
 
 reg RD_FINISH;
 // output register
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     fx3_ack <= RD_VALID; // will be generated during RD_ADDR_INC
     fx3_rd_finish <= RD_FINISH;
@@ -102,7 +102,7 @@ end
 reg first_word_written_check;
 
 // input register
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     if(BUS_BYTE_ACCESS)
        BUS_WR <= (fx3_wr | WR_BYTE);
@@ -146,13 +146,13 @@ parameter WAIT        = 7;
 
 reg [4:0] state, next_state;
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if (BUS_RST)
       state <= IDLE;
     else
       state <= next_state;
 
-always @ (*) begin
+always @(*) begin
     case(state)
         IDLE :
             if (CS & !OE & !first_word_written_check) // !OE is needed to prevent entering IN_ADDR after read request is finished. !first_word_written_check -||- after writing is finished.
@@ -203,7 +203,7 @@ always @ (*) begin
     endcase
 end
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     if (BUS_RST)
     begin

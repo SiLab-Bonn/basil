@@ -204,7 +204,7 @@ sram_fifo
 );
 
 reg [31:0] count;
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(BUS_RST)
         count <= 0;
     else if (COUNTER_FIFO_READ)
@@ -219,7 +219,7 @@ assign count_send[3] = count*4 + 3;
 assign COUNTER_FIFO_DATA = {count_send[3], count_send[2], count_send[1], count_send[0]};
 
 reg [7:0] count_direct;
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     if(BUS_RST)
         count_direct <= 0;
     else if (USB_READ)

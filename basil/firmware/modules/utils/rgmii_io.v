@@ -107,7 +107,7 @@ wire rgmii_tx_ctl_int;
 assign rgmii_tx_ctl_int = gmii_tx_en_int ^ gmii_tx_er_int;
 
 // Register all output signals on rising edge of gtx_clk_bufg
-always @ (posedge tx_rgmii_clk_int or posedge reset)
+always @(posedge tx_rgmii_clk_int or posedge reset)
     begin
         if (reset)
             begin
@@ -127,7 +127,7 @@ wire not_tx_rgmii_clk_int;
 assign not_tx_rgmii_clk_int = ~(tx_rgmii_clk_int);
 
 // Register falling edge RGMII output signals on rising edge of not_gtx_clk_bufg
-always @ (posedge not_tx_rgmii_clk_int or posedge reset)
+always @(posedge not_tx_rgmii_clk_int or posedge reset)
     begin
         if (reset)
             begin
@@ -243,7 +243,7 @@ IBUF drive_rgmii_rxd1   (.I(rgmii_rxd[1]), .O(rgmii_rxd_ibuf[1]));
 IBUF drive_rgmii_rxd0   (.I(rgmii_rxd[0]), .O(rgmii_rxd_ibuf[0]));
 
 // Infer Double Data Rate Input flip-flops.
-always @ (posedge rx_rgmii_clk_int or posedge reset)
+always @(posedge rx_rgmii_clk_int or posedge reset)
     begin
         if (reset)
             begin
@@ -260,7 +260,7 @@ always @ (posedge rx_rgmii_clk_int or posedge reset)
 wire not_rx_rgmii_clk_int;
 assign not_rx_rgmii_clk_int = ~(rx_rgmii_clk_int);
 
-always @ (posedge not_rx_rgmii_clk_int or posedge reset)
+always @(posedge not_rx_rgmii_clk_int or posedge reset)
     begin
         if (reset)
             begin
@@ -276,7 +276,7 @@ always @ (posedge not_rx_rgmii_clk_int or posedge reset)
 
 
 // Register DDR signals internally to FPGA fabric
-always @ (posedge rx_rgmii_clk_int or posedge reset)
+always @(posedge rx_rgmii_clk_int or posedge reset)
     begin
         if (reset)
             begin
@@ -288,9 +288,9 @@ always @ (posedge rx_rgmii_clk_int or posedge reset)
                 rgmii_rxd_reg[3:0] <= rgmii_rxd_ddr[3:0];
                 rgmii_rx_dv_reg    <= rgmii_rx_dv_ddr;
             end
-    end // always @ (posedge rx_rgmii_clk_int or posedge reset)
+    end // always @(posedge rx_rgmii_clk_int or posedge reset)
 
-always @ (posedge not_rx_rgmii_clk_int or posedge reset)
+always @(posedge not_rx_rgmii_clk_int or posedge reset)
     begin
         if (reset)
             begin
@@ -306,7 +306,7 @@ always @ (posedge not_rx_rgmii_clk_int or posedge reset)
 
 
 // Register all input signals on rising edge of gmii_rx_clk_bufg to syncronise.
-always @ (posedge rx_rgmii_clk_int or posedge reset)
+always @(posedge rx_rgmii_clk_int or posedge reset)
     begin
         if (reset)
             begin
@@ -332,7 +332,7 @@ always @ (posedge rx_rgmii_clk_int or posedge reset)
 wire inband_ce;
 assign inband_ce = !(gmii_rx_dv_reg || gmii_rx_er_reg);
 
-always @ (posedge rx_rgmii_clk_int or posedge reset)
+always @(posedge rx_rgmii_clk_int or posedge reset)
     begin
         if (reset)
             begin

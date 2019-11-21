@@ -43,14 +43,14 @@ gerneric_fifo #(
     .size()
 );
 
-always@(posedge CLK)
+always @(posedge CLK)
     if(RST)
         byte_cnt <= 0;
     else if (READ)
         byte_cnt <= byte_cnt + 1;
 
 reg [31:0] DATA_BUF;
-always@(posedge CLK)
+always @(posedge CLK)
     if(READ_FIFO)
         DATA_BUF <= FIFO_DATA_OUT;
 

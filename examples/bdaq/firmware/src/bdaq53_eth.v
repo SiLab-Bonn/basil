@@ -311,7 +311,7 @@ assign LED = ~{TCP_OPEN_ACK, TCP_CLOSE_REQ, TCP_RX_WR, TCP_TX_WR, fifo_full, fif
 
 
 /* -------  Main FSM  ------- */
-always@ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
     begin
 
     // wait for start condition

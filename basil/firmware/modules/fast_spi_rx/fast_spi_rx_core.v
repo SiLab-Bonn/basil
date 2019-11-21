@@ -75,7 +75,7 @@ wire CONF_EN_SYNC;
 assign CONF_EN_SYNC  = CONF_EN;
 
 reg [7:0] sync_cnt;
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(RST)
         sync_cnt <= 120;
     else if(sync_cnt != 100)
@@ -88,13 +88,13 @@ assign RST_LONG = sync_cnt[7];
 reg [11:0] frame_cnt;
 wire SEN_START, SEN_FINISH;
 reg SEN_DLY;
-always@(posedge SCLK) begin
+always @(posedge SCLK) begin
     SEN_DLY <= SEN;
 end
 assign SEN_START = (SEN_DLY ==0 && SEN == 1);
 assign SEN_FINISH = (SEN_DLY ==1 && SEN == 0);
 
-always@(posedge SCLK) begin
+always @(posedge SCLK) begin
     if(RST_SYNC)
         frame_cnt <= 0;
     else if(SEN_FINISH && CONF_EN_SYNC)
@@ -104,7 +104,7 @@ end
 wire cdc_fifo_write;
 
 reg [4:0] bit_cnt;
-always@(posedge SCLK) begin
+always @(posedge SCLK) begin
     if(RST_SYNC | SEN_START)
         bit_cnt <= 0;
     else if(cdc_fifo_write)
@@ -116,7 +116,7 @@ end
 assign cdc_fifo_write = ( (bit_cnt == 15) || SEN_FINISH ) && CONF_EN_SYNC;
 
 reg [15:0] spi_data;
-always@(posedge SCLK) begin
+always @(posedge SCLK) begin
     if(RST_SYNC | SEN_FINISH)
         spi_data <= 0;
     else if(cdc_fifo_write)
@@ -128,7 +128,7 @@ end
 wire fifo_full,cdc_fifo_empty;
 
 wire wfull;
-always@(posedge SCLK) begin
+always @(posedge SCLK) begin
     if(RST_SYNC)
         LOST_DATA_CNT <= 0;
     else if (wfull && cdc_fifo_write && LOST_DATA_CNT != 8'b1111_1111)

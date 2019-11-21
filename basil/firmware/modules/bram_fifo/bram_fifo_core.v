@@ -80,7 +80,7 @@ reg [7:0] CONF_READ_ERROR; // read error count (read attempts when FIFO is empty
 wire [31:0] CONF_SIZE; // in units of int
 assign CONF_SIZE_BYTE = CONF_SIZE * 4;
 
-always @ (posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if(BUS_ADD == 0)
             BUS_DATA_OUT <= VERSION;
@@ -103,7 +103,7 @@ always @ (posedge BUS_CLK) begin
     end
 end
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     if (BUS_ADD == 4 && BUS_RD)
         CONF_SIZE_BYTE_BUF <= CONF_SIZE_BYTE;
@@ -130,14 +130,14 @@ gerneric_fifo #(.DATA_SIZE(32), .DEPTH(DEPTH)) i_buf_fifo
 );
 assign CONF_SIZE[31:POINTER_SIZE] = 0;
 
-always@(posedge BUS_CLK)
+always @(posedge BUS_CLK)
     BUS_DATA_OUT_DATA <= FIFO_DATA_BUF;
 
 assign FIFO_NOT_EMPTY = !FIFO_EMPTY_IN_BUF;
 assign FIFO_FULL = FULL_BUF;
 assign FIFO_READ_ERROR = (CONF_READ_ERROR != 0);
 
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(RST)
         CONF_READ_ERROR <= 0;
     else if(FIFO_EMPTY_IN_BUF && BUS_RD_DATA && CONF_READ_ERROR != 8'hff)

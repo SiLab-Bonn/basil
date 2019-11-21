@@ -206,7 +206,7 @@ reg [23:0] TRIGGER_COUNTER_BUF_8_31;
 reg [7:0] TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT;
 reg [7:0] TLU_TRIGGER_ACCEPT_ERROR_CNT;
 
-always @ (posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if (BUS_ADD == 0)
             BUS_DATA_OUT <= VERSION;
@@ -365,7 +365,7 @@ three_stage_synchronizer three_stage_conf_trigger_enable_synchronizer (
 );
 
 reg CONF_TRIGGER_ENABLE_FF;
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     CONF_TRIGGER_ENABLE_FF <= CONF_TRIGGER_ENABLE;
 end
@@ -429,7 +429,7 @@ three_stage_synchronizer three_stage_trigger_ts_reset_synchronizer (
 );
 
 reg TIMESTAMP_RESET_SYNC_FF;
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
     TIMESTAMP_RESET_SYNC_FF <= TIMESTAMP_RESET_SYNC;
 
 wire TIMESTAMP_RESET_FLAG;
@@ -470,7 +470,7 @@ wire TLU_ASSERT_VETO, TLU_CLOCK_ENABLE;
 integer counter_clk;
 
 reg TLU_ASSERT_VETO_FF;
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
     TLU_ASSERT_VETO_FF <= TLU_ASSERT_VETO;
 
 wire TLU_ASSERT_VETO_LE;
@@ -479,7 +479,7 @@ wire TLU_ASSERT_VETO_TE;
 assign TLU_ASSERT_VETO_TE = TLU_ASSERT_VETO_FF & ~TLU_ASSERT_VETO;
 
 reg TLU_VETO;
-//always @ (RST_SYNC or TRIGGER_ACCEPTED_FLAG or TLU_ASSERT_VETO_TE or TLU_ASSERT_VETO_LE)
+//always @(RST_SYNC or TRIGGER_ACCEPTED_FLAG or TLU_ASSERT_VETO_TE or TLU_ASSERT_VETO_LE)
 //begin
 //    if (RST_SYNC)
 //        TLU_VETO <= 1'b0;
@@ -490,7 +490,7 @@ reg TLU_VETO;
 //    else if (TLU_ASSERT_VETO_LE)
 //        TLU_VETO <= 1'b1;
 //end
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         TLU_VETO <= 1'b0;
@@ -503,7 +503,7 @@ begin
 end
 
 reg TLU_CLOCK_SIGNAL;
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         TLU_CLOCK_SIGNAL <= 1'b0;
@@ -518,7 +518,7 @@ begin
 end
 assign TLU_CLOCK = TLU_CLOCK_SIGNAL | TLU_VETO;
 
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         counter_clk <= 0;
@@ -541,7 +541,7 @@ assign TRIGGER_FSM = (TRIGGER_MODE_SYNC != 2'b00) ? TLU_TRIGGER_SYNC : (SOFT_TRG
 
 // Reset flag
 reg TLU_RESET_SYNC_FF;
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
     TLU_RESET_SYNC_FF <= TLU_RESET_SYNC;
 
 wire TLU_RESET_FLAG_SYNC;
@@ -551,7 +551,7 @@ assign TLU_RESET_FLAG_SYNC = ~TLU_RESET_SYNC_FF & TLU_RESET_SYNC & TLU_ENABLE_RE
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_SYNC;
 wire [31:0] TLU_TRIGGER_NUMBER_DATA;
 wire TRIGGER_DATA_WRITE;
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         CURRENT_TLU_TRIGGER_NUMBER_SYNC <= 32'b0;
@@ -567,7 +567,7 @@ flag_domain_crossing trigger_data_write_flag_domain_crossing (
     .FLAG_OUT_CLK_B(TRIGGER_DATA_WRITE_BUS_CLK)
 );
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK <= 32'b0;
@@ -575,7 +575,7 @@ begin
         CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK <= CURRENT_TLU_TRIGGER_NUMBER_SYNC;
 end
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     if (RST)
         CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF <= 32'b0;
@@ -599,7 +599,7 @@ flag_domain_crossing trigger_low_timeout_error_flag_domain_crossing (
     .FLAG_OUT_CLK_B(TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG_BUS_CLK)
 );
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     if (RST)
         TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT <= 8'b0;
@@ -617,7 +617,7 @@ flag_domain_crossing trigger_accept_error_flag_domain_crossing (
     .FLAG_OUT_CLK_B(TLU_TRIGGER_ACCEPT_ERROR_FLAG_BUS_CLK)
 );
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     if (RST)
         TLU_TRIGGER_ACCEPT_ERROR_CNT <= 8'b0;
@@ -631,7 +631,7 @@ wire TRIGGER_COUNTER_SET;
 reg TRIGGER_COUNTER_SET_FF, TRIGGER_COUNTER_SET_FF2;
 assign TRIGGER_COUNTER_SET = (BUS_ADD == 11 && BUS_WR);
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     TRIGGER_COUNTER_SET_FF <= TRIGGER_COUNTER_SET;
     TRIGGER_COUNTER_SET_FF2 <= TRIGGER_COUNTER_SET_FF;
@@ -648,7 +648,7 @@ flag_domain_crossing trigger_counter_set_flag_domain_crossing (
 );
 
 // write trigger counter
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     if (RST)
         TRIGGER_COUNTER <= 32'b0;
@@ -659,7 +659,7 @@ begin
 end
 
 // read trigger counter
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     if (RST)
         TRIGGER_COUNTER_BUF_8_31 <= 32'b0;
@@ -669,7 +669,7 @@ end
 
 // trigger counter
 reg [31:0] TRIGGER_COUNTER_SYNC;
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         TRIGGER_COUNTER_SYNC <= 32'b0;
@@ -694,7 +694,7 @@ three_stage_synchronizer #(
 );
 
 reg TRIGGER_LIMIT_REACHED_SYNC;
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         TRIGGER_LIMIT_REACHED_SYNC <= 1'b0;
@@ -705,7 +705,7 @@ begin
 end
 
 reg TRIGGER_ENABLE_FSM;
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         TRIGGER_ENABLE_FSM <= 1'b0;
@@ -715,7 +715,7 @@ begin
         TRIGGER_ENABLE_FSM <= 1'b0;
 end
 
-always @ (posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
 begin
     if (RST_SYNC)
         TRIGGER_ENABLED <= 1'b0;
@@ -734,7 +734,7 @@ three_stage_synchronizer three_stage_fifo_preempt_req_synchronizer (
 );
 
 reg FIFO_PREEMPT_REQ_BUS_CLK_FF;
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
     FIFO_PREEMPT_REQ_BUS_CLK_FF <= FIFO_PREEMPT_REQ_BUS_CLK;
 
 wire FIFO_PREEMPT_REQ_LE_BUS_CLK;
@@ -743,7 +743,7 @@ wire FIFO_PREEMPT_REQ_TE_BUS_CLK;
 assign FIFO_PREEMPT_REQ_TE_BUS_CLK = FIFO_PREEMPT_REQ_BUS_CLK_FF & ~FIFO_PREEMPT_REQ_BUS_CLK;
 
 reg FIFO_EMPTY_FF;
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
     FIFO_EMPTY_FF <= FIFO_EMPTY;
 
 wire FIFO_EMPTY_FLAG_BUS_CLK;
@@ -758,7 +758,7 @@ flag_domain_crossing fifo_preempt_flag_domain_crossing (
 );
 
 // 8 to 10 clock cycles after trigger (depending on TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES)
-always @ (posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if (RST)
         FIFO_PREEMPT_REQ <= 1'b0;
     else
@@ -829,7 +829,7 @@ tlu_controller_fsm #(
 // generate long reset
 reg [5:0] rst_cnt;
 reg RST_LONG;
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if (RST)
         rst_cnt <= 6'b11_1111; // start value
     else if (rst_cnt != 0)
@@ -839,7 +839,7 @@ end
 
 reg [5:0] rst_cnt_sync;
 reg RST_LONG_SYNC;
-always@(posedge TRIGGER_CLK) begin
+always @(posedge TRIGGER_CLK) begin
     if (RST_SYNC)
         rst_cnt_sync <= 6'b11_1111; // start value
     else if (rst_cnt_sync != 0)
@@ -853,7 +853,7 @@ assign cdc_fifo_write = !wfull && TRIGGER_DATA_WRITE;
 wire fifo_full, cdc_fifo_empty;
 
 reg [7:0] LOST_DATA_CNT;
-always@(posedge TRIGGER_CLK) begin
+always @(posedge TRIGGER_CLK) begin
     if(RST_SYNC)
         LOST_DATA_CNT <= 0;
     else if (wfull && TRIGGER_DATA_WRITE && LOST_DATA_CNT != 8'b1111_1111)
@@ -861,24 +861,24 @@ always@(posedge TRIGGER_CLK) begin
 end
 
 reg [7:0] lost_data_cnt_gray;
-always@(posedge TRIGGER_CLK)
+always @(posedge TRIGGER_CLK)
     lost_data_cnt_gray <=  (LOST_DATA_CNT>>1) ^ LOST_DATA_CNT;
 
 reg [7:0] lost_data_cnt_cdc0, lost_data_cnt_cdc1, lost_data_cnt_bus_clk;
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     lost_data_cnt_cdc0 <= lost_data_cnt_gray;
     lost_data_cnt_cdc1 <= lost_data_cnt_cdc0;
 end
 
 integer gbi_lost_err_cnt;
-always@(*) begin
+always @(*) begin
     lost_data_cnt_bus_clk[7] = lost_data_cnt_cdc1[7];
     for(gbi_lost_err_cnt = 6; gbi_lost_err_cnt >= 0; gbi_lost_err_cnt = gbi_lost_err_cnt - 1) begin
         lost_data_cnt_bus_clk[gbi_lost_err_cnt] = lost_data_cnt_cdc1[gbi_lost_err_cnt] ^ lost_data_cnt_bus_clk[gbi_lost_err_cnt + 1];
     end
 end
 
-always @ (posedge BUS_CLK)
+always @(posedge BUS_CLK)
 begin
     lost_data_cnt_buf_read <= lost_data_cnt_bus_clk;
 end

@@ -1,12 +1,12 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 `timescale 1ps/1ps
 `default_nettype none
- 
+
 module spi_core
 #(
     parameter ABUSWIDTH = 16,
@@ -19,14 +19,14 @@ module spi_core
     input wire                      BUS_RD,
     input wire                      BUS_WR,
     output reg [7:0]                BUS_DATA_OUT,
-    
+
     input wire SPI_CLK,
-    
+
     output wire SCLK,
     input wire SDO,
     output reg SDI,
     input wire EXT_START,
-    
+
     output reg SEN,
     output reg SLD
 );
@@ -88,7 +88,7 @@ wire CONF_EN;
 assign CONF_EN = status_regs[13][0];
 
 reg [7:0] BUS_DATA_OUT_REG;
-always@(posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if(BUS_ADD == 0)
             BUS_DATA_OUT_REG <= VERSION;
@@ -108,7 +108,7 @@ end
 // if one has a synchronous memory need this to give data on next clock after read
 // limitation: this module still needs to be addressed
 reg [ABUSWIDTH-1:0]  PREV_BUS_ADD;
-always @ (posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         PREV_BUS_ADD <= BUS_ADD;
     end
@@ -206,10 +206,10 @@ wire REP_START;
 assign REP_START = (out_bit_cnt == STOP_BIT && (CONF_REPEAT==0 || REPEAT_COUNT < CONF_REPEAT));
 
 reg REP_START_DLY;
-always @ (posedge SPI_CLK)
+always @(posedge SPI_CLK)
     REP_START_DLY <= REP_START;
- 
-always @ (posedge SPI_CLK)
+
+always @(posedge SPI_CLK)
     if (RST_SYNC)
         SEN_INT <= 0;
     else if(START_SYNC || (EXT_START_PULSE && CONF_EN) || REP_START_DLY)
@@ -217,7 +217,7 @@ always @ (posedge SPI_CLK)
     else if(out_bit_cnt == CONF_BIT_OUT)
         SEN_INT <= 0;
 
-always @ (posedge SPI_CLK)
+always @(posedge SPI_CLK)
     if (RST_SYNC)
         out_bit_cnt <= 0;
     else if(START_SYNC || (EXT_START_PULSE && CONF_EN))
@@ -231,7 +231,7 @@ always @ (posedge SPI_CLK)
     else if(out_bit_cnt != 0)
         out_bit_cnt <= out_bit_cnt + 1;
 
-always @ (posedge SPI_CLK)
+always @(posedge SPI_CLK)
     if (RST_SYNC || START_SYNC || (EXT_START_PULSE && CONF_EN))
         REPEAT_COUNT <= 1;
     else if(out_bit_cnt == STOP_BIT)

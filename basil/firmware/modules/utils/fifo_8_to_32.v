@@ -48,7 +48,7 @@ wire [31:0] FIFO_DATA_IN_32;
 
 reg [1:0] byte_cnt;
 reg WAIT_FOR_FIFO_32;
-always@(posedge CLK)
+always @(posedge CLK)
     if(RST) begin
         byte_cnt <= 0;
         WAIT_FOR_FIFO_32 <= 1'b0;
@@ -67,7 +67,7 @@ wire READ_FIFO_8;
 assign READ_FIFO_8 = (~FIFO_EMPTY_8 && ~WAIT_FOR_FIFO_32);
 assign FIFO_READ_8 = READ_FIFO_8;
 
-always@(posedge CLK)
+always @(posedge CLK)
     if(RST) begin
         FIFO_WRITE_32 <= 1'b0;
     end else if(FIFO_WRITE_32) begin
@@ -77,7 +77,7 @@ always@(posedge CLK)
     end
 
 reg [31:0] DATA_BUF;
-always@(posedge CLK)
+always @(posedge CLK)
     if(RST) begin
         DATA_BUF = 0;
     end else if(READ_FIFO_8 && byte_cnt  == 0) begin

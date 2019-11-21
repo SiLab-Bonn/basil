@@ -40,7 +40,7 @@ initial
     seed = 0;
 
 
-always@(posedge SYS_CLK) begin
+always @(posedge SYS_CLK) begin
     if(SYS_RST)
         TRIG <= 0;
     else if($random(seed) % 100 == 10 && !VETO && ENABLE)
@@ -49,7 +49,7 @@ always@(posedge SYS_CLK) begin
         TRIG <= 0;
 end
 
-always@(posedge SYS_CLK) begin
+always @(posedge SYS_CLK) begin
     if(SYS_RST)
         TRIG_ID <= 0;
     else if(TRIG)
@@ -59,13 +59,13 @@ end
 localparam WAIT_STATE = 0, TRIG_STATE = 1, READ_ID_STATE = 2;
 
 reg [1:0] state, state_next;
-always@(posedge SYS_CLK)
+always @(posedge SYS_CLK)
     if(SYS_RST)
         state <= WAIT_STATE;
     else
         state <= state_next;
 
-always@(*) begin
+always @(*) begin
     state_next = state;
 
     case(state)
@@ -86,7 +86,7 @@ assign VETO = (state != WAIT_STATE) || (state == WAIT_STATE && TLU_CLOCK == 1'b1
 
 reg [15:0] TRIG_ID_SR;
 initial TRIG_ID_SR = 0;
-always@(posedge TLU_CLOCK or posedge TRIG)
+always @(posedge TLU_CLOCK or posedge TRIG)
     if(TRIG)
         TRIG_ID_SR <= {TRIG_ID, 1'b0};
     else

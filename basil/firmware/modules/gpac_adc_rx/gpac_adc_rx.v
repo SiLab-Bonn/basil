@@ -1,18 +1,18 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 `timescale 1ps/1ps
 `default_nettype none
- 
+
 module gpac_adc_rx
 #(
     parameter   BASEADDR = 16'h0000,
     parameter   HIGHADDR = 16'h0000,
     parameter   ABUSWIDTH = 16,
-    
+
     parameter [1:0] ADC_ID = 0,
     parameter [0:0] HEADER_ID = 0
 )
@@ -35,7 +35,7 @@ module gpac_adc_rx
     input wire           BUS_WR,
 
     output wire LOST_ERROR
-); 
+);
 
 wire IP_RD, IP_WR;
 wire [ABUSWIDTH-1:0] IP_ADD;
@@ -56,20 +56,20 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) , .ABUSWIDTH(ABUSWIDTH)) i
     .IP_DATA_OUT(IP_DATA_OUT)
 );
 
-gpac_adc_rx_core 
+gpac_adc_rx_core
 #(
     .ADC_ID(ADC_ID),
     .HEADER_ID(HEADER_ID),
     .ABUSWIDTH(ABUSWIDTH)
-) i_gpac_adc_rx_core 
+) i_gpac_adc_rx_core
 (
-    .BUS_CLK(BUS_CLK),                     
-    .BUS_RST(BUS_RST),                  
-    .BUS_ADD(IP_ADD),                    
-    .BUS_DATA_IN(IP_DATA_IN),                    
-    .BUS_RD(IP_RD),                    
-    .BUS_WR(IP_WR),                    
-    .BUS_DATA_OUT(IP_DATA_OUT),  
+    .BUS_CLK(BUS_CLK),
+    .BUS_RST(BUS_RST),
+    .BUS_ADD(IP_ADD),
+    .BUS_DATA_IN(IP_DATA_IN),
+    .BUS_RD(IP_RD),
+    .BUS_WR(IP_WR),
+    .BUS_DATA_OUT(IP_DATA_OUT),
 
     .ADC_ENC(ADC_ENC),
     .ADC_IN(ADC_IN),
@@ -81,7 +81,7 @@ gpac_adc_rx_core
     .FIFO_EMPTY(FIFO_EMPTY),
     .FIFO_DATA(FIFO_DATA),
     .LOST_ERROR(LOST_ERROR)
-); 
+);
 
 
 endmodule

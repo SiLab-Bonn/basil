@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -19,11 +19,11 @@ module pulse_gen
     inout wire  [7:0]           BUS_DATA,
     input wire                  BUS_RD,
     input wire                  BUS_WR,
-    
+
     input wire  PULSE_CLK,
     input wire  EXT_START,
     output wire PULSE
-); 
+);
 
 wire IP_RD, IP_WR;
 wire [ABUSWIDTH-1:0] IP_ADD;
@@ -53,7 +53,7 @@ pulse_gen_core #(.ABUSWIDTH(ABUSWIDTH) ) i_pulse_gen_core
     .BUS_RD(IP_RD),
     .BUS_WR(IP_WR),
     .BUS_DATA_OUT(IP_DATA_OUT),
-    
+
     .PULSE_CLK(PULSE_CLK),
     .EXT_START(EXT_START),
     .PULSE(PULSE)

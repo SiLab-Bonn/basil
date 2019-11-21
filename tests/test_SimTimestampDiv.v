@@ -118,7 +118,7 @@ module tb (
     clock_multiplier #( .MULTIPLIER(2) ) i_clock_multiplier_two2(.CLK(CLK320),.CLOCK(CLK640));
     assign CLK160 = BUS_CLK;
 
-    always@(posedge CLK40)
+    always @(posedge CLK40)
         TIMESTAMP <= TIMESTAMP + 1;
 
 

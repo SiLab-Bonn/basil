@@ -1,12 +1,12 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 `timescale 1ps/1ps
 `default_nettype none
- 
+
 module spi
 #(
     parameter BASEADDR = 16'h0000,
@@ -29,9 +29,9 @@ module spi
     output wire SDI,
     input wire EXT_START,
 
-    output wire SEN, 
+    output wire SEN,
     output wire SLD
-); 
+);
 
 
 wire IP_RD, IP_WR;
@@ -65,14 +65,14 @@ spi_core #(
     .BUS_RD(IP_RD),
     .BUS_WR(IP_WR),
     .BUS_DATA_OUT(IP_DATA_OUT),
-     
+
     .SPI_CLK(SPI_CLK),
-     
+
     .SCLK(SCLK),
     .SDO(SDO),
     .SDI(SDI),
     .EXT_START(EXT_START),
-    
+
     .SEN(SEN),
     .SLD(SLD)
 );

@@ -71,7 +71,7 @@ reg CONF_DONE;
 reg CONF_NO_ACK;
 
 reg [7:0] BUS_DATA_OUT_REG;
-always @ (posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if(BUS_ADD == 0)
             BUS_DATA_OUT_REG <= VERSION;
@@ -87,7 +87,7 @@ always @ (posedge BUS_CLK) begin
 end
 
 reg [ABUSWIDTH-1:0]  PREV_BUS_ADD;
-always @ (posedge BUS_CLK) begin
+always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         PREV_BUS_ADD <= BUS_ADD;
     end
@@ -152,7 +152,7 @@ reg START_FSM;
 
 localparam STATE_IDLE  = 0, STATE_START = 1, STATE_ADDR = 2, STATE_RW = 3, STATE_AACK = 4, STATE_DATA_W = 5, STATE_DATA_R = 6, STATE_DACK_W = 7, STATE_DACK_R = 8, STATE_DACK_LAST = 9, STATE_STOP = 10;
 
-always @ (posedge I2C_CLK) begin
+always @(posedge I2C_CLK) begin
     if (RST_SYNC)
         START_FSM <= 0;
     else if(START_SYNC)
@@ -163,7 +163,7 @@ end
 
 reg [3:0] state, next_state;
 
-always @ (posedge I2C_CLK) begin
+always @(posedge I2C_CLK) begin
     if (RST_SYNC)
         state <= STATE_IDLE;
     else if(div_cnt==3)
@@ -173,7 +173,7 @@ end
 wire CONF_MODE;
 assign CONF_MODE = I2C_ADD[0];
 
-always @ (*) begin
+always @(*) begin
     next_state = state; //default
     case(state)
         STATE_IDLE:
@@ -220,21 +220,21 @@ always @ (*) begin
     endcase
 end
 
-always @ (posedge I2C_CLK) begin
+always @(posedge I2C_CLK) begin
     if (state == STATE_AACK | state == STATE_START | state == STATE_DACK_W | state == STATE_DACK_R)
         bit_count <= 0;
     else if(div_cnt==3)
         bit_count <= bit_count + 1;
 end
 
-always @ (posedge I2C_CLK) begin
+always @(posedge I2C_CLK) begin
     if (state == STATE_IDLE)
         byte_count <= 0;
     else if((next_state == STATE_DACK_W | next_state == STATE_DACK_R) & div_cnt==3)
         byte_count <= byte_count + 1;
 end
 
-always @ (posedge I2C_CLK) begin
+always @(posedge I2C_CLK) begin
     if (RST_SYNC)
         div_cnt <= 0;
     else
@@ -247,7 +247,7 @@ assign EN_MEM_I2C = WE_MEM_I2C | ((state == STATE_DACK_W | state == STATE_AACK) 
 reg SDA_D0;
 reg SCL_D0;
 
-always @ (*) begin
+always @(*) begin
     SDA_D0 = 1;
     SCL_D0 = 1;
 
@@ -292,14 +292,14 @@ wire NO_ACK;
 assign NO_ACK = ((state == STATE_AACK & SDA_READBACK) | (state == STATE_DACK_W & SDA_READBACK)) & div_cnt == 3;
 
 reg SDA;
-always@(posedge I2C_CLK)
+always @(posedge I2C_CLK)
     if(div_cnt == 0)
         SDA <= SDA_D0;
 
 assign I2C_SDA = SDA ? 1'bz : 1'b0;
 
 reg SCL;
-always@(posedge I2C_CLK)
+always @(posedge I2C_CLK)
     if(div_cnt == 3)
         SCL <= SCL_D0;
     else if(div_cnt == 1)
@@ -307,11 +307,11 @@ always@(posedge I2C_CLK)
 
 assign I2C_SCL = SCL ? 1'bz : 1'b0;
 
-always@(posedge I2C_CLK)
+always @(posedge I2C_CLK)
     if(div_cnt == 1)
         SDA_READBACK <= IGNORE_ACK ? 0 : I2C_SDA;
 
-always@(posedge I2C_CLK)
+always @(posedge I2C_CLK)
     if(div_cnt == 3)
         DATA_BYTE_READBCK[7-bit_count] <= I2C_SDA;
 

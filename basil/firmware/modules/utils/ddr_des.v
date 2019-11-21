@@ -35,26 +35,26 @@ assign OUT_FAST = DDRQ;
 
 reg [1:0] DDRQ_DLY;
 
-always@(posedge CLK2X)
+always @(posedge CLK2X)
     DDRQ_DLY[1:0] <= DDRQ[1:0];
 
 reg [3:0] DDRQ_DATA;
-always@(posedge CLK2X)
+always @(posedge CLK2X)
     DDRQ_DATA[3:0] <= {DDRQ_DLY[1:0], DDRQ[1:0]};
 
  reg [3:0] DDRQ_DATA_BUF;
-always@(posedge CLK2X)
+always @(posedge CLK2X)
     DDRQ_DATA_BUF[3:0] <= DDRQ_DATA[3:0];
 
 reg [3:0] DATA_IN;
-always@(posedge CLK)
+always @(posedge CLK)
     DATA_IN[3:0] <= DDRQ_DATA_BUF[3:0];
 
 reg [CLKDV*4-1:0] DATA_IN_SR;
-always@(posedge CLK)
+always @(posedge CLK)
     DATA_IN_SR <= {DATA_IN_SR[CLKDV*4-5:0],DATA_IN[3:0]};
 
-always@(posedge WCLK)
+always @(posedge WCLK)
     OUT <= DATA_IN_SR;
 
 endmodule
