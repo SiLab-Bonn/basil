@@ -131,8 +131,8 @@ wire wfull;
 always@(posedge SCLK) begin
     if(RST_SYNC)
         LOST_DATA_CNT <= 0;
-    else if (wfull && cdc_fifo_write && LOST_DATA_CNT != -1)
-        LOST_DATA_CNT <= LOST_DATA_CNT +1;
+    else if (wfull && cdc_fifo_write && LOST_DATA_CNT != 8'b1111_1111)
+        LOST_DATA_CNT <= LOST_DATA_CNT + 1;
 end
 
 wire [31:0] cdc_data;

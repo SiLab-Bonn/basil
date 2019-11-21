@@ -158,7 +158,7 @@ always@(posedge ADC_ENC) begin
         rec_cnt <= 0;
     else if(start_data_count && (rec_cnt > CONF_DATA_CNT || rec_cnt == 0))
         rec_cnt <= 1;
-    else if(rec_cnt != -1 && rec_cnt>0 && CONF_DATA_CNT!=0 )
+    else if(rec_cnt != 24'hff_ffff && rec_cnt > 0 && CONF_DATA_CNT != 0)
         rec_cnt <= rec_cnt + 1;
 end
 
