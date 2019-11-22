@@ -78,7 +78,7 @@ always @(posedge CLK_RX)
         if(data_cnt==31)
             INVALID <= !data_len_ok;
 
-always@(posedge CLK_RX)
+always @(posedge CLK_RX)
     if(RST)
         INVALID <= 1'b0;
     else
@@ -98,7 +98,7 @@ always @(posedge CLK_RX)
             data_len <= data_sr[16:1];
 
 // Requiring Mimosa26 registers clkrateout = 1 and dualchannel = 1 (80MHz dual-channel)
-always@(posedge CLK_RX)
+always @(posedge CLK_RX)
     if(RST)
         WRITE <= 1'b0;
     else
@@ -111,7 +111,7 @@ always@(posedge CLK_RX)
         else
             WRITE <= 1'b0;
 
-always@(posedge CLK_RX)
+always @(posedge CLK_RX)
     if(RST)
         DATA <= 1'b0;
     else
