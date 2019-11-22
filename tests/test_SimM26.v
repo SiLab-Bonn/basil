@@ -123,7 +123,9 @@ module tb (
 
         .TIMESTAMP(timestamp_m26),
 
-        .LOST_ERROR()
+        .LOST_ERROR(),
+        .INVALID(),
+        .INVALID_FLAG()
     );
 
     wire FIFO_READ, FIFO_EMPTY;

@@ -32,8 +32,9 @@ module m26_rx
 
     input wire [31:0] TIMESTAMP,
 
-    output wire LOST_ERROR
-
+    output wire LOST_ERROR,
+    output wire INVALID,
+    output wire INVALID_FLAG
 );
 
 wire IP_RD, IP_WR;
@@ -80,7 +81,9 @@ m26_rx_core
 
     .TIMESTAMP(TIMESTAMP),
 
-    .LOST_ERROR(LOST_ERROR)
+    .LOST_ERROR(LOST_ERROR),
+    .INVALID(INVALID),
+    .INVALID_FLAG(INVALID_FLAG)
 );
 
 endmodule
