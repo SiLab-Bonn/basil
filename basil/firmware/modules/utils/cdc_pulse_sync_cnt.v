@@ -20,17 +20,18 @@ always @(posedge clk_in) begin
     if(pulse_in)
         sync_cnt <= 120;
     else if(sync_cnt != 100)
-        sync_cnt <= sync_cnt +1;
+        sync_cnt <= sync_cnt + 1;
 end
 
-reg [2:0] sync;
+(* ASYNC_REG = "TRUE" *) reg out_sync_ff_1;
+(* ASYNC_REG = "TRUE" *) reg out_sync_ff_2;
+reg out_sync_ff_3;
 always @(posedge clk_out) begin
-    sync[0] <= sync_cnt[7];
-    sync[1] <= sync[0];
-    sync[2] <= sync[1];
+    out_sync_ff_1 <= sync_cnt[7];
+    out_sync_ff_2 <= out_sync_ff_1;
+    out_sync_ff_3 <= out_sync_ff_2;
 end
 
-wire RST_SYNC;
-assign pulse_out = !sync[2] && sync[1];
+assign pulse_out = !out_sync_ff_3 && out_sync_ff_2;
 
 endmodule
