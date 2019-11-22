@@ -67,10 +67,11 @@ class TestSimM26(unittest.TestCase):
 
     def test_io(self):
 
-        self.chip['SEQ']['MKD'][0] = 1
-        self.chip['SEQ']['MKD'][1] = 1
-        self.chip['SEQ']['MKD'][2] = 1
-        self.chip['SEQ']['MKD'][3] = 1
+        # no data taking when marker for digital data (MKD) is not set
+        self.chip['SEQ']['MKD'][0] = 0
+        self.chip['SEQ']['MKD'][1] = 0
+        self.chip['SEQ']['MKD'][2] = 0
+        self.chip['SEQ']['MKD'][3] = 0
 
         header0 = BitLogic(16)
         header1 = BitLogic(16)
@@ -117,6 +118,22 @@ class TestSimM26(unittest.TestCase):
             pass
 
         ret = self.chip['FIFO'].get_FIFO_SIZE()
+        self.assertEqual(ret, 0)
+
+        # set marker for digital data (MKD)
+        self.chip['SEQ']['MKD'][0] = 1
+        self.chip['SEQ']['MKD'][1] = 1
+        self.chip['SEQ']['MKD'][2] = 1
+        self.chip['SEQ']['MKD'][3] = 1
+
+        self.chip['SEQ'].write(16 * (4 + 4))
+
+        self.chip['SEQ'].start()
+
+        while(not self.chip['SEQ'].is_ready):
+            pass
+
+        ret = self.chip['FIFO'].get_FIFO_SIZE()
         self.assertEqual(ret, 14 * 4 * 4)
 
         ret = self.chip['FIFO'].get_data()
@@ -136,10 +153,10 @@ class TestSimM26(unittest.TestCase):
 
         np.testing.assert_array_equal(exp, ret)
 
+        # testing internal timestamp replaces M26 header
         self.chip['M26_RX'].reset()
         self.chip['M26_RX']['TIMESTAMP_HEADER'] = True  # default
         self.chip['M26_RX']['EN'] = True
-        self.chip['FIFO'].get_data()
         self.chip['SEQ'].start()
 
         exps[0] = 0x00010000 | 0xBB44
@@ -151,6 +168,68 @@ class TestSimM26(unittest.TestCase):
             pass
 
         ret = self.chip['FIFO'].get_data()
+
+        np.testing.assert_array_equal(exp, ret)
+
+        # setting invalid data length (>570)
+        # after invalid data length get trailer.
+        datalen0 = BitLogic(16)
+        datalen1 = BitLogic(16)
+        datalen0[:] = 0x023B
+        datalen1[:] = 0x023B
+
+        self.chip['SEQ']['DATA0'][32:48] = datalen0[:]
+        self.chip['SEQ']['DATA1'][32:48] = datalen1[:]
+
+        self.chip['SEQ'].write(16 * (4 + 4))
+
+        self.chip['M26_RX'].reset()
+        self.chip['M26_RX']['TIMESTAMP_HEADER'] = True  # default
+        self.chip['M26_RX']['EN'] = True
+        self.chip['SEQ'].start()
+
+        while(not self.chip['SEQ'].is_ready):
+            pass
+
+        self.assertEqual(self.chip['M26_RX']['INVALID_DATA_COUNT'], 4)
+
+        ret = self.chip['FIFO'].get_FIFO_SIZE()
+        self.assertEqual(ret, 6 * 4 * 4)
+
+        ret = self.chip['FIFO'].get_data()
+
+        exps[4] = 0x023B
+        exps[5] = 0x023B
+
+        exp = np.tile(exps[:6], 4)
+
+        np.testing.assert_array_equal(exp, ret)
+
+        # after invalid data length test valid frame
+        datalen0 = BitLogic(16)
+        datalen1 = BitLogic(16)
+        datalen0[:] = 0x0003
+        datalen1[:] = 0x0003
+
+        self.chip['SEQ']['DATA0'][32:48] = datalen0[:]
+        self.chip['SEQ']['DATA1'][32:48] = datalen1[:]
+
+        self.chip['SEQ'].write(16 * (4 + 4))
+
+        self.chip['SEQ'].start()
+
+        while(not self.chip['SEQ'].is_ready):
+            pass
+
+        ret = self.chip['FIFO'].get_FIFO_SIZE()
+        self.assertEqual(ret, 14 * 4 * 4)
+
+        ret = self.chip['FIFO'].get_data()
+
+        exps[4] = 0x0003
+        exps[5] = 0x0003
+
+        exp = np.tile(exps, 4)
 
         np.testing.assert_array_equal(exp, ret)
 
