@@ -17,10 +17,8 @@ module flag_domain_crossing(
 );
 
 
-reg         FLAG_TOGGLE_CLK_A;
-initial     FLAG_TOGGLE_CLK_A = 0;
-reg [2:0]   SYNC_CLK_B;
-
+reg FLAG_TOGGLE_CLK_A;
+initial FLAG_TOGGLE_CLK_A = 0;
 always @(posedge CLK_A)
 begin
     if (FLAG_IN_CLK_A)
@@ -29,11 +27,25 @@ begin
     end
 end
 
-always @(posedge CLK_B)
+(* ASYNC_REG = "TRUE" *) reg flag_out_d_ff_1;
+(* ASYNC_REG = "TRUE" *) reg flag_out_d_ff_2;
+reg flag_out_d_ff_3;
+
+always @(posedge CLK_B) // first stage
 begin
-    SYNC_CLK_B <= {SYNC_CLK_B[1:0], FLAG_TOGGLE_CLK_A};
+    flag_out_d_ff_1 <= FLAG_TOGGLE_CLK_A;
 end
 
-assign FLAG_OUT_CLK_B = (SYNC_CLK_B[2] ^ SYNC_CLK_B[1]); // XOR
+always @(posedge CLK_B) // second stage
+begin
+    flag_out_d_ff_2 <= flag_out_d_ff_1;
+end
+
+always @(posedge CLK_B)
+begin
+    flag_out_d_ff_3 <= flag_out_d_ff_2;
+end
+
+assign FLAG_OUT_CLK_B = (flag_out_d_ff_3 ^ flag_out_d_ff_2); // XOR
 
 endmodule
