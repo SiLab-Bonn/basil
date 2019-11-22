@@ -24,30 +24,36 @@ always @(posedge clk_in) begin
     in_pre_sync[1] <= in_pre_sync[0];
 end
 
+wire pulse_in_flag;
+assign pulse_in_flag = !in_pre_sync[1] && in_pre_sync[0];
+
 reg in_sync_pulse;
-initial in_sync_pulse = 0; //works only in FPGA
+initial in_sync_pulse = 0;  // works only in FPGA
 always @(posedge clk_in) begin
     if (aq_sync)
         in_sync_pulse <= 0;
-    else if (!in_pre_sync[1] && in_pre_sync[0])
+    else if (pulse_in_flag)
         in_sync_pulse <= 1;
 end
 
-reg [2:0] out_sync;
+(* ASYNC_REG = "TRUE" *) reg out_sync_ff_1;
+(* ASYNC_REG = "TRUE" *) reg out_sync_ff_2;
+reg out_sync_ff_3;
 always @(posedge clk_out) begin
-    out_sync[0] <= in_sync_pulse;
-    out_sync[1] <= out_sync[0];
-    out_sync[2] <= out_sync[1];
+    out_sync_ff_1 <= in_sync_pulse;
+    out_sync_ff_2 <= out_sync_ff_1;
+    out_sync_ff_3 <= out_sync_ff_2;
 end
 
-assign pulse_out = !out_sync[2] && out_sync[1];
+assign pulse_out = !out_sync_ff_3 && out_sync_ff_2;
 
-reg [1:0] aq_sync_ff;
+(* ASYNC_REG = "TRUE" *) reg aq_sync_ff_1;
+(* ASYNC_REG = "TRUE" *) reg aq_sync_ff_2;
 always @(posedge clk_in) begin
-    aq_sync_ff[0] <= out_sync[2];
-    aq_sync_ff[1] <= aq_sync_ff[0];
+    aq_sync_ff_1 <= out_sync_ff_2;
+    aq_sync_ff_2 <= aq_sync_ff_1;
 end
 
-assign aq_sync = aq_sync_ff[1];
+assign aq_sync = aq_sync_ff_2;
 
 endmodule
