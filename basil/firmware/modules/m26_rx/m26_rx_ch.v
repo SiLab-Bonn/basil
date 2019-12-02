@@ -53,7 +53,7 @@ always @(posedge CLK_RX)
         else
             FRAME_START <= 1'b0;
 
-reg [13:0] data_cnt;
+reg [13:0] data_cnt;  // must count until 574 * 16
 always @(posedge CLK_RX)
     if(RST)
         data_cnt <= 14'h3FFF;
