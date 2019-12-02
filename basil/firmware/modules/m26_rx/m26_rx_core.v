@@ -200,14 +200,14 @@ always @(posedge CLK_RX)
 
 reg [15:0] data_field;
 always @(posedge CLK_RX) begin
-    if(CONF_TIMESTAMP_HEADER_SYNC & (WRITE_CH0 && FRAME_START_CH0))
-        data_field = TIMESTAMP[15:0];
-    else if(CONF_TIMESTAMP_HEADER_SYNC & (WRITE_CH1 && FRAME_START_CH1))
-        data_field = TIMESTAMP_BUF_31_16;
-    else if(WRITE_CH0)
-        data_field = DATA_CH0;
-    else if(WRITE_CH1)
-        data_field = DATA_CH1;
+    if (CONF_TIMESTAMP_HEADER_SYNC & (WRITE_CH0 && FRAME_START_CH0))
+        data_field <= TIMESTAMP[15:0];
+    else if (CONF_TIMESTAMP_HEADER_SYNC & (WRITE_CH1 && FRAME_START_CH1))
+        data_field <= TIMESTAMP_BUF_31_16;
+    else if (WRITE_CH0)
+        data_field <= DATA_CH0;
+    else if (WRITE_CH1)
+        data_field <= DATA_CH1;
 end
 
 // generate long reset
