@@ -85,8 +85,8 @@ assign CONF_EN = status_regs[1][0];
 wire CONF_TIMESTAMP_HEADER;
 assign CONF_TIMESTAMP_HEADER = status_regs[1][1];
 
-reg [7:0] LOST_DATA_CNT;
-reg [7:0] INVALID_DATA_CNT;
+reg [7:0] lost_data_cnt_bus_clk;
+reg [7:0] invalid_data_cnt_bus_clk;
 
 always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
@@ -95,9 +95,9 @@ always @(posedge BUS_CLK) begin
         else if(BUS_ADD == 1)
             BUS_DATA_OUT <= status_regs[1];
         else if(BUS_ADD == 2)
-            BUS_DATA_OUT <= LOST_DATA_CNT;
+            BUS_DATA_OUT <= lost_data_cnt_bus_clk;
         else if(BUS_ADD == 3)
-            BUS_DATA_OUT <= INVALID_DATA_CNT;
+            BUS_DATA_OUT <= invalid_data_cnt_bus_clk;
         else
             BUS_DATA_OUT <= 8'b0;
     end
@@ -255,12 +255,31 @@ always @(posedge CLK_RX) begin
     INVALID_FLAG <= INVALID_FRAME_FLAG;
 end
 
+reg [7:0] INVALID_DATA_CNT;
 always @(posedge CLK_RX) begin
     if (RST)
         INVALID_DATA_CNT <= 0;
     else
         if (INVALID_FRAME_FLAG && WRITE_FRAME && INVALID_DATA_CNT != 8'hff)
             INVALID_DATA_CNT <= INVALID_DATA_CNT + 1;
+end
+
+reg [7:0] invalid_data_cnt_gray;
+always @(posedge CLK_RX)
+    invalid_data_cnt_gray <=  (INVALID_DATA_CNT>>1) ^ INVALID_DATA_CNT;
+
+reg [7:0] invalid_data_cnt_cdc0, invalid_data_cnt_cdc1;
+always @(posedge BUS_CLK) begin
+    invalid_data_cnt_cdc0 <= invalid_data_cnt_gray;
+    invalid_data_cnt_cdc1 <= invalid_data_cnt_cdc0;
+end
+
+integer gbi_invalid_data_cnt;
+always @(*) begin
+    invalid_data_cnt_bus_clk[7] = invalid_data_cnt_cdc1[7];
+    for(gbi_invalid_data_cnt = 6; gbi_invalid_data_cnt >= 0; gbi_invalid_data_cnt = gbi_invalid_data_cnt - 1) begin
+        invalid_data_cnt_bus_clk[gbi_invalid_data_cnt] = invalid_data_cnt_cdc1[gbi_invalid_data_cnt] ^ invalid_data_cnt_bus_clk[gbi_invalid_data_cnt + 1];
+    end
 end
 
 // M26 data loss flag
@@ -349,6 +368,7 @@ always @(posedge BUS_CLK) begin
     end
 end
 
+reg [7:0] LOST_DATA_CNT;
 always @(posedge CLK_RX) begin
     if (RST)
         LOST_DATA_CNT <= 0;
@@ -356,6 +376,25 @@ always @(posedge CLK_RX) begin
         if (wfull && cdc_fifo_write && WRITE_FRAME && LOST_DATA_CNT != 8'hff)
             LOST_DATA_CNT <= LOST_DATA_CNT + 1;
 end
+
+reg [7:0] lost_data_cnt_gray;
+always @(posedge CLK_RX)
+    lost_data_cnt_gray <=  (LOST_DATA_CNT>>1) ^ LOST_DATA_CNT;
+
+reg [7:0] lost_data_cnt_cdc0, lost_data_cnt_cdc1;
+always @(posedge BUS_CLK) begin
+    lost_data_cnt_cdc0 <= lost_data_cnt_gray;
+    lost_data_cnt_cdc1 <= lost_data_cnt_cdc0;
+end
+
+integer gbi_lost_data_cnt;
+always @(*) begin
+    lost_data_cnt_bus_clk[7] = lost_data_cnt_cdc1[7];
+    for(gbi_lost_data_cnt = 6; gbi_lost_data_cnt >= 0; gbi_lost_data_cnt = gbi_lost_data_cnt - 1) begin
+        lost_data_cnt_bus_clk[gbi_lost_data_cnt] = lost_data_cnt_cdc1[gbi_lost_data_cnt] ^ lost_data_cnt_bus_clk[gbi_lost_data_cnt + 1];
+    end
+end
+
 
 always @(posedge CLK_RX) begin
     LOST_ERROR <= |LOST_DATA_CNT;
