@@ -31,9 +31,9 @@ module m26_rx_core
 
     input wire [31:0] TIMESTAMP,
 
-    output wire LOST_ERROR,
+    output reg LOST_ERROR,
     output wire INVALID,
-    output wire INVALID_FLAG
+    output reg INVALID_FLAG
 );
 
 localparam VERSION = 2;
@@ -195,7 +195,7 @@ assign INVALID = INVALID_CH0 | INVALID_CH1;
 
 reg [15:0] TIMESTAMP_BUF_31_16;
 always @(posedge CLK_RX)
-    if(WRITE_CH0 && FRAME_START_CH0)
+    if (WRITE_CH0 && FRAME_START_CH0)
         TIMESTAMP_BUF_31_16 <= TIMESTAMP[31:16];
 
 reg [15:0] data_field;
@@ -231,17 +231,49 @@ always @(posedge CLK_RX) begin
     RST_LONG_SYNC <= |rst_cnt_sync;
 end
 
+reg INVALID_FRAME;
+always @(posedge CLK_RX) begin
+    if(RST_SYNC)
+        INVALID_FRAME <= 1'b0;
+    else
+        if (M26_FRAME_START)
+            INVALID_FRAME <= 1'b0;
+        else if (INVALID_FLAG_CH0 | INVALID_FLAG_CH1)
+            INVALID_FRAME <= 1'b1;
+end
+
+reg INVALID_FRAME_FF1, INVALID_FRAME_FF2;
+always @(posedge CLK_RX) begin
+    INVALID_FRAME_FF1 <= INVALID_FRAME;
+    INVALID_FRAME_FF2 <= INVALID_FRAME_FF1;
+end
+
+wire INVALID_FRAME_FLAG;
+assign INVALID_FRAME_FLAG = ~INVALID_FRAME_FF2 & INVALID_FRAME_FF1;
+
+always @(posedge CLK_RX) begin
+    INVALID_FLAG <= INVALID_FRAME_FLAG;
+end
+
+always @(posedge CLK_RX) begin
+    if (RST)
+        INVALID_DATA_CNT <= 0;
+    else
+        if (INVALID_FRAME_FLAG && WRITE_FRAME && INVALID_DATA_CNT != 8'hff)
+            INVALID_DATA_CNT <= INVALID_DATA_CNT + 1;
+end
+
 // M26 data loss flag
-wire fifo_data_lost_sync;
+reg fifo_data_lost;
 reg m26_data_lost;
 always @(posedge CLK_RX) begin
-    if(RST_SYNC) begin
+    if (RST_SYNC) begin
         m26_data_lost <= 0;
     end else begin
-        if(fifo_data_lost_sync) begin
-            m26_data_lost <= 1;
-        end else if(FRAME_START_CH0) begin
-            m26_data_lost <= 0;
+        if(FRAME_START_CH0) begin  // keep data lost bit until end of frame
+            m26_data_lost <= 1'b0;
+        end else if (fifo_data_lost) begin
+            m26_data_lost <= 1'b1;
         end
     end
 end
@@ -251,141 +283,87 @@ always @(posedge CLK_RX) begin
     M26_FRAME_START <= FRAME_START_CH0;
 end
 
-reg INVALID_TOGGLE;
-always @(posedge CLK_RX) begin
-    if(RST_SYNC)
-        INVALID_TOGGLE <= 1'b0;
-    else
-        if(M26_FRAME_START)
-            INVALID_TOGGLE <= 1'b0;
-        else if(INVALID_FLAG_CH0 | INVALID_FLAG_CH1)
-            INVALID_TOGGLE <= 1'b1;
-end
-
-reg INVALID_TOGGLE_FF1, INVALID_TOGGLE_FF2;
-always @(posedge CLK_RX) begin
-    INVALID_TOGGLE_FF1 <= INVALID_TOGGLE;
-    INVALID_TOGGLE_FF2 <= INVALID_TOGGLE_FF1;
-end
-
-assign INVALID_FLAG = ~INVALID_TOGGLE_FF2 & INVALID_TOGGLE_FF1;
-
-wire INVALID_FLAG_BUS_CLK;
-flag_domain_crossing INVALID_FLAG_domain_crossing_bus_clk (
-    .CLK_A(CLK_RX),
-    .CLK_B(BUS_CLK),
-    .FLAG_IN_CLK_A(INVALID_FLAG),
-    .FLAG_OUT_CLK_B(INVALID_FLAG_BUS_CLK)
-);
-
-always @(posedge BUS_CLK) begin
-    if(RST)
-        INVALID_DATA_CNT <= 0;
-    else if (INVALID_FLAG_BUS_CLK && INVALID_DATA_CNT != 8'hff)
-        INVALID_DATA_CNT <= INVALID_DATA_CNT + 1;
-end
-
 wire [17:0] cdc_data;
 assign cdc_data[17] = m26_data_lost;  // M26 data loss flag
 assign cdc_data[16] = M26_FRAME_START;  // start of M26 frame flag
 assign cdc_data[15:0] = data_field;  // M26 data
 
-reg FIRST_FRAME;
+reg WRITE_FRAME;
 always @(posedge CLK_RX) begin
-    if(RST_SYNC)
-        FIRST_FRAME <= 1'b0;
-    else if(WRITE_CH0 && FRAME_START_CH0)
-        FIRST_FRAME <= 1'b1;
+    if (RST_SYNC)
+        WRITE_FRAME <= 1'b0;
+    else
+        if (WRITE_CH0 && FRAME_START_CH0 && CONF_EN_SYNC == 1'b0)  // disable write full frame
+            WRITE_FRAME <= 1'b0;
+        else if (WRITE_CH0 && FRAME_START_CH0 && CONF_EN_SYNC == 1'b1)  // enable write full frame
+            WRITE_FRAME <= 1'b1;
 end
 
 reg cdc_fifo_write;
 always @(posedge CLK_RX) begin
-    if((WRITE_CH0 | WRITE_CH1) & CONF_EN_SYNC)
+    if(WRITE_CH0 | WRITE_CH1)
         cdc_fifo_write <= 1'b1;
     else
         cdc_fifo_write <= 1'b0;
 end
 
-wire cdc_fifo_empty;
+wire wfull;
+wire fifo_full, cdc_fifo_empty;
 wire [17:0] cdc_data_out;
 cdc_syncfifo #(
     .DSIZE(18),
     .ASIZE(3)
 ) cdc_syncfifo_i (
     .rdata(cdc_data_out),
-    .wfull(),
+    .wfull(wfull),
     .rempty(cdc_fifo_empty),
     .wdata(cdc_data),
-    .winc(cdc_fifo_write & FIRST_FRAME),
+    .winc(cdc_fifo_write & WRITE_FRAME),
     .wclk(CLK_RX),
     .wrst(RST_LONG_SYNC),
-    .rinc(1'b1),
+    .rinc(!fifo_full),
     .rclk(BUS_CLK),
     .rrst(RST_LONG)
 );
 
-reg cdc_fifo_empty_buf, cdc_fifo_empty_buf2;
-always @(posedge BUS_CLK) begin
-    cdc_fifo_empty_buf <= cdc_fifo_empty;
-    cdc_fifo_empty_buf2 <= cdc_fifo_empty_buf;
-end
-reg [17:0] cdc_data_out_buf, cdc_data_out_buf2;
-always @(posedge BUS_CLK) begin
-    cdc_data_out_buf <= cdc_data_out;
-    cdc_data_out_buf2 <= cdc_data_out_buf;
-end
-
-wire fifo_full;
 gerneric_fifo #(
     .DATA_SIZE(18),
     .DEPTH(2048)
 ) fifo_i (
     .clk(BUS_CLK),
     .reset(RST_LONG),
-    .write(!cdc_fifo_empty_buf2),
+    .write(!cdc_fifo_empty),
     .read(FIFO_READ),
-    .data_in(cdc_data_out_buf2),
+    .data_in(cdc_data_out),
     .full(fifo_full),
     .empty(FIFO_EMPTY),
     .data_out(FIFO_DATA[17:0]),
     .size()
 );
 
-reg fifo_data_lost;
 always @(posedge BUS_CLK) begin
-    if(fifo_full && !cdc_fifo_empty_buf2) begin  // write when full
+    if (wfull && cdc_fifo_write && WRITE_FRAME) begin  // assert when write and FIFO full
         fifo_data_lost <= 1'b1;
-    end else if(!fifo_full && !cdc_fifo_empty_buf2) begin  // write when not full
+    end else if (!wfull && cdc_fifo_write && WRITE_FRAME) begin  // de-assert when write and FIFO not full
         fifo_data_lost <= 1'b0;
     end
 end
 
-three_stage_synchronizer data_lost_synchronizer_clk_rx (
-    .CLK(CLK_RX),
-    .IN(fifo_data_lost),
-    .OUT(fifo_data_lost_sync)
-);
+always @(posedge CLK_RX) begin
+    if (RST)
+        LOST_DATA_CNT <= 0;
+    else
+        if (wfull && cdc_fifo_write && WRITE_FRAME && LOST_DATA_CNT != 8'hff)
+            LOST_DATA_CNT <= LOST_DATA_CNT + 1;
+end
+
+always @(posedge CLK_RX) begin
+    LOST_ERROR <= |LOST_DATA_CNT;
+end
 
 assign FIFO_DATA[19:18] = 0;
 assign FIFO_DATA[23:20] = IDENTYFIER[3:0];
 assign FIFO_DATA[31:24] = HEADER[7:0];
 
-always @(posedge BUS_CLK) begin
-    if(RST)
-        LOST_DATA_CNT <= 0;
-    else if (fifo_full && !cdc_fifo_empty_buf2 && LOST_DATA_CNT != 8'hff)
-        LOST_DATA_CNT <= LOST_DATA_CNT + 1;
-end
-
-reg LOST_ERROR_BUS_CLK;
-always @(posedge BUS_CLK) begin
-    LOST_ERROR_BUS_CLK <= |LOST_DATA_CNT;
-end
-
-three_stage_synchronizer lost_error_synchronizer_clk_rx (
-    .CLK(CLK_RX),
-    .IN(LOST_ERROR_BUS_CLK),
-    .OUT(LOST_ERROR)
-);
 
 endmodule
