@@ -71,7 +71,7 @@ always @(posedge WCLK) begin
     else        state <= next_state;
 end
 
-always @(state or data or wait_cnt or decoder_err) begin // old_data
+always @(state or wait_cnt or decoder_err) begin // or data or old_data
 
     case(state)
         START:
