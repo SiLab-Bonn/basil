@@ -211,7 +211,7 @@ always @(posedge CLK_RX) begin
 end
 
 // generate long reset
-reg [4:0] rst_cnt;
+reg [3:0] rst_cnt;
 reg RST_LONG;
 always @(posedge BUS_CLK) begin
     if (RST)
@@ -221,7 +221,7 @@ always @(posedge BUS_CLK) begin
     RST_LONG <= |rst_cnt;
 end
 
-reg [4:0] rst_cnt_sync;
+reg [3:0] rst_cnt_sync;
 reg RST_LONG_SYNC;
 always @(posedge CLK_RX) begin
     if (RST_SYNC)
@@ -360,7 +360,7 @@ gerneric_fifo #(
     .size()
 );
 
-always @(posedge BUS_CLK) begin
+always @(posedge CLK_RX) begin
     if (wfull && cdc_fifo_write && WRITE_FRAME) begin  // assert when write and FIFO full
         fifo_data_lost <= 1'b1;
     end else if (!wfull && cdc_fifo_write && WRITE_FRAME) begin  // de-assert when write and FIFO not full
@@ -370,7 +370,7 @@ end
 
 reg [7:0] LOST_DATA_CNT;
 always @(posedge CLK_RX) begin
-    if (RST)
+    if (RST_SYNC)
         LOST_DATA_CNT <= 0;
     else
         if (wfull && cdc_fifo_write && WRITE_FRAME && LOST_DATA_CNT != 8'hff)
@@ -394,7 +394,6 @@ always @(*) begin
         lost_data_cnt_bus_clk[gbi_lost_data_cnt] = lost_data_cnt_cdc1[gbi_lost_data_cnt] ^ lost_data_cnt_bus_clk[gbi_lost_data_cnt + 1];
     end
 end
-
 
 always @(posedge CLK_RX) begin
     LOST_ERROR <= |LOST_DATA_CNT;
