@@ -32,12 +32,10 @@
 `include "bram_fifo/bram_fifo.v"
 
 `include "utils/generic_fifo.v"
-//`include "utils/cdc_pulse_sync_cnt.v"
 `include "utils/cdc_syncfifo.v"
 `include "utils/pulse_gen_rising.v"
-
 `include "utils/clock_divider.v"
-
+`include "utils/3_stage_synchronizer.v"
 `include "utils/cdc_reset_sync.v"
 
 module tb (
