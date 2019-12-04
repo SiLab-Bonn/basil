@@ -27,7 +27,7 @@
 `include "utils/cdc_pulse_sync.v"
 `include "utils/CG_MOD_pos.v"
 `include "utils/clock_divider.v"
-
+`include "utils/3_stage_synchronizer.v"
 `include "utils/RAMB16_S1_S9_sim.v"
 
 
