@@ -164,7 +164,7 @@ assign memout_addrb = out_bit_cnt < CONF_COUNT ? out_bit_cnt-1 : CONF_COUNT-1; /
 
 wire [ADDR_SIZEA-1:0] memout_addra;
 wire [ABUSWIDTH-1:0] BUS_ADD_MEM;
-assign BUS_ADD_MEM = BUS_ADD-32;
+assign BUS_ADD_MEM = BUS_ADD - 32;
 
 generate
     if (OUT_BITS<=8) begin
