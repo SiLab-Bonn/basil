@@ -29,7 +29,7 @@
 `include "utils/clock_divider.v"
 `include "utils/ddr_des.v"
 `include "utils/IDDR_sim.v"
-
+`include "utils/3_stage_synchronizer.v"
 `include "utils/RAMB16_S1_S9_sim.v"
 
 
