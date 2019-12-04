@@ -98,9 +98,9 @@ wire CONF_EN_INVERT_TDC; // BUS_ADD==1 BIT==6
 assign CONF_EN_INVERT_TDC = status_regs[1][6];
 wire CONF_EN_INVERT_TRIGGER; // BUS_ADD==1 BIT==7
 assign CONF_EN_INVERT_TRIGGER = status_regs[1][7];
-reg [7:0] lost_data_cnt_buf_read; // BUS_ADD==0
 reg [31:0] event_cnt_buf; // BUS_ADD==2
 reg [23:0] event_cnt_buf_read; // BUS_ADD==3 - 5
+reg [7:0] lost_data_cnt_bus_clk; // BUS_ADD==6
 
 always @(posedge BUS_CLK) begin
     if(RST) begin
@@ -126,7 +126,7 @@ always @(posedge BUS_CLK) begin
         else if(BUS_ADD == 5)
             BUS_DATA_OUT <= event_cnt_buf_read[23:16];
         else if(BUS_ADD == 6)
-            BUS_DATA_OUT <= lost_data_cnt_buf_read;
+            BUS_DATA_OUT <= lost_data_cnt_bus_clk;
         else
             BUS_DATA_OUT <= 0;
     end
@@ -608,53 +608,22 @@ always @(*) begin
         cdc_data[27:20] = TRIG_DIST[7:0];
 end
 
-reg [7:0] LOST_DATA_CNT;
-always @(posedge DV_CLK) begin
-    if(RST_DV_CLK)
-        LOST_DATA_CNT <= 0;
-    else if (wfull && FINISH && LOST_DATA_CNT != 8'b1111_1111)
-        LOST_DATA_CNT <= LOST_DATA_CNT + 1;
-end
-
-reg [7:0] lost_data_cnt_gray;
-always @(posedge DV_CLK)
-    lost_data_cnt_gray <=  (LOST_DATA_CNT>>1) ^ LOST_DATA_CNT;
-
-reg [7:0] lost_data_cnt_cdc0, lost_data_cnt_cdc1, lost_data_cnt_bus_clk;
-always @(posedge BUS_CLK) begin
-    lost_data_cnt_cdc0 <= lost_data_cnt_gray;
-    lost_data_cnt_cdc1 <= lost_data_cnt_cdc0;
-end
-
-integer gbi_lost_err_cnt;
-always @(*) begin
-    lost_data_cnt_bus_clk[7] = lost_data_cnt_cdc1[7];
-    for(gbi_lost_err_cnt = 6; gbi_lost_err_cnt >= 0; gbi_lost_err_cnt = gbi_lost_err_cnt - 1) begin
-        lost_data_cnt_bus_clk[gbi_lost_err_cnt] = lost_data_cnt_cdc1[gbi_lost_err_cnt] ^ lost_data_cnt_bus_clk[gbi_lost_err_cnt + 1];
-    end
-end
-
-always @(posedge BUS_CLK)
-begin
-    lost_data_cnt_buf_read <= lost_data_cnt_bus_clk;
-end
-
 // generate long reset
-reg [5:0] rst_cnt;
+reg [3:0] rst_cnt;
 reg RST_LONG;
 always @(posedge BUS_CLK) begin
     if (RST)
-        rst_cnt <= 6'b11_1111; // start value
+        rst_cnt <= 4'b1111; // start value
     else if (rst_cnt != 0)
         rst_cnt <= rst_cnt - 1;
     RST_LONG <= |rst_cnt;
 end
 
-reg [5:0] rst_cnt_dv_clk;
+reg [3:0] rst_cnt_dv_clk;
 reg RST_LONG_DV_CLK;
 always @(posedge DV_CLK) begin
     if (RST_DV_CLK)
-        rst_cnt_dv_clk <= 6'b11_1111; // start value
+        rst_cnt_dv_clk <= 4'b1111; // start value
     else if (rst_cnt_dv_clk != 0)
         rst_cnt_dv_clk <= rst_cnt_dv_clk - 1;
     RST_LONG_DV_CLK <= |rst_cnt_dv_clk;
@@ -692,5 +661,33 @@ gerneric_fifo #(
     .data_out(FIFO_DATA[31:0]),
     .size()
 );
+
+reg [7:0] LOST_DATA_CNT;
+always @(posedge DV_CLK) begin
+    if (RST_DV_CLK)
+        LOST_DATA_CNT <= 0;
+    else
+        if (wfull && FINISH && LOST_DATA_CNT != 8'b1111_1111)
+            LOST_DATA_CNT <= LOST_DATA_CNT + 1;
+end
+
+reg [7:0] lost_data_cnt_gray;
+always @(posedge DV_CLK)
+    lost_data_cnt_gray <=  (LOST_DATA_CNT>>1) ^ LOST_DATA_CNT;
+
+reg [7:0] lost_data_cnt_cdc0, lost_data_cnt_cdc1;
+always @(posedge BUS_CLK) begin
+    lost_data_cnt_cdc0 <= lost_data_cnt_gray;
+    lost_data_cnt_cdc1 <= lost_data_cnt_cdc0;
+end
+
+integer gbi_lost_data_cnt;
+always @(*) begin
+    lost_data_cnt_bus_clk[7] = lost_data_cnt_cdc1[7];
+    for(gbi_lost_data_cnt = 6; gbi_lost_data_cnt >= 0; gbi_lost_data_cnt = gbi_lost_data_cnt - 1) begin
+        lost_data_cnt_bus_clk[gbi_lost_data_cnt] = lost_data_cnt_cdc1[gbi_lost_data_cnt] ^ lost_data_cnt_bus_clk[gbi_lost_data_cnt + 1];
+    end
+end
+
 
 endmodule

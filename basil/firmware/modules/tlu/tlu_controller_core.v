@@ -199,10 +199,10 @@ begin
 end
 
 // read reg
-reg [7:0] lost_data_cnt_buf_read; // BUS_ADD==0
 reg [31:0] CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK, CURRENT_TLU_TRIGGER_NUMBER_BUS_CLK_BUF; // BUS_ADD==4 - 7
-reg [31:0] TRIGGER_COUNTER; // BUS_ADD==8 - 11
-reg [23:0] TRIGGER_COUNTER_BUF_8_31;
+reg [31:0] TRIGGER_COUNTER; // BUS_ADD==8
+reg [23:0] TRIGGER_COUNTER_BUF_8_31; // BUS_ADD==9 - 11
+reg [7:0] lost_data_cnt_bus_clk; // BUS_ADD==12
 reg [7:0] TLU_TRIGGER_LOW_TIMEOUT_ERROR_CNT;
 reg [7:0] TLU_TRIGGER_ACCEPT_ERROR_CNT;
 
@@ -233,7 +233,7 @@ always @(posedge BUS_CLK) begin
         else if (BUS_ADD == 11)
             BUS_DATA_OUT <= TRIGGER_COUNTER_BUF_8_31[23:16];
         else if (BUS_ADD == 12)
-            BUS_DATA_OUT <= lost_data_cnt_buf_read;
+            BUS_DATA_OUT <= lost_data_cnt_bus_clk;
         else if (BUS_ADD == 13)
             BUS_DATA_OUT <= status_regs[13];
         else if (BUS_ADD == 14)
@@ -827,21 +827,21 @@ tlu_controller_fsm #(
 );
 
 // generate long reset
-reg [5:0] rst_cnt;
+reg [3:0] rst_cnt;
 reg RST_LONG;
 always @(posedge BUS_CLK) begin
     if (RST)
-        rst_cnt <= 6'b11_1111; // start value
+        rst_cnt <= 4'b1111; // start value
     else if (rst_cnt != 0)
         rst_cnt <= rst_cnt - 1;
     RST_LONG <= |rst_cnt;
 end
 
-reg [5:0] rst_cnt_sync;
+reg [3:0] rst_cnt_sync;
 reg RST_LONG_SYNC;
 always @(posedge TRIGGER_CLK) begin
     if (RST_SYNC)
-        rst_cnt_sync <= 6'b11_1111; // start value
+        rst_cnt_sync <= 4'b1111; // start value
     else if (rst_cnt_sync != 0)
         rst_cnt_sync <= rst_cnt_sync - 1;
     RST_LONG_SYNC <= |rst_cnt_sync;
@@ -851,38 +851,6 @@ wire wfull;
 wire cdc_fifo_write;
 assign cdc_fifo_write = !wfull && TRIGGER_DATA_WRITE;
 wire fifo_full, cdc_fifo_empty;
-
-reg [7:0] LOST_DATA_CNT;
-always @(posedge TRIGGER_CLK) begin
-    if(RST_SYNC)
-        LOST_DATA_CNT <= 0;
-    else if (wfull && TRIGGER_DATA_WRITE && LOST_DATA_CNT != 8'b1111_1111)
-        LOST_DATA_CNT <= LOST_DATA_CNT + 1;
-end
-
-reg [7:0] lost_data_cnt_gray;
-always @(posedge TRIGGER_CLK)
-    lost_data_cnt_gray <=  (LOST_DATA_CNT>>1) ^ LOST_DATA_CNT;
-
-reg [7:0] lost_data_cnt_cdc0, lost_data_cnt_cdc1, lost_data_cnt_bus_clk;
-always @(posedge BUS_CLK) begin
-    lost_data_cnt_cdc0 <= lost_data_cnt_gray;
-    lost_data_cnt_cdc1 <= lost_data_cnt_cdc0;
-end
-
-integer gbi_lost_err_cnt;
-always @(*) begin
-    lost_data_cnt_bus_clk[7] = lost_data_cnt_cdc1[7];
-    for(gbi_lost_err_cnt = 6; gbi_lost_err_cnt >= 0; gbi_lost_err_cnt = gbi_lost_err_cnt - 1) begin
-        lost_data_cnt_bus_clk[gbi_lost_err_cnt] = lost_data_cnt_cdc1[gbi_lost_err_cnt] ^ lost_data_cnt_bus_clk[gbi_lost_err_cnt + 1];
-    end
-end
-
-always @(posedge BUS_CLK)
-begin
-    lost_data_cnt_buf_read <= lost_data_cnt_bus_clk;
-end
-
 wire [31:0] cdc_data_out;
 cdc_syncfifo #(
     .DSIZE(32),
@@ -914,6 +882,33 @@ gerneric_fifo #(
     .data_out(FIFO_DATA[31:0]),
     .size()
 );
+
+reg [7:0] LOST_DATA_CNT;
+always @(posedge TRIGGER_CLK) begin
+    if (RST_SYNC)
+        LOST_DATA_CNT <= 0;
+    else
+        if (wfull && TRIGGER_DATA_WRITE && LOST_DATA_CNT != 8'b1111_1111)
+            LOST_DATA_CNT <= LOST_DATA_CNT + 1;
+end
+
+reg [7:0] lost_data_cnt_gray;
+always @(posedge TRIGGER_CLK)
+    lost_data_cnt_gray <=  (LOST_DATA_CNT>>1) ^ LOST_DATA_CNT;
+
+reg [7:0] lost_data_cnt_cdc0, lost_data_cnt_cdc1;
+always @(posedge BUS_CLK) begin
+    lost_data_cnt_cdc0 <= lost_data_cnt_gray;
+    lost_data_cnt_cdc1 <= lost_data_cnt_cdc0;
+end
+
+integer gbi_lost_data_cnt;
+always @(*) begin
+    lost_data_cnt_bus_clk[7] = lost_data_cnt_cdc1[7];
+    for(gbi_lost_data_cnt = 6; gbi_lost_data_cnt >= 0; gbi_lost_data_cnt = gbi_lost_data_cnt - 1) begin
+        lost_data_cnt_bus_clk[gbi_lost_data_cnt] = lost_data_cnt_cdc1[gbi_lost_data_cnt] ^ lost_data_cnt_bus_clk[gbi_lost_data_cnt + 1];
+    end
+end
 
 // Chipscope
 `ifdef SYNTHESIS_NOT
