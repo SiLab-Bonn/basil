@@ -23,7 +23,7 @@ module receiver_logic
     output wire             empty,
     output reg              rx_fifo_full,
     output wire             rec_sync_ready,
-    output reg  [7:0]       lost_err_cnt,
+    output reg  [7:0]       lost_data_cnt,
     output reg  [7:0]       decoder_err_cnt,
     output reg [15:0]       fifo_size,
     input wire              invert_rx_data,
@@ -148,8 +148,6 @@ always @(posedge WCLK) begin
     else
         if(decoder_err && write_8b10b && decoder_err_cnt != 8'hff)
             decoder_err_cnt <= decoder_err_cnt + 1;
-        else
-            decoder_err_cnt <= decoder_err_cnt;
 end
 
 reg [2:0] byte_sel;
@@ -179,64 +177,52 @@ always @(posedge WCLK) begin
             data_dec_in[byte_sel] <= dec_data;
 end
 
-reg write_dec_in;
+reg cdc_fifo_write;
 always @(posedge WCLK) begin
     if(RESET_WCLK)
-        write_dec_in <= 0;
+        cdc_fifo_write <= 0;
     else
         if(write_8b10b && dec_k==0 && byte_sel==2)
-            write_dec_in <= 1;
+            cdc_fifo_write <= 1;
         else
-            write_dec_in <= 0;
-end
-
-wire cdc_fifo_full, cdc_fifo_empty;
-
-always @(posedge WCLK) begin
-    if(RESET_WCLK)
-        lost_err_cnt <= 0;
-    else
-        if(cdc_fifo_full && write_dec_in && lost_err_cnt != 8'hff)
-            lost_err_cnt <= lost_err_cnt + 1;
-        else
-            lost_err_cnt <= lost_err_cnt;
+            cdc_fifo_write <= 0;
 end
 
 wire [23:0] cdc_data_out;
 wire [23:0] wdata;
-assign wdata = {data_dec_in[0],data_dec_in[1],data_dec_in[2]};
+assign wdata = {data_dec_in[0], data_dec_in[1], data_dec_in[2]};
 
 // generate long reset
-reg [5:0] rst_cnt_wclk;
+reg [3:0] rst_cnt_wclk;
 reg RST_LONG_WCLK;
 always @(posedge WCLK) begin
     if (RESET_WCLK)
-        rst_cnt_wclk <= 6'b11_1111; // start value
+        rst_cnt_wclk <= 4'b1111; // start value
     else if (rst_cnt_wclk != 0)
         rst_cnt_wclk <= rst_cnt_wclk - 1;
     RST_LONG_WCLK <= |rst_cnt_wclk;
 end
 
-reg [5:0] rst_cnt_fifo_clk;
+reg [3:0] rst_cnt_fifo_clk;
 reg RST_LONG_FIFO_CLK;
 always @(posedge FIFO_CLK) begin
     if (RESET_FIFO_CLK)
-        rst_cnt_fifo_clk <= 6'b11_1111; // start value
+        rst_cnt_fifo_clk <= 4'b1111; // start value
     else if (rst_cnt_fifo_clk != 0)
         rst_cnt_fifo_clk <= rst_cnt_fifo_clk - 1;
     RST_LONG_FIFO_CLK <= |rst_cnt_fifo_clk;
 end
 
-wire full;
+wire wfull;
 cdc_syncfifo #(
     .DSIZE(24),
     .ASIZE(2)
 ) cdc_syncfifo_i (
     .rdata(cdc_data_out),
-    .wfull(cdc_fifo_full),
+    .wfull(wfull),
     .rempty(cdc_fifo_empty),
     .wdata(wdata),
-    .winc(write_dec_in),
+    .winc(cdc_fifo_write),
     .wclk(WCLK),
     .wrst(RST_LONG_WCLK),
     .rinc(!full),
@@ -244,11 +230,11 @@ cdc_syncfifo #(
     .rrst(RST_LONG_FIFO_CLK)
 );
 
-wire [9:0] fifo_size_int;
+wire [10:0] fifo_size_int;
 
 gerneric_fifo #(
     .DATA_SIZE(24),
-    .DEPTH(1024)
+    .DEPTH(2048)
 ) fifo_i (
     .clk(FIFO_CLK),
     .reset(RST_LONG_FIFO_CLK),
@@ -261,12 +247,24 @@ gerneric_fifo #(
     .size(fifo_size_int)
 );
 
-always @(posedge FIFO_CLK) begin
-    rx_fifo_full <= full;
+always @(posedge WCLK) begin
+    if (wfull && cdc_fifo_write) begin  // write when FIFO full
+        rx_fifo_full <= 1'b1;
+    end else if (!wfull && cdc_fifo_write) begin  // write when FIFO not full
+        rx_fifo_full <= 1'b0;
+    end
+end
+
+always @(posedge WCLK) begin
+    if (RESET_WCLK)
+        lost_data_cnt <= 0;
+    else
+        if (wfull && cdc_fifo_write && lost_data_cnt != 8'b1111_1111)
+            lost_data_cnt <= lost_data_cnt + 1;
 end
 
 always @(posedge FIFO_CLK) begin
-    fifo_size <= {6'b0, fifo_size_int};
+    fifo_size <= {5'b0, fifo_size_int};
 end
 
 `ifdef SYNTHESIS_NOT
