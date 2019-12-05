@@ -12,7 +12,7 @@
 
 import cocotb
 from cocotb.binary import BinaryValue
-from cocotb.triggers import RisingEdge, ReadOnly, Timer
+from cocotb.triggers import RisingEdge, Timer
 from cocotb.drivers import BusDriver
 from cocotb.result import ReturnValue
 from cocotb.clock import Clock
@@ -97,13 +97,8 @@ class BasilBusDriver(BusDriver):
                     if len(self.bus.BUS_DATA.value) == 8:
                         result.append(self.bus.BUS_DATA.value.integer & 0xff)
                     else:
-                        #value = self.bus.BUS_DATA.value[24:31].integer & 0xff
-                        
-                        #workaround for cocotb https://github.com/potentialventures/cocotb/pull/459
-                        value = BinaryValue(self.bus.BUS_DATA.value.binstr[24:32])
-                        
-                        result.append(value.integer)
-                        
+                        result.append(self.bus.BUS_DATA.value[24:31].integer & 0xff)
+
             if(self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value.integer == 0):
                 byte += 4
             else:
