@@ -19,6 +19,7 @@
 `include "seq_rec/seq_rec_core.v"
 
 `include "utils/3_stage_synchronizer.v"
+`include "utils/flag_domain_crossing.v"
 `include "utils/cdc_pulse_sync.v"
 
 
