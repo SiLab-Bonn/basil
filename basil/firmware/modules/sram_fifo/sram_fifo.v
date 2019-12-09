@@ -7,16 +7,14 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module sram_fifo
-#(
+module sram_fifo #(
     parameter   BASEADDR = 16'h0000,
     parameter   HIGHADDR = 16'h0000,
+    parameter   ABUSWIDTH = 16,
     parameter   DEPTH = 21'h10_0000,
     parameter   FIFO_ALMOST_FULL_THRESHOLD = 95, // in percent
     parameter   FIFO_ALMOST_EMPTY_THRESHOLD = 5 // in percent
 ) (
-//    input                   BUS_CLK270,
-
     input wire                  BUS_CLK,
     input wire                  BUS_RST,
     input wire [15:0]           BUS_ADD,
@@ -46,12 +44,15 @@ module sram_fifo
 );
 
 wire IP_RD, IP_WR;
-wire [15:0] IP_ADD;
+wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
 wire [7:0] IP_DATA_OUT;
 
-bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR) ) i_bus_to_ip
-(
+bus_to_ip #(
+    .BASEADDR(BASEADDR),
+    .HIGHADDR(HIGHADDR),
+    .ABUSWIDTH(ABUSWIDTH)
+) i_bus_to_ip (
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
     .BUS_ADD(BUS_ADD),
