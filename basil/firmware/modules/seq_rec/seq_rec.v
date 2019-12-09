@@ -7,15 +7,13 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module seq_rec
-#(
+module seq_rec #(
     parameter BASEADDR = 0,
     parameter HIGHADDR = 0,
     parameter ABUSWIDTH = 16,
-
-    parameter MEM_BYTES = 8*1024,
+    parameter MEM_BYTES = 2*1024,
     parameter IN_BITS = 8
-)(
+) (
     input wire                   BUS_CLK,
     input wire                   BUS_RST,
     input wire  [ABUSWIDTH-1:0]  BUS_ADD,
