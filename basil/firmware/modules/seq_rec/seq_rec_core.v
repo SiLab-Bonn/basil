@@ -15,13 +15,12 @@
  * - multi window recording (sorted with but multiple times)
  */
 
-module seq_rec_core
-#(
-    parameter MEM_BYTES = 8*1024,
+module seq_rec_core #(
+    parameter MEM_BYTES = 2*1024,
     parameter ABUSWIDTH = 16,
-    parameter IN_BITS = 8 //4,8,16,32
+    parameter IN_BITS = 8
 
-)(
+) (
     BUS_CLK,
     BUS_RST,
     BUS_ADD,
@@ -54,7 +53,7 @@ input wire SEQ_EXT_START;
 localparam ADDR_SIZEA = `CLOG2(MEM_BYTES);
 localparam ADDR_SIZEB = (IN_BITS > 8) ? `CLOG2(MEM_BYTES/(IN_BITS/8)) : `CLOG2(MEM_BYTES*(8/IN_BITS));
 
-reg [7:0] status_regs [15:0];
+reg [7:0] status_regs [4:0];
 
 wire RST;
 wire SOFT_RST;
@@ -64,15 +63,15 @@ assign RST = BUS_RST || SOFT_RST;
 localparam DEF_BIT_OUT = MEM_BYTES;
 
 always @(posedge BUS_CLK) begin
-    if(RST) begin
+    if (RST) begin
         status_regs[0] <= 0;
         status_regs[1] <= 0;
         status_regs[2] <= 0;
         status_regs[3] <= DEF_BIT_OUT[7:0]; //bits
         status_regs[4] <= DEF_BIT_OUT[15:8]; //bits
-    end
-    else if(BUS_WR && BUS_ADD < 16)
+    end else if (BUS_WR && BUS_ADD < 5) begin
         status_regs[BUS_ADD[3:0]] <= BUS_DATA_IN;
+    end
 end
 
 reg [7:0] BUS_IN_MEM;
@@ -80,54 +79,60 @@ reg [7:0] BUS_OUT_MEM;
 
 // 1 - finished
 
-wire START;
+wire CONF_START;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
-assign START = (BUS_ADD==1 && BUS_WR);
+assign CONF_START = (BUS_ADD==1 && BUS_WR);
 
 wire [15:0] CONF_COUNT;
 assign CONF_COUNT = {status_regs[4], status_regs[3]};
 
-wire CONF_EN_SEQ_EXT_START;
-assign CONF_EN_SEQ_EXT_START = status_regs[2][0];
+wire CONF_EN_EXT_START;
+assign CONF_EN_EXT_START = status_regs[2][0];
 
-reg CONF_DONE;
+reg CONF_READY;
 
 wire [7:0] BUS_STATUS_OUT;
 assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
 
 reg [7:0] BUS_DATA_OUT_REG;
 always @(posedge BUS_CLK) begin
-    if(BUS_RD)
+    if (BUS_RD)
     begin
-        if(BUS_ADD == 0)
+        if (BUS_ADD == 0)
             BUS_DATA_OUT_REG <= VERSION;
-        else if(BUS_ADD == 1)
-            BUS_DATA_OUT_REG <= {7'b0,CONF_DONE};
-        else if(BUS_ADD == 2)
-            BUS_DATA_OUT_REG <= {7'b0,CONF_EN_SEQ_EXT_START};
-        else if(BUS_ADD == 3)
-            BUS_DATA_OUT_REG <= CONF_COUNT[15:8];
-        else if(BUS_ADD == 4)
-            BUS_DATA_OUT_REG <= CONF_COUNT[7:0];
-        else if(BUS_ADD < 16)
-            BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
+        else if (BUS_ADD == 1)
+            BUS_DATA_OUT_REG <= {7'b0, CONF_READY};
+        else if (BUS_ADD == 2)
+            BUS_DATA_OUT_REG <= {7'b0, CONF_EN_EXT_START};
+        else if (BUS_ADD < 5)
+            BUS_DATA_OUT <= status_regs[BUS_ADD[3:0]];
+        else if (BUS_ADD < 16)
+            BUS_DATA_OUT <= 8'b0;
     end
 end
 
+wire CONF_EN_EXT_START_SYNC;
+flag_domain_crossing conf_en_ext_start_domain_crossing (
+    .CLK_A(BUS_CLK),
+    .CLK_B(SEQ_CLK),
+    .FLAG_IN_CLK_A(CONF_EN_EXT_START),
+    .FLAG_OUT_CLK_B(CONF_EN_EXT_START_SYNC)
+);
+
 reg [ABUSWIDTH-1:0]  PREV_BUS_ADD;
 always @(posedge BUS_CLK) begin
-    if(BUS_RD) begin
+    if (BUS_RD) begin
         PREV_BUS_ADD <= BUS_ADD;
     end
 end
 
 always @(*) begin
-    if(PREV_BUS_ADD < 16)
+    if (PREV_BUS_ADD < 16)
         BUS_DATA_OUT = BUS_DATA_OUT_REG;
-    else if(PREV_BUS_ADD < 16 + MEM_BYTES )
+    else if (PREV_BUS_ADD < 16 + MEM_BYTES)
         BUS_DATA_OUT = BUS_IN_MEM;
     else
-        BUS_DATA_OUT = 8'hxx;
+        BUS_DATA_OUT = 8'b0;
 end
 
 reg [ABUSWIDTH-1:0] out_bit_cnt;
@@ -153,7 +158,7 @@ endgenerate
 reg [IN_BITS-1:0] SEQ_IN_MEM;
 
 wire WEA, WEB;
-assign WEA = BUS_WR && BUS_ADD >=16 && BUS_ADD < 16+MEM_BYTES && !WEB;
+assign WEA = BUS_WR && BUS_ADD >=16 && BUS_ADD < 16 + MEM_BYTES && !WEB;
 
 generate
     if (IN_BITS==8) begin
@@ -176,16 +181,23 @@ generate
         end
 
         always @(posedge SEQ_CLK)
-            if(WEB)
+            if (WEB)
                 mem[memout_addrb] <= SEQ_IN;
 
     end else begin
-         wire [7:0] douta;
+        wire [7:0] douta;
 
-        seq_rec_blk_mem memout(
-            .clka(BUS_CLK), .clkb(SEQ_CLK), .douta(douta), .doutb(),
-            .wea(WEA), .web(WEB), .addra(memout_addra), .addrb(memout_addrb),
-            .dina(BUS_DATA_IN), .dinb(SEQ_IN)
+        seq_rec_blk_mem memout (
+            .clka(BUS_CLK),
+            .clkb(SEQ_CLK),
+            .douta(douta),
+            .doutb(),
+            .wea(WEA),
+            .web(WEB),
+            .addra(memout_addra),
+            .addrb(memout_addrb),
+            .dina(BUS_DATA_IN),
+            .dinb(SEQ_IN)
         );
         always @(*) begin
             BUS_IN_MEM = douta;
@@ -198,44 +210,71 @@ assign WEB = out_bit_cnt != 0;
 
 wire RST_SYNC;
 wire RST_SOFT_SYNC;
-cdc_pulse_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(SEQ_CLK), .pulse_out(RST_SOFT_SYNC));
+cdc_pulse_sync rst_pulse_sync (
+    .clk_in(BUS_CLK),
+    .pulse_in(RST),
+    .clk_out(SEQ_CLK),
+    .pulse_out(RST_SOFT_SYNC)
+);
 assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
 
-wire START_SYNC;
-cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(SEQ_CLK), .pulse_out(START_SYNC));
+wire CONF_START_FLAG_SYNC;
+flag_domain_crossing conf_start_flag_domain_crossing (
+    .CLK_A(BUS_CLK),
+    .CLK_B(SEQ_CLK),
+    .FLAG_IN_CLK_A(CONF_START),
+    .FLAG_OUT_CLK_B(CONF_START_FLAG_SYNC)
+);
 
 wire [ADDR_SIZEB:0] STOP_BIT;
 assign STOP_BIT = CONF_COUNT;
 
-wire START_SYNC_OR_TRIG;
-assign START_SYNC_OR_TRIG = START_SYNC | (CONF_EN_SEQ_EXT_START & SEQ_EXT_START);
+wire START_REC;
+assign START_REC = CONF_START_FLAG_SYNC | (CONF_EN_EXT_START_SYNC & SEQ_EXT_START);
 
 always @(posedge SEQ_CLK)
     if (RST_SYNC)
-        out_bit_cnt <= 0;
-    else if(START_SYNC_OR_TRIG)
-        out_bit_cnt <= 1;
-    else if(out_bit_cnt == STOP_BIT)
+        out_bit_cnt <= 1'b0;
+    else if (START_REC)
+        out_bit_cnt <= 1'b1;
+    else if (out_bit_cnt == STOP_BIT)
         out_bit_cnt <= out_bit_cnt;
-    else if(out_bit_cnt != 0)
+    else if (out_bit_cnt != 0)
         out_bit_cnt <= out_bit_cnt + 1;
 
 reg DONE;
 always @(posedge SEQ_CLK)
-    if(RST_SYNC | START_SYNC_OR_TRIG)
-        DONE <= 0;
-    else if(out_bit_cnt == STOP_BIT)
-        DONE <= 1;
+    if (RST_SYNC)
+        DONE <= 1'b1;
+    else
+        if (START_REC)
+            DONE <= 1'b0;
+        else if (out_bit_cnt == STOP_BIT)
+            DONE <= 1'b1;
 
-wire DONE_SYNC;
-cdc_pulse_sync done_pulse_sync (.clk_in(SEQ_CLK), .pulse_in(DONE), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
+wire START_REC_FLAG_BUS_CLK;
+cdc_pulse_sync start_pulse_sync (
+    .clk_in(SEQ_CLK),
+    .pulse_in(START_REC),
+    .clk_out(BUS_CLK),
+    .pulse_out(START_REC_FLAG_BUS_CLK)
+);
+
+wire DONE_FLAG_BUS_CLK;
+cdc_pulse_sync done_pulse_sync (
+    .clk_in(SEQ_CLK),
+    .pulse_in(DONE),
+    .clk_out(BUS_CLK),
+    .pulse_out(DONE_FLAG_BUS_CLK)
+);
 
 always @(posedge BUS_CLK)
-    if(RST)
-        CONF_DONE <= 1;
-    else if(START)
-        CONF_DONE <= 0;
-    else if(DONE_SYNC)
-        CONF_DONE <= 1;
+    if (RST)
+        CONF_READY <= 1'b1;
+    else if (START_REC_FLAG_BUS_CLK || CONF_START)
+        CONF_READY <= 1'b0;
+    else if (DONE_FLAG_BUS_CLK)
+        CONF_READY <= 1'b1;
+
 
 endmodule
