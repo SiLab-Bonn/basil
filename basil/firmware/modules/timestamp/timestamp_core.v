@@ -7,11 +7,10 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module timestamp_core
-#(
+module timestamp_core #(
     parameter ABUSWIDTH = 16,
     parameter IDENTIFIER = 4'b0001
-)(
+) (
     input wire CLK,
     input wire DI,
     input wire EXT_ENABLE,

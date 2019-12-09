@@ -58,11 +58,44 @@ localparam PLL_LOCK_DELAY     = 1000*1000;
 
 wire PLL_VCO, CLK250, CLK125TX, CLK125TX90, CLK125RX;
 
-clock_multiplier #( .MULTIPLIER(PLL_MUL)  ) i_clock_multiplier( .CLK(BUS_CLK),                      .CLOCK(PLL_VCO)  );
-//clock_divider #(.DIVISOR(PLL_DIV_BUS_CLK) ) i_clock_divisor_1 ( .CLK(PLL_VCO), .RESET(1'b0), .CE(), .CLOCK(BUS_CLK)  );
-clock_divider #(.DIVISOR(PLL_DIV_CLK250)  ) i_clock_divisor_2 ( .CLK(PLL_VCO), .RESET(1'b0), .CE(), .CLOCK(CLK250)   );
-clock_divider #(.DIVISOR(PLL_DIV_CLK125TX)) i_clock_divisor_3 ( .CLK(PLL_VCO), .RESET(1'b0), .CE(), .CLOCK(CLK125TX) );
-clock_divider #(.DIVISOR(PLL_DIV_CLK125RX)) i_clock_divisor_4 ( .CLK(PLL_VCO), .RESET(1'b0), .CE(), .CLOCK(CLK125RX) );
+clock_multiplier #(
+    .MULTIPLIER(PLL_MUL)
+) i_clock_multiplier(
+    .CLK(BUS_CLK),
+    .CLOCK(PLL_VCO)
+);
+// clock_divider #(
+//     .DIVISOR(PLL_DIV_BUS_CLK)
+// ) i_clock_divisor_1 (
+//     .CLK(PLL_VCO),
+//     .RESET(1'b0),
+//     .CE(),
+//     .CLOCK(BUS_CLK)
+// );
+clock_divider #(
+    .DIVISOR(PLL_DIV_CLK250)
+) i_clock_divisor_2 (
+    .CLK(PLL_VCO),
+    .RESET(1'b0),
+    .CE(),
+    .CLOCK(CLK250)
+);
+clock_divider #(
+    .DIVISOR(PLL_DIV_CLK125TX)
+) i_clock_divisor_3 (
+    .CLK(PLL_VCO),
+    .RESET(1'b0),
+    .CE(),
+    .CLOCK(CLK125TX)
+);
+clock_divider #(
+    .DIVISOR(PLL_DIV_CLK125RX)
+) i_clock_divisor_4 (
+    .CLK(PLL_VCO),
+    .RESET(1'b0),
+    .CE(),
+    .CLOCK(CLK125RX)
+);
 
 reg LOCKED;
 initial begin
@@ -73,8 +106,11 @@ end
 
 
 // ------- RESET/CLOCK  ------- //
-//wire BUS_RST;
-//reset_gen ireset_gen(.CLK(BUS_CLK), .RST(BUS_RST));
+// wire BUS_RST;
+// reset_gen ireset_gen (
+//     .CLK(BUS_CLK),
+//     .RST(BUS_RST)
+// );
 
 reg RESET_N;
 initial begin
@@ -87,8 +123,7 @@ end
 // -------  USER MODULES  ------- //
 wire FIFO_FULL, FIFO_READ, FIFO_NOT_EMPTY, FIFO_WRITE;
 wire [31:0] FIFO_DATA;
-bram_fifo
-#(
+bram_fifo #(
     .BASEADDR(FIFO_BASEADDR),
     .HIGHADDR(FIFO_HIGHADDR),
     .BASEADDR_DATA(FIFO_BASEADDR_DATA),

@@ -11,7 +11,7 @@ module i2c_core #(
     parameter ABUSWIDTH = 16,
     parameter MEM_BYTES = 1,
     parameter IGNORE_ACK = 0
-)(
+) (
     input wire BUS_CLK,
     input wire BUS_RST,
     input wire [ABUSWIDTH-1:0] BUS_ADD,

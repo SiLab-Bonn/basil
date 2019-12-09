@@ -7,8 +7,7 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module bram_fifo_core
-#(
+module bram_fifo_core #(
     parameter                   DEPTH = 32'h8000,
     parameter                   FIFO_ALMOST_FULL_THRESHOLD = 95, // in percent
     parameter                   FIFO_ALMOST_EMPTY_THRESHOLD = 5, // in percent
@@ -119,14 +118,19 @@ assign FIFO_READ_NEXT_OUT = !FULL_BUF;
 `include "../includes/log2func.v"
 localparam POINTER_SIZE = `CLOG2(DEPTH);
 
-gerneric_fifo #(.DATA_SIZE(32), .DEPTH(DEPTH)) i_buf_fifo
-( .clk(BUS_CLK), .reset(RST),
+gerneric_fifo #(
+    .DATA_SIZE(32),
+    .DEPTH(DEPTH)
+) i_buf_fifo (
+    .clk(BUS_CLK),
+    .reset(RST),
     .write(!FIFO_EMPTY_IN || BUS_WR_DATA),
     .read(BUS_RD_DATA),
     .data_in(BUS_WR_DATA ? BUS_DATA_IN_DATA : FIFO_DATA),
     .full(FULL_BUF),
     .empty(FIFO_EMPTY_IN_BUF),
-    .data_out(FIFO_DATA_BUF[31:0]), .size(CONF_SIZE[POINTER_SIZE-1:0])
+    .data_out(FIFO_DATA_BUF[31:0]),
+    .size(CONF_SIZE[POINTER_SIZE-1:0])
 );
 assign CONF_SIZE[31:POINTER_SIZE] = 0;
 

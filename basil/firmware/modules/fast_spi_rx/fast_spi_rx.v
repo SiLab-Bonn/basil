@@ -7,14 +7,13 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module fast_spi_rx
-#(
+module fast_spi_rx #(
     parameter BASEADDR = 16'h0000,
     parameter HIGHADDR = 16'h0000,
     parameter ABUSWIDTH = 16,
 
     parameter IDENTYFIER = 4'b0001
-)(
+) (
     input wire BUS_CLK,
     input wire [ABUSWIDTH-1:0] BUS_ADD,
     inout wire [7:0] BUS_DATA,
@@ -37,8 +36,11 @@ wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
 wire [7:0] IP_DATA_OUT;
 
-bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i_bus_to_ip
-(
+bus_to_ip #(
+    .BASEADDR(BASEADDR),
+    .HIGHADDR(HIGHADDR),
+    .ABUSWIDTH(ABUSWIDTH)
+) i_bus_to_ip (
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
     .BUS_ADD(BUS_ADD),
@@ -51,12 +53,10 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i
     .IP_DATA_OUT(IP_DATA_OUT)
 );
 
-fast_spi_rx_core
-#(
+fast_spi_rx_core #(
     .ABUSWIDTH(ABUSWIDTH),
     .IDENTYFIER(IDENTYFIER)
-) i_fast_spi_rx_core
-(
+) i_fast_spi_rx_core (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(IP_ADD),

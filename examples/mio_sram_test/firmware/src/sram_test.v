@@ -61,7 +61,10 @@ fx2_to_bus i_fx2_to_bus (
     .CS_FPGA()
 );
 
-reset_gen i_reset_gen(.CLK(BUS_CLK), .RST(BUS_RST));
+reset_gen i_reset_gen (
+    .CLK(BUS_CLK),
+    .RST(BUS_RST)
+);
 
 //MODULE ADREESSES
 localparam GPIO_CONTROL_BASEADDR = 16'h0000;
@@ -82,15 +85,13 @@ wire PATTERN_EN;
 wire COUNTER_EN;
 wire COUNTER_DIRECT;
 
-gpio
-#(
+gpio #(
     .BASEADDR(GPIO_CONTROL_BASEADDR),
     .HIGHADDR(GPIO_CONTROL_HIGHADDR),
 
     .IO_WIDTH(8),
     .IO_DIRECTION(8'hff)
-) i_gpio_control
-(
+) i_gpio_control (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(BUS_ADD),
@@ -101,15 +102,13 @@ gpio
 );
 
 wire [31:0] PATTERN;
-gpio
-#(
+gpio #(
     .BASEADDR(GPIO_PATTERN_BASEADDR),
     .HIGHADDR(GPIO_PATTERN_HIGHADDR),
 
     .IO_WIDTH(32),
     .IO_DIRECTION(32'hffffffff)
-) i_gpio_pattern
-(
+) i_gpio_pattern (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(BUS_ADD),
@@ -121,12 +120,10 @@ gpio
 
 
 wire PULSE;
-pulse_gen
-#(
+pulse_gen #(
     .BASEADDR(PULSE_BASEADDR),
     .HIGHADDR(PULSE_HIGHADDR)
-) i_pulse_gen
-(
+) i_pulse_gen (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(BUS_ADD),
@@ -149,11 +146,9 @@ wire COUNTER_FIFO_READ;
 wire ARB_READY_OUT, ARB_WRITE_OUT;
 wire [31:0] ARB_DATA_OUT;
 
-rrp_arbiter
-#(
+rrp_arbiter #(
     .WIDTH(2)
-) i_rrp_arbiter
-(
+) i_rrp_arbiter (
     .RST(BUS_RST),
     .CLK(BUS_CLK),
 
@@ -170,8 +165,7 @@ rrp_arbiter
 wire USB_READ;
 assign USB_READ = FREAD && FSTROBE;
 wire [7:0] FD_SRAM;
-sram_fifo
-#(
+sram_fifo #(
     .BASEADDR(FIFO_BASEADDR),
     .HIGHADDR(FIFO_HIGHADDR)
 ) i_out_fifo (

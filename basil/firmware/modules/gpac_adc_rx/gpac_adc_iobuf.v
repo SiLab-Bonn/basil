@@ -7,8 +7,7 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module gpac_adc_iobuf
-(
+module gpac_adc_iobuf (
     input ADC_CLK,
 
     input ADC_DCO_P, ADC_DCO_N,
@@ -54,26 +53,24 @@ always @(negedge ADC_CLK)
 //    ADC_ENC_BUF <= ADC_ENC;
 assign ADC_ENC_BUF = ADC_ENC;
 
-IBUFDS
-#(
-   .DIFF_TERM("TRUE"),    // Differential Termination
-   .IOSTANDARD("LVDS_25")  // Specify the input I/O standard
+IBUFDS #(
+    .DIFF_TERM("TRUE"),    // Differential Termination
+    .IOSTANDARD("LVDS_25")  // Specify the input I/O standard
 ) IBUFGDS_ADC_FCO (
-   .O(ADC_FCO_BUF),  // Clock buffer output
-   .I(ADC_FCO_P),  // Diff_p clock buffer input (connect directly to top-level port)
-   .IB(ADC_FCO_N) // Diff_n clock buffer input (connect directly to top-level port)
+    .O(ADC_FCO_BUF),  // Clock buffer output
+    .I(ADC_FCO_P),  // Diff_p clock buffer input (connect directly to top-level port)
+    .IB(ADC_FCO_N) // Diff_n clock buffer input (connect directly to top-level port)
 );
 
 
-IBUFGDS     // Specify the input I/O standard
-#(
+IBUFGDS #(    // Specify the input I/O standard
     .DIFF_TERM("TRUE"),    // Differential Termination
     .IOSTANDARD("LVDS_25")  // Specify the input I/O standard
 )
 IBUFDS_ADC_DCO (
-  .O(ADC_DCO_BUF),  // Buffer output
-  .I(ADC_DCO_P),  // Diff_p buffer input (connect directly to top-level port)
-  .IB(ADC_DCO_N) // Diff_n buffer input (connect directly to top-level port)
+    .O(ADC_DCO_BUF),  // Buffer output
+    .I(ADC_DCO_P),  // Diff_p buffer input (connect directly to top-level port)
+    .IB(ADC_DCO_N) // Diff_n buffer input (connect directly to top-level port)
 );
 //BUFG ADC_BUFG_INST (.I(ADC_FCO_PB), .O(ADC_FCO));
 
@@ -85,8 +82,7 @@ OBUFDS #(
     .I(ADC_ENC_BUF)      // Buffer input
 );
 
-IBUFDS
-#(
+IBUFDS #(
     .DIFF_TERM("TRUE"),    // Differential Termination
     .IOSTANDARD("LVDS_25")  // Specify the input I/O standard
 ) IBUFGDS_ADC_OUT_0 (
@@ -95,8 +91,7 @@ IBUFDS
     .IB(ADC_IN_N[0]) // Diff_n clock buffer input (connect directly to top-level port)
 );
 
-IBUFDS
-#(
+IBUFDS #(
     .DIFF_TERM("TRUE"),    // Differential Termination
     .IOSTANDARD("LVDS_25")  // Specify the input I/O standard
 ) IBUFGDS_ADC_OUT_1 (
@@ -105,8 +100,7 @@ IBUFDS
     .IB(ADC_IN_N[1]) // Diff_n clock buffer input (connect directly to top-level port)
 );
 
-IBUFDS
-#(
+IBUFDS #(
     .DIFF_TERM("TRUE"),    // Differential Termination
     .IOSTANDARD("LVDS_25")  // Specify the input I/O standard
 ) IBUFGDS_ADC_OUT_2 (
@@ -115,8 +109,7 @@ IBUFDS
     .IB(ADC_IN_N[2]) // Diff_n clock buffer input (connect directly to top-level port)
 );
 
-IBUFDS
-#(
+IBUFDS #(
     .DIFF_TERM("TRUE"),    // Differential Termination
     .IOSTANDARD("LVDS_25")  // Specify the input I/O standard
 ) IBUFGDS_ADC_OUT_3 (

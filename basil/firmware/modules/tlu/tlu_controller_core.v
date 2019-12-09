@@ -16,15 +16,13 @@
  * TLU controller supporting EUDET TLU 0.1/0.2
  */
 
-module tlu_controller_core
-#(
+module tlu_controller_core #(
     parameter                   ABUSWIDTH = 16,
     parameter                   DIVISOR = 8, // dividing TRIGGER_CLK by DIVISOR for TLU_CLOCK
     parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 17, // bit length of trigger data always TLU_TRIGGER_MAX_CLOCK_CYCLES - 1
     parameter                   WIDTH = 8,
     parameter                   TIMESTAMP_N_OF_BIT = 32
-)
-(
+) (
     input wire                  BUS_CLK,
     input wire                  BUS_RST,
     input wire [ABUSWIDTH-1:0]  BUS_ADD,

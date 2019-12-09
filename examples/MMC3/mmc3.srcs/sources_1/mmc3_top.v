@@ -82,7 +82,7 @@ FX3_IF  FX3_IF_inst (
     .fx3_ack(fx3_ack),
     .fx3_rd_finish(fx3_rd_finish),
     .fx3_rst(PLL_RST), // PLL is reset first
-//    .fx3_rst(fx3_rst), // Comment before synthesis and uncomment previous line
+    // .fx3_rst(fx3_rst), // Comment before synthesis and uncomment previous line
 
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
@@ -94,7 +94,7 @@ FX3_IF  FX3_IF_inst (
 
     .FLAG1(FLAG1),
     .FLAG2(FLAG2)
-    );
+);
 
 wire clk40mhz_pll, clk320mhz_pll, clk160mhz_pll, clk16mhz_pll;
 wire pll_feedback, LOCKED;
@@ -124,96 +124,94 @@ PLLE2_BASE #(
     .DIVCLK_DIVIDE(5),        // Master division value, (1-56)
     .REF_JITTER1(0.0),        // Reference input jitter in UI, (0.000-0.999).
     .STARTUP_WAIT("FALSE")     // Delay DONE until PLL Locks, ("TRUE"/"FALSE")
- )
- PLLE2_BASE_inst (
-     // Generated 40 MHz clock
-     .CLKOUT0(clk40mhz_pll),
-     .CLKOUT1(clk320mhz_pll),
-     .CLKOUT2(clk160mhz_pll),
-     .CLKOUT3(clk16mhz_pll),
-     .CLKOUT4(),
-     .CLKOUT5(),
+) PLLE2_BASE_inst (
+    // Generated 40 MHz clock
+    .CLKOUT0(clk40mhz_pll),
+    .CLKOUT1(clk320mhz_pll),
+    .CLKOUT2(clk160mhz_pll),
+    .CLKOUT3(clk16mhz_pll),
+    .CLKOUT4(),
+    .CLKOUT5(),
 
-     .CLKFBOUT(pll_feedback),
+    .CLKFBOUT(pll_feedback),
 
-     .LOCKED(LOCKED),     // 1-bit output: LOCK
+    .LOCKED(LOCKED),     // 1-bit output: LOCK
 
-     // Input 100 MHz clock
-     .CLKIN1(BUS_CLK),
+    // Input 100 MHz clock
+    .CLKIN1(BUS_CLK),
 
-     // Control Ports
-     .PWRDWN(0),
-     .RST(fx3_rst), // Button is active low
+    // Control Ports
+    .PWRDWN(0),
+    .RST(fx3_rst), // Button is active low
 
-     // Feedback
-     .CLKFBIN(pll_feedback)
- );
+    // Feedback
+    .CLKFBIN(pll_feedback)
+);
 
- wire clk40mhz, clk320mhz, clk160mhz, clk16mhz;
+wire clk40mhz, clk320mhz, clk160mhz, clk16mhz;
 
- BUFG BUFG_inst_40 (
- .O(clk40mhz),     // Clock buffer output
- .I(clk40mhz_pll)      // Clock buffer input
- );
+BUFG BUFG_inst_40 (
+    .O(clk40mhz),     // Clock buffer output
+    .I(clk40mhz_pll)      // Clock buffer input
+);
 
- BUFG BUFG_inst_320 (
- .O(clk320mhz),     // Clock buffer output
- .I(clk320mhz_pll)      // Clock buffer input
- );
+BUFG BUFG_inst_320 (
+    .O(clk320mhz),     // Clock buffer output
+    .I(clk320mhz_pll)      // Clock buffer input
+);
 
- BUFG BUFG_inst_160 (
- .O(clk160mhz),     // Clock buffer output
- .I(clk160mhz_pll)      // Clock buffer input
- );
+BUFG BUFG_inst_160 (
+    .O(clk160mhz),     // Clock buffer output
+    .I(clk160mhz_pll)      // Clock buffer input
+);
 
- BUFG BUFG_inst_16 (
- .O(clk16mhz),     // Clock buffer output
- .I(clk16mhz_pll)      // Clock buffer input
- );
+BUFG BUFG_inst_16 (
+    .O(clk16mhz),     // Clock buffer output
+    .I(clk16mhz_pll)      // Clock buffer input
+);
 
 // -------  MODULE ADREESSES  ------- //
- localparam CMD_BASEADDR = 32'h0000;
- localparam CMD_HIGHADDR = 32'h1000-1;
+localparam CMD_BASEADDR = 32'h0000;
+localparam CMD_HIGHADDR = 32'h1000-1;
 
- localparam GPIO1_BASEADDR = 32'h1000;
- localparam GPIO1_HIGHADDR = 32'h1003;
+localparam GPIO1_BASEADDR = 32'h1000;
+localparam GPIO1_HIGHADDR = 32'h1003;
 
- localparam GPIO2_BASEADDR = 32'h1004;
- localparam GPIO2_HIGHADDR = 32'h1007;
+localparam GPIO2_BASEADDR = 32'h1004;
+localparam GPIO2_HIGHADDR = 32'h1007;
 
- localparam FIFO_BASEADDR = 32'h8100;
- localparam FIFO_HIGHADDR = 32'h8200-1;
+localparam FIFO_BASEADDR = 32'h8100;
+localparam FIFO_HIGHADDR = 32'h8200-1;
 
- localparam RX4_BASEADDR = 32'h8300;
- localparam RX4_HIGHADDR = 32'h8400-1;
+localparam RX4_BASEADDR = 32'h8300;
+localparam RX4_HIGHADDR = 32'h8400-1;
 
- localparam RX3_BASEADDR = 32'h8400;
- localparam RX3_HIGHADDR = 32'h8500-1;
+localparam RX3_BASEADDR = 32'h8400;
+localparam RX3_HIGHADDR = 32'h8500-1;
 
- localparam RX2_BASEADDR = 32'h8500;
- localparam RX2_HIGHADDR = 32'h8600-1;
+localparam RX2_BASEADDR = 32'h8500;
+localparam RX2_HIGHADDR = 32'h8600-1;
 
- localparam RX1_BASEADDR = 32'h8600;
- localparam RX1_HIGHADDR = 32'h8700-1;
+localparam RX1_BASEADDR = 32'h8600;
+localparam RX1_HIGHADDR = 32'h8700-1;
 
- localparam FIFO_BASEADDR_DATA = 32'h8000_0000;
- localparam FIFO_HIGHADDR_DATA = 32'h9000_0000;
+localparam FIFO_BASEADDR_DATA = 32'h8000_0000;
+localparam FIFO_HIGHADDR_DATA = 32'h9000_0000;
 
- localparam ABUSWIDTH = 32;
+localparam ABUSWIDTH = 32;
 
 wire CMD_EXT_START_FLAG;
 assign CMD_EXT_START_FLAG = 0;
 
 
-gpio
-#(
+gpio #(
     .BASEADDR(GPIO1_BASEADDR),
     .HIGHADDR(GPIO1_HIGHADDR),
     .ABUSWIDTH(ABUSWIDTH),
     .IO_WIDTH(8),
     .IO_DIRECTION(8'hff),
     .IO_TRI(0)
-)gpio1(
+) gpio1 (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(BUS_ADD),
@@ -223,15 +221,14 @@ gpio
     .IO(led)
 );
 
-gpio
-#(
+gpio #(
     .BASEADDR(GPIO2_BASEADDR),
     .HIGHADDR(GPIO2_HIGHADDR),
     .ABUSWIDTH(ABUSWIDTH),
     .IO_WIDTH(8),
     .IO_DIRECTION(8'hff),
     .IO_TRI(0)
-)gpio2(
+) gpio2 (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(BUS_ADD),
@@ -241,8 +238,7 @@ gpio
     .IO(PWR_EN[3:0])
 );
 
-cmd_seq
-#(
+cmd_seq #(
     .BASEADDR(CMD_BASEADDR),
     .HIGHADDR(CMD_HIGHADDR),
     .ABUSWIDTH(ABUSWIDTH)
@@ -270,45 +266,43 @@ wire [31:0] FIFO_DATA;
 
 genvar i;
 generate
-  for (i = 3; i < 4; i = i + 1) begin: rx_gen
-    fei4_rx
-    #(
-        .BASEADDR(RX1_BASEADDR-32'h0100*i),
-        .HIGHADDR(RX1_HIGHADDR-32'h0100*i),
-        .DSIZE(DSIZE),
-        .DATA_IDENTIFIER(i+1),
-        .ABUSWIDTH(ABUSWIDTH)
-    ) i_fei4_rx (
-        .RX_CLK(clk160mhz),
-        .RX_CLK2X(clk320mhz),
-        .DATA_CLK(clk16mhz),
+    for (i = 3; i < 4; i = i + 1) begin: rx_gen
+        fei4_rx #(
+            .BASEADDR(RX1_BASEADDR-32'h0100*i),
+            .HIGHADDR(RX1_HIGHADDR-32'h0100*i),
+            .DSIZE(DSIZE),
+            .DATA_IDENTIFIER(i+1),
+            .ABUSWIDTH(ABUSWIDTH)
+        ) i_fei4_rx (
+            .RX_CLK(clk160mhz),
+            .RX_CLK2X(clk320mhz),
+            .DATA_CLK(clk16mhz),
 
-        .RX_DATA(DOBOUT),
+            .RX_DATA(DOBOUT),
 
-        .RX_READY(),
-        .RX_8B10B_DECODER_ERR(),
-        .RX_FIFO_OVERFLOW_ERR(),
+            .RX_READY(),
+            .RX_8B10B_DECODER_ERR(),
+            .RX_FIFO_OVERFLOW_ERR(),
 
-        .FIFO_READ(FIFO_READ),
-        .FIFO_EMPTY(FIFO_EMPTY),
-        .FIFO_DATA(FIFO_DATA),
+            .FIFO_READ(FIFO_READ),
+            .FIFO_EMPTY(FIFO_EMPTY),
+            .FIFO_DATA(FIFO_DATA),
 
-        .RX_FIFO_FULL(),
+            .RX_FIFO_FULL(),
 
-        .BUS_CLK(BUS_CLK),
-        .BUS_RST(BUS_RST),
-        .BUS_ADD(BUS_ADD),
-        .BUS_DATA(BUS_DATA[7:0]),
-        .BUS_RD(BUS_RD),
-        .BUS_WR(BUS_WR)
-    );
-  end
+            .BUS_CLK(BUS_CLK),
+            .BUS_RST(BUS_RST),
+            .BUS_ADD(BUS_ADD),
+            .BUS_DATA(BUS_DATA[7:0]),
+            .BUS_RD(BUS_RD),
+            .BUS_WR(BUS_WR)
+        );
+    end
 endgenerate
 
 wire FIFO_NOT_EMPTY, FIFO_FULL, FIFO_NEAR_FULL, FIFO_READ_ERROR;
 
-bram_fifo
-#(
+bram_fifo #(
     .BASEADDR(FIFO_BASEADDR),
     .HIGHADDR(FIFO_HIGHADDR),
     .BASEADDR_DATA(FIFO_BASEADDR_DATA),

@@ -7,11 +7,10 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module spi_core
-#(
+module spi_core #(
     parameter ABUSWIDTH = 16,
     parameter MEM_BYTES = 16
-)(
+) (
     input wire                      BUS_CLK,
     input wire                      BUS_RST,
     input wire     [ABUSWIDTH-1:0]  BUS_ADD,

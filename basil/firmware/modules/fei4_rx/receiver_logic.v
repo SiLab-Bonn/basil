@@ -7,11 +7,9 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module receiver_logic
-#(
+module receiver_logic #(
     parameter               DSIZE = 10
-)
-(
+) (
     input wire              RESET,
     input wire              WCLK,
     input wire              FCLK,

@@ -7,12 +7,11 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module seq_gen_core
-#(
+module seq_gen_core #(
     parameter ABUSWIDTH = 16,
     parameter MEM_BYTES = 16384,
     parameter OUT_BITS = 16 //4,8,16,32
-)(
+) (
     BUS_CLK,
     BUS_RST,
     BUS_ADD,
