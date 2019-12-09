@@ -7,13 +7,11 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module gpac_adc_rx_core
-#(
+module gpac_adc_rx_core #(
     parameter   ABUSWIDTH = 16,
     parameter [1:0] ADC_ID = 0,
     parameter [0:0] HEADER_ID = 0
-)
-(
+) (
     input wire ADC_ENC,
     input wire [13:0] ADC_IN,
 

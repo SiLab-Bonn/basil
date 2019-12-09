@@ -7,15 +7,14 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module tdc_s3_core
-#(
+module tdc_s3_core #(
     parameter DATA_IDENTIFIER = 4'b0100,
     parameter CLKDV = 4, // factor of CLK160 to DV_CLK, minimal divider of 2
     parameter ABUSWIDTH = 16,
     parameter FAST_TDC = 1,
     parameter FAST_TRIGGER = 1,
     parameter BROADCAST = 0  // set this in order to receive the TDC trigger via FAST_TRIGGER_IN (640 MHz sampled TDC trigger signal is shared with other TDC modules)
-)(
+) (
     input wire CLK320,
     input wire CLK160,
     input wire DV_CLK,

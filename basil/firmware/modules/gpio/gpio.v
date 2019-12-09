@@ -7,15 +7,14 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module gpio
-#(
+module gpio #(
     parameter BASEADDR = 0,
     parameter HIGHADDR = 0,
     parameter ABUSWIDTH = 16,
     parameter IO_WIDTH = 8,
     parameter IO_DIRECTION = 0,
     parameter IO_TRI = 0
-)(
+) (
     BUS_CLK,
     BUS_RST,
     BUS_ADD,
@@ -50,8 +49,11 @@ wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
 reg [7:0] IP_DATA_OUT;
 
-bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i_bus_to_ip
-(
+bus_to_ip #(
+    .BASEADDR(BASEADDR),
+    .HIGHADDR(HIGHADDR),
+    .ABUSWIDTH(ABUSWIDTH)
+) i_bus_to_ip (
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
     .BUS_ADD(BUS_ADD),

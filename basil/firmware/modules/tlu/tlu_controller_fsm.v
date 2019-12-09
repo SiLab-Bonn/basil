@@ -7,8 +7,7 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module tlu_controller_fsm
-#(
+module tlu_controller_fsm #(
     parameter                   DIVISOR = 8,
     parameter                   TLU_TRIGGER_MAX_CLOCK_CYCLES = 17,
     parameter                   TIMESTAMP_N_OF_BIT = 32

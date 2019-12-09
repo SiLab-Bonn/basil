@@ -7,8 +7,7 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module sram_fifo_core
-#(
+module sram_fifo_core #(
     parameter                   DEPTH = 21'h10_0000,
     parameter                   FIFO_ALMOST_FULL_THRESHOLD = 95, // in percent
     parameter                   FIFO_ALMOST_EMPTY_THRESHOLD = 5 // in percent

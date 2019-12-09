@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -94,8 +94,8 @@ seq_gen #(
     .BASEADDR(SEQ_GEN_BASEADDR),
     .HIGHADDR(SEQ_GEN_HIGHADDR),
     .ABUSWIDTH(ABUSWIDTH),
-    .MEM_BYTES(8 * 8 * 1024 - 1), 
-    .OUT_BITS(8) 
+    .MEM_BYTES(8 * 8 * 1024 - 1),
+    .OUT_BITS(8)
 ) i_seq_gen (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
@@ -158,47 +158,47 @@ tdc_s3 #(
 // Additional TDC modules: Use the fast sampled trigger signal from first TDC module.
 genvar i;
 generate
-  for (i = 1; i < 3; i = i + 1) begin: tdc_gen
-    tdc_s3 #(
-        .BASEADDR(TDC_BASEADDR + 32'h0100*i),
-        .HIGHADDR(TDC_HIGHADDR + 32'h0100*i),
-        .ABUSWIDTH(ABUSWIDTH),
-        .CLKDV(CLKDV),
-        .DATA_IDENTIFIER(4'b0000),
-        .FAST_TDC(1),
-        .FAST_TRIGGER(1),
-        .BROADCAST(1)  // generate for first TDC module the 640MHz sampled trigger signal and share it with other TDC mddules (broadcast)
-    ) i_tdc (
-        .CLK320(CLK_320),  // 320 MHz
-        .CLK160(CLK_160),  // 160 MHz
-        .DV_CLK(CLK_40),  // 40 MHz
-        .TDC_IN(TDC_IN[i]),
-        .TDC_OUT(),
-        // Use FAST_TRIGGER_IN as input for trigger signal
-        .TRIG_IN(1'b0),
-        .TRIG_OUT(),
+    for (i = 1; i < 3; i = i + 1) begin: tdc_gen
+        tdc_s3 #(
+            .BASEADDR(TDC_BASEADDR + 32'h0100*i),
+            .HIGHADDR(TDC_HIGHADDR + 32'h0100*i),
+            .ABUSWIDTH(ABUSWIDTH),
+            .CLKDV(CLKDV),
+            .DATA_IDENTIFIER(4'b0000),
+            .FAST_TDC(1),
+            .FAST_TRIGGER(1),
+            .BROADCAST(1)  // generate for first TDC module the 640MHz sampled trigger signal and share it with other TDC mddules (broadcast)
+        ) i_tdc (
+            .CLK320(CLK_320),  // 320 MHz
+            .CLK160(CLK_160),  // 160 MHz
+            .DV_CLK(CLK_40),  // 40 MHz
+            .TDC_IN(TDC_IN[i]),
+            .TDC_OUT(),
+            // Use FAST_TRIGGER_IN as input for trigger signal
+            .TRIG_IN(1'b0),
+            .TRIG_OUT(),
 
-        // input/output trigger signals for broadcasting mode
-        .FAST_TRIGGER_IN(FAST_TRIGGER_OUT),  // Use the already existing 640 MHz sampled trigger signal from first module as FAST TRIGGER (broadcast)
-        .FAST_TRIGGER_OUT(),
+            // input/output trigger signals for broadcasting mode
+            .FAST_TRIGGER_IN(FAST_TRIGGER_OUT),  // Use the already existing 640 MHz sampled trigger signal from first module as FAST TRIGGER (broadcast)
+            .FAST_TRIGGER_OUT(),
 
-        .FIFO_READ(TDC_FIFO_READ[i]),
-        .FIFO_EMPTY(TDC_FIFO_EMPTY[i]),
-        .FIFO_DATA(TDC_FIFO_DATA[i]),
+            .FIFO_READ(TDC_FIFO_READ[i]),
+            .FIFO_EMPTY(TDC_FIFO_EMPTY[i]),
+            .FIFO_DATA(TDC_FIFO_DATA[i]),
 
-        .BUS_CLK(BUS_CLK),
-        .BUS_RST(BUS_RST),
-        .BUS_ADD(BUS_ADD),
-        .BUS_DATA(BUS_DATA[7:0]),
-        .BUS_RD(BUS_RD),
-        .BUS_WR(BUS_WR),
+            .BUS_CLK(BUS_CLK),
+            .BUS_RST(BUS_RST),
+            .BUS_ADD(BUS_ADD),
+            .BUS_DATA(BUS_DATA[7:0]),
+            .BUS_RD(BUS_RD),
+            .BUS_WR(BUS_WR),
 
-        .ARM_TDC(TDC_ARM),
-        .EXT_EN(TDC_EXT_EN),
+            .ARM_TDC(TDC_ARM),
+            .EXT_EN(TDC_EXT_EN),
 
-        .TIMESTAMP(16'b0)
-    );
-  end
+            .TIMESTAMP(16'b0)
+        );
+    end
 endgenerate
 
 
@@ -206,35 +206,35 @@ wire FIFO_READ [2:0], FIFO_EMPTY [2:0], FIFO_FULL [2:0];
 wire [31:0] FIFO_DATA [2:0];
 genvar k;
 generate
-  for (k = 0; k < 3; k = k + 1) begin: bram_fifo_gen
-    assign FIFO_DATA[k] = TDC_FIFO_DATA[k];
-    assign FIFO_EMPTY[k] = TDC_FIFO_EMPTY[k];
-    assign TDC_FIFO_READ[k] = FIFO_READ[k];
+    for (k = 0; k < 3; k = k + 1) begin: bram_fifo_gen
+        assign FIFO_DATA[k] = TDC_FIFO_DATA[k];
+        assign FIFO_EMPTY[k] = TDC_FIFO_EMPTY[k];
+        assign TDC_FIFO_READ[k] = FIFO_READ[k];
 
-    bram_fifo #(
-        .BASEADDR(FIFO_BASEADDR + 32'h0100*k),
-        .HIGHADDR(FIFO_HIGHADDR + 32'h0100*k),
-        .BASEADDR_DATA(FIFO_BASEADDR_DATA + 32'h1000_0000*k),
-        .HIGHADDR_DATA(FIFO_HIGHADDR_DATA + 32'h1000_0000*k),
-        .ABUSWIDTH(ABUSWIDTH)
-    ) i_out_fifo (
-        .BUS_CLK(BUS_CLK),
-        .BUS_RST(BUS_RST),
-        .BUS_ADD(BUS_ADD),
-        .BUS_DATA(BUS_DATA),
-        .BUS_RD(BUS_RD),
-        .BUS_WR(BUS_WR),
+        bram_fifo #(
+            .BASEADDR(FIFO_BASEADDR + 32'h0100*k),
+            .HIGHADDR(FIFO_HIGHADDR + 32'h0100*k),
+            .BASEADDR_DATA(FIFO_BASEADDR_DATA + 32'h1000_0000*k),
+            .HIGHADDR_DATA(FIFO_HIGHADDR_DATA + 32'h1000_0000*k),
+            .ABUSWIDTH(ABUSWIDTH)
+        ) i_out_fifo (
+            .BUS_CLK(BUS_CLK),
+            .BUS_RST(BUS_RST),
+            .BUS_ADD(BUS_ADD),
+            .BUS_DATA(BUS_DATA),
+            .BUS_RD(BUS_RD),
+            .BUS_WR(BUS_WR),
 
-        .FIFO_READ_NEXT_OUT(FIFO_READ[k]),
-        .FIFO_EMPTY_IN(FIFO_EMPTY[k]),
-        .FIFO_DATA(FIFO_DATA[k]),
+            .FIFO_READ_NEXT_OUT(FIFO_READ[k]),
+            .FIFO_EMPTY_IN(FIFO_EMPTY[k]),
+            .FIFO_DATA(FIFO_DATA[k]),
 
-        .FIFO_NOT_EMPTY(),
-        .FIFO_FULL(FIFO_FULL[k]),
-        .FIFO_NEAR_FULL(),
-        .FIFO_READ_ERROR()
-    );
-  end
+            .FIFO_NOT_EMPTY(),
+            .FIFO_FULL(FIFO_FULL[k]),
+            .FIFO_NEAR_FULL(),
+            .FIFO_READ_ERROR()
+        );
+    end
 endgenerate
 
 

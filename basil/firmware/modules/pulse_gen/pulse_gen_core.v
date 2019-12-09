@@ -7,11 +7,9 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module pulse_gen_core
-#(
+module pulse_gen_core #(
     parameter ABUSWIDTH = 16
-)
-(
+) (
     input wire                      BUS_CLK,
     input wire                      BUS_RST,
     input wire     [ABUSWIDTH-1:0]  BUS_ADD,

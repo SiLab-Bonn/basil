@@ -10,7 +10,7 @@
 
 module fifo_8_to_32 #(
     parameter DEPTH = 1024
-)(
+) (
     input wire CLK,
     input wire RST,
     input wire WRITE,

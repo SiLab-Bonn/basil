@@ -7,12 +7,11 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module timestamp_div_core
-#(
+module timestamp_div_core #(
     parameter ABUSWIDTH = 16,
     parameter IDENTIFIER = 4'b0001,
     parameter CLKDV = 4
-)(
+) (
     input wire CLK320,
     input wire CLK160,
     input wire CLK40,
@@ -214,10 +213,10 @@ end
 
 wire [71:0] cdc_data_out;
 wire cdc_fifo_read;
-cdc_syncfifo#(
+cdc_syncfifo #(
     .DSIZE(72),
-    .ASIZE(8))
-cdc_syncfifo_i(
+    .ASIZE(8)
+) cdc_syncfifo_i (
     .rdata(cdc_data_out),
     .wfull(wfull),
     .rempty(cdc_fifo_empty),
@@ -256,10 +255,10 @@ assign fifo_write_data_byte[2]={IDENTIFIER,4'b0011,data_buf[71:48]};
 wire [31:0] fifo_data_in;
 assign fifo_data_in = fifo_write_data_byte[byte2_cnt];
 
-gerneric_fifo#(
+gerneric_fifo #(
     .DATA_SIZE(32),
-    .DEPTH(1024))
-fifo_i(
+    .DEPTH(1024)
+) fifo_i (
     .clk(BUS_CLK),
     .reset(RST_LONG | BUS_RST),
     .write(fifo_write),

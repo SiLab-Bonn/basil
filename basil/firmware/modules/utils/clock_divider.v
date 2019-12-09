@@ -9,11 +9,9 @@
 
 // clock divider generating clock and clock enable
 
-module clock_divider
-#(
+module clock_divider #(
     parameter DIVISOR = 40000000
-)
-(
+) (
     input wire        CLK,
     input wire        RESET,
     output reg        CE, // for sequential logic driven by CLK

@@ -7,11 +7,9 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module rec_sync
-#(
+module rec_sync #(
     parameter                       DSIZE = 10
-)
-(
+) (
     input wire                      reset,
     input wire                      datain,
     output reg      [DSIZE-1:0]     data,

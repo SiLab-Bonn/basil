@@ -7,14 +7,13 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module timestamp_div
-#(
+module timestamp_div #(
     parameter BASEADDR = 16'h0000,
     parameter HIGHADDR = 16'h0000,
     parameter ABUSWIDTH = 16,
     parameter IDENTIFIER = 4'b0001,
     parameter CLKDV = 4
-)(
+) (
     input wire BUS_CLK,
     input wire [ABUSWIDTH-1:0] BUS_ADD,
     inout wire [7:0] BUS_DATA,
@@ -33,7 +32,6 @@ module timestamp_div
     input wire FIFO_READ,
     output wire FIFO_EMPTY,
     output wire [31:0] FIFO_DATA
-
 );
 
 wire IP_RD, IP_WR;
@@ -41,8 +39,11 @@ wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
 wire [7:0] IP_DATA_OUT;
 
-bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i_bus_to_ip
-(
+bus_to_ip #(
+    .BASEADDR(BASEADDR),
+    .HIGHADDR(HIGHADDR),
+    .ABUSWIDTH(ABUSWIDTH)
+) i_bus_to_ip (
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
     .BUS_ADD(BUS_ADD),
@@ -55,13 +56,11 @@ bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i
     .IP_DATA_OUT(IP_DATA_OUT)
 );
 
-timestamp_div_core
-#(
+timestamp_div_core #(
     .ABUSWIDTH(ABUSWIDTH),
     .IDENTIFIER(IDENTIFIER),
     .CLKDV(4)
-) i_timestamp_div_core
-(
+) i_timestamp_div_core (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(IP_ADD),

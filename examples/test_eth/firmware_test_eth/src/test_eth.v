@@ -488,8 +488,10 @@ assign recv_tcp_data_cdc_fifo_write = 1'b0; //TCP_RX_WR & ~RECV_TCP_DATA_FULL;
 wire recv_tcp_data_fifo_full, recv_tcp_data_cdc_fifo_empty;
 
 wire [7:0] recv_tcp_data_cdc_data_out;
-cdc_syncfifo #(.DSIZE(8), .ASIZE(3)) cdc_syncfifo_recv_tcp_data
-(
+cdc_syncfifo #(
+    .DSIZE(8),
+    .ASIZE(3)
+) cdc_syncfifo_recv_tcp_data (
     .rdata(recv_tcp_data_cdc_data_out),
     .wfull(recv_tcp_data_wfull),
     .rempty(recv_tcp_data_cdc_fifo_empty),
@@ -512,7 +514,9 @@ always @(posedge BUS_CLK)
 
 wire RECV_TCP_DATA_FIFO_READ, RECV_TCP_DATA_FIFO_EMPTY;
 wire [31:0] RECV_TCP_FIFO_DATA;
-fifo_8_to_32 #(.DEPTH(1024)) fifo_recv_tcp_data_i (
+fifo_8_to_32 #(
+    .DEPTH(1024)
+) fifo_recv_tcp_data_i (
     .RST(RESET),
     .CLK(BUS_CLK),
     .WRITE(!recv_tcp_data_cdc_fifo_empty),
@@ -597,8 +601,10 @@ assign gen_tcp_data_cdc_fifo_write = GEN_TCP_DATA_WRITE;
 wire gen_tcp_data_fifo_full, gen_tcp_data_cdc_fifo_empty;
 
 wire [31:0] gen_tcp_data_cdc_data_out;
-cdc_syncfifo #(.DSIZE(32), .ASIZE(3)) cdc_syncfifo_send_tcp_data_i
-(
+cdc_syncfifo #(
+    .DSIZE(32),
+    .ASIZE(3)
+) cdc_syncfifo_send_tcp_data_i (
     .rdata(gen_tcp_data_cdc_data_out),
     .wfull(gen_tcp_data_wfull),
     .rempty(gen_tcp_data_cdc_fifo_empty),
@@ -653,8 +659,10 @@ assign RECV_TCP_DATA_FIFO_READ = READ_GRANT[1];
 wire FIFO_FULL;
 wire [31:0] cdc_data_out;
 wire full_32to8, cdc_fifo_empty;
-cdc_syncfifo #(.DSIZE(32), .ASIZE(3)) cdc_syncfifo_i
-(
+cdc_syncfifo #(
+    .DSIZE(32),
+    .ASIZE(3)
+) cdc_syncfifo_i (
     .rdata(cdc_data_out),
     .wfull(FIFO_FULL),
     .rempty(cdc_fifo_empty),
@@ -665,7 +673,9 @@ cdc_syncfifo #(.DSIZE(32), .ASIZE(3)) cdc_syncfifo_i
 assign ARB_READY_OUT = !FIFO_FULL;
 
 wire FIFO_EMPTY;
-fifo_32_to_8 #(.DEPTH(256*1024)) i_data_fifo (
+fifo_32_to_8 #(
+    .DEPTH(256*1024)
+) i_data_fifo (
     .RST(RESET),
     .CLK(BUS_CLK),
 

@@ -7,16 +7,14 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module fei4_rx
-#(
+module fei4_rx #(
     parameter   BASEADDR = 32'h0000,
     parameter   HIGHADDR = 32'h0000,
     parameter   DSIZE = 10,
     parameter   DATA_IDENTIFIER = 0,
     parameter   ABUSWIDTH = 16,
     parameter   USE_FIFO_CLK = 0
-)
-(
+) (
     input wire RX_CLK,
     input wire RX_CLK2X,
     input wire DATA_CLK,
@@ -47,8 +45,11 @@ wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
 wire [7:0] IP_DATA_OUT;
 
-bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH) ) i_bus_to_ip
-(
+bus_to_ip #(
+    .BASEADDR(BASEADDR),
+    .HIGHADDR(HIGHADDR),
+    .ABUSWIDTH(ABUSWIDTH)
+) i_bus_to_ip (
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
     .BUS_ADD(BUS_ADD),
@@ -69,13 +70,11 @@ generate
         assign FIFO_CLK_INT = FIFO_CLK;
 endgenerate
 
-fei4_rx_core
-#(
+fei4_rx_core #(
     .DSIZE(DSIZE),
     .DATA_IDENTIFIER(DATA_IDENTIFIER),
     .ABUSWIDTH(ABUSWIDTH)
-) i_fei4_rx_core
-(
+) i_fei4_rx_core (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(IP_ADD),

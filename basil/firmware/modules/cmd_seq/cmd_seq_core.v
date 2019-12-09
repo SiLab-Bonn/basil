@@ -7,8 +7,7 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module cmd_seq_core
-#(
+module cmd_seq_core #(
     parameter                   ABUSWIDTH = 16,
     parameter                   OUTPUTS = 1,  // from (0 : 8]
     parameter                   CMD_MEM_SIZE = 2048

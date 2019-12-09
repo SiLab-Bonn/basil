@@ -10,13 +10,13 @@
 module tdc_s3 #(
     parameter BASEADDR = 16'h0000,
     parameter HIGHADDR = 16'h0000,
+    parameter ABUSWIDTH = 16,
     parameter CLKDV = 4,
     parameter DATA_IDENTIFIER = 4'b0100,
-    parameter ABUSWIDTH = 16,
     parameter FAST_TDC = 1,
     parameter FAST_TRIGGER = 1,
     parameter BROADCAST = 0
-)(
+) (
     input wire BUS_CLK,
     input wire [ABUSWIDTH-1:0] BUS_ADD,
     inout wire [7:0] BUS_DATA,
