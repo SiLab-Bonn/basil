@@ -7,12 +7,11 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module m26_rx_core
-#(
+module m26_rx_core #(
     parameter ABUSWIDTH = 16,
     parameter HEADER = 0,
     parameter IDENTYFIER = 0
-)(
+) (
     input wire CLK_RX,
     input wire MKD_RX,
     input wire [1:0] DATA_RX,

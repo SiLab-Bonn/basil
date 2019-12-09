@@ -7,11 +7,10 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module fast_spi_rx_core
-#(
+module fast_spi_rx_core #(
     parameter ABUSWIDTH = 16,
     parameter IDENTYFIER = 4'b0001
-)(
+) (
     input wire SCLK,
     input wire SDI,
     input wire SEN,

@@ -7,14 +7,12 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module spi
-#(
+module spi #(
     parameter BASEADDR = 16'h0000,
     parameter HIGHADDR = 16'h0000,
     parameter ABUSWIDTH = 16,
     parameter MEM_BYTES = 2
-)
-(
+) (
     input wire          BUS_CLK,
     input wire          BUS_RST,
     input wire  [ABUSWIDTH-1:0]  BUS_ADD,
@@ -39,8 +37,11 @@ wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
 wire [7:0] IP_DATA_OUT;
 
-bus_to_ip #( .BASEADDR(BASEADDR), .HIGHADDR(HIGHADDR), .ABUSWIDTH(ABUSWIDTH)) i_bus_to_ip
-(
+bus_to_ip #(
+    .BASEADDR(BASEADDR),
+    .HIGHADDR(HIGHADDR),
+    .ABUSWIDTH(ABUSWIDTH)
+) i_bus_to_ip (
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
     .BUS_ADD(BUS_ADD),

@@ -7,13 +7,11 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module fei4_rx_core
-#(
+module fei4_rx_core #(
     parameter           DSIZE = 10,
     parameter           DATA_IDENTIFIER = 0,
     parameter           ABUSWIDTH = 32
-)
-(
+) (
     input wire RX_CLK,
     input wire RX_CLK2X,
     input wire DATA_CLK,

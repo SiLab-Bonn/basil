@@ -159,55 +159,53 @@ module tb (
     output wire         BUS_BYTE_ACCESS
 );
 
-    // MODULE ADREESSES //
-    localparam I2C_BASEADDR = 32'h1000;
-    localparam I2C_HIGHADDR = 32'h2000-1;
+// MODULE ADREESSES //
+localparam I2C_BASEADDR = 32'h1000;
+localparam I2C_HIGHADDR = 32'h2000-1;
 
-    localparam ABUSWIDTH = 32;
-    assign BUS_BYTE_ACCESS = BUS_ADD < 32'h8000_0000 ? 1'b1 : 1'b0;
+localparam ABUSWIDTH = 32;
+assign BUS_BYTE_ACCESS = BUS_ADD < 32'h8000_0000 ? 1'b1 : 1'b0;
 
 
-    wire I2C_CLK;
+wire I2C_CLK;
 
-    clock_divider #(
+clock_divider #(
     .DIVISOR(4)
-    ) i_clock_divisor_spi (
-        .CLK(BUS_CLK),
-        .RESET(1'b0),
-        .CE(),
-        .CLOCK(I2C_CLK)
-    );
+) i_clock_divisor_spi (
+    .CLK(BUS_CLK),
+    .RESET(1'b0),
+    .CE(),
+    .CLOCK(I2C_CLK)
+);
 
-    wire SDA, SCL;
+wire SDA, SCL;
 
-    pullup  isda (SDA);
-    pullup  iscl (SCL);
+pullup  isda (SDA);
+pullup  iscl (SCL);
 
-    i2c
-    #(
-        .BASEADDR(I2C_BASEADDR),
-        .HIGHADDR(I2C_HIGHADDR),
-        .ABUSWIDTH(ABUSWIDTH),
-        .MEM_BYTES(32)
-    ) i_i2c
-    (
-        .BUS_CLK(BUS_CLK),
-        .BUS_RST(BUS_RST),
-        .BUS_ADD(BUS_ADD),
-        .BUS_DATA(BUS_DATA[7:0]),
-        .BUS_RD(BUS_RD),
-        .BUS_WR(BUS_WR),
+i2c #(
+    .BASEADDR(I2C_BASEADDR),
+    .HIGHADDR(I2C_HIGHADDR),
+    .ABUSWIDTH(ABUSWIDTH),
+    .MEM_BYTES(32)
+) i_i2c (
+    .BUS_CLK(BUS_CLK),
+    .BUS_RST(BUS_RST),
+    .BUS_ADD(BUS_ADD),
+    .BUS_DATA(BUS_DATA[7:0]),
+    .BUS_RD(BUS_RD),
+    .BUS_WR(BUS_WR),
 
-        .I2C_CLK(I2C_CLK),
-        .I2C_SDA(SDA),
-        .I2C_SCL(SCL)
-    );
+    .I2C_CLK(I2C_CLK),
+    .I2C_SDA(SDA),
+    .I2C_SCL(SCL)
+);
 
-    i2c_slave_model ii2c_slave_model (.SDA(SDA), .SCL(SCL));
+i2c_slave_model ii2c_slave_model (.SDA(SDA), .SCL(SCL));
 
-    initial begin
-        $dumpfile("i2c.vcd");
-        $dumpvars(0);
-    end
+initial begin
+    $dumpfile("i2c.vcd");
+    $dumpvars(0);
+end
 
 endmodule

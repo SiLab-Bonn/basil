@@ -8,10 +8,9 @@
 `default_nettype none
 
 
-module ddr_des
-#(
+module ddr_des #(
     parameter CLKDV = 4
-)(
+) (
     input wire CLK2X,
     input wire CLK,
     input wire WCLK,

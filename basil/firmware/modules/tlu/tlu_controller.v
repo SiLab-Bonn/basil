@@ -8,8 +8,7 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module tlu_controller
-#(
+module tlu_controller #(
     parameter       BASEADDR = 16'h0000,
     parameter       HIGHADDR = 16'h0000,
     parameter       ABUSWIDTH = 16,
@@ -17,8 +16,7 @@ module tlu_controller
     parameter       WIDTH = 8,
     parameter       TLU_TRIGGER_MAX_CLOCK_CYCLES = 17,
     parameter       TIMESTAMP_N_OF_BIT = 32
-)
-(
+) (
     input wire                  BUS_CLK,
     input wire                  BUS_RST,
     input wire  [ABUSWIDTH-1:0] BUS_ADD,

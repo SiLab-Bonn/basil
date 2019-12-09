@@ -13,7 +13,7 @@ module i2c #(
     parameter ABUSWIDTH = 16,
     parameter MEM_BYTES = 1,
     parameter IGNORE_ACK = 0
-)(
+) (
     input wire                 BUS_CLK,
     input wire                 BUS_RST,
     input wire [ABUSWIDTH-1:0] BUS_ADD,
@@ -49,13 +49,11 @@ bus_to_ip #(
 );
 
 
-i2c_core
-#(
+i2c_core #(
     .ABUSWIDTH(ABUSWIDTH),
     .MEM_BYTES(MEM_BYTES),
     .IGNORE_ACK(IGNORE_ACK)
-)
-i_i2c_core (
+) i_i2c_core (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(IP_ADD),

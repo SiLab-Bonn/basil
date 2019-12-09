@@ -139,15 +139,13 @@ always @(posedge BUS_CLK) begin
 end
 assign SHORT_TRIGGER = TRIGGER & ~TRIGGER_FF;
 
-gpio
-#(
+gpio #(
     .BASEADDR(GPIO_BASEADDR),
     .HIGHADDR(GPIO_HIGHADDR),
     .ABUSWIDTH(ABUSWIDTH),
     .IO_WIDTH(8),
     .IO_DIRECTION(8'hff)
-) i_gpio
-(
+) i_gpio (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(BUS_ADD),
@@ -166,8 +164,13 @@ wire ACKNOWLEDGE;
 //assign TRIGGER_ENABLE = 1'b1;
 
 tlu_model itlu_model (
-    .SYS_CLK(BUS_CLK), .SYS_RST(BUS_RST), .ENABLE(TRIGGER_ENABLE), .TLU_CLOCK(TLU_CLOCK), .TLU_BUSY(TLU_BUSY),
-    .TLU_TRIGGER(TLU_TRIGGER), .TLU_RESET(TLU_RESET)
+    .SYS_CLK(BUS_CLK),
+    .SYS_RST(BUS_RST),
+    .ENABLE(TRIGGER_ENABLE),
+    .TLU_CLOCK(TLU_CLOCK),
+    .TLU_BUSY(TLU_BUSY),
+    .TLU_TRIGGER(TLU_TRIGGER),
+    .TLU_RESET(TLU_RESET)
 );
 
 tlu_controller #(
@@ -217,8 +220,7 @@ assign FIFO_DATA = TLU_FIFO_DATA;
 assign FIFO_EMPTY = TLU_FIFO_EMPTY;
 assign TLU_FIFO_READ = FIFO_READ;
 
-bram_fifo
-#(
+bram_fifo #(
     .BASEADDR(FIFO_BASEADDR),
     .HIGHADDR(FIFO_HIGHADDR),
     .BASEADDR_DATA(FIFO_BASEADDR_DATA),

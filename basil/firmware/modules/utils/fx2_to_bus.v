@@ -8,8 +8,7 @@
 `default_nettype none
 
 
-module fx2_to_bus
-#(
+module fx2_to_bus #(
     parameter                   WIDTH = 16 // 16 bit bus from FX2
 ) (
     input wire [WIDTH-1:0]      ADD,

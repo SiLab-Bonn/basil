@@ -9,11 +9,9 @@
 
 //TODO: check with more then 1 hold/priority at a time
 
-module rrp_arbiter
-#(
+module rrp_arbiter #(
     parameter WIDTH = 4
-)
-(
+) (
     input wire RST,
     input wire CLK,
 
