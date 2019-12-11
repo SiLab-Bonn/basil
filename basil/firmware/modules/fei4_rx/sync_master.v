@@ -134,7 +134,7 @@ end
 // *** do not touch code below ***
 
 wire [1:0] DDRQ;
-IDDR IDDR_inst (
+IDDR IDDR_sync_master_inst (
     .Q1(DDRQ[1]), // 1-bit output for positive edge of clock
     .Q2(DDRQ[0]), // 1-bit output for negative edge of clock
     .C(clk_2x),   // 1-bit clock input
@@ -159,7 +159,7 @@ always @(posedge clk_2x)
 
 reg [3:0] DATA_IN;
 always @(posedge clk)
-    DATA_IN[3:0] <= {DDRQ_DATA[3:0]};
+    DATA_IN[3:0] <= DDRQ_DATA[3:0];
 
 reg [3:0] DATA_IN_DLY;
 always @(posedge clk)
