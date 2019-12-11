@@ -16,7 +16,7 @@ module fei4_rx_core #(
     input wire RX_CLK2X,
     input wire DATA_CLK,
     input wire RX_DATA,
-    output wire RX_READY,
+    output reg RX_READY,
     output reg RX_8B10B_DECODER_ERR,
     output reg RX_FIFO_OVERFLOW_ERR,
 
@@ -144,12 +144,11 @@ three_stage_synchronizer rx_ready_synchronizer_bus_clk (
     .OUT(rx_ready_bus_clk)
 );
 
-three_stage_synchronizer rx_ready_synchronizer_data_clk (
-    .CLK(DATA_CLK),
-    .IN(rec_sync_ready),
-    .OUT(RX_READY)
-);
+always @(posedge DATA_CLK) begin
+    RX_READY <= rec_sync_ready;
+end
 
+wire [7:0] decoder_err_cnt;
 always @(posedge DATA_CLK) begin
     if(|decoder_err_cnt) begin
         RX_8B10B_DECODER_ERR <= 1;
@@ -158,6 +157,7 @@ always @(posedge DATA_CLK) begin
     end
 end
 
+wire [7:0] lost_data_cnt;
 always @(posedge DATA_CLK) begin
     if(|lost_data_cnt) begin
         RX_FIFO_OVERFLOW_ERR <= 1;
