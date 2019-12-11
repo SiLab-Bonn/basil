@@ -48,6 +48,12 @@ input wire SEQ_CLK;
 input wire [IN_BITS-1:0] SEQ_IN;
 input wire SEQ_EXT_START;
 
+generate
+if (MEM_BYTES > 2048*8*4) begin
+    illegal_outputs_parameter non_existing_module();
+end
+endgenerate
+
 `include "../includes/log2func.v"
 
 localparam ADDR_SIZEA = `CLOG2(MEM_BYTES);
@@ -135,10 +141,10 @@ always @(*) begin
         BUS_DATA_OUT = 8'b0;
 end
 
-reg [ABUSWIDTH-1:0] out_bit_cnt;
+reg [16:0] out_bit_cnt;
 
 wire [ADDR_SIZEB-1:0] memout_addrb;
-assign memout_addrb = out_bit_cnt-1;
+assign memout_addrb = out_bit_cnt - 1;
 
 wire [ADDR_SIZEA-1:0] memout_addra;
 wire [ABUSWIDTH-1:0] BUS_ADD_MEM;
@@ -226,19 +232,27 @@ flag_domain_crossing conf_start_flag_domain_crossing (
     .FLAG_OUT_CLK_B(CONF_START_FLAG_SYNC)
 );
 
-wire [ADDR_SIZEB:0] STOP_BIT;
-assign STOP_BIT = CONF_COUNT;
+wire [15:0] CONF_COUNT_SYNC;
+three_stage_synchronizer #(
+    .WIDTH(16)
+) three_stage_conf_count_synchronizer (
+    .CLK(SEQ_CLK),
+    .IN(CONF_COUNT),
+    .OUT(CONF_COUNT_SYNC)
+);
+wire [16:0] STOP_BIT;
+assign STOP_BIT = {1'b0, CONF_COUNT_SYNC};
 
 wire START_REC;
 assign START_REC = CONF_START_FLAG_SYNC | (CONF_EN_EXT_START_SYNC & SEQ_EXT_START);
 
 always @(posedge SEQ_CLK)
     if (RST_SYNC)
-        out_bit_cnt <= 1'b0;
-    else if (START_REC)
-        out_bit_cnt <= 1'b1;
+        out_bit_cnt <= 0;
+    else if (START_REC && DONE)
+        out_bit_cnt <= 1;
     else if (out_bit_cnt == STOP_BIT)
-        out_bit_cnt <= out_bit_cnt;
+        out_bit_cnt <= 0;
     else if (out_bit_cnt != 0)
         out_bit_cnt <= out_bit_cnt + 1;
 
@@ -247,9 +261,9 @@ always @(posedge SEQ_CLK)
     if (RST_SYNC)
         DONE <= 1'b1;
     else
-        if (START_REC)
+        if (START_REC && DONE)
             DONE <= 1'b0;
-        else if (out_bit_cnt == STOP_BIT)
+        else if (out_bit_cnt == 0)
             DONE <= 1'b1;
 
 wire START_REC_FLAG_BUS_CLK;
