@@ -66,7 +66,7 @@ class TestSimSeq(unittest.TestCase):
             for cmd_size in [0, 1, 2, np.random.randint(3, max_cmd_size - 1), max_cmd_size - 1, max_cmd_size]:
                 # cmd_size of 0 will not start cmd_seq
                 if isinstance(cmd_pattern, list):
-                    write_cmd_pattern = cmd_pattern.copy()
+                    write_cmd_pattern = list(cmd_pattern)  # copy
                     write_cmd_pattern.extend(np.random.randint(0, 256, size=max_cmd_byte_size - len(write_cmd_pattern)))
                     self.chip['CMD_SEQ'].set_data(data=write_cmd_pattern, addr=0)
                 else:
@@ -108,7 +108,7 @@ class TestSimSeq(unittest.TestCase):
                 for cmd_repeat in [1, 2, 3]:
                     # when cmd_repeat is 0 -> infinite loop
                     if isinstance(cmd_pattern, list):
-                        write_cmd_pattern = cmd_pattern.copy()
+                        write_cmd_pattern = list(cmd_pattern)  # copy
                         write_cmd_pattern.extend(np.random.randint(0, 256, size=max_cmd_byte_size - len(write_cmd_pattern)))
                         self.chip['CMD_SEQ'].set_data(data=write_cmd_pattern, addr=0)
                     else:
@@ -138,7 +138,7 @@ class TestSimSeq(unittest.TestCase):
     def test_start_sequnce(self):
         cmd_pattern = np.random.randint(0, 256, size=max_cmd_byte_size).tolist()
         if isinstance(cmd_pattern, list):
-            write_cmd_pattern = cmd_pattern.copy()
+            write_cmd_pattern = list(cmd_pattern)  # copy
             write_cmd_pattern.extend(np.random.randint(0, 256, size=max_cmd_byte_size - len(write_cmd_pattern)))
             self.chip['CMD_SEQ'].set_data(data=write_cmd_pattern, addr=0)
         else:
@@ -190,7 +190,7 @@ class TestSimSeq(unittest.TestCase):
     def test_stop_sequence(self):
         cmd_pattern = np.random.randint(0, 256, size=max_cmd_byte_size).tolist()
         if isinstance(cmd_pattern, list):
-            write_cmd_pattern = cmd_pattern.copy()
+            write_cmd_pattern = list(cmd_pattern)  # copy
             write_cmd_pattern.extend(np.random.randint(0, 256, size=max_cmd_byte_size - len(write_cmd_pattern)))
             self.chip['CMD_SEQ'].set_data(data=write_cmd_pattern, addr=0)
         else:
@@ -242,7 +242,7 @@ class TestSimSeq(unittest.TestCase):
     def test_start_and_stop_sequence(self):
         cmd_pattern = np.random.randint(0, 256, size=max_cmd_byte_size).tolist()
         if isinstance(cmd_pattern, list):
-            write_cmd_pattern = cmd_pattern.copy()
+            write_cmd_pattern = list(cmd_pattern)  # copy
             write_cmd_pattern.extend(np.random.randint(0, 256, size=max_cmd_byte_size - len(write_cmd_pattern)))
             self.chip['CMD_SEQ'].set_data(data=write_cmd_pattern, addr=0)
         else:
