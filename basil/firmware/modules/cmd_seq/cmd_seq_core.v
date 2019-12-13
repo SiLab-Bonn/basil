@@ -10,7 +10,7 @@
 module cmd_seq_core #(
     parameter                   ABUSWIDTH = 16,
     parameter                   OUTPUTS = 1,  // from (0 : 8]
-    parameter                   CMD_MEM_SIZE = 2048
+    parameter                   CMD_MEM_SIZE = 2048  // max. 8192-1 bytes
 ) (
     input wire                  BUS_CLK,
     input wire                  BUS_RST,
@@ -36,12 +36,20 @@ if (OUTPUTS > 8) begin
     illegal_outputs_parameter non_existing_module();
 end
 endgenerate
+generate
+if (CMD_MEM_SIZE > 8191) begin
+    illegal_outputs_parameter non_existing_module();
+end
+endgenerate
 // IEEE Std 1800-2009
 // generate
 // if (CONDITION > MAX_ALLOWED) begin
 //     $error("%m ** Illegal Condition ** CONDITION(%d) > MAX_ALLOWED(%d)", CONDITION, MAX_ALLOWED);
 // end
 // endgenerate
+
+`include "../includes/log2func.v"
+localparam CMD_ADDR_SIZE = `CLOG2(CMD_MEM_SIZE);
 
 wire SOFT_RST; //0
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
@@ -71,29 +79,18 @@ flag_domain_crossing cmd_rst_flag_domain_crossing (
     .FLAG_OUT_CLK_B(RST_CMD_CLK)
 );
 
-wire START; // 1
-assign START = (BUS_ADD==1 && BUS_WR);
+wire CONF_START; // 1
+assign CONF_START = (BUS_ADD==1 && BUS_WR);
 
-// start sync
-// when write to addr = 1 then send command
-reg START_FF, START_FF2;
-always @(posedge BUS_CLK) begin
-    START_FF <= START;
-    START_FF2 <= START_FF;
-end
-
-wire START_FLAG;
-assign START_FLAG = ~START_FF2 & START_FF;
-
-wire start_sync;
-flag_domain_crossing cmd_start_flag_domain_crossing (
+wire CONF_START_FLAG_SYNC;
+flag_domain_crossing conf_start_flag_domain_crossing (
     .CLK_A(BUS_CLK),
     .CLK_B(CMD_CLK_IN),
-    .FLAG_IN_CLK_A(START_FLAG),
-    .FLAG_OUT_CLK_B(start_sync)
+    .FLAG_IN_CLK_A(CONF_START),
+    .FLAG_OUT_CLK_B(CONF_START_FLAG_SYNC)
 );
 
-reg [0:0] CONF_FINISH; // 1
+reg [0:0] CONF_READY; // 1
 wire CONF_EN_EXT_START, CONF_DIS_CLOCK_GATE, CONF_DIS_CMD_PULSE; // 2
 wire [1:0] CONF_OUTPUT_MODE; // 2 Mode == 0: posedge, 1: negedge, 2: Manchester Code according to IEEE 802.3, 3:  Manchester Code according to G.E. Thomas aka Biphase-L or Manchester-II
 wire [15:0] CONF_CMD_SIZE; // 3 - 4
@@ -215,136 +212,163 @@ three_stage_synchronizer #(
     .OUT(CONF_OUTPUT_MODE_CMD_CLK)
 );
 
-(* RAM_STYLE="{BLOCK}" *)
-reg [7:0] cmd_mem [CMD_MEM_SIZE-1:0];
+wire [7:0] CMD_MEM_DATA;
 always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if(BUS_ADD == 0)
             BUS_DATA_OUT <= VERSION;
         else if(BUS_ADD == 1)
-            BUS_DATA_OUT <= {7'b0, CONF_FINISH};
-        else if(BUS_ADD < 16)
+            BUS_DATA_OUT <= {7'b0, CONF_READY};
+        else if(BUS_ADD < 14)
             BUS_DATA_OUT <= status_regs[BUS_ADD[3:0]];
-        else if(BUS_ADD < CMD_MEM_SIZE)
-            BUS_DATA_OUT <= cmd_mem[BUS_ADD[10:0]-16];
-        else
+        else if(BUS_ADD < 16)
             BUS_DATA_OUT <= 8'b0;
+        else if(BUS_ADD < (16 + CMD_MEM_SIZE))
+            BUS_DATA_OUT <= CMD_MEM_DATA;
     end
 end
 
+// (* RAM_STYLE="{BLOCK}" *)
+reg [7:0] cmd_mem [0:CMD_MEM_SIZE-1];
 always @(posedge BUS_CLK) begin
-    if (BUS_WR && BUS_ADD >= 16)
-        cmd_mem[BUS_ADD[10:0]-16] <= BUS_DATA_IN;
+    if (BUS_WR && BUS_ADD >= 16 && BUS_ADD < (16 + CMD_MEM_SIZE))
+        cmd_mem[BUS_ADD - 16] <= BUS_DATA_IN;
 end
 
-reg [7:0] CMD_MEM_DATA;
-reg [10:0] CMD_MEM_ADD;
-always @(posedge CMD_CLK_IN)
-    CMD_MEM_DATA <= cmd_mem[CMD_MEM_ADD];
+reg [CMD_ADDR_SIZE-1:0] CMD_MEM_ADD;
+assign CMD_MEM_DATA = cmd_mem[BUS_RD && BUS_ADD >= 16 && BUS_ADD < (16 + CMD_MEM_SIZE) ? (BUS_ADD - 16) : CMD_MEM_ADD];
 
-wire ext_send_cmd;
-assign ext_send_cmd = (CMD_EXT_START_FLAG & CMD_EXT_START_ENABLE);
+wire EXT_START_FLAG;
+assign EXT_START_FLAG = (CMD_EXT_START_FLAG & CMD_EXT_START_ENABLE);
 wire send_cmd;
-assign send_cmd = start_sync | ext_send_cmd;
+assign send_cmd = CONF_START_FLAG_SYNC | EXT_START_FLAG;
 
-localparam WAIT = 1, SEND = 2;
+localparam WAIT = 0, SEND = 1;
 
 reg [15:0] cnt;
 reg [31:0] repeat_cnt;
-reg [2:0] state, next_state;
+reg state, next_state;
 
 always @(posedge CMD_CLK_IN)
     if (RST_CMD_CLK)
-      state <= WAIT;
+        state <= WAIT;
     else
-      state <= next_state;
+        state <= next_state;
 
-reg END_SEQ_REP_NEXT, END_SEQ_REP;
-always @(*) begin
-    if(repeat_cnt < CONF_REPEAT_COUNT_CMD_CLK && cnt == CONF_CMD_SIZE_CMD_CLK-1-CONF_STOP_REPEAT_CMD_CLK && !END_SEQ_REP)
-        END_SEQ_REP_NEXT = 1;
-    else
-        END_SEQ_REP_NEXT = 0;
-end
+// reg END_SEQ_REP_NEXT, END_SEQ_REP;
+// always @(*) begin
+//     if((repeat_cnt < CONF_REPEAT_COUNT_CMD_CLK || CONF_REPEAT_COUNT_CMD_CLK == 0) && cnt == CONF_CMD_SIZE_CMD_CLK - 1 - CONF_STOP_REPEAT_CMD_CLK && !END_SEQ_REP)
+//         END_SEQ_REP_NEXT = 1;
+//     else
+//         END_SEQ_REP_NEXT = 0;
+// end
 
+// always @(posedge CMD_CLK_IN)
+//     END_SEQ_REP <= END_SEQ_REP_NEXT;
+
+reg START_STOP_REPEAT_OK;
 always @(posedge CMD_CLK_IN)
-    END_SEQ_REP <= END_SEQ_REP_NEXT;
+    if ((CONF_START_REPEAT_CMD_CLK + CONF_STOP_REPEAT_CMD_CLK) > CONF_CMD_SIZE_CMD_CLK)
+        START_STOP_REPEAT_OK <= 1'b0;
+    else
+        START_STOP_REPEAT_OK <= 1'b1;
+
+reg [31:0] SET_REPEAT_COUNT;
+always @(posedge CMD_CLK_IN)
+    if (CONF_START_REPEAT_CMD_CLK + CONF_STOP_REPEAT_CMD_CLK == CONF_CMD_SIZE_CMD_CLK)
+        SET_REPEAT_COUNT <= 1;
+    else
+        SET_REPEAT_COUNT <= CONF_REPEAT_COUNT_CMD_CLK;
 
 always @(*) begin
-    case(state)
-        WAIT : if(send_cmd)
-                    next_state = SEND;
-                else
-                    next_state = WAIT;
-        SEND : if(cnt == CONF_CMD_SIZE_CMD_CLK && repeat_cnt==CONF_REPEAT_COUNT_CMD_CLK)
-                    next_state = WAIT;
-                else
-                    next_state = SEND;
-        default : next_state = WAIT;
+    case (state)
+        WAIT:
+            if (send_cmd && CONF_CMD_SIZE_CMD_CLK != 0 && START_STOP_REPEAT_OK)
+                next_state = SEND;
+            else
+                next_state = WAIT;
+        SEND:
+            if (cnt >= CONF_CMD_SIZE_CMD_CLK && repeat_cnt >= SET_REPEAT_COUNT && SET_REPEAT_COUNT != 0)
+                next_state = WAIT;
+            else
+                next_state = SEND;
+        default:
+            next_state = WAIT;
     endcase
 end
 
 always @(posedge CMD_CLK_IN) begin
-    if (RST_CMD_CLK)
+    if (RST_CMD_CLK) begin
         cnt <= 0;
-    else if(state != next_state)
-        cnt <= 0;
-    else if(cnt == CONF_CMD_SIZE_CMD_CLK || END_SEQ_REP) begin
-        if(CONF_START_REPEAT_CMD_CLK != 0)
-            cnt <= CONF_START_REPEAT_CMD_CLK+1;
-        else
-            cnt <= 1;
-    end
-    else
-        cnt <= cnt + 1;
-end
-
-always @(posedge CMD_CLK_IN) begin
-    if (send_cmd || RST_CMD_CLK)
-        repeat_cnt <= 1;
-    else if(state == SEND && (cnt == CONF_CMD_SIZE_CMD_CLK || END_SEQ_REP) && repeat_cnt != 0)
-        repeat_cnt <= repeat_cnt + 1;
-end
-
-always @(*) begin
-    if(state != next_state && next_state == SEND)
-        CMD_MEM_ADD = 0;
-    else if(state == SEND)
-        if(cnt == CONF_CMD_SIZE_CMD_CLK-1 || END_SEQ_REP_NEXT) begin
-            if(CONF_START_REPEAT_CMD_CLK != 0)
-                CMD_MEM_ADD = (CONF_START_REPEAT_CMD_CLK)/8;
-            else
-                CMD_MEM_ADD = 0;
+    end else begin
+        if (next_state == WAIT) begin
+            cnt <= 0;  // TODO: adding start value here
+        end else begin
+            if ((repeat_cnt < SET_REPEAT_COUNT || SET_REPEAT_COUNT == 0) && (cnt == CONF_CMD_SIZE_CMD_CLK - CONF_STOP_REPEAT_CMD_CLK - 1)) begin
+                cnt <= CONF_START_REPEAT_CMD_CLK;
+            end else begin
+                cnt <= cnt + 1;
             end
-        else begin
-            if(END_SEQ_REP)
-                CMD_MEM_ADD = (CONF_START_REPEAT_CMD_CLK+1'b1)/8;
-            else
-                CMD_MEM_ADD = (cnt+1'b1)/8;
         end
-    else
-        CMD_MEM_ADD = 0; //no latch
-end
-
-reg [7:0] send_word;
-
-always @(posedge CMD_CLK_IN) begin
-    if(RST_CMD_CLK)
-        send_word <= 0;
-    else if(state == SEND) begin
-        if(next_state == WAIT)
-            send_word <= 0; // by default set to output to zero (this is strange -> bug of FEI4?)
-        else if(cnt == CONF_CMD_SIZE_CMD_CLK || END_SEQ_REP)
-            send_word <= CMD_MEM_DATA;
-        else if(cnt %8 == 0)
-            send_word <= CMD_MEM_DATA;
-        //else
-        //    send_word[7:0] <= {send_word[6:0], 1'b0};
     end
 end
 
-wire cmd_data_ser;
-assign cmd_data_ser = send_word[7-((cnt-1)%8)];
+always @(posedge CMD_CLK_IN) begin
+    if (RST_CMD_CLK)
+        repeat_cnt <= 1;
+    else
+        if (next_state == WAIT)
+            repeat_cnt <= 1;
+        else if ((next_state == SEND) && (cnt == CONF_CMD_SIZE_CMD_CLK - CONF_STOP_REPEAT_CMD_CLK - 1))
+            repeat_cnt <= repeat_cnt + 1;
+end
+
+// always @(posedge CMD_CLK_IN) begin
+//     if (RST_CMD_CLK) begin
+//         CMD_MEM_ADD <= 0;
+//     end else begin
+//         CMD_MEM_ADD <= cnt / 8;
+//     end
+// end
+
+// reg cmd_data_ser;
+// always @(posedge CMD_CLK_IN) begin
+//     if (state == WAIT)
+//         cmd_data_ser <= 1'b0;
+//     else
+//         cmd_data_ser <= CMD_MEM_DATA[7 - ((cnt_buf) % 8)];
+// end
+
+always @(posedge CMD_CLK_IN) begin
+    if (RST_CMD_CLK) begin
+        CMD_MEM_ADD <= 0;
+    end else begin
+        if (cnt == CONF_CMD_SIZE_CMD_CLK - CONF_STOP_REPEAT_CMD_CLK - 1 && repeat_cnt < SET_REPEAT_COUNT && SET_REPEAT_COUNT != 0) begin
+            CMD_MEM_ADD <= CONF_START_REPEAT_CMD_CLK / 8;
+        end else begin
+        // if ()
+            CMD_MEM_ADD <= (cnt + 1) / 8;
+        end
+    end
+end
+
+reg [7:0] CMD_MEM_DATA_BUF;
+always @(posedge CMD_CLK_IN) begin
+    CMD_MEM_DATA_BUF <= CMD_MEM_DATA;
+end
+
+reg [15:0] cnt_buf;
+always @(posedge CMD_CLK_IN) begin
+    cnt_buf <= cnt;
+end
+
+reg cmd_data_ser;
+always @(posedge CMD_CLK_IN) begin
+    if (state == WAIT)
+        cmd_data_ser <= 1'b0;
+    else
+        cmd_data_ser <= CMD_MEM_DATA_BUF[7 - ((cnt_buf) % 8)];
+end
 
 reg [OUTPUTS-1:0] cmd_data_neg;
 reg [OUTPUTS-1:0] cmd_data_pos;
@@ -380,31 +404,69 @@ generate
     end
 endgenerate
 
-
-// command start flag
-always @(posedge CMD_CLK_IN)
-    if (state == SEND && cnt == (CONF_START_REPEAT_CMD_CLK + 1) && CONF_DIS_CMD_PULSE_CMD_CLK == 1'b0)
-        CMD_START_FLAG <= 1'b1;
-    else
-        CMD_START_FLAG <= 1'b0;
-
 // ready signal
 always @(posedge CMD_CLK_IN)
-    if (state == WAIT)
-        CMD_READY <= 1'b1;
-    else
-        CMD_READY <= 1'b0;
+    CMD_READY <= ~next_state;
 
-// ready readout sync
-wire DONE_SYNC;
-cdc_pulse_sync done_pulse_sync(.clk_in(CMD_CLK_IN), .pulse_in(CMD_READY), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
+// command start flag
+reg CMD_START_SIGNAL;
+always @(posedge CMD_CLK_IN)
+    if (state == SEND && cnt_buf == CONF_START_REPEAT_CMD_CLK && CONF_DIS_CMD_PULSE_CMD_CLK == 1'b0)
+        CMD_START_SIGNAL <= 1'b1;
+    else
+        CMD_START_SIGNAL <= 1'b0;
+
+reg CMD_START_SIGNAL_FF, CMD_START_SIGNAL_FF2;
+always @(posedge CMD_CLK_IN) begin
+    CMD_START_SIGNAL_FF <= CMD_START_SIGNAL;
+    CMD_START_SIGNAL_FF2 <= CMD_START_SIGNAL_FF;
+end
+
+always @(posedge CMD_CLK_IN)
+    if (CONF_OUTPUT_MODE_CMD_CLK == 2'b00)
+        CMD_START_FLAG <= ~CMD_START_SIGNAL_FF2 & CMD_START_SIGNAL_FF;  // delay by 1, 180 degree phase shifted data in output mode 0
+    else
+        CMD_START_FLAG <= ~CMD_START_SIGNAL_FF & CMD_START_SIGNAL;
+
+// command start flag
+reg CMD_BUSY_FLAG;
+always @(posedge CMD_CLK_IN)
+    if (state != next_state && next_state == SEND)
+        CMD_BUSY_FLAG <= 1'b1;
+    else
+        CMD_BUSY_FLAG <= 1'b0;
+
+// ready flag
+reg CMD_READY_FLAG;
+always @(posedge CMD_CLK_IN)
+    if (state != next_state && next_state == WAIT)
+        CMD_READY_FLAG <= 1'b1;
+    else
+        CMD_READY_FLAG <= 1'b0;
+
+wire CMD_BUSY_FLAG_BUS_CLK;
+flag_domain_crossing cmd_busy_flag_domain_crossing (
+    .CLK_A(CMD_CLK_IN),
+    .CLK_B(BUS_CLK),
+    .FLAG_IN_CLK_A(CMD_BUSY_FLAG),
+    .FLAG_OUT_CLK_B(CMD_BUSY_FLAG_BUS_CLK)
+);
+
+wire CMD_READY_FLAG_BUS_CLK;
+flag_domain_crossing cmd_ready_flag_domain_crossing (
+    .CLK_A(CMD_CLK_IN),
+    .CLK_B(BUS_CLK),
+    .FLAG_IN_CLK_A(CMD_READY_FLAG),
+    .FLAG_OUT_CLK_B(CMD_READY_FLAG_BUS_CLK)
+);
 
 always @(posedge BUS_CLK)
     if(RST)
-        CONF_FINISH <= 1;
-    else if(START)
-        CONF_FINISH <= 0;
-    else if(DONE_SYNC)
-        CONF_FINISH <= 1;
+        CONF_READY <= 1;
+    else
+        if(CMD_BUSY_FLAG_BUS_CLK || CONF_START)
+            CONF_READY <= 0;
+        else if(CMD_READY_FLAG_BUS_CLK)
+            CONF_READY <= 1;
 
 endmodule
