@@ -127,7 +127,7 @@ decode_8b10b decode_8b10b_inst (
     .disp_err(disp_err)
 );
 
-always @(negedge WCLK) begin // avoid glitches from code_err or disp_err
+always @(posedge WCLK) begin
     if(RESET_WCLK)
         decoder_err <= 1'b0;
     else
