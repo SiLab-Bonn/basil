@@ -212,6 +212,7 @@ always @(posedge FIFO_CLK) begin
 end
 
 wire wfull;
+wire fifo_full, cdc_fifo_empty;
 cdc_syncfifo #(
     .DSIZE(24),
     .ASIZE(2)
@@ -223,7 +224,7 @@ cdc_syncfifo #(
     .winc(cdc_fifo_write),
     .wclk(WCLK),
     .wrst(RST_LONG_WCLK),
-    .rinc(!full),
+    .rinc(!fifo_full),
     .rclk(FIFO_CLK),
     .rrst(RST_LONG_FIFO_CLK)
 );
@@ -239,7 +240,7 @@ gerneric_fifo #(
     .write(!cdc_fifo_empty),
     .read(read),
     .data_in(cdc_data_out),
-    .full(full),
+    .full(fifo_full),
     .empty(empty),
     .data_out(data),
     .size(fifo_size_int)
