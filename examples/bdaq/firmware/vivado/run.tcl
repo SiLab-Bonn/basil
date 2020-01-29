@@ -10,7 +10,7 @@
 #
 
 
-set basil_dir [exec python -c "import basil, os; print str(os.path.dirname(basil.__file__))"]
+set basil_dir [exec python -c "import basil, os; print(str(os.path.dirname(basil.__file__)))"]
 set include_dirs [list $basil_dir/firmware/modules $basil_dir/firmware/modules/utils]
 
 file mkdir output reports
@@ -32,6 +32,7 @@ proc run_bit { part board connector xdc_file size option} {
 
     read_design_files
     read_xdc $xdc_file
+    read_xdc ../src/SiTCP.xdc
 
     global include_dirs
 
