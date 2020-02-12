@@ -17,6 +17,7 @@ source_volt : SOUR:FUNC VOLT
 source_current : SOUR:FUNC CURR
 get_source_mode : SOUR:FUNC?
 set_autorange : SOUR:CURR:RANG:AUTO ON
+set_voltage_range : SOUR:VOLT:RANGE
 get_autorange : SOUR:CURR:RANG:AUTO?
 four_wire_on: SYST:RSEN ON
 four_wire_off: SYST:RSEN OFF
