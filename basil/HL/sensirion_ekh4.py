@@ -7,6 +7,7 @@
 
 import time
 import binascii
+import codecs
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
@@ -43,7 +44,7 @@ class sensirionEKH4(HardwareLayer):
         answer = []
         flg = 0
         for i in range(1024):  # data assumed to be less than 1024 words
-            a = self._intf.read(size=1).encode('hex_codec')
+            a = codecs.encode(self._intf.read(size=1), 'hex_codec').decode('utf-8')
             if a == '':
                 break
             elif flg == 0 and a == '7e':
