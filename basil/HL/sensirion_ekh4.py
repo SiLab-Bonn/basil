@@ -55,18 +55,21 @@ class sensirionEKH4(HardwareLayer):
                 answer.append(a)
         return answer
 
-    def get_temperature(self, min_val=-40, max_val=200):
+    def get_temperature(self, channel='all', min_val=-40, max_val=200):
         ret = self.ask(r"7e4700b87e")
         values = []
         for j in range(4):
             if ret[2 + 2 * j] == "7f" and ret[2 + 2 * j + 1] == "ff":
                 values.append(None)
             else:
-                values.append(self.cal_ret(
-                    ret[2 + 2 * j] + ret[2 + 2 * j + 1]))
-        return values
+                values.append(self.cal_ret(ret[2 + 2 * j] + ret[2 + 2 * j + 1]))
 
-    def get_humidity(self, min_val=0, max_val=100):
+        if channel == 'all':
+            return values
+        elif isinstance(channel, int):
+            return values[channel]
+
+    def get_humidity(self, channel='all', min_val=0, max_val=100):
         ret = self.ask(r"7e4600b97e")
         values = []
         for j in range(4):
@@ -75,9 +78,13 @@ class sensirionEKH4(HardwareLayer):
             else:
                 values.append(self.cal_ret(
                     ret[2 + 2 * j] + ret[2 + 2 * j + 1]))
-        return values
 
-    def get_dew_point(self, min_val=-40, max_val=100):
+        if channel == 'all':
+            return values
+        elif isinstance(channel, int):
+            return values[channel]
+
+    def get_dew_point(self, channel='all', min_val=-40, max_val=100):
         ret = self.ask(r"7e4800b77e")
         values = []
         for j in range(4):
@@ -86,7 +93,11 @@ class sensirionEKH4(HardwareLayer):
             else:
                 values.append(self.cal_ret(
                     ret[2 + 2 * j] + ret[2 + 2 * j + 1]))
-        return values
+
+        if channel == 'all':
+            return values
+        elif isinstance(channel, int):
+            return values[channel]
 
     def cal_ret(self, value):
         bits = 16
