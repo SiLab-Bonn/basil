@@ -34,6 +34,11 @@ localparam VERSION = 1;
 localparam DEF_BIT_OUT = 8*MEM_BYTES;
 reg [7:0] status_regs [15:0];
 
+wire RST;
+wire SOFT_RST;
+wire RST_SYNC;
+assign RST = BUS_RST || SOFT_RST;
+
 always @(posedge BUS_CLK) begin
     if(RST) begin
         status_regs[0] <= 0;
@@ -56,15 +61,13 @@ always @(posedge BUS_CLK) begin
 end
 
 // Parameters from registers //
-wire RST;
-wire SOFT_RST;
-assign RST = BUS_RST || SOFT_RST;
 
 reg [7:0] BUS_IN_MEM;
 reg [7:0] BUS_OUT_MEM;
 reg CONF_DONE;
 
 wire START;
+wire START_SYNC;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 assign START = (BUS_ADD==1 && BUS_WR);
 
@@ -82,7 +85,10 @@ assign CONF_WAIT = {status_regs[8], status_regs[7], status_regs[6], status_regs[
 
 wire CONF_EN;
 assign CONF_EN = status_regs[13][0];
-////
+
+wire [32:0] STOP_BIT;
+assign STOP_BIT = CONF_BIT_OUT + CONF_WAIT;
+/////
 
 /// Basil Bus Communication ///
 reg [7:0] BUS_DATA_OUT_REG;
@@ -429,18 +435,14 @@ end
 ////
 
 // Synchronous signals //
-wire RST_SYNC;
+
 wire RST_SOFT_SYNC;
-wire START_SYNC;
 cdc_pulse_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(JTAG_CLK), .pulse_out(RST_SOFT_SYNC));
 cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(JTAG_CLK), .pulse_out(START_SYNC));
 assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
 ///
 
 // Transmission done signal //
-wire [32:0] STOP_BIT;
-assign STOP_BIT = CONF_BIT_OUT + CONF_WAIT;
-
 reg [1:0] sync_ld;
 always @(posedge JTAG_CLK) begin
     sync_ld[0] <= SEN_INT;
