@@ -181,19 +181,19 @@ class TestSimJtagMaster(unittest.TestCase):
         # Make sure register are set to default values
         self.chip["JTAG"].reset()
 
-        size = self.chip["JTAG"].get_size()
+        size = self.chip["JTAG"].SIZE
         self.assertEqual(size, 16 * 8)
 
-        byte_size = self.chip["JTAG"].get_mem_size()
+        byte_size = self.chip["JTAG"].MEM_BYTES
         self.assertEqual(byte_size, 16)
 
-        word_cnt = self.chip["JTAG"].get_word_count()
+        word_cnt = self.chip["JTAG"].WORD_COUNT
         self.assertEqual(word_cnt, 1)
 
         op = self.chip["JTAG"].get_command()
         self.assertEqual(op, "INSTRUCTION")
 
-        wait = self.chip["JTAG"].get_wait()
+        wait = self.chip["JTAG"].WAIT
         self.assertEqual(wait, 0)
 
         # Test reset
@@ -207,25 +207,25 @@ class TestSimJtagMaster(unittest.TestCase):
         self.assertEqual(ret.tolist(), [0xFF] + list(range(15)))
 
         self.chip["JTAG"].start()
-        while not self.chip["JTAG"].is_ready:
+        while not self.chip["JTAG"].READY:
             pass
 
         # Write 2 word test
-        self.chip["JTAG"].set_word_count(2)
-        word_cnt = self.chip["JTAG"].get_word_count()
+        self.chip["JTAG"].WORD_COUNT = 2
+        word_cnt = self.chip["JTAG"].WORD_COUNT
         self.assertEqual(word_cnt, 2)
 
         self.chip["JTAG"].start()
-        while not self.chip["JTAG"].is_ready:
+        while not self.chip["JTAG"].READY:
             pass
 
         # Write 5 word test
-        self.chip["JTAG"].set_word_count(5)
-        word_cnt = self.chip["JTAG"].get_word_count()
+        self.chip["JTAG"].WORD_COUNT = 5
+        word_cnt = self.chip["JTAG"].WORD_COUNT
         self.assertEqual(word_cnt, 5)
 
         self.chip["JTAG"].start()
-        while not self.chip["JTAG"].is_ready:
+        while not self.chip["JTAG"].READY:
             pass
 
     def jtag_tests(self):

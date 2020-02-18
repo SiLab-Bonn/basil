@@ -54,43 +54,6 @@ class JtagMaster(RegisterHardwareLayer):
         """
         self.START = 0
 
-    def set_size(self, value):
-        """
-        Number of clock cycles for shifting in data
-        ex. length of matrix shift register (number of pixels daisy chained)
-        """
-        self.SIZE = value
-
-    def get_size(self):
-        """
-        Get size of shift register length
-        """
-        return self.SIZE
-
-    def set_wait(self, value):
-        """
-        Sets time delay between repetitions in clock cycles
-        """
-        self.WAIT = value
-
-    def get_wait(self):
-        """
-        Gets time delay between repetitions in clock cycles
-        """
-        return self.WAIT
-
-    def set_word_count(self, value):
-        """
-        Number of word of mem size to send
-        """
-        self.WORD_COUNT = value
-
-    def get_word_count(self):
-        """
-        Gets Number of word of mem size to send
-        """
-        return self.WORD_COUNT
-
     def set_command(self, value):
         """
         IR_SCAN or DR_SCAN
@@ -102,31 +65,6 @@ class JtagMaster(RegisterHardwareLayer):
         IR_SCAN or DR_SCAN
         """
         return list(self.jtag_command.keys())[self.COMMAND]
-
-    def set_en(self, value):
-        """
-        Enable start on external EXT_START signal (inside FPGA)
-        """
-        self.EN = value
-
-    def get_en(self):
-        """
-        Gets state of enable.
-        """
-        return self.EN
-
-    def is_done(self):
-        """
-        Get the status of transfer/sequence.
-        """
-        return self.is_ready
-
-    @property
-    def is_ready(self):
-        return self.READY
-
-    def get_mem_size(self):
-        return self.MEM_BYTES
 
     def set_data(self, data, addr=0):
         """
@@ -166,16 +104,16 @@ class JtagMaster(RegisterHardwareLayer):
         """
 
         bit_number = self._test_input(data)
-        self.set_size(bit_number)
+        self.SIZE = bit_number
 
         data_byte = self._bitlogic2bytes(data)
         self.set_data(data_byte[::-1])
 
-        self.set_word_count(1)
+        self.WORD_COUNT = 1
         self.set_command("INSTRUCTION")
 
         self.start()
-        while not self.is_ready:
+        while not self.READY:
             pass
 
         received_data = self.get_data(size=len(data_byte))
@@ -190,10 +128,10 @@ class JtagMaster(RegisterHardwareLayer):
         """
 
         bit_number = self._test_input(data)
-        self.set_size(bit_number)
+        self.SIZE = bit_number
 
         self.set_command("DATA")
-        self.set_word_count(words)
+        self.WORD_COUNT = words
         if type(data[0]) == BitLogic:
             data_byte = self._bitlogic2bytes(data)
             self.set_data(data_byte[::-1])
@@ -202,7 +140,7 @@ class JtagMaster(RegisterHardwareLayer):
             self.set_data(data_byte)
 
         self.start()
-        while not self.is_ready:
+        while not self.READY:
             pass
 
         received_data = self.get_data(size=len(data_byte))
