@@ -11,10 +11,10 @@
 
 `include "gpio/gpio.v"
 
-`include "jtag_master/jtag_master.v"
-`include "jtag_master/jtag_master_core.v"
 
 `include "spi/blk_mem_gen_8_to_1_2k.v"
+`include "jtag_master/jtag_master.v"
+`include "jtag_master/jtag_master_core.v"
 
 `include "pulse_gen/pulse_gen.v"
 `include "pulse_gen/pulse_gen_core.v"

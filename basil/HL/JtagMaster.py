@@ -4,13 +4,10 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-import yaml
-import numpy as np
+import struct
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
-from basil.RL.StdRegister import StdRegister
 from basil.utils.BitLogic import BitLogic
-from basil.HL.spi import spi
 
 
 class JtagMaster(RegisterHardwareLayer):
@@ -32,6 +29,8 @@ class JtagMaster(RegisterHardwareLayer):
     }
 
     _require_version = "==1"
+
+    jtag_command = {"INSTRUCTION": 0, "DATA": 1}
 
     def __init__(self, intf, conf):
         super(JtagMaster, self).__init__(intf, conf)
@@ -92,20 +91,17 @@ class JtagMaster(RegisterHardwareLayer):
         """
         return self.WORD_COUNT
 
-    def set_operation(self, value):
+    def set_command(self, value):
         """
-        If 0: IR_SCAN
-        If 1: DR_SCAN
-        Other: No operations
+        Operation identifier
+        IR_SCAN or DR_SCAN
         """
         self.OPERATION = value
 
-    def get_operation(self):
+    def get_command(self):
         """
-        Gets operation number
-        If 0: IR_SCAN
-        If 1: DR_SCAN
-        Other: No operations
+        Gets operation identifier
+        IR_SCAN or DR_SCAN
         """
         return self.OPERATION
 
@@ -170,30 +166,15 @@ class JtagMaster(RegisterHardwareLayer):
         """
         Data must be a list of BitLogic
         """
-        if type(data[0]) == BitLogic:
-            pass
-        else:
-            raise TypeError(
-                "Type of data not supported: got",
-                type(data[0]),
-                " and support only Bitlogic",
-            )
 
-        # Set value to pass all data
-        bit_number = sum(len(x) for x in data)  # calculate number of bit to transmit
-        if bit_number < self._mem_bytes * 8:
-            self.set_size(bit_number)
-        else:
-            raise ValueError(
-                "Size is too big for memory: got %d and memory is: %d" % bit_number,
-                self._mem_bytes * 8,
-            )
+        bit_number = self._test_input(data)
+        self.set_size(bit_number)
 
         data_byte = self._bitlogic2bytes(data)
         self.set_data(data_byte[::-1])
 
         self.set_word_count(1)
-        self.set_operation(0)
+        self.set_command(self.jtag_command["INSTRUCTION"])
 
         self.start()
         while not self.is_ready:
@@ -209,25 +190,11 @@ class JtagMaster(RegisterHardwareLayer):
         """
         Data must be a list of BitLogic or string of raw data
         """
-        if type(data[0]) == BitLogic or type(data[0]) == str:
-            pass
-        else:
-            raise TypeError(
-                "Type of data not supported: got",
-                type(data[0]),
-                " and support only str and Bitlogic",
-            )
 
-        bit_number = sum(len(x) for x in data)
-        if bit_number < self._mem_bytes * 8:
-            self.set_size(bit_number)
-        else:
-            raise ValueError(
-                "Size is too big for memory: got %d and memory is: %d" % bit_number,
-                self._mem_bytes * 8,
-            )
+        bit_number = self._test_input(data)
+        self.set_size(bit_number)
 
-        self.set_operation(1)
+        self.set_command(self.jtag_command["DATA"])
         self.set_word_count(words)
         if type(data[0]) == BitLogic:
             data_byte = self._bitlogic2bytes(data)
@@ -246,6 +213,40 @@ class JtagMaster(RegisterHardwareLayer):
 
         return rlist
 
+    def _test_input(self, data):
+        """
+        Test input data and return length in bits
+        """
+        if type(data[0]) == BitLogic or type(data[0]) == str:
+            pass
+        else:
+            raise TypeError(
+                "Type of data not supported: got",
+                type(data[0]),
+                " and support only str and Bitlogic",
+            )
+
+        bit_number = sum(len(x) for x in data)
+        if bit_number <= self._mem_bytes * 8:
+            pass
+        else:
+            raise ValueError(
+                "Size is too big for memory: got %d and memory is: %d" % bit_number,
+                (self._mem_bytes * 8)
+            )
+        return bit_number
+
+        # Set value to pass all data
+        bit_number = sum(len(x) for x in data)  # calculate number of bit to transmit
+        if bit_number < self._mem_bytes * 8:
+            self.set_size(bit_number)
+        else:
+            raise ValueError(
+                "Size is too big for memory: got %d and memory is: %d" % bit_number,
+                self._mem_bytes * 8,
+            )
+        return bit_number
+
     def _bitlogic2bytes(self, data):
         bitlogic_to_send = BitLogic()
         size_dev = len(data)
@@ -262,13 +263,13 @@ class JtagMaster(RegisterHardwareLayer):
             b = BitLogic.from_value(data[i], fmt="B")
             b.reverse()
             ret[0].extend(b)
-        return ret[0][bit_number - 1 : :]
+        return ret[0][bit_number - 1::]
 
     def _split_bitlogic(self, data_to_split, original_data):
         rlist = []
         last_data_len = 0
         for i in original_data:
-            rlist.append(data_to_split[len(i) - 1 + last_data_len : last_data_len])
+            rlist.append(data_to_split[len(i)-1+last_data_len:last_data_len])
             last_data_len = last_data_len + len(i)
         return rlist
 
@@ -283,5 +284,5 @@ class JtagMaster(RegisterHardwareLayer):
             all_data = all_data + "0" * (8 - (len(all_data) % 8))
         # convert string to byte
         size = len(all_data) // 8
-        data_byte = int(all_data, 2).to_bytes(size, "big")
+        data_byte = struct.pack(">Q", int(all_data, 2))[8 - size :]
         return data_byte
