@@ -23,7 +23,7 @@ class JtagMaster(RegisterHardwareLayer):
         "SIZE": {"descr": {"addr": 3, "size": 16}},
         "WAIT": {"descr": {"addr": 5, "size": 32}},
         "WORD_COUNT": {"descr": {"addr": 9, "size": 16}},
-        "OPERATION": {"descr": {"addr": 11, "size": 16}},
+        "COMMAND": {"descr": {"addr": 11, "size": 16}},
         "EN": {"descr": {"addr": 13, "size": 1}},
         "MEM_BYTES": {"descr": {"addr": 14, "size": 16, "properties": ["ro"]}},
     }
@@ -95,19 +95,13 @@ class JtagMaster(RegisterHardwareLayer):
         """
         IR_SCAN or DR_SCAN
         """
-        if value == "INSTRUCTION":
-            self.OPERATION = self.jtag_command["INSTRUCTION"]
-        elif value == "DATA":
-            self.OPERATION = self.jtag_command["DATA"]
+        self.COMMAND = self.jtag_command[value]
 
     def get_command(self):
         """
         IR_SCAN or DR_SCAN
         """
-        if self.OPERATION == self.jtag_command["INSTRUCTION"]:
-            return "INSTRUCTION"
-        elif self.OPERATION == self.jtag_command["DATA"]:
-            return "DATA"
+        return list(self.jtag_command.keys())[self.COMMAND]
 
     def set_en(self, value):
         """

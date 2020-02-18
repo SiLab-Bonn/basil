@@ -52,8 +52,8 @@ always @(posedge BUS_CLK) begin
         status_regs[8] <= 0;  //wait
         status_regs[9] <= 1;  //word count
         status_regs[10] <= 0; //word count
-        status_regs[11] <= 0; //Jtag operation
-        status_regs[12] <= 0; //Jtag operation
+        status_regs[11] <= 0; //Jtag command
+        status_regs[12] <= 0; //Jtag command
         status_regs[13] <= 0; //0:enable external start
     end
     else if(BUS_WR && BUS_ADD < 16)
