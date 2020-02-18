@@ -273,7 +273,7 @@ class JtagMaster(RegisterHardwareLayer):
         rlist = []
         last_data_len = 0
         for i in original_data:
-            rlist.append(data_to_split[len(i)-1+last_data_len:last_data_len])
+            rlist.append(data_to_split[len(i) - 1 + last_data_len:last_data_len])
             last_data_len = last_data_len + len(i)
         return rlist
 
@@ -288,5 +288,5 @@ class JtagMaster(RegisterHardwareLayer):
             all_data = all_data + "0" * (8 - (len(all_data) % 8))
         # convert string to byte
         size = len(all_data) // 8
-        data_byte = struct.pack(">Q", int(all_data, 2))[8 - size :]
+        data_byte = struct.pack(">Q", int(all_data, 2))[8 - size:]
         return data_byte
