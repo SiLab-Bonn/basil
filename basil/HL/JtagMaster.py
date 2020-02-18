@@ -93,17 +93,21 @@ class JtagMaster(RegisterHardwareLayer):
 
     def set_command(self, value):
         """
-        Operation identifier
         IR_SCAN or DR_SCAN
         """
-        self.OPERATION = value
+        if value == "INSTRUCTION":
+            self.OPERATION = self.jtag_command["INSTRUCTION"]
+        elif value == "DATA":
+            self.OPERATION = self.jtag_command["DATA"]
 
     def get_command(self):
         """
-        Gets operation identifier
         IR_SCAN or DR_SCAN
         """
-        return self.OPERATION
+        if self.OPERATION == self.jtag_command["INSTRUCTION"]:
+            return "INSTRUCTION"
+        elif self.OPERATION == self.jtag_command["DATA"]:
+            return "DATA"
 
     def set_en(self, value):
         """
@@ -174,7 +178,7 @@ class JtagMaster(RegisterHardwareLayer):
         self.set_data(data_byte[::-1])
 
         self.set_word_count(1)
-        self.set_command(self.jtag_command["INSTRUCTION"])
+        self.set_command("INSTRUCTION")
 
         self.start()
         while not self.is_ready:
@@ -194,7 +198,7 @@ class JtagMaster(RegisterHardwareLayer):
         bit_number = self._test_input(data)
         self.set_size(bit_number)
 
-        self.set_command(self.jtag_command["DATA"])
+        self.set_command("DATA")
         self.set_word_count(words)
         if type(data[0]) == BitLogic:
             data_byte = self._bitlogic2bytes(data)

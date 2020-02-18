@@ -191,7 +191,7 @@ class TestSimJtagMaster(unittest.TestCase):
         self.assertEqual(word_cnt, 1)
 
         op = self.chip["JTAG"].get_command()
-        self.assertEqual(op, self.chip["JTAG"].jtag_command["INSTRUCTION"])
+        self.assertEqual(op, "INSTRUCTION")
 
         wait = self.chip["JTAG"].get_wait()
         self.assertEqual(wait, 0)
