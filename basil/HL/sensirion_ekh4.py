@@ -64,7 +64,7 @@ class sensirionEKH4(HardwareLayer):
             else:
                 values.append(self.cal_ret(ret[2 + 2 * j] + ret[2 + 2 * j + 1]))
 
-        if channelis None:
+        if channel is None:
             return values
         return values[channel]
 
@@ -75,10 +75,9 @@ class sensirionEKH4(HardwareLayer):
             if ret[2 + 2 * j] == "7f" and ret[2 + 2 * j + 1] == "ff":
                 values.append(None)
             else:
-                values.append(self.cal_ret(
-                    ret[2 + 2 * j] + ret[2 + 2 * j + 1]))
+                values.append(self.cal_ret(ret[2 + 2 * j] + ret[2 + 2 * j + 1]))
 
-        if channelis None:
+        if channel is None:
             return values
         return values[channel]
 
@@ -89,10 +88,9 @@ class sensirionEKH4(HardwareLayer):
             if ret[2 + 2 * j] == "7f" and ret[2 + 2 * j + 1] == "ff":
                 values.append(None)
             else:
-                values.append(self.cal_ret(
-                    ret[2 + 2 * j] + ret[2 + 2 * j + 1]))
+                values.append(self.cal_ret(ret[2 + 2 * j] + ret[2 + 2 * j + 1]))
 
-        if channelis None:
+        if channel is None:
             return values
         return values[channel]
 
