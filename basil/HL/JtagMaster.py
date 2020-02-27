@@ -47,6 +47,8 @@ class JtagMaster(RegisterHardwareLayer):
         Soft reset the module.
         """
         self.RESET = 0
+        while not self.READY:
+            pass
 
     def start(self):
         """
@@ -111,7 +113,6 @@ class JtagMaster(RegisterHardwareLayer):
 
         self.WORD_COUNT = 1
         self.set_command("INSTRUCTION")
-
         self.start()
         while not self.READY:
             pass
@@ -167,19 +168,8 @@ class JtagMaster(RegisterHardwareLayer):
             pass
         else:
             raise ValueError(
-                "Size is too big for memory: got %d and memory is: %d" % bit_number,
-                (self._mem_bytes * 8)
-            )
-        return bit_number
-
-        # Set value to pass all data
-        bit_number = sum(len(x) for x in data)  # calculate number of bit to transmit
-        if bit_number < self._mem_bytes * 8:
-            self.set_size(bit_number)
-        else:
-            raise ValueError(
-                "Size is too big for memory: got %d and memory is: %d" % bit_number,
-                self._mem_bytes * 8,
+                "Size is too big for memory: got %d and memory is: %d" % (bit_number,
+                self._mem_bytes * 8)
             )
         return bit_number
 

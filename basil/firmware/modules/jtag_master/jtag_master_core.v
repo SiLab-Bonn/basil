@@ -438,7 +438,7 @@ end
 // Synchronous signals //
 
 wire RST_SOFT_SYNC;
-cdc_pulse_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(JTAG_CLK), .pulse_out(RST_SOFT_SYNC));
+cdc_reset_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(JTAG_CLK), .pulse_out(RST_SOFT_SYNC));
 cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(JTAG_CLK), .pulse_out(START_SYNC));
 assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
 ///
@@ -454,13 +454,11 @@ always @(posedge JTAG_CLK)
     SLD <= (sync_ld[1]==1 && sync_ld[0]==0);
 
 wire DONE_SYNC, DONE;
-assign DONE = out_word_cnt == WORD_COUNT && state == RUN_TEST_IDLE;
+assign DONE = (out_word_cnt == WORD_COUNT && state == RUN_TEST_IDLE) || (reset_cnt == 5);
 cdc_pulse_sync done_pulse_sync (.clk_in(JTAG_CLK), .pulse_in(DONE), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
 
 always @(posedge BUS_CLK)
-    if(RST)
-        CONF_DONE <= 1;
-    else if(START)
+    if(START || RST)
         CONF_DONE <= 0;
     else if(DONE_SYNC)
         CONF_DONE <= 1;
