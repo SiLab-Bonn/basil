@@ -20,6 +20,7 @@
 `include "pulse_gen/pulse_gen_core.v"
 
 `include "utils/cdc_pulse_sync.v"
+`include "utils/cdc_reset_sync.v"
 `include "utils/CG_MOD_pos.v"
 `include "utils/clock_divider.v"
 
@@ -71,7 +72,7 @@ assign BUS_BYTE_ACCESS = BUS_ADD < 32'h8000_0000 ? 1'b1 : 1'b0;
 // MODULES //
 wire JTAG_CLK;
 clock_divider #(
-    .DIVISOR(4)
+    .DIVISOR(20)
 ) i_clock_divisor_jtag (
     .CLK(BUS_CLK),
     .RESET(1'b0),
