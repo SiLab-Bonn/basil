@@ -168,8 +168,8 @@ class JtagMaster(RegisterHardwareLayer):
             pass
         else:
             raise ValueError(
-                "Size is too big for memory: got %d and memory is: %d" % (bit_number,
-                self._mem_bytes * 8)
+                "Size is too big for memory: got %d and memory is: %d"
+                % (bit_number, self._mem_bytes * 8)
             )
         return bit_number
 
