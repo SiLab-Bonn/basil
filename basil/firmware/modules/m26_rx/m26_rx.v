@@ -12,7 +12,7 @@ module m26_rx #(
     parameter HIGHADDR = 16'h0000,
     parameter ABUSWIDTH = 16,
     parameter HEADER = 0,
-    parameter IDENTYFIER = 0
+    parameter IDENTIFIER = 0
 ) (
     input wire BUS_CLK,
     input wire [ABUSWIDTH-1:0] BUS_ADD,
@@ -60,7 +60,7 @@ bus_to_ip #(
 
 m26_rx_core #(
     .ABUSWIDTH(ABUSWIDTH),
-    .IDENTYFIER(IDENTYFIER),
+    .IDENTIFIER(IDENTIFIER),
     .HEADER(HEADER)
 ) i_m26_rx_core (
     .BUS_CLK(BUS_CLK),
