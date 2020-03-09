@@ -164,10 +164,7 @@ DEV:
 class TestSimJtagMaster(unittest.TestCase):
     def setUp(self):
         cocotb_compile_and_run(
-            [
-                os.path.join(os.path.dirname(__file__), "jtag_tap.v"),
-                os.path.join(os.path.dirname(__file__), "test_SimJtagMaster.v"),
-            ]
+            [os.path.join(os.path.dirname(__file__), "jtag_tap.v"), os.path.join(os.path.dirname(__file__), "test_SimJtagMaster.v"),]
         )
 
         self.chip = Dut(cnfg_yaml)
@@ -182,10 +179,10 @@ class TestSimJtagMaster(unittest.TestCase):
         self.chip["JTAG"].reset()
 
         size = self.chip["JTAG"].SIZE
-        self.assertEqual(size, 16 * 8)
+        self.assertEqual(size, 2000 * 8)
 
         byte_size = self.chip["JTAG"].MEM_BYTES
-        self.assertEqual(byte_size, 16)
+        self.assertEqual(byte_size, 2000)
 
         word_cnt = self.chip["JTAG"].WORD_COUNT
         self.assertEqual(word_cnt, 1)
@@ -201,11 +198,10 @@ class TestSimJtagMaster(unittest.TestCase):
 
         # Write 1 word test
         self.chip["JTAG"].set_data([0xFF] + list(range(15)))
-        ret = self.chip["JTAG"].get_data(
-            size=16, addr=0
-        )  # to read back what was written
+        ret = self.chip["JTAG"].get_data(size=16, addr=0)  # to read back what was written
         self.assertEqual(ret.tolist(), [0xFF] + list(range(15)))
 
+        self.chip["JTAG"].SIZE = 16
         self.chip["JTAG"].start()
         while not self.chip["JTAG"].READY:
             pass
@@ -279,9 +275,7 @@ class TestSimJtagMaster(unittest.TestCase):
 
         self.chip["JTAG"].scan_dr(["1" * 32, "0" * 1 + "1" * 30 + "0" * 1])
         ret = self.chip["JTAG"].scan_dr(["0" * 32, "1" * 32])
-        self.assertEqual(
-            ret, [BitLogic("1" * 32), BitLogic("0" * 1 + "1" * 30 + "0" * 1)]
-        )
+        self.assertEqual(ret, [BitLogic("1" * 32), BitLogic("0" * 1 + "1" * 30 + "0" * 1)])
         ret = self.chip["JTAG"].scan_dr(["0" * 32, "0" * 32])
         self.assertEqual(ret, [BitLogic("0" * 32), BitLogic("1" * 32)])
 
@@ -324,9 +318,7 @@ class TestSimJtagMaster(unittest.TestCase):
         ret = self.chip["JTAG"].scan_dr([self.chip["DEV1"][:] + self.chip["DEV2"][:]])
 
         self.chip["DEV"].set(ret[0])
-        self.assertEqual(
-            self.chip["DEV"][:], self.chip["DEV1"][:] + self.chip["DEV2"][:]
-        )
+        self.assertEqual(self.chip["DEV"][:], self.chip["DEV1"][:] + self.chip["DEV2"][:])
 
         # BYPASS AND DEBUG REGISTER
         self.chip["fifo1"].reset()
@@ -369,22 +361,25 @@ class TestSimJtagMaster(unittest.TestCase):
         self.assertNotEqual(list(data), list(fifo_tap2_content))
         self.assertListEqual(list(data), list(fifo_tap1_content))
 
-        # TEST OF REAPEATING WORD N times
+        # TEST OF SENDING MULTIPLE WORDS WITH SCAN_DR FUNCTION
+        self.chip["JTAG"].set_data([0x00] * 100)
+        self.chip["JTAG"].set_command("DATA")
+        self.chip["JTAG"].SIZE = 100 * 8
+        self.chip["JTAG"].start()
+        while not self.chip["JTAG"].READY:
+            pass
+
         # empty fifos
         fifo_tap1_content = self.chip["fifo1"].get_data()
         fifo_tap2_content = self.chip["fifo2"].get_data()
 
         self.chip["JTAG"].scan_ir([DEBUG, BYPASS])
-        self.chip["JTAG"].scan_dr(["0" * 24 + "10101101", "1"], words=15)
+        self.chip["JTAG"].scan_dr([BitLogic("0" * 24 + "10101101"), BitLogic("1")] * 15, words=15)
 
         fifo_tap1_content = self.chip["fifo1"].get_data()
         fifo_tap2_content = self.chip["fifo2"].get_data()
-        self.assertNotEqual(
-            [int("0" * 24 + "10101101", 2)] * 15, list(fifo_tap1_content)
-        )
-        self.assertListEqual(
-            [int("0" * 24 + "10101101", 2)] * 15, list(fifo_tap2_content)
-        )
+        self.assertNotEqual([int("0" * 24 + "10101101", 2)] * 15, list(fifo_tap1_content))
+        self.assertListEqual([int("0" * 24 + "10101101", 2)] * 15, list(fifo_tap2_content))
 
         # change value of debug registers
         self.chip["JTAG"].scan_ir([DEBUG, DEBUG])
@@ -395,16 +390,55 @@ class TestSimJtagMaster(unittest.TestCase):
         fifo_tap2_content = self.chip["fifo2"].get_data()
 
         self.chip["JTAG"].scan_ir([BYPASS, DEBUG])
-        self.chip["JTAG"].scan_dr(["1", "0" * 24 + "10101101"], words=15)
+        self.chip["JTAG"].scan_dr([BitLogic("1"), BitLogic("0" * 24 + "10101101")] * 15, words=15)
 
         fifo_tap1_content = self.chip["fifo1"].get_data()
         fifo_tap2_content = self.chip["fifo2"].get_data()
-        self.assertListEqual(
-            [int("0" * 24 + "10101101", 2)] * 15, list(fifo_tap1_content)
-        )
-        self.assertNotEqual(
-            [int("0" * 24 + "10101101", 2)] * 15, list(fifo_tap2_content)
-        )
+
+        self.assertListEqual([int("0" * 24 + "10101101", 2)] * 15, list(fifo_tap1_content))
+        self.assertNotEqual([int("0" * 24 + "10101101", 2)] * 15, list(fifo_tap2_content))
+
+        # TEST OF SENDING MULTIPLE WORDS BY WRITING DIRECTLY IN JTAG MODULE MEMORY
+        self.chip["fifo1"].get_data()
+        self.chip["fifo2"].get_data()
+        data = np.byte([0x01, 0x02, 0x03, 0x04,
+                      0x11, 0x12, 0x13, 0x14,
+                      0x21, 0x22, 0x23, 0x24,
+                      0x31, 0x32, 0x33, 0x34,
+                      0x41, 0x42, 0x43, 0x44])
+        word_size_bit = 32
+        word_size_byte = int(word_size_bit / 8)
+        word_count = 5
+
+        self.chip["JTAG"].scan_ir([DEBUG, DEBUG])
+
+        # The ring register (DEBUG register) is 32 bits long, so the data have to be arranged like this : [WORD1(dev1) WORD1(dev2) WORD2(dev1) WORD2(dev2) ...]
+        ba = BitLogic()
+        all_data = bytearray()
+        for word in range(word_count):
+            ba.frombytes(data[word * word_size_byte:(word + 1) * word_size_byte].tobytes())
+            ba.fill()
+            ba.reverse()
+            all_data = all_data + ba.tobytes() * 2
+            del ba[:]
+
+        print(all_data)
+
+        self.chip["JTAG"].set_data(all_data)
+        self.chip["JTAG"].SIZE = word_size_bit * 2
+        self.chip["JTAG"].set_command("DATA")
+        self.chip["JTAG"].WORD_COUNT = word_count
+
+        self.chip["JTAG"].start()
+        while not self.chip["JTAG"].READY:
+            pass
+
+        fifo_tap1_content = self.chip["fifo1"].get_data()
+        fifo_tap2_content = self.chip["fifo2"].get_data()
+
+        expected_result = [int("0x01020304", 16), int("0x11121314", 16), int("0x21222324", 16), int("0x31323334", 16), int("41424344", 16)]
+        self.assertListEqual(expected_result, list(fifo_tap1_content))
+        self.assertListEqual(expected_result, list(fifo_tap2_content))
 
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator

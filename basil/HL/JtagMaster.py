@@ -73,10 +73,7 @@ class JtagMaster(RegisterHardwareLayer):
         Sets data for outgoing stream
         """
         if self._mem_bytes < len(data):
-            raise ValueError(
-                "Size of data (%d bytes) is too big for memory (%d bytes)"
-                % (len(data), self._mem_bytes)
-            )
+            raise ValueError("Size of data (%d bytes) is too big for memory (%d bytes)" % (len(data), self._mem_bytes))
         self._intf.write(self._conf["base_addr"] + self._mem_offset + addr, data)
 
     # This needs to be changed to return written value
@@ -92,20 +89,16 @@ class JtagMaster(RegisterHardwareLayer):
             raise ValueError("Size is too big")
 
         if size is None:
-            return self._intf.read(
-                self._conf["base_addr"] + self._mem_offset + addr, self._mem_bytes
-            )
+            return self._intf.read(self._conf["base_addr"] + self._mem_offset + addr, self._mem_bytes)
         else:
-            return self._intf.read(
-                self._conf["base_addr"] + self._mem_offset + addr, size
-            )
+            return self._intf.read(self._conf["base_addr"] + self._mem_offset + addr, size)
 
     def scan_ir(self, data):
         """
         Data must be a list of BitLogic
         """
 
-        bit_number = self._test_input(data)
+        bit_number = self._test_input(data, words=1)
         self.SIZE = bit_number
 
         data_byte = self._bitlogic2bytes(data)
@@ -128,8 +121,11 @@ class JtagMaster(RegisterHardwareLayer):
         Data must be a list of BitLogic or string of raw data
         """
 
-        bit_number = self._test_input(data)
-        self.SIZE = bit_number
+        bit_number = self._test_input(data, words)
+        if words != 1:
+            self.SIZE = int(bit_number / words)
+        else:
+            self.SIZE = bit_number
 
         self.set_command("DATA")
         self.WORD_COUNT = words
@@ -150,7 +146,7 @@ class JtagMaster(RegisterHardwareLayer):
 
         return rlist
 
-    def _test_input(self, data):
+    def _test_input(self, data, words):
         """
         Test input data and return length in bits
         """
@@ -158,19 +154,18 @@ class JtagMaster(RegisterHardwareLayer):
             pass
         else:
             raise TypeError(
-                "Type of data not supported: got",
-                type(data[0]),
-                " and support only str and Bitlogic",
+                "Type of data not supported: got", type(data[0]), " and support only str and Bitlogic",
             )
 
         bit_number = sum(len(x) for x in data)
         if bit_number <= self._mem_bytes * 8:
             pass
         else:
-            raise ValueError(
-                "Size is too big for memory: got %d and memory is: %d"
-                % (bit_number, self._mem_bytes * 8)
-            )
+            raise ValueError("Size is too big for memory: got %d and memory is: %d" % (bit_number, self._mem_bytes * 8))
+        
+        if words != 1 and bit_number % words != 0:
+            raise ValueError("Number of bits doesn't match the number of words. %d bits remaining" % (bit_number % words))
+
         return bit_number
 
     def _bitlogic2bytes(self, data):

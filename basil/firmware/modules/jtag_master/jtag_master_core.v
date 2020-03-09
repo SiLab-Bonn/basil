@@ -140,6 +140,24 @@ always @(*) begin
 end
 ////
 
+reg [15:0] state, next_state;
+localparam TEST_LOGIC_RESET = 0,
+    RUN_TEST_IDLE = 1,
+    SELECT_DR_SCAN = 2,
+    CAPTURE_DR = 3,
+    SHIFT_DR = 4,
+    EXIT1_DR = 5,
+    PAUSE_DR = 6,
+    EXIT2_DR = 7, 
+    UPDATE_DR = 8,
+    SELECT_IR_SCAN = 9,
+    CAPTURE_IR = 10,
+    SHIFT_IR = 11,
+    EXIT1_IR = 12,
+    PAUSE_IR = 13,
+    EXIT2_IR = 14,
+    UPDATE_IR = 15;
+
 // Memory Management //
 wire SDI_MEM;
 reg [32:0] out_bit_cnt;
@@ -147,7 +165,7 @@ reg [32:0] out_word_cnt;
 reg [32:0] reset_cnt;
 
 wire [13:0] memout_addrb;
-assign memout_addrb = out_bit_cnt;
+assign memout_addrb = (out_word_cnt * CONF_BIT_OUT) + out_bit_cnt;
 wire [10:0] memout_addra;
 assign memout_addra = (BUS_ADD-16);
 
@@ -167,7 +185,7 @@ blk_mem_gen_8_to_1_2k memout(
 wire [10:0] ADDRA_MIN;
 assign ADDRA_MIN = (BUS_ADD-16-MEM_BYTES);
 wire [13:0] ADDRB_MIN;
-assign ADDRB_MIN = out_bit_cnt - 1;
+assign ADDRB_MIN = (out_word_cnt * CONF_BIT_OUT) + out_bit_cnt - 1;
 reg SEN_INT;
 
 blk_mem_gen_8_to_1_2k memin(
@@ -176,7 +194,7 @@ blk_mem_gen_8_to_1_2k memin(
     .DOUTA(BUS_OUT_MEM_IB),
     .DOUTB(),
     .WEA(1'b0),
-    .WEB(SEN_INT),
+    .WEB(SEN_INT && (state == SHIFT_DR || state == SHIFT_IR)),
     .ADDRA(ADDRA_MIN),
     .ADDRB(ADDRB_MIN),
     .DINA(BUS_DATA_IN_IB),
@@ -185,24 +203,6 @@ blk_mem_gen_8_to_1_2k memin(
 ///
 
 // JTAG Master Machine state //
-reg [15:0] state, next_state;
-localparam TEST_LOGIC_RESET = 0,
-    RUN_TEST_IDLE = 1,
-    SELECT_DR_SCAN = 2,
-    CAPTURE_DR = 3,
-    SHIFT_DR = 4,
-    EXIT1_DR = 5,
-    PAUSE_DR = 6,
-    EXIT2_DR = 7, 
-    UPDATE_DR = 8,
-    SELECT_IR_SCAN = 9,
-    CAPTURE_IR = 10,
-    SHIFT_IR = 11,
-    EXIT1_IR = 12,
-    PAUSE_IR = 13,
-    EXIT2_IR = 14,
-    UPDATE_IR = 15;
-
 localparam DR_SCAN = 1, IR_SCAN = 0;
 reg transfert_active = 0;
 
