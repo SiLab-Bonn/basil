@@ -86,7 +86,7 @@ jtag_master #(
     .BASEADDR(JTAGM_BASEADDR),
     .HIGHADDR(JTAGM_HIGHADDR),
     .ABUSWIDTH(ABUSWIDTH),
-    .MEM_BYTES(16)
+    .MEM_BYTES(2000)
 ) i_jtag_master (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
