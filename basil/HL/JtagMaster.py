@@ -8,6 +8,8 @@ import struct
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from basil.utils.BitLogic import BitLogic
+from bitarray import bitarray
+import numpy as np
 
 
 class JtagMaster(RegisterHardwareLayer):
@@ -102,7 +104,7 @@ class JtagMaster(RegisterHardwareLayer):
         self.SIZE = bit_number
 
         data_byte = self._bitlogic2bytes(data)
-        self.set_data(data_byte[::-1])
+        self.set_data(data_byte)
 
         self.WORD_COUNT = 1
         self.set_command("INSTRUCTION")
@@ -111,8 +113,7 @@ class JtagMaster(RegisterHardwareLayer):
             pass
 
         received_data = self.get_data(size=len(data_byte))
-        ret = self._bytes2bitlogic(received_data, bit_number)
-        rlist = self._split_bitlogic(ret, data)
+        rlist = self._bytes2bitlogic(received_data, bit_number, data)
 
         return rlist
 
@@ -131,7 +132,7 @@ class JtagMaster(RegisterHardwareLayer):
         self.WORD_COUNT = words
         if type(data[0]) == BitLogic:
             data_byte = self._bitlogic2bytes(data)
-            self.set_data(data_byte[::-1])
+            self.set_data(data_byte)
         else:
             data_byte = self._raw_data2bytes(data)
             self.set_data(data_byte)
@@ -141,8 +142,7 @@ class JtagMaster(RegisterHardwareLayer):
             pass
 
         received_data = self.get_data(size=len(data_byte))
-        ret = self._bytes2bitlogic(received_data, bit_number)
-        rlist = self._split_bitlogic(ret, data)
+        rlist = self._bytes2bitlogic(received_data, bit_number, data)
 
         return rlist
 
@@ -153,53 +153,47 @@ class JtagMaster(RegisterHardwareLayer):
         if type(data[0]) == BitLogic or type(data[0]) == str:
             pass
         else:
-            raise TypeError(
-                "Type of data not supported: got", type(data[0]), " and support only str and Bitlogic",
-            )
+            raise TypeError("Type of data not supported: got", type(data[0]), " and support only str and Bitlogic")
 
         bit_number = sum(len(x) for x in data)
         if bit_number <= self._mem_bytes * 8:
             pass
         else:
             raise ValueError("Size is too big for memory: got %d and memory is: %d" % (bit_number, self._mem_bytes * 8))
-        
+
         if words != 1 and bit_number % words != 0:
             raise ValueError("Number of bits doesn't match the number of words. %d bits remaining" % (bit_number % words))
 
         return bit_number
 
     def _bitlogic2bytes(self, data):
-        bitlogic_to_send = BitLogic()
-        size_dev = len(data)
-        for dev in range(size_dev):
-            bitlogic_to_send.extend(data[dev])
-        bitlogic_to_send.fill()
-        bitlogic_to_send.reverse()
-        data_byte = bitlogic_to_send.tobytes()
+        original_string = ""
+        for dev in range(len(data)):
+            device_string = data[dev].to01()
+            original_string += device_string[::-1]  # We want the original string of the Bitlogic, not the reversed one
+        data_bitarray = bitarray(original_string)
+        data_byte = data_bitarray.tobytes()
+
         return data_byte
 
-    def _bytes2bitlogic(self, data, bit_number):
-        ret = [BitLogic()]
-        for i in range(len(data)):
-            b = BitLogic.from_value(data[i], fmt="B")
-            b.reverse()
-            ret[0].extend(b)
-        return ret[0][bit_number - 1::]
+    def _bytes2bitlogic(self, data, bit_number, original_data):
+        data_byte = np.byte(data)
+        tmp = bitarray()
+        tmp.frombytes(data_byte.tobytes())
+        binary_string = tmp.to01()
 
-    def _split_bitlogic(self, data_to_split, original_data):
         rlist = []
         last_data_len = 0
         for i in original_data:
-            rlist.append(data_to_split[len(i) - 1 + last_data_len:last_data_len])
-            last_data_len = last_data_len + len(i)
+            rlist.append(BitLogic(binary_string[last_data_len:len(i) + last_data_len]))
+            last_data_len += len(i)
+
         return rlist
 
     def _raw_data2bytes(self, data):
         all_data = ""
         for i in data:
-            all_data = i + all_data
-        # inversion needed for JTAG
-        all_data = all_data[::-1]
+            all_data = all_data + i
         # pad with zero if not a multiple of 8
         if len(all_data) % 8 != 0:
             all_data = all_data + "0" * (8 - (len(all_data) % 8))
