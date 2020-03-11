@@ -165,7 +165,7 @@ reg [32:0] out_word_cnt;
 reg [32:0] reset_cnt;
 
 wire [13:0] memout_addrb;
-assign memout_addrb = (out_word_cnt * CONF_BIT_OUT) + out_bit_cnt;
+assign memout_addrb = (out_word_cnt * CONF_BIT_OUT) + CONF_BIT_OUT - 1 - out_bit_cnt;
 wire [10:0] memout_addra;
 assign memout_addra = (BUS_ADD-16);
 
@@ -185,7 +185,7 @@ blk_mem_gen_8_to_1_2k memout(
 wire [10:0] ADDRA_MIN;
 assign ADDRA_MIN = (BUS_ADD-16-MEM_BYTES);
 wire [13:0] ADDRB_MIN;
-assign ADDRB_MIN = (out_word_cnt * CONF_BIT_OUT) + out_bit_cnt - 1;
+assign ADDRB_MIN = (out_word_cnt * CONF_BIT_OUT) + CONF_BIT_OUT - out_bit_cnt;
 reg SEN_INT;
 
 blk_mem_gen_8_to_1_2k memin(
