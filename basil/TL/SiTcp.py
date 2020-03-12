@@ -463,9 +463,7 @@ class SiTcp(SiTransferLayer):
         super(SiTcp, self).close()
         self._stop = True
         self._tcp_readout_thread.join()
-        # https://stackoverflow.com/questions/60487126/why-does-cpython-garbage-collection-with-threads-not-work
-        del self._tcp_readout_thread
-        del self._tcp_read_buff
+        self._tcp_readout_thread = None
         self._sock_udp.close()
         if self._init['tcp_connection']:
             self._sock_tcp.close()
