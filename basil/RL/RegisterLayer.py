@@ -53,5 +53,5 @@ class RegisterLayer(Base):
         else:
             try:
                 setattr(self._drv, name, value)
-            except:
+            except Exception:
                 super(RegisterLayer, self).__setattr__(name, value)
