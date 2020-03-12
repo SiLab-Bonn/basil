@@ -18,6 +18,11 @@ from threading import RLock as Lock
 from time import time
 
 from basil.TL.SiTransferLayer import SiTransferLayer
+from basil.HL.sram_fifo import sram_fifo
+
+
+# Fake SRAM version to ensure compatibility with the simulation
+sram_fifo_version = int(re.findall(r'\d+', sram_fifo._require_version)[-1])
 
 logger = logging.getLogger(__name__)
 
@@ -404,10 +409,7 @@ class SiTcp(SiTransferLayer):
         elif addr < self.BASE_FAKE_FIFO_TCP:
             return self._get_tcp_data(size)
         elif addr == self.BASE_FAKE_FIFO_TCP:
-            from basil.HL.sram_fifo import sram_fifo
-            version = int(re.findall(r'\d+', sram_fifo._require_version)[-1])
-            del sram_fifo
-            return array('B', chr(version))
+            return array('B', chr(sram_fifo_version))
         else:  # this is to fake a HL fifo. Is there better way? Definitely...
             if size == 4:
                 return array('B', struct.pack('I', self._get_tcp_data_size()))
