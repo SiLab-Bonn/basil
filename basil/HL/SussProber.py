@@ -49,8 +49,11 @@ class SussProber(HardwareLayer):
         self._intf.write('StepFirstDie')
 
     def get_die(self):
-        ''' Move chuck to wafer map chip index'''
-        reply = self._intf.query('ReadMapPosition')
+        ''' Get chip index '''
+        reply = self._intf.query('ReadMapPosition').strip()
+        if reply == '0:' or reply == '':
+            reply = self._intf.query('ReadMapPosition')
+
         values = reply[2:].split(' ')
         return (int(values[0]), int(values[1]))
 
