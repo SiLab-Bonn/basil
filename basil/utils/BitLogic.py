@@ -49,20 +49,20 @@ class BitLogic(bitarray):
         if size:
             if not isinstance(size, integer_types) or not size > 0:
                 raise TypeError('Size must be greater than zero')
-            if size > self.length():
-                bitarray.extend(self, (size - self.length()) * [0])
+            if size > len(self):
+                bitarray.extend(self, (size - len(self)) * [0])
             else:
-                bitarray.__delitem__(self, slice(size, self.length()))  # or use __delslice__() (deprecated)
+                bitarray.__delitem__(self, slice(size, len(self)))  # or use __delslice__() (deprecated)
 
     def tovalue(self, fmt='Q'):
         '''
         Convert bitstring to a int/long number.
         '''
         format_size = struct.calcsize(fmt)
-        if self.length() > format_size * 8:
+        if len(self) > format_size * 8:
             raise TypeError('Cannot convert to number')
         ba = self.copy()
-        ba.extend((format_size * 8 - self.length()) * [0])
+        ba.extend((format_size * 8 - len(self)) * [0])
         return struct.unpack_from(fmt, ba.tobytes())[0]
 
     def __str__(self):
@@ -81,7 +81,7 @@ class BitLogic(bitarray):
 
         Note: the length must not be changed
         '''
-        length = self.length()
+        length = len(self)
         try:
             # item is bit string
             _ = int(item, base=2)
@@ -101,7 +101,7 @@ class BitLogic(bitarray):
             slc = self._swap_slice_indices(key, make_slice=True)
             bl = BitLogic(item)
             bitarray.__setitem__(self, slc, bl)
-        if self.length() != length:
+        if len(self) != length:
             raise ValueError('Unexpected length for slice assignment')
 
     def _swap_slice_indices(self, slc, make_slice=False):
@@ -116,21 +116,21 @@ class BitLogic(bitarray):
         except AttributeError:
             if make_slice:
                 if slc < 0:
-                    slc += self.length()
+                    slc += len(self)
                 return slice(slc, slc + 1)
             else:
                 return slc
         else:
             if not start and start != 0:
-                slc_stop = self.length()
+                slc_stop = len(self)
             elif start < 0:
-                slc_stop = self.length() + start + 1
+                slc_stop = len(self) + start + 1
             else:
                 slc_stop = start + 1
             if not stop and stop != 0:
                 slc_start = 0
             elif stop < 0:
-                slc_start = self.length() + stop
+                slc_start = len(self) + stop
             else:
                 slc_start = stop
             return slice(slc_start, slc_stop, slc_step)
