@@ -43,7 +43,7 @@ class sensirionEKH4(HardwareLayer):
     def read(self):
         answer = []
         flg = 0
-        for i in range(1024):  # data assumed to be less than 1024 words
+        for _ in range(1024):  # data assumed to be less than 1024 words
             a = codecs.encode(self._intf.read(size=1), 'hex_codec').decode('utf-8')
             if a == '':
                 break
@@ -56,8 +56,16 @@ class sensirionEKH4(HardwareLayer):
         return answer
 
     def get_temperature(self, channel=None, min_val=-40, max_val=200):
-        ret = self.ask(r"7e4700b87e")
         values = []
+        for _ in range(1000):
+            ret = self.ask(r"7e4700b87e")
+            if len(ret) == 11:
+                break
+        else:
+            if channel is None:
+                return [None, None, None, None]
+            return None
+
         for j in range(4):
             if ret[2 + 2 * j] == "7f" and ret[2 + 2 * j + 1] == "ff":
                 values.append(None)
@@ -69,8 +77,16 @@ class sensirionEKH4(HardwareLayer):
         return values[channel]
 
     def get_humidity(self, channel=None, min_val=0, max_val=100):
-        ret = self.ask(r"7e4600b97e")
         values = []
+        for _ in range(1000):
+            ret = self.ask(r"7e4600b97e")
+            if len(ret) == 11:
+                break
+        else:
+            if channel is None:
+                return [None, None, None, None]
+            return None
+
         for j in range(4):
             if ret[2 + 2 * j] == "7f" and ret[2 + 2 * j + 1] == "ff":
                 values.append(None)
@@ -82,8 +98,16 @@ class sensirionEKH4(HardwareLayer):
         return values[channel]
 
     def get_dew_point(self, channel=None, min_val=-40, max_val=100):
-        ret = self.ask(r"7e4800b77e")
         values = []
+        for _ in range(1000):
+            ret = self.ask(r"7e4800b77e")
+            if len(ret) == 11:
+                break
+        else:
+            if channel is None:
+                return [None, None, None, None]
+            return None
+       
         for j in range(4):
             if ret[2 + 2 * j] == "7f" and ret[2 + 2 * j + 1] == "ff":
                 values.append(None)
