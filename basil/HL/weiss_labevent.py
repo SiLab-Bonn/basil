@@ -6,7 +6,6 @@
 #
 
 import logging
-import time
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
@@ -22,7 +21,6 @@ class weissLabEvent(HardwareLayer):
         -6: "Too few or incorrect parameters entered!",
         -8: "Data could not be read!",
     }
-
 
     def __init__(self, intf, conf):
         super(weissLabEvent, self).__init__(intf, conf)
