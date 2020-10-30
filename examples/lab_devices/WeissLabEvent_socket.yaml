@@ -1,0 +1,17 @@
+
+transfer_layer:
+  - name     : Socket
+    type     : Socket
+    init     :
+      address            : '192.168.10.2'
+      port               : 2049
+      query_delay        : 0.0
+      encoding           : 'ascii'
+      write_termination  : '\r'
+      read_termination   : '\r\n'
+
+hw_drivers:
+  - name      : Climatechamber
+    type      : weiss_labevent
+    interface : Socket
+        

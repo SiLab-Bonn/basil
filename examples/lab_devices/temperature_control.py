@@ -37,3 +37,10 @@ print(dut['Climatechamber'].get_temperature())
 print(dut['Climatechamber'].get_digital_ch())
 temperature_target = dut['Climatechamber'].get_temperature_target()
 dut['Climatechamber'].set_temperature(temperature_target)
+
+# New Weiss Labevent control
+dut = Dut('WeissLabEvent_socket.yaml')
+dut.init()
+dut['Climatechamber'].start_manual_mode()
+dut['Climatechamber'].set_temperature(-10)
+print(dut['Climatechamber'].get_temperature())
