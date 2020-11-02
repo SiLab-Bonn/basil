@@ -56,13 +56,26 @@ class weissLabEvent(HardwareLayer):
         return code, data
 
     def _get_feature_status(self, id):
-        feature_name = self.query(b'14010\xb61\xb61\xb6' + str(id).encode('ascii'))[1]
-        feature_status = self.query(b'14003\xb61\xb61\xb6' + str(id).encode('ascii'))[1]
+        '''
+            Installed features:
+            1 - Condensation protection
+            2 - Not installed
+            3 - Not installed
+            4 - Compressed air / N2
+            5 - Air Dryer
+            6 - Not installed
+        '''
+
+        if id not in range(1, 7):
+            raise ValueError('Invalid feature id!')
+
+        feature_name = self.query(b'14010\xb61\xb6' + str(id).encode('ascii'))[1]
+        feature_status = self.query(b'14003\xb61\xb6' + str(id + 1).encode('ascii'))[1] # For get and set status, id = id + 1
         logging.debug('Feature {0} has status {1}'.format(feature_name, feature_status))
         return bool(int(feature_status))
 
     def _set_feature_status(self, id, value):
-        return self.query(b'14001\xb61\xb61\xb6' + str(id).encode('ascii') + b'\xb6' + str(int(value)).encode('ascii'))
+        return self.query(b'14001\xb61\xb6' + str(id + 1).encode('ascii') + b'\xb6' + str(int(value)).encode('ascii'))  # For get and set status, id = id + 1
 
     def get_info(self):
         return self.query(b'99997\xb61\xb61')[1]
@@ -90,9 +103,23 @@ class weissLabEvent(HardwareLayer):
     def get_temperature_setpoint(self):
         return float(self.query(b'11002\xb61\xb61')[1])
 
+    def get_condensation_protection(self):
+        return self._get_feature_status(1)
+
+    def set_condensation_protection(self, value):
+        if not self._set_feature_status(1, value)[0] == 1:
+            logging.error('Could not set condensation protection!')
+
+    def get_compressed_air(self):
+        return self._get_feature_status(4)
+
+    def set_compressed_air(self, value):
+        if not self._set_feature_status(4, value)[0] == 1:
+            logging.error('Could not set compressed air / N2!')
+
     def get_air_dryer(self):
-        return self._get_feature_status(8)
+        return self._get_feature_status(5)
 
     def set_air_dryer(self, value):
-        if not self._set_feature_status(8, value)[0] == 1:
+        if not self._set_feature_status(5, value)[0] == 1:
             logging.error('Could not set air dryer!')
