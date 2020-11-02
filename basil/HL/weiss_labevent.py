@@ -9,12 +9,15 @@ import logging
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
+logger = logging.getLogger(__name__)
 
 class weissLabEvent(HardwareLayer):
     '''
         Driver for Weiss LabEvent T/210/70/5 climate chamber. Commands extracted from
         https://github.com/IzaakWN/ClimateChamberMonitor/blob/master/chamber_commands.py
     '''
+
+    CHAMBER_TYPE = 'LabEvent T/210/70/5'
 
     RETURN_CODES = {
         1: "Command is accepted and executed.",
@@ -37,8 +40,8 @@ class weissLabEvent(HardwareLayer):
         super(weissLabEvent, self).init()
 
         info = self.get_info()
-        if info != 'LabEvent T/210/70/5':
-            logging.error('Not the expected climatechamber! Expected {0}, got {1}'.format('LabEvent T/210/70/5', info))
+        if info != self.CHAMBER_TYPE:
+            raise ValueError("Not the expected climatechamber! Expected '{0}', chamber reported '{1}'.".format(self.CHAMBER_TYPE, info))
 
     def query(self, cmd):
         ret = self._intf.query(cmd, buffer_size=512)[0]
@@ -49,9 +52,9 @@ class weissLabEvent(HardwareLayer):
             data = dat[1]
         except IndexError:
             data = None
-        logging.debug('Return code {0}: {1}'.format(code, self.RETURN_CODES[code]))
+        logger.debug('Return code {0}: {1}'.format(code, self.RETURN_CODES[code]))
         if code != 1:
-            logging.error('Return code {0}: {1}'.format(code, self.RETURN_CODES[code]))
+            logger.error('Return code {0}: {1}'.format(code, self.RETURN_CODES[code]))
 
         return code, data
 
@@ -71,7 +74,7 @@ class weissLabEvent(HardwareLayer):
 
         feature_name = self.query(b'14010\xb61\xb6' + str(id).encode('ascii'))[1]
         feature_status = self.query(b'14003\xb61\xb6' + str(id + 1).encode('ascii'))[1] # For get and set status, id = id + 1
-        logging.debug('Feature {0} has status {1}'.format(feature_name, feature_status))
+        logger.debug('Feature {0} has status {1}'.format(feature_name, feature_status))
         return bool(int(feature_status))
 
     def _set_feature_status(self, id, value):
@@ -87,18 +90,18 @@ class weissLabEvent(HardwareLayer):
 
     def start_manual_mode(self):
         if not self.query(b'14001\xb61\xb61\xb61')[0] == 1:
-            logging.error('Could not start manual mode!')
+            logger.error('Could not start manual mode!')
 
     def stop_manual_mode(self):
         if not self.query(b'14001\xb61\xb61\xb60')[0] == 1:
-            logging.error('Could not stop manual mode!')
+            logger.error('Could not stop manual mode!')
 
     def get_temperature(self):
         return float(self.query(b'11004\xb61\xb61')[1])
 
     def set_temperature(self, target):
         if not self.query(b'11001\xb61\xb61\xb6' + str(target).encode('ascii'))[0] == 1:
-            logging.error('Could not set temperature!')
+            logger.error('Could not set temperature!')
 
     def get_temperature_setpoint(self):
         return float(self.query(b'11002\xb61\xb61')[1])
@@ -108,18 +111,18 @@ class weissLabEvent(HardwareLayer):
 
     def set_condensation_protection(self, value):
         if not self._set_feature_status(1, value)[0] == 1:
-            logging.error('Could not set condensation protection!')
+            logger.error('Could not set condensation protection!')
 
     def get_compressed_air(self):
         return self._get_feature_status(4)
 
     def set_compressed_air(self, value):
         if not self._set_feature_status(4, value)[0] == 1:
-            logging.error('Could not set compressed air / N2!')
+            logger.error('Could not set compressed air / N2!')
 
     def get_air_dryer(self):
         return self._get_feature_status(5)
 
     def set_air_dryer(self, value):
         if not self._set_feature_status(5, value)[0] == 1:
-            logging.error('Could not set air dryer!')
+            logger.error('Could not set air dryer!')
