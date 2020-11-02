@@ -1,0 +1,16 @@
+transfer_layer:
+  - name     : SensorBridge
+    type     : SensirionSensorBridge
+    init     :
+        port              : /dev/ttyUSB3
+        baudrate          : 460800
+
+hw_drivers:
+  - name      : Thermohygrometer
+    type      : sensirion_sht85
+    interface : SensorBridge
+    init      :
+        bridgePort    : one       # one or two
+        voltage       : 3.3       # min:2.15, typ:3.3, max:5.5
+        frequency     : 400000    # 400kHz default 1MHz max
+        repeatability : "low"     # low (0.15°C 0.21%RH), medium (0.08°C 0.15%RH), high (0.04°C 0.08%RH)
