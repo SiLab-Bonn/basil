@@ -23,8 +23,9 @@ class SensirionBridgeI2CDevice(HardwareLayer):
         else:
             self.port = self._intf.get_sensor_bridge_port('one')
 
-        self.device = self._intf.setup_i2c_device(bridge_port=self.port, **self._init)
         self.address = address
+
+        self.power_on()
 
     def _read(self, command, read_n_bytes=0, timeout_us=100e3):
         return self._intf.read_i2c(device=self.device, port=self.port, address=self.address,
@@ -35,11 +36,17 @@ class SensirionBridgeI2CDevice(HardwareLayer):
 
     def printInformation(self):
         self._intf.print_i2c_device_information(device=self.device)
+
+    def power_on(self):
+        self.device = self._intf.setup_i2c_device(bridge_port=self.port, **self._init)
+
+    def power_off(self):
+        self._intf.disable_i2c_device(self.device, bridge_port=self.port)
     
     def __del__(self):
         self.close()
 
     def close(self):
-        super(SensirionBridgeI2CDevice, self).close()
         if hasattr(self, 'device'):
-            self._intf.disable_i2c_device(self.device, bridge_port=self.port)
+            self.power_off()
+        super(SensirionBridgeI2CDevice, self).close()

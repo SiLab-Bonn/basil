@@ -80,7 +80,7 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
 
     def get_dew_point(self, repeatability=None):
         T, RH = self.get_temperature_and_humidity(repeatability)
-        return to_dew_point(T, RH)
+        return self.to_dew_point(T, RH)
 
     def start_asynchronous_read(self, measurments_per_second=1, repeatability=None, ART=False):
         if ART:
@@ -109,7 +109,7 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
                     10  : [0x27, 0x37],
                 }[measurments_per_second]
             }[self.get_repeatabilaty(repeatability)]
-            self._write(cmd)
+        self._write(cmd)
 
     def read_asynchronous(self, timeout_us=0):
         try:
@@ -129,9 +129,9 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
             def __exit__(self_a, exc_type, exc_val, exc_tb ):
                 self.stop_asynchronous_read()
             def read(self_a):
-                return read_asynchronous()
+                return self.read_asynchronous()
             def read_synchronous(self_a, timeout_us=100e3):
-                return read_asynchronous(timeout_us)
+                return self.read_asynchronous(timeout_us)
         return Asynchronous()
 
     def _get_status(self):
