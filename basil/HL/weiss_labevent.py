@@ -11,6 +11,7 @@ from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 logger = logging.getLogger(__name__)
 
+
 class weissLabEvent(HardwareLayer):
     '''
         Driver for Weiss LabEvent T/210/70/5 climate chamber. Commands extracted from
@@ -73,7 +74,7 @@ class weissLabEvent(HardwareLayer):
             raise ValueError('Invalid feature id!')
 
         feature_name = self.query(b'14010\xb61\xb6' + str(id).encode('ascii'))[1]
-        feature_status = self.query(b'14003\xb61\xb6' + str(id + 1).encode('ascii'))[1] # For get and set status, id = id + 1
+        feature_status = self.query(b'14003\xb61\xb6' + str(id + 1).encode('ascii'))[1]  # For get and set status, id = id + 1
         logger.debug('Feature {0} has status {1}'.format(feature_name, feature_status))
         return bool(int(feature_status))
 
