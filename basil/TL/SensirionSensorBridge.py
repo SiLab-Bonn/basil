@@ -10,10 +10,16 @@ import array
 
 from basil.TL.TransferLayer import TransferLayer
 
-from sensirion_shdlc_driver import ShdlcSerialPort, ShdlcConnection
-from sensirion_shdlc_sensorbridge import SensorBridgePort, SensorBridgeShdlcDevice
-
 logger = logging.getLogger(__name__)
+
+try:
+    from sensirion_shdlc_driver import ShdlcSerialPort, ShdlcConnection
+    from sensirion_shdlc_sensorbridge import SensorBridgePort, SensorBridgeShdlcDevice
+    from sensirion_shdlc_sensorbridge.device_errors import SensorBridgeI2cTimeoutError
+    TimeoutError = SensorBridgeI2cTimeoutError
+except ModuleNotFoundError:
+    logger.error("You have to install the package 'sensirion_shdlc_sensorbridge' to use this device.")
+    raise
 
 bridge_ports = {
     "one": SensorBridgePort.ONE,
