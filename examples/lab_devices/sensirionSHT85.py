@@ -30,3 +30,4 @@ with dut['Thermohygrometer'].asynchronous(1) as a:
         time.sleep(.8)
         print(a.read())
 
+dut['Thermohygrometer'].power_off()
