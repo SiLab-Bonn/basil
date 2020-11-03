@@ -14,6 +14,7 @@ class SensirionBridgeI2CDevice(HardwareLayer):
 
     def __init__(self, intf, conf):
         super(SensirionBridgeI2CDevice, self).__init__(intf, conf)
+        self.TimeoutError = intf.TimeoutError
 
     def init(self, address):
         super(SensirionBridgeI2CDevice, self).init()

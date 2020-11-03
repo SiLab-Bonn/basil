@@ -5,10 +5,11 @@
 #
 
 import numpy as np
-import crcmod
+import logging
 
 from basil.HL.SensirionBridgeDevice import SensirionBridgeI2CDevice
-from sensirion_shdlc_sensorbridge.device_errors import SensorBridgeI2cTimeoutError
+
+logger = logging.getLogger(__name__)
 
 class sensirionSHT85(SensirionBridgeI2CDevice):
     '''
@@ -29,7 +30,13 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
 
     def init(self):
         super(sensirionSHT85, self).init(0x44)
-        self.crc_func = crcmod.mkCrcFun(0x131, initCrc=0xFF, rev=False, xorOut=0x00)
+
+        try:
+            import crcmod
+            self.crc_func = crcmod.mkCrcFun(0x131, initCrc=0xFF, rev=False, xorOut=0x00)
+        except ModuleNotFoundError:
+            logger.warning("You have to install the package 'crcmod'! Transmission errors will not be catched.")
+            self.crc_func = lambda x: 0
         
         if 'repeatability' in self._init.keys():
             self.repeatability = self._init['repeatability']
@@ -115,7 +122,7 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
         try:
             data = self._read([0xE0, 0x00], read_n_words=2, timeout_us=timeout_us)
             return self.to_temperature(data), self.to_humidity(data)
-        except SensorBridgeI2cTimeoutError:
+        except self.TimeoutError:
             return None, None
 
     def stop_asynchronous_read(self):
