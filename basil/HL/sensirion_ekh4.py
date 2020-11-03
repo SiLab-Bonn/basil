@@ -73,7 +73,7 @@ class sensirionEKH4(HardwareLayer):
                     the extra byte is removed and the other channels are interpreted as usual.
                 2. Varying amount of extra bytes with no recognizable error code.
                     In this case, nothing can be reconstructed and all channels are set to None.
-            
+
             Case 1 is reproducable for temperatures between about 43.53C and 46.1C...?
         '''
         ret = self._query(cmd)[4:-2]
@@ -92,7 +92,7 @@ class sensirionEKH4(HardwareLayer):
                     values.append(None)
                 else:
                     values.append(self._calc_value(d))
-        
+
         return values
 
     def get_temperature(self, channel=None):
