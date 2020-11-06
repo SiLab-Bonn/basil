@@ -12,20 +12,11 @@ from basil.TL.TransferLayer import TransferLayer
 
 logger = logging.getLogger(__name__)
 
-try:
-    from sensirion_shdlc_driver import ShdlcSerialPort, ShdlcConnection
-    from sensirion_shdlc_sensorbridge import SensorBridgePort, SensorBridgeShdlcDevice
-    from sensirion_shdlc_sensorbridge.device_errors import SensorBridgeI2cTimeoutError
-    TimeoutError = SensorBridgeI2cTimeoutError
-except ModuleNotFoundError:
-    logger.error("You have to install the package 'sensirion_shdlc_sensorbridge' to use this device.")
-    raise
-
-bridge_ports = {
-    "one": SensorBridgePort.ONE,
-    "two": SensorBridgePort.TWO,
-    "all": SensorBridgePort.ALL,
-}
+from sensirion_shdlc_driver import ShdlcSerialPort, ShdlcConnection
+from sensirion_shdlc_sensorbridge import SensorBridgePort, SensorBridgeShdlcDevice
+from sensirion_shdlc_sensorbridge.device_errors import SensorBridgeI2cTimeoutError
+TimeoutError = SensorBridgeI2cTimeoutError
+# Requires 'sensirion_shdlc_sensorbridge'
 
 class SensirionSensorBridge(TransferLayer):
     '''
@@ -33,25 +24,22 @@ class SensirionSensorBridge(TransferLayer):
     The Sensirion Sensor Bridge is connected via USB and allows communication to two I2C ports.
     '''
 
+    bridge_ports = {
+        "one": SensorBridgePort.ONE,
+        "two": SensorBridgePort.TWO,
+        "all": SensorBridgePort.ALL,
+    }
+
     def __init__(self, conf):
         super(SensirionSensorBridge, self).__init__(conf)
 
     def init(self):
         super(SensirionSensorBridge, self).init()
 
-        if 'port' in self._init.keys():
-            self.port = self._init['port']
-        else:
-            self.port = '/dev/ttyUSB0'
-        if 'baudrate' in self._init.keys():
-            self.baudrate = self._init['baudrate']
-        else:
-            self.baudrate = 460800
+        self.port = self._init['port']
+        self.baudrate = self._init.get('baudrate', 460800)
 
         self.ser = ShdlcSerialPort(port=self.port, baudrate=self.baudrate)
-
-    def get_sensor_bridge_port(self, port):
-        return bridge_ports[port]
 
     def setup_i2c_device(self, bridge_port=SensorBridgePort.ONE, voltage=3.3, frequency=400e3, **_):
         device = SensorBridgeShdlcDevice(ShdlcConnection(self.ser), slave_address=0)
