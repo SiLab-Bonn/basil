@@ -5,6 +5,7 @@
 #
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
+from basil.TL.SensirionSensorBridge import TimeoutError
 
 class SensirionBridgeI2CDevice(HardwareLayer):
     '''
@@ -14,15 +15,12 @@ class SensirionBridgeI2CDevice(HardwareLayer):
 
     def __init__(self, intf, conf):
         super(SensirionBridgeI2CDevice, self).__init__(intf, conf)
-        self.TimeoutError = intf.TimeoutError
+        self.TimeoutError = TimeoutError
 
     def init(self, address):
         super(SensirionBridgeI2CDevice, self).init()
         
-        if 'bridgePort' in self._init.keys():
-            self.port = self._intf.get_sensor_bridge_port(self._init['bridgePort'])
-        else:
-            self.port = self._intf.get_sensor_bridge_port('one')
+        self.port = self._intf.bridge_ports[self._init.get('bridgePort', 'one')]
 
         self.address = address
 

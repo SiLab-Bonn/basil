@@ -35,13 +35,10 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
             import crcmod
             self.crc_func = crcmod.mkCrcFun(0x131, initCrc=0xFF, rev=False, xorOut=0x00)
         except ModuleNotFoundError:
-            logger.warning("You have to install the package 'crcmod'! Transmission errors will not be catched.")
+            logger.warning("You have to install the package 'crcmod'! Transmission errors will not be caught.")
             self.crc_func = lambda x: 0
         
-        if 'repeatability' in self._init.keys():
-            self.repeatability = self._init['repeatability']
-        else:
-            self.repeatability = "low"
+        self.repeatability = self._init.get('repeatability', 'low')
 
     def _read(self, command, read_n_words=0, timeout_us=20e3, n_tries=10):
         for _ in range(n_tries):
@@ -54,42 +51,37 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
                     data[i] = int.from_bytes(rx_data[i*3:i*3+2], byteorder='big')
             else:
                 return data
-            continue 
-        print(rx_data)
+            continue
         raise Exception('Checksum repeatedly ({1}x) wrong'.format(n_tries), rx_data)
 
     def _write(self, command):
         super(sensirionSHT85, self)._write(command)
 
-    def get_temperature(self, repeatability=None):
+    def _perform_measurement(self, read_n_words=2):
         data = {
-            "low"   : self._read([0x24, 0x16], read_n_words=1, timeout_us= 4500),
-            "medium": self._read([0x24, 0x0B], read_n_words=1, timeout_us= 6500),
-            "high"  : self._read([0x24, 0x00], read_n_words=1, timeout_us=15500),
-        }[self.get_repeatabilaty(repeatability)]
-        return self.to_temperature(data)
+            "low"   : self._read([0x24, 0x16], read_n_words=read_n_words, timeout_us= 4500),
+            "medium": self._read([0x24, 0x0B], read_n_words=read_n_words, timeout_us= 6500),
+            "high"  : self._read([0x24, 0x00], read_n_words=read_n_words, timeout_us=15500),
+        }[self.repeatability]
+        return data
 
-    def get_humidity(self, repeatability=None):
-        data = {
-            "low"   : self._read([0x24, 0x16], read_n_words=2, timeout_us= 4500),
-            "medium": self._read([0x24, 0x0B], read_n_words=2, timeout_us= 6500),
-            "high"  : self._read([0x24, 0x00], read_n_words=2, timeout_us=15500),
-        }[self.get_repeatabilaty(repeatability)]
-        return self.to_humidity(data)
+    def get_temperature(self):
+        data = self._perform_measurement(read_n_words=1)
+        return self._to_temperature(data)
 
-    def get_temperature_and_humidity(self, repeatability=None):
-        data = {
-            "low"   : self._read([0x24, 0x16], read_n_words=2, timeout_us= 4500),
-            "medium": self._read([0x24, 0x0B], read_n_words=2, timeout_us= 6500),
-            "high"  : self._read([0x24, 0x00], read_n_words=2, timeout_us=15500),
-        }[self.get_repeatabilaty(repeatability)]
-        return self.to_temperature(data), self.to_humidity(data)
+    def get_humidity(self):
+        data = self._perform_measurement(read_n_words=2)
+        return self._to_humidity(data)
 
-    def get_dew_point(self, repeatability=None):
-        T, RH = self.get_temperature_and_humidity(repeatability)
+    def get_temperature_and_humidity(self):
+        data = self._perform_measurement(read_n_words=2)
+        return self._to_temperature(data), self._to_humidity(data)
+
+    def get_dew_point(self):
+        T, RH = self.get_temperature_and_humidity()
         return self.to_dew_point(T, RH)
 
-    def start_asynchronous_read(self, measurments_per_second=1, repeatability=None, ART=False):
+    def start_asynchronous_read(self, measurments_per_second=1, ART=False):
         if ART:
             cmd = [0x2B, 0x32]
         else:
@@ -115,23 +107,23 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
                     4   : [0x23, 0x34],
                     10  : [0x27, 0x37],
                 }[measurments_per_second]
-            }[self.get_repeatabilaty(repeatability)]
+            }[self.repeatability]
         self._write(cmd)
 
     def read_asynchronous(self, timeout_us=0):
         try:
             data = self._read([0xE0, 0x00], read_n_words=2, timeout_us=timeout_us)
-            return self.to_temperature(data), self.to_humidity(data)
+            return self._to_temperature(data), self._to_humidity(data)
         except self.TimeoutError:
             return None, None
 
     def stop_asynchronous_read(self):
         self._write([0x30, 0x93])
 
-    def asynchronous(self, measurments_per_second=1, repeatability=None, ART=False):
+    def asynchronous(self, measurments_per_second=1, ART=False):
         class Asynchronous:
             def __enter__(self_a):
-                self.start_asynchronous_read(measurments_per_second, repeatability, ART)
+                self.start_asynchronous_read(measurments_per_second, ART)
                 return self_a
             def __exit__(self_a, exc_type, exc_val, exc_tb ):
                 self.stop_asynchronous_read()
@@ -153,19 +145,14 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
     def is_heater_on(self):
         return self._get_status()[0]&(1<<13) > 0
         
+    # This soft-reset re-initializes all registers
     def reset_sensor(self):
         self._write([0x30, 0xA2])
 
-    def get_repeatabilaty(self, repeatability=None):
-        if repeatability is None:
-            return self.repeatability
-        else:
-            return repeatability
-
-    def to_temperature(self, data):
+    def _to_temperature(self, data):
         return -45+175*(data[0]/(2**16-1))
 
-    def to_humidity(self, data):
+    def _to_humidity(self, data):
         return 100*(data[1]/(2**16-1))
 
     def to_dew_point(self, T, RH):
