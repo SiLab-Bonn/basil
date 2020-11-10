@@ -35,7 +35,7 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
         try:
             import crcmod
             self.crc_func = crcmod.mkCrcFun(0x131, initCrc=0xFF, rev=False, xorOut=0x00)
-        except ModuleNotFoundError:
+        except ImportError:
             logger.warning("You have to install the package 'crcmod'! Transmission errors will not be caught.")
             self.crc_func = lambda x: 0
 
