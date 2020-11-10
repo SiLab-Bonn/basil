@@ -6,17 +6,17 @@
 #
 
 import logging
-import array
 
 from basil.TL.TransferLayer import TransferLayer
-
-logger = logging.getLogger(__name__)
 
 from sensirion_shdlc_driver import ShdlcSerialPort, ShdlcConnection
 from sensirion_shdlc_sensorbridge import SensorBridgePort, SensorBridgeShdlcDevice
 from sensirion_shdlc_sensorbridge.device_errors import SensorBridgeI2cTimeoutError
 TimeoutError = SensorBridgeI2cTimeoutError
 # Requires 'sensirion_shdlc_sensorbridge'
+
+logger = logging.getLogger(__name__)
+
 
 class SensirionSensorBridge(TransferLayer):
     '''
@@ -47,12 +47,10 @@ class SensirionSensorBridge(TransferLayer):
         device.set_supply_voltage(bridge_port, voltage=voltage)
         device.switch_supply_on(bridge_port)
         return device
-    
+
     def disable_i2c_device(self, device, bridge_port=SensorBridgePort.ONE):
-        try:
+        if hasattr(self, 'device'):
             device.switch_supply_off(bridge_port)
-        except:
-            pass
 
     def print_i2c_device_information(self, device):
         logger.info("Product Name: {}".format(device.get_product_name()))
@@ -66,8 +64,8 @@ class SensirionSensorBridge(TransferLayer):
         return rx_data
 
     def write_i2c(self, device, port, address, command):
-        device.transceive_i2c( port, address=address, 
-                rx_length=0, tx_data=command, timeout_us=0)
+        device.transceive_i2c(port, address=address,
+                              rx_length=0, tx_data=command, timeout_us=0)
 
     def __del__(self):
         self.close()
