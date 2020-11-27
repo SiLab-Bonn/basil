@@ -8,6 +8,7 @@
 `timescale 1ps / 1ps
 
 `include "firmware/src/bdaq53_eth_core.v"
+`include "gpio/gpio_core.v"
 `include "gpio/gpio.v"
 `include "bram_fifo/bram_fifo.v"
 `include "bram_fifo/bram_fifo_core.v"
