@@ -8,6 +8,7 @@
 `timescale 1ps / 1ps
 
 `include "utils/bus_to_ip.v"
+`include "gpio/gpio_core.v"
 `include "gpio/gpio.v"
 
 module tb (

@@ -17,6 +17,7 @@ class TestExampleMIO(unittest.TestCase):
         fw_path = os.path.join(get_basil_dir(), 'firmware/modules')
         cocotb_compile_and_run([
             os.path.join(fw_path, 'gpio/gpio.v'),
+            os.path.join(fw_path, 'gpio/gpio_core.v'),
             os.path.join(fw_path, 'utils/reset_gen.v'),
             os.path.join(fw_path, 'utils/bus_to_ip.v'),
             os.path.join(fw_path, 'utils/fx2_to_bus.v'),
