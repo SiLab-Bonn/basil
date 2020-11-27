@@ -62,8 +62,8 @@ else ifeq ($(SIM),ius)
     EXTRA_ARGS += $(NOT_ICARUS_DEFINES)
     EXTRA_ARGS += $(NOT_ICARUS_INCLUDE_DIRS)
 else
-    EXTRA_ARGS += $(ICARUS_DEFINES)
-    EXTRA_ARGS += $(ICARUS_INCLUDE_DIRS)
+    COMPILE_ARGS += $(ICARUS_DEFINES)
+    COMPILE_ARGS += $(ICARUS_INCLUDE_DIRS)
 endif
 
 COMPILE_ARGS += $(COMPILE_ARGS_DEFINES)
@@ -71,7 +71,6 @@ COMPILE_ARGS += $(COMPILE_ARGS_DEFINES)
 TOPLEVEL_LANG?=verilog
 export TOPLEVEL_LANG
 
-include $(shell cocotb-config --makefiles)/Makefile.inc
 include $(shell cocotb-config --makefiles)/Makefile.sim
 
     """

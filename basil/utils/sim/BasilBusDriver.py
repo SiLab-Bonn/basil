@@ -28,11 +28,11 @@ class BasilBusDriver(BusDriver):
         BusDriver.__init__(self, entity, "", entity.BUS_CLK)
 
         # Create an appropriately sized high-impedence value
-        self._high_impedence = BinaryValue(bits=len(self.bus.BUS_DATA))
+        self._high_impedence = BinaryValue(n_bits=len(self.bus.BUS_DATA))
         self._high_impedence.binstr = "Z" * len(self.bus.BUS_DATA)
 
         # Create an appropriately sized high-impedence value
-        self._x = BinaryValue(bits=len(self.bus.BUS_ADD))
+        self._x = BinaryValue(n_bits=len(self.bus.BUS_ADD))
         self._x.binstr = "x" * len(self.bus.BUS_ADD)
 
         self._has_byte_acces = False
@@ -108,7 +108,7 @@ class BasilBusDriver(BusDriver):
         self.bus.BUS_DATA <= self._high_impedence
         yield RisingEdge(self.clock)
 
-        raise ReturnValue(result)
+        return result
 
     @cocotb.coroutine
     def write(self, address, data):

@@ -37,11 +37,11 @@ class SiLibUsbBusDriver(BusDriver):
         BusDriver.__init__(self, entity, "", entity.FCLK_IN)
 
         # Create an appropriately sized high-impedence value
-        self._high_impedence = BinaryValue(bits=len(self.bus.BUS_DATA))
+        self._high_impedence = BinaryValue(n_bits=len(self.bus.BUS_DATA))
         self._high_impedence.binstr = "Z" * len(self.bus.BUS_DATA)
 
         # Create an appropriately sized high-impedence value
-        self._x = BinaryValue(bits=16)
+        self._x = BinaryValue(n_bits=16)
         self._x.binstr = "x" * 16
 
         # Kick off a clock generator
@@ -82,7 +82,7 @@ class SiLibUsbBusDriver(BusDriver):
         else:
             self.entity._log.warning("This address space does not exist!")
 
-        raise ReturnValue(result)
+        return result
 
     @cocotb.coroutine
     def write(self, address, data):
