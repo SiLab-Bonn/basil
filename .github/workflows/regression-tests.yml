@@ -52,7 +52,7 @@ jobs:
     - name: Install Python dependencies
       shell: bash -l {0}
       run: |
-        pip install pyvisa pyvisa-sim coveralls cocotb==1.2.0
+        pip install pyvisa pyvisa-sim coveralls cocotb==1.4.0
   
     - name: Install Icarus Verilog
       run: |
