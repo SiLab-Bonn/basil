@@ -27,10 +27,6 @@ class BasilSbusDriver(BusDriver):
         BusDriver.__init__(self, entity, "", entity.BUS_CLK)
 
         # Create an appropriately sized high-impedence value
-        self._high_impedence = BinaryValue(n_bits=len(self.bus.BUS_DATA_IN))
-        self._high_impedence.binstr = "Z" * len(self.bus.BUS_DATA_IN)
-
-        # Create an appropriately sized high-impedence value
         self._x = BinaryValue(n_bits=len(self.bus.BUS_ADD))
         self._x.binstr = "x" * len(self.bus.BUS_ADD)
 
@@ -46,7 +42,8 @@ class BasilSbusDriver(BusDriver):
         self.bus.BUS_RD <= 0
         self.bus.BUS_WR <= 0
         self.bus.BUS_ADD <= self._x
-        self.bus.BUS_DATA_IN <= self._high_impedence
+        self.bus.BUS_DATA_IN <= 0
+        self.bus.BUS_DATA_OUT <= self._x
 
         for _ in range(8):
             yield RisingEdge(self.clock)
@@ -112,7 +109,7 @@ class BasilSbusDriver(BusDriver):
     def write(self, address, data):
 
         self.bus.BUS_ADD <= self._x
-        self.bus.BUS_DATA_IN <= self._high_impedence
+        self.bus.BUS_DATA_IN <= 0
         self.bus.BUS_WR <= 0
 
         yield RisingEdge(self.clock)
@@ -131,8 +128,8 @@ class BasilSbusDriver(BusDriver):
         if(self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value.integer == 0):
             raise NotImplementedError("BUS_BYTE_ACCESS for write to be implemented.")
 
-        self.bus.BUS_DATA_IN <= self._high_impedence
         self.bus.BUS_ADD <= self._x
+        self.bus.BUS_DATA_IN <= 0
         self.bus.BUS_WR <= 0
 
         yield RisingEdge(self.clock)
