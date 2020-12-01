@@ -14,7 +14,6 @@ import cocotb
 from cocotb.binary import BinaryValue
 from cocotb.triggers import RisingEdge, Timer
 from cocotb.drivers import BusDriver
-from cocotb.result import ReturnValue
 from cocotb.clock import Clock
 
 
@@ -137,4 +136,3 @@ class BasilSbusDriver(BusDriver):
         self.bus.BUS_WR <= 0
 
         yield RisingEdge(self.clock)
-
