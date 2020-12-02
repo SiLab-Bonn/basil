@@ -86,7 +86,7 @@ jtag_master #(
     .BASEADDR(JTAGM_BASEADDR),
     .HIGHADDR(JTAGM_HIGHADDR),
     .ABUSWIDTH(ABUSWIDTH),
-    .MEM_BYTES(2000)
+    .MEM_BYTES(16)
 ) i_jtag_master (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
@@ -109,8 +109,8 @@ wire td_int;
 wire [31:0] debug_reg1, debug_reg2;
 
 wire wr_fifo;
-jtag_tap i_jtag_tap1(.jtag_tms_i(TMS), .jtag_tck_i(TCK), .jtag_trstn_i(1'b1), .jtag_tdi_i(TDI), .jtag_tdo_o(td_int), .debug_reg(debug_reg1));
-jtag_tap i_jtag_tap2(.jtag_tms_i(TMS), .jtag_tck_i(TCK), .jtag_trstn_i(1'b1), .jtag_tdi_i(td_int), .jtag_tdo_o(TDO), .debug_reg(debug_reg2), .is_tap_state_update_dr_o(wr_fifo));
+jtag_tap i_jtag_tap1(.jtag_tms_i(TMS), .jtag_tck_i(TCK), .jtag_trstn_i(1'b1), .jtag_tdi_i(TDI), .jtag_tdo_o(td_int), .debug_reg(debug_reg2));
+jtag_tap i_jtag_tap2(.jtag_tms_i(TMS), .jtag_tck_i(TCK), .jtag_trstn_i(1'b1), .jtag_tdi_i(td_int), .jtag_tdo_o(TDO), .debug_reg(debug_reg1), .is_tap_state_update_dr_o(wr_fifo));
 
 wire D1_F1;
 wire [5:0] D1_F2;
@@ -178,7 +178,7 @@ bram_fifo #(
 
     .FIFO_READ_NEXT_OUT(),
     .FIFO_EMPTY_IN(~fifo_strobe),
-    .FIFO_DATA(debug_reg1),
+    .FIFO_DATA(debug_reg2),
 
     .FIFO_NOT_EMPTY(),
     .FIFO_FULL(),
@@ -202,7 +202,7 @@ bram_fifo #(
 
     .FIFO_READ_NEXT_OUT(),
     .FIFO_EMPTY_IN(~fifo_strobe),
-    .FIFO_DATA(debug_reg2),
+    .FIFO_DATA(debug_reg1),
 
     .FIFO_NOT_EMPTY(),
     .FIFO_FULL(),
