@@ -26,13 +26,13 @@ hw_drivers:
     interface : INTF
     base_addr : 0x0000
     size      : 24
-    
+
   - name      : GPIO2
     type      : gpio
     interface : INTF
     base_addr : 0x0010
     size      : 16
-    
+
 registers:
   - name        : GPIO
     type        : StdRegister
@@ -88,6 +88,7 @@ class TestSimGpio(unittest.TestCase):
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
+
 
 if __name__ == '__main__':
     unittest.main()

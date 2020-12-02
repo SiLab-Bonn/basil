@@ -16,4 +16,3 @@ chip['VDD'].set_enable(True)
 chip['CONTROL']['LED'] = 0xa5
 
 chip['CONTROL'].write()
-

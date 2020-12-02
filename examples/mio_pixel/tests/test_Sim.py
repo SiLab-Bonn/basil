@@ -11,11 +11,10 @@ import yaml
 
 import numpy as np
 from bitarray import bitarray
+import pixel
 
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean, get_basil_dir
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import pixel
 
 
 class TestPixel(unittest.TestCase):
@@ -85,6 +84,7 @@ class TestPixel(unittest.TestCase):
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
+
 
 if __name__ == '__main__':
     unittest.main()
