@@ -34,7 +34,7 @@ def package_files(directory):
 setup(
     name='basil_daq',
     version=version,
-    python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*',
+    python_requires='>=3.7',
     description='Basil - a data acquisition and system testing framework',
     url='https://github.com/SiLab-Bonn/basil',
     license='BSD 3-Clause ("BSD New" or "BSD Simplified") License',
