@@ -20,7 +20,7 @@ from cocotb.result import ReturnValue
 from cocotb.clock import Clock
 
 
-class SiLibUsbBusDriver(BusDriver):
+class SiLibUsbSbusDriver(BusDriver):
 
     _signals = ["FCLK_IN", "BUS_DATA_IN", "BUS_DATA_OUT", "ADD", "RD_B", "WR_B", "FD", "FREAD", "FSTROBE", "FMODE"]
 
