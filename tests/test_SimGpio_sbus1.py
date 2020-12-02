@@ -54,9 +54,9 @@ registers:
 """
 
 
-class TestSimGpioSbus(unittest.TestCase):
+class TestSimGpioSbus1(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run(sim_files=[os.path.join(os.path.dirname(__file__), 'test_SimGpio_sbus.v')], sim_bus='basil.utils.sim.BasilSbusDriver')
+        cocotb_compile_and_run(sim_files=[os.path.join(os.path.dirname(__file__), 'test_SimGpio_sbus1.v')], sim_bus='basil.utils.sim.BasilSbusDriver')
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
