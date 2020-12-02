@@ -36,11 +36,11 @@ class SiLibUsbBusDriver(BusDriver):
     def __init__(self, entity):
         BusDriver.__init__(self, entity, "", entity.FCLK_IN)
 
-        # Create an appropriately sized high-impedence value
-        self._high_impedence = BinaryValue(n_bits=len(self.bus.BUS_DATA_IN))
-        self._high_impedence.binstr = "Z" * len(self.bus.BUS_DATA_IN)
+        # Create an appropriately sized high-impedance value
+        self._high_impedance = BinaryValue(n_bits=len(self.bus.BUS_DATA_IN))
+        self._high_impedance.binstr = "Z" * len(self.bus.BUS_DATA_IN)
 
-        # Create an appropriately sized high-impedence value
+        # Create an appropriately sized high-impedance value
         self._x = BinaryValue(n_bits=16)
         self._x.binstr = "x" * 16
 
@@ -57,8 +57,8 @@ class SiLibUsbBusDriver(BusDriver):
         self.bus.FREAD <= 0
         self.bus.FSTROBE <= 0
         self.bus.FMODE <= 0
-        self.bus.BUS_DATA_IN <= self._high_impedence
-        self.bus.FD <= self._high_impedence
+        self.bus.BUS_DATA_IN <= self._high_impedance
+        self.bus.FD <= self._high_impedance
 
         # wait for reset
         for _ in range(200):
@@ -102,7 +102,7 @@ class SiLibUsbBusDriver(BusDriver):
         """Copied from silusb.sv testbench interface"""
         self.bus.RD_B <= 1
         self.bus.ADD <= self._x
-        self.bus.BUS_DATA_IN <= self._high_impedence
+        self.bus.BUS_DATA_IN <= self._high_impedance
         for _ in range(5):
             yield RisingEdge(self.clock)
 
@@ -121,7 +121,7 @@ class SiLibUsbBusDriver(BusDriver):
         yield RisingEdge(self.clock)
         self.bus.RD_B <= 1
         self.bus.ADD <= self._x
-        self.bus.BUS_DATA_IN <= self._high_impedence
+        self.bus.BUS_DATA_IN <= self._high_impedance
 
         yield RisingEdge(self.clock)
 
@@ -135,7 +135,7 @@ class SiLibUsbBusDriver(BusDriver):
         """Copied from silusb.sv testbench interface"""
         self.bus.WR_B <= 1
         self.bus.ADD <= self._x
-        self.bus.BUS_DATA_IN <= self._high_impedence
+        self.bus.BUS_DATA_IN <= self._high_impedance
 
         for _ in range(5):
             yield RisingEdge(self.clock)
@@ -158,14 +158,14 @@ class SiLibUsbBusDriver(BusDriver):
         self.bus.WR_B <= 0
         yield RisingEdge(self.clock)
         self.bus.WR_B <= 1
-        self.bus.BUS_DATA_IN <= self._high_impedence
+        self.bus.BUS_DATA_IN <= self._high_impedance
         yield Timer(1)  # This is hack for iverilog
         self.bus.WR_B <= 1
-        self.bus.BUS_DATA_IN <= self._high_impedence
+        self.bus.BUS_DATA_IN <= self._high_impedance
         yield RisingEdge(self.clock)
         self.bus.WR_B <= 1
         self.bus.ADD <= self._x
-        self.bus.BUS_DATA_IN <= self._high_impedence
+        self.bus.BUS_DATA_IN <= self._high_impedance
 
         for _ in range(5):
             yield RisingEdge(self.clock)
