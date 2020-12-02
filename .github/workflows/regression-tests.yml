@@ -3,7 +3,26 @@ name: Regression Tests
 on: [push, pull_request]
 
 jobs:
-  build:
+
+  lint-flake8:
+    runs-on: ubuntu-latest
+    name: flake8
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.8]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{matrix.python-version}}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{matrix.python-version}}
+    - name: flake8
+      run: |
+        pip install flake8
+        flake8
+
+  tests:
     name: Python ${{matrix.python-version}}
     runs-on: ubuntu-20.04
 
