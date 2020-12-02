@@ -4,6 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`timescale 1ps/1ps
+`default_nettype none
 
 module gpio_sbus #(
     parameter BASEADDR = 16'h0000,
