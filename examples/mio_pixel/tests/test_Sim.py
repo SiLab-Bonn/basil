@@ -11,10 +11,10 @@ import yaml
 
 import numpy as np
 from bitarray import bitarray
-import pixel
 
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean, get_basil_dir
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import pixel # noqa E402
 
 
 class TestPixel(unittest.TestCase):
