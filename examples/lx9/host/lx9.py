@@ -149,7 +149,7 @@ chip.program_global_reg()
 
 chip['PIXEL_REG'][:] = bitarray('1111111010001100' * 8)
 print(chip['PIXEL_REG'])
-#chip['PIXEL_REG'][0] = 0
+# chip['PIXEL_REG'][0] = 0
 
 print("program pixel register...")
 chip.program_pixel_reg()

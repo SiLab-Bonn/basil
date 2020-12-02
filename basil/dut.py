@@ -8,7 +8,6 @@ import os
 from importlib import import_module
 from inspect import getmembers, isclass
 from yaml import safe_load
-import sys
 import warnings
 from collections import OrderedDict
 from six import string_types
@@ -43,7 +42,7 @@ class Base(object):
 
     def _open_conf(self, conf):
         def isFile(f):
-            return isinstance(f, file) if sys.version_info[0] == 2 else hasattr(f, 'read')
+            return hasattr(f, 'read')
 
         conf_dict = {}
         if not conf:

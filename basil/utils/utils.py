@@ -44,7 +44,10 @@ def bitarray_to_byte_array(bitarr):
     bs = (bs * 0x0202020202 & 0x010884422010) % 1023
     return array('B', bs.astype(np.uint8))
 
+
 # Python 2/3 compatibility function for array.tobytes function
+
+
 try:
     array.tobytes
 except AttributeError:  # Python 2

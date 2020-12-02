@@ -195,5 +195,6 @@ class TestRegisterHardwareLayer(unittest.TestCase):
     def test_wrong_size(self):
         self.assertRaises(TypeError, self.dut['test_register'].set_value, 131, addr=0, size=7, offset=7)
 
+
 if __name__ == '__main__':
     unittest.main()
