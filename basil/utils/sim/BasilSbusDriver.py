@@ -26,7 +26,11 @@ class BasilSbusDriver(BusDriver):
     def __init__(self, entity):
         BusDriver.__init__(self, entity, "", entity.BUS_CLK)
 
-        # Create an appropriately sized high-impedence value
+        # Create an appropriately sized high-impedance value
+        self._high_impedance = BinaryValue(n_bits=len(self.bus.BUS_DATA_IN))
+        self._high_impedance.binstr = "Z" * len(self.bus.BUS_DATA_IN)
+
+        # Create an appropriately sized high-impedance value
         self._x = BinaryValue(n_bits=len(self.bus.BUS_ADD))
         self._x.binstr = "x" * len(self.bus.BUS_ADD)
 
@@ -42,8 +46,7 @@ class BasilSbusDriver(BusDriver):
         self.bus.BUS_RD <= 0
         self.bus.BUS_WR <= 0
         self.bus.BUS_ADD <= self._x
-        self.bus.BUS_DATA_IN <= 0
-        self.bus.BUS_DATA_OUT <= self._x
+        self.bus.BUS_DATA_IN <= self._high_impedance
 
         for _ in range(8):
             yield RisingEdge(self.clock)
@@ -66,6 +69,7 @@ class BasilSbusDriver(BusDriver):
         result = []
 
         self.bus.BUS_ADD <= self._x
+        self.bus.BUS_DATA_IN <= self._high_impedance
         self.bus.BUS_RD <= 0
 
         yield RisingEdge(self.clock)
@@ -100,6 +104,8 @@ class BasilSbusDriver(BusDriver):
                 byte += 1
 
         self.bus.BUS_ADD <= self._x
+        self.bus.BUS_DATA_IN <= self._high_impedance
+        self.bus.BUS_RD <= 0
 
         yield RisingEdge(self.clock)
 
@@ -109,7 +115,7 @@ class BasilSbusDriver(BusDriver):
     def write(self, address, data):
 
         self.bus.BUS_ADD <= self._x
-        self.bus.BUS_DATA_IN <= 0
+        self.bus.BUS_DATA_IN <= self._high_impedance
         self.bus.BUS_WR <= 0
 
         yield RisingEdge(self.clock)
@@ -129,7 +135,7 @@ class BasilSbusDriver(BusDriver):
             raise NotImplementedError("BUS_BYTE_ACCESS for write to be implemented.")
 
         self.bus.BUS_ADD <= self._x
-        self.bus.BUS_DATA_IN <= 0
+        self.bus.BUS_DATA_IN <= self._high_impedance
         self.bus.BUS_WR <= 0
 
         yield RisingEdge(self.clock)
