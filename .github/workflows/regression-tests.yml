@@ -62,3 +62,9 @@ jobs:
       run: |
         pip install -e .
         nosetests --with-coverage --cover-package=basil  tests/test_*.py examples/*/*/test_*.py
+
+    - name: Upload to codecov
+      shell: bash -l {0}
+      run: |
+        pip install codecov
+        codecov
