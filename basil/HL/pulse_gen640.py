@@ -45,10 +45,10 @@ class pulse_gen640(RegisterHardwareLayer):
 
     def get_delay(self):
         return self.DELAY
-        
+
     def set_phase(self, value):
         '''
-        Pulse phase in 640MHz from 0 to 16 
+        Pulse phase in 640MHz from 0 to 16
         '''
         self.PHASE_DES = (0xFFFF << (value % 16)) & 0xFFFF
 
