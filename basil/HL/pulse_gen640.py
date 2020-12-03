@@ -54,7 +54,7 @@ class pulse_gen640(RegisterHardwareLayer):
 
     def get_phase(self):
         for i in range(16):
-            if (( 0xFFFF0000 | self.PHASE_DES) >> i) & 0xFFFF == 0xFFFF:
+            if ((0xFFFF0000 | self.PHASE_DES) >> i) & 0xFFFF == 0xFFFF:
                 break
         return i
 
