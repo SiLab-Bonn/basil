@@ -6,6 +6,7 @@
 
 import numpy as np
 import logging
+import struct
 
 from basil.HL.SensirionBridgeDevice import SensirionBridgeI2CDevice
 
@@ -49,7 +50,7 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
                 if self.crc_func(rx_data[i * 3:(i + 1) * 3]):
                     break
                 else:
-                    data[i] = int.from_bytes(rx_data[i * 3: i * 3 + 2], byteorder='big')
+                    data[i] = struct.unpack('>H', rx_data[i * 3: i * 3 + 2])[0]
             else:
                 return data
             continue
@@ -59,12 +60,12 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
         super(sensirionSHT85, self)._write(command)
 
     def _perform_measurement(self, read_n_words=2):
-        data = {
-            "low": self._read([0x24, 0x16], read_n_words=read_n_words, timeout_us=4500),
-            "medium": self._read([0x24, 0x0B], read_n_words=read_n_words, timeout_us=6500),
-            "high": self._read([0x24, 0x00], read_n_words=read_n_words, timeout_us=15500),
+        params = {
+            "low": ([0x24, 0x16], 4500),
+            "medium": ([0x24, 0x0B], 6500),
+            "high": ([0x24, 0x00], 15500),
         }[self.repeatability]
-        return data
+        return self._read(params[0], read_n_words=read_n_words, timeout_us=params[1])
 
     def get_temperature(self):
         data = self._perform_measurement(read_n_words=1)
@@ -154,10 +155,10 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
         self._write([0x30, 0xA2])
 
     def _to_temperature(self, data):
-        return -45 + 175 * (data[0] / (2**16 - 1))
+        return -45 + 175 * (float(data[0]) / (2**16 - 1))
 
     def _to_humidity(self, data):
-        return 100 * (data[1] / (2**16 - 1))
+        return 100 * (float(data[1]) / (2**16 - 1))
 
     def to_dew_point(self, T, RH):
         if T < 0:
