@@ -28,7 +28,9 @@ module sbus_to_ip
 );
 
 wire CS;
+/* verilator lint_off UNSIGNED */
 assign CS = (BUS_ADD >= BASEADDR && BUS_ADD <= HIGHADDR);
+/* verilator lint_on UNSIGNED */
 
 assign IP_ADD = CS ? BUS_ADD - BASEADDR : {ABUSWIDTH{1'b0}};
 assign IP_RD = CS ? BUS_RD : 1'b0;
