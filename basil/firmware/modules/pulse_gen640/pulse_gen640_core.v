@@ -89,7 +89,7 @@ always@(posedge BUS_CLK) begin
         else if(BUS_ADD == 20)
             BUS_DATA_OUT <= CNT[31:24];
         else if(BUS_ADD == 21)
-            BUS_DATA_OUT <= {6'b0,PULSE_REF, CNT[32]};
+            BUS_DATA_OUT <= {6'b0, PULSE_REF, CNT[32]};
         else
             BUS_DATA_OUT <= 8'b0;
     end
@@ -107,6 +107,7 @@ always @(posedge BUS_CLK) begin
         CONF_DELAY <= 0;
         CONF_WIDTH <= 0;
         CONF_REPEAT <= 1;
+        CONF_PHASE <=0;
     end
     else if(BUS_WR) begin
         if(BUS_ADD == 2)
@@ -233,7 +234,7 @@ end
 
 genvar i;
 generate
-for (i=0; i<2; i=i+1) begin
+for (i=0; i<OUTPUT_SIZE; i=i+1) begin
     OSERDESE2 # (
         .DATA_RATE_OQ("DDR"),
         .DATA_WIDTH(4),
@@ -255,17 +256,17 @@ for (i=0; i<2; i=i+1) begin
         .D6(),
         .D7(),
         .D8(),
-        .TCE(0),
-        .OCE(1),
+        .TCE(1'b0),
+        .OCE(1'b1),
         .TBYTEIN(),
         .TBYTEOUT(),
         .RST(RST_SYNC),
         .SHIFTIN1(),
         .SHIFTIN2(),
-        .T1(0),
-        .T2(0),
-        .T3(0),
-        .T4(0)
+        .T1(1'b0),
+        .T2(1'b0),
+        .T3(1'b0),
+        .T4(1'b0)
     );
 end
 endgenerate

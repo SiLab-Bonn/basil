@@ -6,8 +6,8 @@
 Simple pulse generator with configurable delay and width.
 
 **Unit test/Example:** 
-`test_SimPulseGen640.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimPulseGen640.v>`_ 
-`test_SimPulseGen640.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimPulseGen640.py>`_
+`test_SimTimestamp640.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTimestamp640.v>`_ 
+`test_SimTimestamp40.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTimestamp640.py>`_
 
 Pins
     +---------------+---------------------+-----------------------+------------------------------------------------------+ 
