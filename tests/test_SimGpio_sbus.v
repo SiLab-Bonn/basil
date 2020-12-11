@@ -7,15 +7,16 @@
 
 `timescale 1ps / 1ps
 
-`include "utils/bus_to_ip.v"
+`include "utils/sbus_to_ip.v"
 `include "gpio/gpio_core.v"
-`include "gpio/gpio.v"
+`include "gpio/gpio_sbus.v"
 
 module tb (
     input wire          BUS_CLK,
     input wire          BUS_RST,
     input wire  [15:0]  BUS_ADD,
-    inout wire  [7:0]   BUS_DATA,
+    input wire  [7:0]   BUS_DATA_IN,
+    output wire [7:0]   BUS_DATA_OUT,
     input wire          BUS_RD,
     input wire          BUS_WR
 );
@@ -26,9 +27,20 @@ localparam GPIO_HIGHADDR = 16'h000f;
 localparam GPIO2_BASEADDR = 16'h0010;
 localparam GPIO2_HIGHADDR = 16'h001f;
 
+wire [7:0] BUS_DATA_OUT_1;
+wire [7:0] BUS_DATA_OUT_2;
+
+assign BUS_DATA_OUT = BUS_DATA_OUT_1 | BUS_DATA_OUT_2;
+
+// FIXME: hack for Verilator optimization error
+/* verilator lint_off UNOPT */
 wire [23:0] IO;
 
-gpio #(
+assign IO[15:8] = IO[7:0];
+assign IO[23:20] = IO[19:16];
+/* verilator lint_on UNOPT */
+
+gpio_sbus #(
     .BASEADDR(GPIO_BASEADDR),
     .HIGHADDR(GPIO_HIGHADDR),
     .IO_WIDTH(24),
@@ -38,17 +50,17 @@ gpio #(
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(BUS_ADD),
-    .BUS_DATA(BUS_DATA),
+    .BUS_DATA_IN(BUS_DATA_IN),
+    .BUS_DATA_OUT(BUS_DATA_OUT_1),
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
     .IO(IO)
 );
 
-assign IO[15:8] = IO[7:0];
-assign IO[23:20] = IO[19:16];
-
 wire [15:0] IO_2;
-gpio #(
+assign IO_2 = 16'ha5cd;
+
+gpio_sbus #(
     .BASEADDR(GPIO2_BASEADDR),
     .HIGHADDR(GPIO2_HIGHADDR),
     .IO_WIDTH(16),
@@ -57,15 +69,15 @@ gpio #(
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(BUS_ADD),
-    .BUS_DATA(BUS_DATA),
+    .BUS_DATA_IN(BUS_DATA_IN),
+    .BUS_DATA_OUT(BUS_DATA_OUT_2),
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
     .IO(IO_2)
 );
-assign IO_2 = 16'ha5cd;
 
 initial begin
-    $dumpfile("gpio.vcd");
+    $dumpfile("gpio_sbus1.vcd");
     $dumpvars(0);
 end
 

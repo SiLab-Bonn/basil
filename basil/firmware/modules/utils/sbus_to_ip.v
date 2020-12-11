@@ -4,11 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`timescale 1ps/1ps
-`default_nettype none
 
-
-module bus_to_ip
+module sbus_to_ip
 #(
     parameter BASEADDR = 0,
     parameter HIGHADDR = 0,
@@ -16,10 +13,12 @@ module bus_to_ip
     parameter DBUSWIDTH = 8
 )
 (
+    input wire BUS_CLK,
     input wire BUS_RD,
     input wire BUS_WR,
     input wire [ABUSWIDTH-1:0] BUS_ADD,
-    inout wire [DBUSWIDTH-1:0] BUS_DATA,
+    input wire [DBUSWIDTH-1:0] BUS_DATA_IN,
+    output wire [DBUSWIDTH-1:0] BUS_DATA_OUT,
 
     output wire IP_RD,
     output wire IP_WR,
@@ -37,8 +36,14 @@ assign IP_ADD = CS ? BUS_ADD - BASEADDR : {ABUSWIDTH{1'b0}};
 assign IP_RD = CS ? BUS_RD : 1'b0;
 assign IP_WR = CS ? BUS_WR: 1'b0;
 
-assign IP_DATA_IN =  BUS_DATA;
+assign IP_DATA_IN =  BUS_DATA_IN;
 
-assign BUS_DATA = (CS && BUS_WR) ? {DBUSWIDTH{1'bz}} : (CS ? IP_DATA_OUT : {DBUSWIDTH{1'bz}});
+reg CS_PREV;
+
+always@(posedge BUS_CLK) begin
+    CS_PREV <= CS;
+end
+
+assign BUS_DATA_OUT = (CS_PREV ? IP_DATA_OUT : {DBUSWIDTH{1'b0}});
 
 endmodule

@@ -10,6 +10,7 @@
 `include "utils/rgmii_io.v"
 `include "utils/rbcp_to_bus.v"
 `include "utils/bus_to_ip.v"
+`include "gpio/gpio_core.v"
 `include "gpio/gpio.v"
 
 

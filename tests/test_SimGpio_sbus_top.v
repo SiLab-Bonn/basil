@@ -15,7 +15,8 @@ module tb (
     input wire          BUS_CLK,
     input wire          BUS_RST,
     input wire  [15:0]  BUS_ADD,
-    inout wire  [7:0]   BUS_DATA,
+    input wire  [7:0]   BUS_DATA_IN,
+    output wire [7:0]   BUS_DATA_OUT,
     input wire          BUS_RD,
     input wire          BUS_WR
 );
@@ -26,7 +27,18 @@ localparam GPIO_HIGHADDR = 16'h000f;
 localparam GPIO2_BASEADDR = 16'h0010;
 localparam GPIO2_HIGHADDR = 16'h001f;
 
+// Connect tb internal bus to external split bus
+wire [7:0] BUS_DATA;
+assign BUS_DATA = BUS_DATA_IN;
+assign BUS_DATA_OUT = BUS_DATA;
+
+// FIXME: hack for Verilator optimization error
+/* verilator lint_off UNOPT */
 wire [23:0] IO;
+
+assign IO[15:8] = IO[7:0];
+assign IO[23:20] = IO[19:16];
+/* verilator lint_on UNOPT */
 
 gpio #(
     .BASEADDR(GPIO_BASEADDR),
@@ -44,10 +56,9 @@ gpio #(
     .IO(IO)
 );
 
-assign IO[15:8] = IO[7:0];
-assign IO[23:20] = IO[19:16];
-
 wire [15:0] IO_2;
+assign IO_2 = 16'ha5cd;
+
 gpio #(
     .BASEADDR(GPIO2_BASEADDR),
     .HIGHADDR(GPIO2_HIGHADDR),
@@ -62,10 +73,9 @@ gpio #(
     .BUS_WR(BUS_WR),
     .IO(IO_2)
 );
-assign IO_2 = 16'ha5cd;
 
 initial begin
-    $dumpfile("gpio.vcd");
+    $dumpfile("gpio_sbus2.vcd");
     $dumpvars(0);
 end
 
