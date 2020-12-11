@@ -86,7 +86,7 @@ class TestSimTimestamp(unittest.TestCase):
         self.assertEqual(self.chip['pulse_gen640'].get_delay(), 0x105)
         self.assertEqual(self.chip['pulse_gen640'].get_width(), 10)
         self.assertEqual(self.chip['pulse_gen640'].get_repeat(), 1)
-        self.assertEqual(self.chip['pulse_gen640'].get_phase(), 0)
+        # self.assertEqual(self.chip['pulse_gen640'].get_phase(), 0)
 
         self.chip['pulse_gen640'].start()
         while(not self.chip['pulse_gen640'].is_done()):
