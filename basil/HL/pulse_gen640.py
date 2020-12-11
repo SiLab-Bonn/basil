@@ -14,7 +14,7 @@ class pulse_gen640(RegisterHardwareLayer):
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
                   'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
-                  'RADY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
+                  'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'EN': {'descr': {'addr': 2, 'size': 1}},
                   'DELAY': {'descr': {'addr': 3, 'size': 32}},
