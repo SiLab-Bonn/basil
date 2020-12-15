@@ -22,19 +22,15 @@ always @(posedge CLK)
     else
         cnt <= cnt + 1;
 
-initial begin
-    CLOCK = 0;
-    forever begin
-        @(posedge CLK);
-        if(cnt == DIVISOR-1)
-            CLOCK = 1;
+initial CLOCK = 0;
 
-        if(cnt == DIVISOR/2-1) begin
-            if(DIV[0] == 1) @(negedge CLK);
-            CLOCK = 0;
-        end
-
-    end
+always @(posedge CLK or negedge CLK) begin
+    if(cnt == DIVISOR-1 && CLK == 1'b1) // posedge
+        CLOCK = 1;
+    else if (cnt == DIVISOR/2-1 && DIV[0] == 0 && CLK == 1'b1) // posedge
+        CLOCK = 0;
+    else if (cnt == DIVISOR/2 && DIV[0] == 1 && CLK == 1'b0) // negedge
+        CLOCK = 0;
 end
 
 endmodule
