@@ -79,7 +79,7 @@ always @(posedge CLK)
 reg [31:0] DATA_BUF;
 always @(posedge CLK)
     if(RST) begin
-        DATA_BUF = 0;
+        DATA_BUF <= 0;
     end else if(READ_FIFO_8 && byte_cnt  == 0) begin
         DATA_BUF[7:0] <= FIFO_DATA_OUT_8;
     end else if(READ_FIFO_8 && byte_cnt  == 1) begin
