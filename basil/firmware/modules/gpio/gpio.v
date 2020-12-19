@@ -23,7 +23,6 @@ module gpio #(
     input wire          BUS_WR,
 
     inout wire [IO_WIDTH-1:0]   IO
-
 );
 
 wire IP_RD, IP_WR;
