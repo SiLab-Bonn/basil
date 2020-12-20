@@ -43,6 +43,13 @@ def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test
     mkfile += extra
     mkfile += "\n"
 
+    try:
+        if os.environ['SIM'] == 'verilator':
+            mkfile += "EXTRA_ARGS += -DVERILATOR_SIM\n"
+            mkfile += "EXTRA_ARGS += -Wno-WIDTH -Wno-TIMESCALEMOD\n"
+    except KeyError:
+        pass
+
     mkfile += """
 export SIMULATION_HOST
 export SIMULATION_PORT

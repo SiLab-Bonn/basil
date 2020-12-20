@@ -19,9 +19,9 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     for test_name in test_names:
-        suite.addTest(TestSimGpio(test_name, 'test_SimGpio_sbus.v', 'basil.utils.sim.BasilSbusDriver'))
+        suite.addTest(TestSimGpio(testname=test_name, tb='test_SimGpio.v', bus_drv='basil.utils.sim.BasilSbusDriver', bus_split='sbus'))
     for test_name in test_names:
-        suite.addTest(TestSimGpio(test_name, 'test_SimGpio_sbus_top.v', 'basil.utils.sim.BasilSbusDriver'))
+        suite.addTest(TestSimGpio(testname=test_name, tb='test_SimGpio.v', bus_drv='basil.utils.sim.BasilSbusDriver', bus_split='top'))
 
     result = unittest.TextTestRunner().run(suite)
     sys.exit(not result.wasSuccessful())
