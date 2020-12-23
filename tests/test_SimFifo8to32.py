@@ -6,6 +6,7 @@
 #
 
 import unittest
+import pytest
 import os
 
 from basil.dut import Dut
@@ -89,6 +90,19 @@ class TestSimFifo8to32(unittest.TestCase):
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
+
+
+# TODO: add sbus versions of used modules
+# @pytest.mark.verilator
+# class TestSimFifo8to32Sbus(TestSimFifo8to32):
+#     def __init__(self, testname):
+#         super(TestSimFifo8to32Sbus, self).__init__(testname=testname, tb='test_SimFifo8to32.v', bus_drv='basil.utils.sim.BasilSbusDriver', bus_split='sbus')
+
+
+@pytest.mark.verilator
+class TestSimFifo8to32SbusTop(TestSimFifo8to32):
+    def __init__(self, testname):
+        super(TestSimFifo8to32SbusTop, self).__init__(testname=testname, tb='test_SimFifo8to32.v', bus_drv='basil.utils.sim.BasilSbusDriver', bus_split='top')
 
 
 if __name__ == '__main__':
