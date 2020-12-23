@@ -6,6 +6,7 @@
 #
 
 import unittest
+import pytest
 import os
 import yaml
 
@@ -159,6 +160,19 @@ class TestSimSpi(unittest.TestCase):
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
+
+
+# TODO: add sbus versions of used modules
+# @pytest.mark.verilator
+# class TestSimSpiSbus(TestSimSpi):
+#     def __init__(self, testname):
+#         super(TestSimSpiSbus, self).__init__(testname=testname, tb='test_SimSpi.v', bus_drv='basil.utils.sim.BasilSbusDriver', bus_split='sbus')
+
+
+@pytest.mark.verilator
+class TestSimSpiSbusTop(TestSimSpi):
+    def __init__(self, testname):
+        super(TestSimSpiSbusTop, self).__init__(testname=testname, tb='test_SimSpi.v', bus_drv='basil.utils.sim.BasilSbusDriver', bus_split='top')
 
 
 if __name__ == '__main__':

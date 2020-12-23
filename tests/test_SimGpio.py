@@ -6,6 +6,7 @@
 #
 
 import unittest
+import pytest
 import os
 
 from basil.dut import Dut
@@ -99,6 +100,18 @@ class TestSimGpio(unittest.TestCase):
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
+
+
+@pytest.mark.verilator
+class TestSimGpioSbus(TestSimGpio):
+    def __init__(self, testname):
+        super(TestSimGpioSbus, self).__init__(testname=testname, tb='test_SimGpio.v', bus_drv='basil.utils.sim.BasilSbusDriver', bus_split='sbus')
+
+
+@pytest.mark.verilator
+class TestSimGpioSbusTop(TestSimGpio):
+    def __init__(self, testname):
+        super(TestSimGpioSbusTop, self).__init__(testname=testname, tb='test_SimGpio.v', bus_drv='basil.utils.sim.BasilSbusDriver', bus_split='top')
 
 
 if __name__ == '__main__':
