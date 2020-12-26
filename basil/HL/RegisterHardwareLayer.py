@@ -7,7 +7,7 @@
 
 import logging
 from copy import deepcopy
-import collections
+from collections.abc import Iterable
 import array
 from collections import namedtuple
 from six import integer_types
@@ -242,7 +242,7 @@ class RegisterHardwareLayer(HardwareLayer):
         if 'properties' in descr and [i for i in read_only if i in descr['properties']]:
             raise IOError('Register is read-only')
         if 'properties' in descr and [i for i in is_byte_array if i in descr['properties']]:
-            if not isinstance(value, collections.Iterable):
+            if not isinstance(value, Iterable):
                 raise ValueError('For array byte_register iterable object is needed')
             value = array.array('B', value).tolist()
             self.set_bytes(value, **descr)

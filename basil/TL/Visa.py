@@ -4,7 +4,7 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-import visa
+import pyvisa as visa
 import logging
 
 from basil.TL.TransferLayer import TransferLayer
