@@ -29,12 +29,27 @@ jobs:
         flake8
 
   tests:
-    name: Python ${{matrix.python-version}}
+
+    name: Python ${{matrix.python-version}} | ${{matrix.sim}} 
     runs-on: ubuntu-20.04
+    env:
+      SIM: ${{matrix.sim}}
 
     strategy:
+      fail-fast: false
       matrix:
-        python-version: [3.7, 3.8]
+        include:
+
+          - sim: icarus
+            python-version: 3.7
+
+          - sim: icarus
+            python-version: 3.8
+
+          - sim: verilator
+            sim-version: v4.106
+            python-version: 3.8
+            pytest-marker: "-m verilator"
 
     steps:
     - uses: actions/checkout@v1
@@ -52,9 +67,21 @@ jobs:
     - name: Install Python dependencies
       shell: bash -l {0}
       run: |
-        pip install pyvisa pyvisa-sim pytest coveralls cocotb==1.4.0
+        pip install pyvisa pyvisa-sim pytest coveralls pytest-cov cocotb==1.4.0
   
+    - name: Install Verilator
+      if: matrix.sim == 'verilator'
+      run: |
+        sudo apt install -y --no-install-recommends make g++ perl python3 autoconf flex bison libfl2 libfl-dev zlibc zlib1g zlib1g-dev
+        git clone https://github.com/verilator/verilator.git -b ${{matrix.sim-version}}
+        cd verilator
+        autoconf
+        ./configure
+        make -j $(nproc)
+        sudo make install
+
     - name: Install Icarus Verilog
+      if: matrix.sim == 'icarus'
       run: |
         sudo apt install -y --no-install-recommends iverilog
 
@@ -67,7 +94,7 @@ jobs:
       shell: bash -l {0}
       run: |
         pip install -e .
-        nosetests --with-coverage --cover-package=basil  tests/test_*.py examples/*/*/test_*.py
+        pytest ${{matrix.pytest-marker}} --cov=basil tests/test_*.py examples/*/*/test_*.py
 
     - name: Upload to codecov
       shell: bash -l {0}
