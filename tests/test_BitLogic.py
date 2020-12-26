@@ -124,7 +124,7 @@ class TestBitLogic(unittest.TestCase):
         bl = BitLogic.from_value(12, size=9, fmt='Q')
         self.assertEqual(bl[3:1], bitarray('011'))
         self.assertEqual(bl[:], bitarray('001100000'))
-        self.assertEqual(bl[bl.length():], bitarray('001100000'))
+        self.assertEqual(bl[len(bl):], bitarray('001100000'))
         self.assertEqual(bl[len(bl):], bitarray('001100000'))
         self.assertEqual(bl[len(bl):0], bitarray('001100000'))
 
