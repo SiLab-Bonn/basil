@@ -37,7 +37,6 @@ class SignatoneProber(HardwareLayer):
                 reply = self._intf.query('GETCR')
             else:
                 break
-
         values = reply.split(',')
         return (int(values[0]), int(values[1]))
 
