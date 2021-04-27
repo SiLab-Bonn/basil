@@ -6,8 +6,10 @@
 #
 import pyvisa as visa
 import logging
+import time
 
 from basil.TL.TransferLayer import TransferLayer
+from pyvisa.errors import VisaIOError
 
 logger = logging.getLogger(__name__)
 
@@ -32,10 +34,13 @@ class Visa(TransferLayer):
         backend = self._init.get('backend', '')  # Empty string means std. backend (NI VISA)
         rm = visa.ResourceManager(backend)
         try:
-            logger.info('BASIL VISA TL with %s backend found the following devices: %s', backend, ", ".join(rm.list_resources()))
+            logger.info('BASIL VISA TL with %s backend found the following devices: %s', backend,
+                        ", ".join(rm.list_resources()))
         except NotImplementedError:  # some backends do not always implement the list_resources function
             logger.info('BASIL VISA TL with %s backend', backend)
-        self._resource = rm.open_resource(**{key: value for key, value in self._init.items() if key not in ("backend",)})
+
+        self._resource = rm.open_resource(
+            **{key: value for key, value in self._init.items() if key not in ("backend",)})
 
     def close(self):
         super(Visa, self).close()
@@ -45,7 +50,26 @@ class Visa(TransferLayer):
         self._resource.write(data)
 
     def read(self):
-        self._resource.read()
+        if self._resource.read_termination == "":
+            ret = ""
+            while True:
+                try:
+                    ret += self._resource.read_bytes(1).decode(self._resource._encoding)
+                except VisaIOError:
+                    break
+        else:
+            ret = self._resource.read()
+        return ret
 
     def query(self, data):
-        return self._resource.query(data)
+        if self._resource.read_termination == "":
+            self.write(data)
+            ret = ""
+            while True:
+                try:
+                    ret += self._resource.read_bytes(1).decode(self._resource._encoding)
+                except VisaIOError:
+                    break
+        else:
+            ret = self._resource.query(data)
+        return ret
