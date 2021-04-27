@@ -31,8 +31,12 @@ class SignatoneProber(HardwareLayer):
 
     def get_die(self):
         ''' Get chip index '''
-        reply = self._intf.query('GETCR')
-        return reply
+        reply = self._intf.query('GETCR').strip()
+        if reply == '0:' or reply == '':
+            reply = self._intf.query('GETCR')
+
+        values = reply[2:].split(' ')
+        return (int(values[0]), int(values[1]))
 
     def contact(self):
         ''' Move chuck to contact z position'''
