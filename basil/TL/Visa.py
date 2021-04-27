@@ -64,6 +64,7 @@ class Visa(TransferLayer):
     def query(self, data):
         if self._resource.read_termination == "":
             self.write(data)
+            time.sleep(self._resource.query_delay)
             ret = ""
             while True:
                 try:
