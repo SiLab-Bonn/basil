@@ -35,7 +35,7 @@ class SignatoneProber(HardwareLayer):
         if reply == '0:' or reply == '':
             reply = self._intf.query('GETCR')
 
-        values = reply[2:].split(' ')
+        values = reply.split(',')
         return (int(values[0]), int(values[1]))
 
     def contact(self):
