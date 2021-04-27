@@ -23,15 +23,15 @@ class Mercury(HardwareLayer):
 
     def init(self):
         super(Mercury, self).init()
-        self._adresses = []
+        self._addresses = []
         for a in range(16):  # Check all possible addresses
-            self.write(bytearray.fromhex("01%d" % (a + 30)) + "TB")  # Tell board address
+            self.write(bytearray.fromhex("01%d" % (a + 30)) + "TB".encode())  # Tell board address
             if self.get_address(a):
-                self._adresses.append(a)
+                self._addresses.append(a)
 
     def write(self, value):
-        msg = value + '\r'  # msg has CR at the end
-        self._intf.write(str(msg))
+        msg = value + '\r'.encode()  # msg has CR at the end
+        self._intf.write(msg)
 
     def read(self):
         answer = self._intf._readline()  # the read termination string has to be set to \x03
@@ -39,18 +39,18 @@ class Mercury(HardwareLayer):
 
     def _write_command(self, command, address=None):
         if address:
-            self.write(bytearray.fromhex("01%d" % (address + 30)) + command)
+            self.write(bytearray.fromhex("01%d" % (address + 30)) + command.encode())
         else:
-            for a in self._adresses:
-                self.write(bytearray.fromhex("01%d" % (a + 30)) + command)
+            for a in self._addresses:
+                self.write(bytearray.fromhex("01%d" % (a + 30)) + command.encode())
 
     def get_address(self, address):
         self._write_command("TB", address)
         return self.read()
 
     def get_position(self, address=None):
-        self._write_command("TP")
-        return int(self.read()[3:-3])
+        self._write_command("TP", address)
+        return int(self.read()[2:-3])
 
     def get_channel(self, address=None):
         self._write_command("TS", address)

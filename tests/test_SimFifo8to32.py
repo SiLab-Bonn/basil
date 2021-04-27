@@ -6,6 +6,7 @@
 #
 
 import unittest
+import pytest
 import os
 
 from basil.dut import Dut
@@ -29,9 +30,20 @@ hw_drivers:
 """
 
 
-class TestSimM26(unittest.TestCase):
+class TestSimFifo8to32(unittest.TestCase):
+    def __init__(self, testname, tb='test_SimFifo8to32.v', bus_drv='basil.utils.sim.BasilBusDriver', bus_split=False):
+        super(TestSimFifo8to32, self).__init__(testname)
+        self._test_tb = tb
+        self._sim_bus = bus_drv
+        self._bus_split_def = ()
+        if bus_split is not False:
+            if bus_split == 'sbus':
+                self._bus_split_def = ("BASIL_SBUS",)
+            elif bus_split == 'top':
+                self._bus_split_def = ("BASIL_TOPSBUS",)
+
     def setUp(self):
-        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), 'test_SimFifo8to32.v')])
+        cocotb_compile_and_run(sim_files=[os.path.join(os.path.dirname(__file__), self._test_tb)], sim_bus=self._sim_bus, extra_defines=self._bus_split_def)
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
@@ -78,6 +90,19 @@ class TestSimM26(unittest.TestCase):
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
+
+
+# TODO: add sbus versions of used modules
+# @pytest.mark.verilator
+# class TestSimFifo8to32Sbus(TestSimFifo8to32):
+#     def __init__(self, testname):
+#         super(TestSimFifo8to32Sbus, self).__init__(testname=testname, tb='test_SimFifo8to32.v', bus_drv='basil.utils.sim.BasilSbusDriver', bus_split='sbus')
+
+
+@pytest.mark.verilator
+class TestSimFifo8to32SbusTop(TestSimFifo8to32):
+    def __init__(self, testname):
+        super(TestSimFifo8to32SbusTop, self).__init__(testname=testname, tb='test_SimFifo8to32.v', bus_drv='basil.utils.sim.BasilSbusDriver', bus_split='top')
 
 
 if __name__ == '__main__':

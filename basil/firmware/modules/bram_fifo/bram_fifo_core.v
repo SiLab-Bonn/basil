@@ -149,12 +149,14 @@ always @(posedge BUS_CLK) begin
 end
 
 always @(posedge BUS_CLK) begin
+    /* verilator lint_off UNSIGNED */
     if(RST)
         FIFO_NEAR_FULL <= 1'b0;
     else if (((((FIFO_ALMOST_FULL_VALUE+1)*DEPTH)>>8) <= CONF_SIZE) || (FIFO_ALMOST_FULL_VALUE == 8'b0 && CONF_SIZE >= 0))
         FIFO_NEAR_FULL <= 1'b1;
     else if (((((FIFO_ALMOST_EMPTY_VALUE+1)*DEPTH)>>8) >= CONF_SIZE && FIFO_ALMOST_EMPTY_VALUE != 8'b0) || CONF_SIZE == 0)
         FIFO_NEAR_FULL <= 1'b0;
+/* verilator lint_on UNSIGNED */
 end
 
 endmodule

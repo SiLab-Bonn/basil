@@ -5,10 +5,12 @@
 # ------------------------------------------------------------
 #
 
+# E221 multiple spaces before operator
+# flake8: noqa 
+
 import logging
 
 from basil.HL.HardwareLayer import HardwareLayer
-import six
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +55,7 @@ class MIO_PLL(HardwareLayer):
     CY22150_LCLK4_EN                 = 0x08
     CY22150_CLK5_EN                  = 0x10
     CY22150_CLK6_EN                  = 0x20
-   # constants
+    # constants
     CY22150_DEF_INPDRV               = 0x28  # input range for 48 MHz reference clock oszillator
     CY22150_DEF_INPCAP               = 0x00  # no load capacitor
     CY22150_FREF_FX                  = 48.0  # reference clock, from USB controller

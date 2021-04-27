@@ -36,8 +36,8 @@ parameter WIDTHB      = 2;
 parameter SIZEB       = SIZEA/2;
 parameter ADDRWIDTHB  = 13;
 
-`define max(a,b) {(a) > (b) ? (a) : (b)}
-`define min(a,b) {(a) < (b) ? (a) : (b)}
+`define max(a,b) (a) > (b) ? (a) : (b)
+`define min(a,b) (a) < (b) ? (a) : (b)
 
 `include "../includes/log2func.v"
 

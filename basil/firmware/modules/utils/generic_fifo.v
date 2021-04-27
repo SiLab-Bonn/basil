@@ -74,7 +74,9 @@ always @(posedge clk) begin
 end
 
 always @(posedge clk)
-    if(read && !empty)
+    if (reset)
+        empty <= 1;
+    else if(read && !empty)
         if(rd_pointer == DEPTH-1'b1)
             empty <= (wr_pointer == 0);
         else

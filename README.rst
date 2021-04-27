@@ -2,19 +2,15 @@
 Basil
 ===============================================
 
-|travis-status|  |rtd-status|  |landscape-status|
+|gha-status|  |rtd-status|
 
-.. |travis-status| image:: https://travis-ci.org/SiLab-Bonn/basil.svg?branch=development
-    :target: https://travis-ci.org/SiLab-Bonn/basil
+.. |gha-status| image:: https://github.com/SiLab-Bonn/basil/workflows/Regression%20Tests/badge.svg
+    :target: https://github.com/silab-bonn/basil/actions?query=workflow%3A%22Regression+Tests%22
     :alt: Build status
 
 .. |rtd-status| image:: https://readthedocs.org/projects/basil/badge/?version=latest
     :target: http://basil.rtfd.org
     :alt: Documentation
-
-.. |landscape-status| image:: https://landscape.io/github/SiLab-Bonn/basil/development/landscape.svg?style=flat
-   :target: https://landscape.io/github/SiLab-Bonn/basil/development
-   :alt: Code Health
 
 Basil is a modular data acquisition system and system testing framework in Python.
 

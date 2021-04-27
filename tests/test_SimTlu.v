@@ -7,7 +7,7 @@
 
 `timescale 1ps / 1ps
 
-
+`include "gpio/gpio_core.v"
 `include "gpio/gpio.v"
 
 `include "tlu/tlu_controller_core.v"

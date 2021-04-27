@@ -26,8 +26,8 @@ chip['CONTROL']['EN'] = 1
 chip['CONTROL'].write()
 
 start = 0
-for i in range(10):
 
+for i in range(10):
     time.sleep(1)
 
     fifo_data = chip['FIFO'].get_data()
@@ -35,7 +35,7 @@ for i in range(10):
     data_gen = np.linspace(start, data_size - 1 + start, data_size, dtype=np.int32)
 
     comp = (fifo_data == data_gen)
-    logging.info(str((i, " OK?:", comp.all(), float(32 * data_size) / pow(10, 6), "Mbit")))
+    logging.info("%s: %.2f Mbits checked. OK?: %s" % (i, float(32 * data_size) / pow(10, 6), comp.all()))
     start += data_size
 
 chip['CONTROL']['EN'] = 0  # stop data source
@@ -64,4 +64,4 @@ while time.time() - start_time < testduration:
 chip['CONTROL']['EN'] = 0x0  # stop data source
 chip['CONTROL'].write()
 
-logging.info(str(('Bytes received:', total_len, '  data rate:', round((total_len / 1e6 / testduration), 2), ' Mbits/s')))
+logging.info("Bytes received: %s, average data rate: %s Mbit/s" % (total_len, round((total_len / 1e6 / testduration), 2)))

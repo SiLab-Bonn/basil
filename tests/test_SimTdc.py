@@ -162,7 +162,6 @@ class TestSimTdc(unittest.TestCase):
             self.assertEqual(data0[0], data1[0])  # Compare TDC0 with TDC1
             self.assertEqual(data0[0], data2[0])  # Compare TDC0 with TDC2
 
-
 #     def test_tdc_delay(self):
 #         pass
 #

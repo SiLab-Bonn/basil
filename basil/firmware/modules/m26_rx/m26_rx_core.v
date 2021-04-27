@@ -10,7 +10,7 @@
 module m26_rx_core #(
     parameter ABUSWIDTH = 16,
     parameter HEADER = 0,
-    parameter IDENTYFIER = 0
+    parameter IDENTIFIER = 0
 ) (
     input wire CLK_RX,
     input wire MKD_RX,
@@ -37,7 +37,7 @@ module m26_rx_core #(
 
 localparam VERSION = 2;
 
-//output format #ID (as parameter IDENTYFIER + 1 frame start + 16 bit data)
+//output format #ID (as parameter IDENTIFIER + 1 frame start + 16 bit data)
 
 // writing to register 0 asserts soft reset
 wire SOFT_RST;
@@ -399,7 +399,7 @@ always @(posedge CLK_RX) begin
 end
 
 assign FIFO_DATA[19:18] = 0;
-assign FIFO_DATA[23:20] = IDENTYFIER[3:0];
+assign FIFO_DATA[23:20] = IDENTIFIER[3:0];
 assign FIFO_DATA[31:24] = HEADER[7:0];
 
 

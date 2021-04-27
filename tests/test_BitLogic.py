@@ -124,7 +124,7 @@ class TestBitLogic(unittest.TestCase):
         bl = BitLogic.from_value(12, size=9, fmt='Q')
         self.assertEqual(bl[3:1], bitarray('011'))
         self.assertEqual(bl[:], bitarray('001100000'))
-        self.assertEqual(bl[bl.length():], bitarray('001100000'))
+        self.assertEqual(bl[len(bl):], bitarray('001100000'))
         self.assertEqual(bl[len(bl):], bitarray('001100000'))
         self.assertEqual(bl[len(bl):0], bitarray('001100000'))
 
@@ -232,13 +232,13 @@ class TestBitLogic(unittest.TestCase):
 
     def test_set_slicing_and_indexing(self):
         bl = BitLogic('00000000')
-        bl[3:1] = True #same as 1
+        bl[3:1] = True  # same as 1
         self.assertEqual(bl, bitarray('01000000'))
         bl = BitLogic('00000000')
-        bl[3:1] = 0b111 
+        bl[3:1] = 0b111
         self.assertEqual(bl, bitarray('01110000'))
         bl = BitLogic('11111111')
-        bl[3:1] = False #same as 0
+        bl[3:1] = False  # same as 0
         self.assertEqual(bl, bitarray('10001111'))
         bl = BitLogic('00000000')
         bl[3:1] = 1
@@ -401,6 +401,7 @@ class TestBitLogic(unittest.TestCase):
         self.assertEqual(bl, bitarray('01000010'))
         bl[-1:-2] = 2
         self.assertEqual(bl, bitarray('01000001'))
+
 
 if __name__ == '__main__':
     unittest.main()

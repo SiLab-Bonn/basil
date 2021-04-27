@@ -43,6 +43,13 @@ def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test
     mkfile += extra
     mkfile += "\n"
 
+    try:
+        if os.environ['SIM'] == 'verilator':
+            mkfile += "EXTRA_ARGS += -DVERILATOR_SIM\n"
+            mkfile += "EXTRA_ARGS += -Wno-WIDTH -Wno-TIMESCALEMOD -Wwarn-ASSIGNDLY\n"
+    except KeyError:
+        pass
+
     mkfile += """
 export SIMULATION_HOST
 export SIMULATION_PORT
@@ -62,8 +69,8 @@ else ifeq ($(SIM),ius)
     EXTRA_ARGS += $(NOT_ICARUS_DEFINES)
     EXTRA_ARGS += $(NOT_ICARUS_INCLUDE_DIRS)
 else
-    EXTRA_ARGS += $(ICARUS_DEFINES)
-    EXTRA_ARGS += $(ICARUS_INCLUDE_DIRS)
+    COMPILE_ARGS += $(ICARUS_DEFINES)
+    COMPILE_ARGS += $(ICARUS_INCLUDE_DIRS)
 endif
 
 COMPILE_ARGS += $(COMPILE_ARGS_DEFINES)
@@ -71,7 +78,6 @@ COMPILE_ARGS += $(COMPILE_ARGS_DEFINES)
 TOPLEVEL_LANG?=verilog
 export TOPLEVEL_LANG
 
-include $(shell cocotb-config --makefiles)/Makefile.inc
 include $(shell cocotb-config --makefiles)/Makefile.sim
 
     """

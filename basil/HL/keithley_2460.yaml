@@ -1,0 +1,24 @@
+# Device description for the Keithley 2460 Sourcemeter.
+# set_ function expect a parameter, get_ function return a parameter.
+# Just the very basic commands are implemented here.
+identifier : KEITHLEY INSTRUMENTS,MODEL 2460
+
+on : OUTP ON
+off : OUTP OFF
+get_current : SENSE:FUNC 'CURR';:READ?
+set_current : SOUR:CURR
+set_voltage : SOUR:VOLT
+get_voltage : SENSE:FUNC 'VOLT';:READ?
+set_current_limit : SENS:CURR:PROT
+get_current_limit : SENS:CURR:PROT?
+set_voltage_limit : SENS:VOLT:PROT
+get_voltage_limit : SENS:VOLT:PROT?
+source_volt : SOUR:FUNC VOLT
+source_current : SOUR:FUNC CURR
+get_source_mode : SOUR:FUNC?
+set_autorange : SOUR:CURR:RANG:AUTO ON
+set_voltage_range : SOUR:VOLT:RANGE
+get_autorange : SOUR:CURR:RANG:AUTO?
+four_wire_on: SYST:RSEN ON
+four_wire_off: SYST:RSEN OFF
+get_remote_sense: SYST:RSEN ?

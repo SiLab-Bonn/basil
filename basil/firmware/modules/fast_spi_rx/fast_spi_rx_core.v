@@ -9,7 +9,7 @@
 
 module fast_spi_rx_core #(
     parameter ABUSWIDTH = 16,
-    parameter IDENTYFIER = 4'b0001
+    parameter IDENTIFIER = 4'b0001
 ) (
     input wire SCLK,
     input wire SDI,
@@ -30,7 +30,7 @@ module fast_spi_rx_core #(
 
 localparam VERSION = 0;
 
-//output format #ID (as parameter IDENTYFIER + 12 id-frame + 16 bit data)
+//output format #ID (as parameter IDENTIFIER + 12 id-frame + 16 bit data)
 
 wire SOFT_RST;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
@@ -135,7 +135,7 @@ always @(posedge SCLK) begin
 end
 
 wire [31:0] cdc_data;
-assign cdc_data = {IDENTYFIER, frame_cnt[11:0], spi_data};
+assign cdc_data = {IDENTIFIER, frame_cnt[11:0], spi_data};
 
 wire [31:0] cdc_data_out;
 cdc_syncfifo #(

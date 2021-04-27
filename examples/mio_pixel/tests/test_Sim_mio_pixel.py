@@ -13,9 +13,8 @@ import numpy as np
 from bitarray import bitarray
 
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean, get_basil_dir
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import pixel
+import pixel # noqa E402
 
 
 class TestPixel(unittest.TestCase):
@@ -24,6 +23,7 @@ class TestPixel(unittest.TestCase):
         fw_path = os.path.join(get_basil_dir(), 'firmware/modules')
         cocotb_compile_and_run([
             os.path.join(fw_path, 'gpio/gpio.v'),
+            os.path.join(fw_path, 'gpio/gpio_core.v'),
             os.path.join(fw_path, 'utils/reset_gen.v'),
             os.path.join(fw_path, 'utils/bus_to_ip.v'),
             os.path.join(fw_path, 'rrp_arbiter/rrp_arbiter.v'),
@@ -85,6 +85,7 @@ class TestPixel(unittest.TestCase):
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
+
 
 if __name__ == '__main__':
     unittest.main()

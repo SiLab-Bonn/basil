@@ -132,5 +132,6 @@ class TestSimAdcRx(unittest.TestCase):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
 
+
 if __name__ == '__main__':
     unittest.main()

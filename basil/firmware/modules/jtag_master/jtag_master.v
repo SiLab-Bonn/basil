@@ -7,38 +7,37 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module timestamp_div #(
+module jtag_master #(
     parameter BASEADDR = 16'h0000,
     parameter HIGHADDR = 16'h0000,
     parameter ABUSWIDTH = 16,
-    parameter IDENTIFIER = 4'b0001,
-    parameter CLKDV = 4
+    parameter MEM_BYTES = 2
 ) (
-    input wire BUS_CLK,
-    input wire [ABUSWIDTH-1:0] BUS_ADD,
-    inout wire [7:0] BUS_DATA,
-    input wire BUS_RST,
-    input wire BUS_WR,
-    input wire BUS_RD,
+    input wire          BUS_CLK,
+    input wire          BUS_RST,
+    input wire  [ABUSWIDTH-1:0]  BUS_ADD,
+    inout wire  [7:0]   BUS_DATA,
+    input wire          BUS_RD,
+    input wire          BUS_WR,
 
-    input wire CLK320,
-    input wire CLK160,
-    input wire CLK40,
-    input wire DI,
-    input wire [63:0] EXT_TIMESTAMP,
-    output wire [63:0] TIMESTAMP_OUT,
-    input wire EXT_ENABLE,
+    input wire JTAG_CLK,
 
-    input wire FIFO_READ,
-    output wire FIFO_EMPTY,
-    output wire [31:0] FIFO_DATA
+    output wire TCK,        // TCK
+    input wire TDO,         // TDO
+    output wire TDI,        // TDI
+    output wire TMS,        // TMS
+
+    output wire SEN,
+    output wire SLD
 );
+
 
 wire IP_RD, IP_WR;
 wire [ABUSWIDTH-1:0] IP_ADD;
 wire [7:0] IP_DATA_IN;
 wire [7:0] IP_DATA_OUT;
 
+// Module to map basil bus address to jtag_spi_core internal address
 bus_to_ip #(
     .BASEADDR(BASEADDR),
     .HIGHADDR(HIGHADDR),
@@ -56,11 +55,10 @@ bus_to_ip #(
     .IP_DATA_OUT(IP_DATA_OUT)
 );
 
-timestamp_div_core #(
+jtag_master_core #(
     .ABUSWIDTH(ABUSWIDTH),
-    .IDENTIFIER(IDENTIFIER),
-    .CLKDV(4)
-) i_timestamp_div_core (
+    .MEM_BYTES(MEM_BYTES)
+) i_jtag_master_core (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(IP_ADD),
@@ -69,17 +67,15 @@ timestamp_div_core #(
     .BUS_WR(IP_WR),
     .BUS_DATA_OUT(IP_DATA_OUT),
 
-    .CLK320(CLK320),
-    .CLK160(CLK160),
-    .CLK40(CLK40),
-    .DI(DI),
-    .TIMESTAMP_OUT(TIMESTAMP_OUT),
-    .EXT_TIMESTAMP(EXT_TIMESTAMP),
-    .EXT_ENABLE(EXT_ENABLE),
+    .JTAG_CLK(JTAG_CLK),
 
-    .FIFO_READ(FIFO_READ),
-    .FIFO_EMPTY(FIFO_EMPTY),
-    .FIFO_DATA(FIFO_DATA)
+    .TCK(TCK),
+    .TDO(TDO),
+    .TDI(TDI),
+    .TMS(TMS),
+
+    .SEN(SEN),
+    .SLD(SLD)
 );
 
 endmodule

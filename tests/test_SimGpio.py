@@ -6,6 +6,7 @@
 #
 
 import unittest
+import pytest
 import os
 
 from basil.dut import Dut
@@ -26,13 +27,13 @@ hw_drivers:
     interface : INTF
     base_addr : 0x0000
     size      : 24
-    
+
   - name      : GPIO2
     type      : gpio
     interface : INTF
     base_addr : 0x0010
     size      : 16
-    
+
 registers:
   - name        : GPIO
     type        : StdRegister
@@ -55,8 +56,19 @@ registers:
 
 
 class TestSimGpio(unittest.TestCase):
+    def __init__(self, testname, tb='test_SimGpio.v', bus_drv='basil.utils.sim.BasilBusDriver', bus_split=False):
+        super(TestSimGpio, self).__init__(testname)
+        self._test_tb = tb
+        self._sim_bus = bus_drv
+        self._bus_split_def = ()
+        if bus_split is not False:
+            if bus_split == 'sbus':
+                self._bus_split_def = ("BASIL_SBUS",)
+            elif bus_split == 'top':
+                self._bus_split_def = ("BASIL_TOPSBUS",)
+
     def setUp(self):
-        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), 'test_SimGpio.v')])
+        cocotb_compile_and_run(sim_files=[os.path.join(os.path.dirname(__file__), self._test_tb)], sim_bus=self._sim_bus, extra_defines=self._bus_split_def)
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
@@ -88,6 +100,19 @@ class TestSimGpio(unittest.TestCase):
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
+
+
+@pytest.mark.verilator
+class TestSimGpioSbus(TestSimGpio):
+    def __init__(self, testname):
+        super(TestSimGpioSbus, self).__init__(testname=testname, tb='test_SimGpio.v', bus_drv='basil.utils.sim.BasilSbusDriver', bus_split='sbus')
+
+
+@pytest.mark.verilator
+class TestSimGpioSbusTop(TestSimGpio):
+    def __init__(self, testname):
+        super(TestSimGpioSbusTop, self).__init__(testname=testname, tb='test_SimGpio.v', bus_drv='basil.utils.sim.BasilSbusDriver', bus_split='top')
+
 
 if __name__ == '__main__':
     unittest.main()

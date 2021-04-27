@@ -40,14 +40,7 @@ class TestSimBDAQ53Eth(unittest.TestCase):
         conf['transfer_layer'][0]['type'] = 'SiSim'
         conf['transfer_layer'][0]['tcp_connection'] = 'False'
 
-#        conf['hw_drivers']['FIFO'] = ({'name': 'fifo',
-#                                       'type': 'sram_fifo',
-#                                       'interface': 'intf',
-#                                       'base_addr': 0x8000,
-#                                       'base_data_addr': 0x80000000})
-
-        conf['hw_drivers'].append({'name': 'FIFO', 'type': 'sram_fifo',
-                                   'interface': 'intf', 'base_addr': 0x8000, 'base_data_addr': 0x80000000})
+        conf['hw_drivers'].append({'name': 'FIFO', 'type': 'sram_fifo', 'interface': 'intf', 'base_addr': 0x8000, 'base_data_addr': 0x80000000})
 
         self.chip = Dut(conf)
         self.chip.init()

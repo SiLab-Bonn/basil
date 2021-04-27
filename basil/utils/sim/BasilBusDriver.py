@@ -14,7 +14,6 @@ import cocotb
 from cocotb.binary import BinaryValue
 from cocotb.triggers import RisingEdge, Timer
 from cocotb.drivers import BusDriver
-from cocotb.result import ReturnValue
 from cocotb.clock import Clock
 
 
@@ -28,11 +27,11 @@ class BasilBusDriver(BusDriver):
         BusDriver.__init__(self, entity, "", entity.BUS_CLK)
 
         # Create an appropriately sized high-impedence value
-        self._high_impedence = BinaryValue(bits=len(self.bus.BUS_DATA))
+        self._high_impedence = BinaryValue(n_bits=len(self.bus.BUS_DATA))
         self._high_impedence.binstr = "Z" * len(self.bus.BUS_DATA)
 
         # Create an appropriately sized high-impedence value
-        self._x = BinaryValue(bits=len(self.bus.BUS_ADD))
+        self._x = BinaryValue(n_bits=len(self.bus.BUS_ADD))
         self._x.binstr = "x" * len(self.bus.BUS_ADD)
 
         self._has_byte_acces = False
@@ -40,8 +39,7 @@ class BasilBusDriver(BusDriver):
         # Kick off a clock generator
         cocotb.fork(Clock(self.clock, 5000).start())
 
-    @cocotb.coroutine
-    def init(self):
+    async def init(self):
         # Defaults
         self.bus.BUS_RST <= 1
         self.bus.BUS_RD <= 0
@@ -50,12 +48,12 @@ class BasilBusDriver(BusDriver):
         self.bus.BUS_DATA <= self._high_impedence
 
         for _ in range(8):
-            yield RisingEdge(self.clock)
+            await RisingEdge(self.clock)
 
         self.bus.BUS_RST <= 0
 
         for _ in range(2):
-            yield RisingEdge(self.clock)
+            await RisingEdge(self.clock)
 
         # why this does not work? hasattr(self.bus, 'BUS_BYTE_ACCESS'):
         try:
@@ -65,15 +63,14 @@ class BasilBusDriver(BusDriver):
         else:
             self._has_byte_acces = True
 
-    @cocotb.coroutine
-    def read(self, address, size):
+    async def read(self, address, size):
         result = []
 
         self.bus.BUS_DATA <= self._high_impedence
         self.bus.BUS_ADD <= self._x
         self.bus.BUS_RD <= 0
 
-        yield RisingEdge(self.clock)
+        await RisingEdge(self.clock)
 
         byte = 0
         while(byte <= size):
@@ -84,7 +81,7 @@ class BasilBusDriver(BusDriver):
 
             self.bus.BUS_ADD <= address + byte
 
-            yield RisingEdge(self.clock)
+            await RisingEdge(self.clock)
 
             if(byte != 0):
                 if(self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value.integer == 0):
@@ -106,29 +103,28 @@ class BasilBusDriver(BusDriver):
 
         self.bus.BUS_ADD <= self._x
         self.bus.BUS_DATA <= self._high_impedence
-        yield RisingEdge(self.clock)
+        await RisingEdge(self.clock)
 
-        raise ReturnValue(result)
+        return result
 
-    @cocotb.coroutine
-    def write(self, address, data):
+    async def write(self, address, data):
 
         self.bus.BUS_ADD <= self._x
         self.bus.BUS_DATA <= self._high_impedence
         self.bus.BUS_WR <= 0
 
-        yield RisingEdge(self.clock)
+        await RisingEdge(self.clock)
 
         for index, byte in enumerate(data):
             self.bus.BUS_DATA <= byte
             self.bus.BUS_WR <= 1
             self.bus.BUS_ADD <= address + index
-            yield Timer(1)  # This is hack for iverilog
+            await Timer(1)  # This is hack for iverilog
             self.bus.BUS_DATA <= byte
             self.bus.BUS_WR <= 1
             self.bus.BUS_ADD <= address + index
 
-            yield RisingEdge(self.clock)
+            await RisingEdge(self.clock)
 
         if(self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value.integer == 0):
             raise NotImplementedError("BUS_BYTE_ACCESS for write to be implemented.")
@@ -137,4 +133,4 @@ class BasilBusDriver(BusDriver):
         self.bus.BUS_ADD <= self._x
         self.bus.BUS_WR <= 0
 
-        yield RisingEdge(self.clock)
+        await RisingEdge(self.clock)
