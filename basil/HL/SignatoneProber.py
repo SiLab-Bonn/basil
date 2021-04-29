@@ -19,7 +19,7 @@ class SignatoneProber(HardwareLayer):
 
     def goto_die(self, index_x, index_y):
         ''' Move chuck to wafer map chip index'''
-        self._intf.write('MOVECR %d %d' % (index_x, index_y))
+        self._intf.write('MOVECR %d, %d' % (index_x, index_y))
 
     def goto_next_die(self):
         ''' Move chuck to next die from wafer map'''
@@ -31,20 +31,23 @@ class SignatoneProber(HardwareLayer):
 
     def get_die(self):
         ''' Get chip index '''
-        reply = self._intf.query('GETCR').strip()
-        if reply == '0:' or reply == '':
-            reply = self._intf.query('GETCR')
+        reply = ''
+        for n in range(10):
+            if reply == '0:' or reply == '':
+                reply = self._intf.query('GETCR')
+            else:
+                break
 
         values = reply.split(',')
         return (int(values[0]), int(values[1]))
 
     def contact(self):
         ''' Move chuck to contact z position'''
-        self._intf.write('ZCHUCKDOWN')
+        self._intf.write('ZCHUCKUP')
 
     def separate(self):
         ''' Move chuck to separation z position'''
-        self._intf.write('ZCHUCKUP')
+        self._intf.write('ZCHUCKDOWN')
 
     def load(self):
         ''' Move chuck to load z position'''
