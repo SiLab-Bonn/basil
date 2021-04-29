@@ -13,5 +13,5 @@ transfer_layer:
 hw_drivers:
   - name      : Climatechamber
     type      : weiss_labevent
-    interface : Visa
+    interface : Socket
         
