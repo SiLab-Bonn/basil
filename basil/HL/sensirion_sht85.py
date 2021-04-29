@@ -162,11 +162,12 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
         return 100 * (float(data[1]) / (2**16 - 1))
 
     def to_dew_point(self, T, RH):
-        if T < 0:
-            T_n = 243.12
-            m = 17.6
-        else:
-            T_n = 272.62
-            m = 22.46
-        a = np.log(RH / 100.0) + m * T / (T_n + T)
-        return T_n * a / (m - a)
+        ''' returns the dew point using an approximation
+            approximation specified by Sensirion:
+            http://irtfweb.ifa.hawaii.edu/~tcs3/tcs3/Misc/Dewpoint_Calculation_Humidity_Sensor_E.pdf
+        '''
+        if RH == 0:
+            RH = self._to_humidity((0, 1))  # lowest non-zero rel. humidity
+        H = (np.log10(RH) - 2) / 0.4343 + (17.62 * T) / (243.12 + T)
+        Dp = 243.12 * H / (17.62 - H)
+        return Dp
