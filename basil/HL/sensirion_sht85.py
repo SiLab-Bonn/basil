@@ -18,7 +18,7 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
     '''
     Driver for the Sensirion SHT85 temperature and humidity sensor.
     Measurements can be performed in three repeatability modes:
-    low (0.15C 0.21%RH) (default), medium (0.08C 0.15%RH), high (0.04C 0.08%RH)
+    low (0.15°C 0.21%RH) (default), medium (0.08°C 0.15%RH), high (0.04°C 0.08%RH)
     with respective drawbacks in readout speed and power cosumption.
     The dew point can be estimated using humidity and temperature.
     Readout may also be performed asynchronously:
