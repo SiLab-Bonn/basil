@@ -1,0 +1,13 @@
+transfer_layer:
+  - name     : Visa
+    type     : Visa
+    init     :
+        resource_name : "TCPIP0::169.254.55.86::9090::SOCKET"
+        backend : "@py"
+        read_termination : ""
+        timeout: 2.0
+
+hw_drivers:
+  - name      : Prober
+    type      : SignatoneProber
+    interface : Visa

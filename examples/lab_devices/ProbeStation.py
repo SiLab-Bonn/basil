@@ -5,7 +5,7 @@
 # ------------------------------------------------------------
 #
 
-''' This script shows how to use a Suss Probe station.
+''' This script shows how to use a Suss or Signatone Probe station.
 
 BTW:
 For the PA-200 it is not forseen to be able to communicate with the prober bench software
@@ -25,3 +25,8 @@ dut = Dut('suss_pa_200.yaml')
 dut.init()
 print(dut['SussProber'].get_position())
 print(dut['SussProber'].get_die())
+
+dut2 = Dut('SignatoneProber.yaml')
+dut2.init()
+print(dut2['SignatoneProber'].get_position())
+print(dut2['SignatoneProber'].get_die())
