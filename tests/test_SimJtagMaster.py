@@ -163,7 +163,12 @@ DEV:
 
 class TestSimJtagMaster(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), "jtag_tap.v"), os.path.join(os.path.dirname(__file__), "test_SimJtagMaster.v")])
+        cocotb_compile_and_run(
+            [
+                os.path.join(os.path.dirname(__file__), "jtag_tap.v"),
+                os.path.join(os.path.dirname(__file__), "test_SimJtagMaster.v"),
+            ]
+        )
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init(init_yaml)
@@ -224,7 +229,8 @@ class TestSimJtagMaster(unittest.TestCase):
 
     def jtag_tests(self):
 
-        ID_CODE = BitLogic("0010")
+        ID_CODE_STR = "0010"
+        ID_CODE = BitLogic(ID_CODE_STR)
         BYPASS = BitLogic("1111")
         DEBUG = BitLogic("1000")
         ret_ir = BitLogic("0101")
@@ -247,10 +253,22 @@ class TestSimJtagMaster(unittest.TestCase):
         self.chip["JTAG"].reset()
 
         # IR CODE
+        with self.assertRaises(ValueError):
+            self.chip["JTAG"].scan_ir(ID_CODE_STR + ID_CODE_STR)
+
+        ret = self.chip["JTAG"].scan_ir([ID_CODE] * 2, readback=False)
+        self.assertEqual(ret, None)
+
         ret = self.chip["JTAG"].scan_ir([ID_CODE] * 2)
         self.assertEqual(ret, [ret_ir] * 2)
 
         # ID CODE
+        with self.assertRaises(ValueError):
+            self.chip["JTAG"].scan_dr("0" * 32 * 2)
+
+        ret = self.chip["JTAG"].scan_dr(["0" * 32] * 2, readback=False)
+        self.assertEqual(ret, None)
+
         id_code = BitLogic.from_value(0x149B51C3, fmt="I")
         ret = self.chip["JTAG"].scan_dr(["0" * 32] * 2)
         self.assertEqual(ret, [id_code] * 2)
@@ -297,11 +315,17 @@ class TestSimJtagMaster(unittest.TestCase):
         self.assertEqual(dev1ret[:], self.chip["DEV2"][:])
 
         # REPEATING REGISTER
-        self.chip["JTAG"].scan_dr([self.chip["DEV"][:]], words=2)
-        ret1 = self.chip["JTAG"].scan_dr([self.chip["DEV"][:]], words=2)
+        self.chip["JTAG"].scan_dr([self.chip["DEV"][:]], word_size=len(self.chip["DEV"][:]))
+        ret1 = self.chip["JTAG"].scan_dr([self.chip["DEV"][:]], word_size=len(self.chip["DEV"][:]))
         self.chip["JTAG"].scan_dr([self.chip["DEV1"][:], self.chip["DEV2"][:]])
-        ret2 = self.chip["JTAG"].scan_dr([self.chip["DEV1"][:] + self.chip["DEV2"][:]], words=2)
-        ret3 = self.chip["JTAG"].scan_dr([self.chip["DEV1"][:] + self.chip["DEV2"][:]], words=2)
+        ret2 = self.chip["JTAG"].scan_dr(
+            [self.chip["DEV1"][:] + self.chip["DEV2"][:]],
+            word_size=len(self.chip["DEV1"][:]),
+        )
+        ret3 = self.chip["JTAG"].scan_dr(
+            [self.chip["DEV1"][:] + self.chip["DEV2"][:]],
+            word_size=len(self.chip["DEV1"][:]),
+        )
         self.assertEqual(ret1[:], ret2[:])
         self.assertEqual(ret2[:], ret3[:])
 
@@ -312,8 +336,14 @@ class TestSimJtagMaster(unittest.TestCase):
         self.chip["DEV"].set(ret[0])
         self.assertEqual(self.chip["DEV"][:], BitLogic("1" * 32 + "0" * 32))
 
-        self.chip["JTAG"].scan_dr([self.chip["DEV1"][:] + self.chip["DEV2"][:]], words=2)
-        ret = self.chip["JTAG"].scan_dr([self.chip["DEV1"][:] + self.chip["DEV2"][:]], words=2)
+        self.chip["JTAG"].scan_dr(
+            [self.chip["DEV1"][:] + self.chip["DEV2"][:]],
+            word_size=len(self.chip["DEV1"][:]),
+        )
+        ret = self.chip["JTAG"].scan_dr(
+            [self.chip["DEV1"][:] + self.chip["DEV2"][:]],
+            word_size=len(self.chip["DEV1"][:]),
+        )
 
         self.chip["DEV"].set(ret[0])
         self.assertEqual(self.chip["DEV"][:], self.chip["DEV1"][:] + self.chip["DEV2"][:])
@@ -373,7 +403,7 @@ class TestSimJtagMaster(unittest.TestCase):
         fifo_tap2_content = self.chip["fifo2"].get_data()
 
         self.chip["JTAG"].scan_ir([DEBUG, BYPASS])
-        self.chip["JTAG"].scan_dr([BitLogic("0" * 24 + "10101101"), BitLogic("1")] * 15, words=15)
+        self.chip["JTAG"].scan_dr([BitLogic("0" * 24 + "10101101"), BitLogic("1")] * 15, word_size=33)
 
         fifo_tap1_content = self.chip["fifo1"].get_data()
         fifo_tap2_content = self.chip["fifo2"].get_data()
@@ -389,7 +419,7 @@ class TestSimJtagMaster(unittest.TestCase):
         fifo_tap2_content = self.chip["fifo2"].get_data()
 
         self.chip["JTAG"].scan_ir([BYPASS, DEBUG])
-        self.chip["JTAG"].scan_dr([BitLogic("1"), BitLogic("0" * 24 + "10101101")] * 15, words=15)
+        self.chip["JTAG"].scan_dr([BitLogic("1"), BitLogic("0" * 24 + "10101101")] * 15, word_size=33)
 
         fifo_tap1_content = self.chip["fifo1"].get_data()
         fifo_tap2_content = self.chip["fifo2"].get_data()
@@ -403,16 +433,46 @@ class TestSimJtagMaster(unittest.TestCase):
         # [WORD1(dev1) WORD1(dev2) WORD2(dev1) WORD2(dev2) ...]
         data = np.byte(
             [
-                0x01, 0x02, 0x03, 0x04,
-                0x02, 0x04, 0x06, 0x08,
-                0x11, 0x12, 0x13, 0x14,
-                0x12, 0x14, 0x16, 0x18,
-                0x21, 0x22, 0x23, 0x24,
-                0x22, 0x24, 0x26, 0x28,
-                0x31, 0x32, 0x33, 0x34,
-                0x32, 0x34, 0x36, 0x38,
-                0x41, 0x42, 0x43, 0x44,
-                0x42, 0x44, 0x46, 0x48,
+                0x01,
+                0x02,
+                0x03,
+                0x04,
+                0x02,
+                0x04,
+                0x06,
+                0x08,
+                0x11,
+                0x12,
+                0x13,
+                0x14,
+                0x12,
+                0x14,
+                0x16,
+                0x18,
+                0x21,
+                0x22,
+                0x23,
+                0x24,
+                0x22,
+                0x24,
+                0x26,
+                0x28,
+                0x31,
+                0x32,
+                0x33,
+                0x34,
+                0x32,
+                0x34,
+                0x36,
+                0x38,
+                0x41,
+                0x42,
+                0x43,
+                0x44,
+                0x42,
+                0x44,
+                0x46,
+                0x48,
             ]
         )
 
@@ -438,8 +498,20 @@ class TestSimJtagMaster(unittest.TestCase):
         fifo_tap1_content = self.chip["fifo1"].get_data()
         fifo_tap2_content = self.chip["fifo2"].get_data()
 
-        expected_result_tap1 = [int("0x01020304", 16), int("0x11121314", 16), int("0x21222324", 16), int("0x31323334", 16), int("41424344", 16)]
-        expected_result_tap2 = [int("0x02040608", 16), int("0x12141618", 16), int("0x22242628", 16), int("0x32343638", 16), int("42444648", 16)]
+        expected_result_tap1 = [
+            int("0x01020304", 16),
+            int("0x11121314", 16),
+            int("0x21222324", 16),
+            int("0x31323334", 16),
+            int("41424344", 16),
+        ]
+        expected_result_tap2 = [
+            int("0x02040608", 16),
+            int("0x12141618", 16),
+            int("0x22242628", 16),
+            int("0x32343638", 16),
+            int("42444648", 16),
+        ]
         self.assertListEqual(expected_result_tap1, list(fifo_tap1_content))
         self.assertListEqual(expected_result_tap2, list(fifo_tap2_content))
 

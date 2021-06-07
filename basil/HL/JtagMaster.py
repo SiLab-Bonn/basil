@@ -4,7 +4,6 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-import struct
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from basil.utils.BitLogic import BitLogic
@@ -95,15 +94,19 @@ class JtagMaster(RegisterHardwareLayer):
         else:
             return self._intf.read(self._conf["base_addr"] + self._mem_offset + addr, size)
 
-    def scan_ir(self, data):
+    def scan_ir(self, data, readback=True):
         """
         Data must be a list of BitLogic
         """
 
-        bit_number = self._test_input(data, words=1)
+        bit_number = self._test_input(data)
         self.SIZE = bit_number
 
-        data_byte = self._bitlogic2bytes(data)
+        if type(data[0]) == BitLogic:
+            data_byte = self._bitlogic2bytes(data)
+        else:
+            data_byte = self._raw_data2bytes(data)
+
         self.set_data(data_byte)
 
         self.WORD_COUNT = 1
@@ -112,57 +115,58 @@ class JtagMaster(RegisterHardwareLayer):
         while not self.READY:
             pass
 
-        received_data = self.get_data(size=len(data_byte))
-        rlist = self._bytes2bitlogic(received_data, bit_number, data)
+        if readback:
+            received_data = self.get_data(size=len(data_byte))
+            return self._bytes2bitlogic(received_data, bit_number, data)
 
-        return rlist
-
-    def scan_dr(self, data, words=1):
+    def scan_dr(self, data, readback=True, word_size=None):
         """
         Data must be a list of BitLogic or string of raw data
         """
 
-        bit_number = self._test_input(data, words)
-        if words != 1:
-            self.SIZE = int(bit_number / words)
-        else:
-            self.SIZE = bit_number
+        bit_number = self._test_input(data, word_size)
 
         self.set_command("DATA")
-        self.WORD_COUNT = words
+
+        if word_size is None:
+            self.SIZE = bit_number
+            self.WORD_COUNT = 1
+        else:
+            self.WORD_COUNT = bit_number // word_size
+            self.SIZE = word_size
+
         if type(data[0]) == BitLogic:
             data_byte = self._bitlogic2bytes(data)
-            self.set_data(data_byte)
         else:
             data_byte = self._raw_data2bytes(data)
-            self.set_data(data_byte)
+
+        self.set_data(data_byte)
 
         self.start()
         while not self.READY:
             pass
 
-        received_data = self.get_data(size=len(data_byte))
-        rlist = self._bytes2bitlogic(received_data, bit_number, data)
+        if readback:
+            received_data = self.get_data(size=len(data_byte))
+            return self._bytes2bitlogic(received_data, bit_number, data)
 
-        return rlist
-
-    def _test_input(self, data, words):
+    def _test_input(self, data, word_size=None):
         """
         Test input data and return length in bits
         """
-        if type(data[0]) == BitLogic or type(data[0]) == str:
-            pass
-        else:
+
+        if not isinstance(data, list):
+            raise ValueError("Input data must be a list of BitLogic or str")
+
+        if type(data[0]) not in [BitLogic, str]:
             raise TypeError("Type of data not supported: got", type(data[0]), " and support only str and Bitlogic")
 
         bit_number = sum(len(x) for x in data)
-        if bit_number <= self._mem_bytes * 8:
-            pass
-        else:
+        if bit_number > self._mem_bytes * 8:
             raise ValueError("Size is too big for memory: got %d and memory is: %d" % (bit_number, self._mem_bytes * 8))
 
-        if words != 1 and bit_number % words != 0:
-            raise ValueError("Number of bits doesn't match the number of words. %d bits remaining" % (bit_number % words))
+        if word_size is not None and bit_number % word_size != 0:
+            raise ValueError("Number of bits doesn't match word_size. %d bits remaining" % (bit_number % word_size))
 
         return bit_number
 
@@ -172,9 +176,7 @@ class JtagMaster(RegisterHardwareLayer):
             device_string = data[dev].to01()
             original_string += device_string[::-1]  # We want the original string of the Bitlogic, not the reversed one
         data_bitarray = bitarray(original_string)
-        data_byte = data_bitarray.tobytes()
-
-        return data_byte
+        return data_bitarray.tobytes()
 
     def _bytes2bitlogic(self, data, bit_number, original_data):
         data_byte = np.byte(data)
@@ -183,6 +185,7 @@ class JtagMaster(RegisterHardwareLayer):
         binary_string = tmp.to01()
 
         rlist = []
+
         last_data_len = 0
         for i in original_data:
             rlist.append(BitLogic(binary_string[last_data_len:len(i) + last_data_len]))
@@ -191,13 +194,12 @@ class JtagMaster(RegisterHardwareLayer):
         return rlist
 
     def _raw_data2bytes(self, data):
-        all_data = ""
-        for i in data:
-            all_data = all_data + i
+
+        all_data = "".join(data)
+
         # pad with zero if not a multiple of 8
         if len(all_data) % 8 != 0:
-            all_data = all_data + "0" * (8 - (len(all_data) % 8))
+            all_data += "0" * (8 - (len(all_data) % 8))
+
         # convert string to byte
-        size = len(all_data) // 8
-        data_byte = struct.pack(">Q", int(all_data, 2))[8 - size:]
-        return data_byte
+        return bytes(int(all_data[i:i + 8], 2) for i in range(0, len(all_data), 8))
