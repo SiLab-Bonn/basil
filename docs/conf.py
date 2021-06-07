@@ -147,10 +147,10 @@ html_static_path = ['_static']
 
 
 def setup(app):
-    app.add_stylesheet("theme_overrides.css")
-    app.add_javascript("http://wavedrom.com/skins/default.js")
-    app.add_javascript("http://wavedrom.com/WaveDrom.js")
-    app.add_javascript("WaveDrom_load.js")
+    app.add_css_file("theme_overrides.css")
+    app.add_js_file("http://wavedrom.com/skins/default.js")
+    app.add_js_file("http://wavedrom.com/WaveDrom.js")
+    app.add_js_file("WaveDrom_load.js")
 
 
 # Add any extra paths that contain custom files (such as robots.txt or
