@@ -4,7 +4,7 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`timescale 1ps/1ps
+
 `default_nettype none
 
 module jtag_master_core #(
@@ -30,7 +30,7 @@ module jtag_master_core #(
     output reg SLD
 );
 
-localparam VERSION = 1;
+localparam VERSION     = 1;
 localparam DEF_BIT_OUT = 8*MEM_BYTES;
 reg [7:0] status_regs [15:0];
 
@@ -40,36 +40,36 @@ wire RST_SYNC;
 assign RST = BUS_RST || SOFT_RST;
 
 always @(posedge BUS_CLK) begin
-    if(RST) begin
-        status_regs[0] <= 0;
-        status_regs[1] <= 0;
-        status_regs[2] <= 0;
-        status_regs[3] <= DEF_BIT_OUT[7:0]; //bits
-        status_regs[4] <= DEF_BIT_OUT[15:8]; //bits
-        status_regs[5] <= 0;  //wait
-        status_regs[6] <= 0;  //wait
-        status_regs[7] <= 0;  //wait
-        status_regs[8] <= 0;  //wait
-        status_regs[9] <= 1;  //word count
+    if (RST) begin
+        status_regs[0]  <= 0;
+        status_regs[1]  <= 0;
+        status_regs[2]  <= 0;
+        status_regs[3]  <= DEF_BIT_OUT[7:0]; //bits
+        status_regs[4]  <= DEF_BIT_OUT[15:8]; //bits
+        status_regs[5]  <= 0;  //wait
+        status_regs[6]  <= 0;  //wait
+        status_regs[7]  <= 0;  //wait
+        status_regs[8]  <= 0;  //wait
+        status_regs[9]  <= 1; //word count
         status_regs[10] <= 0; //word count
         status_regs[11] <= 0; //Jtag command
         status_regs[12] <= 0; //Jtag command
         status_regs[13] <= 0; //0:enable external start
     end
-    else if(BUS_WR && BUS_ADD < 16)
+    else if (BUS_WR && BUS_ADD < 16) begin
         status_regs[BUS_ADD[3:0]] <= BUS_DATA_IN;
+    end
 end
 
 // Parameters from registers //
-
 reg [7:0] BUS_IN_MEM;
 reg [7:0] BUS_OUT_MEM;
 reg CONF_DONE;
 
 wire START;
 wire START_SYNC;
-assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
-assign START = (BUS_ADD==1 && BUS_WR);
+assign SOFT_RST = (BUS_ADD == 0 && BUS_WR);
+assign START    = (BUS_ADD == 1 && BUS_WR);
 
 wire [15:0] CONF_BIT_OUT;
 assign CONF_BIT_OUT = {status_regs[4],status_regs[3]};
@@ -93,16 +93,16 @@ assign STOP_BIT = CONF_BIT_OUT + CONF_WAIT;
 /// Basil Bus Communication ///
 reg [7:0] BUS_DATA_OUT_REG;
 always @(posedge BUS_CLK) begin
-    if(BUS_RD) begin
-        if(BUS_ADD == 0)
+    if (BUS_RD) begin
+        if (BUS_ADD == 0)
             BUS_DATA_OUT_REG <= VERSION;
-        else if(BUS_ADD == 1)
+        else if (BUS_ADD == 1)
             BUS_DATA_OUT_REG <= {7'b0, CONF_DONE};
-         else if(BUS_ADD == 13)
+        else if (BUS_ADD == 13)
             BUS_DATA_OUT_REG <= {7'b0, CONF_EN};
-        else if(BUS_ADD == 14)
+        else if (BUS_ADD == 14)
             BUS_DATA_OUT_REG <= MEM_BYTES[7:0];
-        else if(BUS_ADD == 15)
+        else if (BUS_ADD == 15)
             BUS_DATA_OUT_REG <= MEM_BYTES[15:8];
         else if (BUS_ADD < 16)
             BUS_DATA_OUT_REG <= status_regs[BUS_ADD[3:0]];
@@ -111,17 +111,17 @@ end
 
 reg [ABUSWIDTH-1:0]  PREV_BUS_ADD;
 always @(posedge BUS_CLK) begin
-    if(BUS_RD) begin
+    if (BUS_RD) begin
         PREV_BUS_ADD <= BUS_ADD;
     end
 end
 
 always @(*) begin
-    if(PREV_BUS_ADD < 16)
+    if (PREV_BUS_ADD < 16)
         BUS_DATA_OUT = BUS_DATA_OUT_REG;
-    else if(PREV_BUS_ADD < 16+MEM_BYTES)
+    else if (PREV_BUS_ADD < 16+MEM_BYTES)
         BUS_DATA_OUT = BUS_IN_MEM;
-    else if(PREV_BUS_ADD < 16+MEM_BYTES+MEM_BYTES)
+    else if (PREV_BUS_ADD < 16+MEM_BYTES+MEM_BYTES)
         BUS_DATA_OUT = BUS_OUT_MEM;
     else
         BUS_DATA_OUT = 8'hxx;
@@ -132,10 +132,10 @@ wire [7:0] BUS_IN_MEM_IB;
 wire [7:0] BUS_OUT_MEM_IB;
 integer i;
 always @(*) begin
-    for(i=0;i<8;i=i+1) begin
+    for(i = 0;i<8;i = i+1) begin
         BUS_DATA_IN_IB[i] = BUS_DATA_IN[7-i];
-        BUS_IN_MEM[i] = BUS_IN_MEM_IB[7-i];
-        BUS_OUT_MEM[i] = BUS_OUT_MEM_IB[7-i];
+        BUS_IN_MEM[i]     = BUS_IN_MEM_IB[7-i];
+        BUS_OUT_MEM[i]    = BUS_OUT_MEM_IB[7-i];
     end
 end
 ////
@@ -148,7 +148,7 @@ localparam TEST_LOGIC_RESET = 0,
     SHIFT_DR = 4,
     EXIT1_DR = 5,
     PAUSE_DR = 6,
-    EXIT2_DR = 7, 
+    EXIT2_DR = 7,
     UPDATE_DR = 8,
     SELECT_IR_SCAN = 9,
     CAPTURE_IR = 10,
@@ -164,46 +164,47 @@ reg [32:0] out_bit_cnt;
 reg [32:0] out_word_cnt;
 reg [32:0] reset_cnt;
 
-wire [13:0] memout_addrb;
+localparam AWIDTH = $clog2(MEM_BYTES);
+wire [AWIDTH-1:0] memout_addra;
+assign memout_addra = (BUS_ADD - 32'd16);
+wire [AWIDTH+2:0] memout_addrb;
 assign memout_addrb = (out_word_cnt * CONF_BIT_OUT) + CONF_BIT_OUT - 1 - out_bit_cnt;
-wire [10:0] memout_addra;
-assign memout_addra = (BUS_ADD-16);
 
-blk_mem_gen_8_to_1_2k memout(
-    .CLKA(BUS_CLK),
-    .CLKB(JTAG_CLK),
-    .DOUTA(BUS_IN_MEM_IB),
-    .DOUTB(SDI_MEM),
-    .WEA(BUS_WR && BUS_ADD >=16 && BUS_ADD < 16+MEM_BYTES),
-    .WEB(1'b0),
-    .ADDRA(memout_addra),
-    .ADDRB(memout_addrb),
-    .DINA(BUS_DATA_IN_IB),
-    .DINB(1'b0)
+
+ramb_8_to_n #(.SIZE(MEM_BYTES), .WIDTH(1)) memout (
+.clkA(BUS_CLK), 
+.clkB(JTAG_CLK), 
+.weA(BUS_WR && BUS_ADD >= 16 && BUS_ADD < 16+MEM_BYTES), 
+.weB(1'b0), 
+.addrA(memout_addra), 
+.addrB(memout_addrb), 
+.diA(BUS_DATA_IN_IB), 
+.doA(BUS_IN_MEM_IB), 
+.diB(), 
+.doB(SDI_MEM)
 );
 
-wire [10:0] ADDRA_MIN;
+wire [AWIDTH-1:0] ADDRA_MIN;
 assign ADDRA_MIN = (BUS_ADD-16-MEM_BYTES);
-wire [13:0] ADDRB_MIN;
+wire [AWIDTH+2:0] ADDRB_MIN;
 assign ADDRB_MIN = (out_word_cnt * CONF_BIT_OUT) + CONF_BIT_OUT - out_bit_cnt;
 reg SEN_INT;
 
-blk_mem_gen_8_to_1_2k memin(
-    .CLKA(BUS_CLK),
-    .CLKB(JTAG_CLK),
-    .DOUTA(BUS_OUT_MEM_IB),
-    .DOUTB(),
-    .WEA(1'b0),
-    .WEB(SEN_INT && (state == SHIFT_DR || state == SHIFT_IR)),
-    .ADDRA(ADDRA_MIN),
-    .ADDRB(ADDRB_MIN),
-    .DINA(BUS_DATA_IN_IB),
-    .DINB(TDO)
+ramb_8_to_n #(.SIZE(MEM_BYTES), .WIDTH(1)) memin (
+    .clkA(BUS_CLK), 
+    .clkB(JTAG_CLK), 
+    .weA(1'b0), 
+    .weB(SEN_INT && (state == SHIFT_DR || state == SHIFT_IR)), 
+    .addrA(ADDRA_MIN), 
+    .addrB(ADDRB_MIN), 
+    .diA(BUS_DATA_IN_IB), 
+    .doA(BUS_OUT_MEM_IB), 
+    .diB(TDO), 
+    .doB()
 );
-///
 
 // JTAG Master Machine state //
-localparam DR_SCAN = 1, IR_SCAN = 0;
+localparam DR_SCAN   = 1, IR_SCAN   = 0;
 reg transfert_active = 0;
 
 // Assign next state of the FSM
@@ -217,17 +218,17 @@ end
 // State transition conditions
 always @(*) begin
     case (state)
-        TEST_LOGIC_RESET: 
+        TEST_LOGIC_RESET:
         begin
             if (reset_cnt <= 5)
             begin
                 next_state <= TEST_LOGIC_RESET;
-                SEN_INT <= 1;
+                SEN_INT    <= 1;
             end
             else
             begin
                 next_state <= RUN_TEST_IDLE;
-                SEN_INT <= 0;
+                SEN_INT    <= 0;
             end
         end
         RUN_TEST_IDLE:
@@ -235,12 +236,12 @@ always @(*) begin
             if (START_SYNC || (out_word_cnt != WORD_COUNT && SEN_INT))
             begin
                 next_state <= SELECT_DR_SCAN;
-                SEN_INT <= 1;
+                SEN_INT    <= 1;
             end
             else
             begin
                 next_state <= RUN_TEST_IDLE;
-                SEN_INT <= 0;
+                SEN_INT    <= 0;
             end
         end
         SELECT_DR_SCAN:
@@ -290,11 +291,10 @@ begin
         out_bit_cnt <= out_bit_cnt + 1;
     else
         out_bit_cnt <= 0;
-end 
+end
 
 // Word counter
-always @(posedge JTAG_CLK)
-begin // - 1 because we must change of step on last bit
+always @(posedge JTAG_CLK) begin // - 1 because we must change of step on last bit
     if (RST_SYNC)
         out_word_cnt <= 0;
     else if (state == UPDATE_DR || state == UPDATE_IR)
@@ -383,7 +383,7 @@ begin
         end
         SELECT_IR_SCAN:
         begin
-            if(next_state == CAPTURE_IR)
+            if (next_state == CAPTURE_IR)
                 TMS <= 0;
             else
                 TMS <= 1;
@@ -451,18 +451,18 @@ always @(posedge JTAG_CLK) begin
 end
 
 always @(posedge JTAG_CLK)
-    SLD <= (sync_ld[1]==1 && sync_ld[0]==0);
+    SLD <= (sync_ld[1] == 1 && sync_ld[0] == 0);
 
 wire DONE_SYNC, DONE;
 assign DONE = (out_word_cnt == WORD_COUNT && state == RUN_TEST_IDLE) || (reset_cnt == 5);
 cdc_pulse_sync done_pulse_sync (.clk_in(JTAG_CLK), .pulse_in(DONE), .clk_out(BUS_CLK), .pulse_out(DONE_SYNC));
 
 always @(posedge BUS_CLK)
-    if(START || RST)
+    if (START || RST)
         CONF_DONE <= 0;
-    else if(DONE_SYNC)
+    else if (DONE_SYNC)
         CONF_DONE <= 1;
-///
+        ///
 
 // Outputs //
 CG_MOD_pos icg2(.ck_in(JTAG_CLK), .enable(SEN), .ck_out(TCK));

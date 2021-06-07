@@ -11,8 +11,8 @@
 `include "gpio/gpio_core.v"
 `include "gpio/gpio.v"
 
-
 `include "spi/blk_mem_gen_8_to_1_2k.v"
+`include "utils/ramb_8_to_n.v"
 `include "jtag_master/jtag_master.v"
 `include "jtag_master/jtag_master_core.v"
 
