@@ -141,20 +141,20 @@ class TestBitLogic(unittest.TestCase):
         def assign_index(value):
             bl[4] = value
 
-        self.assertRaises(IndexError, lambda val: assign_index(val), [])
-        self.assertRaises(IndexError, lambda val: assign_index(val), [1, 2])
-        self.assertRaises(IndexError, lambda val: assign_index(val), [True])
-        self.assertRaises(IndexError, lambda val: assign_index(val), [False])
-        self.assertRaises(IndexError, lambda val: assign_index(val), [True, False])
+        self.assertRaises(TypeError, lambda val: assign_index(val), [])
+        self.assertRaises(TypeError, lambda val: assign_index(val), [1, 2])
+        self.assertRaises(TypeError, lambda val: assign_index(val), [True])
+        self.assertRaises(TypeError, lambda val: assign_index(val), [False])
+        self.assertRaises(TypeError, lambda val: assign_index(val), [True, False])
 
         def assign_slice(value):
             bl[2:1] = value
 
-        self.assertRaises(IndexError, lambda val: assign_slice(val), [])
-        self.assertRaises(IndexError, lambda val: assign_slice(val), [1, 2])
-        self.assertRaises(IndexError, lambda val: assign_slice(val), [True])
-        self.assertRaises(IndexError, lambda val: assign_slice(val), [False])
-        self.assertRaises(IndexError, lambda val: assign_slice(val), [True, False])
+        self.assertRaises(TypeError, lambda val: assign_slice(val), [])
+        self.assertRaises(TypeError, lambda val: assign_slice(val), [1, 2])
+        self.assertRaises(TypeError, lambda val: assign_slice(val), [True])
+        self.assertRaises(TypeError, lambda val: assign_slice(val), [False])
+        self.assertRaises(TypeError, lambda val: assign_slice(val), [True, False])
 
     def test_set_item_with_slice(self):
         ba = bitarray('001100000')
@@ -211,8 +211,8 @@ class TestBitLogic(unittest.TestCase):
         self.assertIsInstance(bl[3:1], bitarray)
         self.assertIsInstance(bl[1:1], bitarray)
         self.assertIsInstance(bl[2:2], bitarray)
-        self.assertIsInstance(bl[1], bool)
-        self.assertIsInstance(bl[2], bool)
+        self.assertIsInstance(bl[1], int)
+        self.assertIsInstance(bl[2], int)
 
     def test_get_slicing_and_indexing(self):
         bl = BitLogic('10000110')
