@@ -15,8 +15,7 @@
 
 `include "seq_gen/seq_gen.v"
 `include "seq_gen/seq_gen_core.v"
-`include "utils/RAMB16_S1_S2_sim.v"
-`include "seq_gen/seq_gen_blk_mem_16x8196.v"
+`include "utils/ramb_8_to_n.v"
 
 `include "spi/spi.v"
 `include "spi/spi_core.v"

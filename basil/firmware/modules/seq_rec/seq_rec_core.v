@@ -7,7 +7,6 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-// WARNING! THIS MODULE IS WORK IN PROGRESS! NOT TESTED!
 /*
  * Possible extra options:
  * - delay block that allow SEQ_EXT_START in past (enabled by parameter - for speed needed applications a simple memory circular buffer)
@@ -34,7 +33,7 @@ module seq_rec_core #(
     SEQ_EXT_START
 );
 
-localparam VERSION = 0;
+localparam VERSION = 1;
 
 input wire                      BUS_CLK;
 input wire                      BUS_RST;
@@ -48,40 +47,32 @@ input wire SEQ_CLK;
 input wire [IN_BITS-1:0] SEQ_IN;
 input wire SEQ_EXT_START;
 
-generate
-if (MEM_BYTES > 2048*8*4) begin
-    illegal_outputs_parameter non_existing_module();
-end
-endgenerate
+localparam DEF_BIT_OUT = (IN_BITS > 8) ? (MEM_BYTES/(IN_BITS/8)) : (MEM_BYTES*(8/IN_BITS));
+localparam ADDR_SIZEA = $clog2(MEM_BYTES);
+localparam ADDR_SIZEB = $clog2(DEF_BIT_OUT);
 
-`include "../includes/log2func.v"
-
-localparam ADDR_SIZEA = `CLOG2(MEM_BYTES);
-localparam ADDR_SIZEB = (IN_BITS > 8) ? `CLOG2(MEM_BYTES/(IN_BITS/8)) : `CLOG2(MEM_BYTES*(8/IN_BITS));
-
-reg [7:0] status_regs [4:0];
+reg [7:0] status_regs [7:0];
 
 wire RST;
 wire SOFT_RST;
 
 assign RST = BUS_RST || SOFT_RST;
 
-localparam DEF_BIT_OUT = MEM_BYTES;
-
 always @(posedge BUS_CLK) begin
     if (RST) begin
         status_regs[0] <= 0;
         status_regs[1] <= 0;
         status_regs[2] <= 0;
-        status_regs[3] <= DEF_BIT_OUT[7:0]; //bits
-        status_regs[4] <= DEF_BIT_OUT[15:8]; //bits
-    end else if (BUS_WR && BUS_ADD < 5) begin
+        status_regs[4] <= DEF_BIT_OUT[7:0];  // bits
+        status_regs[5] <= DEF_BIT_OUT[15:8];  // -||-
+        status_regs[6] <= DEF_BIT_OUT[23:16]; // -||-
+        status_regs[7] <= DEF_BIT_OUT[31:24]; // -||-
+    end else if (BUS_WR && BUS_ADD < 8) begin
         status_regs[BUS_ADD[3:0]] <= BUS_DATA_IN;
     end
 end
 
-reg [7:0] BUS_IN_MEM;
-reg [7:0] BUS_OUT_MEM;
+wire [7:0] BUS_IN_MEM;
 
 // 1 - finished
 
@@ -89,8 +80,8 @@ wire CONF_START;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
 assign CONF_START = (BUS_ADD==1 && BUS_WR);
 
-wire [15:0] CONF_COUNT;
-assign CONF_COUNT = {status_regs[4], status_regs[3]};
+wire [31:0] CONF_COUNT;
+assign CONF_COUNT = {status_regs[7], status_regs[6], status_regs[5], status_regs[4]};
 
 wire CONF_EN_EXT_START;
 assign CONF_EN_EXT_START = status_regs[2][0];
@@ -110,10 +101,16 @@ always @(posedge BUS_CLK) begin
             BUS_DATA_OUT_REG <= {7'b0, CONF_READY};
         else if (BUS_ADD == 2)
             BUS_DATA_OUT_REG <= {7'b0, CONF_EN_EXT_START};
-        else if (BUS_ADD < 5)
-            BUS_DATA_OUT <= status_regs[BUS_ADD[3:0]];
+        else if (BUS_ADD == 8)
+            BUS_DATA_OUT_REG <= MEM_BYTES[7:0];
+        else if (BUS_ADD == 9)
+            BUS_DATA_OUT_REG <= MEM_BYTES[15:8];
+        else if (BUS_ADD == 10)
+            BUS_DATA_OUT_REG <= MEM_BYTES[23:16];
+        else if (BUS_ADD == 11)
+            BUS_DATA_OUT_REG <= MEM_BYTES[31:24];
         else if (BUS_ADD < 16)
-            BUS_DATA_OUT <= 8'b0;
+            BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
     end
 end
 
@@ -141,7 +138,7 @@ always @(*) begin
         BUS_DATA_OUT = 8'b0;
 end
 
-reg [16:0] out_bit_cnt;
+reg [32:0] out_bit_cnt;
 
 wire [ADDR_SIZEB-1:0] memout_addrb;
 assign memout_addrb = out_bit_cnt - 1;
@@ -150,67 +147,25 @@ wire [ADDR_SIZEA-1:0] memout_addra;
 wire [ABUSWIDTH-1:0] BUS_ADD_MEM;
 assign BUS_ADD_MEM = BUS_ADD-16;
 
-localparam IN_BYTES = IN_BITS/8;
-localparam IN_BYTES_WIDTH = `CLOG2(IN_BYTES);
-
-generate
-    if (IN_BITS<=8) begin
-        assign memout_addra = BUS_ADD_MEM;
-    end else begin
-        assign memout_addra = {BUS_ADD_MEM[ADDR_SIZEA:IN_BYTES_WIDTH], {(IN_BYTES_WIDTH){1'b0}}} + (IN_BYTES-1) - BUS_ADD_MEM[IN_BYTES_WIDTH-1:0]; //Byte order
-    end
-endgenerate
+assign memout_addra = BUS_ADD_MEM;
 
 reg [IN_BITS-1:0] SEQ_IN_MEM;
 
 wire WEA, WEB;
 assign WEA = BUS_WR && BUS_ADD >=16 && BUS_ADD < 16 + MEM_BYTES && !WEB;
 
-generate
-    if (IN_BITS==8) begin
-        (* RAM_STYLE="{BLOCK}" *)
-        reg [7:0] mem [(2**ADDR_SIZEA)-1:0];
-
-
-        // synthesis translate_off
-        //to make simulator happy (no X propagation)
-        integer i;
-        initial
-            for(i = 0; i < (2**ADDR_SIZEA); i = i + 1)
-                mem[i] = 0;
-        // synthesis translate_on
-
-        always @(posedge BUS_CLK) begin
-            if (WEA)
-                mem[memout_addra] <= BUS_DATA_IN;
-            BUS_IN_MEM <= mem[memout_addra];
-        end
-
-        always @(posedge SEQ_CLK)
-            if (WEB)
-                mem[memout_addrb] <= SEQ_IN;
-
-    end else begin
-        wire [7:0] douta;
-
-        seq_rec_blk_mem memout (
-            .clka(BUS_CLK),
-            .clkb(SEQ_CLK),
-            .douta(douta),
-            .doutb(),
-            .wea(WEA),
-            .web(WEB),
-            .addra(memout_addra),
-            .addrb(memout_addrb),
-            .dina(BUS_DATA_IN),
-            .dinb(SEQ_IN)
-        );
-        always @(*) begin
-            BUS_IN_MEM = douta;
-        end
-
-    end
-endgenerate
+ramb_8_to_n #(.SIZE(MEM_BYTES), .WIDTH(IN_BITS)) mem (
+    .clkA(BUS_CLK), 
+    .clkB(SEQ_CLK), 
+    .weA(WEA), 
+    .weB(WEB), 
+    .addrA(memout_addra), 
+    .addrB(memout_addrb), 
+    .diA(BUS_DATA_IN), 
+    .doA(BUS_IN_MEM), 
+    .diB(SEQ_IN),
+    .doB()
+);
 
 assign WEB = out_bit_cnt != 0;
 
@@ -232,20 +187,21 @@ flag_domain_crossing conf_start_flag_domain_crossing (
     .FLAG_OUT_CLK_B(CONF_START_FLAG_SYNC)
 );
 
-wire [15:0] CONF_COUNT_SYNC;
+wire [31:0] CONF_COUNT_SYNC;
 three_stage_synchronizer #(
-    .WIDTH(16)
+    .WIDTH(32)
 ) three_stage_conf_count_synchronizer (
     .CLK(SEQ_CLK),
     .IN(CONF_COUNT),
     .OUT(CONF_COUNT_SYNC)
 );
-wire [16:0] STOP_BIT;
+wire [32:0] STOP_BIT;
 assign STOP_BIT = {1'b0, CONF_COUNT_SYNC};
 
 wire START_REC;
 assign START_REC = CONF_START_FLAG_SYNC | (CONF_EN_EXT_START_SYNC & SEQ_EXT_START);
 
+reg DONE;
 always @(posedge SEQ_CLK)
     if (RST_SYNC)
         out_bit_cnt <= 0;
@@ -256,7 +212,6 @@ always @(posedge SEQ_CLK)
     else if (out_bit_cnt != 0)
         out_bit_cnt <= out_bit_cnt + 1;
 
-reg DONE;
 always @(posedge SEQ_CLK)
     if (RST_SYNC)
         DONE <= 1'b1;
@@ -289,6 +244,5 @@ always @(posedge BUS_CLK)
         CONF_READY <= 1'b0;
     else if (DONE_FLAG_BUS_CLK)
         CONF_READY <= 1'b1;
-
 
 endmodule

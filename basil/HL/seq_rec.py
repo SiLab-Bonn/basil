@@ -17,16 +17,18 @@ class seq_rec(RegisterHardwareLayer):
                   'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
                   'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
                   'EN_EXT_START': {'descr': {'addr': 2, 'size': 8}},
-                  'SIZE': {'descr': {'addr': 3, 'size': 16}}}
-    _require_version = "==0"
+                  'SIZE': {'descr': {'addr': 4, 'size': 32}},
+                  'MEM_BYTES': {'descr': {'addr': 8, 'size': 32, 'properties': ['ro']}},
+                  }
+    _require_version = "==1"
 
     def __init__(self, intf, conf):
         super(seq_rec, self).__init__(intf, conf)
         self._seq_mem_offset = 16  # in bytes
-        try:
-            self._seq_mem_size = conf['mem_size']  # in bytes
-        except KeyError:
-            self._seq_mem_size = 2 * 1024  # default is 2048 bytes, user should be aware of address ranges in FPGA
+
+    def init(self):
+        super(seq_rec, self).init()
+        self._seq_mem_size = self.get_mem_size()
 
     def reset(self):
         self.RESET = 0
@@ -49,6 +51,9 @@ class seq_rec(RegisterHardwareLayer):
     def get_en_ext_start(self):
         return self.EN_EXT_START
 
+    def get_mem_size(self):
+        return self.MEM_BYTES
+
     def is_done(self):
         return self.is_ready
 
@@ -61,7 +66,7 @@ class seq_rec(RegisterHardwareLayer):
 
     def get_data(self, size=None, addr=0):
         if size and self._seq_mem_size < size:
-            raise ValueError('Size is too big')
+            raise ValueError('Size is too big memory=%d requested_size=%d' % (self._seq_mem_size, size))
         if not size:
             return self._intf.read(self._conf['base_addr'] + self._seq_mem_offset + addr, self._seq_mem_size)
         else:

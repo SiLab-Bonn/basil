@@ -48,12 +48,13 @@ localparam log2RATIO = $clog2(RATIO);
 
 reg [minWIDTH-1:0] RAM [0:maxSIZE-1];
 
-genvar w;
-generate
-    for (w=0; w < SIZEA; w=w + 1) begin
-        initial RAM[w] = 0;
+// For simualtion init with 0
+initial begin : INIT_MEM
+    integer w;
+    for (w=0; w < maxSIZE; w=w + 1) begin
+        RAM[w] = 0;
     end
-endgenerate
+end
 
 generate
     if (WIDTH == 8) begin

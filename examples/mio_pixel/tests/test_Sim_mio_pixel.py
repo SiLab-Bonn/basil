@@ -44,6 +44,7 @@ class TestPixel(unittest.TestCase):
             os.path.join(fw_path, 'fast_spi_rx/fast_spi_rx_core.v'),
             os.path.join(fw_path, 'seq_gen/seq_gen.v'),
             os.path.join(fw_path, 'seq_gen/seq_gen_core.v'),
+            os.path.join(fw_path, 'utils/ramb_8_to_n.v'),
             os.path.join(fw_path, 'tdc_s3/tdc_s3.v'),
             os.path.join(fw_path, 'tdc_s3/tdc_s3_core.v'),
             os.path.join(fw_path, 'sram_fifo/sram_fifo_core.v'),

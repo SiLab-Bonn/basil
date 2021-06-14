@@ -11,6 +11,8 @@ import os
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
+# TODO: Add tests for size 1/2/4/16/32
+
 cnfg_yaml = """
 transfer_layer:
   - name  : INTF
@@ -28,14 +30,12 @@ hw_drivers:
   - name      : SEQ_GEN
     type      : seq_gen
     interface : INTF
-    mem_size  : 8192
-    base_addr : 0x1000
+    base_addr : 0x10000000
 
   - name      : SEQ_REC
     type      : seq_rec
     interface : INTF
-    mem_size  : 8192
-    base_addr : 0x3000
+    base_addr : 0x20000000
 
 registers:
   - name        : SEQ
@@ -71,7 +71,35 @@ class TestSimSeq(unittest.TestCase):
         self.chip.init()
 
     def test_io(self):
-        self.assertEqual(self.chip['SEQ_GEN'].get_mem_size(), 8 * 1024)
+        MEM_KB = 1
+
+        self.assertEqual(self.chip['SEQ_GEN'].get_mem_size(), MEM_KB * 1024)
+        self.assertEqual(self.chip['SEQ_REC'].get_mem_size(), MEM_KB * 1024)
+
+        mem_in = (list(range(256)) * 4) * MEM_KB
+
+        self.chip["SEQ_GEN"].set_data(mem_in)
+        ret = self.chip['SEQ_GEN'].get_data()
+        self.assertEqual(ret.tolist(), mem_in)
+
+        self.chip['SEQ_GEN'].set_EN_EXT_START(True)
+        self.chip['SEQ_REC'].set_EN_EXT_START(True)
+
+        self.chip['PULSE_GEN'].set_DELAY(1)
+        self.chip['PULSE_GEN'].set_WIDTH(1)
+        self.chip['PULSE_GEN'].START
+
+        while(not self.chip['SEQ_GEN'].is_ready):
+            pass
+
+        # 2nd time
+        self.chip['PULSE_GEN'].START
+
+        while(not self.chip['SEQ_GEN'].is_ready):
+            pass
+
+        ret = self.chip['SEQ_REC'].get_data()
+        self.assertEqual(ret.tolist()[2:], mem_in[:-2])
 
         self.chip['SEQ']['S0'][0] = 1
         self.chip['SEQ']['S1'][1] = 1
@@ -111,7 +139,7 @@ class TestSimSeq(unittest.TestCase):
             pass
 
         ret = self.chip['SEQ_REC'].get_data(size=rec_size)
-        self.assertEqual(ret.tolist(), [0x0] * 2 + pattern * 4 + [0x80] * 6)  # 2 clk delay + pattern x4 + 6 x last pattern
+        self.assertEqual(ret.tolist()[2:], pattern * 4 + [0x80] * 6)  # 2 clk delay + pattern x4 + 6 x last pattern
 
         #
         self.chip['SEQ'].set_REPEAT_START(12)
@@ -190,6 +218,74 @@ class TestSimSeq(unittest.TestCase):
 
         ret = self.chip['SEQ_REC'].get_data(size=rec_size)
         self.assertEqual(ret.tolist(), exp_pattern)
+
+    def tearDown(self):
+        self.chip.close()  # let it close connection and stop simulator
+        cocotb_compile_clean()
+
+
+class TestSimSeq4bit(unittest.TestCase):
+    def setUp(self):
+        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), 'test_SimSeq.v')], extra_defines=["BITS=4"])
+
+        self.chip = Dut(cnfg_yaml)
+        self.chip.init()
+
+    def test_seq_4bit(self):
+        MEM_KB = 1
+
+        mem_in = (list(range(256)) * 4) * MEM_KB
+
+        self.chip["SEQ_GEN"].set_data(mem_in)
+        ret = self.chip['SEQ_GEN'].get_data()
+        self.assertEqual(ret.tolist(), mem_in)
+
+        self.chip['SEQ_GEN'].set_EN_EXT_START(True)
+        self.chip['SEQ_REC'].set_EN_EXT_START(True)
+
+        self.chip['PULSE_GEN'].set_DELAY(1)
+        self.chip['PULSE_GEN'].set_WIDTH(1)
+        self.chip['PULSE_GEN'].START
+
+        while(not self.chip['SEQ_GEN'].is_ready):
+            pass
+
+        ret = self.chip['SEQ_REC'].get_data()
+        self.assertEqual(ret.tolist()[1:], mem_in[:-1])
+
+    def tearDown(self):
+        self.chip.close()  # let it close connection and stop simulator
+        cocotb_compile_clean()
+
+
+class TestSimSeq16bit(unittest.TestCase):
+    def setUp(self):
+        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), 'test_SimSeq.v')], extra_defines=["BITS=16"])
+
+        self.chip = Dut(cnfg_yaml)
+        self.chip.init()
+
+    def test_seq_16bit(self):
+        MEM_KB = 1
+
+        mem_in = (list(range(256)) * 4) * MEM_KB
+
+        self.chip["SEQ_GEN"].set_data(mem_in)
+        ret = self.chip['SEQ_GEN'].get_data()
+        self.assertEqual(ret.tolist(), mem_in)
+
+        self.chip['SEQ_GEN'].set_EN_EXT_START(True)
+        self.chip['SEQ_REC'].set_EN_EXT_START(True)
+
+        self.chip['PULSE_GEN'].set_DELAY(1)
+        self.chip['PULSE_GEN'].set_WIDTH(1)
+        self.chip['PULSE_GEN'].START
+
+        while(not self.chip['SEQ_GEN'].is_ready):
+            pass
+
+        ret = self.chip['SEQ_REC'].get_data()
+        self.assertEqual(ret.tolist()[4:], mem_in[:-4])
 
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator

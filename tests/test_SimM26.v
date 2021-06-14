@@ -11,6 +11,7 @@
 
 `include "seq_gen/seq_gen.v"
 `include "seq_gen/seq_gen_core.v"
+`include "utils/ramb_8_to_n.v"
 
 `include "m26_rx/m26_rx.v"
 `include "m26_rx/m26_rx_core.v"

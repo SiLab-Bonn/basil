@@ -89,6 +89,9 @@ cdc_syncfifo_sbus #(
     .rinc(!fifo_full), .rclk(BUS_CLK), .rrst(BUS_RST)
 );
 
+wire FIFO_READ, FIFO_EMPTY;
+wire [31:0] FIFO_DATA;
+
 `ifndef BASIL_SBUS
 fifo_8_to_32 #(
 `else
@@ -106,8 +109,7 @@ fifo_8_to_32_sbus #(
     .DATA_OUT(FIFO_DATA)
 );
 
-wire FIFO_READ, FIFO_EMPTY;
-wire [31:0] FIFO_DATA;
+
 
 `ifndef BASIL_SBUS
 bram_fifo #(

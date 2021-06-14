@@ -35,7 +35,7 @@ bus_to_ip #(
     .BASEADDR(BASEADDR),
     .HIGHADDR(HIGHADDR),
     .ABUSWIDTH(ABUSWIDTH)
-) i_bus_to_ip (
+) bus_to_ip (
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
     .BUS_ADD(BUS_ADD),
@@ -52,7 +52,7 @@ seq_rec_core #(
     .ABUSWIDTH(ABUSWIDTH),
     .MEM_BYTES(MEM_BYTES),
     .IN_BITS(IN_BITS)
-) i_scope_core (
+) seq_rec_core (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
     .BUS_ADD(IP_ADD),
