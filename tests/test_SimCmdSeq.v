@@ -17,6 +17,7 @@
 
 `include "seq_rec/seq_rec.v"
 `include "seq_rec/seq_rec_core.v"
+`include "utils/ramb_8_to_n.v"
 
 // `include "utils/glbl.v"
 `include "utils/ODDR_sim.v"

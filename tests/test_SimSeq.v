@@ -21,6 +21,7 @@
 `include "utils/3_stage_synchronizer.v"
 `include "utils/flag_domain_crossing.v"
 `include "utils/cdc_pulse_sync.v"
+`include "utils/ramb_8_to_n.v"
 
 
 module tb (
@@ -36,15 +37,26 @@ module tb (
 localparam PULSE_BASEADDR = 32'h0000;
 localparam PULSE_HIGHADDR = PULSE_BASEADDR + 15;
 
-localparam SEQ_GEN_BASEADDR = 32'h1000;
-localparam SEQ_GEN_HIGHADDR = 32'h3000-1;
+localparam SEQ_GEN_BASEADDR = 32'h1000_0000;
+localparam SEQ_GEN_HIGHADDR = 32'h2000_0000-1;
 
-localparam SEQ_REC_BASEADDR = 32'h3000;
-localparam SEQ_REC_HIGHADDR = 32'h5000 - 1;
+localparam SEQ_REC_BASEADDR = 32'h2000_0000;
+localparam SEQ_REC_HIGHADDR = 32'h3000_0000 - 1;
 
 localparam ABUSWIDTH = 32;
 assign BUS_BYTE_ACCESS = BUS_ADD < 32'h8000_0000 ? 1'b1 : 1'b0;
 
+`ifdef BITS
+    localparam BITS = `BITS;
+`else
+    localparam BITS = 8;
+`endif
+
+`ifdef MEM_KB
+    localparam MEM_KB = `MEM_KB;
+`else
+    localparam MEM_KB = 1;
+`endif
 
 wire EX_START_PULSE;
 pulse_gen #(
@@ -64,13 +76,13 @@ pulse_gen #(
     .PULSE(EX_START_PULSE)
 );
 
-wire [7:0] SEQ_OUT;
+wire [BITS-1:0] SEQ_OUT;
 seq_gen #(
     .BASEADDR(SEQ_GEN_BASEADDR),
     .HIGHADDR(SEQ_GEN_HIGHADDR),
     .ABUSWIDTH(ABUSWIDTH),
-    .MEM_BYTES(8*1024),
-    .OUT_BITS(8)
+    .MEM_BYTES(MEM_KB*1024),
+    .OUT_BITS(BITS)
 ) i_seq_gen (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),
@@ -88,8 +100,8 @@ seq_rec #(
     .BASEADDR(SEQ_REC_BASEADDR),
     .HIGHADDR(SEQ_REC_HIGHADDR),
     .ABUSWIDTH(ABUSWIDTH),
-    .MEM_BYTES(8*1024),
-    .IN_BITS(8)
+    .MEM_BYTES(MEM_KB*1024),
+    .IN_BITS(BITS)
 ) i_seq_rec (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),

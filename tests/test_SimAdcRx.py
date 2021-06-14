@@ -28,7 +28,6 @@ hw_drivers:
   - name      : SEQ_GEN
     type      : seq_gen
     interface : INTF
-    mem_size  : 8192
     base_addr : 0x1000
 
   - name      : FADC
@@ -61,7 +60,7 @@ class TestSimAdcRx(unittest.TestCase):
         self.chip.init()
 
     def test_io(self):
-        pattern = [1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7]
+        pattern = [0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7, 1]
         self.chip['SEQ_GEN'].set_data(pattern)
 
         self.chip['PULSE_GEN'].set_DELAY(1)

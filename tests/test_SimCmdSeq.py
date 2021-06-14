@@ -40,10 +40,9 @@ hw_drivers:
   - name      : SEQ_REC
     type      : seq_rec
     interface : INTF
-    mem_size  : {}
     base_addr : 0x2000
 
-""".format(max_rec_size)
+"""
 
 
 class TestSimSeq(unittest.TestCase):

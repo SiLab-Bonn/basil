@@ -23,7 +23,6 @@ hw_drivers:
   - name      : SEQ_GEN
     type      : seq_gen
     interface : INTF
-    mem_size  : 65535
     base_addr : 0x0000
 
   - name      : TDC0

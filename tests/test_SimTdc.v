@@ -14,6 +14,7 @@
 
 `include "seq_gen/seq_gen.v"
 `include "seq_gen/seq_gen_core.v"
+`include "utils/ramb_8_to_n.v"
 
 `include "tdc_s3/tdc_s3_core.v"
 `include "tdc_s3/tdc_s3.v"
@@ -94,7 +95,7 @@ seq_gen #(
     .BASEADDR(SEQ_GEN_BASEADDR),
     .HIGHADDR(SEQ_GEN_HIGHADDR),
     .ABUSWIDTH(ABUSWIDTH),
-    .MEM_BYTES(8 * 8 * 1024 - 1),
+    .MEM_BYTES(8 * 8 * 1024),
     .OUT_BITS(8)
 ) i_seq_gen (
     .BUS_CLK(BUS_CLK),
