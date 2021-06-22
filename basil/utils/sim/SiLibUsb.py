@@ -37,9 +37,9 @@ class SiUSBDevice(object):
     HIGH_ADDRESS_EXTERNAL = 0x10000 + 0x10000
 
     BASE_ADDRESS_BLOCK = 0x0001000000000000
-    HIGH_ADDRESS_BLOCK = 0xffffffffffffffff
+    HIGH_ADDRESS_BLOCK = 0xFFFFFFFFFFFFFFFF
 
-    def __init__(self, device=None, simulation_host='localhost', simulation_port=12345):
+    def __init__(self, device=None, simulation_host="localhost", simulation_port=12345):
         self._sock = None
         self.simulation_host = simulation_host
         self.simulation_port = simulation_port
@@ -70,7 +70,7 @@ class SiUSBDevice(object):
         resp = self._iface.recv()
         if not isinstance(resp, ReadResponse):
             raise ValueError("Communication error with Simulation: got %s" % repr(resp))
-        return array.array('B', resp.data)
+        return array.array("B", resp.data)
 
     def FastBlockRead(self, size):
         req = ReadRequest(self.BASE_ADDRESS_BLOCK, size)
@@ -78,15 +78,15 @@ class SiUSBDevice(object):
         resp = self._iface.recv()
         if not isinstance(resp, ReadResponse):
             raise ValueError("Communication error with Simulation: got %s" % repr(resp))
-        return array.array('B', resp.data)
+        return array.array("B", resp.data)
 
     def FastBlockWrite(self, data):
         req = WriteRequest(self.BASE_ADDRESS_BLOCK, data)
         self._iface.send(req)
 
     def WriteI2C(self, address, data):
-        print('SiUSBDevice:WriteI2C: {} {}'.format(address, data))
+        print("SiUSBDevice:WriteI2C: {} {}".format(address, data))
 
     def ReadI2C(self, address, size):
-        print('SiUSBDevice:ReadI2C')
-        return array.array('B', range(size))
+        print("SiUSBDevice:ReadI2C")
+        return array.array("B", range(size))

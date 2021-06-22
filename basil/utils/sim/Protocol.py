@@ -21,7 +21,6 @@ class ProtocolBase(object):
 
 
 class WriteRequest(ProtocolBase):
-
     def __init__(self, address, data):
         self.address = address
         self.data = data
@@ -31,7 +30,6 @@ class WriteRequest(ProtocolBase):
 
 
 class ReadRequest(ProtocolBase):
-
     def __init__(self, address, size):
         self.address = address
         self.size = size
@@ -41,7 +39,6 @@ class ReadRequest(ProtocolBase):
 
 
 class ReadResponse(ProtocolBase):
-
     def __init__(self, data):
         self.data = data
 
@@ -50,7 +47,6 @@ class ReadResponse(ProtocolBase):
 
 
 class PickleInterface(ProtocolBase):
-
     def __init__(self, sock):
         self.sock = sock
 
@@ -79,7 +75,7 @@ class PickleInterface(ProtocolBase):
 
     def _get_next_obj(self, length):
         """Assumes we've already read the object length"""
-        data = b''
+        data = b""
         while len(data) < length:
             data += self.sock.recv(length - len(data))
 
