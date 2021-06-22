@@ -12,11 +12,9 @@
 """
 Abastract away interactions with the control bus
 """
-import cocotb
 from cocotb.binary import BinaryValue
 from cocotb.triggers import RisingEdge, ReadOnly, Timer
-from cocotb.drivers import BusDriver
-from cocotb.clock import Clock
+from cocotb_bus.drivers import BusDriver
 
 
 class SiLibUsbBusDriver(BusDriver):
@@ -30,7 +28,7 @@ class SiLibUsbBusDriver(BusDriver):
     HIGH_ADDRESS_EXTERNAL = 0x10000 + 0x10000
 
     BASE_ADDRESS_BLOCK = 0x0001000000000000
-    HIGH_ADDRESS_BLOCK = 0xffffffffffffffff
+    HIGH_ADDRESS_BLOCK = 0xFFFFFFFFFFFFFFFF
 
     def __init__(self, entity):
         BusDriver.__init__(self, entity, "", entity.FCLK_IN)
@@ -42,9 +40,6 @@ class SiLibUsbBusDriver(BusDriver):
         # Create an appropriately sized high-impedance value
         self._x = BinaryValue(n_bits=16)
         self._x.binstr = "x" * 16
-
-        # Kick off a clock generator
-        cocotb.fork(Clock(self.clock, 20800).start())
 
     async def init(self):
         # Defaults
@@ -64,15 +59,15 @@ class SiLibUsbBusDriver(BusDriver):
 
     async def read(self, address, size):
         result = []
-        if(address >= self.BASE_ADDRESS_I2C and address < self.HIGH_ADDRESS_I2C):
+        if address >= self.BASE_ADDRESS_I2C and address < self.HIGH_ADDRESS_I2C:
             self.entity._log.warning("I2C address space supported in simulation!")
             for byte in range(size):
                 result.append(0)
-        elif(address >= self.BASE_ADDRESS_EXTERNAL and address < self.HIGH_ADDRESS_EXTERNAL):
+        elif address >= self.BASE_ADDRESS_EXTERNAL and address < self.HIGH_ADDRESS_EXTERNAL:
             for byte in range(size):
                 val = await self.read_external(address - self.BASE_ADDRESS_EXTERNAL + byte)
                 result.append(val)
-        elif(address >= self.BASE_ADDRESS_BLOCK and address < self.HIGH_ADDRESS_BLOCK):
+        elif address >= self.BASE_ADDRESS_BLOCK and address < self.HIGH_ADDRESS_BLOCK:
             for byte in range(size):
                 val = await self.fast_block_read()
                 result.append(val)
@@ -82,12 +77,12 @@ class SiLibUsbBusDriver(BusDriver):
         return result
 
     async def write(self, address, data):
-        if(address >= self.BASE_ADDRESS_I2C and address < self.HIGH_ADDRESS_I2C):
+        if address >= self.BASE_ADDRESS_I2C and address < self.HIGH_ADDRESS_I2C:
             self.entity._log.warning("I2C address space supported in simulation!")
-        elif(address >= self.BASE_ADDRESS_EXTERNAL and address < self.HIGH_ADDRESS_EXTERNAL):
+        elif address >= self.BASE_ADDRESS_EXTERNAL and address < self.HIGH_ADDRESS_EXTERNAL:
             for index, byte in enumerate(data):
                 await self.write_external(address - self.BASE_ADDRESS_EXTERNAL + index, byte)
-        elif(address >= self.BASE_ADDRESS_BLOCK and address < self.HIGH_ADDRESS_BLOCK):
+        elif address >= self.BASE_ADDRESS_BLOCK and address < self.HIGH_ADDRESS_BLOCK:
             raise NotImplementedError("Unsupported request")
             # self._sidev.FastBlockWrite(data)
         else:

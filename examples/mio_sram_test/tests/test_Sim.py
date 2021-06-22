@@ -69,10 +69,10 @@ class TestSram(unittest.TestCase):
 
         ret = np.hstack((ret, self.chip['FIFO'].get_data()))
 
-        x = np.arange(175 * 4, dtype=np.uint8)
+        x = np.arange(170 * 4, dtype=np.uint8)
         x.dtype = np.uint32
 
-        self.assertTrue(np.alltrue(ret == x))
+        np.testing.assert_array_equal(ret, x)
 
         self.chip['FIFO'].reset()
 
@@ -87,10 +87,10 @@ class TestSram(unittest.TestCase):
 
         ret = np.hstack((ret, self.chip['FIFO'].get_data()))
 
-        x = np.arange(245 * 4, dtype=np.uint8)
+        x = np.arange(238 * 4, dtype=np.uint8)
         x.dtype = np.uint32
 
-        self.assertEqual(ret.tolist(), x.tolist())
+        np.testing.assert_array_equal(ret, x)
 
     def test_full(self):
         self.chip['CONTROL']['COUNTER_EN'] = 1
@@ -111,10 +111,10 @@ class TestSram(unittest.TestCase):
         ret = self.chip['FIFO'].get_data()
         ret = np.hstack((ret, self.chip['FIFO'].get_data()))
 
-        x = np.arange(203 * 4, dtype=np.uint8)
+        x = np.arange(200 * 4, dtype=np.uint8)
         x.dtype = np.uint32
 
-        self.assertTrue(np.alltrue(ret == x))
+        np.testing.assert_array_equal(ret, x)
 
     def test_overflow(self):
         self.chip['CONTROL']['COUNTER_EN'] = 1
@@ -136,7 +136,7 @@ class TestSram(unittest.TestCase):
         x = np.arange((128 + 1023) * 4, dtype=np.uint8)
         x.dtype = np.uint32
 
-        self.assertTrue(np.alltrue(ret == x))
+        np.testing.assert_array_equal(ret, x)
 
         self.chip['PULSE'].set_DELAY(1)
         self.chip['PULSE'].set_WIDTH(1)
@@ -146,7 +146,7 @@ class TestSram(unittest.TestCase):
         x = np.arange((128 + 1023) * 4, (128 + 1023 + 1) * 4, dtype=np.uint8)
         x.dtype = np.uint32
 
-        self.assertEqual(ret, x)
+        np.testing.assert_array_equal(ret, x)
 
     def test_single(self):
 
@@ -171,7 +171,7 @@ class TestSram(unittest.TestCase):
         for _ in range(5):
             self.chip['CONTROL'].write()
 
-        self.assertEqual(self.chip['FIFO'].get_data().tolist(), [0xaa5555aa] * 35)
+        self.assertEqual(self.chip['FIFO'].get_data().tolist(), [0xaa5555aa] * 34)
 
     def test_direct(self):
         self.chip['CONTROL']['COUNTER_DIRECT'] = 1

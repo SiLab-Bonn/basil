@@ -14,35 +14,42 @@ import socket
 import yaml
 
 import cocotb
-from cocotb.triggers import RisingEdge
+from cocotb.triggers import Timer
+from cocotb.clock import Clock
 
 from basil.utils.sim.Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
 
 
 def get_bus():
     bus_name_path = os.getenv("SIMULATION_BUS", "basil.utils.sim.BasilBusDriver")
-    bus_name = bus_name_path.split('.')[-1]
+    bus_name = bus_name_path.split(".")[-1]
     return getattr(__import__(bus_name_path, fromlist=[bus_name]), bus_name)
 
 
 def import_driver(path):
-    name = path.split('.')[-1]
+    name = path.split(".")[-1]
     return getattr(__import__(path, fromlist=[name]), name)
 
 
 @cocotb.test(skip=False)
-def socket_test(dut, debug=False):
+async def test(dut, debug=False):
     """Testcase that uses a socket to drive the DUT"""
 
-    host = os.getenv("SIMULATION_HOST", 'localhost')
-    port = os.getenv("SIMULATION_PORT", '12345')
+    host = os.getenv("SIMULATION_HOST", "localhost")
+    port = os.getenv("SIMULATION_PORT", "12345")
+    bus_clk_freq = int(os.getenv("SIMULATION_BUS_CLK_PERIOD", "5000"))
+    bus_transaction_wait = int(os.getenv("SIMULATION_TRANSACTION_WAIT", "50000"))
+    bus_clock = bool(int(os.getenv("SIMULATION_BUS_CLOCK", "1")))
 
     if debug:
         dut._log.setLevel(logging.DEBUG)
 
     bus = get_bus()(dut)
 
-    dut._log.info("Using bus driver : %s" % (type(bus).__name__))
+    dut._log.info(f"Using bus driver : {type(bus).__name__}")
+    dut._log.info(f"Bus clock : {bus_clock}")
+    dut._log.info(f"Bus clock period : {bus_clk_freq}")
+    dut._log.info(f"Bus transaction wait : {bus_transaction_wait}")
 
     sim_modules = []
     sim_modules_data = os.getenv("SIMULATION_MODULES", "")
@@ -64,11 +71,15 @@ def socket_test(dut, debug=False):
         s = None
         raise
 
+    # Kick off a clock generator
+    if bus_clock:
+        cocotb.fork(Clock(bus.clock, bus_clk_freq).start())
+
     # start sim_modules
     for mod in sim_modules:
         cocotb.fork(mod.run())
 
-    yield bus.init()
+    await bus.init()
 
     while True:
         dut._log.info("Waiting for incoming connection on %s:%d" % (host, int(port)))
@@ -78,7 +89,7 @@ def socket_test(dut, debug=False):
 
         while True:
             # uncomment for constantly advancing clock
-            # yield RisingEdge(bus.clock)
+            # await RisingEdge(bus.clock)
 
             try:
                 req = iface.try_recv()
@@ -93,13 +104,14 @@ def socket_test(dut, debug=False):
             dut._log.debug("Received: %s" % str(req))
 
             # add few clocks
-            for _ in range(10):
-                yield RisingEdge(bus.clock)
+            # for _ in range(10):
+            #    await RisingEdge(bus.clock)
+            await Timer(bus_transaction_wait)
 
             if isinstance(req, WriteRequest):
-                yield bus.write(req.address, req.data)
+                await bus.write(req.address, req.data)
             elif isinstance(req, ReadRequest):
-                result = yield bus.read(req.address, req.size)
+                result = await bus.read(req.address, req.size)
                 resp = ReadResponse(result)
                 dut._log.debug("Send: %s" % str(resp))
                 iface.send(resp)
@@ -107,35 +119,12 @@ def socket_test(dut, debug=False):
                 raise NotImplementedError("Unsupported request type: %s" % str(type(req)))
 
             # add few clocks
-            for _ in range(10):
-                yield RisingEdge(bus.clock)
+            # for _ in range(10):
+            #    await RisingEdge(bus.clock)
+            await Timer(bus_transaction_wait)
 
-        if(os.getenv("SIMULATION_END_ON_DISCONNECT")):
+        if os.getenv("SIMULATION_END_ON_DISCONNECT"):
             break
 
     s.shutdown(socket.SHUT_RDWR)
     s.close()
-
-
-@cocotb.test(skip=True)
-def bringup_test(dut):
-    """Initial test to see if simulation works"""
-
-    bus = get_bus()(dut)
-
-    yield bus.init()
-
-    for _ in range(10):
-        yield RisingEdge(bus.clock)
-
-    yield bus.write(0, [0xff, 0xf2, 0xf3, 0xa4])
-
-    for _ in range(10):
-        yield RisingEdge(bus.clock)
-
-    ret = yield bus.read(0, 4)
-
-    print('bus.read {}'.format(ret))
-
-    for _ in range(10):
-        yield RisingEdge(bus.clock)
