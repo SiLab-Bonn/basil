@@ -5,11 +5,11 @@
 # ------------------------------------------------------------
 #
 
+import re
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 
 class SignatoneProber(HardwareLayer):
-
     '''
     Implements functions to steer a Signatone probe station such as the one of lal in2p3 in Paris.
     '''
@@ -19,6 +19,8 @@ class SignatoneProber(HardwareLayer):
 
     def goto_die(self, index_x, index_y):
         ''' Move chuck to wafer map chip index'''
+        index_x = abs(index_x) * -1
+        index_y = abs(index_y) * -1
         self._intf.write('MOVECR %d, %d' % (index_x, index_y))
 
     def goto_next_die(self):
@@ -37,8 +39,9 @@ class SignatoneProber(HardwareLayer):
                 reply = self._intf.query('GETCR')
             else:
                 break
+        reply = re.sub(r'[a-zA-Z]', r'', reply)
         values = reply.split(',')
-        return (int(values[0]), int(values[1]))
+        return (abs(int(values[0])), abs(int(values[1])))
 
     def contact(self):
         ''' Move chuck to contact z position'''
@@ -51,3 +54,7 @@ class SignatoneProber(HardwareLayer):
     def load(self):
         ''' Move chuck to load z position'''
         self._intf.write('LOADWAFER')
+
+    def get_id(self):
+        ''' Get id '''
+        return self._intf.query('*IDN?')
