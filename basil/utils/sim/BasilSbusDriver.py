@@ -20,7 +20,7 @@ class BasilSbusDriver(BusDriver):
     _optional_signals = ["BUS_BYTE_ACCESS"]
 
     def __init__(self, entity):
-        BusDriver.__init__(self, entity, "", entity.BUS_CLK)
+        BusDriver.__init__(self, entity, "", entity.BUS_CLK, case_insensitive=False)
 
         # Create an appropriately sized high-impedance value
         self._high_impedance = BinaryValue(n_bits=len(self.bus.BUS_DATA_IN))
