@@ -34,16 +34,16 @@ class BasilSbusDriver(BusDriver):
 
     async def init(self):
         # Defaults
-        self.bus.BUS_RST <= 1
-        self.bus.BUS_RD <= 0
-        self.bus.BUS_WR <= 0
-        self.bus.BUS_ADD <= self._x
-        self.bus.BUS_DATA_IN <= self._high_impedance
+        self.bus.BUS_RST.value = 1
+        self.bus.BUS_RD.value = 0
+        self.bus.BUS_WR.value = 0
+        self.bus.BUS_ADD.value = self._x
+        self.bus.BUS_DATA_IN.value = self._high_impedance
 
         for _ in range(8):
             await RisingEdge(self.clock)
 
-        self.bus.BUS_RST <= 0
+        self.bus.BUS_RST.value = 0
 
         for _ in range(2):
             await RisingEdge(self.clock)
@@ -64,8 +64,8 @@ class BasilSbusDriver(BusDriver):
         if size == 0:
             return result
 
-        self.bus.BUS_RD <= 1
-        self.bus.BUS_ADD <= address
+        self.bus.BUS_RD.value = 1
+        self.bus.BUS_ADD.value = address
 
         byte = 0
 
@@ -78,9 +78,9 @@ class BasilSbusDriver(BusDriver):
             else:
                 byte += 1
 
-            self.bus.BUS_ADD <= address + byte
+            self.bus.BUS_ADD.value = address + byte
             if byte >= size:
-                self.bus.BUS_RD <= 0
+                self.bus.BUS_RD.value = 0
 
             await ReadOnly()
 
@@ -98,8 +98,8 @@ class BasilSbusDriver(BusDriver):
 
         await RisingEdge(self.clock)
 
-        self.bus.BUS_ADD <= self._x
-        self.bus.BUS_RD <= 0
+        self.bus.BUS_ADD.value = self._x
+        self.bus.BUS_RD.value = 0
 
         return result
 
@@ -108,15 +108,15 @@ class BasilSbusDriver(BusDriver):
         await RisingEdge(self.clock)
 
         for index, byte in enumerate(data):
-            self.bus.BUS_DATA_IN <= byte
-            self.bus.BUS_WR <= 1
-            self.bus.BUS_ADD <= address + index
+            self.bus.BUS_DATA_IN.value = byte
+            self.bus.BUS_WR.value = 1
+            self.bus.BUS_ADD.value = address + index
 
             await RisingEdge(self.clock)
 
         if self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value.integer == 0:
             raise NotImplementedError("BUS_BYTE_ACCESS for write to be implemented.")
 
-        self.bus.BUS_ADD <= self._x
-        self.bus.BUS_DATA_IN <= self._high_impedance
-        self.bus.BUS_WR <= 0
+        self.bus.BUS_ADD.value = self._x
+        self.bus.BUS_DATA_IN.value = self._high_impedance
+        self.bus.BUS_WR.value = 0
