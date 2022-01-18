@@ -44,14 +44,14 @@ class SiLibUsbBusDriver(BusDriver):
     async def init(self):
         # Defaults
         # self.bus.BUS_RST<= 1
-        self.bus.RD_B <= 1
-        self.bus.WR_B <= 1
-        self.bus.ADD <= 0
-        self.bus.FREAD <= 0
-        self.bus.FSTROBE <= 0
-        self.bus.FMODE <= 0
-        self.bus.BUS_DATA <= self._high_impedance
-        self.bus.FD <= self._high_impedance
+        self.bus.RD_B.value = 1
+        self.bus.WR_B.value = 1
+        self.bus.ADD.value = 0
+        self.bus.FREAD.value = 0
+        self.bus.FSTROBE.value = 0
+        self.bus.FMODE.value = 0
+        self.bus.BUS_DATA.value = self._high_impedance
+        self.bus.FD.value = self._high_impedance
 
         # wait for reset
         for _ in range(200):
@@ -90,27 +90,27 @@ class SiLibUsbBusDriver(BusDriver):
 
     async def read_external(self, address):
         """Copied from silusb.sv testbench interface"""
-        self.bus.RD_B <= 1
-        self.bus.ADD <= self._x
-        self.bus.BUS_DATA <= self._high_impedance
+        self.bus.RD_B.value = 1
+        self.bus.ADD.value = self._x
+        self.bus.BUS_DATA.value = self._high_impedance
         for _ in range(5):
             await RisingEdge(self.clock)
 
         await RisingEdge(self.clock)
-        self.bus.ADD <= address + 0x4000
+        self.bus.ADD.value = address + 0x4000
 
         await RisingEdge(self.clock)
-        self.bus.RD_B <= 0
+        self.bus.RD_B.value = 0
         await RisingEdge(self.clock)
-        self.bus.RD_B <= 0
+        self.bus.RD_B.value = 0
         await ReadOnly()
         result = self.bus.BUS_DATA.value.integer
         await RisingEdge(self.clock)
-        self.bus.RD_B <= 1
+        self.bus.RD_B.value = 1
 
         await RisingEdge(self.clock)
-        self.bus.RD_B <= 1
-        self.bus.ADD <= self._x
+        self.bus.RD_B.value = 1
+        self.bus.ADD.value = self._x
 
         await RisingEdge(self.clock)
 
@@ -121,49 +121,49 @@ class SiLibUsbBusDriver(BusDriver):
 
     async def write_external(self, address, value):
         """Copied from silusb.sv testbench interface"""
-        self.bus.WR_B <= 1
-        self.bus.ADD <= self._x
+        self.bus.WR_B.value = 1
+        self.bus.ADD.value = self._x
 
         for _ in range(5):
             await RisingEdge(self.clock)
 
         await RisingEdge(self.clock)
-        self.bus.ADD <= address + 0x4000
-        self.bus.BUS_DATA <= int(value)
+        self.bus.ADD.value = address + 0x4000
+        self.bus.BUS_DATA.value = int(value)
         await Timer(1)  # This is hack for iverilog
-        self.bus.ADD <= address + 0x4000
-        self.bus.BUS_DATA <= int(value)
+        self.bus.ADD.value = address + 0x4000
+        self.bus.BUS_DATA.value = int(value)
         await RisingEdge(self.clock)
-        self.bus.WR_B <= 0
+        self.bus.WR_B.value = 0
         await Timer(1)  # This is hack for iverilog
-        self.bus.BUS_DATA <= int(value)
-        self.bus.WR_B <= 0
+        self.bus.BUS_DATA.value = int(value)
+        self.bus.WR_B.value = 0
         await RisingEdge(self.clock)
-        self.bus.WR_B <= 0
+        self.bus.WR_B.value = 0
         await Timer(1)  # This is hack for iverilog
-        self.bus.BUS_DATA <= int(value)
-        self.bus.WR_B <= 0
+        self.bus.BUS_DATA.value = int(value)
+        self.bus.WR_B.value = 0
         await RisingEdge(self.clock)
-        self.bus.WR_B <= 1
-        self.bus.BUS_DATA <= self._high_impedance
+        self.bus.WR_B.value = 1
+        self.bus.BUS_DATA.value = self._high_impedance
         await Timer(1)  # This is hack for iverilog
-        self.bus.WR_B <= 1
-        self.bus.BUS_DATA <= self._high_impedance
+        self.bus.WR_B.value = 1
+        self.bus.BUS_DATA.value = self._high_impedance
         await RisingEdge(self.clock)
-        self.bus.WR_B <= 1
-        self.bus.ADD <= self._x
+        self.bus.WR_B.value = 1
+        self.bus.ADD.value = self._x
 
         for _ in range(5):
             await RisingEdge(self.clock)
 
     async def fast_block_read(self):
         await RisingEdge(self.clock)
-        self.bus.FREAD <= 1
-        self.bus.FSTROBE <= 1
+        self.bus.FREAD.value = 1
+        self.bus.FSTROBE.value = 1
         await ReadOnly()
         result = self.bus.FD.value.integer
         await RisingEdge(self.clock)
-        self.bus.FREAD <= 0
-        self.bus.FSTROBE <= 0
+        self.bus.FREAD.value = 0
+        self.bus.FSTROBE.value = 0
         await RisingEdge(self.clock)
         return result
