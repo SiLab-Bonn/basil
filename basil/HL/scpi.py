@@ -47,7 +47,7 @@ class scpi(HardwareLayer):
                 raise RuntimeError('Wrong device description (' + self._init['device'] + ') loaded for ' + name)
         # Device specific query return value formatting
         if '__scpi_query_fmt' in self._scpi_commands:
-            self._scpi_query_fmt = self._scpi_commands.pop('_scpi_query_fmt')
+            self._scpi_query_fmt = self._scpi_commands.pop('__scpi_query_fmt')
 
     def __getattr__(self, name):
         '''dynamically adding device specific commands
@@ -65,7 +65,7 @@ class scpi(HardwareLayer):
             elif len(name_split) == 2 and name_split[0] == 'get' and not args and not kwargs:
                 res = self._intf.query(command)
                 if self._scpi_query_fmt and name in self._scpi_query_fmt['fmt_method']:
-                    res = self._scpi_query_fmt['fmt_method'][name].format(res.strip().split(self._scpi_query_fmt['fmt_sep']))
+                    res = self._scpi_query_fmt['fmt_method'][name].format(*res.strip().split(self._scpi_query_fmt['fmt_sep']))
                 return res
             elif len(name_split) >= 1 and not args and not kwargs:
                 self._intf.write(command)
