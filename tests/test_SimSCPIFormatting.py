@@ -43,10 +43,6 @@ class TestSimScpi(unittest.TestCase):
         voltage = self.device['Sourcemeter'].get_voltage()
         self.assertEqual(voltage, '-5.124E-05')
 
-    def test_read_current(self):
-        voltage = self.device['Sourcemeter'].get_current()
-        self.assertEqual(voltage, '+1.789E-10')
-
     def test_read_voltage_unformatted(self):
         # Check that formatting is enabled
         self.assertTrue(self.device['Sourcemeter'].formatting_enabled)
