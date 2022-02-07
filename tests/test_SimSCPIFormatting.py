@@ -23,6 +23,7 @@ hw_drivers:
         device : Keithley 2410
 '''
 
+
 class TestSimScpi(unittest.TestCase):
 
     def setUp(self):
@@ -36,7 +37,7 @@ class TestSimScpi(unittest.TestCase):
     def test_read_voltage(self):
         voltage = self.device['Sourcemeter'].get_voltage().split(',')[0]
         self.assertEqual(voltage, '-5.124E-05')
-    
+
     def test_read_voltage_formatted(self):
         # Check that formatting is present
         self.assertTrue(self.device['Sourcemeter'].has_formatting)
