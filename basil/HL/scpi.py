@@ -34,6 +34,15 @@ class scpi(HardwareLayer):
     def has_formatting(self, val):
         raise AttributeError("Attribute is read-only")
 
+    @property
+    def formatting_enabled(self):
+        '''Whether or not device has SCPI query formatting is enabled'''
+        return self._formatting_enabled
+
+    @formatting_enabled.setter
+    def formatting_enabled(self, val):
+        raise AttributeError("Attribute is read-only")
+
     def __init__(self, intf, conf):
         super(scpi, self).__init__(intf, conf)
 
@@ -57,6 +66,9 @@ class scpi(HardwareLayer):
         # Device specific query return value formatting
         if '__scpi_query_fmt' in self._scpi_commands:
             self._scpi_query_fmt = self._scpi_commands.pop('__scpi_query_fmt')
+        # Check if we want to enable formatting from the init
+        if 'device_formatting' in self._init and self._init['device_formatting']:
+            self.enable_formatting()
 
     def __getattr__(self, name):
         '''dynamically adding device specific commands
