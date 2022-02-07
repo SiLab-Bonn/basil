@@ -67,7 +67,7 @@ class scpi(HardwareLayer):
         if '__scpi_query_fmt' in self._scpi_commands:
             self._scpi_query_fmt = self._scpi_commands.pop('__scpi_query_fmt')
         # Check if we want to enable formatting from the init
-        if 'device_formatting' in self._init and self._init['device_formatting']:
+        if 'enable_formatting' in self._init and self._init['enable_formatting']:
             self.enable_formatting()
 
     def __getattr__(self, name):
