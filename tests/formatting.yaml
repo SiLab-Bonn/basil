@@ -1,0 +1,38 @@
+spec: "1.1"
+devices:
+  device 1:
+    eom:
+      ASRL INSTR:
+        q: "\r\n"
+        r: "\n"
+      USB INSTR:
+        q: "\n"
+        r: "\n"
+      TCPIP INSTR:
+        q: "\n"
+        r: "\n"
+      GPIB INSTR:
+        q: "\n"
+        r: "\n"
+    dialogues:
+      - q: "*IDN?"
+        r: "KEITHLEY INSTRUMENTS INC.,MODEL 2410"
+    properties:
+      selected_channel:
+        default: 'VOLT'
+        setter:
+          q: "SENSE:FUNC '{}'"
+    channels:
+      type1:
+        ids: ['VOLT']
+        can_select: False
+        properties:
+          value:
+            default: 1.0
+            getter:
+              q: ':READ?'
+              r: '-5.124E-05,+1.789E-10,+1.001E37,1.001E5'
+
+resources:
+  ASRL1::INSTR:
+    device: device 1
