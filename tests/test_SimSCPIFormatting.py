@@ -47,7 +47,7 @@ class TestSimScpi(unittest.TestCase):
         # Disable formatting
         self.device['Sourcemeter'].disable_formatting()
         self.assertEqual(voltage, '-5.124E-05')
-    
+
 
 if __name__ == '__main__':
     unittest.main()
