@@ -25,7 +25,7 @@ hw_drivers:
 '''
 
 
-class TestSimScpiFormatting(unittest.TestCase):
+class TestSimScpi(unittest.TestCase):
 
     def setUp(self):
         self.cfg = yaml.safe_load(cnfg_yaml)
