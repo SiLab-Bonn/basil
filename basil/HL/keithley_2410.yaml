@@ -26,3 +26,9 @@ set_current_sense_range: SENS:CURR:RANGE
 get_current_sense_range: SENS:CURR:RANGE?
 get_reading: READ?
 set_current_nlpc: SENS:CURR:NPLC
+# Special keyword for formatting query results to allow direct conversions to numeric types (e.g. float(get_current()))
+__scpi_query_fmt:
+  fmt_sep: ','
+  fmt_method:
+    get_voltage: '{0}'
+    get_current: '{1}'

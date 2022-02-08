@@ -25,6 +25,23 @@ class scpi(HardwareLayer):
 
     '''Implement Standard Commands for Programmable Instruments (SCPI).
     '''
+    @property
+    def has_formatting(self):
+        '''Whether or not device has SCPI query formatting specified in device description'''
+        return self._scpi_query_fmt is not None
+
+    @has_formatting.setter
+    def has_formatting(self, val):
+        raise AttributeError("Attribute is read-only")
+
+    @property
+    def formatting_enabled(self):
+        '''Whether or not device has SCPI query formatting is enabled'''
+        return self._formatting_enabled
+
+    @formatting_enabled.setter
+    def formatting_enabled(self, val):
+        raise AttributeError("Attribute is read-only")
 
     def __init__(self, intf, conf):
         super(scpi, self).__init__(intf, conf)
@@ -32,6 +49,8 @@ class scpi(HardwareLayer):
     def init(self):
         super(scpi, self).init()
         self._scpi_commands = _scpi_ieee_488_2.copy()
+        self._scpi_query_fmt = None
+        self._formatting_enabled = False
         device_desciption = os.path.join(os.path.dirname(__file__), self._init['device'].lower().replace(" ", "_") + '.yaml')
         try:
             with open(device_desciption, 'r') as in_file:
@@ -44,6 +63,12 @@ class scpi(HardwareLayer):
             name = self.get_name()
             if self._scpi_commands['identifier'] not in name:
                 raise RuntimeError('Wrong device description (' + self._init['device'] + ') loaded for ' + name)
+        # Device specific query return value formatting
+        if '__scpi_query_fmt' in self._scpi_commands:
+            self._scpi_query_fmt = self._scpi_commands.pop('__scpi_query_fmt')
+        # Check if we want to enable formatting from the init
+        if 'enable_formatting' in self._init and self._init['enable_formatting']:
+            self.enable_formatting()
 
     def __getattr__(self, name):
         '''dynamically adding device specific commands
@@ -59,10 +84,22 @@ class scpi(HardwareLayer):
             if len(name_split) == 2 and name_split[0] == 'set' and len(args) == 1 and not kwargs:
                 self._intf.write(command + ' ' + str(args[0]))
             elif len(name_split) == 2 and name_split[0] == 'get' and not args and not kwargs:
-                return self._intf.query(command)
+                res = self._intf.query(command)
+                if self.has_formatting and self._formatting_enabled and name in self._scpi_query_fmt['fmt_method']:
+                    res = self._scpi_query_fmt['fmt_method'][name].format(*res.strip().split(self._scpi_query_fmt['fmt_sep']))
+                return res
             elif len(name_split) >= 1 and not args and not kwargs:
                 self._intf.write(command)
             else:
                 raise ValueError('Invalid SCPI command %s for device %s with args=%s and kwargs=%s' % (name, self.name, str(args), str(kwargs)))
 
         return method
+
+    def enable_formatting(self):
+        '''Enables formatting if specified in device description'''
+        if not self.has_formatting:
+            raise AttributeError("No formatting specified for {}! Specify formatting by adding '__scpi_query_fmt' in the device description yaml".format(self._init['device']))
+        self._formatting_enabled = True
+
+    def disable_formatting(self):
+        self._formatting_enabled = False
