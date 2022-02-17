@@ -15,7 +15,7 @@ def get_basil_dir():
 
 
 def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test', sim_host='localhost', sim_port=12345, sim_bus='basil.utils.sim.BasilBusDriver',
-                    end_on_disconnect=True, include_dirs=(), extra_defines=(), compile_args=(), extra=''):
+                    end_on_disconnect=True, include_dirs=(), extra_defines=(), compile_args=(), build_args=(), extra=''):
 
     basil_dir = get_basil_dir()
     include_dirs += (basil_dir + "/firmware/modules", basil_dir + "/firmware/modules/includes")
@@ -38,6 +38,7 @@ def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test
     mkfile += "NOT_ICARUS_INCLUDE_DIRS=+incdir+./ %s\n" % (" ".join('+incdir+' + str(e) for e in include_dirs))  # this is for modelsim better full path?
 
     mkfile += "COMPILE_ARGS_DEFINES = %s\n" % (" ".join(str(e) for e in compile_args))  # extra compiler args, e.g., for adding Xilinx's glbl.v to Icarus use "-s glbl"
+    mkfile += "BUILD_ARGS_DEFINES = %s\n" % (" ".join(str(e) for e in build_args))  # extra build args passed to build stage in supported simulators
 
     mkfile += "\n"
     mkfile += extra
@@ -74,6 +75,9 @@ else
 endif
 
 COMPILE_ARGS += $(COMPILE_ARGS_DEFINES)
+ifeq ($(SIM), verilator)
+    BUILD_ARGS += $(BUILD_ARGS_DEFINES)
+endif
 
 TOPLEVEL_LANG?=verilog
 export TOPLEVEL_LANG

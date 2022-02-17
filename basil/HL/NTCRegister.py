@@ -73,7 +73,6 @@ class NTCRegister(HardwareLayer):
             j = arg[0]
 
         k = 1.0 / (math.log(r_ratio / self.R_RATIO[j]) / self.B_CONST[j] + 1 / self.TEMP[j])[0]
-        logger.info("Temperature (C): %f", k - 273.15)
 
         if unit == "C":
             return k - 273.15
