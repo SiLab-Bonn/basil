@@ -13,4 +13,4 @@ hw_drivers:
     interface : Visa
     init      :
         device : Keithley 2410
-        enable_formatting: true  # Device-specific formatting
+        enable_formatting : true  # Device-specific formatting
