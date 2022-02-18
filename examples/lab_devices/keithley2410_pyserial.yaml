@@ -1,16 +1,15 @@
 transfer_layer:
-  - name     : Visa
-    type     : Visa
+  - name     : Serial
+    type     : Serial
     init     :
-        resource_name : ASRLCOM3
+        port     : /dev/ttyUSB0
         read_termination : "\r"
-        baud_rate : 19200
-        backend : "@py"
+        baudrate : 19200
 
 hw_drivers:
   - name      : Sourcemeter
     type      : scpi
-    interface : Visa
+    interface : Serial
     init      :
         device : Keithley 2410
         enable_formatting : true  # Device-specific formatting
