@@ -1,0 +1,15 @@
+# Device description for the Hewlett Packard LCR meter. 
+# Only GPIB shows working communication with this device!
+identifier : HEWLETT-PACKARD,HP4284A
+open_correction: CORR:OPEN
+short_correction: CORR:SHOR
+trigger: TRIG
+set_trigger_mode: TRIG:SOUR
+get_trigger_mode: TRIG:SOUR?
+set_ac_voltage: VOLT
+get_ac_voltage: VOLT?
+set_frequency: FREQ
+get_frequency: FREQ?
+set_meas_quantity: FUNC:IMP
+get_meas_quantity: FUN:IMP?
+get_value: FETC?

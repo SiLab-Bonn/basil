@@ -1,0 +1,12 @@
+transfer_layer:
+  - name  : Visa_lcr
+    type  : Visa
+    init  :
+        resource_name    : GPIB0::17::INSTR
+        
+hw_drivers:
+  - name      : LCRMeter
+    type      : scpi
+    interface : Visa_lcr
+    init      :
+         device    : HP 4284A
