@@ -1,6 +1,5 @@
 # Device description for the Hewlett Packard LCR meter. 
 # Only GPIB shows working communication with this device!
-identifier : HEWLETT-PACKARD,HP4284A
 open_correction: CORR:OPEN
 short_correction: CORR:SHOR
 trigger: TRIG
