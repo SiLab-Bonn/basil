@@ -4,23 +4,25 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-from time import sleep
+
 from basil.HL.scpi import scpi
 
 
-def get_property(self, prop):
+def get_meas_func(self, meas_func):
 
-    if prop not in self.MEAS_FUNC:
-        raise KeyError(f"Unknown measurment function {prop}")
+    def property_getter(self):
+        if meas_func not in self.MEAS_FUNCS:
+            raise KeyError(f"Unknown measurment function {meas_func}")
 
-    # Trigger measurment
-    self.trigger()
+        # Trigger measurement
+        self.trigger()
 
-    if prop != self.get_meas_func():
-        self.set_meas_func(prop)
-        sleep(0.1)
+        if meas_func != self.get_meas_func():
+            self.set_meas_func(meas_func)
 
-    return tuple(float(val) for val in self.get_value().split(','))
+        return tuple(float(val) for val in self.get_value().split(','))
+    
+    return property_getter
 
 
 class hp4284A(scpi):
@@ -117,7 +119,7 @@ class hp4284A(scpi):
             Measurement function is not set to measure capacitance
         """
         # Check if we selected a function that measures capacitance
-        meas_func = self.get_meas_quantity()
+        meas_func = self.get_meas_func()
 
         if 'C' not in meas_func:
             raise ValueError(f"Measurement function is {meas_func}: {self.MEAS_FUNCS[meas_func]}. Cannot measure capacitance.")
@@ -125,7 +127,7 @@ class hp4284A(scpi):
         self.trigger()
 
         return float(self.get_value().split(',')[0])
-    
+
     @property
     def resistance(self):
         """
@@ -142,7 +144,7 @@ class hp4284A(scpi):
             Measurement function is not set to measure resistance
         """
         # Check if we selected a function that measures capacitance
-        meas_func = self.get_meas_quantity()
+        meas_func = self.get_meas_func()
 
         if 'R' not in meas_func:
             raise ValueError(f"Measurement function is {meas_func}: {self.MEAS_FUNCS[meas_func]}. Cannot measure capacitance.")
@@ -167,7 +169,7 @@ class hp4284A(scpi):
             Measurement function is not set to measure impedance
         """
         # Check if we selected a function that measures capacitance
-        meas_func = self.get_meas_quantity()
+        meas_func = self.get_meas_func()
 
         if 'Z' not in meas_func:
             raise ValueError(f"Measurement function is {meas_func}: {self.MEAS_FUNCS[meas_func]}. Cannot measure capacitance.")
@@ -181,11 +183,11 @@ class hp4284A(scpi):
 
         # Add getters for all measurement functions
         for mf in self.MEAS_FUNCS:
-            self.__add_propertiy_getters(prop=mf, func=get_property(prop=mf))
+            self.__add_meas_func_getters(meas_func=mf, getter_func=get_meas_func(self, mf))
 
     @classmethod
-    def __add_propertiy_getters(cls, prop, func):
-        setattr(cls, prop, property(func))
+    def __add_meas_func_getters(cls, meas_func, getter_func):
+        setattr(cls, meas_func, property(getter_func))
 
     def _is_min_max(self, val):
         return val in ('MIN', 'MAX')
