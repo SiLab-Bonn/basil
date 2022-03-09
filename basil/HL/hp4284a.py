@@ -9,17 +9,17 @@ from basil.HL.scpi import scpi
 
 
 def get_property(self, prop):
-    
+
     if prop not in self.MEAS_FUNC:
         raise KeyError(f"Unknown measurment function {prop}")
 
     # Trigger measurment
     self.trigger()
-    
+
     if prop != self.get_meas_func():
         self.set_meas_func(prop)
         sleep(0.1)
-    
+
     return tuple(float(val) for val in self.get_value().split(','))
 
 
@@ -117,12 +117,12 @@ class hp4284A(scpi):
         """
         # Check if we selected a function that measures capacitance
         meas_func = self.get_meas_quantity()
-        
+
         if 'C' not in meas_func:
             raise ValueError(f"Measurement function is {meas_func}: {self.MEAS_FUNCS[meas_func]}. Cannot measure capacitance.")
 
         self.trigger()
-        
+
         return float(self.get_value().split(',')[0])
 
     def resistance(self):
@@ -141,12 +141,12 @@ class hp4284A(scpi):
         """
         # Check if we selected a function that measures capacitance
         meas_func = self.get_meas_quantity()
-        
+
         if 'R' not in meas_func:
             raise ValueError(f"Measurement function is {meas_func}: {self.MEAS_FUNCS[meas_func]}. Cannot measure capacitance.")
 
         self.trigger()
-        
+
         return float(self.get_value().split(',')[1])
 
     def impedance(self):
@@ -165,14 +165,13 @@ class hp4284A(scpi):
         """
         # Check if we selected a function that measures capacitance
         meas_func = self.get_meas_quantity()
-        
+
         if 'Z' not in meas_func:
             raise ValueError(f"Measurement function is {meas_func}: {self.MEAS_FUNCS[meas_func]}. Cannot measure capacitance.")
 
         self.trigger()
-        
+
         return float(self.get_value().split(',')[0])
-        
 
     def __init__(self, intf, conf):
         super().__init__(intf, conf)
@@ -180,7 +179,7 @@ class hp4284A(scpi):
         # Add getters for all measurement functions
         for mf in self.MEAS_FUNCS:
             self.__add_propertiy_getters(prop=mf, func=get_property(prop=mf))
-    
+
     @classmethod
     def __add_propertiy_getters(cls, prop, func):
         setattr(cls, prop, property(func))
