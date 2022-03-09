@@ -9,6 +9,6 @@ set_ac_voltage: VOLT
 get_ac_voltage: VOLT?
 set_frequency: FREQ
 get_frequency: FREQ?
-set_meas_quantity: FUNC:IMP
-get_meas_quantity: FUN:IMP?
+set_meas_func: FUNC:IMP
+get_meas_func: FUNC:IMP?
 get_value: FETC?
