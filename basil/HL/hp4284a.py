@@ -101,6 +101,7 @@ class hp4284A(scpi):
         """
         self.set_frequency(f'{freq}' if self._is_min_max(freq) else f'{freq}HZ')
 
+    @property
     def capacitance(self):
         """
         Getter of capacitance measurement. Checks if corresponding measurement function is set.
@@ -124,7 +125,8 @@ class hp4284A(scpi):
         self.trigger()
 
         return float(self.get_value().split(',')[0])
-
+    
+    @property
     def resistance(self):
         """
         Getter of resistance measurement. Checks if corresponding measurement function is set.
@@ -149,6 +151,7 @@ class hp4284A(scpi):
 
         return float(self.get_value().split(',')[1])
 
+    @property
     def impedance(self):
         """
         Getter of impedance measurement. Checks if corresponding measurement function is set.
@@ -174,7 +177,7 @@ class hp4284A(scpi):
         return float(self.get_value().split(',')[0])
 
     def __init__(self, intf, conf):
-        super().__init__(intf, conf)
+        super(hp4284A, self).__init__(intf, conf)
 
         # Add getters for all measurement functions
         for mf in self.MEAS_FUNCS:
