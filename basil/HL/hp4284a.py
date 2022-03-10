@@ -65,11 +65,11 @@ def get_meas_func(self, meas_func):
 
 class hp4284A(scpi):
     """
-    Interface to the Hewlett-Packard Precision LCR-meter with additional functionality
+    Interface to the Hewlett-Packard Precision LCR-meter with additional functionality.
+    Manual: https://wiki.epfl.ch/carplat/documents/hp4284a_lcr_manual.pdf
     """
 
-    # Available measurement functions
-    # See https://wiki.epfl.ch/carplat/documents/hp4284a_lcr_manual.pdf
+    # Available measurement functions; see manual 8-24, p.264
     MEAS_FUNCS = {
         'CPD': "Set function to C_p-D",
         'CPQ': "Set function to C_p-Q",
@@ -93,6 +93,7 @@ class hp4284A(scpi):
         'YTR': "Set function to Y-Theta(rad)"
     }
 
+    # Measurement error states; see manual 7-8, p.208
     ERROR_STATES = {
         '-1': "No dta (in the data buffer memory)",
         '+1': "Analog bridge is unbalanced",
