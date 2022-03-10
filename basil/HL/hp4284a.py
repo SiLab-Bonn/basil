@@ -51,7 +51,7 @@ def get_meas_func(self, meas_func):
         primary_meas, secondary_meas, meas_status = self.get_value().strip().split(',')
 
         # Check status
-        if meas_status != '0':
+        if meas_status != '+0':
             if meas_status not in self.ERROR_STATES:
                 err_msg = f"Unknown measurement status {meas_status} retrieved"
             else:
@@ -95,7 +95,7 @@ class hp4284A(scpi):
 
     # Measurement error states; see manual 7-8, p.208
     ERROR_STATES = {
-        '-1': "No dta (in the data buffer memory)",
+        '-1': "No data (in the data buffer memory)",
         '+1': "Analog bridge is unbalanced",
         '+2': "A/D converter is not working",
         '+3': "Signal source overloaded",
@@ -159,6 +159,16 @@ class hp4284A(scpi):
 
     @classmethod
     def __add_meas_func_getters(cls, meas_func, getter_func):
+        """
+        Classmethod that adds property getters for a given getter function
+
+        Parameters
+        ----------
+        meas_func : str
+            Name of the measurment function. This name corresponds to the property name aka cls.meas_func
+        getter_func : callable
+            The getter function of the corresponding meas_func
+        """
         setattr(cls, meas_func, property(getter_func))
 
     def _is_min_max(self, val):
