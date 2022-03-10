@@ -38,7 +38,7 @@ def get_meas_func(self, meas_func):
         # Check if *meas_func* is valid
         if meas_func not in self.MEAS_FUNCS:
             raise KeyError(f"Unknown measurment function {meas_func}")
-  
+
         # Check current function; if needed change functions
         if meas_func != self.get_meas_func().strip():
             logging.info(f"Setting measurement function to {meas_func}")
@@ -59,7 +59,7 @@ def get_meas_func(self, meas_func):
             raise RuntimeError(err_msg)
 
         return (float(primary_meas), float(secondary_meas))
-    
+
     return property_getter
 
 
