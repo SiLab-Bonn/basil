@@ -5,22 +5,60 @@
 # ------------------------------------------------------------
 #
 
+import logging
 from basil.HL.scpi import scpi
 
 
 def get_meas_func(self, meas_func):
+    """
+    Function that dynamically generates property getters for measurement functions defined in hp4284A.MEAS_FUNCS
+
+    Parameters
+    ----------
+    meas_func : str
+        Name of measurement function; all keys of self.MEAS_FUNCS are valid
+    """
 
     def property_getter(self):
+        """
+        Generate the property getter function
+
+        Returns
+        -------
+        tuple
+            Tuple of floats; primary and secondary measurment quantities according to the respective *meas_func*
+
+        Raises
+        ------
+        KeyError
+            *meas_func* is unkown aka not a key of self.MEAS_FUNCS
+        RuntimeError
+            The measurement status indicates an error
+        """
+        # Check if *meas_func* is valid
         if meas_func not in self.MEAS_FUNCS:
             raise KeyError(f"Unknown measurment function {meas_func}")
-
-        # Trigger measurement
-        self.trigger()
-
-        if meas_func != self.get_meas_func():
+  
+        # Check current function; if needed change functions
+        if meas_func != self.get_meas_func().strip():
+            logging.info(f"Setting measurement function to {meas_func}")
             self.set_meas_func(meas_func)
 
-        return tuple(float(val) for val in self.get_value().split(','))
+        # Check if a manual trigger is needed and trigger if so
+        self._check_trigger()
+
+        # Get primary and secondary measurement quantities as well as the measurement status
+        primary_meas, secondary_meas, meas_status = self.get_value().strip().split(',')
+
+        # Check status
+        if meas_status != '0':
+            if meas_status not in self.ERROR_STATES:
+                err_msg = f"Unknown measurement status {meas_status} retrieved"
+            else:
+                err_msg = self.ERROR_STATES[meas_status]
+            raise RuntimeError(err_msg)
+
+        return (float(primary_meas), float(secondary_meas))
     
     return property_getter
 
@@ -53,6 +91,14 @@ class hp4284A(scpi):
         'GB': "Set function to G-B",
         'YTD': "Set function to Y-Theta(deg)",
         'YTR': "Set function to Y-Theta(rad)"
+    }
+
+    ERROR_STATES = {
+        '-1': "No dta (in the data buffer memory)",
+        '+1': "Analog bridge is unbalanced",
+        '+2': "A/D converter is not working",
+        '+3': "Signal source overloaded",
+        '+4': "ALC unable to regulate"
     }
 
     @property
@@ -103,81 +149,6 @@ class hp4284A(scpi):
         """
         self.set_frequency(f'{freq}' if self._is_min_max(freq) else f'{freq}HZ')
 
-    @property
-    def capacitance(self):
-        """
-        Getter of capacitance measurement. Checks if corresponding measurement function is set.
-
-        Returns
-        -------
-        float
-            Capacitance
-
-        Raises
-        ------
-        ValueError
-            Measurement function is not set to measure capacitance
-        """
-        # Check if we selected a function that measures capacitance
-        meas_func = self.get_meas_func()
-
-        if 'C' not in meas_func:
-            raise ValueError(f"Measurement function is {meas_func}: {self.MEAS_FUNCS[meas_func]}. Cannot measure capacitance.")
-
-        self.trigger()
-
-        return float(self.get_value().split(',')[0])
-
-    @property
-    def resistance(self):
-        """
-        Getter of resistance measurement. Checks if corresponding measurement function is set.
-
-        Returns
-        -------
-        float
-            Resistance
-
-        Raises
-        ------
-        ValueError
-            Measurement function is not set to measure resistance
-        """
-        # Check if we selected a function that measures capacitance
-        meas_func = self.get_meas_func()
-
-        if 'R' not in meas_func:
-            raise ValueError(f"Measurement function is {meas_func}: {self.MEAS_FUNCS[meas_func]}. Cannot measure capacitance.")
-
-        self.trigger()
-
-        return float(self.get_value().split(',')[1])
-
-    @property
-    def impedance(self):
-        """
-        Getter of impedance measurement. Checks if corresponding measurement function is set.
-
-        Returns
-        -------
-        float
-            Impedance
-
-        Raises
-        ------
-        ValueError
-            Measurement function is not set to measure impedance
-        """
-        # Check if we selected a function that measures capacitance
-        meas_func = self.get_meas_func()
-
-        if 'Z' not in meas_func:
-            raise ValueError(f"Measurement function is {meas_func}: {self.MEAS_FUNCS[meas_func]}. Cannot measure capacitance.")
-
-        self.trigger()
-
-        return float(self.get_value().split(',')[0])
-
     def __init__(self, intf, conf):
         super(hp4284A, self).__init__(intf, conf)
 
@@ -191,3 +162,7 @@ class hp4284A(scpi):
 
     def _is_min_max(self, val):
         return val in ('MIN', 'MAX')
+
+    def _check_trigger(self):
+        if self.get_trigger_mode().strip() == 'HOLD':
+            self.trigger()
