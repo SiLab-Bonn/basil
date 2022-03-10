@@ -6,7 +6,7 @@ transfer_layer:
         
 hw_drivers:
   - name      : LCRMeter
-    type      : scpi
+    type      : hp4284a
     interface : Visa_lcr
     init      :
          device    : HP 4284A
