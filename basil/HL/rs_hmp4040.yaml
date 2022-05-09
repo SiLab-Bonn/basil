@@ -1,0 +1,26 @@
+# Device description for the Keithley 2400 Sourcemeter. 
+# set_ function expect a parameter, get_ function return a parameter.
+# Just the very basic commands are implemented here.
+identifier : HAMEG,HMP4040,105767,HW50020001/SW2.51
+
+_on : OUTP ON
+_off : OUTP OFF
+channel 1:
+    set_channel: INST OUT1
+channel 2:
+    set_channel: INST OUT2
+channel 3:
+    set_channel: INST OUT3
+channel 4:
+    set_channel: INST OUT4
+_set_output_on: OUTP:SEL 1
+_set_output_off: OUTP:SEL 0
+_set_ch_by_str: INST
+_set_voltage : VOLT
+_set_current : CURR
+_get_voltage : MEAS:VOLT?
+_get_current : MEAS:CURR?
+_get_target_voltage: VOLT?
+_get_target_current: CURR?
+_set_ovp: VOLT:PROT
+_get_ovp: VOLT:PROT?
