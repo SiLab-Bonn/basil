@@ -2,7 +2,7 @@ transfer_layer:
   - name     : Visa
     type     : Visa
     init     :
-        resource_name : ASRL/dev/ttyUSB1
+        resource_name : ASRL/dev/ttyUSB2
         read_termination : "\r\n"
         baud_rate : 9600
         backend : "@py"
@@ -10,7 +10,7 @@ transfer_layer:
 
 hw_drivers:
   - name      : PowerSupply
-    type      : rshmp4040
+    type      : scpi
     interface : Visa
     init      :
         device : rs_hmp4040
