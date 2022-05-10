@@ -6,8 +6,6 @@ transfer_layer:
         read_termination : "\r\n"
         baud_rate : 9600
         backend : "@py"
-
-
 hw_drivers:
   - name      : PowerSupply
     type      : scpi
