@@ -1,0 +1,15 @@
+# Device description for the Rohde & Schwarz PS
+# set_ function expect a parameter, get_ function return a parameter.
+identifier : HAMEG,HMP4040,105767,HW50020001/SW2.51
+on : OUTP ON
+off : OUTP OFF
+set_channel: INST:NSEL
+get_channel: INST:NSEL?
+set_voltage : VOLT
+set_current : CURR
+get_voltage : MEAS:VOLT?
+get_current : MEAS:CURR?
+get_target_voltage: VOLT?
+get_target_current: CURR?
+set_ovp: VOLT:PROT
+get_ovp: VOLT:PROT?
