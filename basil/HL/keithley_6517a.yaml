@@ -5,10 +5,48 @@ identifier : KEITHLEY INSTRUMENTS INC.,MODEL 6517A
 remote_enable : REN
 on : OUTP ON
 off : OUTP OFF
-#get_current : MEAS:CURR?
-get_current : READ?
+get_current : MEAS:CURR?
+get_read : READ?
+get_fetch : FETC?
 set_current_limit : SENS:CURR:PROT
 set_voltage : SOUR:VOLT
 get_voltage : MEAS:VOLT?
-trigger : TRIG:GET
+# trigger : TRIG:GET
 set_current_range : CURR:RANG
+get_current_range : CURR:RANG?
+set_autorange : CURR:RANG:AUTO ON
+set_autorange_upper: CURR:RANG:UPP
+set_current_func : SENS:FUNC 'CURR'
+
+set_voltage_func: SENS:FUNC 'VOLT'
+set_voltage_range: VOLT:RANG
+get_voltage_range: VOLT:RANG?
+set_V_autorange: VOLT:RANG:AUTO ON
+set_V_autorange_upper: VOLT:RANG:UPP
+
+set_Iavefilter_type: SENS:CURR:AVER:TCON
+set_Vavefilter_type: SENS:VOLT:AVER:TCON
+get_Iavefilter_type: SENS:CURR:AVER:TCON?
+get_Vavefilter_type: SENS:VOLT:AVER:TCON?
+filter_on: SENS:CURR:AVER ON
+V_filter_on: SENS:VOLT:AVER ON
+filter_off: SENS:CURR:AVER OFF
+V_filter_off: SENS:CURR:AVER OFF
+get_filter: SENS:CURR:AVER:STAT?
+get_V_filter: SENS:VOLT:AVER:STAT?
+set_Iavefilter_count: SENS:CURR:AVER:COUN
+set_Vavefilter_count: SENS:VOLT:AVER:COUN
+get_Iavefilter_count: SENS:CURR:AVER:COUN?
+get_Vavefilter_count: SENS:VOLT:AVER:COUN?
+
+config_curr : CONF:CURR
+config_volt : CONF:VOLT
+configQ : CONF?
+trigger : INIT
+trigger_conti_on : INIT:CONT ON
+trigger_conti_off : INIT:CONT OFF
+get_error : SYST:ERR?
+zero_check_on : SYST:ZCH ON
+zero_check_off : SYST:ZCH OFF
+zero_correct_on: SYST:ZCOR ON
+zero_correct_off: SYST:ZCOR OFF
