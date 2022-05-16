@@ -12,24 +12,38 @@ config_volt : CONF:VOLT
 configQ : CONF?
 
 # === The voltage source ===
-set_voltage : SOUR:VOLT
-on : OUTP ON
+set_voltage       : SOUR:VOLT
+set_source_range  : SOUR:VOLT:RANG  # 2 ranges available: MIN --> 100V, MAX --> 1000V
+connect_meter     : SOUR:VOLT:MCON ON
+disconnect_meter  : SOUR:VOLT:MCON OFF
+on  : OUTP ON
 off : OUTP OFF
 
 # === Zero Check ===
-zero_check_on : SYST:ZCH ON
-zero_check_off : SYST:ZCH OFF
-zero_correct_on: SYST:ZCOR ON
-zero_correctx_off: SYST:ZCOR OFF
+zero_check_on   : SYST:ZCH ON
+zero_check_off  : SYST:ZCH OFF
+zero_correct_on : SYST:ZCOR ON
+zero_correct_off: SYST:ZCOR OFF
 
 # === Measurements ===
 
 # >> Measure
-get_read : READ?
+get_read  : READ?
 get_fetch : FETC?
 
-get_current : MEAS:CURR?
-get_voltage : MEAS:VOLT?
+select_current : SENS:FUNC 'CURR'
+select_voltage : SENS:FUNC 'VOLT'
+
+# set the display resolution, where a number (or a string) can be specified to indicate the corresponding value
+#   4 (MIN)     --> 3.5 Digits
+#   5           --> 4.5 Digits
+#   6 (DEFalut) --> 5.5 Digits
+#   7 (MAX)     --> 6.5 Digits
+I_digits  : SENS:CURR:DIG
+V_digits  : SENS:CURR:DIG
+
+#get_current : MEAS:CURR?
+#get_voltage : MEAS:VOLT?
 
 # >> Trigger
 trigger : INIT
