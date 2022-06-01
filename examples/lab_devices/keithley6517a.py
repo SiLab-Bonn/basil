@@ -1,6 +1,8 @@
-'''
-This is an example for keithley6517a electrometer
-'''
+###################################################
+# This is an example for keithley6517a electrometer
+# Last Modified: Mi 01 Jun 2022 07:30:23  CEST
+###################################################
+
 import time
 from basil.dut import Dut
 from basil.TL.Visa import visa

@@ -1,4 +1,7 @@
-# Device description for the Keithley 6517A Electrometer. 
+########################################################
+# Device description for the Keithley 6517A Electrometer 
+# Last Modified: Mi 01 Jun 2022 07:32:43  CEST
+########################################################
 
 identifier : KEITHLEY INSTRUMENTS INC.,MODEL 6517A
 

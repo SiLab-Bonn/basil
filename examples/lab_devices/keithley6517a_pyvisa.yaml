@@ -1,3 +1,8 @@
+#################################################
+# An example for setting up the remote connection
+# Last Modified: Mi 01 Jun 2022 07:31:34  CEST
+#################################################
+
 transfer_layer:
   - name: electrometer
     type: Visa
