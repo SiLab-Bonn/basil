@@ -5,8 +5,6 @@
 
 import time
 from basil.dut import Dut
-from basil.TL.Visa import visa
-
 ##################
 # Initialisation #
 ##################
