@@ -21,6 +21,7 @@ dut.init()
 #############################
 
 def Rem_Set(CRange, SourceRange):
+
     '''
     The function to set up the device remotely. Following setting commands will be sequentially
         executed. This procedure can be manually done using the front panel of the device.
@@ -28,7 +29,6 @@ def Rem_Set(CRange, SourceRange):
     dut['EMeter'].connect_meter()         # connect the source and meter (default: OFF) (better done manually unless you are sure what you are doing)
     dut['EMeter'].select_current()          # select current measurement
     time.sleep(0.5)
-
     # Perform zero correction
     # set the smallest range for zero check
     dut['EMeter'].set_current_range(20e-12)     # unit is A (everywhere)
@@ -52,8 +52,9 @@ def Rem_Set(CRange, SourceRange):
     time.sleep(0.5)
     dut['EMeter'].set_source_range(SourceRange)   # set the output limit of the voltage source to 1000V (MAX)
 
+
 # Apply the settings remotely
-Rem_Set(20e-6,'MAX')
+Rem_Set(20e-6, 'MAX')
 
 ###################
 # End of settings #
