@@ -75,6 +75,6 @@ print(II)
 # End of measurement #
 ######################
 
-# turn the zero check back on after measurements, then the measurement circuit can be 
+# turn the zero check back on after measurements, then the measurement circuit can be
 #   modified while the zero check is on (recommended by the manual)
 dut['EMeter'].zero_check_on()
