@@ -19,32 +19,41 @@ dut.init()
 #############################
 # Settings for Electrometer #
 #############################
-# dut['EMeter'].connect_meter()         # connect the source and meter (default: OFF) (better done manually unless you are sure what you are doing)
-dut['EMeter'].select_current()          # select current measurement
-time.sleep(0.5)
 
-# Perform zero correction
-# set the smallest range for zero check
-dut['EMeter'].set_current_range(20e-12)     # unit is A (everywhere)
-time.sleep(0.5)
-dut['EMeter'].zero_correct_on()
-time.sleep(0.5)
-# set an appropriate range for measurements
-dut['EMeter'].set_current_range(20e-6)
-time.sleep(0.5)
-dut['EMeter'].zero_check_off()
+def Rem_Set(CRange, SourceRange):
+    '''
+    The function to set up the device remotely. Following setting commands will be sequentially
+        executed. This procedure can be manually done using the front panel of the device.
+    '''
+    dut['EMeter'].connect_meter()         # connect the source and meter (default: OFF) (better done manually unless you are sure what you are doing)
+    dut['EMeter'].select_current()          # select current measurement
+    time.sleep(0.5)
 
-# check and configure the filter
-time.sleep(0.5)
-dut['EMeter'].set_Iavefilter_type('REP')            # "REP" means repeating
-dut['EMeter'].set_Iavefilter_count('10')            # take 10 values for averaging
-time.sleep(0.5)
-dut['EMeter'].I_filter_on()                           # turn on the filter
-time.sleep(0.5)
-# set trigger status
-dut['EMeter'].trigger_conti_off()                   # turn off the continuous trigger
-time.sleep(0.5)
-dut['EMeter'].set_source_range('MAX')   # set the output limit of the voltage source to 1000V (MAX)
+    # Perform zero correction
+    # set the smallest range for zero check
+    dut['EMeter'].set_current_range(20e-12)     # unit is A (everywhere)
+    time.sleep(0.5)
+    dut['EMeter'].zero_correct_on()
+    time.sleep(0.5)
+    # set an appropriate range for measurements
+    dut['EMeter'].set_current_range(CRange)
+    time.sleep(0.5)
+    dut['EMeter'].zero_check_off()
+
+    # check and configure the filter
+    time.sleep(0.5)
+    dut['EMeter'].set_Iavefilter_type('REP')            # "REP" means repeating
+    dut['EMeter'].set_Iavefilter_count('10')            # take 10 values for averaging
+    time.sleep(0.5)
+    dut['EMeter'].I_filter_on()                           # turn on the filter
+    time.sleep(0.5)
+    # set trigger status
+    dut['EMeter'].trigger_conti_off()                   # turn off the continuous trigger
+    time.sleep(0.5)
+    dut['EMeter'].set_source_range(SourceRange)   # set the output limit of the voltage source to 1000V (MAX)
+
+# Apply the settings remotely
+Rem_Set(20e-6,'MAX')
 
 ###################
 # End of settings #
