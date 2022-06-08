@@ -20,8 +20,8 @@ dut.init()
 # Settings for Electrometer #
 #############################
 
-def Rem_Set(CRange, SourceRange):
 
+def Rem_Set(CRange, SourceRange):
     '''
     The function to set up the device remotely. Following setting commands will be sequentially
         executed. This procedure can be manually done using the front panel of the device.
