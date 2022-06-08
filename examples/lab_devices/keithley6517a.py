@@ -21,7 +21,7 @@ dut.init()
 #############################
 
 
-def Rem_Set(CRange, SourceRange):
+def Rem_Set(CurrentRange, SourceRange):
     '''
     The function to set up the device remotely. Following setting commands will be sequentially
         executed. This procedure can be manually done using the front panel of the device.
@@ -36,7 +36,7 @@ def Rem_Set(CRange, SourceRange):
     dut['EMeter'].zero_correct_on()
     time.sleep(0.1)
     # set an appropriate range for measurements
-    dut['EMeter'].set_current_range(CRange)
+    dut['EMeter'].set_current_range(CurrentRange)
     time.sleep(0.1)
     dut['EMeter'].zero_check_off()
 
