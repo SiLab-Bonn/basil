@@ -1,6 +1,6 @@
 #################################################
 # An example for setting up the remote connection
-# Last Modified: Mi 01 Jun 2022 07:31:34  CEST
+# Last Modified: Mi 08 Jun 2022 11:23:21  CEST
 #################################################
 
 transfer_layer:
@@ -8,8 +8,8 @@ transfer_layer:
     type: Visa
     init:
         # using serial-USB adapter
-        resource_name: ASRLCOM6         # example for windows system
-#        resource_name: ASRL/dev/ttyUSB0 # example for linux system 
+#        resource_name: ASRLCOM6         # example for windows system
+        resource_name: ASRL/dev/ttyUSB0 # example for linux system 
         timeout : 1000
         read_termination: "\n"
         baud_rate: 19200
