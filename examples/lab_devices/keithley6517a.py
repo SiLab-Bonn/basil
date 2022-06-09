@@ -85,4 +85,3 @@ dut['EMeter'].off()                # turn off the source output
 dut['EMeter'].zero_check_on()
 time.sleep(0.1)
 dut['Emeter'].zero_correct_off()
-
