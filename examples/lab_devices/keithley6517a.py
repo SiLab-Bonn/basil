@@ -1,6 +1,6 @@
 ###################################################
 # This is an example for keithley6517a electrometer
-# Last Modified: Mi 08 Jun 2022 11:23:04  CEST
+# Last Modified: Do 09 Jun 2022 12:06:20  CEST
 ###################################################
 
 import time
@@ -83,3 +83,5 @@ dut['EMeter'].off()                # turn off the source output
 # turn the zero check back on after measurements, then the measurement circuit can be
 #   modified while the zero check is on (recommended by the manual)
 dut['EMeter'].zero_check_on()
+time.sleep(0.1)
+dut['Emeter'].zero_correct_off()
