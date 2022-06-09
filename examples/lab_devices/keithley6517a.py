@@ -1,6 +1,6 @@
 ###################################################
 # This is an example for keithley6517a electrometer
-# Last Modified: Do 09 Jun 2022 12:10:49  CEST
+# Last Modified: Do 09 Jun 2022 12:21:44  CEST
 ###################################################
 
 import time
