@@ -1,6 +1,6 @@
 ###################################################
 # This is an example for keithley6517a electrometer
-# Last Modified: Do 09 Jun 2022 12:06:20  CEST
+# Last Modified: Do 09 Jun 2022 12:08:49  CEST
 ###################################################
 
 import time
@@ -85,3 +85,4 @@ dut['EMeter'].off()                # turn off the source output
 dut['EMeter'].zero_check_on()
 time.sleep(0.1)
 dut['Emeter'].zero_correct_off()
+
