@@ -1,0 +1,22 @@
+#################################################
+# An example for setting up the remote connection
+# Last Modified: Mi 08 Jun 2022 11:23:21  CEST
+#################################################
+
+transfer_layer:
+  - name: electrometer
+    type: Visa
+    init:
+        # using serial-USB adapter
+#        resource_name: ASRLCOM6         # example for windows system
+        resource_name: ASRL/dev/ttyUSB0 # example for linux system 
+        timeout : 1000
+        read_termination: "\n"
+        baud_rate: 19200
+        backend: '@py'
+hw_drivers:
+  - name: EMeter
+    type: scpi
+    interface: electrometer
+    init:
+        device: keithley 6517a
