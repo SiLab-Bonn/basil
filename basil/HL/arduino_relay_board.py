@@ -34,7 +34,7 @@ class RelayBoard(HardwareLayer):
         self._intf.write('GPIO%d %d\r\n' % (channel, value))
 
         ret = self._intf.read()  # Wait for response of Arduino
-        print(channel, ret, value)
+
         error = False
         if channel == 99 and int(ret) != value * 1111111111:
             error = True
