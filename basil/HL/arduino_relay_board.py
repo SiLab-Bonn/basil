@@ -8,13 +8,13 @@
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 
-class Arduino(HardwareLayer):
+class RelayBoard(HardwareLayer):
     '''
     Implement functions to control the Arduino digital IO using the Basil Arduino firmware.
     '''
 
     def __init__(self, intf, conf):
-        super(Arduino, self).__init__(intf, conf)
+        super(RelayBoard, self).__init__(intf, conf)
 
     def set_output(self, channel, value):
         if value == 'ON':
@@ -34,7 +34,7 @@ class Arduino(HardwareLayer):
         self._intf.write('GPIO%d %d\r\n' % (channel, value))
 
         ret = self._intf.read()  # Wait for response of Arduino
-
+        print(channel, ret, value)
         error = False
         if channel == 99 and int(ret) != value * 1111111111:
             error = True
