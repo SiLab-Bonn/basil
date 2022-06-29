@@ -15,7 +15,9 @@ from basil.dut import Dut
 dut = Dut('arduino_relay_board.yaml')
 dut.init()
 
-time.sleep(2)  # Wait for Arduino to reset
+time.sleep(1)  # Wait for Arduino to reset
 
-dut['RelayBoard'].set_output(channel=13, value=1)
-dut['RelayBoard'].set_output(channel='ALL', value='OFF')
+dut['RelayBoard'].set_output(channel=8, value='ON')
+print(dut['RelayBoard'].get_state())
+dut['RelayBoard'].set_output(channel=8, value='OFF')
+print(dut['RelayBoard'].get_state())

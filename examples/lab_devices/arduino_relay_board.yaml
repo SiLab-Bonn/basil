@@ -5,6 +5,7 @@ transfer_layer:
         port     : /dev/ttyUSB1
         baudrate : 9600
         timeout: 2
+        read_termination: '\r\n'
 
 hw_drivers:
   - name      : RelayBoard
