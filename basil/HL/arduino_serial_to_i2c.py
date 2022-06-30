@@ -74,7 +74,7 @@ class SerialToI2C(ArduinoBase):
         -------
         str
             I2C return code as in self.I2C_RETURN_CODES
-        
+
         Raises
         ------
         NotImplementedError

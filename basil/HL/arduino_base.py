@@ -109,9 +109,9 @@ class ArduinoBase(HardwareLayer):
         """
         Create command string according to specified format.
         Arguments to this function are formatted and separated using self._DELIM
-        
+
         Examples:
-        
+
         self.create_command('W', 0x03, 0xFF) -> 'W:3:255:'
         self.create_command('R', 0x03) -> 'R:3:'
 
