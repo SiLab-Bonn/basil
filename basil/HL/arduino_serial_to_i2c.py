@@ -5,7 +5,7 @@ class I2CTransmissionError(ValueError):
     pass
 
 
-class ArduinoToI2C(ArduinoBase):
+class SerialToI2C(ArduinoBase):
 
     CMDS = {
         'write': 'W',
@@ -21,7 +21,7 @@ class ArduinoToI2C(ArduinoBase):
     # Check https://www.arduino.cc/en/Reference/WireEndTransmission
     I2C_RETURN_CODES = {
         '0': "Success",
-        '1': "Rata too long to fit in transmit buffer",
+        '1': "Data too long to fit in transmit buffer",
         '2': "Received NACK on transmit of address",
         '3': "Received NACK on transmit of data",
         '4': "Other error"
@@ -57,7 +57,7 @@ class ArduinoToI2C(ArduinoBase):
         self._set_and_retrieve(cmd='address', val=int(addr), exception_=I2CTransmissionError)
 
     def __init__(self, intf, conf):
-        super(ArduinoToI2C, self).__init__(intf, conf)
+        super(SerialToI2C, self).__init__(intf, conf)
 
     def query_i2c(self, msg):
         """
