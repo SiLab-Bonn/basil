@@ -12,7 +12,7 @@ class NTCReadout(ArduinoBase):
         'temp': 'T',
         'samples': 'S'
     }
-    
+
     ERRORS = {
         '999': "Invalid NTC pin",
         'error': "Serial transmission error"  # Custom return code for unsuccesful serial communciation
@@ -48,5 +48,5 @@ class NTCReadout(ArduinoBase):
             if not self.ntc_limits[0] <= result[sens] <= self.ntc_limits[1]:
                 msg = f"NTC {sens} out of calibration range (NTC_{sens}={result[sens]} °C, NTC_range={self.ntc_limits} °C)."
                 logger.warning(msg)
-        
+
         return result

@@ -21,7 +21,6 @@ print(f"Communication delay after command to Arduino is {dut['SerialToI2C'].comm
 dut['SerialToI2C'].communication_delay = 5  # Set delay between two commands to 5 milli seconds
 print(f"Communication delay after command to Arduino is {dut['SerialToI2C'].communication_delay} ms")
 
-
 print(f"I2C bus address to write to is {dut['SerialToI2C'].i2c_address}")
 dut['SerialToI2C'].i2c_address = 0x20  # Set I2C address
 print(f"I2C bus address to write to is {dut['SerialToI2C'].i2c_address}")

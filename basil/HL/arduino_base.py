@@ -3,9 +3,9 @@ from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 
 class ArduinoBase(HardwareLayer):
-    
+
     CMD_DELIMITER = ':'
-    
+
     CMDS = {
         'communication_delay': 'D'
     }
@@ -67,12 +67,11 @@ class ArduinoBase(HardwareLayer):
         RuntimeError
             Value read from serial bus is an error
         """
-
         read_value = str(self._intf.read()).strip()
 
         if read_value in self.ERRORS:
             raise RuntimeError(self.ERRORS[read_value])
-        
+
         return read_value
 
     def write(self, msg):
@@ -81,7 +80,6 @@ class ArduinoBase(HardwareLayer):
     def query(self, msg):
         self.write(msg)
         return self.read()
-
 
     def _set_and_retrieve(self, cmd, val, exception_=RuntimeError):
         """
@@ -102,12 +100,11 @@ class ArduinoBase(HardwareLayer):
         exception_
             Exception is raised when set and retrieved values differ
         """
-        # The self.CMDS['cmd'].lower() invokes the setter, self.CMDS['cmd'] the getter 
+        # The self.CMDS['cmd'].lower() invokes the setter, self.CMDS['cmd'] the getter
         ret_val = self.query(self.create_command(self.CMDS[cmd].lower(), val))
         if ret_val != str(val):
             raise exception_(f"Retrieved value for command {cmd} ({ret_val}) different from set value ({val})")
 
-    
     def create_command(self, *args):
         """
         Create command string according to specified format.

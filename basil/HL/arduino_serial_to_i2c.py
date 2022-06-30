@@ -13,7 +13,7 @@ class SerialToI2C(ArduinoBase):
         'address': 'A',
         'check': 'T'
     }
-    
+
     ERRORS = {
         'error': "Serial transmission error"  # Custom return code for unsuccesful serial communciation
     }
@@ -84,12 +84,12 @@ class SerialToI2C(ArduinoBase):
         """
         try:
             i2c_return_code = self.query(msg)
-            
+
             if i2c_return_code != '0':
                 if i2c_return_code not in self.I2C_RETURN_CODES:
                     raise NotImplementedError(f"Unknown return code {i2c_return_code}")
                 raise I2CTransmissionError(self.I2C_RETURN_CODES[i2c_return_code])
-            
+
             return i2c_return_code
 
         except RuntimeError:
@@ -124,7 +124,7 @@ class SerialToI2C(ArduinoBase):
             Data to write to register *reg*
         """
         self.query_i2c(self.create_command(self.CMDS['write'], reg, data))
-    
+
     def check_i2c_connection(self):
         """
         Checks the i2c connection from arduino to bus device
