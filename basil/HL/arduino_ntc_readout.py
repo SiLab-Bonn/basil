@@ -1,9 +1,11 @@
 import logging
-
 from basil.HL.arduino_base import ArduinoBase
 
 
-class ArduinoNTCReadout(ArduinoBase):
+logger = logging.getLogger(__name__)
+
+
+class NTCReadout(ArduinoBase):
     """Class to read from Arduino temperature sensor setup"""
 
     CMDS = {
@@ -25,7 +27,7 @@ class ArduinoNTCReadout(ArduinoBase):
         self._set_and_retrieve(cmd='samples', val=int(n_samples))
 
     def __init__(self, intf, conf):
-        super(ArduinoNTCReadout, self).__init__(intf, conf)
+        super(NTCReadout, self).__init__(intf, conf)
         # Store temperature limits of NTC thermistor
         self.ntc_limits = tuple(self._init.get('ntc_limits', (-55, 120)))
 
@@ -44,8 +46,7 @@ class ArduinoNTCReadout(ArduinoBase):
 
         for sens in result:
             if not self.ntc_limits[0] <= result[sens] <= self.ntc_limits[1]:
-                msg = f"NTC {sens} out of clibration range (NTC_{sens}={result[sens]} °C, NTC_range=({self.ntc_lim[0]};{self.ntc_lim[1]}) °C)."
-                msg += " Is the thermistor connected correctly?"
-                logging.warning(msg)
+                msg = f"NTC {sens} out of calibration range (NTC_{sens}={result[sens]} °C, NTC_range={self.ntc_limits} °C)."
+                logger.warning(msg)
         
         return result
