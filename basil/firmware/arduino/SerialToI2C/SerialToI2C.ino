@@ -207,7 +207,7 @@ void loop(){
     }
     else {
       Serial.println("error");
-      resetIncoming();
+      // resetIncoming(); //Does not do what I want
     }
 
   }

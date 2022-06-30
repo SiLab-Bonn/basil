@@ -119,6 +119,7 @@ void printNTCTemps(){
     if (0 <= ntcPin && ntcPin < 8) {
       // Send out, two decimal places, wait
       Serial.println(getTemp(NTC_PINS[ntcPin]), 2);
+      delay(50);
     }
     else {
       // Pin out of range
@@ -138,8 +139,14 @@ void resetIncoming(){
 
 
 void setup(void){
+  /*
+   * initiliaze with external ref voltage
+   * initialize Serial communication with baudrate Serial.begin(<baudrate>)
+   * delay 500ms to let connections and possible setups to be established
+   */
   Serial.begin(115200); // Initialize serial connection
   analogReference(EXTERNAL); // Set 3.3V as external reference voltage instead of internal 5V reference
+  delay(500);
 }
 
 
@@ -157,11 +164,10 @@ void loop(void){
       // Lowercase means we want to set some value and print back that value on the serial bus
       if (isLowerCase(serialBuffer[0])){
 
-        // Set numper of samples
+        // Set number of samples
         if (toupper(serialBuffer[0]) == SAMPLE_CMD){
           processIncoming();
           nSamples = atoi(serialBuffer);
-          processIncoming();
           Serial.println(nSamples);
         }
 
@@ -197,7 +203,7 @@ void loop(void){
 
     } else{
       Serial.println("error");
-      resetIncoming();
+      // resetIncoming(); //Does not do what I want
     }
   }
   delay(serialDelayMillis);
