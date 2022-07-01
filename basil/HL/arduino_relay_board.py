@@ -23,7 +23,6 @@ class RelayBoard(ArduinoBase):
         'error': "Serial transmission error"  # Custom return code for unsuccesful serial communciation
     }
 
-
     def __init__(self, intf, conf):
         super(RelayBoard, self).__init__(intf, conf)
 

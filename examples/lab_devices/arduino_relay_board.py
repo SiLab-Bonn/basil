@@ -28,6 +28,6 @@ for i in range(2, 12):
     dut['RelayBoard'].set_output(channel=i, value='ON')
     print(f"State of RelayBoard is: {dut['RelayBoard'].get_state()}")
 
-print(f"Switching off all channels")
+print("Switching off all channels")
 dut['RelayBoard'].set_output(channel='ALL', value='OFF')
 print(f"State of RelayBoard is: {dut['RelayBoard'].get_state()}")
