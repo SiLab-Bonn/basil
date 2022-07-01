@@ -5,13 +5,24 @@
 # ------------------------------------------------------------
 #
 
-from basil.HL.RegisterHardwareLayer import HardwareLayer
+from basil.HL.arduino_base import ArduinoBase
 
 
-class RelayBoard(HardwareLayer):
+class RelayBoard(ArduinoBase):
     '''
     Implement functions to control the Arduino digital IO using the Basil Arduino firmware.
     '''
+
+    CMDS = {
+        'read': 'R',
+        'write': 'W',
+        'delay': 'D'
+    }
+
+    ERRORS = {
+        'error': "Serial transmission error"  # Custom return code for unsuccesful serial communciation
+    }
+
 
     def __init__(self, intf, conf):
         super(RelayBoard, self).__init__(intf, conf)
@@ -31,9 +42,7 @@ class RelayBoard(HardwareLayer):
         if channel < 2 or (channel > 13 and channel != 99):
             raise ValueError('Arduino supports only 14 IOs and pins 0 and 1 are blocked by Serial communication. %d is out of range.' % channel)
 
-        self._intf.write('GPIO%d %d\r\n' % (channel, value))
-
-        ret = self._intf.read()  # Wait for response of Arduino
+        ret = self.query(self.create_command(self.CMDS['write'], channel, value))
 
         error = False
         if channel == 99 and int(ret) != value * 1111111111:
@@ -45,5 +54,4 @@ class RelayBoard(HardwareLayer):
             raise RuntimeError('Got no or wrong response from Arduino!')
 
     def get_state(self):
-        self._intf.write('?\r\n')
-        return self._intf.read()
+        return self.query(self.create_command(self.CMDS['read']))

@@ -1,21 +1,39 @@
-void setup() {
-  Serial.begin(9600);
-  
-  pinMode(2, OUTPUT);
-  pinMode(3, OUTPUT);
-  pinMode(4, OUTPUT);
-  pinMode(5, OUTPUT);
-  pinMode(6, OUTPUT);
-  pinMode(7, OUTPUT);
-  pinMode(8, OUTPUT);
-  pinMode(9, OUTPUT);
-  pinMode(10, OUTPUT);
-  pinMode(11, OUTPUT);
+const char END = '\n';
+const uint8_t END_PEEK = int(END); // Serial.peek returns byte as dtype int
+const char DELIM = ':';
+const char NULL_TERM = '\0';
 
-  for (int x = 2; x<=11; x++){
-    digitalWrite(x, LOW);
+size_t nProcessedBytes;
+const size_t BUF_SIZE = 32;
+char serialBuffer[BUF_SIZE]; // Max buffer 32 bytes in incoming serial data
+
+// Commands
+const char READ_CMD = 'R';
+const char WRITE_CMD = 'W';
+const char DELAY_CMD = 'D';
+
+// Variables coming in over serial
+uint8_t varPin;
+uint8_t varState;
+uint16_t serialDelayMillis = 1; // Delay between Serial.available() checks
+
+
+void processIncoming(){
+
+  // We have reached the end of the transmission; clear serial by calling read
+  if (Serial.peek() == END_PEEK){
+    Serial.read();
+    serialBuffer[0] = NULL_TERM;
+  }
+  else {
+    // Read to buffer until delimiter
+    nProcessedBytes = Serial.readBytesUntil(DELIM, serialBuffer, BUF_SIZE);
+
+    // Null-terminate string
+    serialBuffer[nProcessedBytes] = NULL_TERM;
   }
 }
+
 
 void send_state() {
   char str[] = "0000000000";
@@ -32,30 +50,76 @@ void send_state() {
   Serial.println(str);
 }
 
+
+void setup() {
+
+  // Initialize as outputs and off
+  for (int i = 2; i <= 11; i++) {
+    pinMode(i, OUTPUT);
+    digitalWrite(i, LOW);
+  }
+  // Begin serial connection adn wait to establish
+  Serial.begin(115200);
+  delay(500);
+}
+
+
 void loop() {
-  char c;
-  char l;
-  int pin;
-  int state;
   
   if (Serial.available()) {
-    c = Serial.read();
-    if (c == 'O') {
-      pin = Serial.parseInt();
-      l = Serial.read();
-      state = Serial.parseInt();
 
+    processIncoming();
 
-      if (pin == 99) {
-        for (int x = 2; x<=11; x++){
-          digitalWrite(x, state);
+    // First processing should yield a single char because it the cmd
+    if (strlen(serialBuffer) == 1){
+
+      // Lowercase means we want to set some value and print back that value on the serial bus
+      if (isLowerCase(serialBuffer[0])){
+
+        // Set serial dealy in millis
+        if (toupper(serialBuffer[0]) == DELAY_CMD){
+          processIncoming();
+          serialDelayMillis = atoi(serialBuffer);
+          Serial.println(serialDelayMillis);
         }
-      } else {
-        digitalWrite(pin, state);
+      } else{
+
+        // Return serial delay millis
+        if (serialBuffer[0] == DELAY_CMD){
+          Serial.println(serialDelayMillis);
+        }
+
+        // Read the state
+        if (serialBuffer[0] == READ_CMD){
+          send_state();
+        }
+
+        // Write the state
+        if (serialBuffer[0] == WRITE_CMD){
+          processIncoming();
+          varPin = atoi(serialBuffer);
+          processIncoming();
+          varState = atoi(serialBuffer);
+          
+          if (varPin == 99) {
+            for (int x = 2; x <= 11; x++){
+              digitalWrite(x, varState);
+            }
+          } else {
+            digitalWrite(varPin, varState);
+          }
+          send_state();
+        }
       }
-      send_state();
-    } else if (c == '?') {
-      send_state();
+
+      // At this point command should have been processed
+      // This last call to processIncoming should just remove the END char from serial buffer
+      processIncoming();
+
+    } else {
+      Serial.println("error");
     }
+
   }
+  delay(serialDelayMillis);
 }
