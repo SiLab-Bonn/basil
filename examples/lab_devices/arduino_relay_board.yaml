@@ -3,9 +3,10 @@ transfer_layer:
     type     : Serial
     init     :
         port     : /dev/ttyUSB1
-        baudrate : 9600
+        baudrate : 115200
         timeout: 2
-        read_termination: '\r\n'
+        read_termination : "\r\n"
+        write_termination : "\n"
 
 hw_drivers:
   - name      : RelayBoard

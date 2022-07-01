@@ -15,9 +15,19 @@ from basil.dut import Dut
 dut = Dut('arduino_relay_board.yaml')
 dut.init()
 
-time.sleep(1)  # Wait for Arduino to reset
+time.sleep(2)  # Wait for Arduino to reset
 
-dut['RelayBoard'].set_output(channel=8, value='ON')
-print(dut['RelayBoard'].get_state())
-dut['RelayBoard'].set_output(channel=8, value='OFF')
-print(dut['RelayBoard'].get_state())
+print(f"Communication delay after command to Arduino is {dut['RelayBoard'].communication_delay} ms")
+dut['RelayBoard'].communication_delay = 5  # Set delay between two commands to 5 milli seconds
+print(f"Communication delay after command to Arduino is {dut['RelayBoard'].communication_delay} ms")
+
+print(f"State of RelayBoard is: {dut['RelayBoard'].get_state()}")
+
+for i in range(2, 12):
+    print(f"Switching on channel {i}")
+    dut['RelayBoard'].set_output(channel=i, value='ON')
+    print(f"State of RelayBoard is: {dut['RelayBoard'].get_state()}")
+
+print(f"Switching off all channels")
+dut['RelayBoard'].set_output(channel='ALL', value='OFF')
+print(f"State of RelayBoard is: {dut['RelayBoard'].get_state()}")
