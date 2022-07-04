@@ -1,0 +1,14 @@
+transfer_layer:
+  - name     : Serial
+    type     : Serial
+    init     :
+        port     : /dev/ttyUSB1
+        baudrate : 115200
+        timeout: 1
+        read_termination: "\r\n"
+        write_termination: "\n"
+
+hw_drivers:
+  - name      : SerialToI2C
+    type      : arduino_serial_to_i2c
+    interface : Serial

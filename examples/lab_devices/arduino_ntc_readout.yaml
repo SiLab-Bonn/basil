@@ -1,0 +1,16 @@
+transfer_layer:
+  - name     : Serial
+    type     : Serial
+    init     :
+        port     : /dev/ttyUSB1
+        baudrate : 115200
+        timeout: 2
+        read_termination: "\r\n"  # Needs to be double-quoted string for YAML to parse this correctly
+        write_termination: "\n"   # Needs to be double-quoted string for YAML to parse this correctly
+
+hw_drivers:
+  - name      : NTCReadout
+    type      : arduino_ntc_readout
+    interface : Serial
+    init :
+      ntc_limits : [-55, 120]
