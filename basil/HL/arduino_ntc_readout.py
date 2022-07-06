@@ -61,7 +61,7 @@ class NTCReadout(ArduinoBase):
     @resistance.setter
     def resistance(self, resistance):
         self._set_and_retrieve(cmd='res', val=float(resistance))
-    
+
     def __init__(self, intf, conf):
         super(NTCReadout, self).__init__(intf, conf)
         # Store temperature limits of NTC thermistor
