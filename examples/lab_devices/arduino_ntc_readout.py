@@ -26,5 +26,22 @@ print(f"Number of samples to average NTC measurement is {dut['NTCReadout'].n_sam
 dut['NTCReadout'].n_samples = 10  # Set amount of NTC measurements to average
 print(f"Number of samples to average NTC measurement is {dut['NTCReadout'].n_samples}")
 
+print(f"Beta coefficient is {dut['NTCReadout'].beta_coefficient} Kelvin")
+dut['NTCReadout'].beta_coefficient = 3450  # Set beta in K
+print(f"Beta coefficient is {dut['NTCReadout'].beta_coefficient} Kelvin")
+
+print(f"Nominal NTC resistance is {dut['NTCReadout'].nominal_resistance} Ohm")
+dut['NTCReadout'].nominal_resistance = 20e3  # Set nom. res. in Ohm
+print(f"Nominal NTC resistance is {dut['NTCReadout'].nominal_resistance} Ohm")
+
+print(f"Nominal NTC temperature is {dut['NTCReadout'].nominal_temperature} °C")
+dut['NTCReadout'].nominal_temperature = 30  # Set nom. res. in Ohm
+print(f"Nominal NTC temperature is {dut['NTCReadout'].nominal_temperature} °C")
+
+print(f"Resistor value is {dut['NTCReadout'].resistance} Ohm")
+dut['NTCReadout'].resistance = 15e3  # Set res. in Ohm
+print(f"Nominal NTC temperature is {dut['NTCReadout'].resistance} Ohm")
+
+# Read temperature in degree C for the first 4 inputs
 for _ in range(10):
     print(dut['NTCReadout'].get_temp(list(range(4))))
