@@ -40,8 +40,8 @@ class ArduinoBase(HardwareLayer):
 
     def __init__(self, intf, conf):
         super(ArduinoBase, self).__init__(intf, conf)
-        self.CMDS.update(ArduinoBase.CMDS)
-        self.ERRORS.update(ArduinoBase.ERRORS)
+        self.CMDS = {**ArduinoBase.CMDS, **self.CMDS}
+        self.ERRORS = {**ArduinoBase.ERRORS, **self.ERRORS}
 
     def reset_buffers(self):
         """
@@ -102,8 +102,22 @@ class ArduinoBase(HardwareLayer):
         """
         # The self.CMDS['cmd'].lower() invokes the setter, self.CMDS['cmd'] the getter
         ret_val = self.query(self.create_command(self.CMDS[cmd].lower(), val))
-        if ret_val != str(val):
-            raise exception_(f"Retrieved value for command {cmd} ({ret_val}) different from set value ({val})")
+
+        # Perform check
+        success = True
+        try:
+            if isinstance(val, int):
+                success = int(ret_val) == val
+            elif isinstance(val, float):
+                success = float(ret_val) == val
+            else:
+                success = ret_val == val
+        except ValueError:
+            success = False
+
+        if not success:
+            exception_message = f"Retrieved value for command {cmd} ({ret_val}, '{type(ret_val)}') different from set value ({val}, '{type(val)}')"
+            raise exception_(exception_message)
 
     def create_command(self, *args):
         """
