@@ -40,7 +40,17 @@ print(f"Nominal NTC temperature is {dut['NTCReadout'].nominal_temperature} °C")
 
 print(f"Resistor value is {dut['NTCReadout'].resistance} Ohm")
 dut['NTCReadout'].resistance = 15e3  # Set res. in Ohm
-print(f"Nominal NTC temperature is {dut['NTCReadout'].resistance} Ohm")
+print(f"Resistor value is {dut['NTCReadout'].resistance} Ohm")
+
+print("Restore defaults")
+dut['NTCReadout'].restore_defaults()
+
+print(f"Communication delay after command to Arduino is {dut['NTCReadout'].communication_delay} ms")
+print(f"Number of samples to average NTC measurement is {dut['NTCReadout'].n_samples}")
+print(f"Beta coefficient is {dut['NTCReadout'].beta_coefficient} Kelvin")
+print(f"Nominal NTC resistance is {dut['NTCReadout'].nominal_resistance} Ohm")
+print(f"Nominal NTC temperature is {dut['NTCReadout'].nominal_temperature} °C")
+print(f"Resistor value is {dut['NTCReadout'].resistance} Ohm")
 
 # Read temperature in degree C for the first 4 inputs
 for _ in range(10):

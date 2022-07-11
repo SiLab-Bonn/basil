@@ -14,7 +14,8 @@ class NTCReadout(ArduinoBase):
         'beta': 'B',
         'nominal_res': 'O',
         'nominal_temp': 'C',
-        'res': 'R'
+        'res': 'R',
+        'restore': 'X'
     }
 
     ERRORS = {
@@ -66,6 +67,12 @@ class NTCReadout(ArduinoBase):
         super(NTCReadout, self).__init__(intf, conf)
         # Store temperature limits of NTC thermistor
         self.ntc_limits = tuple(self._init.get('ntc_limits', (-55, 120)))
+
+    def restore_defaults(self):
+        """
+        Restores default values in the firmware which correspond to this classes properties
+        """
+        self._set_and_retrieve(cmd='restore', val=int(111))  # *val* can be any int, just used to test that the command was received
 
     def get_temp(self, sensor):
         """Gets temperature of sensor where 0 <= sensor <= 7 is the physical pin number of the sensor on

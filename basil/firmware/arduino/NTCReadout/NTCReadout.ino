@@ -13,6 +13,13 @@ const float KELVIN = 273.15; // Kelvin
 const int SAMPLE_DELAY_US = 50; // Microseconds delay between two measurement samples
 const int NTC_PINS [] = {A0, A1, A2, A3, A4, A5, A6, A7}; // Array of analog input pins on Arduino
 
+// Default values
+const int N_SAMPLES = 5; // Average each temperature value over N_SAMPLES analog reads
+const uint16_t SERIAL_DELAY_MILLIS = 1; // Delay between Serial.available() checks
+const float NTC_NOMINAL_RES = 10000.0; // Resistance of NTC at 25 degrees C
+const float RESISTOR_RES = 10000.0; // Resistance of the resistors in series to the NTC, forming voltage divider
+const float TEMP_NOMINAL_DEGREE_C = 25.0; // Nominal temperature for above resistance (almost always 25 C)
+const float BETA_COEFFICIENT = 3950.0; // The beta coefficient of the NTC (usually 3000-4000); EPC B57891-M103 NTC Thermistor
 
 // Serial related
 const char END = '\n';
@@ -32,6 +39,7 @@ const char BETA_CMD = 'B';
 const char NOMINAL_RES_CMD = 'O';
 const char NOMINAL_TEMP_CMD = 'C';
 const char RESISTANCE_CMD = 'R';
+const char RESET_CMD = 'X';
 
 
 // Define variables to be used for calculation
@@ -42,12 +50,25 @@ bool oneLastProcess;
 
 
 // Define vars potentially coming in from serial
-int nSamples = 5; // Average each temperature value over N_SAMPLES analog reads
-uint16_t serialDelayMillis = 1; // Delay between Serial.available() checks
-float ntcNominalRes = 10000.0; // Resistance of NTC at 25 degrees C
-float resistorRes = 10000.0; // Resistance of the resistors in series to the NTC, forming voltage divider
-float tempNominalDegreeC = 25.0; // Nominal temperature for above resistance (almost always 25 C)
-float betaCoefficient = 3950.0; // The beta coefficient of the NTC (usually 3000-4000); EPC B57891-M103 NTC Thermistor
+int nSamples;
+uint16_t serialDelayMillis; 
+float ntcNominalRes;
+float resistorRes;
+float tempNominalDegreeC;
+float betaCoefficient;
+
+
+void restoreDefaults(){
+  /*
+  Resores default values of all variables that potentially come in over serial
+  */
+  nSamples = N_SAMPLES;
+  serialDelayMillis = SERIAL_DELAY_MILLIS;
+  ntcNominalRes = NTC_NOMINAL_RES;
+  resistorRes = RESISTOR_RES;
+  tempNominalDegreeC = TEMP_NOMINAL_DEGREE_C;
+  betaCoefficient = BETA_COEFFICIENT;
+}
 
 
 float steinhartHartNTC(float res){
@@ -148,6 +169,7 @@ void setup(void){
    * initialize Serial communication with baudrate Serial.begin(<baudrate>)
    * delay 500ms to let connections and possible setups to be established
    */
+  restoreDefaults(); // Restore default values
   Serial.begin(115200); // Initialize serial connection
   analogReference(EXTERNAL); // Set 3.3V as external reference voltage instead of internal 5V reference
   delay(500);
@@ -247,6 +269,13 @@ void loop(void){
         // Return resistor value in voltage divider config in Ohm
         if (serialBuffer[0] == RESISTANCE_CMD){
           Serial.println(resistorRes);
+        }
+
+        // Restore all variables to their default value
+        if (serialBuffer[0] == RESET_CMD){
+          restoreDefaults();
+          processIncoming();
+          Serial.println(atoi(serialBuffer)); // Test response
         }
 
       }
