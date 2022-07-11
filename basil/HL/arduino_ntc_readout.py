@@ -10,11 +10,12 @@ class NTCReadout(ArduinoBase):
 
     CMDS = {
         'temp': 'T',
+        'res': 'Q',
         'samples': 'S',
         'beta': 'B',
         'nominal_res': 'O',
         'nominal_temp': 'C',
-        'res': 'R',
+        'resistance': 'R',
         'restore': 'X'
     }
 
@@ -57,16 +58,29 @@ class NTCReadout(ArduinoBase):
 
     @property
     def resistance(self):
-        return float(self.query(self.create_command(self.CMDS['res'])))
+        return float(self.query(self.create_command(self.CMDS['resistance'])))
 
     @resistance.setter
     def resistance(self, resistance):
-        self._set_and_retrieve(cmd='res', val=float(resistance))
+        self._set_and_retrieve(cmd='resistance', val=float(resistance))
 
     def __init__(self, intf, conf):
         super(NTCReadout, self).__init__(intf, conf)
         # Store temperature limits of NTC thermistor
         self.ntc_limits = tuple(self._init.get('ntc_limits', (-55, 120)))
+
+    def _get_measurement(self, sensor, kind='temp'):
+        """Gets measurement of sensor where 0 <= sensor <= 7 is the physical pin number of the sensor on
+        the Arduino analog pin. Can also be a list of ints."""
+
+        # Make int sensors to list
+        sensor = sensor if isinstance(sensor, list) else [sensor]
+
+        # Write command to read all these sensors
+        self.write(self.create_command(self.CMDS[kind], *sensor))
+
+        # Get result; make sure we get the correct amount of results
+        return {s: float(self.read()) for s in sensor}
 
     def restore_defaults(self):
         """
@@ -78,14 +92,7 @@ class NTCReadout(ArduinoBase):
         """Gets temperature of sensor where 0 <= sensor <= 7 is the physical pin number of the sensor on
         the Arduino analog pin. Can also be a list of ints."""
 
-        # Make int sensors to list
-        sensor = sensor if isinstance(sensor, list) else [sensor]
-
-        # Write command to read all these sensors
-        self.write(self.create_command(self.CMDS['temp'], *sensor))
-
-        # Get result; make sure we get the correct amount of results
-        result = {s: float(self.read()) for s in sensor}
+        result = self._get_measurement(sensor, kind='temp')
 
         for sens in result:
             if not self.ntc_limits[0] <= result[sens] <= self.ntc_limits[1]:
@@ -93,3 +100,9 @@ class NTCReadout(ArduinoBase):
                 logger.warning(msg)
 
         return result
+
+    def get_res(self, sensor):
+        """Gets resitance measured on input *sensor* where 0 <= sensor <= 7 is the physical pin number of the sensor on
+        the Arduino analog pin. Can also be a list of ints."""
+
+        return self._get_measurement(sensor, kind='res')

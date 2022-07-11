@@ -33,6 +33,7 @@ char serialBuffer[BUF_SIZE]; // Max buffer 32 bytes in incoming serial data
 
 // Commands
 const char TEMP_CMD = 'T';
+const char RES_CMD = 'Q';
 const char DELAY_CMD = 'D';
 const char SAMPLE_CMD = 'S';
 const char BETA_CMD = 'B';
@@ -86,10 +87,9 @@ float steinhartHartNTC(float res){
 }
 
 
-float getTemp(int ntc){
+float getRes(int ntc){
   /*
   Reads the voltage from analog pin *ntc_pin* in ADC units and converts them to resistance.
-  Returns the temperature calculated from Steinhart-Hart-Equation
   */
 
   // Reset resitance
@@ -108,7 +108,16 @@ float getTemp(int ntc){
   resistance = 1023 / resistance - 1 ;
   resistance = resistorRes / resistance;
 
-  return steinhartHartNTC(resistance);
+  return resistance;
+}
+
+
+float getTemp(int ntc){
+  /*
+  Reads the voltage from analog pin *ntc_pin* in ADC units and converts them to resistance.
+  Returns the temperature calculated from Steinhart-Hart-Equation
+  */
+  return steinhartHartNTC(getRes(ntc));
 }
 
 
@@ -131,9 +140,9 @@ uint8_t processIncoming(){
 }
 
 
-void printNTCTemps(){
+void printNTCMeasurements(int kind){
   /*
-  Read the input buffer, read pins to read and print the respective temp to serial
+  Read the input buffer, read pins to read and print the respective temp or resistance to serial
   */
   
   while (processIncoming()){
@@ -142,8 +151,13 @@ void printNTCTemps(){
 
     // We only have 8 analog pins
     if (0 <= ntcPin && ntcPin < 8) {
-      // Send out, two decimal places, wait
-      Serial.println(getTemp(NTC_PINS[ntcPin]), 2);
+      if (kind == 0) {
+        // Send out tempertaure in C, two decimal places, wait
+        Serial.println(getTemp(NTC_PINS[ntcPin]), 2);
+      } else {
+        // Send out resitance in Ohm, two decimal places, wait
+        Serial.println(getRes(NTC_PINS[ntcPin]));
+      }
       delay(50);
     }
     else {
@@ -237,7 +251,12 @@ void loop(void){
       else {
 
         if (serialBuffer[0] == TEMP_CMD){
-          printNTCTemps();
+          printNTCMeasurements(0); // Temperature
+          oneLastProcess = false;
+        }
+
+        if (serialBuffer[0] == RES_CMD){
+          printNTCMeasurements(1); // Resistance
           oneLastProcess = false;
         }
 

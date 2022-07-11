@@ -52,6 +52,6 @@ print(f"Nominal NTC resistance is {dut['NTCReadout'].nominal_resistance} Ohm")
 print(f"Nominal NTC temperature is {dut['NTCReadout'].nominal_temperature} °C")
 print(f"Resistor value is {dut['NTCReadout'].resistance} Ohm")
 
-# Read temperature in degree C for the first 4 inputs
-for _ in range(10):
-    print(dut['NTCReadout'].get_temp(list(range(4))))
+# Read temperature in degree C and resistanc ein Ohm for the first 4 inputs
+print(dut['NTCReadout'].get_temp(list(range(4))))
+print(dut['NTCReadout'].get_res(list(range(4))))
