@@ -9,14 +9,17 @@ temperature values can be recorded.
 */
 
 // Define constants
-const float NTC_NOMINAL_RES = 10000.0; // Resistance of NTC at 25 degrees C
-const float RESISTOR_RES = 10000.0; // Resistance of the resistors in series to the NTC, forming voltage divider
-const float TEMP_NOMINAL = 25.0; // Nominal temperature for above resistance (almost always 25 C)
-const float BETA_COEFF = 3950.0; // The beta coefficient of the NTC (usually 3000-4000); EPC B57891-M103 NTC Thermistor
 const float KELVIN = 273.15; // Kelvin
 const int SAMPLE_DELAY_US = 50; // Microseconds delay between two measurement samples
 const int NTC_PINS [] = {A0, A1, A2, A3, A4, A5, A6, A7}; // Array of analog input pins on Arduino
 
+// Default values
+const int N_SAMPLES = 5; // Average each temperature value over N_SAMPLES analog reads
+const uint16_t SERIAL_DELAY_MILLIS = 1; // Delay between Serial.available() checks
+const float NTC_NOMINAL_RES = 10000.0; // Resistance of NTC at 25 degrees C
+const float RESISTOR_RES = 10000.0; // Resistance of the resistors in series to the NTC, forming voltage divider
+const float TEMP_NOMINAL_DEGREE_C = 25.0; // Nominal temperature for above resistance (almost always 25 C)
+const float BETA_COEFFICIENT = 3950.0; // The beta coefficient of the NTC (usually 3000-4000); EPC B57891-M103 NTC Thermistor
 
 // Serial related
 const char END = '\n';
@@ -30,8 +33,14 @@ char serialBuffer[BUF_SIZE]; // Max buffer 32 bytes in incoming serial data
 
 // Commands
 const char TEMP_CMD = 'T';
+const char RES_CMD = 'Q';
 const char DELAY_CMD = 'D';
 const char SAMPLE_CMD = 'S';
+const char BETA_CMD = 'B';
+const char NOMINAL_RES_CMD = 'O';
+const char NOMINAL_TEMP_CMD = 'C';
+const char RESISTANCE_CMD = 'R';
+const char RESET_CMD = 'X';
 
 
 // Define variables to be used for calculation
@@ -42,8 +51,25 @@ bool oneLastProcess;
 
 
 // Define vars potentially coming in from serial
-int nSamples = 5; // Average each temperature value over N_SAMPLES analog reads
-uint16_t serialDelayMillis = 1; // Delay between Serial.available() checks
+int nSamples;
+uint16_t serialDelayMillis; 
+float ntcNominalRes;
+float resistorRes;
+float tempNominalDegreeC;
+float betaCoefficient;
+
+
+void restoreDefaults(){
+  /*
+  Resores default values of all variables that potentially come in over serial
+  */
+  nSamples = N_SAMPLES;
+  serialDelayMillis = SERIAL_DELAY_MILLIS;
+  ntcNominalRes = NTC_NOMINAL_RES;
+  resistorRes = RESISTOR_RES;
+  tempNominalDegreeC = TEMP_NOMINAL_DEGREE_C;
+  betaCoefficient = BETA_COEFFICIENT;
+}
 
 
 float steinhartHartNTC(float res){
@@ -52,7 +78,7 @@ float steinhartHartNTC(float res){
   */
 
   // Do calculation
-  temperature = 1.0 / (1.0 / (TEMP_NOMINAL + KELVIN) + 1.0 / BETA_COEFF * log(res / NTC_NOMINAL_RES));
+  temperature = 1.0 / (1.0 / (tempNominalDegreeC + KELVIN) + 1.0 / betaCoefficient * log(res / ntcNominalRes));
 
   // To Kelvin
   temperature -= KELVIN;
@@ -61,10 +87,9 @@ float steinhartHartNTC(float res){
 }
 
 
-float getTemp(int ntc){
+float getRes(int ntc){
   /*
   Reads the voltage from analog pin *ntc_pin* in ADC units and converts them to resistance.
-  Returns the temperature calculated from Steinhart-Hart-Equation
   */
 
   // Reset resitance
@@ -81,9 +106,18 @@ float getTemp(int ntc){
 
   // Convert  ADC resistance value to resistance in Ohm
   resistance = 1023 / resistance - 1 ;
-  resistance = RESISTOR_RES / resistance;
+  resistance = resistorRes / resistance;
 
-  return steinhartHartNTC(resistance);
+  return resistance;
+}
+
+
+float getTemp(int ntc){
+  /*
+  Reads the voltage from analog pin *ntc_pin* in ADC units and converts them to resistance.
+  Returns the temperature calculated from Steinhart-Hart-Equation
+  */
+  return steinhartHartNTC(getRes(ntc));
 }
 
 
@@ -106,9 +140,9 @@ uint8_t processIncoming(){
 }
 
 
-void printNTCTemps(){
+void printNTCMeasurements(int kind){
   /*
-  Read the input buffer, read pins to read and print the respective temp to serial
+  Read the input buffer, read pins to read and print the respective temp or resistance to serial
   */
   
   while (processIncoming()){
@@ -117,8 +151,13 @@ void printNTCTemps(){
 
     // We only have 8 analog pins
     if (0 <= ntcPin && ntcPin < 8) {
-      // Send out, two decimal places, wait
-      Serial.println(getTemp(NTC_PINS[ntcPin]), 2);
+      if (kind == 0) {
+        // Send out tempertaure in C, two decimal places, wait
+        Serial.println(getTemp(NTC_PINS[ntcPin]), 2);
+      } else {
+        // Send out resitance in Ohm, two decimal places, wait
+        Serial.println(getRes(NTC_PINS[ntcPin]));
+      }
       delay(50);
     }
     else {
@@ -144,6 +183,7 @@ void setup(void){
    * initialize Serial communication with baudrate Serial.begin(<baudrate>)
    * delay 500ms to let connections and possible setups to be established
    */
+  restoreDefaults(); // Restore default values
   Serial.begin(115200); // Initialize serial connection
   analogReference(EXTERNAL); // Set 3.3V as external reference voltage instead of internal 5V reference
   delay(500);
@@ -177,12 +217,53 @@ void loop(void){
           serialDelayMillis = atoi(serialBuffer);
           Serial.println(serialDelayMillis);
         }
+
+        // Set beta coefficient in Kelvin
+        if (toupper(serialBuffer[0]) == BETA_CMD){
+          processIncoming();
+          betaCoefficient = atof(serialBuffer);
+          Serial.println(betaCoefficient);
+        }
+
+        // Set nominal resistance in Ohm
+        if (toupper(serialBuffer[0]) == NOMINAL_RES_CMD){
+          processIncoming();
+          ntcNominalRes = atof(serialBuffer);
+          Serial.println(ntcNominalRes);
+        }
+
+        // Set nominal temp in Celsius
+        if (toupper(serialBuffer[0]) == NOMINAL_TEMP_CMD){
+          processIncoming();
+          tempNominalDegreeC = atof(serialBuffer);
+          Serial.println(tempNominalDegreeC);
+        }
+
+        // Set resistance of resistor in voltage divider config in Ohm
+        if (toupper(serialBuffer[0]) == RESISTANCE_CMD){
+          processIncoming();
+          resistorRes = atof(serialBuffer);
+          Serial.println(resistorRes);
+        }
+
+        // Restore all variables to their default value
+        if (toupper(serialBuffer[0]) == RESET_CMD){
+          restoreDefaults();
+          processIncoming();
+          Serial.println(atoi(serialBuffer)); // Test response
+        }
+
       }
 
       else {
 
         if (serialBuffer[0] == TEMP_CMD){
-          printNTCTemps();
+          printNTCMeasurements(0); // Temperature
+          oneLastProcess = false;
+        }
+
+        if (serialBuffer[0] == RES_CMD){
+          printNTCMeasurements(1); // Resistance
           oneLastProcess = false;
         }
 
@@ -191,8 +272,29 @@ void loop(void){
           Serial.println(serialDelayMillis);
         }
 
+        // Return number of samples
         if (serialBuffer[0] == SAMPLE_CMD){
           Serial.println(nSamples);
+        }
+
+        // Return beta coefficient in Kelvin
+        if (serialBuffer[0] == BETA_CMD){
+          Serial.println(betaCoefficient);
+        }
+
+        // Return nominal ntc resistance at nominal temp in Ohm
+        if (serialBuffer[0] == NOMINAL_RES_CMD){
+          Serial.println(ntcNominalRes);
+        }
+
+        // Return nominal ntc temp in Celsius
+        if (serialBuffer[0] == NOMINAL_TEMP_CMD){
+          Serial.println(tempNominalDegreeC);
+        }
+
+        // Return resistor value in voltage divider config in Ohm
+        if (serialBuffer[0] == RESISTANCE_CMD){
+          Serial.println(resistorRes);
         }
 
       }
