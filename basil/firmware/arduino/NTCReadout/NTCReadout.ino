@@ -246,6 +246,13 @@ void loop(void){
           Serial.println(resistorRes);
         }
 
+        // Restore all variables to their default value
+        if (toupper(serialBuffer[0]) == RESET_CMD){
+          restoreDefaults();
+          processIncoming();
+          Serial.println(atoi(serialBuffer)); // Test response
+        }
+
       }
 
       else {
@@ -288,13 +295,6 @@ void loop(void){
         // Return resistor value in voltage divider config in Ohm
         if (serialBuffer[0] == RESISTANCE_CMD){
           Serial.println(resistorRes);
-        }
-
-        // Restore all variables to their default value
-        if (serialBuffer[0] == RESET_CMD){
-          restoreDefaults();
-          processIncoming();
-          Serial.println(atoi(serialBuffer)); // Test response
         }
 
       }
