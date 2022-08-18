@@ -1,0 +1,19 @@
+transfer_layer:
+  - name: Socket
+    type: Socket
+    init:
+      address: '192.168.10.2'
+      port: 10001
+      query_delay: 1
+      write_termination: ''
+      read_termination: ''
+      handle_as_byte: True
+
+hw_drivers:
+  - name      : Climatechamber
+    type      : binder_mk56
+    interface : Socket
+    init :
+        address : 1
+        min_temp : 15
+        max_temp : 25

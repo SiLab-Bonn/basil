@@ -15,14 +15,6 @@ FUNCTION_READN_ALT = 0x04  # read n words, does not occur
 FUNCTION_WRITE = 0x06  # write word
 FUNCTION_WRITEN = 0x10  # write n words
 
-# Operation addresses
-ADDR_CURTEMP = 0x11a9
-ADDR_DOOROPEN = 0x1007  # does not work, wrong address?
-ADDR_SETPOINT = 0x1077
-ADDR_MANSETPT = 0x1581
-ADDR_BASICSETPT = 0x156f
-ADDR_MODE = 0x1a22
-
 # Error codes
 ERROR_CODES = {
     1: "Invalid function",
@@ -45,21 +37,36 @@ class binderMK53(HardwareLayer):
 
     def init(self):
         super(binderMK53, self).init()
+        # Operation addresses
+        self.ADDR_CURTEMP = 0x11a9
+        self.ADDR_DOOROPEN = 0x1007  # does not work, wrong address?
+        self.ADDR_SETPOINT = 0x1077
+        self.ADDR_MANSETPT = 0x1581
+        self.ADDR_BASICSETPT = 0x156f
+        self.ADDR_MODE = 0x1a22
+
         self.slave_address = self._init['address']  # set the device address
         self.min_temp = self._init['min_temp']  # define the minimum temperature one can set, for safety
         self.max_temp = self._init['max_temp']  # define the maximum temperature one can set, for safety
 
-    def get_temperature(self):
-        return self._decode_float(self.read(ADDR_CURTEMP, 2))
+    def get_temperature(self, reps=10):
+        ret = -400
+        for _ in range(reps):
+            try:
+                ret = self._decode_float(self.read(self.ADDR_CURTEMP, 2))
+                break
+            except RuntimeWarning:
+                pass
+        return ret
 
     def get_temperature_target(self):
-        return self._decode_float(self.read(ADDR_SETPOINT, 2))
+        return self._decode_float(self.read(self.ADDR_SETPOINT, 2))
 
     def get_door_open(self):  # FIXME: does not work with tested model
         return bool(self.read(ADDR_DOOROPEN, 1)[0])
 
     def get_mode(self):
-        mode = self.read(ADDR_MODE, 1)[0]
+        mode = self.read(self.ADDR_MODE, 1)[0]
         modes = []
         if mode & 0x1000:
             modes.append("basic")
@@ -76,8 +83,8 @@ class binderMK53(HardwareLayer):
             raise RuntimeWarning('Set temperature %f is lower than minimum allowed temperature %f' % (temperature, self.min_temp))
         if temperature > self.max_temp:
             raise RuntimeWarning('Set temperature %f is higher than maximum allowed temperature %f' % (temperature, self.max_temp))
-        self.write(ADDR_MANSETPT, self._encode_float(temperature))
-        self.write(ADDR_BASICSETPT, self._encode_float(temperature))
+        self.write(self.ADDR_MANSETPT, self._encode_float(temperature))
+        self.write(self.ADDR_BASICSETPT, self._encode_float(temperature))
 
     def read(self, addr, n_words):  # read n words
         read_req = self._make_read_request(addr, n_words)
