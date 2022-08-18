@@ -37,7 +37,6 @@ class Socket(TransferLayer):
         self._sock.close()
 
     def write(self, data):
-        print("aaa", self.handle_as_byte)
         if type(data) == bytes:
             cmd = data
         else:
