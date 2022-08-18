@@ -37,6 +37,7 @@ class Socket(TransferLayer):
         self._sock.close()
 
     def write(self, data):
+        print("aaa", self.handle_as_byte)
         if type(data) == bytes:
             cmd = data
         else:
@@ -48,7 +49,7 @@ class Socket(TransferLayer):
 
     def read(self, buffer_size=1):
         ret = self._sock.recv(buffer_size)
-        if self.handle_as_byte:
+        if not self.handle_as_byte:
             data = ret.split(self.read_termination.encode(self.encoding))
             data = data[:-1]
         else:
