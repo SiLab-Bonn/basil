@@ -1,8 +1,8 @@
-# Device description for the Tektronix MSO4104B Mixed Signal Oscilloscope.
+# Device description for the Tektronix MSO54, MSO4104b, MSO4034 Mixed Signal Oscilloscope.
 # If you need other commands consider to add them here or
 # use dut._intf._resource.write()/query() to directly talk to the device
 
-identifier : TEKTRONIX,MSO4104B,C
+identifier : TEKTRONIX
 set_source : DATa:SOUrce  # the channel for the get_data command
 data_init : DATa:INIT  # reset data taking settings
 set_data_start : DATa:STARt  # the data start index for read out  (?)
