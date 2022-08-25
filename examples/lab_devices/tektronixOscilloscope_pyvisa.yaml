@@ -10,7 +10,7 @@ transfer_layer:
 
 hw_drivers:
   - name      : Oscilloscope
-    type      : scpi
+    type      : tektronix_oscilloscope
     interface : Visa
     init      :
         device : Tektronix Oscilloscope
