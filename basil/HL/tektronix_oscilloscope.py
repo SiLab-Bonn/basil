@@ -8,6 +8,7 @@
 from basil.HL.scpi import scpi
 from collections import namedtuple
 from enum import Enum
+from pyvisa.errors import VisaIOError
 
 Identity = namedtuple("Identity", "company, model, serial, config")
 XScale = namedtuple("XScale", "slope, offset, unit")
@@ -45,6 +46,8 @@ class WaveformCollection:
 
 
 class TektronixOscilloscope(scpi):
+    """This class is heavily inspired by:
+    https://github.com/tektronix/curvequery/blob/release/curvequery/_tek_series_mso_curve_feat.py"""
 
     def _make_jobs(self, channel=1):
         """Scan the instrument for available sources of data construct a list of jobs"""
@@ -95,7 +98,7 @@ class TektronixOscilloscope(scpi):
         result = None
         try:
             xincr = self._intf.query("WFMOutpre:XINCR?").strip()
-        except Exception:
+        except VisaIOError:
             pass
         else:
             # collect more horizontal data
@@ -123,12 +126,8 @@ class TektronixOscilloscope(scpi):
         # Use "display:global:CH{x}:state?" to determine if the channel is displayed
         # and available for download
         if source == "NONE":
-            display_on = False
-        else:
-            display_on = bool(
-                int(self._intf.query("display:global:{}:state?".format(source)))
-            )
-        return display_on
+            return False
+        return bool(int(self._intf.query("display:global:{}:state?".format(source))))
 
     def _setup_curve_query(self, parameters, channel=1):
         """Setup the instrument for the curve query operation"""
@@ -174,23 +173,10 @@ class TektronixOscilloscope(scpi):
         x_scale = self._get_xscale()
         if x_scale is not None:
             source_data = [int(i) for i in self.get_data(channel=channel).replace('\n', '').split(',')]
-            if wave_type is WaveType.DIGITAL:
-                raise Exception(
-                    "Data Type Digital analysis not yet implemented"
-                )
-
-            elif wave_type is WaveType.ANALOG:
+            if wave_type is WaveType.ANALOG:
                 ret_val = self._post_process_analog(source_data, x_scale, channel=channel)
-
-            elif wave_type is WaveType.MATH:
-                raise Exception(
-                    "Data Type Math analysis not yet implemented"
-                )
-
             else:
-                raise Exception(
-                    "It should have been impossible to execute this code"
-                )
+                raise NotImplementedError(f"Analysis for type {wave_type} data not yet implemented!")
 
         # # Restore the acquisition state
         self._intf.write("ACQuire:STATE {}".format(acq_state))
