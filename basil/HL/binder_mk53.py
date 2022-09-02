@@ -9,21 +9,6 @@ import struct
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
-# MODBus function codes
-FUNCTION_READN = 0x03  # read n words
-FUNCTION_READN_ALT = 0x04  # read n words, does not occur
-FUNCTION_WRITE = 0x06  # write word
-FUNCTION_WRITEN = 0x10  # write n words
-
-# Error codes
-ERROR_CODES = {
-    1: "Invalid function",
-    2: "Invalid parameter address",
-    3: "Pparameter value outside range of values",
-    4: "Slave not ready",
-    5: "Write access to parameter denied"
-}
-
 
 class binderMK53(HardwareLayer):
 
@@ -32,19 +17,34 @@ class binderMK53(HardwareLayer):
     Credits to ecree-solarflare with some further information at https://github.com/ecree-solarflare/ovenctl
     '''
 
+    # MODBus function codes
+    FUNCTION_READN = 0x03  # read n words
+    FUNCTION_READN_ALT = 0x04  # read n words, does not occur
+    FUNCTION_WRITE = 0x06  # write word
+    FUNCTION_WRITEN = 0x10  # write n words
+
+    ADDR_CURTEMP = 0x11a9
+    ADDR_DOOROPEN = 0x1007  # does not work, wrong address?
+    ADDR_SETPOINT = 0x1077
+    ADDR_MANSETPT = 0x1581
+    ADDR_BASICSETPT = 0x156f
+    ADDR_MODE = 0x1a22
+
+    # Error codes
+    ERROR_CODES = {
+        1: "Invalid function",
+        2: "Invalid parameter address",
+        3: "Parameter value outside range of values",
+        4: "Slave not ready",
+        5: "Write access to parameter denied"
+    }
+
     def __init__(self, intf, conf):
         super(binderMK53, self).__init__(intf, conf)
 
     def init(self):
         super(binderMK53, self).init()
         # Operation addresses
-        self.ADDR_CURTEMP = 0x11a9
-        self.ADDR_DOOROPEN = 0x1007  # does not work, wrong address?
-        self.ADDR_SETPOINT = 0x1077
-        self.ADDR_MANSETPT = 0x1581
-        self.ADDR_BASICSETPT = 0x156f
-        self.ADDR_MODE = 0x1a22
-
         self.slave_address = self._init['address']  # set the device address
         self.min_temp = self._init['min_temp']  # define the minimum temperature one can set, for safety
         self.max_temp = self._init['max_temp']  # define the maximum temperature one can set, for safety
@@ -63,7 +63,7 @@ class binderMK53(HardwareLayer):
         return self._decode_float(self.read(self.ADDR_SETPOINT, 2))
 
     def get_door_open(self):  # FIXME: does not work with tested model
-        return bool(self.read(ADDR_DOOROPEN, 1)[0])
+        return bool(self.read(self.ADDR_DOOROPEN, 1)[0])
 
     def get_mode(self):
         mode = self.read(self.ADDR_MODE, 1)[0]
@@ -80,9 +80,12 @@ class binderMK53(HardwareLayer):
 
     def set_temperature(self, temperature):
         if temperature < self.min_temp:
-            raise RuntimeWarning('Set temperature %f is lower than minimum allowed temperature %f' % (temperature, self.min_temp))
+            raise RuntimeWarning(
+                f'Set temperature {temperature} is lower than minimum allowed temperature {self.min_temp}')
         if temperature > self.max_temp:
-            raise RuntimeWarning('Set temperature %f is higher than maximum allowed temperature %f' % (temperature, self.max_temp))
+            raise RuntimeWarning(
+                f'Set temperature {temperature} is higher than maximum allowed temperature {self.max_temp}')
+
         self.write(self.ADDR_MANSETPT, self._encode_float(temperature))
         self.write(self.ADDR_BASICSETPT, self._encode_float(temperature))
 
@@ -93,7 +96,7 @@ class binderMK53(HardwareLayer):
         resp = self._intf.read(exp_length)
         is_err, err_code = self._parse_error_response(resp)
         if is_err:
-            raise RuntimeWarning('Error code %d: %s' % (err_code, ERROR_CODES[err_code]))
+            raise RuntimeWarning(f'Error code {err_code}: {self.ERROR_CODES[err_code]}')
         data = self._parse_read_response(resp)
         return data
 
@@ -105,25 +108,25 @@ class binderMK53(HardwareLayer):
 
         is_err, err_code = self._parse_error_response(resp)
         if is_err:
-            raise RuntimeWarning('Error code %d: %s' % (err_code, ERROR_CODES[err_code]))
+            raise ValueError(f'Error code {err_code}: {self.ERROR_CODES[err_code]}')
         resp_addr, resp_words = self._parse_write_response(resp)
         if not (resp_addr == addr) and (resp_words == len(value)):
-            raise RuntimeWarning('Write check failed')
+            raise ValueError('Write check failed')
 
     def _parse_read_response(self, msgbytes):
         if len(msgbytes) < 3:
-            raise RuntimeWarning('Read data is too short: %d' % len(msgbytes))
+            raise ValueError(f'Read data is too short: {len(msgbytes)}')
         _, func, n_bytes = struct.unpack('>BBB', msgbytes[:3])
-        if func not in [FUNCTION_READN, FUNCTION_READN_ALT]:
-            raise RuntimeWarning('Wrong function returned')
+        if func not in [self.FUNCTION_READN, self.FUNCTION_READN_ALT]:
+            raise ValueError('Wrong function returned')
         if n_bytes & 1:
-            raise RuntimeWarning("Odd number of bytes read")
+            raise ValueError("Odd number of bytes read")
         if len(msgbytes) < 5 + n_bytes:
-            raise RuntimeWarning('Read data is too short: %d' % len(msgbytes))
+            raise ValueError(f'Read data is too short: {len(msgbytes)}')
         crc = struct.unpack('<H', msgbytes[3 + n_bytes:5 + n_bytes])
         checkcrc = self._calc_crc16(msgbytes[:3 + n_bytes])
         if crc != checkcrc:
-            raise RuntimeWarning('Checksum of read data wrong')
+            raise ValueError('Checksum of read data wrong')
         n_words = n_bytes >> 1
         words = []
         for word in range(n_words):
@@ -132,14 +135,14 @@ class binderMK53(HardwareLayer):
 
     def _parse_write_response(self, msgbytes):
         if len(msgbytes) < 8:
-            raise RuntimeWarning('Message too short: %d' % len(msgbytes))
+            raise ValueError(f'Message too short: {len(msgbytes)}')
         crc = struct.unpack('<H', msgbytes[6:8])
         _, func, addr, value = struct.unpack('>BBHH', msgbytes[:6])
-        if func != FUNCTION_WRITEN:
-            raise RuntimeWarning('Wrong write function returned')
+        if func != self.FUNCTION_WRITEN:
+            raise ValueError('Wrong write function returned')
         checkcrc = self._calc_crc16(msgbytes[:6])
         if crc != checkcrc:
-            raise RuntimeWarning('Checksum of read after write data wrong')
+            raise ValueError('Checksum of read after write data wrong')
         return addr, value
 
     def _parse_error_response(self, msgbytes):  # string -> (bool, int)
@@ -151,18 +154,18 @@ class binderMK53(HardwareLayer):
             return False, None
         checkcrc = self._calc_crc16(msgbytes[:3])
         if crc != checkcrc:
-            raise RuntimeWarning('CRC Error: %s - %s (bytes: %s)' % (str(crc), str(checkcrc), str(msgbytes)))
+            raise ValueError(f'CRC Error: {str(crc)} - {str(checkcrc)} (bytes: {str(msgbytes)})')
         return True, ecode
 
     def _make_write_request(self, addr, words):
         n_words = len(words)
-        msg = struct.pack('>BBHHB', self.slave_address, FUNCTION_WRITEN, addr, n_words, n_words * 2)
+        msg = struct.pack('>BBHHB', self.slave_address, self.FUNCTION_WRITEN, addr, n_words, n_words * 2)
         for word in words:
             msg += struct.pack('>H', word)
         return msg + struct.pack('<H', self._calc_crc16(msg))
 
     def _make_read_request(self, addr, n_words):
-        msg = struct.pack('>BBHH', self.slave_address, FUNCTION_READN, addr, n_words)
+        msg = struct.pack('>BBHH', self.slave_address, self.FUNCTION_READN, addr, n_words)
         return msg + struct.pack('<H', self._calc_crc16(msg))
 
     def _encode_float(self, value):

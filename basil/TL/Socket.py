@@ -49,11 +49,8 @@ class Socket(TransferLayer):
     def read(self, buffer_size=1):
         ret = self._sock.recv(buffer_size)
         if not self.handle_as_byte:
-            data = ret.split(self.read_termination.encode(self.encoding))
-            data = data[:-1]
-        else:
-            data = ret
-        return data
+            return ret.split(self.read_termination.encode(self.encoding))[:-1]
+        return ret
 
     def query(self, data, buffer_size=1):
         self.write(data)
