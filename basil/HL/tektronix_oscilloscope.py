@@ -171,6 +171,7 @@ class TektronixOscilloscope(scpi):
 
         # Horizontal scale information
         x_scale = self._get_xscale()
+        ret_val = None
         if x_scale is not None:
             source_data = [int(i) for i in self.get_data(channel=channel).replace('\n', '').split(',')]
             if wave_type is WaveType.ANALOG:
