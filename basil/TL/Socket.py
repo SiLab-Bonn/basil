@@ -25,6 +25,7 @@ class Socket(TransferLayer):
         self.write_termination = self._init.get('write_termination', '').encode(self.encoding).decode('unicode_escape')
         self.read_termination = self._init.get('read_termination', self.write_termination).encode(self.encoding).decode('unicode_escape')
         self.query_delay = self._init.get('query_delay', 0)
+        self.handle_as_byte = self._init.get('handle_as_byte', False)
 
         address = self._init.get('address')
         port = self._init.get('port')
@@ -41,13 +42,15 @@ class Socket(TransferLayer):
         else:
             cmd = data.encode(self.encoding)
         cmd += self.write_termination.encode(self.encoding)
-        cmd.decode('unicode_escape')
+        if not self.handle_as_byte:
+            cmd.decode('unicode_escape')
         self._sock.send(cmd)
 
     def read(self, buffer_size=1):
         ret = self._sock.recv(buffer_size)
-        data = ret.split(self.read_termination.encode(self.encoding))
-        return data[:-1]
+        if not self.handle_as_byte:
+            return ret.split(self.read_termination.encode(self.encoding))[:-1]
+        return ret
 
     def query(self, data, buffer_size=1):
         self.write(data)
