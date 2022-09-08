@@ -1,13 +1,12 @@
-# Device description for the Tektronix MSO4104B Mixed Signal Oscilloscope.
+# Device description for the Tektronix MSO54, MSO4104b, MSO4034 Mixed Signal Oscilloscope.
 # If you need other commands consider to add them here or
 # use dut._intf._resource.write()/query() to directly talk to the device
 
-identifier : TEKTRONIX,MSO4104B,C
+identifier : TEKTRONIX
 set_source : DATa:SOUrce  # the channel for the get_data command
 data_init : DATa:INIT  # reset data taking settings
 set_data_start : DATa:STARt  # the data start index for read out  (?)
 set_data_stop : DATa:STOP  # the data stop index for read out (?)
-get_data : WAVFrm?  # returns the data as ; separated values and a header describing all important settings
 set_data_width : DATa:WIDth
 get_data_width : DATa:WIDth?
 set_data_encoding : DATa:ENCdg
@@ -53,6 +52,7 @@ set_horizontal_record_length : HORizontal:RECORDLength
 get_horizontal_record_length : HORizontal:RECORDLength?
 set_horizontal_scale : HORizontal:MAIn:SCAle
 get_horizontal_scale : HORizontal:MAIn:SCAle?
+get_horizontal_divisions: HORizontal:DIVisions?
 set_horizontal_delay_time : HORizontal:DELay:TIMe
 get_horizontal_delay_time : HORizontal:DELay:TIMe?
 channel 1:
