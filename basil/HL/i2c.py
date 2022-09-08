@@ -70,7 +70,7 @@ class i2c(RegisterHardwareLayer):
          :raises ExceptionType: IOError
         Transfer not acknowledged.
         '''
-        if(self.NO_ACK):
+        if self.NO_ACK:
             raise IOError('i2c:Transfer not acknowledged')
         return self.READY
 
