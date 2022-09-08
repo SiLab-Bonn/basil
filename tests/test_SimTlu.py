@@ -176,7 +176,7 @@ class TestSimTlu(unittest.TestCase):
         self.chip['GPIO'].set_data([0x01])  # enable trigger/TLU FSM
 
         readings = 0
-        while(self.chip['FIFO'].get_FIFO_INT_SIZE() < 4 and readings < 10000):
+        while (self.chip['FIFO'].get_FIFO_INT_SIZE() < 4 and readings < 10000):
             readings += 1
 
         self.chip['GPIO'].set_data([0x00])  # disable trigger/TLU FSM
@@ -202,7 +202,7 @@ class TestSimTlu(unittest.TestCase):
             self.chip['TLU'].SOFT_TRIGGER = 1
 
             readings = 0
-            while(self.chip['FIFO'].get_FIFO_INT_SIZE() <= i and readings < 10000):
+            while (self.chip['FIFO'].get_FIFO_INT_SIZE() <= i and readings < 10000):
                 readings += 1
 
         self.chip['TLU'].TRIGGER_ENABLE = False
@@ -229,7 +229,7 @@ class TestSimTlu(unittest.TestCase):
         self.chip['GPIO'].set_data([0x01])
 
         readings = 0
-        while(self.chip['FIFO'].get_FIFO_INT_SIZE() < 4 and readings < 1000):
+        while (self.chip['FIFO'].get_FIFO_INT_SIZE() < 4 and readings < 1000):
             readings += 1
 
         self.chip['GPIO'].set_data([0x00])  # disable trigger/TLU FSM
@@ -255,7 +255,7 @@ class TestSimTlu(unittest.TestCase):
         self.chip['GPIO'].set_data([0x01])  # enable trigger/TLU FSM
 
         readings = 0
-        while(self.chip['FIFO'].get_FIFO_INT_SIZE() == 0 and readings < 1000):
+        while (self.chip['FIFO'].get_FIFO_INT_SIZE() == 0 and readings < 1000):
             readings += 1
 
         self.assertEqual(self.chip['FIFO'].get_FIFO_INT_SIZE(), 0)

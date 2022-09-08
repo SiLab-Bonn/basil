@@ -89,13 +89,13 @@ class TestSimSeq(unittest.TestCase):
         self.chip['PULSE_GEN'].set_WIDTH(1)
         self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ_GEN'].is_ready):
+        while not self.chip['SEQ_GEN'].is_ready:
             pass
 
         # 2nd time
         self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ_GEN'].is_ready):
+        while not self.chip['SEQ_GEN'].is_ready:
             pass
 
         ret = self.chip['SEQ_REC'].get_data()
@@ -135,7 +135,7 @@ class TestSimSeq(unittest.TestCase):
 
         self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ'].is_ready):
+        while not self.chip['SEQ'].is_ready:
             pass
 
         ret = self.chip['SEQ_REC'].get_data(size=rec_size)
@@ -145,7 +145,7 @@ class TestSimSeq(unittest.TestCase):
         self.chip['SEQ'].set_REPEAT_START(12)
         self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ'].is_ready):
+        while not self.chip['SEQ'].is_ready:
             pass
 
         ret = self.chip['SEQ_REC'].get_data(size=rec_size)
@@ -154,7 +154,7 @@ class TestSimSeq(unittest.TestCase):
         self.chip['SEQ'].set_wait(4)
         self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ'].is_ready):
+        while not self.chip['SEQ'].is_ready:
             pass
 
         ret = self.chip['SEQ_REC'].get_data(size=rec_size)
@@ -168,7 +168,7 @@ class TestSimSeq(unittest.TestCase):
         self.chip['SEQ'].set_wait(3)
         self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ'].is_ready):
+        while not self.chip['SEQ'].is_ready:
             pass
 
         ret = self.chip['SEQ_REC'].get_data(size=rec_size)
@@ -183,7 +183,7 @@ class TestSimSeq(unittest.TestCase):
         self.chip['SEQ'].set_wait(0)
         self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ'].is_ready):
+        while not self.chip['SEQ'].is_ready:
             pass
 
         ret = self.chip['SEQ_REC'].get_data(size=rec_size)
@@ -205,7 +205,7 @@ class TestSimSeq(unittest.TestCase):
         self.chip['SEQ'].set_CLK_DIV(1)
         self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ'].is_ready):
+        while not self.chip['SEQ'].is_ready:
             pass
 
         exp_pattern = [0x10, 0x10]
@@ -247,7 +247,7 @@ class TestSimSeq4bit(unittest.TestCase):
         self.chip['PULSE_GEN'].set_WIDTH(1)
         self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ_GEN'].is_ready):
+        while not self.chip['SEQ_GEN'].is_ready:
             pass
 
         ret = self.chip['SEQ_REC'].get_data()
@@ -281,7 +281,7 @@ class TestSimSeq16bit(unittest.TestCase):
         self.chip['PULSE_GEN'].set_WIDTH(1)
         self.chip['PULSE_GEN'].START
 
-        while(not self.chip['SEQ_GEN'].is_ready):
+        while not self.chip['SEQ_GEN'].is_ready:
             pass
 
         ret = self.chip['SEQ_REC'].get_data()

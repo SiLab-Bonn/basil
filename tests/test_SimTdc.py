@@ -101,7 +101,7 @@ class TestSimTdc(unittest.TestCase):
             self.chip['SEQ']['TDC_IN'][0:length] = True
             self.chip['SEQ'].write(length)
             self.chip['SEQ'].START
-            while(not self.chip['SEQ'].is_ready):
+            while not self.chip['SEQ'].is_ready:
                 pass
             self.assertEqual(self.chip['FIFO0'].get_FIFO_INT_SIZE(), 1)
 
@@ -118,7 +118,7 @@ class TestSimTdc(unittest.TestCase):
             self.chip['SEQ']['TDC_IN'][0:length] = True
             self.chip['SEQ'].write(length)
             self.chip['SEQ'].START
-            while(not self.chip['SEQ_GEN'].is_ready):
+            while not self.chip['SEQ_GEN'].is_ready:
                 pass
             self.assertEqual(self.chip['FIFO0'].get_FIFO_INT_SIZE(), 1)
 
@@ -144,7 +144,7 @@ class TestSimTdc(unittest.TestCase):
             self.chip['SEQ']['TDC_TRIGGER_IN'][0:10] = True
             self.chip['SEQ'].write(length)
             self.chip['SEQ'].START
-            while(not self.chip['SEQ_GEN'].is_ready):
+            while not self.chip['SEQ_GEN'].is_ready:
                 pass
             self.assertEqual(self.chip['FIFO0'].get_FIFO_INT_SIZE(), 1)
             self.assertEqual(self.chip['FIFO1'].get_FIFO_INT_SIZE(), 1)

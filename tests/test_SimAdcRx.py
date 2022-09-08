@@ -75,7 +75,7 @@ class TestSimAdcRx(unittest.TestCase):
         self.chip['SEQ_GEN'].is_ready
         self.chip['SEQ_GEN'].is_ready
 
-        while(not self.chip['SEQ_GEN'].is_ready):
+        while not self.chip['SEQ_GEN'].is_ready:
             pass
 
         # take some data
@@ -88,7 +88,7 @@ class TestSimAdcRx(unittest.TestCase):
         self.chip['SEQ_GEN'].is_ready
         self.chip['SEQ_GEN'].is_ready
 
-        while(not self.chip['FADC'].is_ready):
+        while not self.chip['FADC'].is_ready:
             pass
 
         ret = self.chip['FIFO'].get_data()
@@ -102,7 +102,7 @@ class TestSimAdcRx(unittest.TestCase):
         self.chip['PULSE_GEN'].start()
         self.chip['SEQ_GEN'].is_ready
 
-        while(not self.chip['FADC'].is_ready):
+        while not self.chip['FADC'].is_ready:
             pass
 
         self.chip['FADC'].start()
@@ -110,7 +110,7 @@ class TestSimAdcRx(unittest.TestCase):
         self.chip['PULSE_GEN'].start()
         self.chip['SEQ_GEN'].is_ready
 
-        while(not self.chip['FADC'].is_ready):
+        while not self.chip['FADC'].is_ready:
             pass
 
         ret = self.chip['FIFO'].get_data()
@@ -121,7 +121,7 @@ class TestSimAdcRx(unittest.TestCase):
         self.chip['FADC'].start()
         self.chip['FADC'].start()
 
-        while(not self.chip['FADC'].is_ready):
+        while not self.chip['FADC'].is_ready:
             pass
 
         ret = self.chip['FIFO'].get_data()

@@ -114,7 +114,7 @@ class TestSimM26(unittest.TestCase):
 
         self.chip['SEQ'].start()
 
-        while(not self.chip['SEQ'].is_ready):
+        while not self.chip['SEQ'].is_ready:
             pass
 
         ret = self.chip['FIFO'].get_FIFO_SIZE()
@@ -130,7 +130,7 @@ class TestSimM26(unittest.TestCase):
 
         self.chip['SEQ'].start()
 
-        while(not self.chip['SEQ'].is_ready):
+        while not self.chip['SEQ'].is_ready:
             pass
 
         ret = self.chip['FIFO'].get_FIFO_SIZE()
@@ -164,7 +164,7 @@ class TestSimM26(unittest.TestCase):
 
         exp = np.tile(exps, 4)
 
-        while(not self.chip['SEQ'].is_ready):
+        while not self.chip['SEQ'].is_ready:
             pass
 
         ret = self.chip['FIFO'].get_data()
@@ -188,7 +188,7 @@ class TestSimM26(unittest.TestCase):
         self.chip['M26_RX']['EN'] = True
         self.chip['SEQ'].start()
 
-        while(not self.chip['SEQ'].is_ready):
+        while not self.chip['SEQ'].is_ready:
             pass
 
         self.assertEqual(self.chip['M26_RX']['INVALID_DATA_COUNT'], 4)
@@ -218,7 +218,7 @@ class TestSimM26(unittest.TestCase):
 
         self.chip['SEQ'].start()
 
-        while(not self.chip['SEQ'].is_ready):
+        while not self.chip['SEQ'].is_ready:
             pass
 
         ret = self.chip['FIFO'].get_FIFO_SIZE()
