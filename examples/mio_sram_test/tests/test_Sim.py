@@ -130,7 +130,7 @@ class TestSram(unittest.TestCase):
             self.chip['CONTROL'].write()
 
         ret = self.chip['FIFO'].get_data()
-        while(self.chip['FIFO'].get_FIFO_SIZE()):
+        while self.chip['FIFO'].get_FIFO_SIZE():
             ret = np.hstack((ret, self.chip['FIFO'].get_data()))
 
         x = np.arange((128 + 1023) * 4, dtype=np.uint8)
