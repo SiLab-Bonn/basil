@@ -69,19 +69,19 @@ class SiUsb3(SiTransferLayer):
 #                 logger.info("Programming FPGA: bit_file not specified")
 
     def write(self, addr, data):
-        if(addr >= self.BASE_ADDRESS_I2C and addr < self.HIGH_ADDRESS_I2C):
+        if (addr >= self.BASE_ADDRESS_I2C and addr < self.HIGH_ADDRESS_I2C):
             self._sidev.WriteI2C(addr - self.BASE_ADDRESS_I2C, data)
-        elif(addr >= self.BASE_ADDRESS_EXTERNAL and addr < self.HIGH_ADDRESS_EXTERNAL):
+        elif (addr >= self.BASE_ADDRESS_EXTERNAL and addr < self.HIGH_ADDRESS_EXTERNAL):
             self._sidev.WriteExternal(addr - self.BASE_ADDRESS_EXTERNAL, data)
-        elif(addr >= self.BASE_ADDRESS_BLOCK and addr < self.HIGH_ADDRESS_BLOCK):
+        elif (addr >= self.BASE_ADDRESS_BLOCK and addr < self.HIGH_ADDRESS_BLOCK):
             self._sidev.WriteExternal(addr - self.BASE_ADDRESS_BLOCK, data)
 
     def read(self, addr, size):
-        if(addr >= self.BASE_ADDRESS_I2C and addr < self.HIGH_ADDRESS_I2C):
+        if (addr >= self.BASE_ADDRESS_I2C and addr < self.HIGH_ADDRESS_I2C):
             return self._sidev.ReadI2C(addr - self.BASE_ADDRESS_I2C, size)
-        elif(addr >= self.BASE_ADDRESS_EXTERNAL and addr < self.HIGH_ADDRESS_EXTERNAL):
+        elif (addr >= self.BASE_ADDRESS_EXTERNAL and addr < self.HIGH_ADDRESS_EXTERNAL):
             return self._sidev.ReadExternal(addr - self.BASE_ADDRESS_EXTERNAL, size)
-        elif(addr >= self.BASE_ADDRESS_BLOCK and addr < self.HIGH_ADDRESS_BLOCK):
+        elif (addr >= self.BASE_ADDRESS_BLOCK and addr < self.HIGH_ADDRESS_BLOCK):
             return self._sidev.ReadExternal(addr - self.BASE_ADDRESS_BLOCK, size)
 
     def get_configuration(self):

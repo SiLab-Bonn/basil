@@ -119,7 +119,7 @@ class JtagGpio(HardwareLayer):
     def _write(self, tck=True, tdo=False):
         self._intf.set_data(self.reg.tobytes())
 
-        if(tck):
+        if tck:
             self.reg['TCK'] = 0
             self._intf.set_data(self.reg.tobytes())
             self.reg['TCK'] = 1

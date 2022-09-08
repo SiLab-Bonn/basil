@@ -44,11 +44,11 @@ class SiSim(SiTransferLayer):
         if 'timeout' in self._init.keys():
             try_cnt = self._init['timeout']
 
-        while(self._sock.connect_ex((host, port)) != 0):
+        while self._sock.connect_ex((host, port)) != 0:
             logger.debug("Trying to connect to simulator.")
             time.sleep(1)
             try_cnt -= 1
-            if(try_cnt < 1):
+            if try_cnt < 1:
                 raise IOError("No connection to simulation server.")
 
         self._iface = PickleInterface(self._sock)  # exeption?
