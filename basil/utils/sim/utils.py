@@ -22,7 +22,7 @@ def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test
 
     mkfile = "SIMULATION_HOST?=%s\nSIMULATION_PORT?=%d\nSIMULATION_BUS?=%s\n" % (sim_host, sim_port, sim_bus)
 
-    if(end_on_disconnect):
+    if end_on_disconnect:
         mkfile += "SIMULATION_END_ON_DISCONNECT?=1\n"
 
     mkfile += "\n"
