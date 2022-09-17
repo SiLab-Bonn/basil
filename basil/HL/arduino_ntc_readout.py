@@ -68,7 +68,7 @@ class NTCReadout(ArduinoBase):
     @property
     def measure_v_drop_over_ntc(self):
         return bool(int(self.query(self.create_command(self.CMDS['measure_ntc']))))
-    
+
     @measure_v_drop_over_ntc.setter
     def measure_v_drop_over_ntc(self, measure_ntc):
         self._set_and_retrieve(cmd='measure_ntc', val=1 if bool(measure_ntc) else 0)
