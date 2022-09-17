@@ -55,3 +55,9 @@ print(f"Resistor value is {dut['NTCReadout'].resistance} Ohm")
 # Read temperature in degree C and resistanc ein Ohm for the first 4 inputs
 print(dut['NTCReadout'].get_temp(list(range(4))))
 print(dut['NTCReadout'].get_res(list(range(4))))
+
+print(f"Voltage is measured over NTC in divider config: {dut['NTCReadout'].measure_v_drop_over_ntc}")
+print(f"Resistance is: {dut['NTCReadout'].get_res(1)}")
+dut['NTCReadout'].measure_v_drop_over_ntc = True
+print(f"Voltage is measured over NTC in divider config: {dut['NTCReadout'].measure_v_drop_over_ntc}")
+print(f"Resistance is: {dut['NTCReadout'].get_res(1)}")

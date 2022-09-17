@@ -20,6 +20,7 @@ const float NTC_NOMINAL_RES = 10000.0; // Resistance of NTC at 25 degrees C
 const float RESISTOR_RES = 10000.0; // Resistance of the resistors in series to the NTC, forming voltage divider
 const float TEMP_NOMINAL_DEGREE_C = 25.0; // Nominal temperature for above resistance (almost always 25 C)
 const float BETA_COEFFICIENT = 3950.0; // The beta coefficient of the NTC (usually 3000-4000); EPC B57891-M103 NTC Thermistor
+const uint16_t MEAS_OVER_NTC = 0; // Whether the voltage drop in the divider configuration is measured over the NTC. If 0, then it is measured over the fixed resistor
 
 // Serial related
 const char END = '\n';
@@ -41,6 +42,7 @@ const char NOMINAL_RES_CMD = 'O';
 const char NOMINAL_TEMP_CMD = 'C';
 const char RESISTANCE_CMD = 'R';
 const char RESET_CMD = 'X';
+const char MEAS_OVER_NTC_CMD = 'Y';
 
 
 // Define variables to be used for calculation
@@ -57,6 +59,7 @@ float ntcNominalRes;
 float resistorRes;
 float tempNominalDegreeC;
 float betaCoefficient;
+uint16_t measureOverNTC;
 
 
 void restoreDefaults(){
@@ -69,6 +72,7 @@ void restoreDefaults(){
   resistorRes = RESISTOR_RES;
   tempNominalDegreeC = TEMP_NOMINAL_DEGREE_C;
   betaCoefficient = BETA_COEFFICIENT;
+  measureOverNTC = MEAS_OVER_NTC;
 }
 
 
@@ -106,7 +110,16 @@ float getRes(int ntc){
 
   // Convert  ADC resistance value to resistance in Ohm
   resistance = 1023 / resistance - 1 ;
-  resistance = resistorRes / resistance;
+
+  // Voltage divider is measured over the NTC with NTC_NOMINAL_RES
+  if (measureOverNTC > 0) {
+    resistance = resistorRes / resistance;
+  }
+
+  // Voltage divider is measured over the fixed RESISTOR_RES
+  else {
+    resistance = resistorRes * resistance;  
+  }
 
   return resistance;
 }
@@ -246,6 +259,13 @@ void loop(void){
           Serial.println(resistorRes);
         }
 
+        // Set whether we measure the voltage over the NTC or the fixed resistor in voltage divider config
+        if (toupper(serialBuffer[0]) == MEAS_OVER_NTC_CMD){
+          processIncoming();
+          measureOverNTC = atoi(serialBuffer);
+          Serial.println(measureOverNTC);
+        }
+
         // Restore all variables to their default value
         if (toupper(serialBuffer[0]) == RESET_CMD){
           restoreDefaults();
@@ -295,6 +315,11 @@ void loop(void){
         // Return resistor value in voltage divider config in Ohm
         if (serialBuffer[0] == RESISTANCE_CMD){
           Serial.println(resistorRes);
+        }
+
+        // Return whether we measure over the NTC or fixed resistor
+        if (serialBuffer[0] == MEAS_OVER_NTC_CMD){
+          Serial.println(measureOverNTC);
         }
 
       }

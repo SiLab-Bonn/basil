@@ -16,7 +16,8 @@ class NTCReadout(ArduinoBase):
         'nominal_res': 'O',
         'nominal_temp': 'C',
         'resistance': 'R',
-        'restore': 'X'
+        'restore': 'X',
+        'measure_ntc': 'Y'
     }
 
     ERRORS = {
@@ -63,6 +64,14 @@ class NTCReadout(ArduinoBase):
     @resistance.setter
     def resistance(self, resistance):
         self._set_and_retrieve(cmd='resistance', val=float(resistance))
+
+    @property
+    def measure_v_drop_over_ntc(self):
+        return bool(int(self.query(self.create_command(self.CMDS['measure_ntc']))))
+
+    @measure_v_drop_over_ntc.setter
+    def measure_v_drop_over_ntc(self, measure_ntc):
+        self._set_and_retrieve(cmd='measure_ntc', val=1 if bool(measure_ntc) else 0)
 
     def __init__(self, intf, conf):
         super(NTCReadout, self).__init__(intf, conf)
