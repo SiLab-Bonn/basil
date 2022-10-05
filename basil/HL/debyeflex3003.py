@@ -80,10 +80,10 @@ class debyeflex3003(HardwareLayer):
             self.write("SV:{:02d}".format(vol))
             logger.info("Set tube voltage to {:.1f} kV".format(self.get_nominal_voltage()))
 
-    def set_highvoltage_on(self):
+    def set_high_voltage_on(self):
         self.write("HV:1")
 
-    def set_highvoltage_off(self):
+    def set_high_voltage_off(self):
         self.write("HV:0")
 
     def open_shutter(self, shutter=1):
