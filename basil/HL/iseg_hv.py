@@ -176,7 +176,7 @@ class IsegHV(HardwareLayer):
     @v_lim.setter
     def v_lim(self, voltage_limit):
         self._v_lim = voltage_limit if voltage_limit is None else float(voltage_limit)
-    
+
     @property
     def voltage_limit(self):
         """

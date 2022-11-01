@@ -25,7 +25,7 @@ dut['SHQ'].autostart = True
 # Set voltage to +-30 volts; requires hardware polarity change
 polarity = dut['SHQ'].polarity
 
-dut['SHQ'].high_voltage = 15 * polarity  # Set high voltage; hv_on() / hv_off() 
+dut['SHQ'].high_voltage = 15 * polarity  # Set high voltage; hv_on() / hv_off()
 dut['SHQ'].v_lim = 20 * polarity  # Set software-side voltage limit
 dut['SHQ'].voltage = 10 * polarity  # Set voltage
 
