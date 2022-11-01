@@ -308,13 +308,19 @@ class IsegHV(HardwareLayer):
         return self.identifier.split(';')[3]
 
     def __init__(self, intf, conf):
-        super(IsegHV).__init__(intf, conf)
+        super(IsegHV, self).__init__(intf, conf)
 
         # Store current channel number; default to channel 1
         self._channel = None
+
+    def setup_ps(self):
+        """Set up the power supply"""
+
         # Store number of channels
         self.n_channel = self._init.get('n_channel', 1)
         self.channel = self._init.get('channel', 1)
+
+        self.write("")  # Synchronize
 
         # Important: The manual states that the default answer delay is 3 ms.
         # When querying the answer_delay property, it returns 0 although only values in between 1 and 255 ms are valid.
@@ -326,9 +332,7 @@ class IsegHV(HardwareLayer):
         self.high_voltage = self._init.get('high_voltage', None)
         
         # Add error response for attempting to set voltage too high
-        self.ERRORS[f'? UMAX={self.voltage_limit}'] = "Set voltage exceeds voltage limit"
-
-        
+        self.ERRORS[f'? UMAX={self.voltage_limit}'] = "Set voltage exceeds voltage limit"            
 
     def _get_set_property(self, prop, value=None):
         
@@ -365,6 +369,9 @@ class IsegHV(HardwareLayer):
             raise RuntimeError(self.ERRORS[read_value])
 
         return read_value
+
+    def write(self, msg):
+        self._intf.write(msg)    
 
     def query(self, msg):
         """
