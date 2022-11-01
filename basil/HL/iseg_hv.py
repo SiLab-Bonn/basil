@@ -12,15 +12,6 @@ from basil.HL.HardwareLayer import HardwareLayer
 logger = logging.getLogger(__name__)
 
 
-def check_ps_is_setup(func):
-
-    def wrapper(self, *args, **kwargs):
-        if not self._ps_is_setup:
-            self._setup_ps()
-        return func(self, *args, **kwargs)
-    return wrapper    
-
-
 class IsegHV(HardwareLayer):
     """
     Python RS232 interface for various ISEG HV power supplies (SHQ-Series, NQH-Series, etc.)
@@ -46,7 +37,14 @@ class IsegHV(HardwareLayer):
         'get_module_status': 'T{channel}',
         'set_autostart': 'A{channel}={value}',
         'get_autostart': 'A{channel}'
-        }
+    }
+
+    FORMATS = {
+        'get_voltage_meas': lambda val: f'{val[:-3]}e{val[-3:]}',
+        'get_current_meas': lambda val: f'{val[:-3]}e{val[-3:]}',
+        'get_voltage_set': lambda val: f'{val[:-3]}e{val[-3:]}',
+        'get_trip_current': lambda val: f'{val[:-3]}e{val[-3:]}'
+    }    
 
     ERRORS = {
         '????': 'Syntax error in command',
@@ -318,33 +316,28 @@ class IsegHV(HardwareLayer):
 
     def __init__(self, intf, conf):
         super(IsegHV, self).__init__(intf, conf)
-        self._ps_is_setup = False
-
-    def _setup_ps(self):
-        """Set up the power supply"""
         
         # Store current channel number; default to channel 1
         self._channel = None
         # Store number of channels
         self.n_channel = self._init.get('n_channel', 1)
         self.channel = self._init.get('channel', 1)
-
-        self.write("")  # Synchronize
-
-        # Important: The manual states that the default answer delay is 3 ms.
-        # When querying the answer_delay property, it returns 0 although only values in between 1 and 255 ms are valid.
-        # Queries take very long which leads to serial timeouts. I suspect the default value on firmware side is in fact 255 ms (not 3 ms).
-        # Therefore, setting the answer_delay as first thing in the __init__ is absolutely REQUIRED
-        self.answer_delay = 1  # ms
-
         # Voltage which is considered the high voltage
         self.high_voltage = self._init.get('high_voltage', None)
-        
+
+    def setup_ps(self):
+        """Set up the power supply"""
+        # self.write("")  # Synchronize: sometimze needed
+
+        # Important: The manual states that the default answer delay is 3 ms.
+        # When querying the answer_delay property, it returns sometimes 0 although only values in between 1 and 255 ms are valid.
+        # Queries take very long which leads to serial timeouts. I suspect the default value on firmware side is in fact 255 ms (not 3 ms).
+        # Therefore, setting the answer_delay as first thing in the __init__ is sometimes required
+        self.answer_delay = 1  # ms
+                
         # Add error response for attempting to set voltage too high
         self.ERRORS[f'? UMAX={self.voltage_limit}'] = "Set voltage exceeds voltage limit"
-
-        self._ps_is_setup = True         
-
+       
     def _get_set_property(self, prop, value=None):
         
         if '{channel}' in self.CMDS[prop] and '{value}' in self.CMDS[prop]: 
@@ -356,9 +349,10 @@ class IsegHV(HardwareLayer):
         else:
             cmd = self.CMDS[prop]
         
-        return self.query(cmd)
+        result = self.query(cmd)
+        
+        return self.FORMATS[prop](result) if prop in self.FORMATS else result
 
-    @check_ps_is_setup
     def read(self):
         """
         Reads from serial port until self.READ_TERMINATION byte is encountered.
@@ -382,11 +376,9 @@ class IsegHV(HardwareLayer):
 
         return read_value
 
-    @check_ps_is_setup
     def write(self, msg):
         self._intf.write(msg)    
 
-    @check_ps_is_setup
     def query(self, msg):
         """
         Queries a message *msg* and reads the answer
