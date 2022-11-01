@@ -199,10 +199,10 @@ class IsegHV(HardwareLayer):
 
         Returns
         -------
-        int
+        float
             Current trip
         """
-        return int(self._get_set_property(prop='get_current_trip'))
+        return float(self._get_set_property(prop='get_current_trip'))
 
     @current_trip.setter
     def current_trip(self, ct):
