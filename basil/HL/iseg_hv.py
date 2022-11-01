@@ -175,7 +175,7 @@ class IsegHV(HardwareLayer):
 
     @v_lim.setter
     def v_lim(self, voltage_limit):
-        self._v_lim =float(voltage_limit)
+        self._v_lim = voltage_limit if voltage_limit is None else float(voltage_limit)
     
     @property
     def voltage_limit(self):
@@ -365,7 +365,7 @@ class IsegHV(HardwareLayer):
         # Voltage which is considered the high voltage
         self.high_voltage = self._init.get('high_voltage', None)
         # Software-side voltage limit, set via self.v_lim property
-        self._v_lim = None
+        self._v_lim = self._init.get('v_lim', None)
 
     def setup_ps(self):
         """Set up the power supply"""
