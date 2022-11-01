@@ -115,12 +115,21 @@ class IsegHV(HardwareLayer):
         if voltage > self.voltage_limit:
             raise ValueError(f"Value too high! Maximum allowed voltage is {self.voltage_limit} V")
 
+        # Get module status for checks
+        ms = self.module_status
+
+        # Issue warning if PSU is in different polarity as value
+        if ms[5] == '1' and voltage < 0:
+            raise ValueError("Power supply polarity is set to positive but target voltage of {voltage}V is negative!")
+        elif ms[5] == '0' and voltage > 0:
+            raise ValueError("Power supply polarity is set to negative but target voltage of {voltage}V is positive!")
+
         # Issue warning if PSU is in manual mode
         # Then voltage can only be changed manually, at the device
-        elif self.module_status[6] == '1':
+        if ms[6] == '1':
             logging.warning("Power supply in manual mode; voltage changes have no effect!")
 
-        self._get_set_property(prop='set_voltage', value=voltage)
+        self._get_set_property(prop='set_voltage', value=abs(voltage))
 
     @property
     def voltage_target(self):
