@@ -12,6 +12,15 @@ from basil.HL.HardwareLayer import HardwareLayer
 logger = logging.getLogger(__name__)
 
 
+def check_ps_is_setup(func):
+
+    def wrapper(self, *args, **kwargs):
+        if not self._ps_is_setup:
+            self._setup_ps()
+        return func(self, *args, **kwargs)
+    return wrapper    
+
+
 class IsegHV(HardwareLayer):
     """
     Python RS232 interface for various ISEG HV power supplies (SHQ-Series, NQH-Series, etc.)
@@ -309,13 +318,13 @@ class IsegHV(HardwareLayer):
 
     def __init__(self, intf, conf):
         super(IsegHV, self).__init__(intf, conf)
+        self._ps_is_setup = False
 
+    def _setup_ps(self):
+        """Set up the power supply"""
+        
         # Store current channel number; default to channel 1
         self._channel = None
-
-    def setup_ps(self):
-        """Set up the power supply"""
-
         # Store number of channels
         self.n_channel = self._init.get('n_channel', 1)
         self.channel = self._init.get('channel', 1)
@@ -332,7 +341,9 @@ class IsegHV(HardwareLayer):
         self.high_voltage = self._init.get('high_voltage', None)
         
         # Add error response for attempting to set voltage too high
-        self.ERRORS[f'? UMAX={self.voltage_limit}'] = "Set voltage exceeds voltage limit"            
+        self.ERRORS[f'? UMAX={self.voltage_limit}'] = "Set voltage exceeds voltage limit"
+
+        self._ps_is_setup = True         
 
     def _get_set_property(self, prop, value=None):
         
@@ -347,6 +358,7 @@ class IsegHV(HardwareLayer):
         
         return self.query(cmd)
 
+    @check_ps_is_setup
     def read(self):
         """
         Reads from serial port until self.READ_TERMINATION byte is encountered.
@@ -370,9 +382,11 @@ class IsegHV(HardwareLayer):
 
         return read_value
 
+    @check_ps_is_setup
     def write(self, msg):
         self._intf.write(msg)    
 
+    @check_ps_is_setup
     def query(self, msg):
         """
         Queries a message *msg* and reads the answer
@@ -387,8 +401,11 @@ class IsegHV(HardwareLayer):
         str
             Decoded, stripped string, read from serial port
         """
-        # TODO: Manual states that character by character have to be sent and echoed, check that
-        echo = self._intf.query(msg)
+        # ASCII protocol mirrors msg first, then sends reply, eg:
+        # SEND -> request_some_data  // command string 
+        # RECV -> request_some_data  // recv the command string on first read 
+        # RECV -> actual data        // recv the actual data
+        echo = str(self._intf.query(msg)).strip()
         if echo != msg:
             raise RuntimeError(f"Issued command ({msg}) and echoed command ({echo}) differ.")
         return self.read()
