@@ -13,6 +13,7 @@ hw_drivers:
     type      : iseg_hv
     interface : Serial
     init      :
-        high_voltage : 10 # Set HV to be 10 V
+        # high_voltage : 15 # Set HV to be 15 V
+        # v_lim : 100 # Set software-side voltage limit to be 100 V
         n_channel : 1 # Set number of channels the ISEG HV PS has 
         channel : 1  # Set channel number
