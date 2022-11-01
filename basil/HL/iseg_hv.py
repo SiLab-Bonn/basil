@@ -112,17 +112,22 @@ class IsegHV(HardwareLayer):
 
     @voltage.setter
     def voltage(self, voltage):
-        if voltage > self.voltage_limit:
-            raise ValueError(f"Value too high! Maximum allowed voltage is {self.voltage_limit} V")
+        # Check hardware voltage limit
+        if abs(voltage) > abs(self.voltage_limit):
+            raise ValueError(f"Voltage of {voltage}V too high! Maximum voltage is {self.voltage_limit} V")
+
+        # Check software voltage limit
+        if self._v_lim is not None and abs(voltage) > abs(self._v_lim):
+            raise ValueError(f"Voltage of {voltage}V too high! Increase *v_lim={self._vlim}V* to enable higher voltage!")
 
         # Get module status for checks
         ms = self.module_status
 
         # Issue warning if PSU is in different polarity as value
         if ms[5] == '1' and voltage < 0:
-            raise ValueError("Power supply polarity is set to positive but target voltage of {voltage}V is negative!")
+            raise ValueError(f"Power supply polarity is set to positive but target voltage of {voltage}V is negative!")
         elif ms[5] == '0' and voltage > 0:
-            raise ValueError("Power supply polarity is set to negative but target voltage of {voltage}V is positive!")
+            raise ValueError(f"Power supply polarity is set to negative but target voltage of {voltage}V is positive!")
 
         # Issue warning if PSU is in manual mode
         # Then voltage can only be changed manually, at the device
@@ -157,9 +162,25 @@ class IsegHV(HardwareLayer):
         return float(self._get_set_property(prop='get_current_meas'))
 
     @property
+    def v_lim(self):
+        """
+        Software-side voltage limit, initially None. If set, a check will happen before each voltage change
+
+        Returns
+        -------
+        float, None
+            Software-side voltage limit
+        """
+        return self._v_lim
+
+    @v_lim.setter
+    def v_lim(self, voltage_limit):
+        self._v_lim =float(voltage_limit)
+    
+    @property
     def voltage_limit(self):
         """
-        Return current voltage limit of self.channel in V
+        Return current hardware-side voltage limit of self.channel in V
 
         Returns
         -------
@@ -343,6 +364,8 @@ class IsegHV(HardwareLayer):
         self.channel = self._init.get('channel', 1)
         # Voltage which is considered the high voltage
         self.high_voltage = self._init.get('high_voltage', None)
+        # Software-side voltage limit, set via self.v_lim property
+        self._v_lim = None
 
     def setup_ps(self):
         """Set up the power supply"""
