@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 class IsegHV(HardwareLayer):
     """
     Python RS232 interface for various ISEG HV power supplies (SHQ-Series, NQH-Series, etc.)
+    https://iseg-hv.com/download/AC_DC/SHQ/iseg_manual_SHQ-RS-232-Programmers-Guide.pdf
+    https://iseg-hv.com/download/SYSTEMS/NIM/NHQ/NHQ-RS-232-Programmers-Guide.pdf
     """
 
     # Command references from protocol
@@ -112,6 +114,12 @@ class IsegHV(HardwareLayer):
     def voltage(self, voltage):
         if voltage > self.voltage_limit:
             raise ValueError(f"Value too high! Maximum allowed voltage is {self.voltage_limit} V")
+
+        # Issue warning if PSU is in manual mode
+        # Then voltage can only be changed manually, at the device  
+        elif self.module_status[6] == '1':
+            logging.warning("Power supply in manual mode; voltage changes have no effect!")
+
         self._get_set_property(prop='set_voltage', value=voltage)
 
     @property
