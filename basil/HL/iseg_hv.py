@@ -254,7 +254,7 @@ class IsegHV(HardwareLayer):
         """
         def module_msg(bit, prefix, t_msg, f_msg=''):
             return f'{prefix} ' + (t_msg if bit == '1' else f_msg) + '\n'
-        
+
         _description = {
             0: dict(prefix='', t_msg="Quality of output voltage not given at present"),
             1: dict(prefix='', t_msg="V_MAX or I_MAX is / was exceeded"),
@@ -265,9 +265,9 @@ class IsegHV(HardwareLayer):
             6: dict(prefix="Control via", t_msg="manual", f_msg="RS-232 interface"),
             7: dict(prefix="Display dialled to", t_msg="voltage measurement", f_msg="current measurement")
         }
-        module_status = self.module_status
+
         module_description = ''
-        for i, bit in enumerate(module_status):
+        for i, bit in enumerate(self.module_status):
             module_description += module_msg(bit=bit, **_description[i])
         return module_description
 
@@ -342,9 +342,9 @@ class IsegHV(HardwareLayer):
 
     def _get_set_property(self, prop, value=None):
 
-        if '{channel}' in self.CMDS[prop] and '{value}' in self.CMDS[prop]: 
+        if '{channel}' in self.CMDS[prop] and '{value}' in self.CMDS[prop]:
             cmd = self.CMDS[prop].format(channel=self.channel, value=value)
-        elif '{channel}' in self.CMDS[prop]: 
+        elif '{channel}' in self.CMDS[prop]:
             cmd = self.CMDS[prop].format(channel=self.channel)
         elif '{value}' in self.CMDS[prop]:
             cmd = self.CMDS[prop].format(value=value)
@@ -379,7 +379,7 @@ class IsegHV(HardwareLayer):
         return read_value
 
     def write(self, msg):
-        self._intf.write(msg)    
+        self._intf.write(msg)
 
     def query(self, msg):
         """
@@ -396,8 +396,8 @@ class IsegHV(HardwareLayer):
             Decoded, stripped string, read from serial port
         """
         # ASCII protocol mirrors msg first, then sends reply, eg:
-        # SEND -> request_some_data  // command string 
-        # RECV -> request_some_data  // recv the command string on first read 
+        # SEND -> request_some_data  // command string
+        # RECV -> request_some_data  // recv the command string on first read
         # RECV -> actual data        // recv the actual data
         echo = str(self._intf.query(msg)).strip()
         if echo != msg:
