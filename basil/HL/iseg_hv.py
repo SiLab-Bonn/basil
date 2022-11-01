@@ -44,7 +44,7 @@ class IsegHV(HardwareLayer):
         'get_current_meas': lambda val: f'{val[:-3]}e{val[-3:]}',
         'get_voltage_set': lambda val: f'{val[:-3]}e{val[-3:]}',
         'get_trip_current': lambda val: f'{val[:-3]}e{val[-3:]}'
-    }    
+    }
 
     ERRORS = {
         '????': 'Syntax error in command',
@@ -149,7 +149,7 @@ class IsegHV(HardwareLayer):
         float
             Voltage limit in V
         """
-        # Property get_v_lim returns voltage limit as percentage of max voltage 
+        # Property get_v_lim returns voltage limit as percentage of max voltage
         return int(self._get_set_property(prop='get_v_lim')) / 100.0 * float(self.V_MAX[:-1])
 
     @property
@@ -162,7 +162,7 @@ class IsegHV(HardwareLayer):
         float
             Current limit in A
         """
-        # Property get_i_lim returns voltage limit as percentage of max current 
+        # Property get_i_lim returns voltage limit as percentage of max current
         return int(self._get_set_property(prop='get_i_lim')) / 100.0 * float(self.I_MAX[:-2])
 
     @property
@@ -228,7 +228,7 @@ class IsegHV(HardwareLayer):
             if status in status_word:
                 return f"{status_word}: {self.STATUS[status]}"
         return 'No description'
-        
+
     @property
     def module_status(self):
         """
@@ -252,21 +252,23 @@ class IsegHV(HardwareLayer):
         str
             Module description string
         """
-        module_msg = lambda bit, prefix, t_msg, f_msg='': f'{prefix} ' + (t_msg if bit == '1' else f_msg)
+        def module_msg(bit, prefix, t_msg, f_msg=''):
+            return f'{prefix} ' + (t_msg if bit == '1' else f_msg) + '\n'
+        
         _description = {
-            0: lambda b: module_msg(bit=b, prefix='', t_msg="Quality of output voltage not given at present"),
-            1: lambda b: module_msg(bit=b, prefix='', t_msg="V_MAX or I_MAX is / was exceeded"),
-            2: lambda b: module_msg(bit=b, prefix='INHIBIT signal', t_msg="is / was active", f_msg="inactive"),
-            3: lambda b: module_msg(bit=b, prefix="KILL_ENABLE is", t_msg="on", f_msg="off"),
-            4: lambda b: module_msg(bit=b, prefix="Front-panel HV-ON switch is", t_msg="OFF", f_msg="ON"),
-            5: lambda b: module_msg(bit=b, prefix="Polarity set to", t_msg="positive", f_msg="negative"),
-            6: lambda b: module_msg(bit=b, prefix="Control via", t_msg="manual", f_msg="RS-232 interface"),
-            7: lambda b: module_msg(bit=b, prefix="Display dialled to", t_msg="voltage measurement", f_msg="current measurement")
+            0: dict(prefix='', t_msg="Quality of output voltage not given at present"),
+            1: dict(prefix='', t_msg="V_MAX or I_MAX is / was exceeded"),
+            2: dict(prefix='INHIBIT signal', t_msg="is / was active", f_msg="inactive"),
+            3: dict(prefix="KILL_ENABLE is", t_msg="on", f_msg="off"),
+            4: dict(prefix="Front-panel HV-ON switch is", t_msg="OFF", f_msg="ON"),
+            5: dict(prefix="Polarity set to", t_msg="positive", f_msg="negative"),
+            6: dict(prefix="Control via", t_msg="manual", f_msg="RS-232 interface"),
+            7: dict(prefix="Display dialled to", t_msg="voltage measurement", f_msg="current measurement")
         }
         module_status = self.module_status
         module_description = ''
         for i, bit in enumerate(module_status):
-            module_description += _description[i](bit) + '\n'
+            module_description += module_msg(bit=bit, **_description[i])
         return module_description
 
     @property
@@ -309,14 +311,14 @@ class IsegHV(HardwareLayer):
     @property
     def V_MAX(self):
         return self.identifier.split(';')[2]
-    
+
     @property
     def I_MAX(self):
         return self.identifier.split(';')[3]
 
     def __init__(self, intf, conf):
         super(IsegHV, self).__init__(intf, conf)
-        
+
         # Store current channel number; default to channel 1
         self._channel = None
         # Store number of channels
@@ -334,12 +336,12 @@ class IsegHV(HardwareLayer):
         # Queries take very long which leads to serial timeouts. I suspect the default value on firmware side is in fact 255 ms (not 3 ms).
         # Therefore, setting the answer_delay as first thing in the __init__ is sometimes required
         self.answer_delay = 1  # ms
-                
+
         # Add error response for attempting to set voltage too high
         self.ERRORS[f'? UMAX={self.voltage_limit}'] = "Set voltage exceeds voltage limit"
-       
+
     def _get_set_property(self, prop, value=None):
-        
+
         if '{channel}' in self.CMDS[prop] and '{value}' in self.CMDS[prop]: 
             cmd = self.CMDS[prop].format(channel=self.channel, value=value)
         elif '{channel}' in self.CMDS[prop]: 
@@ -348,9 +350,9 @@ class IsegHV(HardwareLayer):
             cmd = self.CMDS[prop].format(value=value)
         else:
             cmd = self.CMDS[prop]
-        
+
         result = self.query(cmd)
-        
+
         return self.FORMATS[prop](result) if prop in self.FORMATS else result
 
     def read(self):
