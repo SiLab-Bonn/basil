@@ -45,7 +45,7 @@ class IsegHV(HardwareLayer):
         'get_voltage_meas': lambda val: f'{val[:-3]}e{val[-3:]}',
         'get_current_meas': lambda val: f'{val[:-3]}e{val[-3:]}',
         'get_voltage_set': lambda val: f'{val[:-3]}e{val[-3:]}',
-        'get_trip_current': lambda val: f'{val[:-3]}e{val[-3:]}'
+        'get_current_trip': lambda val: f'{val[:-3]}e{val[-3:]}'
     }
 
     ERRORS = {
