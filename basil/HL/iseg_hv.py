@@ -332,6 +332,10 @@ class IsegHV(HardwareLayer):
     def channel(self):
         return self._channel
 
+    @property
+    def polarity(self):
+        return 1 if self.module_status[5] == '1' else -1    
+
     @channel.setter
     def channel(self, ch):
         if not 1 <= ch <= self.n_channel:
