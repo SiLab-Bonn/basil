@@ -116,7 +116,7 @@ class IsegHV(HardwareLayer):
             raise ValueError(f"Value too high! Maximum allowed voltage is {self.voltage_limit} V")
 
         # Issue warning if PSU is in manual mode
-        # Then voltage can only be changed manually, at the device  
+        # Then voltage can only be changed manually, at the device
         elif self.module_status[6] == '1':
             logging.warning("Power supply in manual mode; voltage changes have no effect!")
 
