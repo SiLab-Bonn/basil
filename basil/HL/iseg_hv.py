@@ -118,7 +118,7 @@ class IsegHV(HardwareLayer):
 
         # Check software voltage limit
         if self._v_lim is not None and abs(voltage) > abs(self._v_lim):
-            raise ValueError(f"Voltage of {voltage}V too high! Increase *v_lim={self._vlim}V* to enable higher voltage!")
+            raise ValueError(f"Voltage of {voltage}V too high! Increase *v_lim={self._v_lim}V* to enable higher voltage!")
 
         # Get module status for checks
         ms = self.module_status
