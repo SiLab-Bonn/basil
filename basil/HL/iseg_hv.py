@@ -116,10 +116,6 @@ class IsegHV(HardwareLayer):
         if abs(voltage) > abs(self.voltage_limit):
             raise ValueError(f"Voltage of {voltage}V too high! Maximum voltage is {self.voltage_limit} V")
 
-        # Check software voltage limit
-        if self._v_lim is not None and abs(voltage) > abs(self._v_lim):
-            raise ValueError(f"Voltage of {voltage}V too high! Increase *v_lim={self._v_lim}V* to enable higher voltage!")
-
         # Get module status for checks
         ms = self.module_status
 
@@ -128,6 +124,11 @@ class IsegHV(HardwareLayer):
             raise ValueError(f"Power supply polarity is set to positive but target voltage of {voltage}V is negative!")
         elif ms[5] == '0' and voltage > 0:
             raise ValueError(f"Power supply polarity is set to negative but target voltage of {voltage}V is positive!")
+
+        # Check software voltage limit
+        if self._v_lim is not None:
+            if (ms[5] == '1' and voltage > self._v_lim) or (ms[5] == '0' and voltage < self._v_lim):
+                raise ValueError(f"Voltage of {voltage}V too high! Increase *v_lim={self._v_lim}V* to enable higher voltage!")
 
         # Issue warning if PSU is in manual mode
         # Then voltage can only be changed manually, at the device
