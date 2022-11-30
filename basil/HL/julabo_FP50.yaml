@@ -1,0 +1,13 @@
+"""
+Device description for using the julabo FP50 chiller
+set_ function expect a parameter, get_ function return a parameter.
+"""
+
+get_temp: in_sp_00  # get current set temperature
+set_temp: out_sp_00  # set the temperature
+get_curr_temp: in_pv_00  # get the current bath temperature
+get_version: version  # get the version of the device
+get_status: status  # see its status (manual start, remote control, ...)
+set_power: out_hil_00  # Set the desired maximum cooling power (0% to 100%). Note: Enter the value with a preceding negative sign! This setting is meaningful only for FP cooling machines.
+on: out_mode_05 1  # start (parameter 1)
+off: out_mode_05 0  # stop (parameter 0)
