@@ -17,4 +17,3 @@ hw_drivers:
   - name      : chiller
     type      : julaboFP50
     interface : Serial
-

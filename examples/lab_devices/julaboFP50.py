@@ -13,5 +13,3 @@ print("Status: {}".format(dut["chiller"].get_status()))
 
 # turn off:
 # dut["chiller"].stop_chiller()
-
-
