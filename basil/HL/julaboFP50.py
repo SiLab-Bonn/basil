@@ -12,7 +12,7 @@ This script is used to communicate with the chiller julabo fp50
 import logging
 import time
 
-from basil.HL.RegisterHardwareLayer import HardwareLayer
+from basil.HL.HardwareLayer import HardwareLayer
 
 
 logger = logging.getLogger(__name__)
@@ -22,6 +22,12 @@ class julaboFP50(HardwareLayer):
     ''' Driver for the Julabo FP50 chiller.
     A simple protocol via crossed null modem serial port is used with baud rate of 9600.
     '''
+
+    Commands = {'get_temp': 'in_sp_00',
+                'set_temp': 'out_sp_00',
+                'get_curr_temp': 'in_pv_00',
+                'get_version': 'version',
+                'get_status': 'status'}
 
     def __init__(self, intf, conf):
         super(julaboFP50, self).__init__(intf, conf)
