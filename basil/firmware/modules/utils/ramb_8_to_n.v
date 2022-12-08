@@ -15,17 +15,22 @@ module ramb_8_to_n (clkA,
                     doA,
                     diB,
                     doB);
-    
+
+
+`include "../../../git/basil/basil/firmware/modules/includes/log2func.v"
+//`include "includes/log2func.v"
+
 parameter SIZE  = 1024;
 parameter WIDTH = 8;
 
+
 localparam WIDTHA     = 8;
 localparam SIZEA      = SIZE;
-localparam ADDRWIDTHA = $clog2(SIZEA);
+localparam ADDRWIDTHA = clog2(SIZEA);
 
 localparam WIDTHB     = WIDTH;
 localparam SIZEB      = SIZEA*8/WIDTHB;
-localparam ADDRWIDTHB = $clog2(SIZEB);
+localparam ADDRWIDTHB = clog2(SIZEB);
 
 input wire clkA;
 input wire clkB;
@@ -44,7 +49,7 @@ localparam maxSIZE   = `max(SIZEA, SIZEB);
 localparam maxWIDTH  = `max(WIDTHA, WIDTHB);
 localparam minWIDTH  = `min(WIDTHA, WIDTHB);
 localparam RATIO     = maxWIDTH / minWIDTH;
-localparam log2RATIO = $clog2(RATIO);
+localparam log2RATIO = clog2(RATIO);
 
 reg [minWIDTH-1:0] RAM [0:maxSIZE-1];
 
