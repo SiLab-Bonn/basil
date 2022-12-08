@@ -1,11 +1,11 @@
 from basil.dut import Dut
 
-dut = Dut('/julaboFP50_pyserial.yaml')
+dut = Dut('julaboFP50_pyserial.yaml')
 dut.init()
 
 
 # turn on:
-# dut["chiller"].start_chiller(start=True)
+# dut["chiller"].start_chiller()
 
 # dut["chiller"].set_temp(15)  # set temp
 
