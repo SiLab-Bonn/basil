@@ -9,13 +9,15 @@
 import yaml
 from array import array
 from basil.HL.HardwareLayer import HardwareLayer
-from struct import pack, unpack, unpack_from, calcsize
+from struct import pack, unpack_from
 import logging
+
 
 class I2C_INTF(HardwareLayer):
     '''
     Use basil implementation of i2c.
     '''
+
     def __init__(self, intf, conf):
         super(I2C_INTF, self).__init__(intf, conf)
         self._base_addr = conf['base_addr']
@@ -29,6 +31,7 @@ class I2C_INTF(HardwareLayer):
     def _get_reg(self, addr):
         self._intf.write(self._base_addr, array('B', pack('B', addr)))
         return unpack_from('B', self._intf.read(self._base_addr, size=1))[0]
+
 
 class MuxPca9540B(HardwareLayer):
     '''PCA 9540B
@@ -75,14 +78,16 @@ class GpioPca9554(HardwareLayer):
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_OUT, 0x00))
 
     def _write_output_port_select(self, value):
-        self._intf.write(self._base_addr + self.PCA9554_ADD, array('B', pack('BB', self.PCA9554_CFG, value)))  # configure output lines
+        self._intf.write(self._base_addr + self.PCA9554_ADD,
+                         array('B', pack('BB', self.PCA9554_CFG, value)))  # configure output lines
 
     def _read_input_port(self):
         self._intf.write(self._base_addr + self.PCA9554_ADD, array('B', pack('B', self.PCA9554_IN)))  # set command byte
         return unpack_from('B', self._intf.read(self._base_addr + self.PCA9554_ADD | 1, size=1))[0]  # read input lines
 
     def _write_output_port(self, value):
-        self._intf.write(self._base_addr + self.PCA9554_ADD, array('B', pack('BB', self.PCA9554_OUT, value)))  # write output lines
+        self._intf.write(self._base_addr + self.PCA9554_ADD,
+                         array('B', pack('BB', self.PCA9554_OUT, value)))  # write output lines
 
     def _read_output_port(self):
         self._intf.write(self._base_addr + self.PCA9554_ADD, array('B', pack('B', self.PCA9554_OUT)))
@@ -109,6 +114,7 @@ class ADN_XPT(I2C_INTF):
     - Termination if not handled during I/O config
     - XPT core update
     '''
+
     def __init__(self, intf, conf):
         super().__init__(intf, conf)
         self.lookup = {}
@@ -122,17 +128,19 @@ class ADN_XPT(I2C_INTF):
         '''
         Set up helper maps and select an output table if desired 
         '''
-        with open(register_map, 'r') as map_: #register lookup table with register properties (addr, offset, default ...)
+        with open(register_map, 'r') as map_:
+            # register lookup table with register properties (addr, offset, default ...)
             self.lookup = yaml.safe_load(map_)
 
-        for key in self.lookup: #set up register dict with everything but output channel assignment
+        for key in self.lookup:  # set up register dict with everything but output channel assignment
             if key != 'Output_Channels':
                 self.map[key] = {}
                 for reg in self.lookup[key]:
                     self.map[key][reg['name']] = reg
 
-        self.output_channels = [channel for channel in self.lookup["Output_Channels"]] #List of available output channels for given XPT.
-        #self.select_table = self.output_table(write = False) #Query current output table. Upon power up should be 0.
+        self.output_channels = [channel for channel in self.lookup["Output_Channels"]]
+        # List of available output channels for given XPT.
+        # self.select_table = self.output_table(write = False) #Query current output table. Upon power up should be 0.
 
     def write_register(self, cat, regname, val):
         '''
@@ -144,7 +152,8 @@ class ADN_XPT(I2C_INTF):
         mask = self._calculate_mask(cat, regname)
         reg_read = self._get_reg(addr)
         val = (reg_read & ~mask) | ((val << self.map[cat][regname]['offset']) & mask)
-        logging.debug('Writing in register %s (address %s). Register content: %s' % (cat + " " + regname, hex(addr), format(reg_read, '#010b')))
+        logging.debug('Writing in register %s (address %s). Register content: %s' % (cat + " " + regname, hex(addr),
+                                                                                     format(reg_read, '#010b')))
         logging.debug('Use mask: %s. Write data: %s' % (format(mask, '#010b'), format(val, '#010b')))
         self._set_reg(addr, val)
         logging.debug('Register content after writing: %s' % format(self._get_reg(addr), '#010b'))
@@ -156,7 +165,8 @@ class ADN_XPT(I2C_INTF):
         addr = self.get_addr(cat, regname)
         mask = self._calculate_mask(cat, regname)
         reg_read = (self._get_reg(addr) & mask) >> self.map[cat][regname]['offset']
-        logging.info("Reading register %s (address %s). Masked register content: %s" % (cat + " " + regname, hex(addr), format(reg_read, '#010b')))
+        logging.info("Reading register %s (address %s). Masked register content: %s" % (
+            cat + " " + regname, hex(addr), format(reg_read, '#010b')))
         return reg_read
 
     def _calculate_mask(self, cat, regname):
@@ -183,7 +193,7 @@ class ADN_XPT(I2C_INTF):
         Either set an output table (0 or 1), or retrieve the current table.
         '''
         if not write:
-            self.select_table = self.read_register('General', 'Table_Select') 
+            self.select_table = self.read_register('General', 'Table_Select')
             return self.select_table
         elif write:
             self.select_table = table
@@ -191,7 +201,7 @@ class ADN_XPT(I2C_INTF):
         else:
             raise Exception
 
-    def assign_output(self, channel="OUT0", val=0, write=True):
+    def assign_output(self, channel="OUT0", val=0):
         '''
         Assign an input channel to a given output channel. Input channels are expected as integers.
         '''
@@ -202,13 +212,13 @@ class ADN_XPT(I2C_INTF):
                 channel = self.output_channels[channel]
             else:
                 raise NotImplementedError
-        if self.select_table == 0: #Selecting table
+        if self.select_table == 0:  # Selecting table
             self.table = 'XPT_Map0'
         elif self.select_table == 1:
             self.table = 'XPT_Map1'
         return self.write_register(self.table, channel, val)
 
-    def tx_config(self, register, channel='OUT0', val=0, write = True):
+    def tx_config(self, register, channel='OUT0', val=0, write=True):
         '''
         Configure TX channels. Available register blocks: TX_Drive_Control, TX_Sign_Control, TX_Lane_Control.
         '''
@@ -222,7 +232,7 @@ class ADN_XPT(I2C_INTF):
         elif write:
             return self.write_register(register, channel, val)
 
-    def rx_config(self, register, channel='IN0', val=0, write = True):
+    def rx_config(self, register, channel='IN0', val=0, write=True):
         '''
         Configure RX channels. Available register blocks: RX_EQ_Control, RX_Sign_Control.
         Retrieve current config.
@@ -240,10 +250,10 @@ class ADN_XPT(I2C_INTF):
         Set rx and tx termination for XPT.
         '''
         for key in self.map["TX_Termination_Control"]:
-            self.tx_termination(key, val = 0, write = True)
-        if self.name == "ADN4605": #ADN4604 has no RX term
+            self.tx_termination(key, val=0, write=True)
+        if self.name == "ADN4605":  # ADN4604 has no RX term
             for key in self.map["RX_Termination_Control"]:
-                self.rx_termination(key, val = 0, write = True)
+                self.rx_termination(key, val=0, write=True)
 
     def tx_termination(self, output='TXA_TERM0', write=False, val=0):
         '''
@@ -274,17 +284,17 @@ class ADN_XPT(I2C_INTF):
 
     def io_config(self, conf):
         """Map input pins to the XP outputs according to specifications in the eos_config.yaml.
-        In addition configure the XP outputs: TX_Lane_Control, TX_Sign_Control and
+        In addition, configure the XP outputs: TX_Lane_Control, TX_Sign_Control and
         TX_Drive_Control. TX_Lane_Control and TX_Drive_Control offer broadcast."""
         if self.name == 'ADN4605':
             for key, value in conf['AURORA_IN'].items():
-                if not value == None:
-                    self.assign_output(channel = key, val = value, write = True)
+                if value is not None:
+                    self.assign_output(channel=key, val=value)
                     self.tx_config("TX_Lane_Control", key, 0b01001000, True)
                     self.tx_config("TX_Drive_Control", key, 0b11, True)
-                    #if "BC" not in key: # Hack for no broadcast in tx sign control. Default usually sufficient
+                    # if "BC" not in key: # Hack for no broadcast in tx sign control. Default usually sufficient
                     #    self.tx_config("TX_Sign_Control", key, 0, True)
-                elif value == None: #But why?
+                elif value is None:  # But why?
                     pass
                 else:
                     raise NotImplementedError
@@ -296,21 +306,21 @@ class ADN_XPT(I2C_INTF):
                 if not value == "None":
                     # print(key,value)
                     # print(value==True)
-                    self.assign_output(channel = key, val = value, write = True)
+                    self.assign_output(channel=key, val=value)
                     self.tx_config("TX_basic_control", key, 0xff, True)
                     self.rx_termination("RX_EQ_Control", key, 1, True)
-                elif value == "None": #But why?
+                elif value == "None":  # But why?
                     pass
                 else:
                     raise NotImplementedError
 
         elif self.name == 'ADN4604_DATA':
             for key, value in conf['AURORA_IN'].items():
-                if not value == None:
-                    self.assign_output(channel = key, val = value, write = True)
+                if value is not None:
+                    self.assign_output(channel=key, val=value)
                     self.tx_config("TX_basic_control", key, 0b00110000, True)
                     # self.tx_config("TX_Drive0_Control", key, 0b10001000, True)
-                elif value == None: #But why?
+                elif value is None:  # But why?
                     pass
                 else:
                     raise NotImplementedError
@@ -318,11 +328,11 @@ class ADN_XPT(I2C_INTF):
 
         elif self.name == 'ADN4604_CMD':
             for key, value in conf['CMD_IN'].items():
-                if not value == None:
-                    self.assign_output(channel = key, val = value, write = True)
+                if value is not None:
+                    self.assign_output(channel=key, val=value)
                     self.tx_config("TX_basic_control", key, 0b00110000, True)
                     # self.tx_config("TX_Drive1_Control", key, 0b10001000, True)
-                elif value == None: #But why?
+                elif value is None:  # But why?
                     pass
                 else:
                     raise NotImplementedError
@@ -330,11 +340,11 @@ class ADN_XPT(I2C_INTF):
 
         elif self.name == 'ADN4604_MOD':
             for key, value in conf['MODULE_IN'].items():
-                if not value == None:
-                    self.assign_output(channel = key, val = value, write = True)
+                if value is not None:
+                    self.assign_output(channel=key, val=value)
                     self.tx_config("TX_basic_control", key, 0b00110000, True)
                     # self.tx_config("TX_Drive1_Control", key, 0b10001000, True)
-                elif value == None: #But why?
+                elif value is None:  # But why?
                     pass
                 else:
                     raise NotImplementedError
@@ -353,10 +363,10 @@ class ADN_XPT(I2C_INTF):
         RX_EQ_Control can be used as broadcast. RX_Sign_Control has to be done
         on an input-by-input basis."""
         for key in self.map["RX_EQ_Control"].keys():
-            if "BC" in key: #Use BCAST
-                self.rx_config('RX_EQ_Control', key, val = 0b00000011, write = True)
-            elif "BC" not in key: #Use a different map for input equalizer / inverter. Not implemented
-                self.rx_config('RX_EQ_Control', key, val = 0, write = True)
+            if "BC" in key:  # Use BCAST
+                self.rx_config('RX_EQ_Control', key, val=0b00000011, write=True)
+            elif "BC" not in key:  # Use a different map for input equalizer / inverter. Not implemented
+                self.rx_config('RX_EQ_Control', key, val=0, write=True)
 
         # if self.name == 'ADN4604_CMD': # need to invert CMD signal for QMS card
         #     for key in self.map["RX_Sign_Control"].keys():
