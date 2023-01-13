@@ -126,7 +126,7 @@ class ADN_XPT(I2C_INTF):
 
     def init(self, register_map):
         '''
-        Set up helper maps and select an output table if desired 
+        Set up helper maps and select an output table if desired
         '''
         with open(register_map, 'r') as map_:
             # register lookup table with register properties (addr, offset, default ...)
