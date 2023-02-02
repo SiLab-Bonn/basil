@@ -21,13 +21,18 @@ logger = logging.getLogger(__name__)
 class julaboFP50(HardwareLayer):
     ''' Driver for the Julabo FP50 chiller.
     A simple protocol via crossed null modem serial port is used with baud rate of 9600.
+    All commands were taken from JulaboFP50 manual.
     '''
 
-    Commands = {'get_temp': 'in_sp_00',
-                'set_temp': 'out_sp_00',
-                'get_curr_temp': 'in_pv_00',
-                'get_version': 'version',
-                'get_status': 'status'}
+    CMDS = {'get_temp': 'in_sp_00',
+            'set_temp': 'out_sp_00',
+            'get_curr_temp': 'in_pv_00',
+            'get_version': 'version',
+            'get_status': 'status',
+            'start': 'out_mode_05 1',
+            'stop': 'out_mode_05 0',
+            'set_power': 'out_sp_06'
+            }
 
     def __init__(self, intf, conf):
         super(julaboFP50, self).__init__(intf, conf)
@@ -51,24 +56,24 @@ class julaboFP50(HardwareLayer):
     def get_version(self):
         ''' Read identifier
         '''
-        self.write("version")
+        self.write(self.CMDS['get_version'])
         ret = self.read()
         return ret
 
     def start_chiller(self):
         ''' Start chiller
         '''
-        self.write("out_mode_05 1")
+        self.write(self.CMDS['start'])
 
     def stop_chiller(self):
         ''' Stop chiller
         '''
-        self.write("out_mode_05 0")
+        self.write(self.CMDS['stop'])
 
     def get_status(self):
         ''' Get status
         '''
-        self.write("status")
+        self.write(self.CMDS['get_status'])
         ret = self.read()
         logger.debug("status:{:s}".format(ret))
         try:
@@ -84,18 +89,23 @@ class julaboFP50(HardwareLayer):
     def get_set_temp(self):
         '''get the set temperature
         '''
-        self.write("in_sp_00")
+        self.write(self.CMDS['get_temp'])
         ret = self.read()
         return float(ret)
 
     def set_temp(self, temp):
-        '''set the temperature to a value
+        '''set the temperature
         '''
-        self.write(f"out_sp_00={temp}")
+        self.write(f"{self.CMDS['set_temp']}={temp}")
 
     def get_temp(self):
         '''get the current temperature in chiller
         '''
-        self.write("in_pv_00")
+        self.write(self.CMDS['get_curr_temp'])
         ret = self.read()
         return float(ret)
+
+    def set_power(self, variable):
+        '''Set the power for heater/cooler via serial interface (positive value for heating, negative value for cooling)
+        '''
+        self.write(f"{self.CMDS['set_power']}={variable}")
