@@ -10,7 +10,7 @@
 module seq_gen_core #(
     parameter ABUSWIDTH = 16,
     parameter MEM_BYTES = 16384,
-    parameter OUT_BITS = 16 //4,8,16,32
+    parameter OUT_BITS = 8
 ) (
     BUS_CLK,
     BUS_RST,
@@ -26,6 +26,7 @@ module seq_gen_core #(
 );
 
 localparam VERSION = 3;
+localparam MEM_OFFSET = 64;
 
 input wire                  BUS_CLK;
 input wire                  BUS_RST;
@@ -38,11 +39,10 @@ output reg [7:0]            BUS_DATA_OUT;
 input wire SEQ_EXT_START;
 input wire SEQ_CLK;
 output reg [OUT_BITS-1:0] SEQ_OUT;
-`include "../../../git/basil/basil/firmware/modules/includes/log2func.v"
-//`include "../includes/log2func.v"
 
-localparam ADDR_SIZEA = `CLOG2(MEM_BYTES);
-localparam ADDR_SIZEB = (OUT_BITS > 8) ? `CLOG2(MEM_BYTES/(OUT_BITS/8)) : `CLOG2(MEM_BYTES*(8/OUT_BITS));
+localparam DEF_BIT_OUT = (OUT_BITS > 8) ?  (MEM_BYTES/(OUT_BITS/8)) : (MEM_BYTES*(8/OUT_BITS));
+localparam ADDR_SIZEA = $clog2(MEM_BYTES);
+localparam ADDR_SIZEB = $clog2(DEF_BIT_OUT);
 
 reg [7:0] status_regs [31:0];
 
@@ -51,38 +51,54 @@ wire SOFT_RST;
 
 assign RST = BUS_RST || SOFT_RST;
 
-localparam DEF_BIT_OUT = MEM_BYTES;
-
 always @(posedge BUS_CLK) begin
     if(RST) begin
         status_regs[0] <= 0;
         status_regs[1] <= 0;
         status_regs[2] <= 0;
 
-        status_regs[3] <= 1;
+        status_regs[3] <= 1; // CONF_CLK_DIV
 
-        status_regs[4] <= DEF_BIT_OUT[7:0]; //bits
-        status_regs[5] <= DEF_BIT_OUT[15:8]; //bits
+        status_regs[4] <= DEF_BIT_OUT[7:0];   // bits
+        status_regs[5] <= DEF_BIT_OUT[15:8];  // -||-
+        status_regs[6] <= DEF_BIT_OUT[23:16]; // -||-
+        status_regs[7] <= DEF_BIT_OUT[31:24]; // -||-
 
-        status_regs[6] <= 0; //wait
-        status_regs[7] <= 0; //wait
-        status_regs[8] <= 0; // 7  repeat
-        status_regs[9] <= 0; // 7  repeat
-        status_regs[10] <= 0; //repeat start
-        status_regs[11] <= 0; //repeat start
-        status_regs[12] <= 0; // nested loop start
+        status_regs[8] <= 0; // wait
+        status_regs[9] <= 0; // -||-
+        status_regs[10] <= 0; // -||-
+        status_regs[11] <= 0; // -||-
+
+        status_regs[12] <= 1; // repeat
         status_regs[13] <= 0; // -||-
-        status_regs[14] <= 0; // nested loop stop
+        status_regs[14] <= 0; // -||-
         status_regs[15] <= 0; // -||-
-        status_regs[16] <= 0; // nested loop repat count
+
+        status_regs[16] <= 0; //repeat start
         status_regs[17] <= 0; // -||-
+        status_regs[18] <= 0; // -||-
+        status_regs[19] <= 0; // -||-
+
+        status_regs[20] <= 0; // nested loop start
+        status_regs[21] <= 0; // -||-
+        status_regs[22] <= 0; // -||-
+        status_regs[23] <= 0; // -||-
+
+        status_regs[24] <= 0; // nested loop stop
+        status_regs[25] <= 0; // -||-
+        status_regs[26] <= 0; // -||-
+        status_regs[27] <= 0; // -||-
+
+        status_regs[28] <= 0; // nested loop repat count
+        status_regs[29] <= 0; // -||-
+        status_regs[30] <= 0; // -||-
+        status_regs[31] <= 0; // -||-
     end
-    else if(BUS_WR && BUS_ADD < 32)
+    else if(BUS_WR && BUS_ADD < MEM_OFFSET)
         status_regs[BUS_ADD[4:0]] <= BUS_DATA_IN;
 end
 
-reg [7:0] BUS_IN_MEM;
-reg [7:0] BUS_OUT_MEM;
+wire [7:0] BUS_IN_MEM;
 
 // 1 - finished
 
@@ -97,26 +113,26 @@ wire [7:0] CONF_CLK_DIV;
 assign CONF_CLK_DIV = status_regs[3] - 1;
 reg CONF_DONE;
 
-wire [15:0] CONF_COUNT;
-assign CONF_COUNT = {status_regs[5], status_regs[4]};
+wire [31:0] CONF_COUNT;
+assign CONF_COUNT = {status_regs[7], status_regs[6], status_regs[5], status_regs[4]};
 
-wire [15:0] CONF_WAIT;
-assign CONF_WAIT = {status_regs[7], status_regs[6]};
+wire [31:0] CONF_WAIT;
+assign CONF_WAIT = {status_regs[11], status_regs[10], status_regs[9], status_regs[8]};
 
-wire [15:0] CONF_REPEAT;
-assign CONF_REPEAT = {status_regs[9], status_regs[8]};
+wire [31:0] CONF_REPEAT;
+assign CONF_REPEAT = {status_regs[15], status_regs[14], status_regs[13], status_regs[12]};
 
-wire [15:0] CONF_REP_START;
-assign CONF_REP_START = {status_regs[11], status_regs[10]};
+wire [31:0] CONF_REP_START;
+assign CONF_REP_START = {status_regs[19], status_regs[18], status_regs[17], status_regs[16]};
 
-wire [15:0] CONF_NESTED_START;
-assign CONF_NESTED_START = {status_regs[13], status_regs[12]};
+wire [31:0] CONF_NESTED_START;
+assign CONF_NESTED_START = {status_regs[23], status_regs[22], status_regs[21], status_regs[20]};
 
-wire [15:0] CONF_NESTED_STOP;
-assign CONF_NESTED_STOP = {status_regs[15], status_regs[14]};
+wire [31:0] CONF_NESTED_STOP;
+assign CONF_NESTED_STOP = {status_regs[27], status_regs[26], status_regs[25], status_regs[24]};
 
-wire [15:0] CONF_NESTED_REPEAT;
-assign CONF_NESTED_REPEAT = {status_regs[17], status_regs[16]};
+wire [31:0] CONF_NESTED_REPEAT;
+assign CONF_NESTED_REPEAT = {status_regs[31], status_regs[30], status_regs[29], status_regs[28]};
 
 wire [7:0] BUS_STATUS_OUT;
 assign BUS_STATUS_OUT = status_regs[BUS_ADD[4:0]];
@@ -128,11 +144,15 @@ always @(posedge BUS_CLK) begin
             BUS_DATA_OUT_REG <= VERSION;
         else if(BUS_ADD == 1)
             BUS_DATA_OUT_REG <= {7'b0, CONF_DONE};
-        else if(BUS_ADD == 18)
-            BUS_DATA_OUT_REG <= DEF_BIT_OUT[7:0];
-        else if(BUS_ADD == 19)
-            BUS_DATA_OUT_REG <= DEF_BIT_OUT[15:8];
-        else if(BUS_ADD < 32)
+        else if(BUS_ADD == 32)
+            BUS_DATA_OUT_REG <= MEM_BYTES[7:0];
+        else if(BUS_ADD == 33)
+            BUS_DATA_OUT_REG <= MEM_BYTES[15:8];
+        else if(BUS_ADD == 34)
+            BUS_DATA_OUT_REG <= MEM_BYTES[23:16];
+        else if(BUS_ADD == 35)
+            BUS_DATA_OUT_REG <= MEM_BYTES[31:24];
+        else if(BUS_ADD < MEM_OFFSET)
             BUS_DATA_OUT_REG <= BUS_STATUS_OUT;
     end
 end
@@ -147,15 +167,15 @@ always @(posedge BUS_CLK) begin
 end
 
 always @(*) begin
-    if(PREV_BUS_ADD < 32)
+    if(PREV_BUS_ADD < MEM_OFFSET)
         BUS_DATA_OUT = BUS_DATA_OUT_REG;
-    else if(PREV_BUS_ADD < 32 + MEM_BYTES )
+    else if(PREV_BUS_ADD < MEM_OFFSET + MEM_BYTES )
         BUS_DATA_OUT = BUS_IN_MEM;
     else
         BUS_DATA_OUT = 8'hxx;
 end
 
-reg [15:0] out_bit_cnt;
+reg [31:0] out_bit_cnt;
 
 wire [ADDR_SIZEB-1:0] memout_addrb;
 //assign memout_addrb = out_bit_cnt-1;
@@ -163,59 +183,27 @@ assign memout_addrb = out_bit_cnt < CONF_COUNT ? out_bit_cnt-1 : CONF_COUNT-1; /
 
 wire [ADDR_SIZEA-1:0] memout_addra;
 wire [ABUSWIDTH-1:0] BUS_ADD_MEM;
-assign BUS_ADD_MEM = BUS_ADD - 32;
+assign BUS_ADD_MEM = BUS_ADD - MEM_OFFSET;
 
-generate
-    if (OUT_BITS<=8) begin
-        assign memout_addra = BUS_ADD_MEM;
-    end else begin
-        assign memout_addra = {BUS_ADD_MEM[ABUSWIDTH-1:OUT_BITS/8-1], {(OUT_BITS/8-1){1'b0}}} + (OUT_BITS/8-1) - (BUS_ADD_MEM % (OUT_BITS/8)); //Byte order
-    end
-endgenerate
+assign memout_addra = BUS_ADD_MEM;
 
-reg [OUT_BITS-1:0] SEQ_OUT_MEM;
+wire [OUT_BITS-1:0] SEQ_OUT_MEM;
 
 wire WEA;
-assign WEA = BUS_WR && BUS_ADD >=32 && BUS_ADD < 32+MEM_BYTES;
+assign WEA = BUS_WR && BUS_ADD >=MEM_OFFSET && BUS_ADD < MEM_OFFSET+MEM_BYTES;
 
-generate
-    if (OUT_BITS==8) begin
-        reg [7:0] mem [(2**ADDR_SIZEA)-1:0];
-
-        // synthesis translate_off
-        //to make simulator happy (no X propagation)
-        integer i;
-        initial begin
-            for(i = 0; i<(2**ADDR_SIZEA); i = i + 1)
-                mem[i] = 0;
-        end
-        // synthesis translate_on
-
-        always @(posedge BUS_CLK) begin
-            if (WEA)
-                mem[memout_addra] <= BUS_DATA_IN;
-            BUS_IN_MEM <= mem[memout_addra];
-        end
-
-        always @(posedge SEQ_CLK)
-                SEQ_OUT_MEM <= mem[memout_addrb];
-
-    end else begin
-        wire [7:0] douta;
-        wire [OUT_BITS-1:0] doutb;
-          seq_gen_blk_mem memout(
-            .clka(BUS_CLK), .clkb(SEQ_CLK), .douta(douta), .doutb(doutb),
-            .wea(WEA), .web(1'b0), .addra(memout_addra), .addrb(memout_addrb),
-            .dina(BUS_DATA_IN), .dinb({OUT_BITS{1'b0}})
-        );
-
-        always @(*) begin
-            BUS_IN_MEM = douta;
-            SEQ_OUT_MEM = doutb;
-        end
-    end
-endgenerate
-
+ramb_8_to_n #(.SIZE(MEM_BYTES), .WIDTH(OUT_BITS)) mem (
+    .clkA(BUS_CLK), 
+    .clkB(SEQ_CLK), 
+    .weA(WEA), 
+    .weB(1'b0), 
+    .addrA(memout_addra), 
+    .addrB(memout_addrb), 
+    .diA(BUS_DATA_IN), 
+    .doA(BUS_IN_MEM), 
+    .diB({OUT_BITS{1'b0}}),
+    .doB(SEQ_OUT_MEM)
+);
 
 wire RST_SYNC;
 wire RST_SOFT_SYNC;
@@ -231,13 +219,12 @@ wire START_SYNC_PRE;
 assign START_SYNC_PRE = (START_SYNC_CDC | (SEQ_EXT_START & CONF_EN_EXT_START));
 assign START_SYNC =  START_SYNC_PRE & DONE; //no START if previous not finished
 
-wire [15:0] STOP_BIT;
+wire [31:0] STOP_BIT;
 assign STOP_BIT = CONF_COUNT + CONF_WAIT;
-reg [15:0] REPEAT_COUNT;
-reg [15:0] REPEAT_NESTED_COUNT;
+reg [31:0] REPEAT_COUNT;
+reg [31:0] REPEAT_NESTED_COUNT;
 
 reg [7:0] dev_cnt;
-
 
 wire REP_START;
 assign REP_START = (out_bit_cnt == STOP_BIT && dev_cnt == CONF_CLK_DIV && (CONF_REPEAT==0 || REPEAT_COUNT < CONF_REPEAT));
@@ -286,7 +273,7 @@ always @(posedge SEQ_CLK)
         DONE <= 1;
     else if(START_SYNC_PRE)
         DONE <= 0;
-    else if(REPEAT_COUNT > CONF_REPEAT)
+    else if(REPEAT_COUNT > CONF_REPEAT & out_bit_cnt == STOP_BIT && dev_cnt == CONF_CLK_DIV)
         DONE <= 1;
 
 always @(posedge SEQ_CLK)

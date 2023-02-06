@@ -13,7 +13,7 @@ module seq_gen #(
     parameter ABUSWIDTH = 16,
 
     parameter MEM_BYTES = 16384,
-    parameter OUT_BITS = 16
+    parameter OUT_BITS = 8
 ) (
     input wire          BUS_CLK,
     input wire          BUS_RST,
