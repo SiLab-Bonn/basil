@@ -5,8 +5,6 @@
 # ------------------------------------------------------------
 #
 
-import string
-
 from basil.HL.scpi import scpi
 
 
