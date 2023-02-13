@@ -52,6 +52,10 @@ class Bronkhorst_ELFLOW(HardwareLayer):
         return ret
 
     def set_setpoint(self, value):
+
+        if not isinstance(value, int):
+            raise ValueError(f"Given value has to be of type integer, is {type(value)}!")
+
         cmd = [1, 1, 0x21, (value >> 8) & 0xFF, value & 0xFF]
         self.write(cmd)
         ret = self.read()
