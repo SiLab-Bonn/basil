@@ -20,7 +20,7 @@ const float NTC_NOMINAL_RES = 10000.0; // Resistance of NTC at 25 degrees C
 const float RESISTOR_RES = 10000.0; // Resistance of the resistors in series to the NTC, forming voltage divider
 const float TEMP_NOMINAL_DEGREE_C = 25.0; // Nominal temperature for above resistance (almost always 25 C)
 const float BETA_COEFFICIENT = 3950.0; // The beta coefficient of the NTC (usually 3000-4000); EPC B57891-M103 NTC Thermistor
-const uint16_t MEAS_OVER_NTC = 0; // Whether the voltage drop in the divider configuration is measured over the NTC. If 0, then it is measured over the fixed resistor
+const uint16_t MEAS_OVER_NTC = 1; // Whether the voltage drop in the divider configuration is measured over the NTC. If 0, then it is measured over the fixed resistor
 
 // Serial related
 const char END = '\n';
