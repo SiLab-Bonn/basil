@@ -1,0 +1,15 @@
+#This configuration is valid for the following oscilloscopes: Tektronix TDS3034B
+transfer_layer:
+  - name     : Visa
+    type     : Visa
+    init     :
+        resource_name : TCPIP0::10.42.0.48::INSTR
+        encoding: 'ascii'
+        backend : "@py"
+
+hw_drivers:
+  - name      : Oscilloscope
+    type      : tektronix_tds3034b
+    interface : Visa
+    init      :
+        device : tektronix oscilloscope
