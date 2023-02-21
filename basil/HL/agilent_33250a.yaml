@@ -12,3 +12,5 @@ get_voltage_high : VOLT:HIGH?
 get_voltage_low : VOLT:LOW?
 set_voltage_high : VOLT:HIGH
 set_voltage_low : VOLT:LOW
+set_enable: OUTP:STAT
+get_enable: OUTP:STAT?
