@@ -162,7 +162,6 @@ class TektronixOscilloscope(scpi):
 
         jobs = self._make_jobs(channel=channel)
         # remember the state of the acquisition system and then stop acquiring waveforms
-        acq_state = self._intf.query("ACQuire:STATE?").split(' ')[1].strip()
         self._intf.write("ACQuire:STATE STOP")
         wave_type = self._setup_curve_query(jobs, channel=channel)
         # Horizontal scale information
@@ -174,9 +173,8 @@ class TektronixOscilloscope(scpi):
                 ret_val = self._post_process_analog(source_data, x_scale, channel=channel)
             else:
                 raise NotImplementedError(f"Analysis for type {wave_type} data not yet implemented!")
-        
         # Restore the acquisition state
-        if continue_meas==True:
+        if continue_meas is True:
             self._intf.write("ACQuire:STATE RUN")
         return ret_val
 
@@ -184,4 +182,3 @@ class TektronixOscilloscope(scpi):
         scale = float(self._intf.query("{}:SCALE?".format('CH' + str(channel))).split(' ')[1])
         position = float(self._intf.query("{}:POSITION?".format('CH' + str(channel))).split(' ')[1])
         return scale, position
-
