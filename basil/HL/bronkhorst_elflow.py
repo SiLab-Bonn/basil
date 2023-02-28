@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 class Bronkhorst_ELFLOW(HardwareLayer):
     ''' Bronkhorst ELFLOW
+    Manual can be found here https://www.bronkhorst.com/getmedia/77a1438f-e547-4a79-95ad-53e81fd38a97/917027-Manual-RS232-interface.pdf
     '''
 
     CMDS = {
