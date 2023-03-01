@@ -16,7 +16,15 @@ logger = logging.getLogger(__name__)
 
 class Bronkhorst_ELFLOW(HardwareLayer):
     ''' Bronkhorst ELFLOW
+    Manual can be found here https://www.bronkhorst.com/getmedia/77a1438f-e547-4a79-95ad-53e81fd38a97/917027-Manual-RS232-interface.pdf
     '''
+
+    CMDS = {
+        'get_valve_opening': '06800472417241\r\n',  # These bytes will make the flow meter send back the opening
+        'measure_flow': 'b":06800401210120\r\n"',    # These bytes will measure the gas flow through the valve in %
+        'read_max_capacity': '068004014D014D\r\n'   # These bytes will read the maximum capacity of the current flow
+    }
+
 
     def __init__(self, intf, conf):
         self.debug = 0
@@ -51,6 +59,23 @@ class Bronkhorst_ELFLOW(HardwareLayer):
             ret.append(int(ret_s[5 + 2 * i:5 + 2 * (i + 1)], 16))
         return ret
 
+
+    def get_opening(self):
+        self._intf.write(self.CMDS['get_valve_opening'])
+
+    def get_flow(self):
+        self._intf.write(self.CMDS['measure_flow'])
+        self._intf.readline().decode()
+        reading = self._intf.readline().decode()[11:-2]
+        print(reading)
+        int_flow = int(reading, 16)
+        print(int_flow)
+
+
+
+    def get_max_cap(self):
+        self._intf.write(self.CMDS['read_max_capacity'])
+
     def set_setpoint(self, value):
 
         if not isinstance(value, int):
@@ -70,6 +95,7 @@ class Bronkhorst_ELFLOW(HardwareLayer):
 
     def get_setpoint(self):
         cmd = [4, 1, 0x21, 1, 0x21]
+        # 06800401210121\r\n
         self.write(cmd)
         ret = self.read()
         if len(ret) != 5:
@@ -88,6 +114,7 @@ class Bronkhorst_ELFLOW(HardwareLayer):
             8 valve fully open
             20 valve steering (valve=setpoint)"""
         cmd = [1, 1, 4, value & 0xFF]
+        # 0580010104xx\r\n  where xx
         self.write(cmd)
         ret = self.read()
         if len(ret) != 3:
@@ -167,6 +194,7 @@ class Bronkhorst_ELFLOW(HardwareLayer):
 
     def get_measure(self):
         cmd = [4, 1, 0x21, 1, 0x20]
+        # 06800401210120\r\n
         self.write(cmd)
         ret = self.read()
         if len(ret) != 5:
@@ -177,3 +205,10 @@ class Bronkhorst_ELFLOW(HardwareLayer):
         else:
             logger.debug("ELFLOW.get_valve_output() ret error ret=%s" % str(ret))
             return -1
+
+    def get_max_capacity(self):
+        cmd = [4, 1, 0x4D, 1, 0x4D]
+        # 068004014D014D\r\n
+        self.write(cmd)
+        ret = self.read()
+        print(ret)
