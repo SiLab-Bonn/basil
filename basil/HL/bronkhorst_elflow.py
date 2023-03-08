@@ -20,9 +20,10 @@ class Bronkhorst_ELFLOW(HardwareLayer):
     '''
 
     CMDS = {
-        'get_valve_opening': '06800472417241\r\n',  # These bytes will make the flow meter send back the opening
-        'measure_flow': 'b":06800401210120\r\n"',    # These bytes will measure the gas flow through the valve in %
-        'read_max_capacity': '068004014D014D\r\n'   # These bytes will read the maximum capacity of the current flow
+        'get_valve_opening': ':06800472417241\r\n',  # These bytes will make the flow meter send back the opening
+        'measure_flow': ':06800401210120\r\n',       # These bytes will measure the gas flow through the valve in %
+        'read_max_capacity': ':068004014D014D\r\n',  # These bytes will read the maximum capacity of the current flow
+        'read_control_mode': ':06800401040104\r\n'   # these bytes will give what control mode is on
     }
 
 
@@ -116,7 +117,9 @@ class Bronkhorst_ELFLOW(HardwareLayer):
         cmd = [1, 1, 4, value & 0xFF]
         # 0580010104xx\r\n  where xx
         self.write(cmd)
+        print(cmd)
         ret = self.read()
+        print(ret)
         if len(ret) != 3:
             logger.debug("ELFLOW.set_setpoint() data lenth error ret=%s" % str(ret))
             return -1
@@ -128,6 +131,7 @@ class Bronkhorst_ELFLOW(HardwareLayer):
 
     def get_control_mode(self):
         cmd = [4, 1, 1, 1, 4]
+        # :06800401040104\r\n
         self.write(cmd)
         ret = self.read()
         if len(ret) != 4:
