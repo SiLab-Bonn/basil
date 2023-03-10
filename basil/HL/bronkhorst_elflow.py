@@ -6,6 +6,7 @@
 #
 
 import logging
+import time
 import struct
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
@@ -21,9 +22,10 @@ class Bronkhorst_ELFLOW(HardwareLayer):
 
     CMDS = {
         'get_valve_opening': ':06800472417241\r\n',  # These bytes will make the flow meter send back the opening
-        'measure_flow': ':06800401210120\r\n',       # These bytes will measure the gas flow through the valve in %
+        'measure_flow': ':06800401210120\r\n',  # These bytes will measure the gas flow through the valve in %
         'read_max_capacity': ':068004014D014D\r\n',  # These bytes will read the maximum capacity of the current flow
-        'read_control_mode': ':06800401040104\r\n'   # these bytes will give what control mode is on
+        'read_control_mode': ':06800401040104',  # these bytes will give what control mode is on
+        'set_control_mode': ':0580010104',
     }
 
 
@@ -104,41 +106,6 @@ class Bronkhorst_ELFLOW(HardwareLayer):
             return -1
         elif ret[0] == 2 and ret[1] == cmd[1] and ret[2] == cmd[2]:
             return ((ret[3] << 8) & 0xFF00) | (ret[4] & 0xFF)
-        else:
-            logger.debug("ELFLOW.set_setpoint() ret error ret=%s" % str(ret))
-            return -1
-
-    def set_control_mode(self, value):
-        """ 0 setpoint source RS232
-            3 valve close
-            4 freeze valuve out
-            8 valve fully open
-            20 valve steering (valve=setpoint)"""
-        cmd = [1, 1, 4, value & 0xFF]
-        # 0580010104xx\r\n  where xx
-        self.write(cmd)
-        print(cmd)
-        ret = self.read()
-        print(ret)
-        if len(ret) != 3:
-            logger.debug("ELFLOW.set_setpoint() data lenth error ret=%s" % str(ret))
-            return -1
-        elif ret[0] == 0 and ret[1] == 0 and ret[2] == 4:
-            return 0
-        else:
-            logger.debug("ELFLOW.set_setpoint() ret error ret=%s" % str(ret))
-            return -1
-
-    def get_control_mode(self):
-        cmd = [4, 1, 1, 1, 4]
-        # :06800401040104\r\n
-        self.write(cmd)
-        ret = self.read()
-        if len(ret) != 4:
-            logger.debug("ELFLOW.set_setpoint() data lenth error ret=%s" % str(ret))
-            return -1
-        elif ret[0] == 2 and ret[1] == cmd[1] and ret[2] == cmd[2]:
-            return ret[3]
         else:
             logger.debug("ELFLOW.set_setpoint() ret error ret=%s" % str(ret))
             return -1
