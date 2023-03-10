@@ -110,6 +110,37 @@ class Bronkhorst_ELFLOW(HardwareLayer):
             logger.debug("ELFLOW.set_setpoint() ret error ret=%s" % str(ret))
             return -1
 
+    def set_control_mode(self, value):
+        """ 0 setpoint source RS232
+            3 valve close
+            4 freeze valuve out
+            8 valve fully open
+            20 valve steering (valve=setpoint)"""
+        cmd = [1, 1, 4, value & 0xFF]
+        self.write(cmd)
+        ret = self.read()
+        if len(ret) != 3:
+            logger.debug("ELFLOW.set_setpoint() data lenth error ret=%s" % str(ret))
+            return -1
+        elif ret[0] == 0 and ret[1] == 0 and ret[2] == 4:
+            return 0
+        else:
+            logger.debug("ELFLOW.set_setpoint() ret error ret=%s" % str(ret))
+            return -1
+
+    def get_control_mode(self):
+        cmd = [4, 1, 1, 1, 4]
+        self.write(cmd)
+        ret = self.read()
+        if len(ret) != 4:
+            logger.debug("ELFLOW.set_setpoint() data lenth error ret=%s" % str(ret))
+            return -1
+        elif ret[0] == 2 and ret[1] == cmd[1] and ret[2] == cmd[2]:
+            return ret[3]
+        else:
+            logger.debug("ELFLOW.set_setpoint() ret error ret=%s" % str(ret))
+            return -1
+
     def set_valve_output(self, value):
         cmd = [1, 114, 0x41, (value >> 24) & 0xFF, (value >> 16) & 0xFF, (value >> 8) & 0xFF, value & 0xFF]
         self.write(cmd)
