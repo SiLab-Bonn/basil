@@ -15,5 +15,5 @@ print(dut['Prober'].set_position(160000, -40000))
 # print(dut['Prober'].get_die())
 # print(dut['Prober'].goto_first_die())
 # print(dut['Prober'].contact())
-### print(dut['Prober'].load()) # DO NOT USE
+# print(dut['Prober'].load()) # DO NOT USE
 # print(dut['Prober'].separate())
