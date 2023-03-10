@@ -17,10 +17,6 @@ class SentioProber(HardwareLayer):
     def __init__(self, intf, conf):
         super(SentioProber, self).__init__(intf, conf)
 
-    def init(self):
-        # self._intf.write("*RCS 1")
-        pass
-        
     def set_position(self, x, y, speed=None):
         ''' Move chuck to absolute position in um'''
         return self._intf.query("move_chuck_xy zero,%1.1f,%1.1f" % (x, y))
@@ -36,8 +32,8 @@ class SentioProber(HardwareLayer):
         x = float(values[2])
         y = float(values[3])
         z = float(self._intf.query("get_chuck_z").split(',')[2])
-        return [x,y,z]
-    
+        return [x, y, z]
+
     def goto_die(self, index_x, index_y):
         ''' Move chuck to wafer map chip index'''
         return self._intf.query("map:step_die %d,%d" % (index_x, index_y))
