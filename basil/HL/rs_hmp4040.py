@@ -46,7 +46,7 @@ class rs_HMP4040(HardwareLayer):
 
     def set_enable(self, on, channel=1):
         """ channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4, ALL=all channels"""
-        if channel=="ALL":
+        if channel == "ALL":
             for i in [1, 2, 3, 4]:
                 self.set_enable(on, channel=i)
         else:
