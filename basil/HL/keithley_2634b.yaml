@@ -6,22 +6,73 @@ identifier : Keithley Instruments Inc., Model 2634B
 channel 1:
     on : smua.source.output = 1
     off : smua.source.output = 0
+    get_on : print(smua.source.output)
     get_current : print(smua.measure.i())
-    set_voltage : smua.source.levelv =
+    set_current : smua.source.leveli =
     get_voltage : print(smua.measure.v())
+    set_voltage : smua.source.levelv =
+    set_current_limit : smua.source.limiti =
+    get_current_limit : print(smua.source.limiti)
+    set_voltage_limit : smua.source.limitv =
+    get_voltage_limit : print(smua.source.limitv)
+    source_volt : smua.source.func = smua.OUTPUT_DCVOLTS
+    source_current : smua.source.func = smua.OUTPUT_DCAMPS
+    get_source_mode : print(smua.source.func)
+    set_voltage_range: smua.source.rangev =
+    set_current_range: smua.source.rangei =
+    four_wire_on: smua.sense = smua.SENSE_REMOTE
+    four_wire_off: smua.sense = smua.SENSE_LOCAL
+    set_current_sense_range: smua.measure.rangei =
+    get_current_sense_range: print(smua.measure.rangei)
+    set_voltage_sense_range: smua.measure.rangev =
+    get_voltage_sense_range: print(smua.measure.rangev)
     set_mode_measure_current : display.smua.measure.func = display.MEASURE_DCAMPS
 
 channel 2:
-    on : smub.source.output = 1
-    off : smub.source.output = 0
-    get_current : print(smub.measure.i())
-    set_voltage : smub.source.levelv =
-    get_voltage : print(smub.measure.v())
-    set_mode_measure_current : display.smub.measure.func = display.MEASURE_DCAMPS
+    on: smub.source.output = 1
+    off: smub.source.output = 0
+    get_on: print(smub.source.output)
+    get_current: print(smub.measure.i())
+    set_current: smub.source.leveli =
+    get_voltage: print(smub.measure.v())
+    set_voltage: smub.source.levelv =
+    set_current_limit: smub.source.limiti =
+    get_current_limit: print(smub.source.limiti)
+    set_voltage_limit: smub.source.limitv =
+    get_voltage_limit: print(smub.source.limitv)
+    source_volt: smub.source.func = smub.OUTPUT_DCVOLTS
+    source_current: smub.source.func = smub.OUTPUT_DCAMPS
+    get_source_mode: print(smub.source.func)
+    set_voltage_range: smub.source.rangev =
+    set_current_range: smub.source.rangei =
+    four_wire_on: smub.sense = smub.SENSE_REMOTE
+    four_wire_off: smub.sense = smub.SENSE_LOCAL
+    set_current_sense_range: smub.measure.rangei =
+    get_current_sense_range: print(smub.measure.rangei)
+    set_voltage_sense_range: smub.measure.rangev =
+    get_voltage_sense_range: print(smub.measure.rangev)
+    set_mode_measure_current: display.smub.measure.func = display.MEASURE_DCAMPS
     
 on : smua.source.output = 1
 off : smua.source.output = 0
+get_on : print(smua.source.output)
 get_current : print(smua.measure.i())
-set_voltage : smua.source.levelv =
+set_current : smua.source.leveli =
 get_voltage : print(smua.measure.v())
+set_voltage : smua.source.levelv =
+set_current_limit : smua.source.limiti =
+get_current_limit : print(smua.source.limiti)
+set_voltage_limit : smua.source.limitv =
+get_voltage_limit : print(smua.source.limitv)
+source_volt : smua.source.func = smua.OUTPUT_DCVOLTS
+source_current : smua.source.func = smua.OUTPUT_DCAMPS
+get_source_mode : print(smua.source.func)
+set_voltage_range: smua.source.rangev =
+set_current_range: smua.source.rangei =
+four_wire_on: smua.sense = smua.SENSE_REMOTE
+four_wire_off: smua.sense = smua.SENSE_LOCAL
+set_current_sense_range: smua.measure.rangei =
+get_current_sense_range: print(smua.measure.rangei)
+set_voltage_sense_range: smua.measure.rangev =
+get_voltage_sense_range: print(smua.measure.rangev)
 set_mode_measure_current : display.smua.measure.func = display.MEASURE_DCAMPS
