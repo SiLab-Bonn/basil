@@ -1,0 +1,15 @@
+transfer_layer:
+  - name: Serial
+    type: Serial
+    init:
+      port: /dev/ttyUSB5
+      read_termination: "\r\n"
+      baudrate: 19200
+      timeout: 5
+
+hw_drivers:
+  - name: Sourcemeter1
+    type: scpi
+    interface: Serial
+    init:
+      device: Keithley 2634B
