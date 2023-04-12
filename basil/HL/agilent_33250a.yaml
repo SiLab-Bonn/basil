@@ -177,7 +177,7 @@ set_system_lock: SYSTem:RWLock
 ######
 # PLL commands
 ######
-set_pll_phase: PHASe #{<:LQNHO>|MINimum|MAXimum}
+set_pll_phase: PHASe #{Angle|MINimum|MAXimum}
 get_pll_phase: PHASe? #[MINimum|MAXimum]
 set_pll_reference: PHASe:REFerence
 set_pll_phase_error_state: PHASe:UNLock:ERRor:STATe #{OFF|ON}
