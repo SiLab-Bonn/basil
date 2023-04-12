@@ -4,3 +4,5 @@
 identifier : KEITHLEY INSTRUMENTS INC.,MODEL 2000
 get_current : MEAS:CURR?
 get_voltage : MEAS:VOLT?
+set_NPLC_dc_voltage : SENS:VOLT:DC:NPLC
+get_NPLC_dc_voltage : SENS:VOLT:DC:NPLC?

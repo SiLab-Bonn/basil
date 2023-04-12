@@ -1,0 +1,15 @@
+transfer_layer:
+  - name     : ProberSocket
+    type     : Visa
+    init     :
+        resource_name : "TCPIP0::169.254.119.108::35555::SOCKET"
+        backend : "@py"
+        read_termination : "\n"
+        write_termination : "\n"
+        timeout: 10000.0
+#        query_delay: 5
+
+hw_drivers:
+  - name      : Prober
+    type      : SentioProber
+    interface : ProberSocket
