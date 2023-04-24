@@ -36,7 +36,7 @@ class keithley6517A(scpi):
         # Overwrite TL write to add a delay after each write; Keithley 6517A needs this because otherwise errors occur
         self._intf.write = MethodType(_write_with_delay(self._intf.write), self._intf)
 
-    def setup_current_measurement(self, current_range=None, voltage_range=None, filter=('REP', 10)):
+    def setup_current_measurement(self, current_range=None, current_limit=None, voltage_range=None, filter=('REP', 10)):
         # See manual p.2-23 ff.
         # Enable zero check before switching functions
         self.zero_check_on()
@@ -59,7 +59,11 @@ class keithley6517A(scpi):
         self.current_filter_on()
         # No continouous trigger
         self.trigger_conti_off()
-        self.set_source_range('MIN' if voltage_range is None else voltage_range)
+        if voltage_range is not None:
+            self.set_source_range(voltage_range)
+        if current_limit is not None:
+            self.set_current_limit(current_limit)
+
 
     def get_current(self):
         if not self._setup_for_current_measurement:
