@@ -16,7 +16,7 @@ transfer_layer:
         backend: '@py'
 hw_drivers:
   - name: EMeter
-    type: scpi
+    type: keithley6517a
     interface: electrometer
     init:
         device: keithley 6517a
