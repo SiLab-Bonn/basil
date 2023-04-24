@@ -1,10 +1,15 @@
 ########################################################
 # Device description for the Keithley 6517A Electrometer 
 # Last Modified: Do 02 Jun 2022 11:22:30  CEST
+# Note:
+#     A delay is required between most of the commands.
+#     Otherwise errors may occur.
 ########################################################
 identifier : KEITHLEY INSTRUMENTS INC.,MODEL 6517A
-# Notice:
-#   >> A time sleep is required between most of the commands. Otherwise errors may occur.
+# Output control
+on : OUTP ON
+off : OUTP OFF
+get_on : OUTP?
 # more or less useless
 remote_enable : REN 
 # === System ===
@@ -18,9 +23,6 @@ set_source_range  : SOUR:VOLT:RANG  # 2 ranges available: MIN --> 100V, MAX --> 
 # connect or disconnect the voltage source with meter
 connect_meter     : SOUR:VOLT:MCON ON
 disconnect_meter  : SOUR:VOLT:MCON OFF
-# turn the source on or off
-on  : OUTP ON
-off : OUTP OFF
 # === Zero Check ===
 zero_check_on   : SYST:ZCH ON
 zero_check_off  : SYST:ZCH OFF
