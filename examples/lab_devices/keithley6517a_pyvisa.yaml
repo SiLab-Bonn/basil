@@ -10,7 +10,7 @@ transfer_layer:
         # using serial-USB adapter
 #        resource_name: ASRLCOM6         # example for windows system
         resource_name: ASRL/dev/ttyUSB0 # example for linux system 
-        timeout : 1000
+        timeout : 2000 # Needed because of sleeps in between write in subclass of keithley6517a TL
         read_termination: "\n"
         baud_rate: 19200
         backend: '@py'
