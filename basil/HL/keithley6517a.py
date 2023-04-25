@@ -44,7 +44,7 @@ class keithley6517A(scpi):
         self._intf.write = MethodType(_write_with_delay(self._intf.write), self._intf)
 
     def get_read(self):
-        if self._prev_read_ts is not None: 
+        if self._prev_read_ts is not None:
             elapsed_secs = time.time() - self._prev_read_ts
             if elapsed_secs < self._read_settle_time:
                 logger.warning(f"Keithley 6517A may need increased settling time (currently {elapsed_secs:.2f} s) in between reads for precise measurements!")
