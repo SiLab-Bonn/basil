@@ -75,10 +75,17 @@ class scpi(HardwareLayer):
         '''
         def method(*args, **kwargs):
             channel = kwargs.pop('channel', None)
+            command = None
             try:
-                command = self._scpi_commands['channel %s' % channel][name] if channel is not None else self._scpi_commands[name]
-            except Exception:
-                raise ValueError('SCPI command %s is not defined for device %s' % (name, self.name))
+                command = self._scpi_commands[f'channel {channel}'][name] if channel is not None else self._scpi_commands[name]
+            # Fails with KeyError if attribute is not found; TypeError if channel-based attribute is not a dict
+            except (KeyError, TypeError):
+                pass
+            # If command is still None, the attribute does not exist and we raise an AttributeError
+            if command is None:
+                chnl_msg = f"channel {channel} of"
+                err_msg = f"SCPI command {name} is not defined for {chnl_msg if channel is not None else ''} device {self.name}!"
+                raise AttributeError(err_msg)
 
             name_split = name.split('_', 1)
             if len(name_split) == 2 and name_split[0] == 'set' and len(args) == 1 and not kwargs:
