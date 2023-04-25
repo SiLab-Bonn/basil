@@ -1,16 +1,202 @@
 # Device description for the Agilent 33250A Function/Arbitrary Waveform Generator. 
 # set_ function expect a parameter, get_ function return a parameter.
-# Just the very basic commands are implemented here.
+# Almost all available commands are implemented except arbitrary signals, commands
+# to save/reset device states, statusregister commands, IEEE 488.2 commands
+
+######
+# General commands
+######
 identifier : Agilent Technologies,33250A
-set_burst : BURST:STAT
-get_burst : BURST:STAT?
-set_n_bursts : BURS:NCYC
-set_pulse_period : PULS:PER
-set_pulse_width : PULS:WIDT
-set_trigger_delay : TRIG:DELAY
+
+######
+# Set function type (frequency, amplitude, offset)
+######
+set_sin: APPLy:SINusoid 
+set_square: APPLy:SQUare 
+set_ramp: APPLy:RAMP 
+set_pulse: APPLy:PULSe 
+set_noise: APPLy:NOISe 
+set_DC: APPLy:DC
+set_arb: APPLy:USER 
+get_function: APPLy?
+
+######
+# Output options
+######
+set_frequency: FREQuency #{frequency|MINimum|MAXimum}
+get_frequency: FREQuency? #[MINimum|MAXimum]
+set_voltage: VOLTage #{amplitude|MINimum|MAXimum}
+get_voltage: VOLTage? #[MINimum|MAXimum]
+set_voltage_offset: VOLTage:OFFSet #{Offset|MINimum|MAXimum}
+get_voltage_offset: VOLTage:OFFSet? #[MINimum|MAXimum]
 get_voltage_high : VOLT:HIGH?
 get_voltage_low : VOLT:LOW?
 set_voltage_high : VOLT:HIGH
 set_voltage_low : VOLT:LOW
+set_voltage_range_auto: VOLTage:RANGe:AUTO #{OFF|ON|ONCE}
+get_voltage_range_auto: VOLTage:RANGe:AUTO?
+set_voltage_unit: VOLTage:UNIT #{VPP|VRMS|DBM}
+get_voltage_unit: VOLTage:UNIT?
+set_square_dcycle: FUNCtion:SQUare:DCYCle #{Percent|MINimum|MAXimum}
+get_square_dcycle: FUNCtion:SQUare:DCYCle? #[MINimum|MAXimum]
+set_function_ramp_symmetry: FUNCtion:RAMP:SYMMetry #{Percent|MINimum|MAXimum}
+get_function_ramp_symmetry: FUNCtion:RAMP:SYMMetry? #[MINimum|MAXimum]
 set_enable: OUTP:STAT
 get_enable: OUTP:STAT?
+set_output_load: OUTPut:LOAD #{Ohm|INFinity|MINimum|MAXimum}
+get_output_load: OUTPut:LOAD? #[MINimum|MAXimum]
+set_output_polarity: OUTPut:POLarity #{NORMal|INVerted}
+get_output_polarity: OUTPut:POLarity?
+set_output_sync: OUTPut:SYNC #{OFF|ON}
+get_output_sync: OUTPut:SYNC?
+
+######
+# Commands to configure the output "Pulse"
+######
+set_pulse_period : PULS:PER #{Seconds|MINimum|MAXimum}
+get_pulse_period : PULS:PER? #{MINimum|MAXimum}
+set_pulse_width : PULS:WIDT #{Seconds|MINimum|MAXimum}
+get_pulse_width : PULS:WIDT? #{MINimum|MAXimum}
+set_pulse_transition : PULS:TRAN #{Seconds|MINimum|MAXimum}
+get_pulse_transition : PULS:TRAN? #{MINimum|MAXimum}
+
+######
+# Modulation commands
+######
+
+# AM commands
+set_AM_function: AM:INTernal:FUNCtion #{SINusoid|SQUare|RAMP|NRAMp|TRIangle|NOISe|USER}
+get_AM_function: AM:INTernal:FUNCtion?
+set_AM_frequency: AM:INTernal:FREQuency #{Frequency|MINimum|MAXimum}
+get_AM_frequency: AM:INTernal:FREQuency? #[MINimum|MAXimum]
+set_AM_depth: AM:DEPTh #{Modulation degree in percent|MINimum|MAXimum}
+get_AM_depth: AM:DEPTh? #[MINimum|MAXimum]
+set_AM_source: AM:SOURce #{INTernal|EXTernal}
+get_AM_source: AM:SOURce?
+set_AM_state: AM:STATe #{OFF|ON}
+get_AM_state: AM:STATe?
+
+# FM commands
+set_FM_function: FM:INTernal:FUNCtion #{SINusoid|SQUare|RFMP|NRFMp|TRIangle|NOISe|USER}
+get_FM_function: FM:INTernal:FUNCtion?
+set_FM_frequency: FM:INTernal:FREQuency #{Frequency|MINimum|MAXimum}
+get_FM_frequency: FM:INTernal:FREQuency? #[MINimum|MAXimum]
+set_FM_depth: FM:DEViation #{Peak frequencyhub in Hz|MINimum|MAXimum}
+get_FM_depth: FM:DEViation? #[MINimum|MAXimum]
+set_FM_source: FM:SOURce #{INTernal|EXTernal}
+get_FM_source: FM:SOURce?
+set_FM_state: FM:STATe #{OFF|ON}
+get_FM_state: FM:STATe?
+
+#FSK commands
+set_FSK_frequency: FSKey:FREQuency #{Frequency|MINimum|MAXimum}
+get_FSK_frequency: FSKey:FREQuency? #[MINimum|MAXimum]
+set_FSK_rate: FSKey:INTernal:RATE #{Rate in Hz|MINimum|MAXimum}
+get_FSK_rate: FSKey:INTernal:RATE? #[MINimum|MAXimum]
+set_FSK_source: FSKey:SOURce #{INTernal|EXTernal}
+get_FSK_source: FSKey:SOURce?
+set_FSK_state: FSKey:STATe #{OFF|ON}
+get_FSK_state: FSKey:STATe?
+
+######
+# Wobble commands
+######
+set_frequency_start: FREQuency:STARt #{Frequency|MINimum|MAXimum}
+get_frequency_start: FREQuency:STARt? #[MINimum|MAXimum]
+set_frequency_stop: FREQuency:STOP #{Frequency|MINimum|MAXimum}
+get_frequency_stop: FREQuency:STOP? #[MINimum|MAXimum]
+set_frequency_center: FREQuency:CENTer #{Frequency|MINimum|MAXimum}
+get_frequency_center: FREQuency:CENTer? #[MINimum|MAXimum]
+set_frequency_span: FREQuency:SPAN #{Frequency|MINimum|MAXimum}
+get_frequency_span: FREQuency:SPAN? #[MINimum|MAXimum]
+set_frequency_spacing: SWEep:SPACing #{LINear|LOGarithmic}
+get_frequency_spacing: SWEep:SPACing?
+set_sweep_time: SWEep:TIME #{Seconds|MINimum|MAXimum}
+get_sweep_time: SWEep:TIME? #[MINimum|MAXimum]
+set_sweep_state: SWEep:STATe #{OFF|ON}
+get_sweep_time: SWEep:STATe?
+set_marker_frequency: MARKer:FREQuency #{Frequency|MINimum|MAXimum}
+get_marker_frequency: MARKER:FREQuency? #[MINimum|MAXimum]
+set_marker_enable: MARKer #{OFF|ON}
+get_marker_enable: MARKer?
+
+######
+# Burst Comands
+######
+set_burst_mode: BURSt:MODE #{TRIGgered|GATed}
+get_burst_mode: BURSt:MODE?
+set_n_bursts: BURSt:NCYCles #{Zycles|INFinity|MINimum|MAXimum}
+get_n_bursts: BURSt:NCYCles?# [MINimum|MAXimum]
+set_burst_internal_period: BURSt:INTernal:PERiod #{Seconds|MINimum|MAXimum}
+get_burst_internal_period: BURSt:INTernal:PERiod? #[MINimum|MAXimum]
+set_burst_phase: BURSt:PHASe #{Angle|MINimum|MAXimum}
+get_burst_phase: BURSt:PHASe? #[MINimum|MAXimum]
+set_burst_state: BURSt:STATe #{OFF|ON}
+get_burst_state: BURSt:STATe?
+set_unit_angle: UNIT:ANGLe #{DEGree|RADian}
+get_unit_angle: UNIT:ANGLe?
+set_burst_polarity: BURSt:GATE:POLarity #{NORMal|INVerted}
+get_burst_polarity: BURSt:GATE:POLarity?
+
+######
+# Trigger
+######
+set_trigger_source: TRIGger:SOURce #{IMMediate|EXTernal|BUS}
+get_trigger_source: TRIGger:SOURce?
+trigger: TRIG
+set_trigger_delay: TRIGger:DELay #{Seconds|MINimum|MAXimum}
+get_trigger_delay: TRIGger:DELay? #[MINimum|MAXimum]
+set_trigger_slope: TRIGger:SLOPe #{POSitive|NEGative} 
+get_trigger_slope: TRIGger:SLOPe?BURSt:GATE:POLarity #{NORMal|INVerted}
+set_trigger_output_slope: OUTPut:TRIGger:SLOPe #{POSitive|NEGative} 
+get_trigger_output_slope: OUTPut:TRIGger:SLOPe?
+set_trigger_output: OUTPut:TRIGger #{OFF|ON}
+get_trigger_output: OUTPut:TRIGger?
+
+######
+# Systemcommands
+######
+get_system_err: SYSTem:ERRor?
+set_display: DISPlay #{OFF|ON}
+get_display: DISPlay?
+set_display_text: DISPlay:TEXT #<String in quotes>
+get_display_text: DISPlay:TEXT?
+set_display_clear: DISPlay:TEXT:CLEar
+get_system_version: SYSTem:VERSion?
+set_system_beeper: SYSTem:BEEPer
+set_system_beeper_state: SYSTem:BEEPer:STATe #{OFF|ON}
+get_system_beeper_state: SYSTem:BEEPer:STATe?
+
+######
+# Interface commands
+######
+set_system_interface: SYSTem:INTerface #{GPIB|RS232}
+set_system_local: SYSTem:LOCal
+set_system_lock: SYSTem:RWLock
+
+######
+# PLL commands
+######
+set_pll_phase: PHASe #{Angle|MINimum|MAXimum}
+get_pll_phase: PHASe? #[MINimum|MAXimum]
+set_pll_reference: PHASe:REFerence
+set_pll_phase_error_state: PHASe:UNLock:ERRor:STATe #{OFF|ON}
+get_pll_phase_error_state: PHASe:UNLock:ERRor:STATe?
+set_pll_unit_angle: UNIT:ANGLe #{DEGree|RADian}
+get_pll_unit_angle: UNIT:ANGLe?
+
+######
+# Calibration commands
+######
+get_calibration: CALibration?
+
+get_calibration: CALibration:SECure:STATe #{OFF|ON},<Code>
+get_calibration_secure_state: CALibration:SECure:STATe?
+set_calibration_secure_code: CALibration:SECure:CODE #<New code>
+set_calibration_setupt: CALibration:SETup #<0|1|2|3| . . . |115>
+get_calibration_setupt: CALibration:SETup?
+set_calibration_value: CALibration:VALue #<:HUW>
+get_calibration_value: CALibration:VALue?
+set_calibration_count: CALibration:COUNt?
+set_calibration_string: CALibration:STRing #<String in quotes>
+get_calibration_string: CALibration:STRing?
