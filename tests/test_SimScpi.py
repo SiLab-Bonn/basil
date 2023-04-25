@@ -50,9 +50,9 @@ class TestSimScpi(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.device['Pulser'].set_on(1, 2)
 
-    def test_exception(self):
-        with self.assertRaises(ValueError):
-            self.device['Pulser'].unknown_function()
+    def test_unknown_method(self):
+        with self.assertRaises(AttributeError):
+            self.device['Pulser'].unknown_method()
 
 
 if __name__ == '__main__':
