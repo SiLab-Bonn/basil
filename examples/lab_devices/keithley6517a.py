@@ -5,6 +5,7 @@
 
 # Manual https://download.tek.com/manual/6517A_900_01C.pdf
 
+import time
 from basil.dut import Dut
 
 ##################
@@ -25,7 +26,7 @@ def current_measurement():
     dut['EMeter'].connect_meter()
 
     # Setup the electrometer for current measurement
-    dut['EMeter'].setup_current_measurement(current_range=1e-9,  # Also 'MIN'/'MAX' e.g. 20e-12/12e-3 A or any number in between or None for autorange
+    dut['EMeter'].setup_current_measurement(current_range=2e-10,  # Also 'MIN'/'MAX' e.g. 20e-12/12e-3 A or any number in between or None for autorange
                                             voltage_range='MIN',  # Also 'MIN'/'MAX' e.g. 100/1000 V or any number in between
                                             current_limit=1e-10,  # Current limit for protection DUT
                                             filter=('REP', 5))  # Average filter to apply e.g. REPeat measurement 5 times andy yield average 
@@ -35,7 +36,7 @@ def current_measurement():
     # Loop over voltages
     for i in range(5):
         dut['Emeter'].set_voltage(i)
-
+        time.sleep(1) # Bias voltage needs time to settle for precise measurement -> maybe needs to be increased
         print(f"{dut['EMeter'].get_current()} A @ {i} V")
 
     # Ramp down
