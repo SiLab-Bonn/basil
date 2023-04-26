@@ -17,7 +17,6 @@ get_read  : READ? # Read array of measurement quantities
 get_fetch : FETC? # also get the displayed value but no trigger (should be)
 set_voltage : SOUR:VOLT # Bias voltage
 set_source_range : SOUR:VOLT:RANG  # Ranges available: MIN --> 100V, MAX --> 1000V or just some voltage e.g. set_source_range(300)
-set_current_limit : SENS:CURR:PROT
 set_current_range : CURR:RANG
 get_current_range : CURR:RANG?
 set_current_autorange : CURR:RANG:AUTO ON
@@ -70,5 +69,3 @@ trigger : INIT
 ## Continuous trigger
 trigger_conti_on : INIT:CONT ON
 trigger_conti_off : INIT:CONT OFF
-# Enable remote; does not seem to do anything
-remote_enable : REN
