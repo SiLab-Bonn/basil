@@ -15,11 +15,12 @@ select_current : SENS:FUNC 'CURR' # measure current
 select_voltage : SENS:FUNC 'VOLT' # measure voltage
 get_read  : READ? # Read array of measurement quantities
 get_fetch : FETC? # also get the displayed value but no trigger (should be)
-get_current : MEAS:CURR?  # Reads current by performing ABORt -> CONFigure:CURRent -> READ
-get_voltage : MEAS:VOLT?  # Reads current by performing ABORt -> CONFigure:VOLTage -> READ
-get_resistance : MEAS:RES?  # Reads current by performing ABORt -> CONFigure:RESistance -> READ
-get_charge : MEAS:CHAR?  # Reads current by performing ABORt -> CONFigure:CHARge -> READ
+# get_current : MEAS:CURR?  # Reads current by performing ABORt -> CONFigure:CURRent -> READ
+# get_voltage : MEAS:VOLT?  # Reads current by performing ABORt -> CONFigure:VOLTage -> READ
+# get_resistance : MEAS:RES?  # Reads current by performing ABORt -> CONFigure:RESistance -> READ
+# get_charge : MEAS:CHAR?  # Reads current by performing ABORt -> CONFigure:CHARge -> READ
 set_voltage : SOUR:VOLT # Bias voltage
+get_voltage : SOUR:VOLT? # Returns the bias/source voltage
 set_source_range : SOUR:VOLT:RANG  # Ranges available: MIN --> 100V, MAX --> 1000V or just some voltage e.g. set_source_range(300)
 set_current_limit_on : SOUR:CURR:RLIM:STAT ON  # There seems to be now compliance setting when sourcing other than adding a 1MOhm series resistor,normal compliance is AT 1 MILLI AMP!
 set_current_limit_off : SOUR:CURR:RLIM:STAT OFF

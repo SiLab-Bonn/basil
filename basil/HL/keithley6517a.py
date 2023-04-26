@@ -5,7 +5,6 @@
 # ------------------------------------------------------------
 #
 import logging
-import time
 from types import MethodType
 from time import sleep
 from basil.HL.scpi import scpi
@@ -43,22 +42,14 @@ class keithley6517A(scpi):
         # Overwrite TL write to add a delay after each write; Keithley 6517A needs this because otherwise errors occur
         self._intf.write = MethodType(_write_with_delay(self._intf.write), self._intf)
 
-    def get_read(self):
-        if self._prev_read_ts is not None:
-            elapsed_secs = time.time() - self._prev_read_ts
-            if elapsed_secs < self._read_settle_time:
-                logger.warning(f"Keithley 6517A may need increased settling time (currently {elapsed_secs:.2f} s) in between reads for precise measurements!")
-        self._prev_read_ts = time.time()
-        return super(keithley6517A, self).get_read()
-
-    def setup_current_measurement(self, current_range=None, current_limit=None, voltage_range=None, filter=('REP', 10)):
+    def setup_current_measurement(self, current_range=None, limit_current=True, voltage_range=None, filter=('REP', 10)):
         # See manual p.2-23 ff.
         # Enable zero check before switching functions
         self.zero_check_on()
         # Select current measurement function
         self.select_current()
         # Set lowest range (20 pA) to do zero correction, works by scaling
-        self.set_current_range(20e-12)
+        self.set_current_range('MIN')
         # Zero correct
         self.zero_correct_on()
         if current_range is None:
@@ -76,8 +67,11 @@ class keithley6517A(scpi):
         self.trigger_conti_off()
         if voltage_range is not None:
             self.set_source_range(voltage_range)
-        if current_limit is not None:
-            self.set_current_limit(current_limit)
+        # Apply 1MOhm series resistor internally o prevent large currents
+        if limit_current:
+            self.set_current_limit_on()
+        else:
+            self.set_current_limit_off()
 
         self._setup_for_current_measurement = True
         self._setup_for_voltage_measurement = False
