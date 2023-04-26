@@ -36,7 +36,7 @@ class agilent33250a(scpi):
         self.set_voltage_low(raw_low)
 
     def get_voltage(self, channel, unit='mV'):
-        raw_low, raw_high = string.atof(self.get_voltage_low()), string.atof(self.get_voltage_high())
+        raw_low, raw_high = float(self.get_voltage_low()), float(self.get_voltage_high())
         if unit == 'raw':
             return raw_low, raw_high
         elif unit == 'V':
