@@ -22,7 +22,9 @@ class fadc_rx(RegisterHardwareLayer):
                   'SINGLE_DATA': {'descr': {'addr': 2, 'size': 1, 'offset': 2}},
                   'SAMPLE_DLY': {'descr': {'addr': 7, 'size': 8}},
                   'COUNT': {'descr': {'addr': 3, 'size': 24}},
-                  'COUNT_LOST': {'descr': {'addr': 8, 'size': 8, 'properties': ['ro']}}}
+                  'COUNT_LOST': {'descr': {'addr': 8, 'size': 8, 'properties': ['ro']}},
+                  'CONF_TRIGGER_THRESHOLD' : {'descr':{'addr' : 9, 'size' : 1}},
+                  'CONF_SET_TRIGGER_THRESHOLD' : {'descr':{'addr' : 10, 'size' : 16}}}
 
     _require_version = "==1"
 
@@ -79,3 +81,12 @@ class fadc_rx(RegisterHardwareLayer):
 
     def get_done(self):
         return self.is_ready
+
+    def set_threshold_trigger(self, val):
+        self.CONF_TRIGGER_THRESHOLD = val
+    
+    def set_threshold_trigger_value(self, val):
+        self.CONF_SET_TRIGGER_THRESHOLD = val
+    
+    def get_threshold_trigger_value(self):
+        return self.CONF_SET_TRIGGER_THRESHOLD 
