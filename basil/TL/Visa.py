@@ -38,6 +38,11 @@ class Visa(TransferLayer):
         except NotImplementedError:  # some backends do not always implement the list_resources function
             logger.info('BASIL VISA TL with %s backend', backend)
 
+        # make interface compatible with other transfer layes (serial)
+        if "baudrate" in self._init:
+            self._init["baud_rate"] = self._init["baudrate"]
+            del self._init["baudrate"]
+
         self._resource = rm.open_resource(**{key: value for key, value in self._init.items() if key not in ("backend",)})
 
     def close(self):
