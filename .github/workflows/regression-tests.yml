@@ -74,6 +74,7 @@ jobs:
       run: |
         sudo apt install -y --no-install-recommends make g++ perl python3 autoconf flex bison libfl2 libfl-dev zlib1g zlib1g-dev
         git clone https://github.com/verilator/verilator.git -b ${{matrix.sim-version}}
+        unset VERILATOR_ROOT
         cd verilator
         autoconf
         ./configure
