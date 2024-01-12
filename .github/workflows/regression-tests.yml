@@ -72,7 +72,9 @@ jobs:
     - name: Install Verilator
       if: matrix.sim == 'verilator'
       run: |
-        sudo apt install -y --no-install-recommends make g++ perl python3 autoconf flex bison libfl2 libfl-dev zlib1g zlib1g-dev help2man
+        echo $PYTHONHOME
+        echo $PYTHONPATH
+        sudo apt install -y --no-install-recommends make g++ perl autoconf flex bison libfl2 libfl-dev zlib1g zlib1g-dev help2man
         git clone https://github.com/verilator/verilator.git -b ${{matrix.sim-version}}
         unset VERILATOR_ROOT
         cd verilator
@@ -80,11 +82,15 @@ jobs:
         ./configure
         make -j $(nproc)
         sudo make install
+        echo $PYTHONHOME
+        echo $PYTHONPATH
 
     - name: Install Icarus Verilog
       if: matrix.sim == 'icarus'
       run: |
         sudo apt install -y --no-install-recommends iverilog
+        echo $PYTHONHOME
+        echo $PYTHONPATH
 
     - name: Install basil
       shell: bash -l {0}
