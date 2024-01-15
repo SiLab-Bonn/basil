@@ -1,92 +1,79 @@
 ########################################################
 # Device description for the Keithley 6517A Electrometer 
 # Last Modified: Do 02 Jun 2022 11:22:30  CEST
+# Note:
+#     A delay is required between most of the commands.
+#     Otherwise errors may occur.
 ########################################################
-
 identifier : KEITHLEY INSTRUMENTS INC.,MODEL 6517A
-
-# Notice:
-#   >> A time sleep is required between most of the commands. Otherwise errors may occur.
-
-# more or less useless
-remote_enable : REN 
-
-# === System ===
-get_error : SYST:ERR?
-config_curr : CONF:CURR
-config_volt : CONF:VOLT
-configQ : CONF?
-
-# === The voltage source ===
-set_voltage       : SOUR:VOLT
-set_source_range  : SOUR:VOLT:RANG  # 2 ranges available: MIN --> 100V, MAX --> 1000V
-  # connect or disconnect the voltage source with meter
+# Output control
+on : OUTP ON
+off : OUTP OFF
+get_on : OUTP?
+# Measurement
+select_current : SENS:FUNC 'CURR' # measure current
+select_voltage : SENS:FUNC 'VOLT' # measure voltage
+get_read  : READ? # Read array of measurement quantities
+get_fetch : FETC? # also get the displayed value but no trigger (should be)
+# get_current : MEAS:CURR?  # Reads current by performing ABORt -> CONFigure:CURRent -> READ
+# get_voltage : MEAS:VOLT?  # Reads current by performing ABORt -> CONFigure:VOLTage -> READ
+# get_resistance : MEAS:RES?  # Reads current by performing ABORt -> CONFigure:RESistance -> READ
+# get_charge : MEAS:CHAR?  # Reads current by performing ABORt -> CONFigure:CHARge -> READ
+set_voltage : SOUR:VOLT # Bias voltage
+get_voltage : SOUR:VOLT? # Returns the bias/source voltage
+set_source_range : SOUR:VOLT:RANG  # Ranges available: MIN --> 100V, MAX --> 1000V or just some voltage e.g. set_source_range(300)
+set_current_limit_on : SOUR:CURR:RLIM:STAT ON  # There seems to be now compliance setting when sourcing other than adding a 1MOhm series resistor,normal compliance is AT 1 MILLI AMP!
+set_current_limit_off : SOUR:CURR:RLIM:STAT OFF
+get_current_limit_on : SOUR:CURR:RLIM:STAT?
+set_current_range : CURR:RANG
+get_current_range : CURR:RANG?
+set_current_autorange : CURR:RANG:AUTO ON
+set_current_autorange_upper: CURR:RANG:UPP
+set_voltage_range: VOLT:RANG
+get_voltage_range: VOLT:RANG?
+set_voltage_autorange: VOLT:RANG:AUTO ON
+set_voltage_autorange_upper: VOLT:RANG:UPP
+# Manage connection of internal meter with the voltage source, see p.2-11, fig.2-9
 connect_meter     : SOUR:VOLT:MCON ON
 disconnect_meter  : SOUR:VOLT:MCON OFF
-  # turn the source on or off
-on  : OUTP ON
-off : OUTP OFF
-
-# === Zero Check ===
+# Zero correction and check
 zero_check_on   : SYST:ZCH ON
 zero_check_off  : SYST:ZCH OFF
 zero_correct_on : SYST:ZCOR ON
 zero_correct_off: SYST:ZCOR OFF
-
-# === Measurements ===
-
-# >> Measure
-get_read  : READ? # get the measured value
-get_fetch : FETC? # also get the displayed value but no trigger (should be)
-select_current : SENS:FUNC 'CURR'
-select_voltage : SENS:FUNC 'VOLT'
-
+# Filters
+## Type
+set_current_filter_type: SENS:CURR:AVER:TCON # e.g. 'REP' for REPeating
+set_voltage_filter_type: SENS:VOLT:AVER:TCON
+get_current_filter_type: SENS:CURR:AVER:TCON?
+get_voltage_filter_type: SENS:VOLT:AVER:TCON?
+## Number of measurements being averaged
+set_current_filter_count: SENS:CURR:AVER:COUN
+set_voltage_filter_count: SENS:VOLT:AVER:COUN
+get_current_filter_count: SENS:CURR:AVER:COUN?
+get_voltage_filter_count: SENS:VOLT:AVER:COUN?
+## Toggle
+current_filter_on: SENS:CURR:AVER ON
+voltage_filter_on: SENS:VOLT:AVER ON
+current_filter_off: SENS:CURR:AVER OFF
+voltage_filter_off: SENS:CURR:AVER OFF
+# Status
+get_current_filter: SENS:CURR:AVER:STAT?
+get_voltage_filter: SENS:VOLT:AVER:STAT? 
+# System
+get_config : CONF?
+get_error : SYST:ERR?
+config_curr : CONF:CURR
+config_volt : CONF:VOLT
 # set the display resolution, where a number (or a string) can be specified to indicate the corresponding value
 #   4 (MIN)     --> 3.5 Digits
 #   5           --> 4.5 Digits
 #   6 (DEFalut) --> 5.5 Digits
 #   7 (MAX)     --> 6.5 Digits
-I_digits  : SENS:CURR:DIG
-V_digits  : SENS:CURR:DIG
-
-#get_current : MEAS:CURR?
-#get_voltage : MEAS:VOLT?
-
-# >> Trigger
+set_current_display_digits : SENS:CURR:DIG
+set_voltage_display_digits : SENS:VOLT:DIG
+# Trigger
 trigger : INIT
-  # continuous trigger
+## Continuous trigger
 trigger_conti_on : INIT:CONT ON
 trigger_conti_off : INIT:CONT OFF
-
-# >> filter
-  # type of filter
-set_Iavefilter_type: SENS:CURR:AVER:TCON
-set_Vavefilter_type: SENS:VOLT:AVER:TCON
-get_Iavefilter_type: SENS:CURR:AVER:TCON?
-get_Vavefilter_type: SENS:VOLT:AVER:TCON?
-  # the number of measurements being averaged
-set_Iavefilter_count: SENS:CURR:AVER:COUN
-set_Vavefilter_count: SENS:VOLT:AVER:COUN
-get_Iavefilter_count: SENS:CURR:AVER:COUN?
-get_Vavefilter_count: SENS:VOLT:AVER:COUN?
-  # on and off
-I_filter_on: SENS:CURR:AVER ON
-V_filter_on: SENS:VOLT:AVER ON
-I_filter_off: SENS:CURR:AVER OFF
-V_filter_off: SENS:CURR:AVER OFF
-  # status of the filter
-get_I_filter: SENS:CURR:AVER:STAT?
-get_V_filter: SENS:VOLT:AVER:STAT?
-
-
-# >> Settings
-set_current_limit : SENS:CURR:PROT
-set_current_range : CURR:RANG
-get_current_range : CURR:RANG?
-set_I_autorange : CURR:RANG:AUTO ON
-set_I_autorange_upper: CURR:RANG:UPP
-
-set_voltage_range: VOLT:RANG
-get_voltage_range: VOLT:RANG?
-set_V_autorange: VOLT:RANG:AUTO ON
-set_V_autorange_upper: VOLT:RANG:UPP
