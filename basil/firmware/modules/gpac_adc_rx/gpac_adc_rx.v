@@ -32,7 +32,9 @@ module gpac_adc_rx #(
     input wire           BUS_RD,
     input wire           BUS_WR,
 
-    output wire LOST_ERROR
+    output wire LOST_ERROR,
+	 output wire [0:1] status_LED
+
 );
 
 wire IP_RD, IP_WR;
@@ -79,7 +81,8 @@ gpac_adc_rx_core #(
     .FIFO_READ(FIFO_READ),
     .FIFO_EMPTY(FIFO_EMPTY),
     .FIFO_DATA(FIFO_DATA),
-    .LOST_ERROR(LOST_ERROR)
+    .LOST_ERROR(LOST_ERROR),
+	 .status_LED(status_LED)
 );
 
 

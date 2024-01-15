@@ -30,7 +30,8 @@ module gpac_adc_rx_core #(
     input wire BUS_WR,
     input wire BUS_RD,
 
-    output wire LOST_ERROR
+    output wire LOST_ERROR,
+	 output wire status_LED
 );
 
 localparam VERSION = 1;
@@ -40,6 +41,8 @@ localparam VERSION = 1;
 
 //TODO:
 // - external trigger /rising falling
+
+
 
 wire SOFT_RST;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
@@ -60,6 +63,10 @@ always @(posedge BUS_CLK) begin
         status_regs[6] <= 1;
         status_regs[7] <= 0;
         status_regs[8] <= 0;
+		status_regs[9] <= 0;
+		status_regs[10] <= 0;
+		status_regs[11] <= 0;
+		status_regs[12] <= 0;
     end
     else if(BUS_WR && BUS_ADD < 16)
         status_regs[BUS_ADD[3:0]] <= BUS_DATA_IN;
@@ -73,6 +80,7 @@ assign CONF_START_WITH_SYNC = status_regs[2][0];
 
 wire CONF_EN_EX_TRIGGER;
 assign CONF_EN_EX_TRIGGER = status_regs[2][1];
+
 
 wire CONF_SINGLE_DATA;
 assign CONF_SINGLE_DATA = status_regs[2][2];
@@ -91,6 +99,14 @@ reg CONF_DONE;
 wire [7:0] BUS_STATUS_OUT;
 assign BUS_STATUS_OUT = status_regs[BUS_ADD[3:0]];
 
+
+// Triggering on threshold condition registers
+wire [7:0] CONF_TRIGGER_THRESHOLD = status_regs[9]; // Enable threshold triggering
+wire [13:0] CONF_SET_TRIGGER_THRESHOLD = {status_regs[11][5:0], status_regs[10]}; // set the value for the threshold (depends on mode)
+reg [7:0] FEEDBACK_THRESHOLD_TRIGGERED; // A statusregister that gives basil a feedback, that it found an event
+reg [7:0] ADC_THRESHOLD; // The register that will hold the trigger information
+reg [13:0] ADC_IN_DLY_BUF; // Stores the most recent buf num
+
 always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if(BUS_ADD == 0)
@@ -99,6 +115,8 @@ always @(posedge BUS_CLK) begin
             BUS_DATA_OUT <= {7'b0, CONF_DONE};
         else if(BUS_ADD == 8)
             BUS_DATA_OUT <= CONF_ERROR_LOST;
+//        else if (BUS_ADD == 12)
+//            BUS_DATA_OUT <= FEEDBACK_THRESHOLD_TRIGGERED;
         else if(BUS_ADD < 16)
             BUS_DATA_OUT <= BUS_STATUS_OUT;
     end
@@ -147,7 +165,7 @@ always @(posedge ADC_ENC) begin
 end
 
 wire start_data_count;
-assign start_data_count = (CONF_START_WITH_SYNC ? (adc_sync_wait && adc_sync_pulse) : start_adc_sync) || ( CONF_EN_EX_TRIGGER && ADC_TRIGGER);
+assign start_data_count = (CONF_START_WITH_SYNC ? (adc_sync_wait && adc_sync_pulse) : start_adc_sync) || ( CONF_EN_EX_TRIGGER && ADC_TRIGGER) || (CONF_TRIGGER_THRESHOLD && ADC_THRESHOLD);
 
 
 reg [23:0] rec_cnt;
@@ -202,11 +220,27 @@ always @(posedge ADC_ENC)
 always @(posedge ADC_ENC)
         adc_dly_mem <= dly_mem[dly_addr_read];
 
+reg status_LED_temp;
+
+
+
 always @(*) begin
+	 ADC_IN_DLY_BUF = ADC_IN_DLY;
     dly_addr_read = dly_addr_write - CONF_SAMPEL_DLY;
     ADC_IN_DLY = CONF_SAMPEL_DLY == 0 ? ADC_IN : adc_dly_mem;
+    if(CONF_TRIGGER_THRESHOLD==1 || CONF_TRIGGER_THRESHOLD==4) begin // MODE 1: Check if value is smaller than threshold
+		ADC_THRESHOLD = (ADC_IN_DLY < CONF_SET_TRIGGER_THRESHOLD); end
+    else if(CONF_TRIGGER_THRESHOLD==2) begin // MODE 2: Check if value exceeds threshold
+		ADC_THRESHOLD = (ADC_IN_DLY > CONF_SET_TRIGGER_THRESHOLD);end
+    else if(CONF_TRIGGER_THRESHOLD==3) begin// MODE 3: Check if value changes more than threshold
+		ADC_THRESHOLD = (ADC_IN_DLY_BUF-ADC_IN_DLY > CONF_SET_TRIGGER_THRESHOLD);end
+	if(ADC_THRESHOLD) begin
+		FEEDBACK_THRESHOLD_TRIGGERED = FEEDBACK_THRESHOLD_TRIGGERED+1; end
 end
-//
+
+assign status_LED = status_LED_temp;
+
+
 
 always @(posedge ADC_ENC) begin
         prev_data <= ADC_IN_DLY;
@@ -228,10 +262,15 @@ end
 
 reg [31:0] data_to_fifo;
 always @(*) begin
-    if(CONF_SINGLE_DATA)
-        data_to_fifo = {HEADER_ID, ADC_ID, CONF_EN_EX_TRIGGER ? rec_cnt == 1 : ADC_SYNC, 14'b0, ADC_IN_DLY};
-    else
+    if(CONF_SINGLE_DATA) begin
+        if (!CONF_TRIGGER_THRESHOLD)begin
+            data_to_fifo = {HEADER_ID, ADC_ID, CONF_EN_EX_TRIGGER ? rec_cnt == 1 : ADC_SYNC, 14'b0, ADC_IN_DLY};end
+		  else begin
+            data_to_fifo = {HEADER_ID, ADC_ID, CONF_TRIGGER_THRESHOLD ? (rec_cnt == 1) : ADC_SYNC, 14'b0, ADC_IN_DLY};end
+    end
+    else begin
         data_to_fifo = {HEADER_ID, ADC_ID, prev_sync, prev_data, ADC_IN_DLY};
+    end
 
     if(CONF_SINGLE_DATA)
         cdc_fifo_write = cdc_fifo_write_single;
@@ -239,7 +278,6 @@ always @(*) begin
         cdc_fifo_write = cdc_fifo_write_double;
 
 end
-
 wire [31:0] cdc_data_out;
 cdc_syncfifo #(
     .DSIZE(32),

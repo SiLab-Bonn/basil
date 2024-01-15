@@ -22,7 +22,10 @@ class fadc_rx(RegisterHardwareLayer):
                   'SINGLE_DATA': {'descr': {'addr': 2, 'size': 1, 'offset': 2}},
                   'SAMPLE_DLY': {'descr': {'addr': 7, 'size': 8}},
                   'COUNT': {'descr': {'addr': 3, 'size': 24}},
-                  'COUNT_LOST': {'descr': {'addr': 8, 'size': 8, 'properties': ['ro']}}}
+                  'COUNT_LOST': {'descr': {'addr': 8, 'size': 8, 'properties': ['ro']}},
+                  'CONF_TRIGGER_THRESHOLD' : {'descr':{'addr' : 9, 'size' : 8}},
+                  'CONF_SET_TRIGGER_THRESHOLD' : {'descr':{'addr' : 10, 'size' : 16}},
+                  'FEEDBACK_THRESHOLD_TRIGGERED' : {'descr':{'addr' : 12, 'size' : 8, 'properties' : ['ro']}}}
 
     _require_version = "==1"
 
@@ -79,3 +82,21 @@ class fadc_rx(RegisterHardwareLayer):
 
     def get_done(self):
         return self.is_ready
+
+    def set_threshold_trigger(self, mode):
+        self.CONF_TRIGGER_THRESHOLD = mode
+        # MODE 1: Check if value is smaller than threshold
+        # MODE 2: Check if value exceeds threshold
+        # MODE 3: Check if value changes more than threshold
+    
+    def get_threshold_trigger_mode(self):
+        return self.CONF_TRIGGER_THRESHOLD
+
+    def set_threshold_trigger_value(self, val):
+        self.CONF_SET_TRIGGER_THRESHOLD = val
+    
+    def get_threshold_trigger_value(self):
+        return self.CONF_SET_TRIGGER_THRESHOLD 
+
+    def get_threshold_trigger_feedback(self):
+        return self.FEEDBACK_THRESHOLD_TRIGGERED

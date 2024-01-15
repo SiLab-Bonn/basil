@@ -3,7 +3,7 @@ transfer_layer:
   - name     : Visa
     type     : Visa
     init     :
-        resource_name : TCPIP::131.220.167.109
+        resource_name : TCPIP::10.42.0.48
         encoding: 'ascii'
         backend : "@py"
         #resource_name : USB0::0x0699::0x0409::C010877::INSTR # (works with NI VISA backend + USB + Windows 7)
