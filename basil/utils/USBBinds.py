@@ -90,3 +90,80 @@ def findUSBBinds(rm, log,
                 pass
 
     return results
+
+def getBaudrate(dictionary):
+    """
+    Gets the baud rate from the given dictionary.
+
+    Args:
+        dict (dict): The dictionary to get the baud rate from.
+
+    Returns:
+        int: The baud rate.
+    """
+    if "baud_rate" in dictionary.keys():
+        return dictionary["baud_rate"]
+    elif "baudrate" in dictionary.keys():
+        return dictionary["baudrate"]
+    else:
+        return 9600
+
+def modify_basil_config(conf, log, skip_binds=[], verbose=False):
+    """
+    Modifies the basil configuration file by finding USB binds for devices.
+
+    Args:
+        conf (dict): The basil configuration dictionary.
+        log: The logger object for logging messages.
+        skip_binds (list, optional): List of USB binds to skip. Defaults to [].
+        verbose (bool, optional): Flag to enable verbose logging. Defaults to False.
+
+    Returns:
+        dict: The modified basil configuration dictionary.
+    """
+    log.info("Trying to find USB binds for devices in basil configuration file")
+
+    rm = pyvisa.ResourceManager()
+
+    instruments = []
+    insts_idx_map = {}
+
+    # Iterate over transfer layers in the configuration
+    for i, tf in enumerate(conf["transfer_layer"]):
+        if (
+            "identification" not in tf["init"].keys()
+            or "read_termination" not in tf["init"].keys()
+            or not any(e in tf["init"].keys() for e in ["baud_rate", "baudrate"])
+        ):
+            if verbose:
+                log.debug(f"Skipping {tf['type']} transfer layer with name {tf['name']}")
+            continue
+
+        instrument = tf["init"]["identification"]
+        baud_rate = getBaudrate(tf["init"])
+        read_termination = tf["init"]["read_termination"] if "read_termination" in tf["init"].keys() else "\n"
+        write_termination = tf["init"]["write_termination"] if "write_termination" in tf["init"].keys() else "\n"
+        
+        instruments.append({
+            "identification": instrument,
+            "baud_rate": baud_rate,
+            "read_termination": read_termination,
+            "write_termination": write_termination,
+        })
+
+        insts_idx_map[instrument.lower().strip()] = i
+
+    found_binds = findUSBBinds(rm, log=log, instruments=instruments, binds_to_skip=skip_binds, verbose=verbose)
+
+    for inst in found_binds.keys():
+        if found_binds[inst] is None:
+            raise LookupError(f"Could not find USB bind for {inst.title().replace('_', '')}")
+
+        if conf["transfer_layer"][insts_idx_map[inst]]["type"].lower() == "serial":
+            conf["transfer_layer"][insts_idx_map[inst]]["init"]["port"] = found_binds[inst]
+        elif conf["transfer_layer"][insts_idx_map[inst]]["type"].lower() == "visa":
+            conf["transfer_layer"][insts_idx_map[inst]]["init"]["resource_name"] = f"ASRL{found_binds[inst]}::INSTR"
+
+        del conf["transfer_layer"][insts_idx_map[inst]]["init"]["identification"]
+
+    return conf
