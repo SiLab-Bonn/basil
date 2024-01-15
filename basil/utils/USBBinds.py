@@ -141,7 +141,7 @@ def modify_basil_config(conf, log, skip_binds=[], verbose=False):
 
         instrument = tf["init"]["identification"]
         baud_rate = getBaudrate(tf["init"])
-        read_termination = tf["init"]["read_termination"] if "read_termination" in tf["init"].keys() else "\n"
+        read_termination = tf["init"]["read_termination"]
         write_termination = tf["init"]["write_termination"] if "write_termination" in tf["init"].keys() else "\n"
         
         instruments.append({
