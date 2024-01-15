@@ -103,6 +103,11 @@ jobs:
         echo $PYTHONHOME
         echo $PYTHONPATH
         pip install -e .
+        echo $PYTHONHOME
+        echo $PYTHONPATH
+        unset PYTHONHOME
+        echo $PYTHONHOME
+        echo $PYTHONPATH
         pytest ${{matrix.pytest-marker}} --cov=basil tests/test_*.py examples/*/*/test_*.py
 
     - name: Upload to codecov
