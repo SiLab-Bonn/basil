@@ -61,7 +61,7 @@ export COCOTB=$(shell cocotb-config --share)
 #export COCOTB=$(shell SPHINX_BUILD=1 python -c "import cocotb; import os; print(os.path.dirname(os.path.dirname(os.path.abspath(cocotb.__file__))))")
 #export PYTHONPATH=$(shell python -c "from distutils import sysconfig; print(sysconfig.get_python_lib())"):$(COCOTB)
 #export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:$(PYTHONLIBS)
-export PYTHONHOME=$(shell python -c "from distutils.sysconfig import get_config_var; print(get_config_var('prefix'))")
+#export PYTHONHOME=$(shell python -c "from distutils.sysconfig import get_config_var; print(get_config_var('prefix'))")
 
 ifeq ($(SIM),questa)
     EXTRA_ARGS += $(NOT_ICARUS_DEFINES)

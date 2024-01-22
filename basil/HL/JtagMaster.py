@@ -102,7 +102,7 @@ class JtagMaster(RegisterHardwareLayer):
         bit_number = self._test_input(data)
         self.SIZE = bit_number
 
-        if type(data[0]) == BitLogic:
+        if isinstance(data[0], BitLogic):
             data_byte = self._bitlogic2bytes(data)
         else:
             data_byte = self._raw_data2bytes(data)
@@ -135,7 +135,7 @@ class JtagMaster(RegisterHardwareLayer):
             self.WORD_COUNT = bit_number // word_size
             self.SIZE = word_size
 
-        if type(data[0]) == BitLogic:
+        if isinstance(data[0], BitLogic):
             data_byte = self._bitlogic2bytes(data)
         else:
             data_byte = self._raw_data2bytes(data)
