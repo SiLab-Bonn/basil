@@ -23,3 +23,9 @@ get_autorange : SOUR:CURR:RANG:AUTO?
 four_wire_on: SYST:RSEN ON
 four_wire_off: SYST:RSEN OFF
 get_remote_sense: SYST:RSEN ?
+# Special keyword for formatting query results to allow direct conversions to numeric types (e.g. float(get_current()))
+__scpi_query_fmt:
+  fmt_sep: ','
+  fmt_method:
+    get_voltage: '{0}'
+    get_current: '{1}'
