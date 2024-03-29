@@ -40,7 +40,7 @@ class SiSim(SiTransferLayer):
             port = self._init['port']
 
         # try few times for simulator to setup
-        try_cnt = 60
+        try_cnt = 120
         if 'timeout' in self._init.keys():
             try_cnt = self._init['timeout']
 
