@@ -15,8 +15,8 @@ class Mercury(HardwareLayer):
     Therefore '\x03' has to be set a read termination in the transport layer! And a read termination
     of 0.1 s should be set!
     Despite the manual telling SCPI compatibility, this is not correct for our devices with our
-    firmware.
-    '''
+    firmware. The manual explaining every "native" command: https://twiki.cern.ch/twiki/pub/ILCBDSColl/Phase2Preparations/MercuryNativeCommands_MS176E101.pdf
+    The overall manual: https://www.le.infn.it/~chiodini/allow_listing/pi/Manuals/C-863_Benutzerhandbuch_Kurzversion_MS205Dqu200.pdf'''
 
     def __init__(self, intf, conf):
         super(Mercury, self).__init__(intf, conf)
@@ -44,11 +44,27 @@ class Mercury(HardwareLayer):
             for a in self._addresses:
                 self.write(bytearray.fromhex("01%d" % (a + 30)) + command.encode())
 
+
     def get_address(self, address):
         self._write_command("TB", address)
         return self.read()
 
-    def get_position(self, address=None):
+    def motor_on(self,address=None):
+        self._write_command("MN", address)
+
+    def motor_off(self,address=None):
+        self._write_command("MF", address)
+
+    def LL(self,address=None): #logic active low
+        self._write_command("LL", address)
+
+    def set_home(self,address=None): #Defines the current position as 0
+        self._write_command("DH", address)
+
+    def go_home(self,address=None): #Moves motor to zero position
+        self._write_command("GH", address)
+
+    def get_position(self, address=None): 
         self._write_command("TP", address)
         return int(self.read()[2:-3])
 
@@ -61,3 +77,10 @@ class Mercury(HardwareLayer):
 
     def move_relative(self, value, address=None):
         self._write_command("MR%d" % value, address)
+
+    def abort(self, address=None):
+        self._write_command("AB", address)
+
+    def find_edge(self, n, address=None):
+        self._write_command("FE%d" % n, address)
+
