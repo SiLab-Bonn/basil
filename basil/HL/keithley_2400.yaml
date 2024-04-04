@@ -6,8 +6,10 @@ identifier : KEITHLEY INSTRUMENTS INC.,MODEL 2400
 on : OUTP ON
 off : OUTP OFF
 get_on: OUTP?
+get_source_current: SOUR:CURR?
 get_current : SENSE:FUNC 'CURR';:READ?
 set_current : SOUR:CURR
+get_source_voltage: SOUR:VOLT?
 set_voltage : SOUR:VOLT
 get_voltage : SENSE:FUNC 'VOLT';:READ?
 set_current_limit : SENS:CURR:PROT
