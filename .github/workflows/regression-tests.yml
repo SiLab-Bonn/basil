@@ -53,10 +53,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - uses: conda-incubator/setup-miniconda@v2
+    - name: Set up Anaconda ${{matrix.python-version}}
+      uses: conda-incubator/setup-miniconda@v2
       with:
         auto-update-conda: true
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{matrix.python-version}}
 
     - name: Install Conda dependencies
       shell: bash -l {0}
@@ -72,25 +73,18 @@ jobs:
     - name: Install Verilator
       if: matrix.sim == 'verilator'
       run: |
-        echo $PYTHONHOME
-        echo $PYTHONPATH
-        sudo apt install -y --no-install-recommends make g++ perl autoconf flex bison libfl2 libfl-dev zlib1g zlib1g-dev help2man
+        sudo apt install -y --no-install-recommends make g++ help2man perl python3 autoconf flex bison libfl2 libfl-dev zlib1g zlib1g-dev
         git clone https://github.com/verilator/verilator.git -b ${{matrix.sim-version}}
-        unset VERILATOR_ROOT
         cd verilator
         autoconf
         ./configure
         make -j $(nproc)
         sudo make install
-        echo $PYTHONHOME
-        echo $PYTHONPATH
 
     - name: Install Icarus Verilog
       if: matrix.sim == 'icarus'
       run: |
         sudo apt install -y --no-install-recommends iverilog
-        echo $PYTHONHOME
-        echo $PYTHONPATH
 
     - name: Install basil
       shell: bash -l {0}
@@ -100,14 +94,7 @@ jobs:
     - name: Test
       shell: bash -l {0}
       run: |
-        echo $PYTHONHOME
-        echo $PYTHONPATH
         pip install -e .
-        echo $PYTHONHOME
-        echo $PYTHONPATH
-        unset PYTHONHOME
-        echo $PYTHONHOME
-        echo $PYTHONPATH
         pytest ${{matrix.pytest-marker}} --cov=basil tests/test_*.py examples/*/*/test_*.py
 
     - name: Upload to codecov
