@@ -73,12 +73,12 @@ jobs:
     - name: Install Verilator
       if: matrix.sim == 'verilator'
       run: |
-        sudo apt install -y --no-install-recommends make g++ help2man perl python3 autoconf flex bison libfl2 libfl-dev zlib1g zlib1g-dev
+        sudo apt install -y --no-install-recommends make g++ help2man perl autoconf flex bison libfl2 libfl-dev zlib1g zlib1g-dev
         git clone https://github.com/verilator/verilator.git -b ${{matrix.sim-version}}
         cd verilator
         autoconf
         ./configure
-        make PYTHON3=/usr/share/miniconda/bin/python3 -j $(nproc)
+        make PYTHON3=/usr/share/miniconda/bin/python -j $(nproc)
         sudo make install
 
     - name: Install Icarus Verilog
