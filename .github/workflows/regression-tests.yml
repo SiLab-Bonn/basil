@@ -78,7 +78,7 @@ jobs:
         cd verilator
         autoconf
         ./configure
-        make -j $(nproc)
+        make PYTHON3=/usr/share/miniconda/bin/python3 -j $(nproc)
         sudo make install
 
     - name: Install Icarus Verilog
