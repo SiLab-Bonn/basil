@@ -1,0 +1,1033 @@
+#-----------------------------------------------------------
+# Vivado v2022.2 (64-bit)
+# SW Build 3671981 on Fri Oct 14 04:59:54 MDT 2022
+# IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+# Start of session at: Thu Apr  4 12:04:17 2024
+# Process ID: 3604667
+# Current directory: /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1
+# Command line: vivado -log tdc_bdaq.vdi -applog -product Vivado -messageDb vivado.pb -mode batch -source tdc_bdaq.tcl -notrace
+# Log file: /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.vdi
+# Journal file: /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/vivado.jou
+# Running On: asiclab006.physik.uni-bonn.de, OS: Linux, CPU Frequency: 1898.503 MHz, CPU Physical cores: 6, Host memory: 67208 MB
+#-----------------------------------------------------------
+source tdc_bdaq.tcl -notrace
+Command: open_checkpoint /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.dcp
+
+Starting open_checkpoint Task
+
+Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.04 . Memory (MB): peak = 1530.586 ; gain = 0.000 ; free physical = 47452 ; free virtual = 66060
+INFO: [Device 21-403] Loading part xc7k160tffg676-2L
+Netlist sorting complete. Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.04 . Memory (MB): peak = 1809.734 ; gain = 0.000 ; free physical = 46982 ; free virtual = 65590
+INFO: [Netlist 29-17] Analyzing 717 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-479] Netlist was created with Vivado 2022.2
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Timing 38-478] Restoring timing data from binary archive.
+INFO: [Timing 38-479] Binary timing data restore complete.
+INFO: [Project 1-856] Restoring constraints from binary archive.
+INFO: [Project 1-853] Binary constraint restore complete.
+Reading XDEF placement.
+Reading placer database...
+Reading XDEF routing.
+Read XDEF Files: Time (s): cpu = 00:00:00.06 ; elapsed = 00:00:00.07 . Memory (MB): peak = 2329.055 ; gain = 3.969 ; free physical = 46476 ; free virtual = 65084
+Restored from archive | CPU: 0.070000 secs | Memory: 1.350159 MB |
+Finished XDEF File Restore: Time (s): cpu = 00:00:00.06 ; elapsed = 00:00:00.07 . Memory (MB): peak = 2329.055 ; gain = 3.969 ; free physical = 46476 ; free virtual = 65084
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2329.055 ; gain = 0.000 ; free physical = 46475 ; free virtual = 65084
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 14 instances were transformed.
+  IOBUF => IOBUF (IBUF, OBUFT): 1 instance 
+  RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 5 instances
+  RAM32X1S => RAM32X1S (RAMS32): 8 instances
+
+INFO: [Project 1-604] Checkpoint was created with Vivado v2022.2 (64-bit) build 3671981
+OpenCheckpoint Checksum | Checksum: 104cb2f98
+----- Checksum: PlaceDB: 54b78c2d ShapeSum: b013a36b RouteDB: 00000000 
+open_checkpoint: Time (s): cpu = 00:00:19 ; elapsed = 00:00:24 . Memory (MB): peak = 2329.055 ; gain = 798.469 ; free physical = 46475 ; free virtual = 65084
+Command: opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7k160t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7k160t'
+Running DRC as a precondition to command opt_design
+
+Starting DRC Task
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Project 1-461] DRC finished with 0 Errors
+INFO: [Project 1-462] Please refer to the DRC report (report_drc) for more information.
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.96 . Memory (MB): peak = 2419.836 ; gain = 84.844 ; free physical = 46463 ; free virtual = 65071
+
+Starting Cache Timing Information Task
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Ending Cache Timing Information Task | Checksum: 18613af5d
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.43 . Memory (MB): peak = 2506.648 ; gain = 86.812 ; free physical = 46459 ; free virtual = 65067
+
+Starting Logic Optimization Task
+
+Phase 1 Generate And Synthesize Debug Cores
+INFO: [Chipscope 16-329] Generating Script for core instance : dbg_hub 
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/tools/xilinx/Vivado/2022.2/data/ip'.
+INFO: [IP_Flow 19-3806] Processing IP xilinx.com:ip:xsdbm:3.0 for cell dbg_hub_CV.
+INFO: [Chipscope 16-329] Generating Script for core instance : u_ila_0 
+INFO: [IP_Flow 19-3806] Processing IP xilinx.com:ip:ila:6.2 for cell u_ila_0_CV.
+Netlist sorting complete. Time (s): cpu = 00:00:00.14 ; elapsed = 00:00:00.13 . Memory (MB): peak = 2879.285 ; gain = 0.000 ; free physical = 46093 ; free virtual = 64751
+Phase 1 Generate And Synthesize Debug Cores | Checksum: 1922b6f7d
+
+Time (s): cpu = 00:02:17 ; elapsed = 00:02:10 . Memory (MB): peak = 2879.285 ; gain = 92.684 ; free physical = 46093 ; free virtual = 64751
+
+Phase 2 Retarget
+INFO: [Opt 31-1287] Pulled Inverter i_tdc/i_tdc_core/fifo_i/mem_reg_i_11 into driver instance i_tdc/i_tdc_core/fifo_i/mem_reg_i_14, which resulted in an inversion of 2 pins
+INFO: [Opt 31-1287] Pulled Inverter i_tdc/i_tdc_core/i_broker/out_word[8]_i_1 into driver instance i_tdc/i_tdc_core/i_broker/out_valid_i_4, which resulted in an inversion of 2 pins
+INFO: [Opt 31-1287] Pulled Inverter u_ila_0/inst/ila_core_inst/xsdb_memory_read_inst/current_state[0]_i_1 into driver instance u_ila_0/inst/ila_core_inst/xsdb_memory_read_inst/read_addr[9]_i_4, which resulted in an inversion of 15 pins
+INFO: [Opt 31-138] Pushed 7 inverter(s) to 22 load pin(s).
+INFO: [Opt 31-49] Retargeted 0 cell(s).
+Phase 2 Retarget | Checksum: 118f84362
+
+Time (s): cpu = 00:02:20 ; elapsed = 00:02:10 . Memory (MB): peak = 2879.285 ; gain = 92.684 ; free physical = 46098 ; free virtual = 64756
+INFO: [Opt 31-389] Phase Retarget created 156 cells and removed 431 cells
+INFO: [Opt 31-1021] In phase Retarget, 68 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 3 Constant propagation
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Phase 3 Constant propagation | Checksum: 1055cb8e9
+
+Time (s): cpu = 00:02:20 ; elapsed = 00:02:11 . Memory (MB): peak = 2879.285 ; gain = 92.684 ; free physical = 46098 ; free virtual = 64756
+INFO: [Opt 31-389] Phase Constant propagation created 51 cells and removed 158 cells
+INFO: [Opt 31-1021] In phase Constant propagation, 99 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 4 Sweep
+Phase 4 Sweep | Checksum: f8813cfd
+
+Time (s): cpu = 00:02:20 ; elapsed = 00:02:11 . Memory (MB): peak = 2879.285 ; gain = 92.684 ; free physical = 46098 ; free virtual = 64756
+INFO: [Opt 31-389] Phase Sweep created 0 cells and removed 242 cells
+INFO: [Opt 31-1021] In phase Sweep, 1063 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 5 BUFG optimization
+INFO: [Opt 31-194] Inserted BUFG CLK480PLL_BUFG_inst to drive 384 load(s) on clock net CLK480PLL_BUFG
+INFO: [Opt 31-193] Inserted 1 BUFG(s) on clock nets
+Phase 5 BUFG optimization | Checksum: 1262feb27
+
+Time (s): cpu = 00:02:20 ; elapsed = 00:02:11 . Memory (MB): peak = 2911.301 ; gain = 124.699 ; free physical = 46097 ; free virtual = 64755
+INFO: [Opt 31-662] Phase BUFG optimization created 1 cells of which 1 are BUFGs and removed 0 cells.
+
+Phase 6 Shift Register Optimization
+INFO: [Opt 31-1064] SRL Remap converted 0 SRLs to 0 registers and converted 0 registers of register chains to 0 SRLs
+Phase 6 Shift Register Optimization | Checksum: 1262feb27
+
+Time (s): cpu = 00:02:20 ; elapsed = 00:02:11 . Memory (MB): peak = 2911.301 ; gain = 124.699 ; free physical = 46097 ; free virtual = 64755
+INFO: [Opt 31-389] Phase Shift Register Optimization created 0 cells and removed 0 cells
+
+Phase 7 Post Processing Netlist
+Phase 7 Post Processing Netlist | Checksum: 1262feb27
+
+Time (s): cpu = 00:02:20 ; elapsed = 00:02:11 . Memory (MB): peak = 2911.301 ; gain = 124.699 ; free physical = 46097 ; free virtual = 64755
+INFO: [Opt 31-389] Phase Post Processing Netlist created 0 cells and removed 0 cells
+INFO: [Opt 31-1021] In phase Post Processing Netlist, 57 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+Opt_design Change Summary
+=========================
+
+
+-------------------------------------------------------------------------------------------------------------------------
+|  Phase                        |  #Cells created  |  #Cells Removed  |  #Constrained objects preventing optimizations  |
+-------------------------------------------------------------------------------------------------------------------------
+|  Retarget                     |             156  |             431  |                                             68  |
+|  Constant propagation         |              51  |             158  |                                             99  |
+|  Sweep                        |               0  |             242  |                                           1063  |
+|  BUFG optimization            |               1  |               0  |                                              0  |
+|  Shift Register Optimization  |               0  |               0  |                                              0  |
+|  Post Processing Netlist      |               0  |               0  |                                             57  |
+-------------------------------------------------------------------------------------------------------------------------
+
+
+
+Starting Connectivity Check Task
+
+Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2911.301 ; gain = 0.000 ; free physical = 46097 ; free virtual = 64755
+Ending Logic Optimization Task | Checksum: 1881443a3
+
+Time (s): cpu = 00:02:21 ; elapsed = 00:02:11 . Memory (MB): peak = 2911.301 ; gain = 124.699 ; free physical = 46097 ; free virtual = 64755
+
+Starting Power Optimization Task
+INFO: [Pwropt 34-132] Skipping clock gating for clocks with a period < 2.00 ns.
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+INFO: [Pwropt 34-9] Applying IDT optimizations ...
+INFO: [Pwropt 34-10] Applying ODC optimizations ...
+
+
+Starting PowerOpt Patch Enables Task
+INFO: [Pwropt 34-162] WRITE_MODE attribute of 11 BRAM(s) out of a total of 146 has been updated to save power. Run report_power_opt to get a complete listing of the BRAMs updated.
+INFO: [Pwropt 34-201] Structural ODC has moved 14 WE to EN ports
+Number of BRAM Ports augmented: 195 newly gated: 36 Total Ports: 292
+Number of Flops added for Enable Generation: 3
+
+Ending PowerOpt Patch Enables Task | Checksum: 15cb65f0d
+
+Time (s): cpu = 00:00:00.51 ; elapsed = 00:00:00.45 . Memory (MB): peak = 3346.941 ; gain = 0.000 ; free physical = 46060 ; free virtual = 64718
+Ending Power Optimization Task | Checksum: 15cb65f0d
+
+Time (s): cpu = 00:00:12 ; elapsed = 00:00:11 . Memory (MB): peak = 3346.941 ; gain = 435.641 ; free physical = 46086 ; free virtual = 64744
+
+Starting Final Cleanup Task
+
+Starting Logic Optimization Task
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Ending Logic Optimization Task | Checksum: fa5a71d4
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 3346.941 ; gain = 0.000 ; free physical = 46090 ; free virtual = 64748
+Ending Final Cleanup Task | Checksum: fa5a71d4
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:03 . Memory (MB): peak = 3346.941 ; gain = 0.000 ; free physical = 46090 ; free virtual = 64748
+
+Starting Netlist Obfuscation Task
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3346.941 ; gain = 0.000 ; free physical = 46090 ; free virtual = 64748
+Ending Netlist Obfuscation Task | Checksum: fa5a71d4
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3346.941 ; gain = 0.000 ; free physical = 46090 ; free virtual = 64748
+INFO: [Common 17-83] Releasing license: Implementation
+57 Infos, 6 Warnings, 0 Critical Warnings and 0 Errors encountered.
+opt_design completed successfully
+opt_design: Time (s): cpu = 00:02:43 ; elapsed = 00:02:29 . Memory (MB): peak = 3346.941 ; gain = 1017.887 ; free physical = 46090 ; free virtual = 64748
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:00.32 ; elapsed = 00:00:00.08 . Memory (MB): peak = 3346.941 ; gain = 0.000 ; free physical = 46068 ; free virtual = 64727
+INFO: [Common 17-1381] The checkpoint '/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq_opt.dcp' has been generated.
+INFO: [runtcl-4] Executing : report_drc -file tdc_bdaq_drc_opted.rpt -pb tdc_bdaq_drc_opted.pb -rpx tdc_bdaq_drc_opted.rpx
+Command: report_drc -file tdc_bdaq_drc_opted.rpt -pb tdc_bdaq_drc_opted.pb -rpx tdc_bdaq_drc_opted.rpx
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 2-168] The results of DRC are in file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq_drc_opted.rpt.
+report_drc completed successfully
+INFO: [Chipscope 16-240] Debug cores have already been implemented
+Command: place_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7k160t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7k160t'
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+Running DRC as a precondition to command place_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors, 34 Warnings
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+Starting Placer Task
+INFO: [Place 30-611] Multithreading enabled for place_design using a maximum of 8 CPUs
+
+Phase 1 Placer Initialization
+
+Phase 1.1 Placer Initialization Netlist Sorting
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 46027 ; free virtual = 64689
+Phase 1.1 Placer Initialization Netlist Sorting | Checksum: c76909aa
+
+Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 46027 ; free virtual = 64689
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 46027 ; free virtual = 64689
+
+Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device
+Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device | Checksum: 1733512fa
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 46011 ; free virtual = 64673
+
+Phase 1.3 Build Placer Netlist Model
+Phase 1.3 Build Placer Netlist Model | Checksum: 1fb2ef19f
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:03 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45977 ; free virtual = 64654
+
+Phase 1.4 Constrain Clocks/Macros
+Phase 1.4 Constrain Clocks/Macros | Checksum: 1fb2ef19f
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:03 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45977 ; free virtual = 64654
+Phase 1 Placer Initialization | Checksum: 1fb2ef19f
+
+Time (s): cpu = 00:00:07 ; elapsed = 00:00:03 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45977 ; free virtual = 64654
+
+Phase 2 Global Placement
+
+Phase 2.1 Floorplanning
+Phase 2.1 Floorplanning | Checksum: 1b35257f2
+
+Time (s): cpu = 00:00:10 ; elapsed = 00:00:04 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 46010 ; free virtual = 64672
+
+Phase 2.2 Update Timing before SLR Path Opt
+Phase 2.2 Update Timing before SLR Path Opt | Checksum: 1c3305ee9
+
+Time (s): cpu = 00:00:13 ; elapsed = 00:00:05 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 46010 ; free virtual = 64672
+
+Phase 2.3 Post-Processing in Floorplanning
+Phase 2.3 Post-Processing in Floorplanning | Checksum: 25f0e5b03
+
+Time (s): cpu = 00:00:13 ; elapsed = 00:00:05 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 46010 ; free virtual = 64672
+
+Phase 2.4 Global Placement Core
+
+Phase 2.4.1 UpdateTiming Before Physical Synthesis
+Phase 2.4.1 UpdateTiming Before Physical Synthesis | Checksum: 18df7ac65
+
+Time (s): cpu = 00:01:33 ; elapsed = 00:00:30 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45962 ; free virtual = 64624
+
+Phase 2.4.2 Physical Synthesis In Placer
+INFO: [Physopt 32-1035] Found 0 LUTNM shape to break, 543 LUT instances to create LUTNM shape
+INFO: [Physopt 32-1044] Break lutnm for timing: one critical 0, two critical 0, total 0, new lutff created 0
+INFO: [Physopt 32-1138] End 1 Pass. Optimized 239 nets or LUTs. Breaked 0 LUT, combined 239 existing LUTs and moved 0 existing LUT
+INFO: [Physopt 32-65] No nets found for high-fanout optimization.
+INFO: [Physopt 32-232] Optimized 0 net. Created 0 new instance.
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-456] No candidate cells for DSP register optimization found in the design.
+INFO: [Physopt 32-775] End 2 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-1123] No candidate cells found for Shift Register to Pipeline optimization
+INFO: [Physopt 32-775] End 2 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-677] No candidate cells for Shift Register optimization found in the design
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-526] No candidate cells for BRAM register optimization found in the design
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-846] No candidate cells for URAM register optimization found in the design
+INFO: [Physopt 32-775] End 2 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-949] No candidate nets found for dynamic/static region interface net replication
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45960 ; free virtual = 64622
+
+Summary of Physical Synthesis Optimizations
+============================================
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+|  Optimization                                     |  Added Cells  |  Removed Cells  |  Optimized Cells/Nets  |  Dont Touch  |  Iterations  |  Elapsed   |
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+|  LUT Combining                                    |            0  |            239  |                   239  |           0  |           1  |  00:00:00  |
+|  Retime                                           |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Very High Fanout                                 |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  DSP Register                                     |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Shift Register to Pipeline                       |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Shift Register                                   |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  BRAM Register                                    |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  URAM Register                                    |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Dynamic/Static Region Interface Net Replication  |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Total                                            |            0  |            239  |                   239  |           0  |           9  |  00:00:00  |
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Phase 2.4.2 Physical Synthesis In Placer | Checksum: 1e6eb4c07
+
+Time (s): cpu = 00:01:40 ; elapsed = 00:00:33 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45960 ; free virtual = 64622
+Phase 2.4 Global Placement Core | Checksum: 15a0ffd23
+
+Time (s): cpu = 00:01:41 ; elapsed = 00:00:34 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45958 ; free virtual = 64620
+Phase 2 Global Placement | Checksum: 15a0ffd23
+
+Time (s): cpu = 00:01:41 ; elapsed = 00:00:34 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45958 ; free virtual = 64620
+
+Phase 3 Detail Placement
+
+Phase 3.1 Commit Multi Column Macros
+Phase 3.1 Commit Multi Column Macros | Checksum: 17245c322
+
+Time (s): cpu = 00:01:43 ; elapsed = 00:00:34 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45957 ; free virtual = 64619
+
+Phase 3.2 Commit Most Macros & LUTRAMs
+Phase 3.2 Commit Most Macros & LUTRAMs | Checksum: 1d2864c14
+
+Time (s): cpu = 00:01:51 ; elapsed = 00:00:37 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45955 ; free virtual = 64617
+
+Phase 3.3 Area Swap Optimization
+Phase 3.3 Area Swap Optimization | Checksum: 200f39dec
+
+Time (s): cpu = 00:01:52 ; elapsed = 00:00:37 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45955 ; free virtual = 64617
+
+Phase 3.4 Pipeline Register Optimization
+Phase 3.4 Pipeline Register Optimization | Checksum: 22eb06d23
+
+Time (s): cpu = 00:01:52 ; elapsed = 00:00:37 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45955 ; free virtual = 64617
+
+Phase 3.5 Fast Optimization
+Phase 3.5 Fast Optimization | Checksum: 26c17909f
+
+Time (s): cpu = 00:02:00 ; elapsed = 00:00:39 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45952 ; free virtual = 64614
+
+Phase 3.6 Small Shape Detail Placement
+Phase 3.6 Small Shape Detail Placement | Checksum: 27bb833d6
+
+Time (s): cpu = 00:02:04 ; elapsed = 00:00:42 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45942 ; free virtual = 64604
+
+Phase 3.7 Re-assign LUT pins
+Phase 3.7 Re-assign LUT pins | Checksum: 28d7eea39
+
+Time (s): cpu = 00:02:04 ; elapsed = 00:00:42 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45942 ; free virtual = 64604
+
+Phase 3.8 Pipeline Register Optimization
+Phase 3.8 Pipeline Register Optimization | Checksum: 202bc6597
+
+Time (s): cpu = 00:02:04 ; elapsed = 00:00:42 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45942 ; free virtual = 64604
+
+Phase 3.9 Fast Optimization
+Phase 3.9 Fast Optimization | Checksum: 110a8d372
+
+Time (s): cpu = 00:02:12 ; elapsed = 00:00:44 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45934 ; free virtual = 64596
+Phase 3 Detail Placement | Checksum: 110a8d372
+
+Time (s): cpu = 00:02:12 ; elapsed = 00:00:44 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45934 ; free virtual = 64596
+
+Phase 4 Post Placement Optimization and Clean-Up
+
+Phase 4.1 Post Commit Optimization
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 4.1.1 Post Placement Optimization
+Post Placement Optimization Initialization | Checksum: 15ed2a571
+
+Phase 4.1.1.1 BUFG Insertion
+
+Starting Physical Synthesis Task
+
+Phase 1 Physical Synthesis Initialization
+INFO: [Physopt 32-721] Multithreading enabled for phys_opt_design using a maximum of 8 CPUs
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=-3.482 | TNS=-352.268 |
+Phase 1 Physical Synthesis Initialization | Checksum: 152421edc
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.56 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45927 ; free virtual = 64589
+INFO: [Place 46-56] BUFG insertion identified 0 candidate nets. Inserted BUFG: 0, Replicated BUFG Driver: 0, Skipped due to Placement/Routing Conflicts: 0, Skipped due to Timing Degradation: 0, Skipped due to Illegal Netlist: 0.
+Ending Physical Synthesis Task | Checksum: da4fc486
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:00.72 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45927 ; free virtual = 64589
+Phase 4.1.1.1 BUFG Insertion | Checksum: 15ed2a571
+
+Time (s): cpu = 00:02:21 ; elapsed = 00:00:47 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45927 ; free virtual = 64589
+
+Phase 4.1.1.2 Post Placement Timing Optimization
+INFO: [Place 30-746] Post Placement Timing Summary WNS=-3.482. For the most accurate timing information please run report_timing.
+Phase 4.1.1.2 Post Placement Timing Optimization | Checksum: 13976a866
+
+Time (s): cpu = 00:02:29 ; elapsed = 00:00:55 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45927 ; free virtual = 64589
+
+Time (s): cpu = 00:02:29 ; elapsed = 00:00:55 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45927 ; free virtual = 64589
+Phase 4.1 Post Commit Optimization | Checksum: 13976a866
+
+Time (s): cpu = 00:02:29 ; elapsed = 00:00:55 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45926 ; free virtual = 64588
+
+Phase 4.2 Post Placement Cleanup
+Phase 4.2 Post Placement Cleanup | Checksum: 13976a866
+
+Time (s): cpu = 00:02:29 ; elapsed = 00:00:55 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45926 ; free virtual = 64588
+
+Phase 4.3 Placer Reporting
+
+Phase 4.3.1 Print Estimated Congestion
+INFO: [Place 30-612] Post-Placement Estimated Congestion 
+ ____________________________________________________
+|           | Global Congestion | Short Congestion  |
+| Direction | Region Size       | Region Size       |
+|___________|___________________|___________________|
+|      North|                1x1|                1x1|
+|___________|___________________|___________________|
+|      South|                1x1|                1x1|
+|___________|___________________|___________________|
+|       East|                1x1|                1x1|
+|___________|___________________|___________________|
+|       West|                1x1|                1x1|
+|___________|___________________|___________________|
+
+Phase 4.3.1 Print Estimated Congestion | Checksum: 13976a866
+
+Time (s): cpu = 00:02:30 ; elapsed = 00:00:56 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45926 ; free virtual = 64588
+Phase 4.3 Placer Reporting | Checksum: 13976a866
+
+Time (s): cpu = 00:02:30 ; elapsed = 00:00:56 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45926 ; free virtual = 64588
+
+Phase 4.4 Final Placement Cleanup
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45926 ; free virtual = 64588
+
+Time (s): cpu = 00:02:30 ; elapsed = 00:00:56 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45926 ; free virtual = 64588
+Phase 4 Post Placement Optimization and Clean-Up | Checksum: 10b0f9ac9
+
+Time (s): cpu = 00:02:30 ; elapsed = 00:00:56 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45927 ; free virtual = 64589
+Ending Placer Task | Checksum: 9669b83e
+
+Time (s): cpu = 00:02:30 ; elapsed = 00:00:56 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45927 ; free virtual = 64589
+INFO: [Common 17-83] Releasing license: Implementation
+98 Infos, 6 Warnings, 0 Critical Warnings and 0 Errors encountered.
+place_design completed successfully
+place_design: Time (s): cpu = 00:02:31 ; elapsed = 00:00:56 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45973 ; free virtual = 64635
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45943 ; free virtual = 64625
+INFO: [Common 17-1381] The checkpoint '/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq_placed.dcp' has been generated.
+INFO: [runtcl-4] Executing : report_io -file tdc_bdaq_io_placed.rpt
+report_io: Time (s): cpu = 00:00:00.16 ; elapsed = 00:00:00.18 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45940 ; free virtual = 64608
+INFO: [runtcl-4] Executing : report_utilization -file tdc_bdaq_utilization_placed.rpt -pb tdc_bdaq_utilization_placed.pb
+INFO: [runtcl-4] Executing : report_control_sets -verbose -file tdc_bdaq_control_sets_placed.rpt
+report_control_sets: Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.06 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45955 ; free virtual = 64622
+Command: phys_opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7k160t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7k160t'
+
+Starting Initial Update Timing Task
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:01 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45930 ; free virtual = 64598
+INFO: [Vivado_Tcl 4-1435] PhysOpt_Tcl_Interface Runtime Before Starting Physical Synthesis Task | CPU: 5.09s |  WALL: 1.47s
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45930 ; free virtual = 64598
+
+Starting Physical Synthesis Task
+
+Phase 1 Physical Synthesis Initialization
+INFO: [Physopt 32-721] Multithreading enabled for phys_opt_design using a maximum of 8 CPUs
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=-3.482 | TNS=-346.747 |
+Phase 1 Physical Synthesis Initialization | Checksum: f062f5ac
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45926 ; free virtual = 64594
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=-3.482 | TNS=-346.747 |
+
+Phase 2 DSP Register Optimization
+INFO: [Physopt 32-456] No candidate cells for DSP register optimization found in the design.
+INFO: [Physopt 32-775] End 2 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+Phase 2 DSP Register Optimization | Checksum: f062f5ac
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:02 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45926 ; free virtual = 64594
+
+Phase 3 Critical Path Optimization
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=-3.482 | TNS=-346.747 |
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/fifo_i/tdc_fifo_data[16]. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net CLK160PLL. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg_0_3_0_5/DOA0. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[47].MoreCells/q[1]. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net BUS_CLK_PLL. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[46].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[45].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[44].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[43].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[42].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[41].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[40].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[39].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[38].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[37].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[36].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[35].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[34].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[33].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[32].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[31].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[30].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[29].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[28].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[27].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[26].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[25].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[24].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[23].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[22].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[21].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[20].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[19].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[18].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[17].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[16].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[15].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[14].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[13].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[12].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[11].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[10].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[9].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[8].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[7].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[6].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[5].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[4].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[3].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[2].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[1].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/FirstCell/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-663] Processed net i_tdc/i_tdc_core/calib_sig_gen/sig_in.  Re-placed instance i_tdc/i_tdc_core/calib_sig_gen/i_tdl_i_1
+INFO: [Physopt 32-735] Processed net i_tdc/i_tdc_core/calib_sig_gen/sig_in. Optimization improves timing on the net.
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=-3.482 | TNS=-345.091 |
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/calib_sig_gen/sig_in. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[47].MoreCells/CARRY4_inst_n_0. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-663] Processed net i_tdc/i_tdc_core/calib_sig_gen/sig_calib.  Re-placed instance i_tdc/i_tdc_core/calib_sig_gen/pulse_reg
+INFO: [Physopt 32-735] Processed net i_tdc/i_tdc_core/calib_sig_gen/sig_calib. Optimization improves timing on the net.
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=-3.482 | TNS=-340.906 |
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/calib_sig_gen/sig_calib. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/fifo_i/tdc_fifo_data[16]. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net CLK160PLL. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg_0_3_0_5/DOA0. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[47].MoreCells/q[1]. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net BUS_CLK_PLL. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[46].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[45].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[44].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[43].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[42].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[41].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[40].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[39].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[38].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[37].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[36].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[35].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[34].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[33].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[32].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[31].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[30].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[29].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[28].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[27].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[26].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[25].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[24].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[23].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[22].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[21].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[20].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[19].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[18].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[17].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[16].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[15].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[14].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[13].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[12].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[11].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[10].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[9].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[8].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[7].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[6].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[5].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[4].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[3].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[2].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[1].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/FirstCell/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/calib_sig_gen/sig_in. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[47].MoreCells/CARRY4_inst_n_0. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/calib_sig_gen/sig_calib. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=-3.482 | TNS=-340.906 |
+Phase 3 Critical Path Optimization | Checksum: f062f5ac
+
+Time (s): cpu = 00:00:07 ; elapsed = 00:00:04 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45925 ; free virtual = 64593
+
+Phase 4 Critical Path Optimization
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=-3.482 | TNS=-340.906 |
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/fifo_i/tdc_fifo_data[16]. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net CLK160PLL. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg_0_3_0_5/DOA0. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[47].MoreCells/q[1]. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net BUS_CLK_PLL. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[46].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[45].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[44].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[43].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[42].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[41].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[40].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[39].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[38].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[37].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[36].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[35].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[34].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[33].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[32].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[31].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[30].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[29].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[28].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[27].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[26].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[25].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[24].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[23].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[22].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[21].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[20].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[19].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[18].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[17].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[16].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[15].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[14].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[13].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[12].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[11].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[10].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[9].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[8].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[7].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[6].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[5].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[4].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[3].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[2].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[1].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/FirstCell/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/calib_sig_gen/sig_in. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[47].MoreCells/CARRY4_inst_n_0. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/calib_sig_gen/sig_calib. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/fifo_i/tdc_fifo_data[16]. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net CLK160PLL. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg_0_3_0_5/DOA0. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[47].MoreCells/q[1]. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net BUS_CLK_PLL. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[46].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[45].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[44].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[43].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[42].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[41].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[40].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[39].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[38].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[37].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[36].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[35].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[34].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[33].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[32].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[31].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[30].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[29].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[28].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[27].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[26].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[25].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[24].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[23].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[22].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[21].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[20].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[19].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[18].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[17].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[16].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[15].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[14].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[13].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[12].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[11].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[10].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[9].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[8].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[7].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[6].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[5].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[4].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[3].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[2].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[1].MoreCells/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/FirstCell/CO. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/calib_sig_gen/sig_in. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/i_tdl/tdl_sampler/carry_chain[47].MoreCells/CARRY4_inst_n_0. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net i_tdc/i_tdc_core/calib_sig_gen/sig_calib. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=-3.482 | TNS=-340.906 |
+Phase 4 Critical Path Optimization | Checksum: f062f5ac
+
+Time (s): cpu = 00:00:10 ; elapsed = 00:00:06 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45925 ; free virtual = 64593
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45925 ; free virtual = 64593
+INFO: [Physopt 32-603] Post Physical Optimization Timing Summary | WNS=-3.482 | TNS=-340.906 |
+
+Summary of Physical Synthesis Optimizations
+============================================
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+|  Optimization   |  WNS Gain (ns)  |  TNS Gain (ns)  |  Added Cells  |  Removed Cells  |  Optimized Cells/Nets  |  Dont Touch  |  Iterations  |  Elapsed   |
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+|  DSP Register   |          0.000  |          0.000  |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Critical Path  |          0.000  |          5.841  |            0  |              0  |                     2  |           0  |           2  |  00:00:04  |
+|  Total          |          0.000  |          5.841  |            0  |              0  |                     2  |           0  |           3  |  00:00:04  |
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45925 ; free virtual = 64593
+Ending Physical Synthesis Task | Checksum: 13c3f9b27
+
+Time (s): cpu = 00:00:10 ; elapsed = 00:00:06 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45925 ; free virtual = 64593
+INFO: [Common 17-83] Releasing license: Implementation
+342 Infos, 6 Warnings, 0 Critical Warnings and 0 Errors encountered.
+phys_opt_design completed successfully
+phys_opt_design: Time (s): cpu = 00:00:15 ; elapsed = 00:00:07 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45926 ; free virtual = 64594
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45908 ; free virtual = 64596
+INFO: [Common 17-1381] The checkpoint '/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq_physopt.dcp' has been generated.
+Command: route_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7k160t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7k160t'
+Running DRC as a precondition to command route_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+
+Starting Routing Task
+INFO: [Route 35-254] Multithreading enabled for route_design using a maximum of 8 CPUs
+
+Phase 1 Build RT Design
+Checksum: PlaceDB: ba2af082 ConstDB: 0 ShapeSum: 4f23427b RouteDB: 0
+Post Restoration Checksum: NetGraph: 1e20ec53 NumContArr: f397010e Constraints: 0 Timing: 0
+Phase 1 Build RT Design | Checksum: 111b7ed61
+
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:15 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45722 ; free virtual = 64395
+
+Phase 2 Router Initialization
+
+Phase 2.1 Fix Topology Constraints
+Phase 2.1 Fix Topology Constraints | Checksum: 111b7ed61
+
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:15 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45685 ; free virtual = 64358
+
+Phase 2.2 Pre Route Cleanup
+Phase 2.2 Pre Route Cleanup | Checksum: 111b7ed61
+
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:15 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45685 ; free virtual = 64358
+ Number of Nodes with overlaps = 0
+
+Phase 2.3 Update Timing
+Phase 2.3 Update Timing | Checksum: 19ddd3377
+
+Time (s): cpu = 00:00:33 ; elapsed = 00:00:19 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45664 ; free virtual = 64337
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-3.559 | TNS=-356.966| WHS=-1.227 | THS=-706.589|
+
+
+Phase 2.4 Update Timing for Bus Skew
+
+Phase 2.4.1 Update Timing
+Phase 2.4.1 Update Timing | Checksum: 266d5880a
+
+Time (s): cpu = 00:00:38 ; elapsed = 00:00:21 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45663 ; free virtual = 64336
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-3.559 | TNS=-361.048| WHS=N/A    | THS=N/A    |
+
+Phase 2.4 Update Timing for Bus Skew | Checksum: 227803455
+
+Time (s): cpu = 00:00:39 ; elapsed = 00:00:21 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45663 ; free virtual = 64339
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 0 %
+  Global Horizontal Routing Utilization  = 0 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 11268
+    (Failed Nets is the sum of unrouted and partially routed nets)
+  Number of Unrouted Nets             = 11268
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+Phase 2 Router Initialization | Checksum: 26e166f67
+
+Time (s): cpu = 00:00:40 ; elapsed = 00:00:22 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45653 ; free virtual = 64329
+
+Phase 3 Initial Routing
+
+Phase 3.1 Global Routing
+Phase 3.1 Global Routing | Checksum: 26e166f67
+
+Time (s): cpu = 00:00:40 ; elapsed = 00:00:22 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45653 ; free virtual = 64329
+Phase 3 Initial Routing | Checksum: 1272f57f8
+
+Time (s): cpu = 00:00:56 ; elapsed = 00:00:25 . Memory (MB): peak = 3365.988 ; gain = 0.000 ; free physical = 45637 ; free virtual = 64313
+INFO: [Route 35-580] Design has 374 pins with tight setup and hold constraints.
+
+The top 5 pins with tight setup and hold constraints:
+
++====================+===================+======================================================================================+
+| Launch Setup Clock | Launch Hold Clock | Pin                                                                                  |
++====================+===================+======================================================================================+
+| BUS_CLK_PLL        | BUS_CLK_PLL       | i_tdc/i_tdc_sw_interface/conf_en_clib_mode_dv_clk/out_d_ff_1_reg[0]/D                |
+| BUS_CLK_PLL        | BUS_CLK_PLL       | i_tdc/i_tdc_core/clock_sync_fifo/sync_r2w_inst/cdc_sync_wq1_rptr_reg[2]/D            |
+| BUS_CLK_PLL        | BUS_CLK_PLL       | i_tdc/i_tdc_sw_interface/conf_en_write_ts_synchronizer_dv_clk/out_d_ff_1_reg[0]/D    |
+| BUS_CLK_PLL        | BUS_CLK_PLL       | i_tdc/i_tdc_core/clock_sync_fifo/sync_r2w_inst/cdc_sync_wq1_rptr_reg[1]/D            |
+| BUS_CLK_PLL        | BUS_CLK_PLL       | i_tdc/i_tdc_sw_interface/conf_en_arm_conf_en_synchronizer_dv_clk/out_d_ff_1_reg[0]/D |
++--------------------+-------------------+--------------------------------------------------------------------------------------+
+
+File with complete list of pins: tight_setup_hold_pins.txt
+
+
+Phase 4 Rip-up And Reroute
+
+Phase 4.1 Global Iteration 0
+ Number of Nodes with overlaps = 471
+ Number of Nodes with overlaps = 3
+ Number of Nodes with overlaps = 1
+ Number of Nodes with overlaps = 1
+ Number of Nodes with overlaps = 0
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-4.932 | TNS=-608.802| WHS=N/A    | THS=N/A    |
+
+Phase 4.1 Global Iteration 0 | Checksum: 154bba5fa
+
+Time (s): cpu = 00:01:27 ; elapsed = 00:00:46 . Memory (MB): peak = 3376.211 ; gain = 10.223 ; free physical = 45630 ; free virtual = 64306
+
+Phase 4.2 Global Iteration 1
+ Number of Nodes with overlaps = 1
+ Number of Nodes with overlaps = 0
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-4.932 | TNS=-608.877| WHS=N/A    | THS=N/A    |
+
+Phase 4.2 Global Iteration 1 | Checksum: 1eaf8e3a9
+
+Time (s): cpu = 00:01:28 ; elapsed = 00:00:47 . Memory (MB): peak = 3376.211 ; gain = 10.223 ; free physical = 45630 ; free virtual = 64307
+Phase 4 Rip-up And Reroute | Checksum: 1eaf8e3a9
+
+Time (s): cpu = 00:01:28 ; elapsed = 00:00:47 . Memory (MB): peak = 3376.211 ; gain = 10.223 ; free physical = 45630 ; free virtual = 64307
+
+Phase 5 Delay and Skew Optimization
+
+Phase 5.1 Delay CleanUp
+
+Phase 5.1.1 Update Timing
+Phase 5.1.1 Update Timing | Checksum: 1788a36bf
+
+Time (s): cpu = 00:01:29 ; elapsed = 00:00:47 . Memory (MB): peak = 3376.211 ; gain = 10.223 ; free physical = 45630 ; free virtual = 64307
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-4.932 | TNS=-607.762| WHS=N/A    | THS=N/A    |
+
+ Number of Nodes with overlaps = 0
+Phase 5.1 Delay CleanUp | Checksum: 261fb4fe9
+
+Time (s): cpu = 00:01:49 ; elapsed = 00:00:54 . Memory (MB): peak = 3651.211 ; gain = 285.223 ; free physical = 45587 ; free virtual = 64264
+
+Phase 5.2 Clock Skew Optimization
+Phase 5.2 Clock Skew Optimization | Checksum: 261fb4fe9
+
+Time (s): cpu = 00:01:49 ; elapsed = 00:00:54 . Memory (MB): peak = 3651.211 ; gain = 285.223 ; free physical = 45587 ; free virtual = 64264
+Phase 5 Delay and Skew Optimization | Checksum: 261fb4fe9
+
+Time (s): cpu = 00:01:49 ; elapsed = 00:00:54 . Memory (MB): peak = 3651.211 ; gain = 285.223 ; free physical = 45587 ; free virtual = 64264
+
+Phase 6 Post Hold Fix
+
+Phase 6.1 Hold Fix Iter
+
+Phase 6.1.1 Update Timing
+Phase 6.1.1 Update Timing | Checksum: 23adc7fbb
+
+Time (s): cpu = 00:01:55 ; elapsed = 00:00:55 . Memory (MB): peak = 3651.211 ; gain = 285.223 ; free physical = 45587 ; free virtual = 64264
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-4.932 | TNS=-595.711| WHS=0.035  | THS=0.000  |
+
+Phase 6.1 Hold Fix Iter | Checksum: 1a95df2f5
+
+Time (s): cpu = 00:01:55 ; elapsed = 00:00:55 . Memory (MB): peak = 3651.211 ; gain = 285.223 ; free physical = 45587 ; free virtual = 64264
+Phase 6 Post Hold Fix | Checksum: 1a95df2f5
+
+Time (s): cpu = 00:01:55 ; elapsed = 00:00:55 . Memory (MB): peak = 3651.211 ; gain = 285.223 ; free physical = 45587 ; free virtual = 64264
+
+Phase 7 Route finalize
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 1.8693 %
+  Global Horizontal Routing Utilization  = 2.00328 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 0
+    (Failed Nets is the sum of unrouted and partially routed nets)
+  Number of Unrouted Nets             = 0
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+Congestion Report
+North Dir 1x1 Area, Max Cong = 45.045%, No Congested Regions.
+South Dir 1x1 Area, Max Cong = 57.6577%, No Congested Regions.
+East Dir 1x1 Area, Max Cong = 51.4706%, No Congested Regions.
+West Dir 1x1 Area, Max Cong = 54.4118%, No Congested Regions.
+
+------------------------------
+Reporting congestion hotspots
+------------------------------
+Direction: North
+----------------
+Congested clusters found at Level 0
+Effective congestion level: 0 Aspect Ratio: 1 Sparse Ratio: 0
+Direction: South
+----------------
+Congested clusters found at Level 0
+Effective congestion level: 0 Aspect Ratio: 1 Sparse Ratio: 0
+Direction: East
+----------------
+Congested clusters found at Level 0
+Effective congestion level: 0 Aspect Ratio: 1 Sparse Ratio: 0
+Direction: West
+----------------
+Congested clusters found at Level 0
+Effective congestion level: 0 Aspect Ratio: 1 Sparse Ratio: 0
+
+Phase 7 Route finalize | Checksum: 28ef762bf
+
+Time (s): cpu = 00:01:55 ; elapsed = 00:00:56 . Memory (MB): peak = 3651.211 ; gain = 285.223 ; free physical = 45587 ; free virtual = 64264
+
+Phase 8 Verifying routed nets
+
+ Verification completed successfully
+Phase 8 Verifying routed nets | Checksum: 28ef762bf
+
+Time (s): cpu = 00:01:55 ; elapsed = 00:00:56 . Memory (MB): peak = 3651.211 ; gain = 285.223 ; free physical = 45587 ; free virtual = 64263
+
+Phase 9 Depositing Routes
+Phase 9 Depositing Routes | Checksum: 26baf8adf
+
+Time (s): cpu = 00:01:57 ; elapsed = 00:00:57 . Memory (MB): peak = 3667.219 ; gain = 301.230 ; free physical = 45585 ; free virtual = 64262
+
+Phase 10 Post Router Timing
+INFO: [Route 35-57] Estimated Timing Summary | WNS=-4.932 | TNS=-595.711| WHS=0.035  | THS=0.000  |
+
+WARNING: [Route 35-328] Router estimated timing not met.
+Resolution: For a complete and accurate timing signoff, report_timing_summary must be run after route_design. Alternatively, route_design can be run with the -timing_summary option to enable a complete timing signoff at the end of route_design.
+Phase 10 Post Router Timing | Checksum: 26baf8adf
+
+Time (s): cpu = 00:02:02 ; elapsed = 00:00:58 . Memory (MB): peak = 3667.219 ; gain = 301.230 ; free physical = 45585 ; free virtual = 64261
+INFO: [Route 35-16] Router Completed Successfully
+
+Time (s): cpu = 00:02:02 ; elapsed = 00:00:58 . Memory (MB): peak = 3667.219 ; gain = 301.230 ; free physical = 45690 ; free virtual = 64366
+
+Routing Is Done.
+INFO: [Common 17-83] Releasing license: Implementation
+359 Infos, 7 Warnings, 0 Critical Warnings and 0 Errors encountered.
+route_design completed successfully
+route_design: Time (s): cpu = 00:02:05 ; elapsed = 00:00:59 . Memory (MB): peak = 3667.219 ; gain = 301.230 ; free physical = 45690 ; free virtual = 64366
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 3667.219 ; gain = 0.000 ; free physical = 45678 ; free virtual = 64376
+INFO: [Common 17-1381] The checkpoint '/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq_routed.dcp' has been generated.
+INFO: [runtcl-4] Executing : report_drc -file tdc_bdaq_drc_routed.rpt -pb tdc_bdaq_drc_routed.pb -rpx tdc_bdaq_drc_routed.rpx
+Command: report_drc -file tdc_bdaq_drc_routed.rpt -pb tdc_bdaq_drc_routed.pb -rpx tdc_bdaq_drc_routed.rpx
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 2-168] The results of DRC are in file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq_drc_routed.rpt.
+report_drc completed successfully
+INFO: [runtcl-4] Executing : report_methodology -file tdc_bdaq_methodology_drc_routed.rpt -pb tdc_bdaq_methodology_drc_routed.pb -rpx tdc_bdaq_methodology_drc_routed.rpx
+Command: report_methodology -file tdc_bdaq_methodology_drc_routed.rpt -pb tdc_bdaq_methodology_drc_routed.pb -rpx tdc_bdaq_methodology_drc_routed.rpx
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [DRC 23-133] Running Methodology with 8 threads
+INFO: [Vivado_Tcl 2-1520] The results of Report Methodology are in file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq_methodology_drc_routed.rpt.
+report_methodology completed successfully
+INFO: [runtcl-4] Executing : report_power -file tdc_bdaq_power_routed.rpt -pb tdc_bdaq_power_summary_routed.pb -rpx tdc_bdaq_power_routed.rpx
+Command: report_power -file tdc_bdaq_power_routed.rpt -pb tdc_bdaq_power_summary_routed.pb -rpx tdc_bdaq_power_routed.rpx
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+WARNING: [Power 33-332] Found switching activity that implies high-fanout reset nets being asserted for excessive periods of time which may result in inaccurate power analysis.
+Resolution: To review and fix problems, please run Power Constraints Advisor in the GUI from Tools > Power Constraints Advisor or run report_power with the -advisory option to generate a text report.
+371 Infos, 8 Warnings, 0 Critical Warnings and 0 Errors encountered.
+report_power completed successfully
+INFO: [runtcl-4] Executing : report_route_status -file tdc_bdaq_route_status.rpt -pb tdc_bdaq_route_status.pb
+INFO: [runtcl-4] Executing : report_timing_summary -max_paths 10 -report_unconstrained -file tdc_bdaq_timing_summary_routed.rpt -pb tdc_bdaq_timing_summary_routed.pb -rpx tdc_bdaq_timing_summary_routed.rpx -warn_on_violation 
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2L, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 8 CPUs
+CRITICAL WARNING: [Timing 38-282] The design failed to meet the timing requirements. Please see the timing summary report for details on the timing violations.
+WARNING: [Timing 38-436] There are set_bus_skew constraint(s) in this design. Please run report_bus_skew to ensure that bus skew requirements are met.
+INFO: [runtcl-4] Executing : report_incremental_reuse -file tdc_bdaq_incremental_reuse_routed.rpt
+INFO: [Vivado_Tcl 4-1062] Incremental flow is disabled. No incremental reuse Info to report.
+INFO: [runtcl-4] Executing : report_clock_utilization -file tdc_bdaq_clock_utilization_routed.rpt
+INFO: [runtcl-4] Executing : report_bus_skew -warn_on_violation -file tdc_bdaq_bus_skew_routed.rpt -pb tdc_bdaq_bus_skew_routed.pb -rpx tdc_bdaq_bus_skew_routed.rpx
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2L, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 8 CPUs
+INFO: [Common 17-206] Exiting Vivado at Thu Apr  4 12:09:45 2024...

@@ -6,13 +6,14 @@ module controller (
 	input wire arm_flag,
 	input wire en,
 	input wire en_arm_mode,
+	input wire en_calib_mode,
 	input wire counter_overflow,
 
 	output reg counter_count,
 	output reg counter_reset,
-	output reg [state_bits-1:0] tdc_state,
+	output wire [state_bits-1:0] tdc_state,
 	output reg [7:0] miss_cnt,
-	output reg [31:0] event_cnt
+	output reg [31:0] event_cnt,
 	output reg [mux_bits-1:0] mux_addr
 );
 
@@ -32,19 +33,26 @@ localparam SIG_IN = 1;
 localparam SIG_IN_B = 2;
 localparam CALIB_OSC = 3;
 
+function [state_bits-1:0] int_to_gray;
+	input [state_bits-1:0] int;
+	begin
+		int_to_gray = int ^ (int >> 1);
+	end
+endfunction
 // TDC states
 // These need to be in sync with the word broker.
-localparam IDLE = 0;
-localparam TRIGGERED = 1;
-localparam RIS_EDGE = 2;
-localparam FAL_EDGE = 3;
-localparam COUNTER_OVERFLOW = 4;
-localparam FIFO_FULL = 5;
-localparam MISSED = 6;
-localparam CALIB = 7;
-localparam CALIB_HIT = 8;
-localparam ARMED = 9;
-localparam RESET = 10;
+localparam [state_bits-1:0] IDLE = 0;
+localparam [state_bits-1:0] ARMED = 1;
+localparam [state_bits-1:0] TRIGGERED = 2;
+localparam [state_bits-1:0] RIS_EDGE = 3;
+localparam [state_bits-1:0] FAL_EDGE = 4;
+localparam [state_bits-1:0] COUNTER_OVERFLOW = 5;
+localparam [state_bits-1:0] FIFO_FULL = 6;
+localparam [state_bits-1:0] MISSED = 7;
+localparam [state_bits-1:0] CALIB = 8;
+localparam [state_bits-1:0] CALIB_HIT = 9;
+localparam [state_bits-1:0] RESET = 10;
+
 
 reg [state_bits-1:0] state = 0;
 reg [state_bits-1:0] previous_state = 0;
@@ -52,22 +60,21 @@ always @(posedge CLK) begin
 	previous_state <= state;
 end
 
+assign tdc_state = state;
 
-always @(posedge CLK) begin
+
+always @(state) begin
 	// State dependent control outputs
 	case(state)
 		RESET: begin
 			mux_addr <= TRIG_IN;
 			counter_reset <= 1;
-			counter_counte <= 0;
-			miss_cnt <= 0;
-			event_cnt <= 0;
+			counter_count <= 0;
+		end
 		IDLE: begin
 			mux_addr <= TRIG_IN;
 			counter_reset <= 1;
 			counter_count <= 0;
-			if(previous_state == FAL_EDGE)
-				event_cnt <= event_cnt + 1; // This is really a multicycle path: Only every 4 cycles can this occur.
 		end
 		ARMED: begin
 			mux_addr <= TRIG_IN;
@@ -108,7 +115,6 @@ always @(posedge CLK) begin
 			counter_reset <= 1;
 			counter_count <= 0;
 			mux_addr <= TRIG_IN;
-			miss_cnt = miss_cnt + 1; //TODO: reset
 		end
 		default: begin
 			mux_addr <= TRIG_IN;
@@ -116,22 +122,42 @@ always @(posedge CLK) begin
 			counter_count <= 0;
 		end
 	endcase
+end
 
+always @(posedge CLK) begin
+	// State dependent counting of events
+	case(state)
+		RESET: begin
+			event_cnt <= 0;
+			miss_cnt <= 0;
+		end
+		IDLE: begin
+			if (previous_state == FAL_EDGE)
+				event_cnt <= event_cnt + 1; // This is really a multicycle path: Only every 4 cycles can this occur.
+		end
+		MISSED:
+			miss_cnt <= miss_cnt + 1; 
+	endcase
+end
+
+always @(posedge CLK) begin
 	// State transitions
-	if(rst) begin
+	if (rst) begin
 		state <= RESET;
 	end else if (~en) begin
 		state <= IDLE;
-	end else if(cdc_fifo_full) begin
+	end else if (cdc_fifo_full) begin
 		state <= FIFO_FULL;
-	end else if(counter_overflow) begin
+	end else if (counter_overflow) begin
 		state <= COUNTER_OVERFLOW;
-	end else if(hit_status == TDL_MISSED) begin
+	end else if (hit_status == TDL_MISSED) begin
 		state <= MISSED;
 	end else begin
 		case(state)
 			IDLE: begin
-				if (~en_arm_mode) begin 
+				if (en_calib_mode) begin
+					state <= CALIB;
+				end else if (~en_arm_mode) begin 
 					if (hit_status == TDL_HIT)
 						state <= TRIGGERED;
 				end else if (arm_flag) begin
@@ -148,6 +174,7 @@ always @(posedge CLK) begin
 				end else begin
 					state <= state;
 				end
+			end
 			TRIGGERED: begin
 				if (hit_status == TDL_HIT)
 					state <= RIS_EDGE;
@@ -161,48 +188,22 @@ always @(posedge CLK) begin
 					state <= state;
 			end
 			FAL_EDGE: begin
-				if (hit_status == TDL_HIT)
 					state <= IDLE;
-				else
-					state <= state;
 			end
 			CALIB: begin
-				if (hit_status == TDL_HIT)
-					state <= CALIB_HIT;
-				else if (~calib_mode)
+				if (~en_calib_mode)
 					state <= IDLE;
+				else if (hit_status == TDL_HIT)
+					state <= CALIB_HIT;
 				else
-					state <= CALIB
+					state <= CALIB;
 			end
 			CALIB_HIT: state <= CALIB;
 			FIFO_FULL: state <= IDLE;
 			COUNTER_OVERFLOW: state <= IDLE;
 			MISSED: state <= IDLE;
+			RESET: state <= IDLE;
 		endcase
 	end
 end
-
-wire ARM_TDC_CLK160;
-three_stage_synchronizer three_stage_arm_tdc_synchronizer_clk_160 (
-    .CLK(CLK160),
-    .IN(ARM_TDC),
-    .OUT(ARM_TDC_CLK160)
-);
-
-reg ARM_TDC_CLK160_FF;
-always @(posedge CLK160) begin
-    ARM_TDC_CLK160_FF <= ARM_TDC_CLK160;
-end
-
-wire ARM_TDC_FLAG_CLK160;
-assign ARM_TDC_FLAG_CLK160 = ~ARM_TDC_CLK160_FF & ARM_TDC_CLK160;
-
-wire ARM_TDC_FLAG_DV_CLK;
-flag_domain_crossing arm_tdc_flag_domain_crossing (
-    .CLK_A(CLK160),
-    .CLK_B(CLK_SLOW),
-    .FLAG_IN_CLK_A(ARM_TDC_FLAG_CLK160),
-    .FLAG_OUT_CLK_B(ARM_TDC_FLAG_DV_CLK)
-);
-
-
+endmodule

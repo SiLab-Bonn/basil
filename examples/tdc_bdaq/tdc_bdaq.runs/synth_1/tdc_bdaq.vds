@@ -1,0 +1,610 @@
+#-----------------------------------------------------------
+# Vivado v2022.2 (64-bit)
+# SW Build 3671981 on Fri Oct 14 04:59:54 MDT 2022
+# IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+# Start of session at: Mon Apr 15 18:42:38 2024
+# Process ID: 2204021
+# Current directory: /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/synth_1
+# Command line: vivado -log tdc_bdaq.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source tdc_bdaq.tcl
+# Log file: /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/synth_1/tdc_bdaq.vds
+# Journal file: /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/synth_1/vivado.jou
+# Running On: asiclab006.physik.uni-bonn.de, OS: Linux, CPU Frequency: 1100.062 MHz, CPU Physical cores: 6, Host memory: 67208 MB
+#-----------------------------------------------------------
+source tdc_bdaq.tcl -notrace
+create_project: Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 1530.613 ; gain = 0.023 ; free physical = 38075 ; free virtual = 57404
+Command: read_checkpoint -auto_incremental -incremental /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.srcs/utils_1/imports/synth_1/tdc_bdaq.dcp
+INFO: [Vivado 12-5825] Read reference checkpoint from /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.srcs/utils_1/imports/synth_1/tdc_bdaq.dcp for incremental synthesis
+INFO: [Vivado 12-7989] Please ensure there are no constraint changes
+Command: synth_design -top tdc_bdaq -part xc7k160tffg676-2L
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7k160t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7k160t'
+INFO: [Device 21-403] Loading part xc7k160tffg676-2L
+INFO: [Designutils 20-5440] No compile time benefit to using incremental synthesis; A full resynthesis will be run
+INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 4 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 2204164
+INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [/tools/xilinx/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
+WARNING: [Synth 8-6901] identifier 'ABUSWIDTH' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v:14]
+WARNING: [Synth 8-6901] identifier 'fifo_lost_data_cnt_bus_clk' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v:139]
+WARNING: [Synth 8-6901] identifier 'tdc_miss_cnt_bus_clk' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v:141]
+WARNING: [Synth 8-6901] identifier 'dlyline_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:4]
+WARNING: [Synth 8-6901] identifier 'fine_time_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:7]
+WARNING: [Synth 8-6901] identifier 'dlyline_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:8]
+WARNING: [Synth 8-6901] identifier 'fine_time_previous' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:102]
+WARNING: [Synth 8-6901] identifier 'fine_time_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:9]
+WARNING: [Synth 8-6901] identifier 'dlyline_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:10]
+WARNING: [Synth 8-10604] concatenation with an unsized literal will be treated as 32 bits [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:169]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:14]
+WARNING: [Synth 8-6901] identifier 'mux_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:17]
+WARNING: [Synth 8-6901] identifier 'counter_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:3]
+WARNING: [Synth 8-6901] identifier 'fine_time_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:4]
+WARNING: [Synth 8-6901] identifier 'encodebits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:5]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:6]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:30]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:31]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:37]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:38]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:39]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:40]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:41]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:42]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:43]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:44]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:45]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:46]
+WARNING: [Synth 8-6901] identifier 'state_bits' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:47]
+WARNING: [Synth 8-6901] identifier 'width' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:3]
+WARNING: [Synth 8-6901] identifier 'width' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:5]
+WARNING: [Synth 8-6901] identifier 'cdc_fifo_full' is used before its declaration [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:194]
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 2181.477 ; gain = 373.738 ; free physical = 37226 ; free virtual = 56570
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1391.673; parent = 1180.812; children = 210.860
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3805.223; parent = 2184.449; children = 1620.773
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'tdc_bdaq' [/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v:17]
+INFO: [Synth 8-6157] synthesizing module 'PLLE2_BASE' [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:108995]
+	Parameter BANDWIDTH bound to: OPTIMIZED - type: string 
+	Parameter CLKFBOUT_MULT bound to: 10 - type: integer 
+	Parameter CLKFBOUT_PHASE bound to: 0.000000 - type: double 
+	Parameter CLKIN1_PERIOD bound to: 10.000000 - type: double 
+	Parameter CLKOUT0_DIVIDE bound to: 7 - type: integer 
+	Parameter CLKOUT0_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT0_PHASE bound to: 0.000000 - type: double 
+	Parameter CLKOUT1_DIVIDE bound to: 4 - type: integer 
+	Parameter CLKOUT1_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT1_PHASE bound to: 0.000000 - type: double 
+	Parameter CLKOUT2_DIVIDE bound to: 8 - type: integer 
+	Parameter CLKOUT2_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT2_PHASE bound to: 0.000000 - type: double 
+	Parameter CLKOUT3_DIVIDE bound to: 8 - type: integer 
+	Parameter CLKOUT3_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT3_PHASE bound to: 90.000000 - type: double 
+	Parameter CLKOUT4_DIVIDE bound to: 8 - type: integer 
+	Parameter CLKOUT4_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT4_PHASE bound to: -5.625000 - type: double 
+	Parameter DIVCLK_DIVIDE bound to: 1 - type: integer 
+	Parameter REF_JITTER1 bound to: 0.000000 - type: double 
+	Parameter STARTUP_WAIT bound to: FALSE - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'PLLE2_BASE' (0#1) [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:108995]
+INFO: [Synth 8-6157] synthesizing module 'PLLE2_BASE__parameterized0' [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:108995]
+	Parameter BANDWIDTH bound to: OPTIMIZED - type: string 
+	Parameter CLKFBOUT_MULT bound to: 16 - type: integer 
+	Parameter CLKFBOUT_PHASE bound to: 0.000000 - type: double 
+	Parameter CLKIN1_PERIOD bound to: 10.000000 - type: double 
+	Parameter CLKOUT0_DIVIDE bound to: 10 - type: integer 
+	Parameter CLKOUT0_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT0_PHASE bound to: 90.000000 - type: double 
+	Parameter CLKOUT1_DIVIDE bound to: 10 - type: integer 
+	Parameter CLKOUT1_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT1_PHASE bound to: 0.000000 - type: double 
+	Parameter CLKOUT2_DIVIDE bound to: 40 - type: integer 
+	Parameter CLKOUT2_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT2_PHASE bound to: 0.000000 - type: double 
+	Parameter CLKOUT3_DIVIDE bound to: 8 - type: integer 
+	Parameter CLKOUT3_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT3_PHASE bound to: 90.000000 - type: double 
+	Parameter CLKOUT4_DIVIDE bound to: 8 - type: integer 
+	Parameter CLKOUT4_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT4_PHASE bound to: -5.625000 - type: double 
+	Parameter DIVCLK_DIVIDE bound to: 1 - type: integer 
+	Parameter REF_JITTER1 bound to: 0.000000 - type: double 
+	Parameter STARTUP_WAIT bound to: FALSE - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'PLLE2_BASE__parameterized0' (0#1) [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:108995]
+INFO: [Synth 8-6157] synthesizing module 'PLLE2_BASE__parameterized1' [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:108995]
+	Parameter BANDWIDTH bound to: OPTIMIZED - type: string 
+	Parameter CLKFBOUT_MULT bound to: 6 - type: integer 
+	Parameter CLKFBOUT_PHASE bound to: 0.000000 - type: double 
+	Parameter CLKIN1_PERIOD bound to: 6.250000 - type: double 
+	Parameter CLKOUT0_DIVIDE bound to: 6 - type: integer 
+	Parameter CLKOUT0_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT0_PHASE bound to: 0.000000 - type: double 
+	Parameter CLKOUT1_DIVIDE bound to: 2 - type: integer 
+	Parameter CLKOUT1_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT1_PHASE bound to: 0.000000 - type: double 
+	Parameter CLKOUT2_DIVIDE bound to: 24 - type: integer 
+	Parameter CLKOUT2_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT2_PHASE bound to: 0.000000 - type: double 
+	Parameter CLKOUT3_DIVIDE bound to: 8 - type: integer 
+	Parameter CLKOUT3_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT3_PHASE bound to: 90.000000 - type: double 
+	Parameter CLKOUT4_DIVIDE bound to: 8 - type: integer 
+	Parameter CLKOUT4_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT4_PHASE bound to: 0.000000 - type: double 
+	Parameter DIVCLK_DIVIDE bound to: 1 - type: integer 
+	Parameter REF_JITTER1 bound to: 0.000000 - type: double 
+	Parameter STARTUP_WAIT bound to: FALSE - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'PLLE2_BASE__parameterized1' (0#1) [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:108995]
+INFO: [Synth 8-6157] synthesizing module 'BUFG' [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:1082]
+INFO: [Synth 8-6155] done synthesizing module 'BUFG' (0#1) [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:1082]
+INFO: [Synth 8-6157] synthesizing module 'rgmii_io' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/rgmii_io.v:12]
+INFO: [Synth 8-6157] synthesizing module 'ODDR' [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:94268]
+	Parameter DDR_CLK_EDGE bound to: OPPOSITE_EDGE - type: string 
+	Parameter INIT bound to: 1'b0 
+	Parameter SRTYPE bound to: SYNC - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'ODDR' (0#1) [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:94268]
+INFO: [Synth 8-6157] synthesizing module 'OBUF' [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:90662]
+INFO: [Synth 8-6155] done synthesizing module 'OBUF' (0#1) [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:90662]
+INFO: [Synth 8-6157] synthesizing module 'IBUF' [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:71326]
+INFO: [Synth 8-6155] done synthesizing module 'IBUF' (0#1) [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:71326]
+INFO: [Synth 8-6155] done synthesizing module 'rgmii_io' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/rgmii_io.v:12]
+INFO: [Synth 8-6157] synthesizing module 'IOBUF' [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:75902]
+INFO: [Synth 8-6155] done synthesizing module 'IOBUF' (0#1) [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:75902]
+INFO: [Synth 8-6157] synthesizing module 'WRAP_SiTCP_GMII_XC7K_32K' [/users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP/WRAP_SiTCP_GMII_XC7K_32K.V:29]
+INFO: [Synth 8-6157] synthesizing module 'TIMER' [/users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP/TIMER.v:14]
+	Parameter TIM_PERIOD bound to: 8'b10000000 
+INFO: [Synth 8-6155] done synthesizing module 'TIMER' (0#1) [/users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP/TIMER.v:14]
+INFO: [Synth 8-6157] synthesizing module 'SiTCP_XC7K_32K_BBT_V110' [/users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP/SiTCP_XC7K_32K_BBT_V110.V:28]
+INFO: [Synth 8-6155] done synthesizing module 'SiTCP_XC7K_32K_BBT_V110' (0#1) [/users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP/SiTCP_XC7K_32K_BBT_V110.V:28]
+INFO: [Synth 8-6155] done synthesizing module 'WRAP_SiTCP_GMII_XC7K_32K' (0#1) [/users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP/WRAP_SiTCP_GMII_XC7K_32K.V:29]
+INFO: [Synth 8-6157] synthesizing module 'rbcp_to_bus' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/rbcp_to_bus.v:11]
+INFO: [Synth 8-6155] done synthesizing module 'rbcp_to_bus' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/rbcp_to_bus.v:11]
+INFO: [Synth 8-6157] synthesizing module 'gpio' [/users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio.v:10]
+	Parameter BASEADDR bound to: 4096 - type: integer 
+	Parameter HIGHADDR bound to: 4127 - type: integer 
+	Parameter ABUSWIDTH bound to: 32 - type: integer 
+	Parameter IO_WIDTH bound to: 8 - type: integer 
+	Parameter IO_DIRECTION bound to: 8'b11111111 
+INFO: [Synth 8-6157] synthesizing module 'bus_to_ip' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/bus_to_ip.v:11]
+	Parameter BASEADDR bound to: 4096 - type: integer 
+	Parameter HIGHADDR bound to: 4127 - type: integer 
+	Parameter ABUSWIDTH bound to: 32 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'bus_to_ip' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/bus_to_ip.v:11]
+INFO: [Synth 8-6157] synthesizing module 'gpio_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio_core.v:8]
+	Parameter ABUSWIDTH bound to: 32 - type: integer 
+	Parameter IO_WIDTH bound to: 8 - type: integer 
+	Parameter IO_DIRECTION bound to: 8'b11111111 
+	Parameter IO_TRI bound to: 0 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'gpio_core' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio_core.v:8]
+INFO: [Synth 8-6155] done synthesizing module 'gpio' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio.v:10]
+INFO: [Synth 8-6157] synthesizing module 'tdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v:4]
+	Parameter BASEADDR bound to: 4128 - type: integer 
+	Parameter HIGHADDR bound to: 4383 - type: integer 
+	Parameter ABUSWIDTH bound to: 32 - type: integer 
+	Parameter DATA_IDENTIFIER bound to: 4'b0100 
+INFO: [Synth 8-6157] synthesizing module 'tdc_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:11]
+INFO: [Synth 8-6157] synthesizing module 'slimfast_multioption_counter' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:41]
+	Parameter clip_count bound to: 0 - type: integer 
+	Parameter clip_reset bound to: 1 - type: integer 
+	Parameter size bound to: 16 - type: integer 
+	Parameter outputwidth bound to: 17 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'slimfast_multioption_counter_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:76]
+	Parameter clip_count bound to: 0 - type: integer 
+	Parameter clip_reset bound to: 1 - type: integer 
+	Parameter size bound to: 16 - type: integer 
+	Parameter outputwidth bound to: 17 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'signal_clipper' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/signal_clipper.vhdl:42]
+INFO: [Synth 8-256] done synthesizing module 'signal_clipper' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/signal_clipper.vhdl:42]
+INFO: [Synth 8-6155] done synthesizing module 'slimfast_multioption_counter_core' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:76]
+INFO: [Synth 8-6155] done synthesizing module 'slimfast_multioption_counter' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:41]
+INFO: [Synth 8-6157] synthesizing module 'clk_divide' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v:1]
+	Parameter CLK_DIVISOR bound to: 7 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'clk_divide' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v:1]
+INFO: [Synth 8-6157] synthesizing module 'tdl_and_detector' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:4]
+	Parameter clk_ratio bound to: 3 - type: integer 
+	Parameter fine_time_bits bound to: 2 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+	Parameter bits bound to: 96 - type: integer 
+	Parameter resolution bound to: 2 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+INFO: [Synth 8-6157] synthesizing module 'CARRY4' [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:1497]
+INFO: [Synth 8-6155] done synthesizing module 'CARRY4' (0#1) [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:1497]
+INFO: [Synth 8-6157] synthesizing module 'FDCE' [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:38492]
+	Parameter INIT bound to: 1'b0 
+INFO: [Synth 8-6155] done synthesizing module 'FDCE' (0#1) [/tools/xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:38492]
+INFO: [Synth 8-6155] done synthesizing module 'CHAIN_CELL' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+INFO: [Synth 8-6155] done synthesizing module 'carry_sampler_spartan6' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+INFO: [Synth 8-6157] synthesizing module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+	Parameter dlyline_bits bound to: 96 - type: integer 
+	Parameter internally_rising bound to: 1'b1 
+	Parameter fine_time_bits bound to: 2 - type: integer 
+	Parameter clk_ratio bound to: 3 - type: integer 
+WARNING: [Synth 8-567] referenced signal 'samples_133' should be on the sensitivity list [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:90]
+INFO: [Synth 8-6155] done synthesizing module 'sample_deser' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'tdl_and_detector' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:4]
+INFO: [Synth 8-6157] synthesizing module 'controller' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:1]
+	Parameter state_bits bound to: 4 - type: integer 
+	Parameter mux_bits bound to: 2 - type: integer 
+INFO: [Synth 8-155] case statement is not full and has no default [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:129]
+INFO: [Synth 8-155] case statement is not full and has no default [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:156]
+INFO: [Synth 8-6155] done synthesizing module 'controller' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:1]
+INFO: [Synth 8-6157] synthesizing module 'priority_encoder_only' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v:7]
+INFO: [Synth 8-6155] done synthesizing module 'priority_encoder_only' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v:7]
+INFO: [Synth 8-6157] synthesizing module 'delay_n' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+	Parameter n bound to: 3 - type: integer 
+	Parameter width bound to: 4 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'delay_n' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+INFO: [Synth 8-6157] synthesizing module 'delay_n__parameterized0' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+	Parameter n bound to: 4 - type: integer 
+	Parameter width bound to: 2 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'delay_n__parameterized0' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+INFO: [Synth 8-6157] synthesizing module 'delay_n__parameterized1' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+	Parameter n bound to: 4 - type: integer 
+	Parameter width bound to: 16 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'delay_n__parameterized1' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+INFO: [Synth 8-6157] synthesizing module 'word_broker' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:1]
+	Parameter state_bits bound to: 4 - type: integer 
+	Parameter counter_bits bound to: 16 - type: integer 
+	Parameter encodebits bound to: 7 - type: integer 
+	Parameter fine_time_bits bound to: 2 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'word_broker' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:1]
+INFO: [Synth 8-6157] synthesizing module 'cdc_syncfifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:11]
+	Parameter DSIZE bound to: 32 - type: integer 
+	Parameter ASIZE bound to: 2 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'cdc_sync_r2w' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:193]
+	Parameter ADDRSIZE bound to: 2 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'cdc_sync_r2w' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:193]
+INFO: [Synth 8-6157] synthesizing module 'cdc_sync_w2r' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:209]
+	Parameter ADDRSIZE bound to: 2 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'cdc_sync_w2r' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:209]
+INFO: [Synth 8-6157] synthesizing module 'cdc_fifomem' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:83]
+	Parameter DATASIZE bound to: 32 - type: integer 
+	Parameter ADDRSIZE bound to: 2 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'cdc_fifomem' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:83]
+INFO: [Synth 8-6157] synthesizing module 'rptr_empty' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:121]
+	Parameter ADDRSIZE bound to: 2 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'rptr_empty' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:121]
+INFO: [Synth 8-6157] synthesizing module 'wptr_full' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:157]
+	Parameter ADDRSIZE bound to: 2 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'wptr_full' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:157]
+INFO: [Synth 8-6155] done synthesizing module 'cdc_syncfifo' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:11]
+INFO: [Synth 8-6157] synthesizing module 'gerneric_fifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/generic_fifo.v:11]
+	Parameter DATA_SIZE bound to: 32 - type: integer 
+	Parameter DEPTH bound to: 512 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'gerneric_fifo' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/generic_fifo.v:11]
+INFO: [Synth 8-6155] done synthesizing module 'tdc_core' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:11]
+INFO: [Synth 8-6157] synthesizing module 'tdc_sw_interface' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v:5]
+	Parameter VERSION bound to: 0 - type: integer 
+	Parameter BASEADDR bound to: 4128 - type: integer 
+	Parameter HIGHADDR bound to: 4383 - type: integer 
+	Parameter ABUSWIDTH bound to: 32 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'bus_to_ip__parameterized0' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/bus_to_ip.v:11]
+	Parameter BASEADDR bound to: 4128 - type: integer 
+	Parameter HIGHADDR bound to: 4383 - type: integer 
+	Parameter ABUSWIDTH bound to: 32 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'bus_to_ip__parameterized0' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/bus_to_ip.v:11]
+INFO: [Synth 8-6157] synthesizing module 'flag_domain_crossing' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v:12]
+INFO: [Synth 8-6155] done synthesizing module 'flag_domain_crossing' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v:12]
+INFO: [Synth 8-6157] synthesizing module 'three_stage_synchronizer' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v:12]
+INFO: [Synth 8-6155] done synthesizing module 'three_stage_synchronizer' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v:12]
+INFO: [Synth 8-6157] synthesizing module 'graycode_2stage_cdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+	Parameter DATA_WIDTH bound to: 32 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'graycode_2stage_cdc' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+INFO: [Synth 8-6157] synthesizing module 'graycode_2stage_cdc__parameterized0' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+	Parameter DATA_WIDTH bound to: 8 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'graycode_2stage_cdc__parameterized0' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'tdc_sw_interface' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v:5]
+INFO: [Synth 8-6155] done synthesizing module 'tdc' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v:4]
+INFO: [Synth 8-6157] synthesizing module 'rrp_arbiter' [/users/rleiser/work/basil_branch/basil/firmware/modules/rrp_arbiter/rrp_arbiter.v:12]
+	Parameter WIDTH bound to: 1 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'rrp_arbiter' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/rrp_arbiter/rrp_arbiter.v:12]
+INFO: [Synth 8-6157] synthesizing module 'fifo_32_to_8' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/fifo_32_to_8.v:11]
+	Parameter DEPTH bound to: 131072 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'gerneric_fifo__parameterized0' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/generic_fifo.v:11]
+	Parameter DATA_SIZE bound to: 32 - type: integer 
+	Parameter DEPTH bound to: 131072 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'gerneric_fifo__parameterized0' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/generic_fifo.v:11]
+INFO: [Synth 8-6155] done synthesizing module 'fifo_32_to_8' (0#1) [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/fifo_32_to_8.v:11]
+INFO: [Synth 8-6155] done synthesizing module 'tdc_bdaq' (0#1) [/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v:17]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'i_tdl'. This will prevent further optimization [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:102]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'i_controller'. This will prevent further optimization [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:114]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'encoder'. This will prevent further optimization [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:135]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'state_pipe'. This will prevent further optimization [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:152]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'i_broker'. This will prevent further optimization [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:176]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'fine_time_pipe'. This will prevent further optimization [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:158]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'corse_time_pipe'. This will prevent further optimization [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:163]
+WARNING: [Synth 8-7129] Port en_no_trig_err in module word_broker is either unconnected or has no load
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 2334.383 ; gain = 526.645 ; free physical = 37331 ; free virtual = 56645
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1391.673; parent = 1180.812; children = 210.860
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3955.160; parent = 2334.387; children = 1620.773
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 2334.383 ; gain = 526.645 ; free physical = 37331 ; free virtual = 56644
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1391.673; parent = 1180.812; children = 210.860
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3955.160; parent = 2334.387; children = 1620.773
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 2334.383 ; gain = 526.645 ; free physical = 37331 ; free virtual = 56644
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1391.673; parent = 1180.812; children = 210.860
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3955.160; parent = 2334.387; children = 1620.773
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.02 . Memory (MB): peak = 2334.383 ; gain = 0.000 ; free physical = 37325 ; free virtual = 56639
+INFO: [Netlist 29-17] Analyzing 58 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP.xdc]
+WARNING: [Vivado 12-508] No pins matched 'get_pins -hier -filter {name =~ */SiTCP_INT/SiTCP_RESET_OUT/C}'. [/users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP.xdc:26]
+Finished Parsing XDC File [/users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP.xdc]
+WARNING: [Project 1-498] One or more constraints failed evaluation while reading constraint file [/users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP.xdc] and the design contains unresolved black boxes. These constraints will be read post-synthesis (as long as their source constraint file is marked as used_in_implementation) and should be applied correctly then. You should review the constraints listed in the file [.Xil/tdc_bdaq_propImpl.xdc] and check the run log file to verify that these constraints were correctly applied.
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/tdc_bdaq_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/tdc_bdaq_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Parsing XDC File [/users/rleiser/work/basil_branch/examples/tdc_bdaq/bdaq53.xdc]
+INFO: [Timing 38-2] Deriving generated clocks [/users/rleiser/work/basil_branch/examples/tdc_bdaq/bdaq53.xdc:5]
+Finished Parsing XDC File [/users/rleiser/work/basil_branch/examples/tdc_bdaq/bdaq53.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/users/rleiser/work/basil_branch/examples/tdc_bdaq/bdaq53.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/tdc_bdaq_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/tdc_bdaq_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Parsing XDC File [/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.xdc]
+Finished Parsing XDC File [/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/tdc_bdaq_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/tdc_bdaq_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2436.227 ; gain = 0.000 ; free physical = 37240 ; free virtual = 56554
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 4 instances were transformed.
+  IOBUF => IOBUF (IBUF, OBUFT): 1 instance 
+  PLLE2_BASE => PLLE2_ADV: 3 instances
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.02 . Memory (MB): peak = 2436.227 ; gain = 0.000 ; free physical = 37240 ; free virtual = 56554
+INFO: [Designutils 20-5440] No compile time benefit to using incremental synthesis; A full resynthesis will be run
+INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
+INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [/tools/xilinx/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:12 ; elapsed = 00:00:15 . Memory (MB): peak = 2436.227 ; gain = 628.488 ; free physical = 37312 ; free virtual = 56627
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1391.673; parent = 1180.812; children = 210.860
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 4024.988; parent = 2404.215; children = 1620.773
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7k160tffg676-2L
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:12 ; elapsed = 00:00:15 . Memory (MB): peak = 2436.227 ; gain = 628.488 ; free physical = 37312 ; free virtual = 56627
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1391.673; parent = 1180.812; children = 210.860
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 4024.988; parent = 2404.215; children = 1620.773
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+Applied set_property MARK_DEBUG = true for i_tdc/i_tdc_core/hit_status[0]. (constraint file  /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.xdc, line 220).
+Applied set_property MARK_DEBUG = true for i_tdc/i_tdc_core/fine_time[0]. (constraint file  /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.xdc, line 222).
+Applied set_property MARK_DEBUG = true for i_tdc/i_tdc_core/encoder/position_out[0]. (constraint file  /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.xdc, line 226).
+Applied set_property MARK_DEBUG = true for i_tdc/i_tdc_core/tdc_state_delayed[0]. (constraint file  /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.xdc, line 233).
+Applied set_property MARK_DEBUG = true for i_tdc/i_tdc_core/fine_time_delayed[0]. (constraint file  /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.xdc, line 237).
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:13 ; elapsed = 00:00:15 . Memory (MB): peak = 2436.227 ; gain = 628.488 ; free physical = 37311 ; free virtual = 56625
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1391.673; parent = 1180.812; children = 210.860
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 4024.988; parent = 2404.215; children = 1620.773
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:14 ; elapsed = 00:00:17 . Memory (MB): peak = 2436.227 ; gain = 628.488 ; free physical = 37293 ; free virtual = 56607
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1391.673; parent = 1180.812; children = 210.860
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 4024.988; parent = 2404.215; children = 1620.773
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input   32 Bit       Adders := 5     
+	   2 Input   17 Bit       Adders := 2     
+	   3 Input   17 Bit       Adders := 1     
+	   2 Input   14 Bit       Adders := 1     
+	   2 Input   11 Bit       Adders := 3     
+	   2 Input    9 Bit       Adders := 3     
+	   3 Input    9 Bit       Adders := 1     
+	   2 Input    8 Bit       Adders := 2     
+	   2 Input    7 Bit       Adders := 1     
+	   2 Input    4 Bit       Adders := 1     
+	  12 Input    4 Bit       Adders := 1     
+	   2 Input    3 Bit       Adders := 5     
+	   2 Input    2 Bit       Adders := 2     
++---XORs : 
+	   2 Input     32 Bit         XORs := 1     
+	   2 Input      8 Bit         XORs := 2     
+	   2 Input      3 Bit         XORs := 2     
+	   2 Input      1 Bit         XORs := 48    
++---Registers : 
+	               96 Bit    Registers := 8     
+	               32 Bit    Registers := 8     
+	               24 Bit    Registers := 1     
+	               17 Bit    Registers := 1     
+	               16 Bit    Registers := 5     
+	               14 Bit    Registers := 1     
+	               12 Bit    Registers := 1     
+	               11 Bit    Registers := 3     
+	                9 Bit    Registers := 1     
+	                8 Bit    Registers := 17    
+	                7 Bit    Registers := 2     
+	                4 Bit    Registers := 14    
+	                3 Bit    Registers := 9     
+	                2 Bit    Registers := 10    
+	                1 Bit    Registers := 64    
++---RAMs : 
+	            4096K Bit	(131072 X 32 bit)          RAMs := 1     
+	              16K Bit	(512 X 32 bit)          RAMs := 1     
+	              128 Bit	(4 X 32 bit)          RAMs := 1     
++---Muxes : 
+	   3 Input   96 Bit        Muxes := 1     
+	   2 Input   32 Bit        Muxes := 4     
+	   9 Input   32 Bit        Muxes := 1     
+	   2 Input   17 Bit        Muxes := 4     
+	   2 Input   16 Bit        Muxes := 2     
+	   2 Input   11 Bit        Muxes := 2     
+	   2 Input    9 Bit        Muxes := 5     
+	   2 Input    8 Bit        Muxes := 6     
+	   4 Input    8 Bit        Muxes := 1     
+	   2 Input    7 Bit        Muxes := 1     
+	   2 Input    4 Bit        Muxes := 6     
+	   3 Input    4 Bit        Muxes := 1     
+	   2 Input    3 Bit        Muxes := 1     
+	   2 Input    2 Bit        Muxes := 4     
+	   3 Input    2 Bit        Muxes := 1     
+	  11 Input    2 Bit        Muxes := 1     
+	   2 Input    1 Bit        Muxes := 55    
+	  12 Input    1 Bit        Muxes := 1     
+	   4 Input    1 Bit        Muxes := 2     
+	  11 Input    1 Bit        Muxes := 2     
+	   3 Input    1 Bit        Muxes := 2     
+	   9 Input    1 Bit        Muxes := 1     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 600 (col length:100)
+BRAMs: 650 (col length: RAMB18 100 RAMB36 50)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-7080] Parallel synthesis criteria is not met
+WARNING: [Synth 8-7129] Port en_no_trig_err in module word_broker is either unconnected or has no load
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[1].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[1].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[2].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[2].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[3].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[3].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[4].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[4].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[5].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[5].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[6].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[6].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[7].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[7].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[8].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[8].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[9].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[9].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[10].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[10].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[11].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[11].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[12].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[12].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[13].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[13].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[14].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[14].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[15].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[15].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[16].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[16].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[17].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[17].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[18].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[18].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[19].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[19].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[20].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[20].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[21].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[21].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[22].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[22].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[23].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[23].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[24].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[24].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[25].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[25].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[26].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[26].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[27].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[27].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[28].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[28].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[29].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[29].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[30].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[30].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[31].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[31].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[32].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[32].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[33].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[33].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[34].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[34].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[35].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[35].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[36].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[36].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[37].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[37].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[38].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[38].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[39].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[39].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[40].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[40].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[41].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[41].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[42].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[42].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[43].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[43].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[44].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[44].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[45].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[45].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[46].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[46].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[47].MoreCells/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/carry_chain[47].MoreCells/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/FirstCell/TDL_FF_C) is unused and will be removed from module tdl_and_detector.
+WARNING: [Synth 8-3332] Sequential element (tdl_sampler/FirstCell/TDL_FF_A) is unused and will be removed from module tdl_and_detector.
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:20 ; elapsed = 00:00:24 . Memory (MB): peak = 2436.227 ; gain = 628.488 ; free physical = 37256 ; free virtual = 56595
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1401.786; parent = 1191.526; children = 210.860
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 4024.988; parent = 2404.215; children = 1620.773
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Preliminary Mapping Report (see note below)
++------------+---------------------------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
+|Module Name | RTL Object                      | PORT A (Depth x Width) | W | R | PORT B (Depth x Width)  | W | R | Ports driving FF | RAMB18 | RAMB36 | 
++------------+---------------------------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
+|tdc_bdaq    | i_tdc/i_tdc_core/fifo_i/mem_reg | 512 x 32(READ_FIRST)   | W |   | 512 x 32(WRITE_FIRST)   |   | R | Port A and B     | 1      | 0      | 
+|tdc_bdaq    | i_data_fifo/fifo_i/mem_reg      | 128 K x 32(READ_FIRST) | W |   | 128 K x 32(WRITE_FIRST) |   | R | Port A and B     | 0      | 128    | 
++------------+---------------------------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
+
+Note: The table above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
+
+Distributed RAM: Preliminary Mapping Report (see note below)
++------------+---------------------------------------------------------------+-----------+----------------------+-------------+
+|Module Name | RTL Object                                                    | Inference | Size (Depth x Width) | Primitives  | 
++------------+---------------------------------------------------------------+-----------+----------------------+-------------+
+|tdc_bdaq    | i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg | Implied   | 4 x 32               | RAM32M x 6  | 
++------------+---------------------------------------------------------------+-----------+----------------------+-------------+
+
+Note: The table above is a preliminary report that shows the Distributed RAMs at the current stage of the synthesis flow. Some Distributed RAMs may be reimplemented as non Distributed RAM primitives later in the synthesis flow. Multiple instantiated RAMs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------

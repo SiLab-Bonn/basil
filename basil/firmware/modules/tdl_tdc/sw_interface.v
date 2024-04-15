@@ -1,3 +1,7 @@
+`include "tdl_tdc/utils/graycode_2stage_cdc.v"
+`include "utils/flag_domain_crossing.v"
+`include "utils/3_stage_synchronizer.v"
+
 module tdc_sw_interface (
 	input wire BUS_CLK,
 	input wire CLK,
@@ -9,8 +13,8 @@ module tdc_sw_interface (
 	inout wire [7:0] bus_data,
 	input wire [ABUSWIDTH-1:0] bus_add,
 	input wire [31:0] event_count,
-	input wire [7:0] fifo_lost_data_count,
-	input wire [7:0] tdc_miss_count,
+	input wire [7:0] fifo_lost_data_cnt,
+	input wire [7:0] tdc_miss_cnt,
 
 	output wire tdc_enabled,
 	output wire tdc_rst,
@@ -24,15 +28,15 @@ module tdc_sw_interface (
 	output wire en_no_trig_err
 );
 
-parameter VERSION;
-parameter BASEADDR;
-parameter HIGHADDR;
-parameter ABUSWIDTH;
+parameter VERSION = 8'b00001111;
+parameter BASEADDR = 16'h0;
+parameter HIGHADDR = 16'h100;
+parameter ABUSWIDTH = 16;
 
 wire ip_rd, ip_wr;
 wire [ABUSWIDTH-1:0] ip_add;
 wire [7:0] ip_data_in;
-wire [7:0] ip_data_out;
+reg [7:0] ip_data_out;
 
 bus_to_ip #(
 	.BASEADDR(BASEADDR),
@@ -58,7 +62,7 @@ assign soft_rst = (ip_add == 0 && ip_wr);
 reg [1:0] soft_rst_ff, bus_rst_ff;
 always @(posedge BUS_CLK) begin
 	soft_rst_ff[0] <= soft_rst;
-	sof_rst_ff[1] <= soft_rst_ff[0];
+	soft_rst_ff[1] <= soft_rst_ff[0];
 	bus_rst_ff[0] <= bus_rst;
 	bus_rst_ff[1] <= bus_rst;
 end
@@ -70,16 +74,16 @@ assign bus_rst_flag = bus_rst_ff[1] & ~bus_rst_ff[0]; // trailing edge
 wire rst_bus_clk;
 assign rst_bus_clk = bus_rst_flag | soft_rst_flag;
 
-flag_domain_corssing rst_flag_domeain_crossing (
+flag_domain_crossing rst_flag_domeain_crossing (
 	.CLK_A(BUS_CLK),
-	.CLKB(CLK),
+	.CLK_B(CLK),
 	.FLAG_IN_CLK_A(rst_bus_clk),
 	.FLAG_OUT_CLK_B(tdc_rst)
 );
 
 
 // Status registers
-reg [7:0] status_regs[1:0];
+reg [7:0] status_regs[2:0];
 
 wire CONF_EN; // ENABLE BUS_ADD==1 BIT==0
 assign CONF_EN = status_regs[1][0];
@@ -97,21 +101,23 @@ wire CONF_EN_INVERT_TDC; // BUS_ADD==1 BIT==6
 assign CONF_EN_INVERT_TDC = status_regs[1][6];
 wire CONF_EN_INVERT_TRIGGER; // BUS_ADD==1 BIT==7
 assign CONF_EN_INVERT_TRIGGER = status_regs[1][7];
-wire CONF_EN_CALIB_MODE; // BUS_ADD=0 BIT=0
-assign CONF_EN_CALIB_MODE = status_regs[0][0]
+wire CONF_EN_CALIB_MODE; // BUS_ADD=8 BIT=0
+assign CONF_EN_CALIB_MODE = status_regs[2][0];
 reg [31:0] event_cnt_buf; // BUS_ADD==2
 reg [23:0] event_cnt_buf_read; // BUS_ADD==3 - 5
 reg [7:0] lost_data_cnt_bus_clk; // BUS_ADD==6
-reg [7:0] tdl_miss_cnt_bus_clk; // BUS_ADD==6
+reg [7:0] tdl_miss_cnt_bus_clk; // BUS_ADD==7
 
 // Writing to status registers
 always @(posedge BUS_CLK) begin
 	if (bus_rst) begin
-		status_regs[0] <= 8'b0;
 		status_regs[1] <= 8'b0;
+		status_regs[2] <= 8'b0;
 	end
-	else if (ip_wr && ip_add < 2)
-		status_regs[ip_add[0]] <= ip_data_in;
+	else if (ip_wr && ip_add == 1)
+		status_regs[1] <= ip_data_in;
+	else if (ip_wr && ip_add == 8)
+		status_regs[2] <= ip_data_in;
 end
 
 // Reading of status registers
@@ -132,7 +138,7 @@ always @(posedge BUS_CLK) begin
 		else if (ip_add == 6)
 			ip_data_out <= fifo_lost_data_cnt_bus_clk;
 		else if (ip_add == 7)
-			ip_data_out <= tdc_misses_cnt_bus_clk;
+			ip_data_out <= tdc_miss_cnt_bus_clk;
 		else
 			ip_data_out <= 0;
 	end
@@ -142,7 +148,7 @@ end
 three_stage_synchronizer conf_en_three_stage_synchronizer_dv_clk (
 	.CLK(CLK),
 	.IN(CONF_EN | (CONF_EN_EXT & ext_en)),
-	.OUT(tdc_enable)
+	.OUT(tdc_enabled)
 );
 
 three_stage_synchronizer conf_en_arm_conf_en_synchronizer_dv_clk (
@@ -160,7 +166,7 @@ three_stage_synchronizer conf_en_write_ts_synchronizer_dv_clk (
 three_stage_synchronizer conf_en_trig_dist_synchronizer_dv_clk (
 	.CLK(CLK),
 	.IN(CONF_EN_TRIG_DIST),
-	.OUT(en_trigger_distance_mode)
+	.OUT(en_trig_distance_mode)
 );
 
 three_stage_synchronizer conf_en_no_write_trig_err_synchronizer_dv_clk (
@@ -188,16 +194,17 @@ three_stage_synchronizer conf_en_clib_mode_dv_clk (
 );
 
 // Gray code cdc from the main tdc clock to the bus clock
+wire [31:0] event_cnt;
 graycode_2stage_cdc #(.DATA_WIDTH(32)) event_count_cdc (
 	.IN_CLK(CLK),
 	.OUT_CLK(BUS_CLK),
 	.data(event_count),
-	.data_out_clk(event_cnt_buf)
+	.data_out_clk(event_cnt)
 );
 
-// This is a strange additional buffer from the original tdc_s3 (L:420). I did
-// remove a single piping stage because I don't see a reason for it.
+// This is a strange additional buffer from the original tdc_s3 (L:420). 
 always @(posedge BUS_CLK) begin
+	event_cnt_buf <= event_cnt;
 	if (ip_add == 2 && ip_rd)
 		event_cnt_buf_read[23:0] <= event_cnt_buf[31:8];
 end
@@ -233,3 +240,4 @@ end
 assign arm_flag = ~ext_arm_clk_ff & ext_arm_clk;
 
 
+endmodule

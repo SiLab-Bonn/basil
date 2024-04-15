@@ -6,7 +6,7 @@
 //*/
        module priority_encoder_only(
 	       input wire CLK,
-	       input wire [96-1:0] bins,
+	       input wire [96-1:0] sample,
 	       output reg [6:0] position_out);
 
 	// converts thermometercode to onehot
@@ -54,9 +54,9 @@
        always @(posedge CLK) begin
 	       
 	       for(j =0; j<96/6; j = j + 1) begin //corse position is calculated in thermo
-		       corse_code[j] <= (bins[j*6 +: 6] == 6'b111111) ? 1 : 0;
+		       corse_code[j] <= (sample[j*6 +: 6] == 6'b111111) ? 1 : 0;
 	       end 
-	       bins_extended <= {8'h00, bins};
+	       bins_extended <= {8'h00, sample};
 	       // cycle
 	       corse_position <= onehot2bin(therm2onehot(corse_code)); //conversion to binary
 	       bins_extended_dly <= bins_extended;

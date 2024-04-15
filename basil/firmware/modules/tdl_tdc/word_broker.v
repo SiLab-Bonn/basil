@@ -10,41 +10,48 @@ module word_broker  (
 	input wire [15:0] timestamp,
 
 	output reg out_valid,
-	output reg [32-1:0] out_word,
+	output reg [32-1:0] out_word
 );
 
 
 localparam DATA_IDENTIFIER = 4'b0100;
-localparam word_type_bits = 3;
+localparam word_type_bits = 3; // TODO: This parameter can't be changed
 
-// Word type identifier
-localparam TRIGGERED_WORD = word_type_bits'd0;
-localparam  RISING_WORD = word_type_bits'd1;
-localparam FALLING_WORD = word_type_bits'd2;
-localparam TIMESTAMP_WORD = word_type_bits'd3;
-localparam COUNTER_OVERFLOW_WORD = word_type_bits'd4;
-localparam CALBI_WORD = word_type_bits'd5;
-localparam MISS_WORD = word_type_bits'd6;
-localparam RESET_WORD = word_type_bits'd7;
+// Word type codes
+localparam [word_type_bits-1:0] TRIGGERED_WORD = 0;
+localparam [word_type_bits-1:0] RISING_WORD = 1;
+localparam [word_type_bits-1:0] FALLING_WORD = 2;
+localparam [word_type_bits-1:0] TIMESTAMP_WORD = 3;
+localparam [word_type_bits-1:0] COUNTER_OVERFLOW_WORD = 4;
+localparam [word_type_bits-1:0] CALIB_WORD = 5;
+localparam [word_type_bits-1:0] MISS_WORD = 6;
+localparam [word_type_bits-1:0] RESET_WORD = 7;
 
+function [state_bits-1:0] int_to_gray;
+	input [state_bits-1:0] int;
+	begin
+		int_to_gray = int ^ (int >> 1);
+	end
+endfunction
 // TDC states
-localparam IDLE = 0;
-localparam TRIGGERED = 1;
-localparam RIS_EDGE = 2;
-localparam FAL_EDGE = 3;
-localparam COUNTER_OVERFLOW = 4;
-localparam FIFO_FULL = 5;
-localparam MISSED = 6;
-localparam CALIB = 7;
-localparam CALIB_HIT = 8;
-localparam RESET = 9;
+localparam [state_bits-1:0] IDLE = 0;
+localparam [state_bits-1:0] ARMED = 1;
+localparam [state_bits-1:0] TRIGGERED = 2;
+localparam [state_bits-1:0] RIS_EDGE = 3;
+localparam [state_bits-1:0] FAL_EDGE = 4;
+localparam [state_bits-1:0] COUNTER_OVERFLOW = 5;
+localparam [state_bits-1:0] FIFO_FULL = 6;
+localparam [state_bits-1:0] MISSED = 7;
+localparam [state_bits-1:0] CALIB = 8;
+localparam [state_bits-1:0] CALIB_HIT = 9;
+localparam [state_bits-1:0] RESET = 10;
 
 
 
 parameter state_bits = 4;
-parameter counter_bits;
+parameter counter_bits = 10;
 parameter encodebits = 7;
-parameter fine_time_bits;
+parameter fine_time_bits = 2;
 
 reg [state_bits-1:0] previous_state;
 always @(posedge CLK) begin
@@ -53,7 +60,7 @@ end
 
 always @(posedge CLK) begin
 	case({previous_state, tdc_state})
-		{IDLE,TRIGGERED}: begin
+		{IDLE, TRIGGERED}: begin
 			if(en_write_trigger_distance) begin
 				out_valid <= 1;
 				out_word <= {DATA_IDENTIFIER, TRIGGERED_WORD, corse_time, fine_time, tdl_time};
@@ -90,7 +97,7 @@ always @(posedge CLK) begin
 			out_word <= {DATA_IDENTIFIER, MISS_WORD, 25'b0};
 		end
 		{RESET, IDLE}: begin
-			out_valid <=;
+			out_valid <= 1;
 			out_word <= {DATA_IDENTIFIER, RESET_WORD, 25'b0};
 		end
 		{CALIB, CALIB_HIT}: begin
@@ -104,3 +111,4 @@ always @(posedge CLK) begin
 	endcase
 end
 
+endmodule
