@@ -18,7 +18,7 @@ wire ck_inb;
 reg enl;
 
 assign ck_inb = ~ck_in;
-always @(ck_inb or enable)
+always_latch @(ck_inb or enable)
 if (ck_inb)
     enl = enable;
 assign ck_out = ck_in & enl;
