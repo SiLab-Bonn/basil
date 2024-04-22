@@ -18,7 +18,7 @@ input ck_in,enable;
 output ck_out;
 reg enl;
 
-always @(ck_in or enable)
+always_latch
 if (ck_in)
     enl = enable;
 assign ck_out = ck_in | ~enl;
