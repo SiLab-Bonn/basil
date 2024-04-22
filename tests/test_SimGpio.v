@@ -53,12 +53,12 @@ localparam GPIO2_HIGHADDR = 16'h001f;
     assign BUS_DATA_OUT = BUS_DATA_OUT_1 | BUS_DATA_OUT_2;
 `endif
 
-/* verilator lint_off UNOPT */
+/* verilator lint_off UNOPTFLAT */
 wire [23:0] IO;
 
 assign IO[15:8] = IO[7:0];
 assign IO[23:20] = IO[19:16];
-/* verilator lint_on UNOPT */
+/* verilator lint_on UNOPTFLAT */
 
 `ifndef BASIL_SBUS
 gpio #(
