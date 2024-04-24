@@ -64,9 +64,14 @@ def findUSBBinds(rm, log,
 
     results = {}
 
-    for instrument in instruments:    
-        for res in rm.list_resources():
-            if "USB" not in res: # Only search for USB devices
+    for instrument in instruments:
+        # try first ASRL port
+        if instrument.get("port") and 'ASRL' not in instrument.get("port"):
+            instrument["port"] = f'ASRL{instrument["port"]}::INSTR'
+        resources = (instrument["port"],) + rm.list_resources() if instrument.get("port") else rm.list_resources()
+
+        for res in resources:
+            if "USB" not in res:  # Only search for USB devices
                 continue
 
             if any(bind in res for bind in skip_binds):
