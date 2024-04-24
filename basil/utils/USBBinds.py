@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pyvisa
 
-def queryIdentification(rm, resource, baud_rate, read_termination="\n", write_termination="\n", timeout=1000 * 5, verbose=False):
+def queryIdentification(rm, resource, baud_rate, read_termination="\n", write_termination="\n", timeout=1000 * 5):
     """
     Queries the identification of the instrument connected via USB.
 
