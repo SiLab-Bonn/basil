@@ -3,6 +3,21 @@ from pathlib import Path
 import pyvisa
 
 def queryIdentification(rm, resource, baud_rate, read_termination="\n", write_termination="\n", timeout=1000 * 5, verbose=False):
+    """
+    Queries the identification of the instrument connected via USB.
+
+    Args:
+        rm (pyvisa.ResourceManager): The pyvisa resource manager.
+        resource (str): The resource name or address of the instrument.
+        baud_rate (int): The baud rate for communication with the instrument.
+        read_termination (str, optional): The read termination character(s). Defaults to "\n".
+        write_termination (str, optional): The write termination character(s). Defaults to "\n".
+        timeout (int, optional): The timeout value in milliseconds. Defaults to 5000.
+
+    Returns:
+        str: The identification string of the instrument.
+
+    """
     inst = rm.open_resource(resource)
     inst.timeout = timeout
     inst.baud_rate = baud_rate
