@@ -1,6 +1,13 @@
+import os
+
 from pathlib import Path
 
+from six import string_types
+
 import pyvisa
+
+import ruamel.yaml
+
 
 def queryIdentification(rm, resource, baud_rate, read_termination="\n", write_termination="\n", timeout=1000 * 5):
     """
@@ -128,7 +135,44 @@ def getBaudrate(dictionary):
     else:
         return 9600
 
-def modify_basil_config(conf, log, skip_binds=[], verbose=False):
+
+def load_yaml_with_comments(conf):
+    """
+    Load YAML configuration file with comments.
+
+    Args:
+        conf: The YAML configuration file path or a file-like object containing YAML content.
+
+    Returns:
+        dict: A dictionary containing the parsed YAML configuration.
+
+    """
+    conf_dict = {}
+
+    if not conf:
+        pass
+    elif isinstance(conf, string_types):  # parse the first YAML document in a stream
+        yaml = ruamel.yaml.YAML()
+        if os.path.isfile(conf):
+            with open(conf, 'r') as f:
+                yaml = ruamel.yaml.YAML()
+                conf_dict.update(yaml.load(f))
+        else:  # YAML string
+            try:
+                conf_dict.update(yaml.load(conf))
+            except ValueError:  # invalid path/filename
+                raise IOError("File not found: %s" % conf)
+    elif hasattr(conf, 'read'):  # parse the first YAML document in a stream
+        yaml = ruamel.yaml.YAML()
+        conf_dict.update(yaml.load(conf))
+        conf.close()
+    else:  # conf is already a dict
+        conf_dict.update(conf)
+
+    return conf_dict
+
+
+def modify_basil_config(conf, log, skip_binds=[], save_modified=None, verbose=False):
     """
     Modifies the basil configuration file by finding USB binds for devices.
 
@@ -136,6 +180,7 @@ def modify_basil_config(conf, log, skip_binds=[], verbose=False):
         conf (dict): The basil configuration dictionary.
         log: The logger object for logging messages.
         skip_binds (list, optional): List of USB binds to skip. Defaults to [].
+        save_modified (str, optional): Path to save the modified basil configuration file. Defaults to None.
         verbose (bool, optional): Flag to enable verbose logging. Defaults to False.
 
     Returns:
@@ -163,12 +208,14 @@ def modify_basil_config(conf, log, skip_binds=[], verbose=False):
         baud_rate = getBaudrate(tf["init"])
         read_termination = tf["init"]["read_termination"]
         write_termination = tf["init"]["write_termination"] if "write_termination" in tf["init"].keys() else "\n"
-        
+        port = tf["init"]["port"] if "port" in tf["init"].keys() else None
+
         instruments.append({
             "identification": instrument,
             "baud_rate": baud_rate,
             "read_termination": read_termination,
             "write_termination": write_termination,
+            "port": port,
         })
 
         insts_idx_map[instrument.lower().strip()] = i
@@ -184,6 +231,13 @@ def modify_basil_config(conf, log, skip_binds=[], verbose=False):
         elif conf["transfer_layer"][insts_idx_map[inst]]["type"].lower() == "visa":
             conf["transfer_layer"][insts_idx_map[inst]]["init"]["resource_name"] = f"ASRL{found_binds[inst]}::INSTR"
 
+    if save_modified is not None:
+        yaml = ruamel.yaml.YAML()
+        log.info(f'Saving modified periphery file: {save_modified}')
+        with open(save_modified, 'w') as f:
+            yaml.dump(conf, f)
+
+    for inst in found_binds.keys():
         del conf["transfer_layer"][insts_idx_map[inst]]["init"]["identification"]
 
     return conf
