@@ -33,13 +33,14 @@ def queryIdentification(rm, resource, baud_rate, read_termination="\n", write_te
 
     return inst.query("*IDN?", delay=0.5)
 
+
 def findUSBBinds(rm, log,
-    instruments,
-    binds_to_skip=[],
-    memorized_binds=[],
-    timeout=1000 * 4,
-    verbose=False,
-):
+                 instruments,
+                 binds_to_skip=[],
+                 memorized_binds=[],
+                 timeout=1000 * 4,
+                 verbose=False,
+                 ):
     """
     Finds the USB bind for each instrument in the given list of instruments.
 
@@ -86,7 +87,7 @@ def findUSBBinds(rm, log,
                     log.info(f"Skipping USB bind {res}")
                 continue
 
-            try:                
+            try:
                 if verbose:
                     log.info(f"Trying {res} with baud rate {instrument['baud_rate']}")
 
@@ -100,8 +101,8 @@ def findUSBBinds(rm, log,
                     memorized_binds.append({res, result})
 
                     if verbose:
-                        log.info(f"Found {result.strip()}")                              
-                
+                        log.info(f"Found {result.strip()}")
+
                 if result.lower().strip() in [inst["identification"].lower().strip() for inst in instruments]:
                     substring = res.split("/")[2].split("::")[0]
 
@@ -109,14 +110,15 @@ def findUSBBinds(rm, log,
                     skip_binds.append(f"/dev/{str(substring)}")
 
                     results[result.lower().strip()] = f"/dev/{str(substring)}"
-                    
+
                     if len(results) == len(instruments):
                         return results
-                
+
             except pyvisa.VisaIOError:
                 pass
 
     return results
+
 
 def getBaudrate(dictionary):
     """
