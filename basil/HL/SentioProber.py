@@ -48,9 +48,19 @@ class SentioProber(HardwareLayer):
 
     def get_die(self):
         ''' Get chip index '''
-        print("Check if return order of col and row is correct and consistent with other pc drivers.")
-        values = self._intf.query("map:die:get_current_index").split(",")
-        print(int(values[-2]), int(values[-1]))
+        reply = self._intf.query("map:die:get_current_index").strip()
+        if reply == '0:' or reply == '':
+            reply = self._intf.query("map:die:get_current_index")
+
+        values = reply[2:].split(',')
+        
+        #return (int(values[-2]), int(values[-1])) 
+        
+        #To read the SENTIO die number,uncomment the return above and comment out the stuff below.
+        #The return below maps the SENTIO wafermap onto the Twiki one.
+          
+        return(7 - int(values[-1]), 7 - int(values[-2]))
+
 
     def contact(self):
         ''' Move chuck to contact z position'''
