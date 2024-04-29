@@ -51,7 +51,7 @@ class SentioProber(HardwareLayer):
         reply = self._intf.query("map:die:get_current_index").strip()
         if reply == '0:' or reply == '':
             reply = self._intf.query("map:die:get_current_index")
-            
+
         values = reply[2:].split(',')
 
         return (int(values[0]), int(values[1]))

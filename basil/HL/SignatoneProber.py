@@ -39,10 +39,10 @@ class SignatoneProber(HardwareLayer):
                 reply = self._intf.query('GETCR')
             else:
                 break
-        
+
         reply = re.sub(r'[a-zA-Z]', r'', reply)
         values = reply.split(',')
-        
+
         return (int(values[0]), int(values[1]))
 
     def contact(self):
