@@ -9,7 +9,7 @@ import pyvisa
 import ruamel.yaml
 
 
-def query_identification(rm, resource, baud_rate, read_termination="\n", write_termination="\n", timeout=1000 * 5):
+def query_identification(rm, resource, baud_rate, read_termination=None, write_termination=None, timeout=1000 * 5):
     """
     Queries the identification of the instrument connected via USB.
 
