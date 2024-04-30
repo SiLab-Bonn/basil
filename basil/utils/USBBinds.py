@@ -35,11 +35,11 @@ def query_identification(rm, resource, baud_rate, read_termination=None, write_t
 
 
 def find_usb_binds(rm, log,
-                 instruments,
-                 binds_to_skip=[],
-                 memorized_binds=[],
-                 timeout=1000 * 4,
-                 verbose=False,
+                   instruments,
+                   binds_to_skip=[],
+                   memorized_binds=[],
+                   timeout=1000 * 4,
+                   verbose=False,
                  ):
     """
     Finds the USB bind for each instrument in the given list of instruments.
@@ -96,7 +96,7 @@ def find_usb_binds(rm, log,
                         log.info(f"Found memorized bind {res}")
                     result = memorized_binds[res]
                 else:
-                    result = queryIdentification(rm, res, instrument['baud_rate'], instrument['read_termination'], instrument['write_termination'], timeout=timeout, verbose=verbose)
+                    result = query_identification(rm, res, instrument['baud_rate'], instrument['read_termination'], instrument['write_termination'], timeout=timeout, verbose=verbose)
 
                     memorized_binds.append({res, result})
 
@@ -207,7 +207,7 @@ def modify_basil_config(conf, log, skip_binds=[], save_modified=None, verbose=Fa
             continue
 
         instrument = tf["init"]["identification"]
-        baud_rate = getBaudrate(tf["init"])
+        baud_rate = get_baudrate(tf["init"])
         read_termination = tf["init"]["read_termination"]
         write_termination = tf["init"]["write_termination"] if "write_termination" in tf["init"].keys() else "\n"
         port = tf["init"]["port"] if "port" in tf["init"].keys() else None
@@ -222,7 +222,7 @@ def modify_basil_config(conf, log, skip_binds=[], save_modified=None, verbose=Fa
 
         insts_idx_map[instrument.lower().strip()] = i
 
-    found_binds = findUSBBinds(rm, log=log, instruments=instruments, binds_to_skip=skip_binds, verbose=verbose)
+    found_binds = find_usb_binds(rm, log=log, instruments=instruments, binds_to_skip=skip_binds, verbose=verbose)
 
     for inst in found_binds.keys():
         if found_binds[inst] is None:
