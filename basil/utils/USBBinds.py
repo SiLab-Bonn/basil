@@ -40,7 +40,7 @@ def find_usb_binds(rm, log,
                    memorized_binds=[],
                    timeout=1000 * 4,
                    verbose=False,
-                  ):
+                   ):
     """
     Finds the USB bind for each instrument in the given list of instruments.
 
