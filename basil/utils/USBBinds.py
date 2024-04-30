@@ -9,7 +9,7 @@ import pyvisa
 import ruamel.yaml
 
 
-def queryIdentification(rm, resource, baud_rate, read_termination="\n", write_termination="\n", timeout=1000 * 5):
+def query_identification(rm, resource, baud_rate, read_termination="\n", write_termination="\n", timeout=1000 * 5):
     """
     Queries the identification of the instrument connected via USB.
 
@@ -34,7 +34,7 @@ def queryIdentification(rm, resource, baud_rate, read_termination="\n", write_te
     return inst.query("*IDN?", delay=0.5)
 
 
-def findUSBBinds(rm, log,
+def find_usb_binds(rm, log,
                  instruments,
                  binds_to_skip=[],
                  memorized_binds=[],
@@ -120,7 +120,7 @@ def findUSBBinds(rm, log,
     return results
 
 
-def getBaudrate(dictionary):
+def get_baudrate(dictionary):
     """
     Gets the baud rate from the given dictionary.
 
