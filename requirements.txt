@@ -2,5 +2,4 @@ numpy
 pyyaml
 bitarray>=2.0.0
 six
-pyvisa
 ruamel.yaml 
