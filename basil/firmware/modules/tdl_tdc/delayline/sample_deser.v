@@ -48,7 +48,8 @@ wire [clk_ratio-1:0] hit_flags;
 genvar k;
 generate 
 	for(k=0; k<clk_ratio; k = k+1) begin
-		assign hit_flags[k] = (samples_133[k][0] == a && samples_133[k][dlyline_bits -1] == b);
+			assign hit_flags[k] = ((samples_133[k][0] ==a) || (samples_133[k][1]  == a)) &&
+			       	((samples_133[k][dlyline_bits -2] == b ) || (samples_133[k][dlyline_bits -1] == b) );
 	end
 endgenerate
 

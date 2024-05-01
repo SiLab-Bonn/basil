@@ -1,0 +1,76 @@
+Release 14.7 - ngc2edif P_INT.20191124 (lin64)
+Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved.
+Reading design SiTCP_XC7K_32K_BBT_V110.ngc ...
+WARNING:NetListWriters:298 - No output is written to
+   SiTCP_XC7K_32K_BBT_V110.xncf, ignored.
+Processing design ...
+   Preping design's networks ...
+   Preping design's macros ...
+WARNING:NetListWriters:306 - Signal bus GMII/GMII_RXCNT/muxFlowMac[7 : 0] on
+   block SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some
+   missing bus signals.
+WARNING:NetListWriters:306 - Signal bus GMII/GMII_TXBUF/prmblData[3 : 0] on
+   block SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some
+   missing bus signals.
+WARNING:NetListWriters:306 - Signal bus SiTCP/UDP/UDP_PRE/udpProcStartDly[8 : 1]
+   on block SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some
+   missing bus signals.
+WARNING:NetListWriters:306 - Signal bus SiTCP/TCP/TCP_PRE/rcvdCode[4 : 0] on
+   block SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some
+   missing bus signals.
+WARNING:NetListWriters:306 - Signal bus SiTCP/TCP/TCP_PRE/tcpProcStartDly[15 :
+   0] on block SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are
+   some missing bus signals.
+WARNING:NetListWriters:306 - Signal bus
+   SiTCP/TCP/TCP_MNGR/Maccum_WinUpTimer_lut[11 : 0] on block
+   SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some missing
+   bus signals.
+WARNING:NetListWriters:306 - Signal bus
+   SiTCP/TCP/TCP_MNGR/preDataDlyA[7]_GND_21_o_mux_18_OUT[7 : 0] on block
+   SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some missing
+   bus signals.
+WARNING:NetListWriters:306 - Signal bus SiTCP/TCP/TCP_MNGR/preCmpValDly[2 : 0]
+   on block SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some
+   missing bus signals.
+WARNING:NetListWriters:306 - Signal bus SiTCP/TCP/TCP_MNGR/irPreCode[4 : 0] on
+   block SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some
+   missing bus signals.
+WARNING:NetListWriters:306 - Signal bus SiTCP/TCP/TCP_TXCNT/payStart[3 : 0] on
+   block SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some
+   missing bus signals.
+WARNING:NetListWriters:306 - Signal bus SiTCP/TCP/TCP_TXCNT/txStart[3 : 0] on
+   block SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some
+   missing bus signals.
+WARNING:NetListWriters:306 - Signal bus SiTCP/TCP/TCP_TXCNT/memRdPrmLd[4 : 0] on
+   block SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some
+   missing bus signals.
+WARNING:NetListWriters:306 - Signal bus SiTCP/ECIF_RX/irTxEcifAck[2 : 0] on
+   block SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some
+   missing bus signals.
+WARNING:NetListWriters:306 - Signal bus SiTCP/UDP/UDP_LOC/preSoHd[2 : 0] on
+   block SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some
+   missing bus signals.
+WARNING:NetListWriters:306 - Signal bus SiTCP/ECIF_TX/ipHdTim[9 : 0] on block
+   SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some missing
+   bus signals.
+WARNING:NetListWriters:306 - Signal bus
+   SiTCP_INT/MII_MIF/GND_36_o_GND_36_o_or_33_OUT[3 : 0] on block
+   SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some missing
+   bus signals.
+WARNING:NetListWriters:306 - Signal bus SiTCP_INT/MII_MIF/initWa[3 : 0] on block
+   SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some missing
+   bus signals.
+WARNING:NetListWriters:306 - Signal bus SiTCP_INT/MII_MIF/initWd[6 : 0] on block
+   SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some missing
+   bus signals.
+WARNING:NetListWriters:306 - Signal bus
+   SiTCP_INT/SiTCP_INT_REG/irAddr[3]_X3FData[7]_wide_mux_250_OUT[31 : 0] on
+   block SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some
+   missing bus signals.
+WARNING:NetListWriters:306 - Signal bus SiTCP_INT/SiTCP_INT_REG/muxData[31 : 0]
+   on block SiTCP_XC7K_32K_BBT_V110 is not reconstructed, because there are some
+   missing bus signals.
+  finished :Prep
+Writing EDIF netlist file SiTCP_XC7K_32K_BBT_V110.edif ...
+ngc2edif: Total memory usage is 111932 kilobytes
+

@@ -13,8 +13,6 @@ module tdc_core(
 	input wire CLK_FAST,
 	input wire CLK,
 	input wire CALIB_CLK,
-	input wire BUS_CLK,
-	input wire bus_rst,
 	input wire sig_in,
 	input wire trig_in,
 	input wire en,
@@ -25,13 +23,11 @@ module tdc_core(
 	input wire en_write_trigger_distance,
 	input wire en_calib_mode,
 	input wire en_no_trig_err,
-	input wire FIFO_READ,
 	input wire [15:0] timestamp,
 
-	output wire [31:0] FIFO_DATA,
-	output wire FIFO_EMPTY,
+	output wire [31:0] out_word,
+	output wire out_valid,
 	output wire [7:0] tdc_miss_cnt,
-	output reg [7:0] fifo_over_cnt,
 	output wire [31:0] event_cnt
 );
 
@@ -40,7 +36,7 @@ module tdc_core(
 localparam dlyline_bits = 96; // TODO: should this be a localparam?
 localparam clk_ratio = 3;
 // The following numbers of bits should add up to 33, as the bus is 32 bit and
-// there is a one bit overflow flag
+// there is a one bit counter overflow flag
 localparam corsebits = 17; // corse counter width, one bit of which is overflow flag.
 localparam encodebits = 7; // fine, pure tdl precision
 localparam fine_time_bits = 2; // We need that clk_ratio <= 2^fine_time_bits
@@ -52,12 +48,20 @@ localparam word_type_bits = 3; // TODO: this isn't yet parametric
 // corse counter.
 wire [corsebits-1:0] corse_count;
 wire counter_count, counter_reset;
+wire counter_overflow;
+assign counter_overflow = corse_count[corsebits-1];
 // TODO: should clip_reset be set?
 slimfast_multioption_counter #(.clip_count(0), .clip_reset(1), .outputwidth(corsebits), .size(corsebits-1) ) corse_counter (
 .countClock(CLK),
-.count(counter_count),
+.count(counter_count && ~counter_overflow),
 .reset(counter_reset),
 .countout(corse_count));
+
+// TLU timestamp sampling
+reg [15:0] timestamp_register;
+always @(posedge counter_count) begin
+	timestamp_register <= timestamp;
+end
 
 // Test signal generator
 wire sig_calib;
@@ -81,8 +85,8 @@ localparam CALIB_OSC = 3;
 reg tdl_input;
 (* mark_debug = "true" *)
 wire [input_mux_bits-1:0] input_mux_addr;
-// Initially I did not use this register but the mux address that the
-// controller computes might contain glitches
+// The mux address that the controller computes might contain glitches which
+// this buffer removes
 reg [input_mux_bits-1:0] input_mux_addr_buf;
 always @ (posedge CLK) 
 	input_mux_addr_buf <= input_mux_addr;
@@ -115,12 +119,12 @@ controller #(.state_bits(state_bits), .mux_bits(input_mux_bits)) i_controller(
 	.CLK(CLK),
 	.rst(rst),
 	.hit_status(hit_status),
-	.cdc_fifo_full(cdc_fifo_full),
+	.tdl_status(tdl_input),
 	.arm_flag(arm_flag),
 	.en(en),
 	.en_arm_mode(en_arm_mode),
 	.en_calib_mode(en_calib_mode),
-	.counter_overflow(corse_count[corsebits-1]),
+	.en_write_trigger_distance(en_write_trigger_distance),
 
 	.counter_count(counter_count),
 	.counter_reset(counter_reset),
@@ -154,21 +158,21 @@ delay_n #(.n(4-1), .width(state_bits)) state_pipe(
 	.signal(tdc_state),
 	.delayed_signal(tdc_state_delayed)
 );
+// Since the state machine controls the counter, it is also one cycle behind
+// the selected sample.
+delay_n #(.n(4-1), .width(corsebits-1)) corse_time_pipe(
+	.CLK(CLK),
+	.signal(corse_count[corsebits-2:0]), // We don't need the overflow bit
+	.delayed_signal(corse_time_delayed)
+);
 
 delay_n #(.n(4), .width(fine_time_bits)) fine_time_pipe(
 	.CLK(CLK),
 	.signal(fine_time),
 	.delayed_signal(fine_time_delayed)
 );
-delay_n #(.n(4), .width(corsebits-1)) corse_time_pipe(
-	.CLK(CLK),
-	.signal(corse_count[corsebits-2:0]), // We don't need the overflow bit
-	.delayed_signal(corse_time_delayed)
-);
 
 // This module assembles the data output based on the tdc state transitions
-wire cdc_fifo_write;
-wire [32-1:0] word_to_cdc_fifo;
 word_broker #(.state_bits(state_bits),
 	.counter_bits(corsebits-1),
 	.fine_time_bits(fine_time_bits),
@@ -176,61 +180,15 @@ word_broker #(.state_bits(state_bits),
 )  i_broker (
 	.CLK(CLK),
 	.corse_time(corse_time_delayed), // We don't need the overflow bit
+	.counter_overflow(counter_overflow),
 	.fine_time(fine_time_delayed),
 	.tdl_time(tdl_time),
 	.tdc_state(tdc_state_delayed),
 	.en_write_timestamp(en_write_timestamp),
-	.en_write_trigger_distance(en_write_trigger_distance),
 	.en_no_trig_err(en_no_trig_err),
-	.timestamp(timestamp),
+	.timestamp(timestamp_register),
 
-	.out_valid(cdc_fifo_write),
-	.out_word(word_to_cdc_fifo)
-);
-
-always @(posedge CLK) begin
-	if (rst)
-		fifo_over_cnt <= 0;
-	else if (cdc_fifo_full && cdc_fifo_write && (fifo_over_cnt < 255))
-		fifo_over_cnt <= fifo_over_cnt + 1;
-	else
-		fifo_over_cnt <= fifo_over_cnt;
-end
-
-// Now we need to transfer clock domains to Bus
-// TODO: Should these FIFOs be inside the _core module? After all, they
-// operate on the BUS clock
-wire cdc_fifo_empty;
-wire cdc_fifo_full;
-wire generic_fifo_full;
-wire [32-1:0] cdc_data_out;
-cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) clock_sync_fifo (
-	.wdata(word_to_cdc_fifo),
-	.wclk(CLK),
-	.winc(cdc_fifo_write),
-	.wrst(rst),
-	.rclk(BUS_CLK),
-	.rrst(1'b0),
-	.rinc(!generic_fifo_full),
-
-	.wfull(cdc_fifo_full),
-	.rempty(cdc_fifo_empty),
-	.rdata(cdc_data_out)
-);
-
-gerneric_fifo #(
-	.DATA_SIZE(32),
-	.DEPTH(512)
-) fifo_i (
-	.clk(BUS_CLK),
-	.reset(bus_rst),
-	.write(!cdc_fifo_empty),
-	.read(FIFO_READ),
-	.data_in(cdc_data_out),
-
-	.full(generic_fifo_full),
-	.empty(FIFO_EMPTY),
-	.data_out(FIFO_DATA[31:0]),
-	.size()
+	.out_valid(out_valid),
+	.out_word(out_word)
 );
 endmodule

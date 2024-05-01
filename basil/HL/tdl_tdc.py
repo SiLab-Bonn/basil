@@ -6,11 +6,22 @@
 #
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
+import numpy as np
 
 
 class tdl_tdc(RegisterHardwareLayer):
     '''TDC controller interface
     '''
+
+    GHZ_S_FREQ = 0.48
+    CLK_DIV = 3
+    word_type_codes = {0 : 'TRIGGERED', 
+                     1 : 'RISING',
+                     2 : 'FALLING',
+                     3 : 'TIMESTAMP',
+                     4 : 'CALIB',
+                     5 : 'MISS',
+                     6 : 'RST'}
 
     _registers = {'RESET': {'descr': {'addr': 0, 'size': 7, 'offset': 1, 'properties': ['writeonly']}},
                   'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
@@ -27,11 +38,70 @@ class tdl_tdc(RegisterHardwareLayer):
                   'TDL_MISS_COUNTER' : {'descr' : {'addr': 7, 'size': 8, 'porperties' :['ro']}},
                   'EN_CALIBRATION_MOD': {'descr': {'addr': 8, 'size': 1, 'offset': 0}}}
 
-    _require_version = "==0"
+    _require_version = "==2"
+
+    calib_vector = np.ones(92)
+    calib_sum = np.sum(calib_vector)
 
     def __init__(self, intf, conf):
         super(tdl_tdc, self).__init__(intf, conf)
 
+    def get_tdc_value(self, word):
+        # The last 7 bit are tdl data, the first 7 bits are word type and source, so 18 bits are counter information
+        return word >> 7 & 0x3FFFF
+
+    def get_word_type(self, word):
+        return (word >> (32 - 7) & 0b111) 
+
+    def is_calib_word(self, word):
+        return self.get_word_type(word) == 4
+
+    def is_time_word(self, word):
+        return self.get_word_type(word) in [0, 1, 2,]
+
+    def get_raw_tdl_values(self, word):
+        return word & 0b1111111
+
+    def tdl_to_time(self, tdl_value) :
+        sample_proportion = np.sum(self.calib_vector[0:tdl_value-1])/self.calib_sum
+        return sample_proportion * 1/self.GHZ_S_FREQ
+
+    def set_calib_values(self,  calib_values) :
+        data_sort, value_counts = np.unique(calib_values % 128, return_counts = True)
+        self.calib_vector = value_counts
+        self.calib_sum = np.sum(value_counts)
+
+    def tdc_word_to_time(self, word) :
+        if isinstance(word, dict) :
+            word = word['raw_word']
+        if (not self.is_time_word(word)) :
+            word_type = self.word_type_codes[self.get_word_type(word)]
+            raise ValueError('can not convert tdc word of type %s to time' % word_type )
+        tdc_value = self.get_tdc_value(word)
+        tdc_time = (tdc_value & 0b11) * 1/self.GHZ_S_FREQ + (tdc_value >> 2) * self.CLK_DIV/self.GHZ_S_FREQ
+        return tdc_time + self.tdl_to_time(self.get_raw_tdl_values(word))
+
+    def disassemble_tdc_word(self, word):
+        # Shift away the 32 - 7 data bits and grab 3 bit word type
+        word_type = self.word_type_codes[self.get_word_type(word)]
+        if word_type in ['CALIB', 'TRIGGERED', 'RISING', 'FALLING'] :
+            return {'source_id' : (word >> (32 - 4)),
+                    'word_type' : word_type,
+                    'tdl_value' : word & 0b1111111,
+                    'counter_value' : self.get_tdc_value(word) >> 2,
+                    'fine_clk_value' : self.get_tdc_value(word) & 0b11,
+                    'raw_word' : word}
+        elif word_type == 'TIMESTAMP' :
+            return {'source_id' : (word >> (32 - 4)),
+                    'word_type' : word_type,
+                    'timestamp' : (word >> 9) & 0xFFFF,
+                    'raw_word'  : word}
+        else :
+            return {'source_id' : (word >> (32 - 4)),
+                    'word_type' : word_type,
+                    'raw_word'  : word}
+
+    
     def reset(self):
         self.RESET = 0
 

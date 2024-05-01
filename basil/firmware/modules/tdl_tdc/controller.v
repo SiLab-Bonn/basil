@@ -1,13 +1,17 @@
+// Main state machine of the tdc. Contains the logic for switching the
+// multiplexer, controling the corse counter, arming, calibration 
+// states and the trigger distance mode. Furthermore counts successful events
+// and tdl misses.
 module controller (
 	input wire CLK,
 	input wire rst,
 	input wire [1:0] hit_status,
-	input wire cdc_fifo_full,
+	input wire tdl_status,
 	input wire arm_flag,
 	input wire en,
 	input wire en_arm_mode,
 	input wire en_calib_mode,
-	input wire counter_overflow,
+	input wire en_write_trigger_distance,
 
 	output reg counter_count,
 	output reg counter_reset,
@@ -42,16 +46,14 @@ endfunction
 // TDC states
 // These need to be in sync with the word broker.
 localparam [state_bits-1:0] IDLE = 0;
-localparam [state_bits-1:0] ARMED = 1;
+localparam [state_bits-1:0] IDLE_TRIG = 1;
 localparam [state_bits-1:0] TRIGGERED = 2;
 localparam [state_bits-1:0] RIS_EDGE = 3;
 localparam [state_bits-1:0] FAL_EDGE = 4;
-localparam [state_bits-1:0] COUNTER_OVERFLOW = 5;
-localparam [state_bits-1:0] FIFO_FULL = 6;
-localparam [state_bits-1:0] MISSED = 7;
-localparam [state_bits-1:0] CALIB = 8;
-localparam [state_bits-1:0] CALIB_HIT = 9;
-localparam [state_bits-1:0] RESET = 10;
+localparam [state_bits-1:0] MISSED = 6;
+localparam [state_bits-1:0] CALIB = 7;
+localparam [state_bits-1:0] CALIB_HIT = 8;
+localparam [state_bits-1:0] RESET = 9;
 
 
 reg [state_bits-1:0] state = 0;
@@ -61,9 +63,13 @@ always @(posedge CLK) begin
 end
 
 assign tdc_state = state;
+wire hit;
+assign hit = (hit_status == TDL_HIT) && tdl_status;
 
 
-always @(state) begin
+
+
+always @(state, en_write_trigger_distance) begin
 	// State dependent control outputs
 	case(state)
 		RESET: begin
@@ -72,14 +78,14 @@ always @(state) begin
 			counter_count <= 0;
 		end
 		IDLE: begin
-			mux_addr <= TRIG_IN;
+			mux_addr <= SIG_IN;
 			counter_reset <= 1;
 			counter_count <= 0;
 		end
-		ARMED: begin
+		IDLE_TRIG: begin
 			mux_addr <= TRIG_IN;
+			counter_reset <= 1;
 			counter_count <= 0;
-			counter_reset <= 0;
 		end
 		TRIGGERED: begin
 			mux_addr <= SIG_IN;
@@ -92,7 +98,10 @@ always @(state) begin
 			counter_count <= 1;
 		end
 		FAL_EDGE: begin
-			mux_addr <= TRIG_IN;
+			if (en_write_trigger_distance)
+				mux_addr <= TRIG_IN;
+			else 
+				mux_addr <= SIG_IN;
 			counter_reset <= 1;
 			counter_count <= 0;
 		end
@@ -105,11 +114,6 @@ always @(state) begin
 			mux_addr <= CALIB_OSC;
 			counter_reset <= 1;
 			counter_count <= 0;
-		end
-		COUNTER_OVERFLOW: begin
-			counter_reset <= 1;
-			counter_count <= 0;
-			mux_addr <= TRIG_IN;
 		end
 		MISSED: begin
 			counter_reset <= 1;
@@ -135,74 +139,87 @@ always @(posedge CLK) begin
 			if (previous_state == FAL_EDGE)
 				event_cnt <= event_cnt + 1; // This is really a multicycle path: Only every 4 cycles can this occur.
 		end
+		IDLE_TRIG: begin
+			if (previous_state == FAL_EDGE)
+				event_cnt <= event_cnt + 1; // This is really a multicycle path: Only every 4 cycles can this occur.
+		end
 		MISSED:
 			miss_cnt <= miss_cnt + 1; 
 	endcase
 end
 
+wire armed;
+reg arm_flag_latch;
+assign armed = en_arm_mode?arm_flag_latch:1;
+
+// State transitions
 always @(posedge CLK) begin
-	// State transitions
+	arm_flag_latch <= arm_flag | arm_flag_latch;
+	// Interrupt-style state transitions
 	if (rst) begin
 		state <= RESET;
+		arm_flag_latch <= 0;
 	end else if (~en) begin
 		state <= IDLE;
-	end else if (cdc_fifo_full) begin
-		state <= FIFO_FULL;
-	end else if (counter_overflow) begin
-		state <= COUNTER_OVERFLOW;
 	end else if (hit_status == TDL_MISSED) begin
 		state <= MISSED;
 	end else begin
+	// Regular state-dependent transition
 		case(state)
 			IDLE: begin
 				if (en_calib_mode) begin
 					state <= CALIB;
-				end else if (~en_arm_mode) begin 
-					if (hit_status == TDL_HIT)
-						state <= TRIGGERED;
-				end else if (arm_flag) begin
-					state <= ARMED;
+				end else if (armed) begin 
+					if (hit)
+						state <= RIS_EDGE;
+				end else if (en_write_trigger_distance) begin
+					state <= IDLE_TRIG;
 				end else begin
 					state <= state;
 				end
 			end
-			ARMED: begin
-				if (~en_arm_mode) begin
+			IDLE_TRIG: begin
+				if (en_calib_mode) begin
+					state <= CALIB;
+				end else if (armed) begin 
+					if (hit)
+						state <= TRIGGERED;
+				end else if (~en_write_trigger_distance) begin
 					state <= IDLE;
-				end else if (hit_status == TDL_HIT) begin
-					state <= TRIGGERED;
 				end else begin
 					state <= state;
 				end
 			end
 			TRIGGERED: begin
-				if (hit_status == TDL_HIT)
+				if (hit)
 					state <= RIS_EDGE;
 				else
 					state <= state;
 			end
 			RIS_EDGE: begin
-				if (hit_status == TDL_HIT)
+				if (hit)
 					state <= FAL_EDGE;
 				else
 					state <= state;
 			end
 			FAL_EDGE: begin
+				arm_flag_latch <= 0;
+				if (en_write_trigger_distance)
+					state <= IDLE_TRIG;
+				else
 					state <= IDLE;
 			end
 			CALIB: begin
 				if (~en_calib_mode)
-					state <= IDLE;
-				else if (hit_status == TDL_HIT)
+					state <= IDLE_TRIG;
+				else if (hit)
 					state <= CALIB_HIT;
 				else
 					state <= CALIB;
 			end
 			CALIB_HIT: state <= CALIB;
-			FIFO_FULL: state <= IDLE;
-			COUNTER_OVERFLOW: state <= IDLE;
-			MISSED: state <= IDLE;
-			RESET: state <= IDLE;
+			MISSED: state <= IDLE_TRIG;
+			RESET: state <= IDLE_TRIG;
 		endcase
 	end
 end

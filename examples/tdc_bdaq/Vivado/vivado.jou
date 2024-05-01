@@ -1,0 +1,1244 @@
+#-----------------------------------------------------------
+# Vivado v2022.2 (64-bit)
+# SW Build 3671981 on Fri Oct 14 04:59:54 MDT 2022
+# IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+# Start of session at: Tue Apr  2 12:43:27 2024
+# Process ID: 3036421
+# Current directory: /users/rleiser/work/basil_branch/examples/tdc_bdaq
+# Command line: vivado .
+# Log file: /users/rleiser/work/basil_branch/examples/tdc_bdaq/vivado.log
+# Journal file: /users/rleiser/work/basil_branch/examples/tdc_bdaq/vivado.jou
+# Running On: asiclab006.physik.uni-bonn.de, OS: Linux, CPU Frequency: 1000.269 MHz, CPU Physical cores: 6, Host memory: 67208 MB
+#-----------------------------------------------------------
+start_gui
+open_project /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.xpr
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+# Disabling source management mode.  This is to allow the top design properties to be set without GUI intervention.
+set_property source_mgmt_mode None [current_project]
+set_property top tdc_bdaq [current_fileset]
+# Re-enabling previously disabled source management mode.
+set_property source_mgmt_mode DisplayOnly [current_project]
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+add_files -norecurse /users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP/WRAP_SiTCP_GMII_XC7K_32K.V
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP/WRAP_SiTCP_GMII_XC7K_32K.V] -no_script -reset -force -quiet
+remove_files  /users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP/WRAP_SiTCP_GMII_XC7K_32K.V
+add_files {/users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP/SiTCP_XC7K_32K_BBT_V110.edf /users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP/WRAP_SiTCP_GMII_XC7K_32K.V /users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP/SiTCP_XC7K_32K_BBT_V110.ngc /users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP/TIMER.v /users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP/SiTCP_XC7K_32K_BBT_V110.V}
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v] -no_script -reset -force -quiet
+remove_files  {/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v}
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v] -no_script -reset -force -quiet
+remove_files  /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v] -no_script -reset -force -quiet
+remove_files  /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delay_n.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/graycode_2stage_cdc.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sample_deser.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/slimfast_multioption_counter.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/test_sig_gen.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/signal_clipper.vhdl] -no_script -reset -force -quiet
+remove_files  {/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delay_n.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/graycode_2stage_cdc.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sample_deser.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/slimfast_multioption_counter.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/test_sig_gen.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/signal_clipper.vhdl}
+add_files -norecurse /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+# Disabling source management mode.  This is to allow the top design properties to be set without GUI intervention.
+set_property source_mgmt_mode None [current_project]
+set_property top tdc_bdaq [get_filesets sim_1]
+set_property top_lib xil_defaultlib [get_filesets sim_1]
+# Re-enabling previously disabled source management mode.
+set_property source_mgmt_mode DisplayOnly [current_project]
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+add_files -norecurse /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/signal_clipper.vhdl
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+launch_runs impl_1 -jobs 8
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -jobs 8
+wait_on_run impl_1
+open_run impl_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+launch_runs impl_1 -jobs 8
+wait_on_run impl_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs impl_1 -jobs 8
+wait_on_run impl_1
+get_cells -hier */FIRST_CELL
+get_cells -hier */FirstCell
+get_cells -hier */sampler/*
+get_cells tdc_bdaq
+get_cells *
+get_cells -hier */FirstCell/CARRY4_inst
+get_cells -hier *
+get_cells -hier */FirstCell/CARRY4_inst
+get_cells i_tdc/i_tdc_core/i_tdl/tdl_sampler/FirstCell/CARRY4_inst
+get_cells -hier */FirstCell/CARRY4_inst
+get_cells -hier *tdl_sampler/FirstCell/CARRY4_inst
+get_cells -hier */tdl_sampler/FirstCell/CARRY4_inst
+get_cells -hier */*/*/*/FirstCell/CARRY4_inst
+get_cells  */*/*/*/FirstCell/CARRY4_inst
+get_cells  */*/*/FirstCell/CARRY4_inst
+get_cells  -hier */FirstCell
+get_cells  -hier */FirstCell/
+get_cells  -hier */FirstCell/*
+get_cells  -hier -regexp .*FirstCell/CARRY4_inst
+reset_run synth_1
+launch_runs impl_1 -jobs 8
+wait_on_run impl_1
+refresh_design
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -jobs 8
+wait_on_run impl_1
+refresh_design
+close_design
+open_run synth_1 -name synth_1
+create_debug_core u_ila_0 ila
+set_property C_DATA_DEPTH 1024 [get_debug_cores u_ila_0]
+set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
+set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
+set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+set_property C_EN_STRG_QUAL false [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
+connect_debug_port u_ila_0/clk [get_nets [list CLK160PLL_BUFG ]]
+set_property port_width 4 [get_debug_ports u_ila_0/probe0]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
+connect_debug_port u_ila_0/probe0 [get_nets [list {i_tdc/i_tdc_core/tdc_state[0]} {i_tdc/i_tdc_core/tdc_state[1]} {i_tdc/i_tdc_core/tdc_state[2]} {i_tdc/i_tdc_core/tdc_state[3]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 96 [get_debug_ports u_ila_0/probe1]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list {i_tdc/i_tdc_core/selected_sample[0]} {i_tdc/i_tdc_core/selected_sample[1]} {i_tdc/i_tdc_core/selected_sample[2]} {i_tdc/i_tdc_core/selected_sample[3]} {i_tdc/i_tdc_core/selected_sample[4]} {i_tdc/i_tdc_core/selected_sample[5]} {i_tdc/i_tdc_core/selected_sample[6]} {i_tdc/i_tdc_core/selected_sample[7]} {i_tdc/i_tdc_core/selected_sample[8]} {i_tdc/i_tdc_core/selected_sample[9]} {i_tdc/i_tdc_core/selected_sample[10]} {i_tdc/i_tdc_core/selected_sample[11]} {i_tdc/i_tdc_core/selected_sample[12]} {i_tdc/i_tdc_core/selected_sample[13]} {i_tdc/i_tdc_core/selected_sample[14]} {i_tdc/i_tdc_core/selected_sample[15]} {i_tdc/i_tdc_core/selected_sample[16]} {i_tdc/i_tdc_core/selected_sample[17]} {i_tdc/i_tdc_core/selected_sample[18]} {i_tdc/i_tdc_core/selected_sample[19]} {i_tdc/i_tdc_core/selected_sample[20]} {i_tdc/i_tdc_core/selected_sample[21]} {i_tdc/i_tdc_core/selected_sample[22]} {i_tdc/i_tdc_core/selected_sample[23]} {i_tdc/i_tdc_core/selected_sample[24]} {i_tdc/i_tdc_core/selected_sample[25]} {i_tdc/i_tdc_core/selected_sample[26]} {i_tdc/i_tdc_core/selected_sample[27]} {i_tdc/i_tdc_core/selected_sample[28]} {i_tdc/i_tdc_core/selected_sample[29]} {i_tdc/i_tdc_core/selected_sample[30]} {i_tdc/i_tdc_core/selected_sample[31]} {i_tdc/i_tdc_core/selected_sample[32]} {i_tdc/i_tdc_core/selected_sample[33]} {i_tdc/i_tdc_core/selected_sample[34]} {i_tdc/i_tdc_core/selected_sample[35]} {i_tdc/i_tdc_core/selected_sample[36]} {i_tdc/i_tdc_core/selected_sample[37]} {i_tdc/i_tdc_core/selected_sample[38]} {i_tdc/i_tdc_core/selected_sample[39]} {i_tdc/i_tdc_core/selected_sample[40]} {i_tdc/i_tdc_core/selected_sample[41]} {i_tdc/i_tdc_core/selected_sample[42]} {i_tdc/i_tdc_core/selected_sample[43]} {i_tdc/i_tdc_core/selected_sample[44]} {i_tdc/i_tdc_core/selected_sample[45]} {i_tdc/i_tdc_core/selected_sample[46]} {i_tdc/i_tdc_core/selected_sample[47]} {i_tdc/i_tdc_core/selected_sample[48]} {i_tdc/i_tdc_core/selected_sample[49]} {i_tdc/i_tdc_core/selected_sample[50]} {i_tdc/i_tdc_core/selected_sample[51]} {i_tdc/i_tdc_core/selected_sample[52]} {i_tdc/i_tdc_core/selected_sample[53]} {i_tdc/i_tdc_core/selected_sample[54]} {i_tdc/i_tdc_core/selected_sample[55]} {i_tdc/i_tdc_core/selected_sample[56]} {i_tdc/i_tdc_core/selected_sample[57]} {i_tdc/i_tdc_core/selected_sample[58]} {i_tdc/i_tdc_core/selected_sample[59]} {i_tdc/i_tdc_core/selected_sample[60]} {i_tdc/i_tdc_core/selected_sample[61]} {i_tdc/i_tdc_core/selected_sample[62]} {i_tdc/i_tdc_core/selected_sample[63]} {i_tdc/i_tdc_core/selected_sample[64]} {i_tdc/i_tdc_core/selected_sample[65]} {i_tdc/i_tdc_core/selected_sample[66]} {i_tdc/i_tdc_core/selected_sample[67]} {i_tdc/i_tdc_core/selected_sample[68]} {i_tdc/i_tdc_core/selected_sample[69]} {i_tdc/i_tdc_core/selected_sample[70]} {i_tdc/i_tdc_core/selected_sample[71]} {i_tdc/i_tdc_core/selected_sample[72]} {i_tdc/i_tdc_core/selected_sample[73]} {i_tdc/i_tdc_core/selected_sample[74]} {i_tdc/i_tdc_core/selected_sample[75]} {i_tdc/i_tdc_core/selected_sample[76]} {i_tdc/i_tdc_core/selected_sample[77]} {i_tdc/i_tdc_core/selected_sample[78]} {i_tdc/i_tdc_core/selected_sample[79]} {i_tdc/i_tdc_core/selected_sample[80]} {i_tdc/i_tdc_core/selected_sample[81]} {i_tdc/i_tdc_core/selected_sample[82]} {i_tdc/i_tdc_core/selected_sample[83]} {i_tdc/i_tdc_core/selected_sample[84]} {i_tdc/i_tdc_core/selected_sample[85]} {i_tdc/i_tdc_core/selected_sample[86]} {i_tdc/i_tdc_core/selected_sample[87]} {i_tdc/i_tdc_core/selected_sample[88]} {i_tdc/i_tdc_core/selected_sample[89]} {i_tdc/i_tdc_core/selected_sample[90]} {i_tdc/i_tdc_core/selected_sample[91]} {i_tdc/i_tdc_core/selected_sample[92]} {i_tdc/i_tdc_core/selected_sample[93]} {i_tdc/i_tdc_core/selected_sample[94]} {i_tdc/i_tdc_core/selected_sample[95]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe2]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe2]
+connect_debug_port u_ila_0/probe2 [get_nets [list {i_tdc/i_tdc_core/input_mux_addr[0]} {i_tdc/i_tdc_core/input_mux_addr[1]} ]]
+set_property target_constrs_file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.xdc [current_fileset -constrset]
+save_constraints -force
+reset_run impl_1
+launch_runs impl_1 -jobs 8
+wait_on_run impl_1
+close_design
+open_run impl_1
+open_hw_manager
+connect_hw_server -allow_non_jtag
+open_hw_target
+current_hw_device [get_hw_devices xc7k160t_0]
+refresh_hw_device -update_hw_probes false [lindex [get_hw_devices xc7k160t_0] 0]
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+display_hw_ila_data [ get_hw_ila_data hw_ila_data_1 -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}] -trigger_now
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+open_run synth_1 -name synth_1
+delete_debug_core [get_debug_cores {u_ila_0 }]
+create_debug_core u_ila_0 ila
+set_property C_DATA_DEPTH 1024 [get_debug_cores u_ila_0]
+set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
+set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
+set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+set_property C_EN_STRG_QUAL false [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
+startgroup 
+set_property C_EN_STRG_QUAL true [get_debug_cores u_ila_0 ]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0 ]
+set_property ALL_PROBE_SAME_MU_CNT 2 [get_debug_cores u_ila_0 ]
+endgroup
+connect_debug_port u_ila_0/clk [get_nets [list CLK160PLL_BUFG ]]
+set_property port_width 4 [get_debug_ports u_ila_0/probe0]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
+connect_debug_port u_ila_0/probe0 [get_nets [list {i_tdc/i_tdc_core/tdc_state[0]} {i_tdc/i_tdc_core/tdc_state[1]} {i_tdc/i_tdc_core/tdc_state[2]} {i_tdc/i_tdc_core/tdc_state[3]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe1]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list {i_tdc/i_tdc_core/input_mux_addr[0]} {i_tdc/i_tdc_core/input_mux_addr[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 96 [get_debug_ports u_ila_0/probe2]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe2]
+connect_debug_port u_ila_0/probe2 [get_nets [list {i_tdc/i_tdc_core/selected_sample[0]} {i_tdc/i_tdc_core/selected_sample[1]} {i_tdc/i_tdc_core/selected_sample[2]} {i_tdc/i_tdc_core/selected_sample[3]} {i_tdc/i_tdc_core/selected_sample[4]} {i_tdc/i_tdc_core/selected_sample[5]} {i_tdc/i_tdc_core/selected_sample[6]} {i_tdc/i_tdc_core/selected_sample[7]} {i_tdc/i_tdc_core/selected_sample[8]} {i_tdc/i_tdc_core/selected_sample[9]} {i_tdc/i_tdc_core/selected_sample[10]} {i_tdc/i_tdc_core/selected_sample[11]} {i_tdc/i_tdc_core/selected_sample[12]} {i_tdc/i_tdc_core/selected_sample[13]} {i_tdc/i_tdc_core/selected_sample[14]} {i_tdc/i_tdc_core/selected_sample[15]} {i_tdc/i_tdc_core/selected_sample[16]} {i_tdc/i_tdc_core/selected_sample[17]} {i_tdc/i_tdc_core/selected_sample[18]} {i_tdc/i_tdc_core/selected_sample[19]} {i_tdc/i_tdc_core/selected_sample[20]} {i_tdc/i_tdc_core/selected_sample[21]} {i_tdc/i_tdc_core/selected_sample[22]} {i_tdc/i_tdc_core/selected_sample[23]} {i_tdc/i_tdc_core/selected_sample[24]} {i_tdc/i_tdc_core/selected_sample[25]} {i_tdc/i_tdc_core/selected_sample[26]} {i_tdc/i_tdc_core/selected_sample[27]} {i_tdc/i_tdc_core/selected_sample[28]} {i_tdc/i_tdc_core/selected_sample[29]} {i_tdc/i_tdc_core/selected_sample[30]} {i_tdc/i_tdc_core/selected_sample[31]} {i_tdc/i_tdc_core/selected_sample[32]} {i_tdc/i_tdc_core/selected_sample[33]} {i_tdc/i_tdc_core/selected_sample[34]} {i_tdc/i_tdc_core/selected_sample[35]} {i_tdc/i_tdc_core/selected_sample[36]} {i_tdc/i_tdc_core/selected_sample[37]} {i_tdc/i_tdc_core/selected_sample[38]} {i_tdc/i_tdc_core/selected_sample[39]} {i_tdc/i_tdc_core/selected_sample[40]} {i_tdc/i_tdc_core/selected_sample[41]} {i_tdc/i_tdc_core/selected_sample[42]} {i_tdc/i_tdc_core/selected_sample[43]} {i_tdc/i_tdc_core/selected_sample[44]} {i_tdc/i_tdc_core/selected_sample[45]} {i_tdc/i_tdc_core/selected_sample[46]} {i_tdc/i_tdc_core/selected_sample[47]} {i_tdc/i_tdc_core/selected_sample[48]} {i_tdc/i_tdc_core/selected_sample[49]} {i_tdc/i_tdc_core/selected_sample[50]} {i_tdc/i_tdc_core/selected_sample[51]} {i_tdc/i_tdc_core/selected_sample[52]} {i_tdc/i_tdc_core/selected_sample[53]} {i_tdc/i_tdc_core/selected_sample[54]} {i_tdc/i_tdc_core/selected_sample[55]} {i_tdc/i_tdc_core/selected_sample[56]} {i_tdc/i_tdc_core/selected_sample[57]} {i_tdc/i_tdc_core/selected_sample[58]} {i_tdc/i_tdc_core/selected_sample[59]} {i_tdc/i_tdc_core/selected_sample[60]} {i_tdc/i_tdc_core/selected_sample[61]} {i_tdc/i_tdc_core/selected_sample[62]} {i_tdc/i_tdc_core/selected_sample[63]} {i_tdc/i_tdc_core/selected_sample[64]} {i_tdc/i_tdc_core/selected_sample[65]} {i_tdc/i_tdc_core/selected_sample[66]} {i_tdc/i_tdc_core/selected_sample[67]} {i_tdc/i_tdc_core/selected_sample[68]} {i_tdc/i_tdc_core/selected_sample[69]} {i_tdc/i_tdc_core/selected_sample[70]} {i_tdc/i_tdc_core/selected_sample[71]} {i_tdc/i_tdc_core/selected_sample[72]} {i_tdc/i_tdc_core/selected_sample[73]} {i_tdc/i_tdc_core/selected_sample[74]} {i_tdc/i_tdc_core/selected_sample[75]} {i_tdc/i_tdc_core/selected_sample[76]} {i_tdc/i_tdc_core/selected_sample[77]} {i_tdc/i_tdc_core/selected_sample[78]} {i_tdc/i_tdc_core/selected_sample[79]} {i_tdc/i_tdc_core/selected_sample[80]} {i_tdc/i_tdc_core/selected_sample[81]} {i_tdc/i_tdc_core/selected_sample[82]} {i_tdc/i_tdc_core/selected_sample[83]} {i_tdc/i_tdc_core/selected_sample[84]} {i_tdc/i_tdc_core/selected_sample[85]} {i_tdc/i_tdc_core/selected_sample[86]} {i_tdc/i_tdc_core/selected_sample[87]} {i_tdc/i_tdc_core/selected_sample[88]} {i_tdc/i_tdc_core/selected_sample[89]} {i_tdc/i_tdc_core/selected_sample[90]} {i_tdc/i_tdc_core/selected_sample[91]} {i_tdc/i_tdc_core/selected_sample[92]} {i_tdc/i_tdc_core/selected_sample[93]} {i_tdc/i_tdc_core/selected_sample[94]} {i_tdc/i_tdc_core/selected_sample[95]} ]]
+set_property C_ADV_TRIGGER true [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
+delete_debug_core [get_debug_cores {u_ila_0 }]
+create_debug_core u_ila_0 ila
+set_property C_DATA_DEPTH 1024 [get_debug_cores u_ila_0]
+set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
+set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
+set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+set_property C_EN_STRG_QUAL false [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
+startgroup 
+set_property C_EN_STRG_QUAL true [get_debug_cores u_ila_0 ]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0 ]
+set_property ALL_PROBE_SAME_MU_CNT 2 [get_debug_cores u_ila_0 ]
+endgroup
+connect_debug_port u_ila_0/clk [get_nets [list CLK160PLL_BUFG ]]
+set_property port_width 4 [get_debug_ports u_ila_0/probe0]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
+connect_debug_port u_ila_0/probe0 [get_nets [list {i_tdc/i_tdc_core/tdc_state[0]} {i_tdc/i_tdc_core/tdc_state[1]} {i_tdc/i_tdc_core/tdc_state[2]} {i_tdc/i_tdc_core/tdc_state[3]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe1]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list {i_tdc/i_tdc_core/input_mux_addr[0]} {i_tdc/i_tdc_core/input_mux_addr[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 96 [get_debug_ports u_ila_0/probe2]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe2]
+connect_debug_port u_ila_0/probe2 [get_nets [list {i_tdc/i_tdc_core/selected_sample[0]} {i_tdc/i_tdc_core/selected_sample[1]} {i_tdc/i_tdc_core/selected_sample[2]} {i_tdc/i_tdc_core/selected_sample[3]} {i_tdc/i_tdc_core/selected_sample[4]} {i_tdc/i_tdc_core/selected_sample[5]} {i_tdc/i_tdc_core/selected_sample[6]} {i_tdc/i_tdc_core/selected_sample[7]} {i_tdc/i_tdc_core/selected_sample[8]} {i_tdc/i_tdc_core/selected_sample[9]} {i_tdc/i_tdc_core/selected_sample[10]} {i_tdc/i_tdc_core/selected_sample[11]} {i_tdc/i_tdc_core/selected_sample[12]} {i_tdc/i_tdc_core/selected_sample[13]} {i_tdc/i_tdc_core/selected_sample[14]} {i_tdc/i_tdc_core/selected_sample[15]} {i_tdc/i_tdc_core/selected_sample[16]} {i_tdc/i_tdc_core/selected_sample[17]} {i_tdc/i_tdc_core/selected_sample[18]} {i_tdc/i_tdc_core/selected_sample[19]} {i_tdc/i_tdc_core/selected_sample[20]} {i_tdc/i_tdc_core/selected_sample[21]} {i_tdc/i_tdc_core/selected_sample[22]} {i_tdc/i_tdc_core/selected_sample[23]} {i_tdc/i_tdc_core/selected_sample[24]} {i_tdc/i_tdc_core/selected_sample[25]} {i_tdc/i_tdc_core/selected_sample[26]} {i_tdc/i_tdc_core/selected_sample[27]} {i_tdc/i_tdc_core/selected_sample[28]} {i_tdc/i_tdc_core/selected_sample[29]} {i_tdc/i_tdc_core/selected_sample[30]} {i_tdc/i_tdc_core/selected_sample[31]} {i_tdc/i_tdc_core/selected_sample[32]} {i_tdc/i_tdc_core/selected_sample[33]} {i_tdc/i_tdc_core/selected_sample[34]} {i_tdc/i_tdc_core/selected_sample[35]} {i_tdc/i_tdc_core/selected_sample[36]} {i_tdc/i_tdc_core/selected_sample[37]} {i_tdc/i_tdc_core/selected_sample[38]} {i_tdc/i_tdc_core/selected_sample[39]} {i_tdc/i_tdc_core/selected_sample[40]} {i_tdc/i_tdc_core/selected_sample[41]} {i_tdc/i_tdc_core/selected_sample[42]} {i_tdc/i_tdc_core/selected_sample[43]} {i_tdc/i_tdc_core/selected_sample[44]} {i_tdc/i_tdc_core/selected_sample[45]} {i_tdc/i_tdc_core/selected_sample[46]} {i_tdc/i_tdc_core/selected_sample[47]} {i_tdc/i_tdc_core/selected_sample[48]} {i_tdc/i_tdc_core/selected_sample[49]} {i_tdc/i_tdc_core/selected_sample[50]} {i_tdc/i_tdc_core/selected_sample[51]} {i_tdc/i_tdc_core/selected_sample[52]} {i_tdc/i_tdc_core/selected_sample[53]} {i_tdc/i_tdc_core/selected_sample[54]} {i_tdc/i_tdc_core/selected_sample[55]} {i_tdc/i_tdc_core/selected_sample[56]} {i_tdc/i_tdc_core/selected_sample[57]} {i_tdc/i_tdc_core/selected_sample[58]} {i_tdc/i_tdc_core/selected_sample[59]} {i_tdc/i_tdc_core/selected_sample[60]} {i_tdc/i_tdc_core/selected_sample[61]} {i_tdc/i_tdc_core/selected_sample[62]} {i_tdc/i_tdc_core/selected_sample[63]} {i_tdc/i_tdc_core/selected_sample[64]} {i_tdc/i_tdc_core/selected_sample[65]} {i_tdc/i_tdc_core/selected_sample[66]} {i_tdc/i_tdc_core/selected_sample[67]} {i_tdc/i_tdc_core/selected_sample[68]} {i_tdc/i_tdc_core/selected_sample[69]} {i_tdc/i_tdc_core/selected_sample[70]} {i_tdc/i_tdc_core/selected_sample[71]} {i_tdc/i_tdc_core/selected_sample[72]} {i_tdc/i_tdc_core/selected_sample[73]} {i_tdc/i_tdc_core/selected_sample[74]} {i_tdc/i_tdc_core/selected_sample[75]} {i_tdc/i_tdc_core/selected_sample[76]} {i_tdc/i_tdc_core/selected_sample[77]} {i_tdc/i_tdc_core/selected_sample[78]} {i_tdc/i_tdc_core/selected_sample[79]} {i_tdc/i_tdc_core/selected_sample[80]} {i_tdc/i_tdc_core/selected_sample[81]} {i_tdc/i_tdc_core/selected_sample[82]} {i_tdc/i_tdc_core/selected_sample[83]} {i_tdc/i_tdc_core/selected_sample[84]} {i_tdc/i_tdc_core/selected_sample[85]} {i_tdc/i_tdc_core/selected_sample[86]} {i_tdc/i_tdc_core/selected_sample[87]} {i_tdc/i_tdc_core/selected_sample[88]} {i_tdc/i_tdc_core/selected_sample[89]} {i_tdc/i_tdc_core/selected_sample[90]} {i_tdc/i_tdc_core/selected_sample[91]} {i_tdc/i_tdc_core/selected_sample[92]} {i_tdc/i_tdc_core/selected_sample[93]} {i_tdc/i_tdc_core/selected_sample[94]} {i_tdc/i_tdc_core/selected_sample[95]} ]]
+save_constraints
+reset_run impl_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+set_property CONTROL.CAPTURE_MODE BASIC [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+set_property CAPTURE_COMPARE_VALUE neq4'hX [get_hw_probes i_tdc/i_tdc_core/tdc_state -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property CAPTURE_COMPARE_VALUE neq4'bXXXX [get_hw_probes i_tdc/i_tdc_core/tdc_state -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property CAPTURE_COMPARE_VALUE neq4'bNNNN [get_hw_probes i_tdc/i_tdc_core/tdc_state -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+set_property CAPTURE_COMPARE_VALUE neq4'b0000 [get_hw_probes i_tdc/i_tdc_core/tdc_state -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+wait_on_hw_ila -timeout 0 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila -timeout 0 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+set_property CAPTURE_COMPARE_VALUE eq4'b0000 [get_hw_probes i_tdc/i_tdc_core/tdc_state -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+wait_on_hw_ila -timeout 0 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+set_property CONTROL.CAPTURE_MODE ALWAYS [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property CONTROL.CAPTURE_MODE BASIC [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property CAPTURE_COMPARE_VALUE neq4'b0000 [get_hw_probes i_tdc/i_tdc_core/tdc_state -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila -timeout 0 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+delete_debug_core [get_debug_cores {u_ila_0 }]
+create_debug_core u_ila_0 ila
+set_property C_DATA_DEPTH 1024 [get_debug_cores u_ila_0]
+set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
+set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
+set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+set_property C_EN_STRG_QUAL false [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
+startgroup 
+set_property C_EN_STRG_QUAL true [get_debug_cores u_ila_0 ]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0 ]
+set_property ALL_PROBE_SAME_MU_CNT 2 [get_debug_cores u_ila_0 ]
+endgroup
+connect_debug_port u_ila_0/clk [get_nets [list CLK160PLL_BUFG ]]
+set_property port_width 4 [get_debug_ports u_ila_0/probe0]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
+connect_debug_port u_ila_0/probe0 [get_nets [list {i_tdc/i_tdc_core/tdc_state[0]} {i_tdc/i_tdc_core/tdc_state[1]} {i_tdc/i_tdc_core/tdc_state[2]} {i_tdc/i_tdc_core/tdc_state[3]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe1]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list {i_tdc/i_tdc_core/input_mux_addr[0]} {i_tdc/i_tdc_core/input_mux_addr[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 96 [get_debug_ports u_ila_0/probe2]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe2]
+connect_debug_port u_ila_0/probe2 [get_nets [list {i_tdc/i_tdc_core/selected_sample[0]} {i_tdc/i_tdc_core/selected_sample[1]} {i_tdc/i_tdc_core/selected_sample[2]} {i_tdc/i_tdc_core/selected_sample[3]} {i_tdc/i_tdc_core/selected_sample[4]} {i_tdc/i_tdc_core/selected_sample[5]} {i_tdc/i_tdc_core/selected_sample[6]} {i_tdc/i_tdc_core/selected_sample[7]} {i_tdc/i_tdc_core/selected_sample[8]} {i_tdc/i_tdc_core/selected_sample[9]} {i_tdc/i_tdc_core/selected_sample[10]} {i_tdc/i_tdc_core/selected_sample[11]} {i_tdc/i_tdc_core/selected_sample[12]} {i_tdc/i_tdc_core/selected_sample[13]} {i_tdc/i_tdc_core/selected_sample[14]} {i_tdc/i_tdc_core/selected_sample[15]} {i_tdc/i_tdc_core/selected_sample[16]} {i_tdc/i_tdc_core/selected_sample[17]} {i_tdc/i_tdc_core/selected_sample[18]} {i_tdc/i_tdc_core/selected_sample[19]} {i_tdc/i_tdc_core/selected_sample[20]} {i_tdc/i_tdc_core/selected_sample[21]} {i_tdc/i_tdc_core/selected_sample[22]} {i_tdc/i_tdc_core/selected_sample[23]} {i_tdc/i_tdc_core/selected_sample[24]} {i_tdc/i_tdc_core/selected_sample[25]} {i_tdc/i_tdc_core/selected_sample[26]} {i_tdc/i_tdc_core/selected_sample[27]} {i_tdc/i_tdc_core/selected_sample[28]} {i_tdc/i_tdc_core/selected_sample[29]} {i_tdc/i_tdc_core/selected_sample[30]} {i_tdc/i_tdc_core/selected_sample[31]} {i_tdc/i_tdc_core/selected_sample[32]} {i_tdc/i_tdc_core/selected_sample[33]} {i_tdc/i_tdc_core/selected_sample[34]} {i_tdc/i_tdc_core/selected_sample[35]} {i_tdc/i_tdc_core/selected_sample[36]} {i_tdc/i_tdc_core/selected_sample[37]} {i_tdc/i_tdc_core/selected_sample[38]} {i_tdc/i_tdc_core/selected_sample[39]} {i_tdc/i_tdc_core/selected_sample[40]} {i_tdc/i_tdc_core/selected_sample[41]} {i_tdc/i_tdc_core/selected_sample[42]} {i_tdc/i_tdc_core/selected_sample[43]} {i_tdc/i_tdc_core/selected_sample[44]} {i_tdc/i_tdc_core/selected_sample[45]} {i_tdc/i_tdc_core/selected_sample[46]} {i_tdc/i_tdc_core/selected_sample[47]} {i_tdc/i_tdc_core/selected_sample[48]} {i_tdc/i_tdc_core/selected_sample[49]} {i_tdc/i_tdc_core/selected_sample[50]} {i_tdc/i_tdc_core/selected_sample[51]} {i_tdc/i_tdc_core/selected_sample[52]} {i_tdc/i_tdc_core/selected_sample[53]} {i_tdc/i_tdc_core/selected_sample[54]} {i_tdc/i_tdc_core/selected_sample[55]} {i_tdc/i_tdc_core/selected_sample[56]} {i_tdc/i_tdc_core/selected_sample[57]} {i_tdc/i_tdc_core/selected_sample[58]} {i_tdc/i_tdc_core/selected_sample[59]} {i_tdc/i_tdc_core/selected_sample[60]} {i_tdc/i_tdc_core/selected_sample[61]} {i_tdc/i_tdc_core/selected_sample[62]} {i_tdc/i_tdc_core/selected_sample[63]} {i_tdc/i_tdc_core/selected_sample[64]} {i_tdc/i_tdc_core/selected_sample[65]} {i_tdc/i_tdc_core/selected_sample[66]} {i_tdc/i_tdc_core/selected_sample[67]} {i_tdc/i_tdc_core/selected_sample[68]} {i_tdc/i_tdc_core/selected_sample[69]} {i_tdc/i_tdc_core/selected_sample[70]} {i_tdc/i_tdc_core/selected_sample[71]} {i_tdc/i_tdc_core/selected_sample[72]} {i_tdc/i_tdc_core/selected_sample[73]} {i_tdc/i_tdc_core/selected_sample[74]} {i_tdc/i_tdc_core/selected_sample[75]} {i_tdc/i_tdc_core/selected_sample[76]} {i_tdc/i_tdc_core/selected_sample[77]} {i_tdc/i_tdc_core/selected_sample[78]} {i_tdc/i_tdc_core/selected_sample[79]} {i_tdc/i_tdc_core/selected_sample[80]} {i_tdc/i_tdc_core/selected_sample[81]} {i_tdc/i_tdc_core/selected_sample[82]} {i_tdc/i_tdc_core/selected_sample[83]} {i_tdc/i_tdc_core/selected_sample[84]} {i_tdc/i_tdc_core/selected_sample[85]} {i_tdc/i_tdc_core/selected_sample[86]} {i_tdc/i_tdc_core/selected_sample[87]} {i_tdc/i_tdc_core/selected_sample[88]} {i_tdc/i_tdc_core/selected_sample[89]} {i_tdc/i_tdc_core/selected_sample[90]} {i_tdc/i_tdc_core/selected_sample[91]} {i_tdc/i_tdc_core/selected_sample[92]} {i_tdc/i_tdc_core/selected_sample[93]} {i_tdc/i_tdc_core/selected_sample[94]} {i_tdc/i_tdc_core/selected_sample[95]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe3]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe3]
+connect_debug_port u_ila_0/probe3 [get_nets [list i_tdc/i_tdc_core/trig_in_IBUF ]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe4]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe4]
+connect_debug_port u_ila_0/probe4 [get_nets [list i_tdc/sig_in_IBUF ]]
+save_constraints -force
+reset_run impl_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+add_wave -into {hw_ila_data_1.wcfg} -radix hex { {i_tdc/i_tdc_core/trig_in_IBUF} {i_tdc/sig_in_IBUF} }
+set_property CAPTURE_COMPARE_VALUE eq1'b1 [get_hw_probes i_tdc/i_tdc_core/trig_in_IBUF -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property CAPTURE_COMPARE_VALUE eq1'b1 [get_hw_probes i_tdc/sig_in_IBUF -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property CONTROL.CAPTURE_CONDITION OR [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila -timeout 0 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property mark_debug true [get_nets [list {i_tdc/i_tdc_core/hit_status[0]} {i_tdc/i_tdc_core/hit_status[1]}]]
+set_property mark_debug true [get_nets [list {i_tdc/i_tdc_core/fine_time[0]} {i_tdc/i_tdc_core/fine_time[1]}]]
+delete_debug_core [get_debug_cores {u_ila_0 }]
+create_debug_core u_ila_0 ila
+set_property C_DATA_DEPTH 1024 [get_debug_cores u_ila_0]
+set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
+set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
+set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+set_property C_EN_STRG_QUAL false [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
+startgroup 
+set_property C_EN_STRG_QUAL true [get_debug_cores u_ila_0 ]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0 ]
+set_property ALL_PROBE_SAME_MU_CNT 2 [get_debug_cores u_ila_0 ]
+endgroup
+connect_debug_port u_ila_0/clk [get_nets [list CLK160PLL_BUFG ]]
+set_property port_width 4 [get_debug_ports u_ila_0/probe0]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
+connect_debug_port u_ila_0/probe0 [get_nets [list {i_tdc/i_tdc_core/tdc_state[0]} {i_tdc/i_tdc_core/tdc_state[1]} {i_tdc/i_tdc_core/tdc_state[2]} {i_tdc/i_tdc_core/tdc_state[3]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe1]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list {i_tdc/i_tdc_core/input_mux_addr[0]} {i_tdc/i_tdc_core/input_mux_addr[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 96 [get_debug_ports u_ila_0/probe2]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe2]
+connect_debug_port u_ila_0/probe2 [get_nets [list {i_tdc/i_tdc_core/selected_sample[0]} {i_tdc/i_tdc_core/selected_sample[1]} {i_tdc/i_tdc_core/selected_sample[2]} {i_tdc/i_tdc_core/selected_sample[3]} {i_tdc/i_tdc_core/selected_sample[4]} {i_tdc/i_tdc_core/selected_sample[5]} {i_tdc/i_tdc_core/selected_sample[6]} {i_tdc/i_tdc_core/selected_sample[7]} {i_tdc/i_tdc_core/selected_sample[8]} {i_tdc/i_tdc_core/selected_sample[9]} {i_tdc/i_tdc_core/selected_sample[10]} {i_tdc/i_tdc_core/selected_sample[11]} {i_tdc/i_tdc_core/selected_sample[12]} {i_tdc/i_tdc_core/selected_sample[13]} {i_tdc/i_tdc_core/selected_sample[14]} {i_tdc/i_tdc_core/selected_sample[15]} {i_tdc/i_tdc_core/selected_sample[16]} {i_tdc/i_tdc_core/selected_sample[17]} {i_tdc/i_tdc_core/selected_sample[18]} {i_tdc/i_tdc_core/selected_sample[19]} {i_tdc/i_tdc_core/selected_sample[20]} {i_tdc/i_tdc_core/selected_sample[21]} {i_tdc/i_tdc_core/selected_sample[22]} {i_tdc/i_tdc_core/selected_sample[23]} {i_tdc/i_tdc_core/selected_sample[24]} {i_tdc/i_tdc_core/selected_sample[25]} {i_tdc/i_tdc_core/selected_sample[26]} {i_tdc/i_tdc_core/selected_sample[27]} {i_tdc/i_tdc_core/selected_sample[28]} {i_tdc/i_tdc_core/selected_sample[29]} {i_tdc/i_tdc_core/selected_sample[30]} {i_tdc/i_tdc_core/selected_sample[31]} {i_tdc/i_tdc_core/selected_sample[32]} {i_tdc/i_tdc_core/selected_sample[33]} {i_tdc/i_tdc_core/selected_sample[34]} {i_tdc/i_tdc_core/selected_sample[35]} {i_tdc/i_tdc_core/selected_sample[36]} {i_tdc/i_tdc_core/selected_sample[37]} {i_tdc/i_tdc_core/selected_sample[38]} {i_tdc/i_tdc_core/selected_sample[39]} {i_tdc/i_tdc_core/selected_sample[40]} {i_tdc/i_tdc_core/selected_sample[41]} {i_tdc/i_tdc_core/selected_sample[42]} {i_tdc/i_tdc_core/selected_sample[43]} {i_tdc/i_tdc_core/selected_sample[44]} {i_tdc/i_tdc_core/selected_sample[45]} {i_tdc/i_tdc_core/selected_sample[46]} {i_tdc/i_tdc_core/selected_sample[47]} {i_tdc/i_tdc_core/selected_sample[48]} {i_tdc/i_tdc_core/selected_sample[49]} {i_tdc/i_tdc_core/selected_sample[50]} {i_tdc/i_tdc_core/selected_sample[51]} {i_tdc/i_tdc_core/selected_sample[52]} {i_tdc/i_tdc_core/selected_sample[53]} {i_tdc/i_tdc_core/selected_sample[54]} {i_tdc/i_tdc_core/selected_sample[55]} {i_tdc/i_tdc_core/selected_sample[56]} {i_tdc/i_tdc_core/selected_sample[57]} {i_tdc/i_tdc_core/selected_sample[58]} {i_tdc/i_tdc_core/selected_sample[59]} {i_tdc/i_tdc_core/selected_sample[60]} {i_tdc/i_tdc_core/selected_sample[61]} {i_tdc/i_tdc_core/selected_sample[62]} {i_tdc/i_tdc_core/selected_sample[63]} {i_tdc/i_tdc_core/selected_sample[64]} {i_tdc/i_tdc_core/selected_sample[65]} {i_tdc/i_tdc_core/selected_sample[66]} {i_tdc/i_tdc_core/selected_sample[67]} {i_tdc/i_tdc_core/selected_sample[68]} {i_tdc/i_tdc_core/selected_sample[69]} {i_tdc/i_tdc_core/selected_sample[70]} {i_tdc/i_tdc_core/selected_sample[71]} {i_tdc/i_tdc_core/selected_sample[72]} {i_tdc/i_tdc_core/selected_sample[73]} {i_tdc/i_tdc_core/selected_sample[74]} {i_tdc/i_tdc_core/selected_sample[75]} {i_tdc/i_tdc_core/selected_sample[76]} {i_tdc/i_tdc_core/selected_sample[77]} {i_tdc/i_tdc_core/selected_sample[78]} {i_tdc/i_tdc_core/selected_sample[79]} {i_tdc/i_tdc_core/selected_sample[80]} {i_tdc/i_tdc_core/selected_sample[81]} {i_tdc/i_tdc_core/selected_sample[82]} {i_tdc/i_tdc_core/selected_sample[83]} {i_tdc/i_tdc_core/selected_sample[84]} {i_tdc/i_tdc_core/selected_sample[85]} {i_tdc/i_tdc_core/selected_sample[86]} {i_tdc/i_tdc_core/selected_sample[87]} {i_tdc/i_tdc_core/selected_sample[88]} {i_tdc/i_tdc_core/selected_sample[89]} {i_tdc/i_tdc_core/selected_sample[90]} {i_tdc/i_tdc_core/selected_sample[91]} {i_tdc/i_tdc_core/selected_sample[92]} {i_tdc/i_tdc_core/selected_sample[93]} {i_tdc/i_tdc_core/selected_sample[94]} {i_tdc/i_tdc_core/selected_sample[95]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe3]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe3]
+connect_debug_port u_ila_0/probe3 [get_nets [list {i_tdc/i_tdc_core/fine_time[0]} {i_tdc/i_tdc_core/fine_time[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe4]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe4]
+connect_debug_port u_ila_0/probe4 [get_nets [list {i_tdc/i_tdc_core/hit_status[0]} {i_tdc/i_tdc_core/hit_status[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe5]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe5]
+connect_debug_port u_ila_0/probe5 [get_nets [list i_tdc/sig_in_IBUF ]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe6]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe6]
+connect_debug_port u_ila_0/probe6 [get_nets [list i_tdc/i_tdc_core/trig_in_IBUF ]]
+save_constraints -force
+reset_run impl_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+add_wave -into {hw_ila_data_1.wcfg} -radix hex { {i_tdc/i_tdc_core/fine_time} {i_tdc/i_tdc_core/hit_status} }
+set_property TRIGGER_COMPARE_VALUE eq1'b1 [get_hw_probes i_tdc/i_tdc_core/trig_in_IBUF -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property TRIGGER_COMPARE_VALUE eq1'bR [get_hw_probes i_tdc/i_tdc_core/trig_in_IBUF -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila -timeout 0 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}] -trigger_now
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+startgroup 
+set_property CONTROL.DATA_DEPTH 128 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+set_property CONTROL.TRIGGER_POSITION 127 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+endgroup
+set_property CONTROL.DATA_DEPTH 256 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property CONTROL.TRIGGER_CONDITION OR [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+set_property TRIGGER_COMPARE_VALUE neq4'hX [get_hw_probes i_tdc/i_tdc_core/tdc_state -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property TRIGGER_COMPARE_VALUE neq4'h0 [get_hw_probes i_tdc/i_tdc_core/tdc_state -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property CONTROL.TRIGGER_POSITION 0 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+current_design impl_1
+refresh_design
+reset_run impl_1 -prev_step 
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+get_cells  -hier -regexp .*cdc_fifomem_inst/cdc_mem_reg*
+get_cells  -hier -regexp .*cdc_fifomem_inst/cdc_mem_reg_0_3_18_23
+get_cells  -hier -regexp .*cdc_fifomem_inst/cdc_mem_reg
+get_cells  -hier -regexp .*cdc_fifomem_inst/cdc_mem_reg*
+get_cells  -hier -regexp .*cdc_fifomem_inst/cdc_mem_reg.*
+get_cells *
+set_false_path -from [get_cells -hier -regexp .*cdc_fifomem_ints/cdc_mem_reg_0_3_18_23.*] -to [get_cells *]
+set_false_path -from [get_cells -hier -regexp .*cdc_fifomem_ints/cdc_mem_reg_0_3_18_23] -to [get_cells *]
+[get_cells -hier -regexp .*cdc_fifomem_ints/cdc_mem_reg_0_3_18_23]
+get_cells  -hier -regexp .*cdc_fifomem_inst/cdc_mem_reg.*
+[get_cells -hier -regexp .*cdc_fifomem_inst/cdc_mem_reg_0_3_18_23]
+set_false_path -from [get_cells -hier -regexp .*cdc_fifomem_inst/cdc_mem_reg_0_3_18_23] -to [get_cells *]
+get_cells -hier -regexp .*cdc_fifomem_inst/cdc_mem_reg_0_3_18_23.*/O
+get_pins -hier -regexp .*cdc_fifomem_inst/cdc_mem_reg_0_3_18_23.*/O
+get_pins -regexp i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg.*/CLK
+get_pins -regexp i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg/.*/CLK
+get_pins -hier -regexp i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg/.*/CLK
+get_pins -regexp i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg/.*CLK
+get_pins -regexp i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg.*CLK
+get_pins -regexp i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg.*
+get_pins -regexp i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg
+get_pins -regexp i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg.+
+get_pins -regexp i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg(.+)
+get_pins -regexp i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg(.*)
+get_pins i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg_0_3_0_5/RAMB/CLK
+get_pins -regexp i_tdc/i_tdc_core/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg_0_3_0_5/RAMB/CLK
+get_pins -regexp .*/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg_0_3_0_5/RAMB/CLK
+get_pins -regexp .+/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg_0_3_0_5/RAMB/CLK
+get_pins -regexp (.+)/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg_0_3_0_5/RAMB/CLK
+get_pins -regexp -hier (.+)/clock_sync_fifo/cdc_fifomem_inst/cdc_mem_reg_0_3_0_5/RAMB/CLK
+get_pins -regexp -hier (.+)/clock_sync_fifo/cdc_fifomem_inst/(.+)/CLK
+set_false_path -from [get_pins [get_pins -regexp -hier (.+)/clock_sync_fifo/cdc_fifomem_inst/(.+)/CLK] -to [get_cells *]
+set_false_path -from [get_pins -regexp -hier (.+)/clock_sync_fifo/cdc_fifomem_inst/(.+)/CLK] -to [get_cells *]
+get_pins -hier -regexp {(.+)fifo_i/mem_reg/DIADI[\d+]}
+get_pins -hier -regexp {(.+)fifo_i/mem_reg/DIADI[\\d+]}
+get_pins -hier -regexp {(.+)fifo_i/mem_reg/DIADI[.+]}
+get_pins -hier -regexp (.+)fifo_i/mem_reg/DIADI[.+]
+get_pins -hier -regexp (.+)fifo_i/mem_reg/DIADI
+reset_run synth_1
+save_constraints_as constrs_2
+delete_fileset [ get_filesets constrs_2 ]
+file delete -force /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.srcs/constrs_2
+launch_runs impl_1 -jobs 8
+wait_on_run impl_1
+close_design
+open_run impl_1
+get_pins -hier -regexp (.+)fifo_i/mem_reg/DI.DI
+reset_run synth_1
+launch_runs impl_1 -jobs 8
+wait_on_run impl_1
+refresh_design
+reset_run synth_1
+launch_runs impl_1 -jobs 8
+wait_on_run impl_1
+refresh_design
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila -timeout 0 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}] -trigger_now
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+open_run synth_1 -name synth_1
+delete_debug_core [get_debug_cores {u_ila_0 }]
+create_debug_core u_ila_0 ila
+set_property C_DATA_DEPTH 1024 [get_debug_cores u_ila_0]
+set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
+set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
+set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+set_property C_EN_STRG_QUAL false [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
+startgroup 
+set_property C_EN_STRG_QUAL true [get_debug_cores u_ila_0 ]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0 ]
+set_property ALL_PROBE_SAME_MU_CNT 2 [get_debug_cores u_ila_0 ]
+endgroup
+connect_debug_port u_ila_0/clk [get_nets [list CLK160PLL_BUFG ]]
+set_property port_width 96 [get_debug_ports u_ila_0/probe0]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe0]
+connect_debug_port u_ila_0/probe0 [get_nets [list {i_tdc/i_tdc_core/selected_sample[0]} {i_tdc/i_tdc_core/selected_sample[1]} {i_tdc/i_tdc_core/selected_sample[2]} {i_tdc/i_tdc_core/selected_sample[3]} {i_tdc/i_tdc_core/selected_sample[4]} {i_tdc/i_tdc_core/selected_sample[5]} {i_tdc/i_tdc_core/selected_sample[6]} {i_tdc/i_tdc_core/selected_sample[7]} {i_tdc/i_tdc_core/selected_sample[8]} {i_tdc/i_tdc_core/selected_sample[9]} {i_tdc/i_tdc_core/selected_sample[10]} {i_tdc/i_tdc_core/selected_sample[11]} {i_tdc/i_tdc_core/selected_sample[12]} {i_tdc/i_tdc_core/selected_sample[13]} {i_tdc/i_tdc_core/selected_sample[14]} {i_tdc/i_tdc_core/selected_sample[15]} {i_tdc/i_tdc_core/selected_sample[16]} {i_tdc/i_tdc_core/selected_sample[17]} {i_tdc/i_tdc_core/selected_sample[18]} {i_tdc/i_tdc_core/selected_sample[19]} {i_tdc/i_tdc_core/selected_sample[20]} {i_tdc/i_tdc_core/selected_sample[21]} {i_tdc/i_tdc_core/selected_sample[22]} {i_tdc/i_tdc_core/selected_sample[23]} {i_tdc/i_tdc_core/selected_sample[24]} {i_tdc/i_tdc_core/selected_sample[25]} {i_tdc/i_tdc_core/selected_sample[26]} {i_tdc/i_tdc_core/selected_sample[27]} {i_tdc/i_tdc_core/selected_sample[28]} {i_tdc/i_tdc_core/selected_sample[29]} {i_tdc/i_tdc_core/selected_sample[30]} {i_tdc/i_tdc_core/selected_sample[31]} {i_tdc/i_tdc_core/selected_sample[32]} {i_tdc/i_tdc_core/selected_sample[33]} {i_tdc/i_tdc_core/selected_sample[34]} {i_tdc/i_tdc_core/selected_sample[35]} {i_tdc/i_tdc_core/selected_sample[36]} {i_tdc/i_tdc_core/selected_sample[37]} {i_tdc/i_tdc_core/selected_sample[38]} {i_tdc/i_tdc_core/selected_sample[39]} {i_tdc/i_tdc_core/selected_sample[40]} {i_tdc/i_tdc_core/selected_sample[41]} {i_tdc/i_tdc_core/selected_sample[42]} {i_tdc/i_tdc_core/selected_sample[43]} {i_tdc/i_tdc_core/selected_sample[44]} {i_tdc/i_tdc_core/selected_sample[45]} {i_tdc/i_tdc_core/selected_sample[46]} {i_tdc/i_tdc_core/selected_sample[47]} {i_tdc/i_tdc_core/selected_sample[48]} {i_tdc/i_tdc_core/selected_sample[49]} {i_tdc/i_tdc_core/selected_sample[50]} {i_tdc/i_tdc_core/selected_sample[51]} {i_tdc/i_tdc_core/selected_sample[52]} {i_tdc/i_tdc_core/selected_sample[53]} {i_tdc/i_tdc_core/selected_sample[54]} {i_tdc/i_tdc_core/selected_sample[55]} {i_tdc/i_tdc_core/selected_sample[56]} {i_tdc/i_tdc_core/selected_sample[57]} {i_tdc/i_tdc_core/selected_sample[58]} {i_tdc/i_tdc_core/selected_sample[59]} {i_tdc/i_tdc_core/selected_sample[60]} {i_tdc/i_tdc_core/selected_sample[61]} {i_tdc/i_tdc_core/selected_sample[62]} {i_tdc/i_tdc_core/selected_sample[63]} {i_tdc/i_tdc_core/selected_sample[64]} {i_tdc/i_tdc_core/selected_sample[65]} {i_tdc/i_tdc_core/selected_sample[66]} {i_tdc/i_tdc_core/selected_sample[67]} {i_tdc/i_tdc_core/selected_sample[68]} {i_tdc/i_tdc_core/selected_sample[69]} {i_tdc/i_tdc_core/selected_sample[70]} {i_tdc/i_tdc_core/selected_sample[71]} {i_tdc/i_tdc_core/selected_sample[72]} {i_tdc/i_tdc_core/selected_sample[73]} {i_tdc/i_tdc_core/selected_sample[74]} {i_tdc/i_tdc_core/selected_sample[75]} {i_tdc/i_tdc_core/selected_sample[76]} {i_tdc/i_tdc_core/selected_sample[77]} {i_tdc/i_tdc_core/selected_sample[78]} {i_tdc/i_tdc_core/selected_sample[79]} {i_tdc/i_tdc_core/selected_sample[80]} {i_tdc/i_tdc_core/selected_sample[81]} {i_tdc/i_tdc_core/selected_sample[82]} {i_tdc/i_tdc_core/selected_sample[83]} {i_tdc/i_tdc_core/selected_sample[84]} {i_tdc/i_tdc_core/selected_sample[85]} {i_tdc/i_tdc_core/selected_sample[86]} {i_tdc/i_tdc_core/selected_sample[87]} {i_tdc/i_tdc_core/selected_sample[88]} {i_tdc/i_tdc_core/selected_sample[89]} {i_tdc/i_tdc_core/selected_sample[90]} {i_tdc/i_tdc_core/selected_sample[91]} {i_tdc/i_tdc_core/selected_sample[92]} {i_tdc/i_tdc_core/selected_sample[93]} {i_tdc/i_tdc_core/selected_sample[94]} {i_tdc/i_tdc_core/selected_sample[95]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe1]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list {i_tdc/i_tdc_core/input_mux_addr[0]} {i_tdc/i_tdc_core/input_mux_addr[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe2]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe2]
+connect_debug_port u_ila_0/probe2 [get_nets [list {i_tdc/i_tdc_core/hit_status[0]} {i_tdc/i_tdc_core/hit_status[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe3]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe3]
+connect_debug_port u_ila_0/probe3 [get_nets [list {i_tdc/i_tdc_core/fine_time[0]} {i_tdc/i_tdc_core/fine_time[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 4 [get_debug_ports u_ila_0/probe4]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe4]
+connect_debug_port u_ila_0/probe4 [get_nets [list {i_tdc/i_tdc_core/tdc_state[0]} {i_tdc/i_tdc_core/tdc_state[1]} {i_tdc/i_tdc_core/tdc_state[2]} {i_tdc/i_tdc_core/tdc_state[3]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe5]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe5]
+connect_debug_port u_ila_0/probe5 [get_nets [list i_tdc/sig_in_IBUF ]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe6]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe6]
+connect_debug_port u_ila_0/probe6 [get_nets [list i_tdc/i_tdc_core/tdl_input ]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe7]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe7]
+connect_debug_port u_ila_0/probe7 [get_nets [list i_tdc/i_tdc_core/trig_in_IBUF ]]
+save_constraints
+reset_run impl_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+add_wave -into {hw_ila_data_1.wcfg} -radix hex { {i_tdc/i_tdc_core/tdl_input} }
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property TRIGGER_COMPARE_VALUE neq1'bR [get_hw_probes i_tdc/i_tdc_core/trig_in_IBUF -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property TRIGGER_COMPARE_VALUE neq1'b0 [get_hw_probes i_tdc/i_tdc_core/trig_in_IBUF -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+reset_run impl_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+reset_run impl_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+current_design impl_1
+refresh_design
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property CONTROL.DATA_DEPTH 1024 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property CONTROL.TRIGGER_POSITION 512 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+reset_run impl_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+refresh_design
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+refresh_design
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+current_design synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+current_design impl_1
+refresh_design
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila -timeout 0 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila -timeout 0 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+current_design synth_1
+refresh_design
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+refresh_design
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+display_hw_ila_data [ get_hw_ila_data hw_ila_data_1 -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property mark_debug true [get_nets [list {i_tdc/i_tdc_core/encoder/position_out[0]} {i_tdc/i_tdc_core/encoder/position_out[1]} {i_tdc/i_tdc_core/encoder/position_out[2]} {i_tdc/i_tdc_core/encoder/position_out[3]} {i_tdc/i_tdc_core/encoder/position_out[4]} {i_tdc/i_tdc_core/encoder/position_out[5]} {i_tdc/i_tdc_core/encoder/position_out[6]}]]
+refresh_design
+set_property mark_debug true [get_nets [list {i_tdc/i_tdc_core/encoder/position_out[0]} {i_tdc/i_tdc_core/encoder/position_out[1]} {i_tdc/i_tdc_core/encoder/position_out[2]} {i_tdc/i_tdc_core/encoder/position_out[3]} {i_tdc/i_tdc_core/encoder/position_out[4]} {i_tdc/i_tdc_core/encoder/position_out[5]} {i_tdc/i_tdc_core/encoder/position_out[6]}]]
+delete_debug_core [get_debug_cores {u_ila_0 }]
+create_debug_core u_ila_0 ila
+set_property C_DATA_DEPTH 1024 [get_debug_cores u_ila_0]
+set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
+set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
+set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+set_property C_EN_STRG_QUAL false [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
+startgroup 
+set_property C_EN_STRG_QUAL true [get_debug_cores u_ila_0 ]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0 ]
+set_property ALL_PROBE_SAME_MU_CNT 2 [get_debug_cores u_ila_0 ]
+endgroup
+connect_debug_port u_ila_0/clk [get_nets [list CLK160PLL_BUFG ]]
+set_property port_width 4 [get_debug_ports u_ila_0/probe0]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
+connect_debug_port u_ila_0/probe0 [get_nets [list {i_tdc/i_tdc_core/tdc_state[0]} {i_tdc/i_tdc_core/tdc_state[1]} {i_tdc/i_tdc_core/tdc_state[2]} {i_tdc/i_tdc_core/tdc_state[3]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 96 [get_debug_ports u_ila_0/probe1]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list {i_tdc/i_tdc_core/selected_sample[0]} {i_tdc/i_tdc_core/selected_sample[1]} {i_tdc/i_tdc_core/selected_sample[2]} {i_tdc/i_tdc_core/selected_sample[3]} {i_tdc/i_tdc_core/selected_sample[4]} {i_tdc/i_tdc_core/selected_sample[5]} {i_tdc/i_tdc_core/selected_sample[6]} {i_tdc/i_tdc_core/selected_sample[7]} {i_tdc/i_tdc_core/selected_sample[8]} {i_tdc/i_tdc_core/selected_sample[9]} {i_tdc/i_tdc_core/selected_sample[10]} {i_tdc/i_tdc_core/selected_sample[11]} {i_tdc/i_tdc_core/selected_sample[12]} {i_tdc/i_tdc_core/selected_sample[13]} {i_tdc/i_tdc_core/selected_sample[14]} {i_tdc/i_tdc_core/selected_sample[15]} {i_tdc/i_tdc_core/selected_sample[16]} {i_tdc/i_tdc_core/selected_sample[17]} {i_tdc/i_tdc_core/selected_sample[18]} {i_tdc/i_tdc_core/selected_sample[19]} {i_tdc/i_tdc_core/selected_sample[20]} {i_tdc/i_tdc_core/selected_sample[21]} {i_tdc/i_tdc_core/selected_sample[22]} {i_tdc/i_tdc_core/selected_sample[23]} {i_tdc/i_tdc_core/selected_sample[24]} {i_tdc/i_tdc_core/selected_sample[25]} {i_tdc/i_tdc_core/selected_sample[26]} {i_tdc/i_tdc_core/selected_sample[27]} {i_tdc/i_tdc_core/selected_sample[28]} {i_tdc/i_tdc_core/selected_sample[29]} {i_tdc/i_tdc_core/selected_sample[30]} {i_tdc/i_tdc_core/selected_sample[31]} {i_tdc/i_tdc_core/selected_sample[32]} {i_tdc/i_tdc_core/selected_sample[33]} {i_tdc/i_tdc_core/selected_sample[34]} {i_tdc/i_tdc_core/selected_sample[35]} {i_tdc/i_tdc_core/selected_sample[36]} {i_tdc/i_tdc_core/selected_sample[37]} {i_tdc/i_tdc_core/selected_sample[38]} {i_tdc/i_tdc_core/selected_sample[39]} {i_tdc/i_tdc_core/selected_sample[40]} {i_tdc/i_tdc_core/selected_sample[41]} {i_tdc/i_tdc_core/selected_sample[42]} {i_tdc/i_tdc_core/selected_sample[43]} {i_tdc/i_tdc_core/selected_sample[44]} {i_tdc/i_tdc_core/selected_sample[45]} {i_tdc/i_tdc_core/selected_sample[46]} {i_tdc/i_tdc_core/selected_sample[47]} {i_tdc/i_tdc_core/selected_sample[48]} {i_tdc/i_tdc_core/selected_sample[49]} {i_tdc/i_tdc_core/selected_sample[50]} {i_tdc/i_tdc_core/selected_sample[51]} {i_tdc/i_tdc_core/selected_sample[52]} {i_tdc/i_tdc_core/selected_sample[53]} {i_tdc/i_tdc_core/selected_sample[54]} {i_tdc/i_tdc_core/selected_sample[55]} {i_tdc/i_tdc_core/selected_sample[56]} {i_tdc/i_tdc_core/selected_sample[57]} {i_tdc/i_tdc_core/selected_sample[58]} {i_tdc/i_tdc_core/selected_sample[59]} {i_tdc/i_tdc_core/selected_sample[60]} {i_tdc/i_tdc_core/selected_sample[61]} {i_tdc/i_tdc_core/selected_sample[62]} {i_tdc/i_tdc_core/selected_sample[63]} {i_tdc/i_tdc_core/selected_sample[64]} {i_tdc/i_tdc_core/selected_sample[65]} {i_tdc/i_tdc_core/selected_sample[66]} {i_tdc/i_tdc_core/selected_sample[67]} {i_tdc/i_tdc_core/selected_sample[68]} {i_tdc/i_tdc_core/selected_sample[69]} {i_tdc/i_tdc_core/selected_sample[70]} {i_tdc/i_tdc_core/selected_sample[71]} {i_tdc/i_tdc_core/selected_sample[72]} {i_tdc/i_tdc_core/selected_sample[73]} {i_tdc/i_tdc_core/selected_sample[74]} {i_tdc/i_tdc_core/selected_sample[75]} {i_tdc/i_tdc_core/selected_sample[76]} {i_tdc/i_tdc_core/selected_sample[77]} {i_tdc/i_tdc_core/selected_sample[78]} {i_tdc/i_tdc_core/selected_sample[79]} {i_tdc/i_tdc_core/selected_sample[80]} {i_tdc/i_tdc_core/selected_sample[81]} {i_tdc/i_tdc_core/selected_sample[82]} {i_tdc/i_tdc_core/selected_sample[83]} {i_tdc/i_tdc_core/selected_sample[84]} {i_tdc/i_tdc_core/selected_sample[85]} {i_tdc/i_tdc_core/selected_sample[86]} {i_tdc/i_tdc_core/selected_sample[87]} {i_tdc/i_tdc_core/selected_sample[88]} {i_tdc/i_tdc_core/selected_sample[89]} {i_tdc/i_tdc_core/selected_sample[90]} {i_tdc/i_tdc_core/selected_sample[91]} {i_tdc/i_tdc_core/selected_sample[92]} {i_tdc/i_tdc_core/selected_sample[93]} {i_tdc/i_tdc_core/selected_sample[94]} {i_tdc/i_tdc_core/selected_sample[95]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe2]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe2]
+connect_debug_port u_ila_0/probe2 [get_nets [list {i_tdc/i_tdc_core/input_mux_addr[0]} {i_tdc/i_tdc_core/input_mux_addr[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe3]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe3]
+connect_debug_port u_ila_0/probe3 [get_nets [list {i_tdc/i_tdc_core/hit_status[0]} {i_tdc/i_tdc_core/hit_status[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe4]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe4]
+connect_debug_port u_ila_0/probe4 [get_nets [list {i_tdc/i_tdc_core/fine_time[0]} {i_tdc/i_tdc_core/fine_time[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 7 [get_debug_ports u_ila_0/probe5]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe5]
+connect_debug_port u_ila_0/probe5 [get_nets [list {i_tdc/i_tdc_core/encoder/position_out[0]} {i_tdc/i_tdc_core/encoder/position_out[1]} {i_tdc/i_tdc_core/encoder/position_out[2]} {i_tdc/i_tdc_core/encoder/position_out[3]} {i_tdc/i_tdc_core/encoder/position_out[4]} {i_tdc/i_tdc_core/encoder/position_out[5]} {i_tdc/i_tdc_core/encoder/position_out[6]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe6]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe6]
+connect_debug_port u_ila_0/probe6 [get_nets [list i_tdc/sig_in_IBUF ]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe7]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe7]
+connect_debug_port u_ila_0/probe7 [get_nets [list i_tdc/i_tdc_core/tdl_input ]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe8]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe8]
+connect_debug_port u_ila_0/probe8 [get_nets [list i_tdc/i_tdc_core/trig_in_IBUF ]]
+set_property mark_debug true [get_nets [list {i_tdc/i_tdc_core/tdc_state_delayed[0]} {i_tdc/i_tdc_core/tdc_state_delayed[1]} {i_tdc/i_tdc_core/tdc_state_delayed[2]} {i_tdc/i_tdc_core/tdc_state_delayed[3]}]]
+set_property mark_debug true [get_nets [list {i_tdc/i_tdc_core/fine_time_delayed[0]} {i_tdc/i_tdc_core/fine_time_delayed[1]}]]
+save_constraints
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+refresh_design
+delete_debug_core [get_debug_cores {u_ila_0 }]
+create_debug_core u_ila_0 ila
+set_property C_DATA_DEPTH 1024 [get_debug_cores u_ila_0]
+set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
+set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
+set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+set_property C_EN_STRG_QUAL false [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
+startgroup 
+set_property C_EN_STRG_QUAL true [get_debug_cores u_ila_0 ]
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0 ]
+set_property ALL_PROBE_SAME_MU_CNT 2 [get_debug_cores u_ila_0 ]
+endgroup
+connect_debug_port u_ila_0/clk [get_nets [list CLK160PLL_BUFG ]]
+set_property port_width 7 [get_debug_ports u_ila_0/probe0]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe0]
+connect_debug_port u_ila_0/probe0 [get_nets [list {i_tdc/i_tdc_core/encoder/position_out[0]} {i_tdc/i_tdc_core/encoder/position_out[1]} {i_tdc/i_tdc_core/encoder/position_out[2]} {i_tdc/i_tdc_core/encoder/position_out[3]} {i_tdc/i_tdc_core/encoder/position_out[4]} {i_tdc/i_tdc_core/encoder/position_out[5]} {i_tdc/i_tdc_core/encoder/position_out[6]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 96 [get_debug_ports u_ila_0/probe1]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list {i_tdc/i_tdc_core/selected_sample[0]} {i_tdc/i_tdc_core/selected_sample[1]} {i_tdc/i_tdc_core/selected_sample[2]} {i_tdc/i_tdc_core/selected_sample[3]} {i_tdc/i_tdc_core/selected_sample[4]} {i_tdc/i_tdc_core/selected_sample[5]} {i_tdc/i_tdc_core/selected_sample[6]} {i_tdc/i_tdc_core/selected_sample[7]} {i_tdc/i_tdc_core/selected_sample[8]} {i_tdc/i_tdc_core/selected_sample[9]} {i_tdc/i_tdc_core/selected_sample[10]} {i_tdc/i_tdc_core/selected_sample[11]} {i_tdc/i_tdc_core/selected_sample[12]} {i_tdc/i_tdc_core/selected_sample[13]} {i_tdc/i_tdc_core/selected_sample[14]} {i_tdc/i_tdc_core/selected_sample[15]} {i_tdc/i_tdc_core/selected_sample[16]} {i_tdc/i_tdc_core/selected_sample[17]} {i_tdc/i_tdc_core/selected_sample[18]} {i_tdc/i_tdc_core/selected_sample[19]} {i_tdc/i_tdc_core/selected_sample[20]} {i_tdc/i_tdc_core/selected_sample[21]} {i_tdc/i_tdc_core/selected_sample[22]} {i_tdc/i_tdc_core/selected_sample[23]} {i_tdc/i_tdc_core/selected_sample[24]} {i_tdc/i_tdc_core/selected_sample[25]} {i_tdc/i_tdc_core/selected_sample[26]} {i_tdc/i_tdc_core/selected_sample[27]} {i_tdc/i_tdc_core/selected_sample[28]} {i_tdc/i_tdc_core/selected_sample[29]} {i_tdc/i_tdc_core/selected_sample[30]} {i_tdc/i_tdc_core/selected_sample[31]} {i_tdc/i_tdc_core/selected_sample[32]} {i_tdc/i_tdc_core/selected_sample[33]} {i_tdc/i_tdc_core/selected_sample[34]} {i_tdc/i_tdc_core/selected_sample[35]} {i_tdc/i_tdc_core/selected_sample[36]} {i_tdc/i_tdc_core/selected_sample[37]} {i_tdc/i_tdc_core/selected_sample[38]} {i_tdc/i_tdc_core/selected_sample[39]} {i_tdc/i_tdc_core/selected_sample[40]} {i_tdc/i_tdc_core/selected_sample[41]} {i_tdc/i_tdc_core/selected_sample[42]} {i_tdc/i_tdc_core/selected_sample[43]} {i_tdc/i_tdc_core/selected_sample[44]} {i_tdc/i_tdc_core/selected_sample[45]} {i_tdc/i_tdc_core/selected_sample[46]} {i_tdc/i_tdc_core/selected_sample[47]} {i_tdc/i_tdc_core/selected_sample[48]} {i_tdc/i_tdc_core/selected_sample[49]} {i_tdc/i_tdc_core/selected_sample[50]} {i_tdc/i_tdc_core/selected_sample[51]} {i_tdc/i_tdc_core/selected_sample[52]} {i_tdc/i_tdc_core/selected_sample[53]} {i_tdc/i_tdc_core/selected_sample[54]} {i_tdc/i_tdc_core/selected_sample[55]} {i_tdc/i_tdc_core/selected_sample[56]} {i_tdc/i_tdc_core/selected_sample[57]} {i_tdc/i_tdc_core/selected_sample[58]} {i_tdc/i_tdc_core/selected_sample[59]} {i_tdc/i_tdc_core/selected_sample[60]} {i_tdc/i_tdc_core/selected_sample[61]} {i_tdc/i_tdc_core/selected_sample[62]} {i_tdc/i_tdc_core/selected_sample[63]} {i_tdc/i_tdc_core/selected_sample[64]} {i_tdc/i_tdc_core/selected_sample[65]} {i_tdc/i_tdc_core/selected_sample[66]} {i_tdc/i_tdc_core/selected_sample[67]} {i_tdc/i_tdc_core/selected_sample[68]} {i_tdc/i_tdc_core/selected_sample[69]} {i_tdc/i_tdc_core/selected_sample[70]} {i_tdc/i_tdc_core/selected_sample[71]} {i_tdc/i_tdc_core/selected_sample[72]} {i_tdc/i_tdc_core/selected_sample[73]} {i_tdc/i_tdc_core/selected_sample[74]} {i_tdc/i_tdc_core/selected_sample[75]} {i_tdc/i_tdc_core/selected_sample[76]} {i_tdc/i_tdc_core/selected_sample[77]} {i_tdc/i_tdc_core/selected_sample[78]} {i_tdc/i_tdc_core/selected_sample[79]} {i_tdc/i_tdc_core/selected_sample[80]} {i_tdc/i_tdc_core/selected_sample[81]} {i_tdc/i_tdc_core/selected_sample[82]} {i_tdc/i_tdc_core/selected_sample[83]} {i_tdc/i_tdc_core/selected_sample[84]} {i_tdc/i_tdc_core/selected_sample[85]} {i_tdc/i_tdc_core/selected_sample[86]} {i_tdc/i_tdc_core/selected_sample[87]} {i_tdc/i_tdc_core/selected_sample[88]} {i_tdc/i_tdc_core/selected_sample[89]} {i_tdc/i_tdc_core/selected_sample[90]} {i_tdc/i_tdc_core/selected_sample[91]} {i_tdc/i_tdc_core/selected_sample[92]} {i_tdc/i_tdc_core/selected_sample[93]} {i_tdc/i_tdc_core/selected_sample[94]} {i_tdc/i_tdc_core/selected_sample[95]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 4 [get_debug_ports u_ila_0/probe2]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe2]
+connect_debug_port u_ila_0/probe2 [get_nets [list {i_tdc/i_tdc_core/tdc_state_delayed[0]} {i_tdc/i_tdc_core/tdc_state_delayed[1]} {i_tdc/i_tdc_core/tdc_state_delayed[2]} {i_tdc/i_tdc_core/tdc_state_delayed[3]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 4 [get_debug_ports u_ila_0/probe3]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe3]
+connect_debug_port u_ila_0/probe3 [get_nets [list {i_tdc/i_tdc_core/tdc_state[0]} {i_tdc/i_tdc_core/tdc_state[1]} {i_tdc/i_tdc_core/tdc_state[2]} {i_tdc/i_tdc_core/tdc_state[3]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe4]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe4]
+connect_debug_port u_ila_0/probe4 [get_nets [list {i_tdc/i_tdc_core/fine_time_delayed[0]} {i_tdc/i_tdc_core/fine_time_delayed[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe5]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe5]
+connect_debug_port u_ila_0/probe5 [get_nets [list {i_tdc/i_tdc_core/input_mux_addr[0]} {i_tdc/i_tdc_core/input_mux_addr[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe6]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe6]
+connect_debug_port u_ila_0/probe6 [get_nets [list {i_tdc/i_tdc_core/hit_status[0]} {i_tdc/i_tdc_core/hit_status[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 2 [get_debug_ports u_ila_0/probe7]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe7]
+connect_debug_port u_ila_0/probe7 [get_nets [list {i_tdc/i_tdc_core/fine_time[0]} {i_tdc/i_tdc_core/fine_time[1]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 16 [get_debug_ports u_ila_0/probe8]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe8]
+connect_debug_port u_ila_0/probe8 [get_nets [list {i_tdc/i_tdc_core/corse_time_delayed[0]} {i_tdc/i_tdc_core/corse_time_delayed[1]} {i_tdc/i_tdc_core/corse_time_delayed[2]} {i_tdc/i_tdc_core/corse_time_delayed[3]} {i_tdc/i_tdc_core/corse_time_delayed[4]} {i_tdc/i_tdc_core/corse_time_delayed[5]} {i_tdc/i_tdc_core/corse_time_delayed[6]} {i_tdc/i_tdc_core/corse_time_delayed[7]} {i_tdc/i_tdc_core/corse_time_delayed[8]} {i_tdc/i_tdc_core/corse_time_delayed[9]} {i_tdc/i_tdc_core/corse_time_delayed[10]} {i_tdc/i_tdc_core/corse_time_delayed[11]} {i_tdc/i_tdc_core/corse_time_delayed[12]} {i_tdc/i_tdc_core/corse_time_delayed[13]} {i_tdc/i_tdc_core/corse_time_delayed[14]} {i_tdc/i_tdc_core/corse_time_delayed[15]} ]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe9]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe9]
+connect_debug_port u_ila_0/probe9 [get_nets [list i_tdc/sig_in_IBUF ]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe10]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe10]
+connect_debug_port u_ila_0/probe10 [get_nets [list i_tdc/i_tdc_core/tdl_input ]]
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe11]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe11]
+connect_debug_port u_ila_0/probe11 [get_nets [list i_tdc/i_tdc_core/trig_in_IBUF ]]
+save_constraints
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+add_wave -into {hw_ila_data_1.wcfg} -radix hex { {i_tdc/i_tdc_core/corse_time_delayed} {i_tdc/i_tdc_core/encoder/position_out} {i_tdc/i_tdc_core/fine_time_delayed} {i_tdc/i_tdc_core/tdc_state_delayed} }
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila -timeout 0 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}] -trigger_now
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property TRIGGER_COMPARE_VALUE neq4'hX [get_hw_probes i_tdc/i_tdc_core/tdc_state_delayed -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property TRIGGER_COMPARE_VALUE neq4'h0 [get_hw_probes i_tdc/i_tdc_core/tdc_state_delayed -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+startgroup 
+set_property CONTROL.DATA_DEPTH 64 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+set_property CONTROL.TRIGGER_POSITION 63 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+endgroup
+set_property CONTROL.TRIGGER_POSITION 0 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+current_design impl_1
+refresh_design
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+set_property needs_refresh false [get_runs synth_1]
+set_property needs_refresh false [get_runs impl_1]
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+close_design
+close_design
+open_run synth_1 -name synth_1
+close_design
+open_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+set_property CONTROL.DATA_DEPTH 512 [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+add_wave -into {hw_ila_data_1.wcfg} -radix hex { {trig_in_IBUF} }
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+refresh_design
+reset_run synth_1
+launch_runs impl_1 -jobs 8
+wait_on_run impl_1
+close_design
+reset_run impl_1 -prev_step 
+get_cells -hier -filter {NAME =~ calib_sig_gen/}
+open_run synth_1 -name synth_1
+get_cells -hier -filter {NAME =~ calib_sig_gen/}
+get_cells -hier -filter {NAME =~ *calib_sig_gen/}
+get_cells -hier -filter {NAME =~ */calib_sig_gen/}
+get_cells -hier -filter {NAME =~ */calib_sig_gen/*}
+get_cells -hier -filter {NAME =~ */calib_sig_gen/* && IS_SEQUENTIAL ==1}
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+wait_on_run synth_1
+close_design
+launch_runs impl_1 -jobs 8
+wait_on_run impl_1
+open_run impl_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+add_wave -into {hw_ila_data_1.wcfg} -radix hex { {i_tdc/i_tdc_core/trig_in_IBUF} }
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+run_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+wait_on_hw_ila [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]
+display_hw_ila_data [upload_hw_ila_data [get_hw_ilas -of_objects [get_hw_devices xc7k160t_0] -filter {CELL_NAME=~"u_ila_0"}]]
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+refresh_design
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+refresh_design
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1
+set_property PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property FULL_PROBES.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.ltx} [get_hw_devices xc7k160t_0]
+set_property PROGRAM.FILE {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.runs/impl_1/tdc_bdaq.bit} [get_hw_devices xc7k160t_0]
+program_hw_devices [get_hw_devices xc7k160t_0]
+refresh_hw_device [lindex [get_hw_devices xc7k160t_0] 0]
+save_wave_config {/users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.hw/hw_1/wave/hw_ila_data_1/hw_ila_data_1.wcfg}

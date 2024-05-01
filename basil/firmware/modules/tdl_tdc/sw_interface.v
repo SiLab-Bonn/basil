@@ -28,7 +28,7 @@ module tdc_sw_interface (
 	output wire en_no_trig_err
 );
 
-parameter VERSION = 8'b00001111;
+parameter VERSION = 8'b00000010;
 parameter BASEADDR = 16'h0;
 parameter HIGHADDR = 16'h100;
 parameter ABUSWIDTH = 16;
@@ -111,7 +111,7 @@ reg [7:0] tdl_miss_cnt_bus_clk; // BUS_ADD==7
 // Writing to status registers
 always @(posedge BUS_CLK) begin
 	if (bus_rst) begin
-		status_regs[1] <= 8'b0;
+		status_regs[1] <= 8'h08;
 		status_regs[2] <= 8'b0;
 	end
 	else if (ip_wr && ip_add == 1)

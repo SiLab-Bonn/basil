@@ -30,7 +30,7 @@ module tdc #(
 
 );
 
-localparam VERSION = 0;
+localparam VERSION = 8'b00000010;
 
 wire inv_trig_in;
 wire inv_sig_in;
@@ -42,12 +42,14 @@ wire en_arm_mode, en_calib_mode, en_write_trigger_distance, en_write_timestamp, 
 
 
 wire [31:0] event_count;
-wire [7:0] tdc_miss_cnt, fifo_over_cnt;
+wire [7:0] tdc_miss_cnt;
+reg [7:0] fifo_over_cnt;
+wire cdc_fifo_write;
+wire [32-1:0] word_to_cdc_fifo;
+
 tdc_core i_tdc_core (
 	.CLK_FAST(CLK480),
 	.CLK(CLK160),
-	.BUS_CLK(BUS_CLK),
-	.bus_rst(bus_rst),
 	.CALIB_CLK(CALIB_CLK),
 	.rst(rst),
 	.sig_in(inv_sig_in ? ~tdc_in : tdc_in),
@@ -60,14 +62,55 @@ tdc_core i_tdc_core (
 	.en_write_trigger_distance(en_write_trigger_distance),
 	.en_calib_mode(en_calib_mode),
 	.en_no_trig_err(en_no_trig_err),
-	.FIFO_READ(fifo_read),
 
-
-	.FIFO_DATA(fifo_data),
-	.FIFO_EMPTY(fifo_empty),
+	.out_valid(cdc_fifo_write),
+	.out_word(word_to_cdc_fifo),
 	.tdc_miss_cnt(tdc_miss_cnt),
-	.fifo_over_cnt(fifo_over_cnt),
 	.event_cnt(event_count)
+);
+
+// Now we need to transfer clock domains to Bus
+wire cdc_fifo_empty;
+wire cdc_fifo_full;
+wire [32-1:0] cdc_data_out;
+cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) clock_sync_fifo (
+	.wdata(word_to_cdc_fifo),
+	.wclk(CLK160),
+	.winc(cdc_fifo_write),
+	.wrst(rst),
+	.rclk(BUS_CLK),
+	.rrst(1'b0),
+	.rinc(!generic_fifo_full),
+
+	.wfull(cdc_fifo_full),
+	.rempty(cdc_fifo_empty),
+	.rdata(cdc_data_out)
+);
+
+always @(posedge CLK160) begin
+	if (rst)
+		fifo_over_cnt <= 0;
+	else if (cdc_fifo_full && cdc_fifo_write && (fifo_over_cnt < 255))
+		fifo_over_cnt <= fifo_over_cnt + 1;
+	else
+		fifo_over_cnt <= fifo_over_cnt;
+end
+
+wire generic_fifo_full;
+gerneric_fifo #(
+	.DATA_SIZE(32),
+	.DEPTH(512)
+) fifo_i (
+	.clk(BUS_CLK),
+	.reset(bus_rst),
+	.write(!cdc_fifo_empty),
+	.read(fifo_read),
+	.data_in(cdc_data_out),
+
+	.full(generic_fifo_full),
+	.empty(fifo_empty),
+	.data_out(fifo_data[31:0]),
+	.size()
 );
 
 tdc_sw_interface #(.VERSION(VERSION),

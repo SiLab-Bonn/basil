@@ -9,9 +9,11 @@ set_false_path -from [get_clocks rgmii_rxc] -to [get_clocks BUS_CLK_PLL]
 set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks CLK160PLL]
 set_false_path -from [get_clocks CLK160PLL] -to [get_clocks BUS_CLK_PLL]
 set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks CLK480PLL]
-set_false_path -from [get_clocks CLK160PLL] -to [get_clocks CLK480PLL]
+#set_false_path -from [get_clocks CLK160PLL] -to [get_clocks CLK480PLL]
 
+set_false_path -from [get_cells -hier -filter {NAME =~ */calib_sig_gen/*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */i_controller/* && IS_SEQUENTIAL ==1  }  ]
 set_false_path -from [get_cells -hier -filter {NAME =~ */calib_sig_gen/*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */tdl_sampler/* && IS_SEQUENTIAL ==1  }  ]
+set_false_path -from [get_cells -hier -filter {NAME =~ */conf_en_invert_tdc_synchronizer_dv_clk/* && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */tdl_sampler/carry_chain* && IS_SEQUENTIAL ==1}]
 
 #NET "Clk100"
 set_property PACKAGE_PIN AA4 [get_ports clkin]

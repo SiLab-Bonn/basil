@@ -16,17 +16,6 @@ from basil.dut import Dut
 
 
 def disassemble_tdc_word(word):
-#       TRIGGERED_WORD = 3'd0;
-#       RISING_WORD = 3'd1;
-#       FALLING_WORD = 3'd2;
-#       TIMESTAMP_WORD = 3'd3;
-#       COUNTER_OVERFLOW_WORD = 3'd4;
-#       CALIB_WORD = 3'd5;
-#       MISS_WORD = 3'd6;
-#       RESET_WORD = 3'd7;
-
-
-
     word_type_codes = {0 : 'TRIGGERED', 
                      1 : 'RISING',
                      2 : 'FALLING',
@@ -42,6 +31,8 @@ def disassemble_tdc_word(word):
             'fine_value' : (word >> 7) & 0b11,
             'corse_value' : (word >> 9) & 0xFFFF}
 
+GHZ_S_FREQ = 0.48
+CLK_DIV = 3
 
 
 chip = Dut("tdc_bdaq.yaml")
@@ -57,42 +48,45 @@ logging.info("Starting data test ...")
 chip['CONTROL']['EN'] = 1
 chip['CONTROL'].write()
 
+chip['TDL_TDC'].RESET =1
+
 print(chip['TDL_TDC'].get_en_extern())
 print(chip['TDL_TDC'].get_arming())
 chip['TDL_TDC'].EN_TRIGGER_DIST = 1
 chip['TDL_TDC'].ENABLE = 1
+chip['TDL_TDC'].RESET=0
+
+collected_data = np.empty(0, dtype=np.uint32)
+test_duration = 3
+start_time = time.time()
+
 chip['TDL_TDC'].EN_CALIBRATION_MOD = 1
 print(chip['TDL_TDC'].EN_CALIBRATION_MOD)
 
-collected_data = np.empty(0, dtype=np.uint32)
-testduration = 2
-start_time = time.time()
-
-while time.time() - start_time < testduration:
+while time.time() - start_time < test_duration:
     time.sleep(.01)
 
     fifo_data = chip['FIFO'].get_data()
-    print(fifo_data)
     data_size = len(fifo_data)
     collected_data = np.concatenate((collected_data,fifo_data), dtype=np.uint32)
-    for word_int in fifo_data[-4:] :
-        word_dict = disassemble_tdc_word(word_int)
+    for word_int in fifo_data[-1:] :
+        word_dict = chip['TDL_TDC'].disassemble_tdc_word(word_int)
         print(word_dict)
 
 
+chip['TDL_TDC'].EN_CALIBRATION_MOD = 0
+chip['TDL_TDC'].RESET=1
+chip['FIFO'].get_data()
 
 chip['CONTROL']['EN'] = 0  # stop data source
 chip['CONTROL'].write()
 
-formatted_data = [disassemble_tdc_word(word) for word in collected_data]
-calib_data = [ word for word in formatted_data if word['word_type'] == 'CALIB']
+calib_data_indices = chip['TDL_TDC'].is_calib_word(collected_data)
+print(calib_data_indices)
 
-calib_values = np.array([w['tdl_value'] + 128 * w['fine_value'] for w in calib_data])
+calib_vector = np.ones(92)
+calib_sum = np.sum(calib_vector)
 
-print(calib_values[-20:])
-
-
-logging.info("creating plots")
 def histogram_plots(data):
     if max(data) - min(data) < 1000:
         d = 1
@@ -104,5 +98,77 @@ def histogram_plots(data):
         _ = plt.hist(data, 1000)
     plt.title("Histogram of TDL code density")
     plt.show()
-histogram_plots(calib_values) # 9 bit, which is tdl_module precision
-histogram_plots(calib_values % 128) # 7 bit, which is actual tdl precision
+
+if any(calib_data_indices) :
+    calib_values = chip['TDL_TDC'].get_raw_tdl_values(np.array(collected_data[calib_data_indices]))
+    print(calib_values[-20:])
+    chip['TDL_TDC'].set_calib_values(calib_values)
+    logging.info("Calibration set using %s samples" % len(calib_values))
+
+    #histogram_plots(calib_values[0:int(np.floor(len(calib_values)*1/3))]) 
+    #histogram_plots(calib_values[0:int(np.floor(len(calib_values)*2/3))]) 
+    histogram_plots(calib_values)
+
+
+
+
+
+
+collected_rising = []
+collected_falling = []
+chip['CONTROL']['EN'] = 1  # start data source
+chip['CONTROL'].write()
+chip['FIFO'].get_data()
+
+chip['TDL_TDC'].EN_CALIBRATION_MOD = 0
+chip['TDL_TDC'].RESET=1
+time.sleep(0.1)
+chip['TDL_TDC'].RESET=0
+chip['FIFO'].get_data()
+logging.info("Ready for measurements")
+
+delta_t = 0
+
+while True :
+    time.sleep(.01)
+
+    fifo_data = chip['FIFO'].get_data()
+    data_size = len(fifo_data)
+    for word_int in fifo_data[-8:] :
+        word_dict = chip['TDL_TDC'].disassemble_tdc_word(word_int)
+        print(word_dict)
+        if (word_dict['word_type'] in ['TRIGGERED', 'RISING', 'FALLING']) :
+            if (word_dict['word_type'] == 'TRIGGERED') :
+                delta_t = chip['TDL_TDC'].tdc_word_to_time(word_dict)
+
+            word_time = chip['TDL_TDC'].tdc_word_to_time(word_dict) - delta_t
+
+            if (word_dict['word_type'] == 'RISING'):
+                delta_t += word_time
+
+            print('%s Time: %.3f, Delta Time: %.3f' % (word_dict['word_type'], chip['TDL_TDC'].tdc_word_to_time(word_dict), word_time)) 
+            if(word_dict['word_type'] == 'RISING') :
+                collected_rising.append(word_time)
+            elif(word_dict['word_type'] == 'FALLING') :
+                collected_falling.append(word_time)
+
+    if(len(collected_falling) * len(collected_rising) > 0 and len(collected_falling) % 20 == 19) :
+        plt.subplot(2, 1, 1)
+        d = 0.03
+        left_of_first_bin = np.min(collected_rising) - float(d)/2
+        right_of_last_bin = np.max(collected_rising) + float(d)/2
+        plt.hist(collected_rising, np.arange(left_of_first_bin, right_of_last_bin + d, d))
+        plt.ylabel('# rising signal')
+        plt.xlabel('ns')
+        plt.subplot(2, 1, 2)
+        left_of_first_bin = np.min(collected_falling) - float(d)/2
+        right_of_last_bin = np.max(collected_falling) + float(d)/2
+        plt.hist(collected_falling, np.arange(left_of_first_bin, right_of_last_bin + d, d))
+        plt.ylabel('# falling signal')
+        plt.xlabel('ns')
+
+        plt.tight_layout()
+        plt.show()
+
+
+
