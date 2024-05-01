@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<ProcessHandle Version="1" Minor="0">
-    <Process Command="vivado" Owner="rleiser" Host="asiclab006.physik.uni-bonn.de" Pid="367042" HostCore="12" HostMemory="65632872">
-    </Process>
-</ProcessHandle>
