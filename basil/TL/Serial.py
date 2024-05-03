@@ -37,6 +37,10 @@ class Serial(TransferLayer):
             logger.debug(e)
         self.timeout = self._init.get('timeout', None)  # timeout of 0 returns immediately
 
+        # make interface compatible with other transfer layes (visa)
+        if "baud_rate" in self._init.keys():
+            self._init["baudrate"] = self._init.pop("baud_rate")
+
         self._port = serial.Serial(**{key: value for key, value in self._init.items() if key not in ("read_termination", "write_termination")})
 
     def close(self):
