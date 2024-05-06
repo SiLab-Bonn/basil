@@ -6,6 +6,8 @@
 #
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
+import time
+
 
 class Mercury(HardwareLayer):
     '''Driver for the Physiks Instruments Mercury Controller.
@@ -84,3 +86,27 @@ class Mercury(HardwareLayer):
     def find_edge(self, n, address=None):
         self._write_command("FE%d" % n, address)
 
+    def wait_pos(self, target,precision,address): #waits/prints position until desired precision is reached
+        print("Moving motore from:",self.get_position(address),"to" ,target) #absolute target
+        done=False
+        while done is False:
+            pos=self.get_position(address)
+            print("motor at",pos,"moving to",target)
+            if abs(pos-target)<= precision:
+                done=True
+            else:
+                time.sleep(0.5)
+        return pos
+
+    def wait_FE(self, address): #waits until motor stops moving
+        print(self.get_position(address),"Moving")
+        done=False
+        while done is False:
+            a=self.get_position(address)
+            time.sleep(1)
+            b=self.get_position(address)
+            if a == b:
+                done=True
+            else:
+                time.sleep(0.5)
+        return b
