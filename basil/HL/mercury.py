@@ -85,7 +85,7 @@ class Mercury(HardwareLayer):
     def find_edge(self, n, address=None):
         self._write_command("FE%d" % n, address)
 
-    def wait_pos(self, target, precision, address):   # waits/prints position until desired precision is reached
+    def wait_pos(self, target, precision, address):   # waits and prints position until desired precision is reached
         print("Moving motore from:", self.get_position(address), "to", target)  # absolute target
         done = False
         while done is False:
