@@ -96,7 +96,7 @@ class Mercury(HardwareLayer):
             else:
                 time.sleep(0.5)
         return pos
-        
+
     def wait_FE(self, address):  # waits until motor stops moving
         print(self.get_position(address), "Moving")
         done = False
