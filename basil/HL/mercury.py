@@ -50,46 +50,46 @@ class Mercury(HardwareLayer):
         self._write_command("TB", address)
         return self.read()
 
-    def motor_on(self, address = None):
+    def motor_on(self, address=None):
         self._write_command("MN", address)
 
-    def motor_off(self, address = None):
+    def motor_off(self, address=None):
         self._write_command("MF", address)
 
     def LL(self, address=None):  # logic active low
         self._write_command("LL", address)
 
-    def set_home(self, address = None):  # Defines the current position as 0
+    def set_home(self, address=None):  # Defines the current position as 0
         self._write_command("DH", address)
 
     def go_home(self, address=None):  # Moves motor to zero position
         self._write_command("GH", address)
 
-    def get_position(self, address = None): 
+    def get_position(self, address=None):
         self._write_command("TP", address)
         return int(self.read()[2:-3])
 
-    def get_channel(self, address = None):
+    def get_channel(self, address=None):
         self._write_command("TS", address)
         return self.read()
 
-    def set_position(self, value, address = None):
+    def set_position(self, value, address=None):
         self._write_command("MA%d" % value, address)
 
-    def move_relative(self, value, address = None):
+    def move_relative(self, value, address=None):
         self._write_command("MR%d" % value, address)
 
-    def abort(self, address = None):
+    def abort(self, address=None):
         self._write_command("AB", address)
 
-    def find_edge(self, n, address = None):
+    def find_edge(self, n, address=None):
         self._write_command("FE%d" % n, address)
 
     def wait_pos(self, target, precision, address):   # waits/prints position until desired precision is reached
         print("Moving motore from:", self.get_position(address), "to", target)  # absolute target
         done = False
         while done is False:
-            pos=self.get_position(address)
+            pos = self.get_position(address)
             print("motor at", pos, "moving to", target)
             if abs(pos-target) <= precision:
                 done = True
@@ -101,11 +101,11 @@ class Mercury(HardwareLayer):
         print(self.get_position(address), "Moving")
         done = False
         while done is False:
-            a=self.get_position(address)
+            a = self.get_position(address)
             time.sleep(1)
-            b=self.get_position(address)
+            b = self.get_position(address)
             if a == b:
-                done=True
+                done = True
             else:
                 time.sleep(0.5)
         return b
