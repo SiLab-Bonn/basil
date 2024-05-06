@@ -41,10 +41,10 @@ dut["MotorStage"].set_position(1000, address=1)
 # print(dut["MotorStage"].get_position(address=1), "position after")  # print position after movement
 
 # example of an relative movement using wait_pos
-# move_r=20000
-# target = dut["MotorStage"].get_position(address=1)+move_r
-# dut["MotorStage"].move_relative(move_r,address=1)
-# dut["MotorStage"].wait_pos(target,500,1)
+# move_r = 20000
+# target = dut["MotorStage"].get_position(address=1) + move_r
+# dut["MotorStage"].move_relative(move_r, address=1)
+# dut["MotorStage"].wait_pos(target, 500, 1)
 
 # abort any movement abruptly:
 # dut["MotorStage"].abort(address=1)
