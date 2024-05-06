@@ -91,7 +91,7 @@ class Mercury(HardwareLayer):
         while done is False:
             pos = self.get_position(address)
             print("motor at", pos, "moving to", target)
-            if abs(pos-target) <= precision:
+            if abs(pos - target) <= precision:
                 done = True
             else:
                 time.sleep(0.5)
