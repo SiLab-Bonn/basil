@@ -51,19 +51,19 @@ class Mercury(HardwareLayer):
         self._write_command("TB", address)
         return self.read()
 
-    def motor_on(self,address=None):
+    def motor_on(self, address=None):
         self._write_command("MN", address)
 
-    def motor_off(self,address=None):
+    def motor_off(self, address=None):
         self._write_command("MF", address)
 
-    def LL(self,address=None): #logic active low
+    def LL(self, address=None):  # logic active low
         self._write_command("LL", address)
 
-    def set_home(self,address=None): #Defines the current position as 0
+    def set_home(self, address=None):  # Defines the current position as 0
         self._write_command("DH", address)
 
-    def go_home(self,address=None): #Moves motor to zero position
+    def go_home(self, address=None):  # Moves motor to zero position
         self._write_command("GH", address)
 
     def get_position(self, address=None): 
@@ -86,8 +86,8 @@ class Mercury(HardwareLayer):
     def find_edge(self, n, address=None):
         self._write_command("FE%d" % n, address)
 
-    def wait_pos(self, target,precision,address): #waits/prints position until desired precision is reached
-        print("Moving motore from:",self.get_position(address),"to" ,target) #absolute target
+    def wait_pos(self, target, precision, address):   # waits/prints position until desired precision is reached
+        print("Moving motore from:",self.get_position(address),"to" ,target)  # absolute target
         done=False
         while done is False:
             pos=self.get_position(address)
@@ -97,8 +97,8 @@ class Mercury(HardwareLayer):
             else:
                 time.sleep(0.5)
         return pos
-
-    def wait_FE(self, address): #waits until motor stops moving
+        
+    def wait_FE(self, address):  # waits until motor stops moving
         print(self.get_position(address),"Moving")
         done=False
         while done is False:
