@@ -73,31 +73,34 @@ class Mercury(HardwareLayer):
         self._write_command("TS", address)
         return self.read()
 
-    def set_position(self, value, address=None):
+    def set_position(self, value, precision=500, address=None, wait=True):
         self._write_command("MA%d" % value, address)
+        if wait == True:
+            pos = self._wait_FE(address)
+            if abs(pos - value) <= precision:
+                print("At position", pos, "Traget at", value)
+            else:
+                print("Warning: Precision not reached")
 
-    def move_relative(self, value, address=None):
+    def move_relative(self, value, precision=500, address=None, wait=True):
+        target = self.get_position(address=1) + value
         self._write_command("MR%d" % value, address)
+        if wait == True:
+            pos = self._wait_FE(address)
+            if abs(pos - target) <= precision:
+                print("At position", pos, "Traget at", target)
+            else:
+                print("Warning: Precision not reached")
 
     def abort(self, address=None):
         self._write_command("AB", address)
 
     def find_edge(self, n, address=None):
         self._write_command("FE%d" % n, address)
+        pos = self._wait_FE(address)
+        print("Edge found, position:", pos)
 
-    def wait_pos(self, target, precision, address):   # waits and prints position until desired precision is reached
-        print("Moving motore from:", self.get_position(address), "to", target)  # absolute target
-        done = False
-        while done is False:
-            pos = self.get_position(address)
-            print("motor at", pos, "moving to", target)
-            if abs(pos - target) <= precision:
-                done = True
-            else:
-                time.sleep(0.5)
-        return pos
-
-    def wait_FE(self, address):  # waits until motor stops moving
+    def _wait_FE(self, address=None):  # waits until motor stops moving
         print(self.get_position(address), "Moving")
         done = False
         while done is False:
