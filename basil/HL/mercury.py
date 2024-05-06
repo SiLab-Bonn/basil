@@ -75,7 +75,7 @@ class Mercury(HardwareLayer):
 
     def set_position(self, value, precision=500, address=None, wait=True):
         self._write_command("MA%d" % value, address)
-        if wait == True:
+        if wait is True:
             pos = self._wait_FE(address)
             if abs(pos - value) <= precision:
                 print("At position", pos, "Traget at", value)
@@ -85,7 +85,7 @@ class Mercury(HardwareLayer):
     def move_relative(self, value, precision=500, address=None, wait=True):
         target = self.get_position(address=1) + value
         self._write_command("MR%d" % value, address)
-        if wait == True:
+        if wait is True:
             pos = self._wait_FE(address)
             if abs(pos - target) <= precision:
                 print("At position", pos, "Traget at", target)

@@ -34,7 +34,7 @@ time.sleep(0.1)
 dut["MotorStage"].move_relative(10000, address=1, wait=False)
 
 # finding edge example:
-#dut["MotorStage"].find_edge(1,address=1)  # 0 or 1 indicates direction of movement
+# dut["MotorStage"].find_edge(1,address=1)  # 0 or 1 indicates direction of movement
 
 # abort any movement abruptly:
 # dut["MotorStage"].abort(address=1)
