@@ -25,13 +25,13 @@ dut["MotorStage"].LL(address=1)
 time.sleep(0.1)
 
 # move to absolute position 10000:
-# dut["MotorStage"].set_position(10000, address=1)
+# dut["MotorStage"].set_position(10000, address=1, wait=True)
 
 # get position:
 # print(dut["MotorStage"].get_position(address=1))
 
 # move relative 10000:
-dut["MotorStage"].move_relative(10000, address=1, wait=False)
+dut["MotorStage"].move_relative(10000, address=1, wait=True)
 
 # finding edge example:
 # dut["MotorStage"].find_edge(1,address=1)  # 0 or 1 indicates direction of movement

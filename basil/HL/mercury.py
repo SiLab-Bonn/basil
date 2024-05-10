@@ -73,35 +73,35 @@ class Mercury(HardwareLayer):
         self._write_command("TS", address)
         return self.read()
 
-    def set_position(self, value, precision=500, address=None, wait=True):
+    def set_position(self, value, precision=100, address=None, wait=False):
         self._write_command("MA%d" % value, address)
         if wait is True:
-            pos = self._wait_FE(address)
+            pos = self._wait(address)
             if abs(pos - value) <= precision:
-                print("At position", pos, "Traget at", value)
+                print("At position {pos}, Target at {target}".format(pos = pos, target = value))
             else:
-                print("Warning: Precision not reached")
+                print("Warning: Target not reached! Target: {target}, actual position: {pos}, precision: {pre}".format(target = value, pos = pos, pre = precision))
 
-    def move_relative(self, value, precision=500, address=None, wait=True):
+    def move_relative(self, value, precision=100, address=None, wait=False):
         target = self.get_position(address=1) + value
         self._write_command("MR%d" % value, address)
         if wait is True:
-            pos = self._wait_FE(address)
+            pos = self._wait(address)
             if abs(pos - target) <= precision:
-                print("At position", pos, "Traget at", target)
+                print("At position {pos}, Target at {target}".format(pos = pos, target = target))
             else:
-                print("Warning: Precision not reached")
+                print("Warning: Target not reached! Target: {target}, actual position: {pos}, precision: {pre}".format(target = target, pos = pos, pre = precision))
 
     def abort(self, address=None):
         self._write_command("AB", address)
 
     def find_edge(self, n, address=None):
         self._write_command("FE%d" % n, address)
-        pos = self._wait_FE(address)
-        print("Edge found, position:", pos)
+        pos = self._wait(address)
+        print("Edge found at position: {pos}".format(pos = pos))
 
-    def _wait_FE(self, address=None):  # waits until motor stops moving
-        print(self.get_position(address), "Moving")
+    def _wait(self, address=None):  # waits until motor stops moving
+        print("Moving! Starting position: {pos}".format(pos = self.get_position(address)))
         done = False
         while done is False:
             a = self.get_position(address)
