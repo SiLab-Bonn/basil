@@ -78,9 +78,9 @@ class Mercury(HardwareLayer):
         if wait is True:
             pos = self._wait(address)
             if abs(pos - value) <= precision:
-                print("At position {pos}, Target at {target}".format(pos = pos, target = value))
+                print("At position {pos}, Target at {target}".format(pos=pos, target=value))
             else:
-                print("Warning: Target not reached! Target: {target}, actual position: {pos}, precision: {pre}".format(target = value, pos = pos, pre = precision))
+                print("Warning: Target not reached! Target: {target}, actual position: {pos}, precision: {pre}".format(target=value, pos=pos, pre=precision))
 
     def move_relative(self, value, precision=100, address=None, wait=False):
         target = self.get_position(address=1) + value
@@ -88,9 +88,9 @@ class Mercury(HardwareLayer):
         if wait is True:
             pos = self._wait(address)
             if abs(pos - target) <= precision:
-                print("At position {pos}, Target at {target}".format(pos = pos, target = target))
+                print("At position {pos}, Target at {target}".format(pos=pos, target=target))
             else:
-                print("Warning: Target not reached! Target: {target}, actual position: {pos}, precision: {pre}".format(target = target, pos = pos, pre = precision))
+                print("Warning: Target not reached! Target: {target}, actual position: {pos}, precision: {pre}".format(target=target, pos=pos, pre=precision))
 
     def abort(self, address=None):
         self._write_command("AB", address)
@@ -98,10 +98,10 @@ class Mercury(HardwareLayer):
     def find_edge(self, n, address=None):
         self._write_command("FE%d" % n, address)
         pos = self._wait(address)
-        print("Edge found at position: {pos}".format(pos = pos))
+        print("Edge found at position: {pos}".format(pos=pos))
 
     def _wait(self, address=None):  # waits until motor stops moving
-        print("Moving! Starting position: {pos}".format(pos = self.get_position(address)))
+        print("Moving! Starting position: {pos}".format(pos=self.get_position(address)))
         done = False
         while done is False:
             a = self.get_position(address)
