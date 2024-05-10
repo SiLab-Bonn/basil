@@ -30,7 +30,7 @@ module tdc #(
 
 );
 
-localparam VERSION = 8'b00000010;
+localparam VERSION = 8'b00000011;
 
 wire inv_trig_in;
 wire inv_sig_in;
@@ -97,12 +97,13 @@ always @(posedge CLK160) begin
 end
 
 wire generic_fifo_full;
+wire bus_clk_rst;
 gerneric_fifo #(
 	.DATA_SIZE(32),
 	.DEPTH(512)
 ) fifo_i (
 	.clk(BUS_CLK),
-	.reset(bus_rst),
+	.reset(bus_clk_rst),
 	.write(!cdc_fifo_empty),
 	.read(fifo_read),
 	.data_in(cdc_data_out),
@@ -133,6 +134,7 @@ tdc_sw_interface #(.VERSION(VERSION),
 
 	.tdc_enabled(en_tdc),
 	.tdc_rst(rst),
+	.bus_clk_rst(bus_clk_rst),
 	.arm_flag(arm_flag),
 	.en_write_timestamp(en_write_timestamp),
 	.en_arm(en_arm_mode),

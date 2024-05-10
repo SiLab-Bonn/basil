@@ -169,11 +169,11 @@ always @(posedge CLK) begin
 			IDLE: begin
 				if (en_calib_mode) begin
 					state <= CALIB;
+				end else if (en_write_trigger_distance) begin
+					state <= IDLE_TRIG;
 				end else if (armed) begin 
 					if (hit)
 						state <= RIS_EDGE;
-				end else if (en_write_trigger_distance) begin
-					state <= IDLE_TRIG;
 				end else begin
 					state <= state;
 				end
@@ -181,11 +181,11 @@ always @(posedge CLK) begin
 			IDLE_TRIG: begin
 				if (en_calib_mode) begin
 					state <= CALIB;
+				end else if (~en_write_trigger_distance) begin
+					state <= IDLE;
 				end else if (armed) begin 
 					if (hit)
 						state <= TRIGGERED;
-				end else if (~en_write_trigger_distance) begin
-					state <= IDLE;
 				end else begin
 					state <= state;
 				end

@@ -1,0 +1,1110 @@
+#-----------------------------------------------------------
+# Vivado v2022.2 (64-bit)
+# SW Build 3671981 on Fri Oct 14 04:59:54 MDT 2022
+# IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+# Start of session at: Fri May 10 17:15:45 2024
+# Process ID: 738038
+# Current directory: /users/rleiser/work/basil_branch/examples/tdc_bdaq
+# Command line: vivado
+# Log file: /users/rleiser/work/basil_branch/examples/tdc_bdaq/vivado.log
+# Journal file: /users/rleiser/work/basil_branch/examples/tdc_bdaq/vivado.jou
+# Running On: asiclab006.physik.uni-bonn.de, OS: Linux, CPU Frequency: 1701.310 MHz, CPU Physical cores: 6, Host memory: 67208 MB
+#-----------------------------------------------------------
+start_gui
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:kcu105:part0:1.6 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/kcu105/1.6/board.xml as part xcku040-ffva1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:kcu105:part0:1.7 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/kcu105/1.7/board.xml as part xcku040-ffva1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:kcu116:part0:1.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/kcu116/1.4/board.xml as part xcku5p-ffvb676-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:kcu116:part0:1.5 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/kcu116/1.5/board.xml as part xcku5p-ffvb676-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:kcu1500:part0:1.2 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/kcu1500/1.2/board.xml as part xcku115-flvb2104-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vck190:part0:2.2 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vck190/production/2.2/board.xml as part xcvc1902-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vck190:part0:3.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vck190/production/3.0/board.xml as part xcvc1902-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vck190:part0:3.1 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vck190/production/3.1/board.xml as part xcvc1902-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vck190_newl:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vck190_newl/production/1.0/board.xml as part xcvc1902-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu108:part0:1.6 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu108/1.6/board.xml as part xcvu095-ffva2104-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu108:part0:1.7 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu108/1.7/board.xml as part xcvu095-ffva2104-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu110:part0:1.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu110/1.4/board.xml as part xcvu190-flgc2104-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu118:part0:2.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu118/2.0/board.xml as part xcvu9p-flga2104-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu118:part0:2.3 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu118/2.3/board.xml as part xcvu9p-flga2104-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu118:part0:2.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu118/2.4/board.xml as part xcvu9p-flga2104-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu128:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu128/production/1.0/board.xml as part xcvu37p-fsvh2892-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu129:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu129/production/1.0/board.xml as part xcvu29p-fsga2577-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu1525:part0:1.3 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu1525/1.3/board.xml as part xcvu9p-fsgd2104-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vek280_es:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vek280/es/1.0/board.xml as part xcve2802-vsvh1760-2lp-e-s-es1 specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vermeo_t1_mpsoc:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vermeo_t1_mpsoc/1.0/board.xml as part xczu19eg-ffvd1760-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vermeo_t1_rfsoc:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vermeo_t1_rfsoc/1.0/board.xml as part xczu21dr-ffvd1156-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vhk158_es:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vhk158/es/1.0/board.xml as part xcvh1582-vsva3697-2mp-e-s-es1 specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vmk180:part0:2.2 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vmk180/production/2.2/board.xml as part xcvm1802-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vmk180:part0:3.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vmk180/production/3.0/board.xml as part xcvm1802-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vmk180:part0:3.1 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vmk180/production/3.1/board.xml as part xcvm1802-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vmk180_newl:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vmk180_newl/production/1.0/board.xml as part xcvm1802-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vpk120:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vpk120/production/1.0/board.xml as part xcvp1202-vsva2785-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vpk120_es:part0:1.2 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vpk120/es/1.2/board.xml as part xcvp1202-vsva2785-2mp-e-s-es1 specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vpk120_es_revb:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vpk120_revb/es/1.0/board.xml as part xcvp1202-vsva2785-2mp-e-s-es1 specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vpk180_es:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vpk180/es/1.0/board.xml as part xcvp1802-lsvc4072-2mp-e-s-es1 specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zc702:part0:1.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zc702/1.4/board.xml as part xc7z020clg484-1 specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zc706:part0:1.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zc706/1.4/board.xml as part xc7z045ffg900-2 specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu102:part0:3.3 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu102/3.3/board.xml as part xczu9eg-ffvb1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu102:part0:3.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu102/3.4/board.xml as part xczu9eg-ffvb1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu104:part0:1.1 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu104/1.1/board.xml as part xczu7ev-ffvc1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu106:part0:2.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu106/2.4/board.xml as part xczu7ev-ffvc1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu106:part0:2.5 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu106/2.5/board.xml as part xczu7ev-ffvc1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu106:part0:2.6 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu106/2.6/board.xml as part xczu7ev-ffvc1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu111:part0:1.2 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu111/1.2/board.xml as part xczu28dr-ffvg1517-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu111:part0:1.3 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu111/1.3/board.xml as part xczu28dr-ffvg1517-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu111:part0:1.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu111/1.4/board.xml as part xczu28dr-ffvg1517-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu1275:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu1275/1.0/board.xml as part xczu29dr-ffvf1760-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu1285:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu1285/1.0/board.xml as part xczu39dr-ffvf1760-2-i specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu208:part0:2.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu208/production/2.0/board.xml as part xczu48dr-fsvg1517-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu208ld:part0:2.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu208ld/production/2.0/board.xml as part xczu58dr-fsvg1517-2-i specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu216:part0:2.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu216/production/2.0/board.xml as part xczu49dr-ffvf1760-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu216ld:part0:2.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu216ld/production/2.0/board.xml as part xczu59dr-ffvf1760-2-i specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu670:part0:2.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu670/2.0/board.xml as part xczu67dr-fsve1156-2-i specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu670ld:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu670ld/1.0/board.xml as part xczu57dr-fsve1156-2-i specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:kcu105:part0:1.6 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/kcu105/1.6/board.xml as part xcku040-ffva1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:kcu105:part0:1.7 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/kcu105/1.7/board.xml as part xcku040-ffva1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:kcu116:part0:1.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/kcu116/1.4/board.xml as part xcku5p-ffvb676-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:kcu116:part0:1.5 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/kcu116/1.5/board.xml as part xcku5p-ffvb676-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:kcu1500:part0:1.2 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/kcu1500/1.2/board.xml as part xcku115-flvb2104-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vck190:part0:2.2 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vck190/production/2.2/board.xml as part xcvc1902-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vck190:part0:3.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vck190/production/3.0/board.xml as part xcvc1902-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vck190:part0:3.1 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vck190/production/3.1/board.xml as part xcvc1902-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vck190_newl:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vck190_newl/production/1.0/board.xml as part xcvc1902-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu108:part0:1.6 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu108/1.6/board.xml as part xcvu095-ffva2104-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu108:part0:1.7 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu108/1.7/board.xml as part xcvu095-ffva2104-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu110:part0:1.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu110/1.4/board.xml as part xcvu190-flgc2104-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu118:part0:2.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu118/2.0/board.xml as part xcvu9p-flga2104-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu118:part0:2.3 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu118/2.3/board.xml as part xcvu9p-flga2104-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu118:part0:2.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu118/2.4/board.xml as part xcvu9p-flga2104-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu128:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu128/production/1.0/board.xml as part xcvu37p-fsvh2892-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu129:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu129/production/1.0/board.xml as part xcvu29p-fsga2577-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vcu1525:part0:1.3 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vcu1525/1.3/board.xml as part xcvu9p-fsgd2104-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vek280_es:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vek280/es/1.0/board.xml as part xcve2802-vsvh1760-2lp-e-s-es1 specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vermeo_t1_mpsoc:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vermeo_t1_mpsoc/1.0/board.xml as part xczu19eg-ffvd1760-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vermeo_t1_rfsoc:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vermeo_t1_rfsoc/1.0/board.xml as part xczu21dr-ffvd1156-2l-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vhk158_es:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vhk158/es/1.0/board.xml as part xcvh1582-vsva3697-2mp-e-s-es1 specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vmk180:part0:2.2 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vmk180/production/2.2/board.xml as part xcvm1802-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vmk180:part0:3.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vmk180/production/3.0/board.xml as part xcvm1802-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vmk180:part0:3.1 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vmk180/production/3.1/board.xml as part xcvm1802-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vmk180_newl:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vmk180_newl/production/1.0/board.xml as part xcvm1802-vsva2197-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vpk120:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vpk120/production/1.0/board.xml as part xcvp1202-vsva2785-2mp-e-s specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vpk120_es:part0:1.2 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vpk120/es/1.2/board.xml as part xcvp1202-vsva2785-2mp-e-s-es1 specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vpk120_es_revb:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vpk120_revb/es/1.0/board.xml as part xcvp1202-vsva2785-2mp-e-s-es1 specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:vpk180_es:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/vpk180/es/1.0/board.xml as part xcvp1802-lsvc4072-2mp-e-s-es1 specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zc702:part0:1.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zc702/1.4/board.xml as part xc7z020clg484-1 specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zc706:part0:1.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zc706/1.4/board.xml as part xc7z045ffg900-2 specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu102:part0:3.3 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu102/3.3/board.xml as part xczu9eg-ffvb1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu102:part0:3.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu102/3.4/board.xml as part xczu9eg-ffvb1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu104:part0:1.1 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu104/1.1/board.xml as part xczu7ev-ffvc1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu106:part0:2.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu106/2.4/board.xml as part xczu7ev-ffvc1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu106:part0:2.5 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu106/2.5/board.xml as part xczu7ev-ffvc1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu106:part0:2.6 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu106/2.6/board.xml as part xczu7ev-ffvc1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu111:part0:1.2 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu111/1.2/board.xml as part xczu28dr-ffvg1517-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu111:part0:1.3 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu111/1.3/board.xml as part xczu28dr-ffvg1517-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu111:part0:1.4 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu111/1.4/board.xml as part xczu28dr-ffvg1517-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu1275:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu1275/1.0/board.xml as part xczu29dr-ffvf1760-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu1285:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu1285/1.0/board.xml as part xczu39dr-ffvf1760-2-i specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu208:part0:2.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu208/production/2.0/board.xml as part xczu48dr-fsvg1517-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu208ld:part0:2.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu208ld/production/2.0/board.xml as part xczu58dr-fsvg1517-2-i specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu216:part0:2.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu216/production/2.0/board.xml as part xczu49dr-ffvf1760-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu216ld:part0:2.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu216ld/production/2.0/board.xml as part xczu59dr-ffvf1760-2-i specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu670:part0:2.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu670/2.0/board.xml as part xczu67dr-fsve1156-2-i specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu670ld:part0:1.0 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu670ld/1.0/board.xml as part xczu57dr-fsve1156-2-i specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:kcu105:part0:1.6 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/kcu105/1.6/board.xml as part xcku040-ffva1156-2-e specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:kcu105:part0:1.7 available at /tools/xilinx/Vivado/2022.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/kcu105/1.7/board.xml as part xcku040-ffva1156-2-e specified in board_part file is either invalid or not available
+INFO: [Common 17-14] Message 'Board 49-26' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+create_project tdc_bdaq /users/rleiser/work/basil_branch/examples/tdc_bdaq/Vivado -part xc7k160tffg676-2
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/tools/xilinx/Vivado/2022.2/data/ip'.
+create_project: Time (s): cpu = 00:00:11 ; elapsed = 00:00:05 . Memory (MB): peak = 6631.676 ; gain = 58.055 ; free physical = 47645 ; free virtual = 66953
+add_files -norecurse /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+add_files -fileset constrs_1 -norecurse {/users/rleiser/work/basil_branch/examples/tdc_bdaq/SiTCP.xdc /users/rleiser/work/basil_branch/examples/tdc_bdaq/bdaq53.xdc /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.xdc}
+update_compile_order -fileset sources_1
+launch_runs synth_1 -jobs 8
+WARNING: [Vivado 12-7122] Auto Incremental Compile:: No reference checkpoint was found in run synth_1. Auto-incremental flow will not be run, the standard flow will be run instead.
+[Fri May 10 17:18:56 2024] Launched synth_1...
+Run output will be captured here: /users/rleiser/work/basil_branch/examples/tdc_bdaq/Vivado/tdc_bdaq.runs/synth_1/runme.log
+add_files {/users/rleiser/work/basil_branch/basil/firmware/modules/pulse_gen/pulse_gen_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/rec_sync.v /users/rleiser/work/basil_branch/basil/firmware/modules/i2c/i2c_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/gpac_adc_rx/gpac_adc_rx.v /users/rleiser/work/basil_branch/basil/firmware/modules/tlu/tlu_controller_fsm.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/CG_MOD_pos.v /users/rleiser/work/basil_branch/basil/firmware/modules/seq_rec/seq_rec.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/ODDR_s6.v /users/rleiser/work/basil_branch/basil/firmware/modules/timestamp/timestamp_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/sram_fifo/sram_fifo_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/.word_broker.sv /users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/rgmii_io.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/clock_divider.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v /users/rleiser/work/basil_branch/basil/firmware/modules/m26_rx/m26_rx_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/uart/uart.v /users/rleiser/work/basil_branch/basil/firmware/modules/m26_rx/m26_rx.v /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/fei4_rx.v /users/rleiser/work/basil_branch/basil/firmware/modules/pulse_gen/pulse_gen.v /users/rleiser/work/basil_branch/basil/firmware/modules/fx3_if/FX3_IF.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/RAMB16_S1_S2_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/tb/silbusb.sv /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v /users/rleiser/work/basil_branch/basil/firmware/modules/sram_fifo/sram_fifo.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_reset_sync.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/signal_clipper.vhdl /users/rleiser/work/basil_branch/basil/firmware/modules/utils/DCM_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/chipscope/chipscope_icon.xco /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/ODDR_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/ODDR_s3.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IBUFGDS_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/RAMB16_S1_S9_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/simple_arbiter.v /users/rleiser/work/basil_branch/basil/firmware/modules/chipscope/chipscope_ila.xco /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/fei4_rx_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/tlu/tlu_controller.v /users/rleiser/work/basil_branch/basil/firmware/modules/cmd_seq/cmd_seq_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/jtag_master/jtag_master_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/bus_to_ip.v /users/rleiser/work/basil_branch/basil/firmware/modules/gpac_adc_rx/gpac_adc_rx_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_pulse_sync.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_pulse_sync_cnt.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IBUFDS_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v /users/rleiser/work/basil_branch/basil/firmware/modules/tb/silbusb.v /users/rleiser/work/basil_branch/basil/firmware/modules/i2c/i2c.v /users/rleiser/work/basil_branch/basil/firmware/modules/spi/blk_mem_gen_8_to_1_2k.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/CG_MOD_neg.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/ramb_8_to_n.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IDDR_s3.v /users/rleiser/work/basil_branch/basil/firmware/modules/gpac_adc_rx/gpac_adc_iobuf.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/fx2_to_bus.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/reset_gen.v /users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio_sbus.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/OBUFDS_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v /users/rleiser/work/basil_branch/basil/firmware/modules/spi/spi.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/BUFG_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IDDR_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/fifo_32_to_8.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/sbus_to_ip.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/ddr_des.v /users/rleiser/work/basil_branch/basil/firmware/modules/fast_spi_rx/fast_spi_rx_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/bram_fifo/bram_fifo_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v /users/rleiser/work/basil_branch/basil/firmware/modules/seq_gen/seq_gen_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/seq_rec/seq_rec_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/rrp_arbiter/rrp_arbiter.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/tcp_to_bus.v /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/decode_8b10b.v /users/rleiser/work/basil_branch/basil/firmware/modules/m26_rx/m26_rx_ch.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IDDR_s6.v /users/rleiser/work/basil_branch/basil/firmware/modules/includes/log2func.v /users/rleiser/work/basil_branch/basil/firmware/modules/timestamp/timestamp.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/pulse_gen_rising.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/generic_fifo.v /users/rleiser/work/basil_branch/basil/firmware/modules/jtag_master/jtag_master.v /users/rleiser/work/basil_branch/basil/firmware/modules/seq_gen/seq_gen.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/rbcp_to_bus.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdc_s3/tdc_s3_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/bram_fifo/bram_fifo.v /users/rleiser/work/basil_branch/basil/firmware/modules/cmd_seq/cmd_seq.v /users/rleiser/work/basil_branch/basil/firmware/modules/fast_spi_rx/fast_spi_rx.v /users/rleiser/work/basil_branch/basil/firmware/modules/tlu/tlu_controller_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/tb/uartlib.v /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/receiver_logic.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdc_s3/tdc_s3.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IDDR_s3_noibuf.v /users/rleiser/work/basil_branch/basil/firmware/modules/spi/spi_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/uart/uart_master.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/sync_master.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/fifo_8_to_32.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/clock_multiplier.v}
+CRITICAL WARNING: [IP_Flow 19-11718] IP file '/users/rleiser/work/basil_branch/basil/firmware/modules/chipscope/chipscope_icon.xco' could not be added. XCO files are no longer supported in Vivado. Please use Vivado 2021.2 or earlier to migrate XCO files to XCI format.
+CRITICAL WARNING: [IP_Flow 19-3389] Failed to import IP file '/users/rleiser/work/basil_branch/basil/firmware/modules/chipscope/chipscope_icon.xco': Invalid file type specified: '/users/rleiser/work/basil_branch/basil/firmware/modules/chipscope/chipscope_icon.xco'.  File must have a valid Vivado IP extension (.xci).
+
+CRITICAL WARNING: [Vivado 12-1464] The source file '/users/rleiser/work/basil_branch/basil/firmware/modules/chipscope/chipscope_icon.xco' cannot be added to the fileset 'sources_1'.
+CRITICAL WARNING: [IP_Flow 19-11718] IP file '/users/rleiser/work/basil_branch/basil/firmware/modules/chipscope/chipscope_ila.xco' could not be added. XCO files are no longer supported in Vivado. Please use Vivado 2021.2 or earlier to migrate XCO files to XCI format.
+CRITICAL WARNING: [IP_Flow 19-3389] Failed to import IP file '/users/rleiser/work/basil_branch/basil/firmware/modules/chipscope/chipscope_ila.xco': Invalid file type specified: '/users/rleiser/work/basil_branch/basil/firmware/modules/chipscope/chipscope_ila.xco'.  File must have a valid Vivado IP extension (.xci).
+
+CRITICAL WARNING: [Vivado 12-1464] The source file '/users/rleiser/work/basil_branch/basil/firmware/modules/chipscope/chipscope_ila.xco' cannot be added to the fileset 'sources_1'.
+update_compile_order -fileset sources_1
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/gpac_adc_rx/gpac_adc_iobuf.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/DCM_sim.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/bram_fifo/bram_fifo.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/cmd_seq/cmd_seq.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/fast_spi_rx/fast_spi_rx.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/fei4_rx.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/fifo_8_to_32.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/gpac_adc_rx/gpac_adc_rx.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio_sbus.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/i2c/i2c.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/jtag_master/jtag_master.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/m26_rx/m26_rx.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/pulse_gen/pulse_gen.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/seq_gen/seq_gen.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/seq_rec/seq_rec.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/spi/spi.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/sram_fifo/sram_fifo.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdc_s3/tdc_s3.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/timestamp/timestamp.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tlu/tlu_controller.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/uart/uart_master.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/CG_MOD_neg.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/fx3_if/FX3_IF.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IDDR_s3.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IDDR_s3_noibuf.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IDDR_s6.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/ODDR_s3.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/ODDR_s6.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/RAMB16_S1_S2_sim.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/simple_arbiter.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_pulse_sync_cnt.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/clock_divider.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/fx2_to_bus.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/reset_gen.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/tcp_to_bus.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tb/uartlib.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v] -no_script -reset -force -quiet
+remove_files  {/users/rleiser/work/basil_branch/basil/firmware/modules/gpac_adc_rx/gpac_adc_iobuf.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/DCM_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/bram_fifo/bram_fifo.v /users/rleiser/work/basil_branch/basil/firmware/modules/cmd_seq/cmd_seq.v /users/rleiser/work/basil_branch/basil/firmware/modules/fast_spi_rx/fast_spi_rx.v /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/fei4_rx.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/fifo_8_to_32.v /users/rleiser/work/basil_branch/basil/firmware/modules/gpac_adc_rx/gpac_adc_rx.v /users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio_sbus.v /users/rleiser/work/basil_branch/basil/firmware/modules/i2c/i2c.v /users/rleiser/work/basil_branch/basil/firmware/modules/jtag_master/jtag_master.v /users/rleiser/work/basil_branch/basil/firmware/modules/m26_rx/m26_rx.v /users/rleiser/work/basil_branch/basil/firmware/modules/pulse_gen/pulse_gen.v /users/rleiser/work/basil_branch/basil/firmware/modules/seq_gen/seq_gen.v /users/rleiser/work/basil_branch/basil/firmware/modules/seq_rec/seq_rec.v /users/rleiser/work/basil_branch/basil/firmware/modules/spi/spi.v /users/rleiser/work/basil_branch/basil/firmware/modules/sram_fifo/sram_fifo.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdc_s3/tdc_s3.v /users/rleiser/work/basil_branch/basil/firmware/modules/timestamp/timestamp.v /users/rleiser/work/basil_branch/basil/firmware/modules/tlu/tlu_controller.v /users/rleiser/work/basil_branch/basil/firmware/modules/uart/uart_master.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/CG_MOD_neg.v /users/rleiser/work/basil_branch/basil/firmware/modules/fx3_if/FX3_IF.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IDDR_s3.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IDDR_s3_noibuf.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IDDR_s6.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/ODDR_s3.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/ODDR_s6.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/RAMB16_S1_S2_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/simple_arbiter.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_pulse_sync_cnt.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/clock_divider.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/fx2_to_bus.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/reset_gen.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/tcp_to_bus.v /users/rleiser/work/basil_branch/basil/firmware/modules/tb/uartlib.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v}
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tlu/tlu_controller_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/cmd_seq/cmd_seq_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tdc_s3/tdc_s3_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/m26_rx/m26_rx_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/pulse_gen/pulse_gen_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/seq_rec/seq_rec_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/spi/spi_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/gpac_adc_rx/gpac_adc_rx_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/jtag_master/jtag_master_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/seq_gen/seq_gen_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/fei4_rx_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/i2c/i2c_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/fast_spi_rx/fast_spi_rx_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/timestamp/timestamp_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/sram_fifo/sram_fifo_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/bram_fifo/bram_fifo_core.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IBUFDS_sim.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IBUFGDS_sim.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/OBUFDS_sim.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/clock_multiplier.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/sbus_to_ip.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/uart/uart.v] -no_script -reset -force -quiet
+remove_files  {/users/rleiser/work/basil_branch/basil/firmware/modules/tlu/tlu_controller_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/cmd_seq/cmd_seq_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/tdc_s3/tdc_s3_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/m26_rx/m26_rx_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/pulse_gen/pulse_gen_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/seq_rec/seq_rec_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/spi/spi_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/gpac_adc_rx/gpac_adc_rx_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/jtag_master/jtag_master_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/seq_gen/seq_gen_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/fei4_rx_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/i2c/i2c_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/fast_spi_rx/fast_spi_rx_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/timestamp/timestamp_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/sram_fifo/sram_fifo_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/bram_fifo/bram_fifo_core.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IBUFDS_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IBUFGDS_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/OBUFDS_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/clock_multiplier.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/sbus_to_ip.v /users/rleiser/work/basil_branch/basil/firmware/modules/uart/uart.v}
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/receiver_logic.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/spi/blk_mem_gen_8_to_1_2k.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/ddr_des.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/CG_MOD_pos.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_pulse_sync.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_reset_sync.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/m26_rx/m26_rx_ch.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/pulse_gen_rising.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/ramb_8_to_n.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/tlu/tlu_controller_fsm.v] -no_script -reset -force -quiet
+remove_files  {/users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/receiver_logic.v /users/rleiser/work/basil_branch/basil/firmware/modules/spi/blk_mem_gen_8_to_1_2k.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/ddr_des.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/CG_MOD_pos.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_pulse_sync.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_reset_sync.v /users/rleiser/work/basil_branch/basil/firmware/modules/m26_rx/m26_rx_ch.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/pulse_gen_rising.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/ramb_8_to_n.v /users/rleiser/work/basil_branch/basil/firmware/modules/tlu/tlu_controller_fsm.v}
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/rec_sync.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/sync_master.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/RAMB16_S1_S9_sim.v] -no_script -reset -force -quiet
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/decode_8b10b.v] -no_script -reset -force -quiet
+remove_files  {/users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/rec_sync.v /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/sync_master.v /users/rleiser/work/basil_branch/basil/firmware/modules/utils/RAMB16_S1_S9_sim.v /users/rleiser/work/basil_branch/basil/firmware/modules/fei4_rx/decode_8b10b.v}
+export_ip_user_files -of_objects  [get_files /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IDDR_sim.v] -no_script -reset -force -quiet
+remove_files  /users/rleiser/work/basil_branch/basil/firmware/modules/utils/IDDR_sim.v
+set_property include_dirs /users/rleiser/work/basil_branch/basil/firmware/modules [current_fileset]
+set_property dataflow_viewer_settings "min_width=16"   [current_fileset]
+update_compile_order -fileset sources_1
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+WARNING: [HDL 9-3756] overwriting previous definition of module 'three_stage_synchronizer' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'three_stage_synchronizer' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'three_stage_synchronizer' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'bus_to_ip' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/bus_to_ip.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_syncfifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_fifomem' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:83]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rptr_empty' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:121]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'wptr_full' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:157]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_r2w' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:193]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_w2r' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:209]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_syncfifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_fifomem' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:83]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rptr_empty' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:121]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'wptr_full' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:157]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_r2w' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:193]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_w2r' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:209]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_syncfifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_fifomem' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:83]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rptr_empty' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:121]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'wptr_full' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:157]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_r2w' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:193]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_w2r' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:209]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'clk_divide' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'clk_divide' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'clk_divide' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'controller' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'controller' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'controller' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'delay_n' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'delay_n' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'delay_n' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'fifo_32_to_8' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/fifo_32_to_8.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'flag_domain_crossing' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'flag_domain_crossing' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'flag_domain_crossing' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'gerneric_fifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/generic_fifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'gpio' [/users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio.v:10]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'gpio_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio_core.v:8]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'graycode_2stage_cdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'graycode_2stage_cdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'graycode_2stage_cdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'priority_encoder_only' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v:7]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'priority_encoder_only' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v:7]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'priority_encoder_only' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v:7]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rbcp_to_bus' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/rbcp_to_bus.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rgmii_io' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/rgmii_io.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rrp_arbiter' [/users/rleiser/work/basil_branch/basil/firmware/modules/rrp_arbiter/rrp_arbiter.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:41]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:76]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:41]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:76]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:41]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:76]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_sw_interface' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_sw_interface' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdl_and_detector' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdl_and_detector' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdl_and_detector' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'word_broker' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/.word_broker.sv:1]
+WARNING: [HDL 9-3756] overwriting previous definition of interface 'SiLibUSB' [/users/rleiser/work/basil_branch/basil/firmware/modules/tb/silbusb.sv:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'word_broker' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'word_broker' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:1]
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'three_stage_synchronizer()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'bus_to_ip()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/bus_to_ip.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'CHAIN_CELL()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'carry_sampler_spartan6()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_syncfifo()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_fifomem()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 83 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 83 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 83 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 83 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rptr_empty()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 121 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 121 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 121 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 121 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'wptr_full()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 157 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 157 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 157 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 157 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_sync_r2w()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 193 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 193 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 193 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 193 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_sync_w2r()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 209 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 209 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 209 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 209 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'clk_divide()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'controller()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'delay_n()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'fifo_32_to_8()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/fifo_32_to_8.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'flag_domain_crossing()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'gerneric_fifo()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/generic_fifo.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'gpio()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 10 of file /users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio.v
+Duplicate found at line 10 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'gpio_core()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 8 of file /users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio_core.v
+Duplicate found at line 8 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'graycode_2stage_cdc()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'priority_encoder_only()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 7 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v
+Duplicate found at line 7 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 7 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 7 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rbcp_to_bus()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/rbcp_to_bus.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rgmii_io()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/rgmii_io.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rrp_arbiter()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/rrp_arbiter/rrp_arbiter.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'sample_deser()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'SiLibUSB()' found in library 'xil_defaultlib'
+Duplicate found at line 13 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tb/silbusb.v
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tb/silbusb.sv
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'slimfast_multioption_counter()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 41 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v
+Duplicate found at line 41 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 41 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 41 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'slimfast_multioption_counter_core()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 76 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v
+Duplicate found at line 76 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 76 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 76 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdc_sw_interface()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdl_and_detector()' found in library 'xil_defaultlib'
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+	(Active) Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'word_broker()' found in library 'xil_defaultlib'
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/.word_broker.sv
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdc_core()' found in library 'xil_defaultlib'
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdc()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [Vivado 12-7122] Auto Incremental Compile:: No reference checkpoint was found in run synth_1. Auto-incremental flow will not be run, the standard flow will be run instead.
+[Fri May 10 17:23:58 2024] Launched synth_1...
+Run output will be captured here: /users/rleiser/work/basil_branch/examples/tdc_bdaq/Vivado/tdc_bdaq.runs/synth_1/runme.log
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+WARNING: [HDL 9-3756] overwriting previous definition of module 'three_stage_synchronizer' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'three_stage_synchronizer' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'three_stage_synchronizer' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'bus_to_ip' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/bus_to_ip.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_syncfifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_fifomem' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:83]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rptr_empty' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:121]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'wptr_full' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:157]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_r2w' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:193]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_w2r' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:209]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_syncfifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_fifomem' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:83]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rptr_empty' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:121]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'wptr_full' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:157]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_r2w' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:193]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_w2r' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:209]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_syncfifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_fifomem' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:83]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rptr_empty' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:121]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'wptr_full' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:157]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_r2w' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:193]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_w2r' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:209]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'clk_divide' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'clk_divide' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'clk_divide' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'controller' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'controller' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'controller' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'delay_n' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'delay_n' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'delay_n' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'fifo_32_to_8' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/fifo_32_to_8.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'flag_domain_crossing' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'flag_domain_crossing' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'flag_domain_crossing' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'gerneric_fifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/generic_fifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'gpio' [/users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio.v:10]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'gpio_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio_core.v:8]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'graycode_2stage_cdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'graycode_2stage_cdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'graycode_2stage_cdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'priority_encoder_only' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v:7]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'priority_encoder_only' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v:7]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'priority_encoder_only' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v:7]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rbcp_to_bus' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/rbcp_to_bus.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rgmii_io' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/rgmii_io.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rrp_arbiter' [/users/rleiser/work/basil_branch/basil/firmware/modules/rrp_arbiter/rrp_arbiter.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:41]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:76]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:41]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:76]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:41]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:76]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_sw_interface' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_sw_interface' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdl_and_detector' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdl_and_detector' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdl_and_detector' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'word_broker' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/.word_broker.sv:1]
+WARNING: [HDL 9-3756] overwriting previous definition of interface 'SiLibUSB' [/users/rleiser/work/basil_branch/basil/firmware/modules/tb/silbusb.sv:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'word_broker' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'word_broker' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:1]
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'three_stage_synchronizer()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'bus_to_ip()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/bus_to_ip.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'CHAIN_CELL()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'carry_sampler_spartan6()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_syncfifo()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_fifomem()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 83 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 83 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 83 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 83 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rptr_empty()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 121 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 121 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 121 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 121 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'wptr_full()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 157 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 157 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 157 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 157 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_sync_r2w()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 193 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 193 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 193 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 193 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_sync_w2r()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 209 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 209 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 209 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 209 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'clk_divide()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'controller()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'delay_n()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'fifo_32_to_8()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/fifo_32_to_8.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'flag_domain_crossing()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'gerneric_fifo()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/generic_fifo.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'gpio()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 10 of file /users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio.v
+Duplicate found at line 10 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'gpio_core()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 8 of file /users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio_core.v
+Duplicate found at line 8 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'graycode_2stage_cdc()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'priority_encoder_only()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 7 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v
+Duplicate found at line 7 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 7 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 7 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rbcp_to_bus()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/rbcp_to_bus.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rgmii_io()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/rgmii_io.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rrp_arbiter()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/rrp_arbiter/rrp_arbiter.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'sample_deser()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'SiLibUSB()' found in library 'xil_defaultlib'
+Duplicate found at line 13 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tb/silbusb.v
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tb/silbusb.sv
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'slimfast_multioption_counter()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 41 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v
+Duplicate found at line 41 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 41 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 41 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'slimfast_multioption_counter_core()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 76 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v
+Duplicate found at line 76 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 76 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 76 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdc_sw_interface()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdl_and_detector()' found in library 'xil_defaultlib'
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+	(Active) Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'word_broker()' found in library 'xil_defaultlib'
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/.word_broker.sv
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdc_core()' found in library 'xil_defaultlib'
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdc()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [Vivado 12-7122] Auto Incremental Compile:: No reference checkpoint was found in run synth_1. Auto-incremental flow will not be run, the standard flow will be run instead.
+[Fri May 10 17:25:27 2024] Launched synth_1...
+Run output will be captured here: /users/rleiser/work/basil_branch/examples/tdc_bdaq/Vivado/tdc_bdaq.runs/synth_1/runme.log
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+WARNING: [HDL 9-3756] overwriting previous definition of module 'three_stage_synchronizer' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'three_stage_synchronizer' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'three_stage_synchronizer' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'bus_to_ip' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/bus_to_ip.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_syncfifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_fifomem' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:83]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rptr_empty' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:121]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'wptr_full' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:157]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_r2w' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:193]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_w2r' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:209]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_syncfifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_fifomem' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:83]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rptr_empty' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:121]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'wptr_full' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:157]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_r2w' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:193]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_w2r' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:209]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_syncfifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_fifomem' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:83]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rptr_empty' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:121]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'wptr_full' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:157]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_r2w' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:193]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_w2r' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:209]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'clk_divide' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'clk_divide' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'clk_divide' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'controller' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'controller' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'controller' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'delay_n' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'delay_n' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'delay_n' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'fifo_32_to_8' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/fifo_32_to_8.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'flag_domain_crossing' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'flag_domain_crossing' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'flag_domain_crossing' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'gerneric_fifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/generic_fifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'gpio' [/users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio.v:10]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'gpio_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio_core.v:8]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'graycode_2stage_cdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'graycode_2stage_cdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'graycode_2stage_cdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'priority_encoder_only' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v:7]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'priority_encoder_only' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v:7]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'priority_encoder_only' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v:7]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rbcp_to_bus' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/rbcp_to_bus.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rgmii_io' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/rgmii_io.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rrp_arbiter' [/users/rleiser/work/basil_branch/basil/firmware/modules/rrp_arbiter/rrp_arbiter.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:41]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:76]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:41]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:76]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:41]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:76]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_sw_interface' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_sw_interface' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdl_and_detector' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdl_and_detector' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdl_and_detector' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'word_broker' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/.word_broker.sv:1]
+WARNING: [HDL 9-3756] overwriting previous definition of interface 'SiLibUSB' [/users/rleiser/work/basil_branch/basil/firmware/modules/tb/silbusb.sv:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'word_broker' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'word_broker' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:1]
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'three_stage_synchronizer()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'bus_to_ip()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/bus_to_ip.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'CHAIN_CELL()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'carry_sampler_spartan6()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_syncfifo()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_fifomem()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 83 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 83 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 83 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 83 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rptr_empty()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 121 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 121 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 121 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 121 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'wptr_full()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 157 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 157 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 157 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 157 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_sync_r2w()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 193 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 193 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 193 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 193 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_sync_w2r()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 209 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 209 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 209 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 209 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'clk_divide()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'controller()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'delay_n()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'fifo_32_to_8()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/fifo_32_to_8.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'flag_domain_crossing()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'gerneric_fifo()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/generic_fifo.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'gpio()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 10 of file /users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio.v
+Duplicate found at line 10 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'gpio_core()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 8 of file /users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio_core.v
+Duplicate found at line 8 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'graycode_2stage_cdc()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'priority_encoder_only()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 7 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v
+Duplicate found at line 7 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 7 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 7 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rbcp_to_bus()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/rbcp_to_bus.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rgmii_io()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/rgmii_io.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rrp_arbiter()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/rrp_arbiter/rrp_arbiter.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'sample_deser()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'SiLibUSB()' found in library 'xil_defaultlib'
+Duplicate found at line 13 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tb/silbusb.v
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tb/silbusb.sv
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'slimfast_multioption_counter()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 41 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v
+Duplicate found at line 41 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 41 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 41 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'slimfast_multioption_counter_core()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 76 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v
+Duplicate found at line 76 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 76 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 76 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdc_sw_interface()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdl_and_detector()' found in library 'xil_defaultlib'
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+	(Active) Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'word_broker()' found in library 'xil_defaultlib'
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/.word_broker.sv
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdc_core()' found in library 'xil_defaultlib'
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdc()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [Vivado 12-7122] Auto Incremental Compile:: No reference checkpoint was found in run synth_1. Auto-incremental flow will not be run, the standard flow will be run instead.
+[Fri May 10 17:26:12 2024] Launched synth_1...
+Run output will be captured here: /users/rleiser/work/basil_branch/examples/tdc_bdaq/Vivado/tdc_bdaq.runs/synth_1/runme.log
+reset_run synth_1
+launch_runs synth_1 -jobs 8
+WARNING: [HDL 9-3756] overwriting previous definition of module 'three_stage_synchronizer' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'three_stage_synchronizer' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'three_stage_synchronizer' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'bus_to_ip' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/bus_to_ip.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'CHAIN_CELL' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:27]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'carry_sampler_spartan6' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v:56]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_syncfifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_fifomem' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:83]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rptr_empty' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:121]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'wptr_full' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:157]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_r2w' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:193]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_w2r' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:209]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_syncfifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_fifomem' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:83]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rptr_empty' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:121]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'wptr_full' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:157]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_r2w' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:193]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_w2r' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:209]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_syncfifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_fifomem' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:83]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rptr_empty' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:121]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'wptr_full' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:157]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_r2w' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:193]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'cdc_sync_w2r' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v:209]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'clk_divide' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'clk_divide' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'clk_divide' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'controller' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'controller' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'controller' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'delay_n' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'delay_n' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'delay_n' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'fifo_32_to_8' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/fifo_32_to_8.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'flag_domain_crossing' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'flag_domain_crossing' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'flag_domain_crossing' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'gerneric_fifo' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/generic_fifo.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'gpio' [/users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio.v:10]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'gpio_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio_core.v:8]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'graycode_2stage_cdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'graycode_2stage_cdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'graycode_2stage_cdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'priority_encoder_only' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v:7]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'priority_encoder_only' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v:7]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'priority_encoder_only' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v:7]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rbcp_to_bus' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/rbcp_to_bus.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rgmii_io' [/users/rleiser/work/basil_branch/basil/firmware/modules/utils/rgmii_io.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'rrp_arbiter' [/users/rleiser/work/basil_branch/basil/firmware/modules/rrp_arbiter/rrp_arbiter.v:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'sample_deser' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:41]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:76]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:41]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:76]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:41]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'slimfast_multioption_counter_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v:76]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_sw_interface' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_sw_interface' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v:5]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdc_core' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v:11]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdl_and_detector' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdl_and_detector' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'tdl_and_detector' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v:4]
+WARNING: [HDL 9-3756] overwriting previous definition of interface 'SiLibUSB' [/users/rleiser/work/basil_branch/basil/firmware/modules/tb/silbusb.sv:12]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'word_broker' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:1]
+WARNING: [HDL 9-3756] overwriting previous definition of module 'word_broker' [/users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/word_broker.v:1]
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'three_stage_synchronizer()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/3_stage_synchronizer.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'bus_to_ip()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/bus_to_ip.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'CHAIN_CELL()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+Duplicate found at line 27 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'carry_sampler_spartan6()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/carrysampler_spartan6_20ps.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+Duplicate found at line 56 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_syncfifo()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_fifomem()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 83 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 83 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 83 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 83 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rptr_empty()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 121 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 121 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 121 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 121 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'wptr_full()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 157 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 157 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 157 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 157 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_sync_r2w()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 193 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 193 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 193 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 193 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'cdc_sync_w2r()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 209 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/cdc_syncfifo.v
+Duplicate found at line 209 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 209 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 209 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'clk_divide()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/clk_divide.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'controller()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/controller.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'delay_n()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/delay_n.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'fifo_32_to_8()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/fifo_32_to_8.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'flag_domain_crossing()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/flag_domain_crossing.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'gerneric_fifo()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/generic_fifo.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'gpio()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 10 of file /users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio.v
+Duplicate found at line 10 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'gpio_core()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 8 of file /users/rleiser/work/basil_branch/basil/firmware/modules/gpio/gpio_core.v
+Duplicate found at line 8 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'graycode_2stage_cdc()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/utils/graycode_2stage_cdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'priority_encoder_only()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 7 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/priority_encoder_only.v
+Duplicate found at line 7 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 7 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 7 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rbcp_to_bus()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/rbcp_to_bus.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rgmii_io()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/utils/rgmii_io.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'rrp_arbiter()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/rrp_arbiter/rrp_arbiter.v
+Duplicate found at line 12 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'sample_deser()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/delayline/sample_deser.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'SiLibUSB()' found in library 'xil_defaultlib'
+Duplicate found at line 13 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tb/silbusb.v
+	(Active) Duplicate found at line 12 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tb/silbusb.sv
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'slimfast_multioption_counter()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 41 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v
+Duplicate found at line 41 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 41 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 41 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'slimfast_multioption_counter_core()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 76 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/counter/slimfast_multioption_counter.v
+Duplicate found at line 76 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 76 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 76 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdc_sw_interface()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/sw_interface.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 5 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdl_and_detector()' found in library 'xil_defaultlib'
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+	(Active) Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdl_supersampler.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'word_broker()' found in library 'xil_defaultlib'
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+Duplicate found at line 1 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdc_core()' found in library 'xil_defaultlib'
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 11 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+	(Active) Duplicate found at line 11 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc_core.v
+WARNING: [filemgmt 20-1318] Duplicate Design Unit 'tdc()' found in library 'xil_defaultlib'
+	(Active) Duplicate found at line 4 of file /users/rleiser/work/basil_branch/basil/firmware/modules/tdl_tdc/tdc.v
+Duplicate found at line 4 of file /users/rleiser/work/basil_branch/examples/tdc_bdaq/tdc_bdaq.v
+WARNING: [Vivado 12-7122] Auto Incremental Compile:: No reference checkpoint was found in run synth_1. Auto-incremental flow will not be run, the standard flow will be run instead.
+[Fri May 10 17:29:48 2024] Launched synth_1...
+Run output will be captured here: /users/rleiser/work/basil_branch/examples/tdc_bdaq/Vivado/tdc_bdaq.runs/synth_1/runme.log
+exit
+INFO: [Common 17-206] Exiting Vivado at Fri May 10 17:36:19 2024...

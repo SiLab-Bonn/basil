@@ -18,6 +18,7 @@ module tdc_sw_interface (
 
 	output wire tdc_enabled,
 	output wire tdc_rst,
+	output wire bus_clk_rst,
 	output wire arm_flag,
 	output wire en_write_timestamp,
 	output wire en_arm,
@@ -28,7 +29,7 @@ module tdc_sw_interface (
 	output wire en_no_trig_err
 );
 
-parameter VERSION = 8'b00000010;
+parameter VERSION = 8'b00000000;
 parameter BASEADDR = 16'h0;
 parameter HIGHADDR = 16'h100;
 parameter ABUSWIDTH = 16;
@@ -71,13 +72,12 @@ wire soft_rst_flag, bus_rst_flag;
 assign soft_rst_flag = ~soft_rst_ff[1] & soft_rst_ff[0]; 
 assign bus_rst_flag = bus_rst_ff[1] & ~bus_rst_ff[0]; // trailing edge
 
-wire rst_bus_clk;
-assign rst_bus_clk = bus_rst_flag | soft_rst_flag;
+assign bus_clk_rst = bus_rst_flag | soft_rst_flag;
 
-flag_domain_crossing rst_flag_domeain_crossing (
+flag_domain_crossing rst_flag_domain_crossing (
 	.CLK_A(BUS_CLK),
 	.CLK_B(CLK),
-	.FLAG_IN_CLK_A(rst_bus_clk),
+	.FLAG_IN_CLK_A(bus_clk_rst),
 	.FLAG_OUT_CLK_B(tdc_rst)
 );
 
