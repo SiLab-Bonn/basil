@@ -10,6 +10,7 @@ import time
 
 logger = logging.getLogger(__name__)
 
+
 class Mercury(HardwareLayer):
     '''Driver for the Physiks Instruments Mercury Controller.
     A protocoll via RS 232 serial port is used with 9600/19200/38400/115200 baud rate. The baud rate
