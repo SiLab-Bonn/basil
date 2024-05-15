@@ -15,9 +15,9 @@ class EnvironmentReadout(NTCReadout):
 
         super(EnvironmentReadout, self).__init__(intf, conf)
 
-        self.fixed_resistors = self._init.get('resistors')
-        if not isinstance(self.fixed_resistors, list):
-            self.fixed_resistors = [float(self.fixed_resistors)] * 8 if self.fixed_resistors is not None else [None] * 8
+        self.fixed_resistors = self._init.get('resistors', [10000] * 8)
+        if not isinstance(self.fixed_resistors, list) and isinstance(self.fixed_resistors, (int, float)):
+            self.fixed_resistors = [float(self.fixed_resistors)] * 8
 
         self.adc_range = float(self._init.get('adc_range', 1023))
         self.operating_voltage = float(self._init.get('operating_voltage', 5.0))
