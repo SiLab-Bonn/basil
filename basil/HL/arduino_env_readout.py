@@ -48,10 +48,10 @@ class EnvironmentReadout(NTCReadout):
             "offset": 0.0,
         }))
 
-    def setFixedResistance(self, pin, resistance):
+    def set_fixed_resistance(self, pin, resistance):
         self.fixed_resistors[pin] = resistance
 
-    def getResistance(self, sensor, adc_range=None):
+    def get_resistance(self, sensor, adc_range=None):
         analog_read = self.analog_read(sensor)
 
         # Make int sensors to list
@@ -62,7 +62,7 @@ class EnvironmentReadout(NTCReadout):
 
         return {s: self.fixed_resistors[s] / (adc_range / analog_read[s] - 1.0) if abs(adc_range / analog_read[s] - 1) > 0.01 else None for s in sensor}
 
-    def getVoltage(self, sensor, adc_range=None):
+    def get_voltage(self, sensor, adc_range=None):
         analog_read = self.analog_read(sensor)
 
         # Make int sensors to list
@@ -73,7 +73,7 @@ class EnvironmentReadout(NTCReadout):
 
         return {s: analog_read[s] * (self.operating_voltage / adc_range) for s in sensor}
 
-    def steinhartHart(self, R, A, B, C, D, R25=10e3):
+    def steinharthart(self, R, A, B, C, D, R25=10e3):
         E = np.log(R / R25)
 
         return 1.0 / (A + B * E + C * E**2 + D * E**3) - 273.15
@@ -85,16 +85,16 @@ class EnvironmentReadout(NTCReadout):
         if adc_range is None:
             adc_range = self.adc_range
 
-        resistances = self.getResistance(sensor, adc_range)
+        resistances = self.get_resistance(sensor, adc_range)
 
-        return {s: self.steinhartHart(resistances[s], **self.steinharthart_params) if resistances[s] is not None else None for s in sensor}
+        return {s: self.steinharthart(resistances[s], **self.steinharthart_params) if resistances[s] is not None else None for s in sensor}
 
     def humidity(self, temperature_correction=None, adc_range=None):
         if self.humidity_pin < 0:
             logger.warning('No humidity pin specified!')
             return
 
-        voltage = self.getVoltage(self.humidity_pin, adc_range)[self.humidity_pin]
+        voltage = self.get_voltage(self.humidity_pin, adc_range)[self.humidity_pin]
 
         RH = (voltage - self.humidity_params['offset']) / self.humidity_params['slope']
 
@@ -108,7 +108,7 @@ class EnvironmentReadout(NTCReadout):
             logger.warning('No pressure pin specified!')
             return
 
-        voltage = self.getVoltage(self.pressure_pin, adc_range)[self.pressure_pin]
+        voltage = self.get_voltage(self.pressure_pin, adc_range)[self.pressure_pin]
 
         return self.pressure_params['slope'] * voltage - self.pressure_params['offset']
 
