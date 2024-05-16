@@ -9,6 +9,7 @@ import logging
 import time
 
 logger = logging.getLogger(__name__)
+# logger.setLevel(logging.DEBUG)
 
 
 class Mercury(HardwareLayer):
@@ -80,7 +81,7 @@ class Mercury(HardwareLayer):
         if wait is True:
             pos = self._wait(address)
             if abs(pos - value) <= precision:
-                logger.info("At position {pos}, Target at {target}".format(pos=pos, target=value))
+                logger.debug("At position {pos}, Target at {target}".format(pos=pos, target=value))
             else:
                 logger.warning("Target not reached! Target: {target}, actual position: {pos}, precision: {pre}".format(target=value, pos=pos, pre=precision))
 
@@ -90,7 +91,7 @@ class Mercury(HardwareLayer):
         if wait is True:
             pos = self._wait(address)
             if abs(pos - target) <= precision:
-                logger.info("At position {pos}, Target at {target}".format(pos=pos, target=target))
+                logger.debug("At position {pos}, Target at {target}".format(pos=pos, target=target))
             else:
                 logger.warning("Target not reached! Target: {target}, actual position: {pos}, precision: {pre}".format(target=target, pos=pos, pre=precision))
 
@@ -100,10 +101,10 @@ class Mercury(HardwareLayer):
     def find_edge(self, n, address=None):
         self._write_command("FE%d" % n, address)
         pos = self._wait(address)
-        logger.info("Edge found at position: {pos}".format(pos=pos))
+        logger.debug("Edge found at position: {pos}".format(pos=pos))
 
     def _wait(self, address=None):  # waits until motor stops moving
-        logger.info("Moving! Starting position: {pos}".format(pos=self.get_position(address)))
+        logger.debug("Moving! Starting position: {pos}".format(pos=self.get_position(address)))
         done = False
         while done is False:
             a = self.get_position(address)
