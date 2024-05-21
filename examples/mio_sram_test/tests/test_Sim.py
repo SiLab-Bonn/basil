@@ -143,7 +143,7 @@ class TestSram(unittest.TestCase):
         self.chip['PULSE'].start()
 
         ret = self.chip['FIFO'].get_data()
-        x = np.arange((128 + 1023) * 4, (128 + 1023 + 1) * 4, dtype=np.uint8)
+        x = np.arange((128 + 1023) * 4, (128 + 1023 + 1) * 4).astype(np.uint8)
         x.dtype = np.uint32
 
         np.testing.assert_array_equal(ret, x)
@@ -197,12 +197,12 @@ class TestSram(unittest.TestCase):
         for _ in range(100):
             ret = self.chip['FIFO'].get_data()
 
-            x = np.arange(i * 4, (i + ret.shape[0]) * 4, dtype=np.uint8)
+            x = np.arange(i * 4, (i + ret.shape[0]) * 4).astype(np.uint8)
             x.dtype = np.uint32
 
             i += ret.shape[0]
 
-            ok = np.alltrue(ret == x)
+            ok = np.all(ret == x)
             # print 'OK?', ok, ret.shape[0], i, k
             if not ok:
                 error = True
