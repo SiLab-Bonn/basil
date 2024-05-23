@@ -18,9 +18,13 @@ wire ck_inb;
 reg enl;
 
 assign ck_inb = ~ck_in;
-always_latch
+
+// verilator lint_off LATCH
+always @(ck_inb or enable)
 if (ck_inb)
     enl = enable;
+// verilator lint_on LATCH
+
 assign ck_out = ck_in & enl;
 
 endmodule

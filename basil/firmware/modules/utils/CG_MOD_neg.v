@@ -18,9 +18,12 @@ input ck_in,enable;
 output ck_out;
 reg enl;
 
-always_latch
+// verilator lint_off LATCH
+always @(ck_in or enable)
 if (ck_in)
     enl = enable;
+// verilator lint_on LATCH
+
 assign ck_out = ck_in | ~enl;
 
 endmodule
