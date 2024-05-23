@@ -1,4 +1,4 @@
-from pkg_resources import get_distribution, DistributionNotFound
+from importlib.metadata import version, PackageNotFoundError
 import collections
 import yaml
 
@@ -6,8 +6,8 @@ import yaml
 __version__ = None  # required for initial installation
 
 try:
-    __version__ = get_distribution("basil_daq").version
-except DistributionNotFound:
+    __version__ = version("basil_daq")
+except PackageNotFoundError:
     __version__ = "(local)"
 
 
