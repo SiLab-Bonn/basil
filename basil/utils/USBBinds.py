@@ -77,10 +77,10 @@ def find_usb_binds(rm, log,
 
         resources = rm.list_resources()
 
-        if instrument.get("port") in resources:    
+        if instrument.get("port") in resources:
             if instrument.get("port") and 'ASRL' not in instrument.get("port"):
                 instrument["port"] = f'ASRL{instrument["port"]}::INSTR'
-                
+
             resources = (instrument["port"],) + resources if instrument.get("port") else resources
 
         for i, res in enumerate(resources):
