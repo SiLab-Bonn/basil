@@ -73,6 +73,8 @@ def find_usb_binds(rm, log,
     results = {}
 
     for instrument in instruments:
+        log.info(f"Searching for {instrument['identification']}")
+
         resources = rm.list_resources()
 
         if instrument.get("port") in resources:    
@@ -81,13 +83,18 @@ def find_usb_binds(rm, log,
                 
             resources = (instrument["port"],) + resources if instrument.get("port") else resources
 
-        for res in resources:
+        for i, res in enumerate(resources):
+            if verbose:
+                log.debug(f"[{i}] Trying {res}")
+
             if "USB" not in res:  # Only search for USB devices
+                if verbose:
+                    log.debug(f"Skipping non USB bind {res}")
                 continue
 
             if any(bind in res for bind in skip_binds):
                 if verbose:
-                    log.info(f"Skipping USB bind {res}")
+                    log.debug(f"Skipping USB bind {res}")
                 continue
 
             try:
@@ -116,6 +123,11 @@ def find_usb_binds(rm, log,
 
                     if len(results) == len(instruments):
                         return results
+
+                    if verbose:
+                        log.debug(f"Found {len(results)} out of {len(instruments)}")
+
+                    break
 
             except pyvisa.VisaIOError:
                 pass
