@@ -106,7 +106,7 @@ def find_usb_binds(rm, log,
                         log.info(f"Found memorized bind {res}")
                     result = memorized_binds[res]
                 else:
-                    result = query_identification(rm, res, instrument['baud_rate'], instrument['read_termination'], instrument['write_termination'], timeout=timeout, verbose=verbose)
+                    result = query_identification(rm, res, instrument['baud_rate'], instrument['read_termination'], instrument['write_termination'], timeout=timeout)
 
                     memorized_binds.append({res, result})
 
