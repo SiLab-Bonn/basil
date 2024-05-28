@@ -38,8 +38,7 @@ def find_usb_binds(rm, log,
                    instruments,
                    binds_to_skip=[],
                    memorized_binds=[],
-                   timeout=1000 * 4,
-                   verbose=False,
+                   timeout=1000 * 4
                    ):
     """
     Finds the USB bind for each instrument in the given list of instruments.
@@ -59,8 +58,6 @@ def find_usb_binds(rm, log,
             Defaults to an empty list.
         timeout (int, optional): Timeout value in milliseconds.
             Defaults to 4000.
-        verbose (bool, optional): Flag indicating whether to log verbose messages.
-            Defaults to False.
 
     Returns:
         dict: A dictionary mapping the identification strings of the instruments
@@ -73,35 +70,42 @@ def find_usb_binds(rm, log,
     results = {}
 
     for instrument in instruments:
-        # try first ASRL port
-        if instrument.get("port") and 'ASRL' not in instrument.get("port"):
-            instrument["port"] = f'ASRL{instrument["port"]}::INSTR'
-        resources = (instrument["port"],) + rm.list_resources() if instrument.get("port") else rm.list_resources()
+        log.info(f"Searching for {instrument['identification']}")
 
-        for res in resources:
+        resources = rm.list_resources()
+
+        if "port" in instrument.keys():
+            port = instrument.get("port")
+
+            if port in resources:
+                if 'ASRL' not in port:
+                    instrument["port"] = f'ASRL{port}::INSTR'
+
+                resources = (instrument["port"],) + resources
+
+        for i, res in enumerate(resources):
+            log.debug(f"[{i}] Trying {res}")
+
             if "USB" not in res:  # Only search for USB devices
+                log.debug(f"Skipping non USB bind {res}")
                 continue
 
             if any(bind in res for bind in skip_binds):
-                if verbose:
-                    log.info(f"Skipping USB bind {res}")
+                log.debug(f"Skipping USB bind {res}")
                 continue
 
             try:
-                if verbose:
-                    log.info(f"Trying {res} with baud rate {instrument['baud_rate']}")
+                log.debug(f"Trying {res} with baud rate {instrument['baud_rate']}")
 
                 if any(res in bind for bind in memorized_binds):
-                    if verbose:
-                        log.info(f"Found memorized bind {res}")
+                    log.debug(f"Found memorized bind {res}")
                     result = memorized_binds[res]
                 else:
-                    result = query_identification(rm, res, instrument['baud_rate'], instrument['read_termination'], instrument['write_termination'], timeout=timeout, verbose=verbose)
+                    result = query_identification(rm, res, instrument['baud_rate'], instrument['read_termination'], instrument['write_termination'], timeout=timeout)
 
                     memorized_binds.append({res, result})
 
-                    if verbose:
-                        log.info(f"Found {result.strip()}")
+                    log.debug(f"Found {result.strip()}")
 
                 if result.lower().strip() in [inst["identification"].lower().strip() for inst in instruments]:
                     substring = res.split("/")[2].split("::")[0]
@@ -113,6 +117,10 @@ def find_usb_binds(rm, log,
 
                     if len(results) == len(instruments):
                         return results
+
+                    log.debug(f"Found {len(results)} out of {len(instruments)}")
+
+                    break
 
             except pyvisa.VisaIOError:
                 pass
@@ -174,7 +182,7 @@ def load_yaml_with_comments(conf):
     return conf_dict
 
 
-def modify_basil_config(conf, log, skip_binds=[], save_modified=None, verbose=False):
+def modify_basil_config(conf, log, skip_binds=[], save_modified=None):
     """
     Modifies the basil configuration file by finding USB binds for devices.
 
@@ -183,7 +191,6 @@ def modify_basil_config(conf, log, skip_binds=[], save_modified=None, verbose=Fa
         log: The logger object for logging messages.
         skip_binds (list, optional): List of USB binds to skip. Defaults to [].
         save_modified (str, optional): Path to save the modified basil configuration file. Defaults to None.
-        verbose (bool, optional): Flag to enable verbose logging. Defaults to False.
 
     Returns:
         dict: The modified basil configuration dictionary.
@@ -202,8 +209,7 @@ def modify_basil_config(conf, log, skip_binds=[], save_modified=None, verbose=Fa
             or "read_termination" not in tf["init"].keys()
             or not any(e in tf["init"].keys() for e in ["baud_rate", "baudrate"])
         ):
-            if verbose:
-                log.debug(f"Skipping {tf['type']} transfer layer with name {tf['name']}")
+            log.debug(f"Skipping {tf['type']} transfer layer with name {tf['name']}")
             continue
 
         instrument = tf["init"]["identification"]
@@ -222,7 +228,7 @@ def modify_basil_config(conf, log, skip_binds=[], save_modified=None, verbose=Fa
 
         insts_idx_map[instrument.lower().strip()] = i
 
-    found_binds = find_usb_binds(rm, log=log, instruments=instruments, binds_to_skip=skip_binds, verbose=verbose)
+    found_binds = find_usb_binds(rm, log=log, instruments=instruments, binds_to_skip=skip_binds)
 
     for inst in found_binds.keys():
         if found_binds[inst] is None:
