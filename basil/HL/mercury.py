@@ -86,7 +86,7 @@ class Mercury(HardwareLayer):
                 logger.warning("Target not reached! Target: {target}, actual position: {pos}, precision: {pre}".format(target=value, pos=pos, pre=precision))
 
     def move_relative(self, value, precision=100, address=None, wait=False):
-        target = self.get_position(address=1) + value
+        target = self.get_position(address) + value
         self._write_command("MR%d" % value, address)
         if wait is True:
             pos = self._wait(address)
@@ -107,6 +107,7 @@ class Mercury(HardwareLayer):
         logger.debug("Moving! Starting position: {pos}".format(pos=self.get_position(address)))
         done = False
         while done is False:
+            time.sleep(0.1)
             a = self.get_position(address)
             time.sleep(1)
             b = self.get_position(address)
