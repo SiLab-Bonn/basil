@@ -28,6 +28,7 @@ class Bronkhorst_ELFLOW(HardwareLayer):
         'set_control_mode': ':0580010104',
         'set_setpoint': ':0680010121',
         'get_setpoint': ':06800401210121',
+        'get_valve': ':06800472417241',
     }
 
     def __init__(self, intf, conf):
@@ -50,6 +51,11 @@ class Bronkhorst_ELFLOW(HardwareLayer):
         if len(ret) < 2 or ret[-2:] != "\r\n":
             logger.warning("read() termination error")
         return ret.strip()
+
+    def get_valve_output(self):
+        self._intf.write(self.CMDS['get_valve'])
+        ret = int(self.read()[11:], 16)
+        return ret*61.7/10345949 # converts int in percentage
 
     def set_setpoint(self, value):
         """value range from 0 - 32000
