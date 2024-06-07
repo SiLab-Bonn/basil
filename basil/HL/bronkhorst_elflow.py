@@ -59,7 +59,7 @@ class Bronkhorst_ELFLOW(HardwareLayer):
             raise ValueError(f"Given value has to be of type integer, is {type(value)}!")
 
         hex_val = hex(value)[2:]        # [2:] to remove the 0x from the beginning of the hex number
-        command = f"{self.CMDS['set_setpoint']}" + f"{hex_val.zfill(2)}"  # hex should have at least two digits
+        command = f"{self.CMDS['set_setpoint']}" + f"{hex_val.zfill(4)}"  # hex should have at least 4 digits
         self._intf.write(command)
         ret = self.read()
         return ret
