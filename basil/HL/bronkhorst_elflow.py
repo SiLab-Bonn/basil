@@ -55,7 +55,7 @@ class Bronkhorst_ELFLOW(HardwareLayer):
     def get_valve_output(self):
         self._intf.write(self.CMDS['get_valve'])
         ret = int(self.read()[11:], 16)
-        return ret*61.7/10345949 # converts int in percentage
+        return ret*61.7 / 10345949  # converts int in percentage
 
     def set_setpoint(self, value):
         """value range from 0 - 32000

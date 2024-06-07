@@ -8,7 +8,6 @@
 ''' This script shows how to use EFLOW
 '''
 
-import time
 from basil.dut import Dut
 
 dut = Dut('bronkhorstELFLOW_pyserial.yaml')
@@ -16,9 +15,9 @@ dut.init()
 
 # setting set point
 dut["hot_n2"].set_mode(0)
-dut["hot_n2"].set_setpoint(10000)  
+dut["hot_n2"].set_setpoint(10000)
 dut["hot_n2"].set_mode(0)
-print("setpoint",dut["hot_n2"].get_setpoint())
+print("setpoint", dut["hot_n2"].get_setpoint())
 
 # controlling valve
 dut["hot_n2"].set_mode(20)
