@@ -2,7 +2,10 @@
 // multiplexer, controling the corse counter, arming, calibration 
 // states and the trigger distance mode. Furthermore counts successful events
 // and tdl misses.
-module controller (
+module controller #(
+	parameter state_bits = 4,
+	parameter mux_bits =2
+)(
 	input wire CLK,
 	input wire rst,
 	input wire [1:0] hit_status,
@@ -21,8 +24,6 @@ module controller (
 	output reg [mux_bits-1:0] mux_addr
 );
 
-parameter state_bits = 4;
-parameter mux_bits =2;
 
 // 2 bit flag to store hit and miss information of the group of
 // samples. This needs to be in sync with the sample deser
@@ -37,12 +38,12 @@ localparam SIG_IN = 1;
 localparam SIG_IN_B = 2;
 localparam CALIB_OSC = 3;
 
-function [state_bits-1:0] int_to_gray;
-	input [state_bits-1:0] int;
-	begin
-		int_to_gray = int ^ (int >> 1);
-	end
-endfunction
+// function [state_bits-1:0] int_to_gray;
+// 	input [state_bits-1:0] int;
+// 	begin
+// 		int_to_gray = int ^ (int >> 1);
+// 	end
+// endfunction
 // TDC states
 // These need to be in sync with the word broker.
 localparam [state_bits-1:0] IDLE = 0;
@@ -64,6 +65,9 @@ end
 
 assign tdc_state = state;
 wire hit;
+// Here we safeguard against really short (narrow) pulses triggering the
+// sampling. Only if a hit was detected and on the next cycle the input is
+// still a solid 1 do we count a hit.
 assign hit = (hit_status == TDL_HIT) && tdl_status;
 
 
@@ -164,7 +168,7 @@ always @(posedge CLK) begin
 	end else if (hit_status == TDL_MISSED) begin
 		state <= MISSED;
 	end else begin
-	// Regular state-dependent transition
+		// Regular state-dependent transition
 		case(state)
 			IDLE: begin
 				if (en_calib_mode) begin
@@ -219,7 +223,7 @@ always @(posedge CLK) begin
 			end
 			CALIB_HIT: state <= CALIB;
 			MISSED: state <= IDLE_TRIG;
-			RESET: state <= IDLE_TRIG;
+			RESET: state <= IDLE;
 		endcase
 	end
 end

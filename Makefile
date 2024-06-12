@@ -1,17 +1,17 @@
 SIMULATION_HOST?=localhost
 SIMULATION_PORT?=12345
-SIMULATION_BUS?=basil.utils.sim.BasilBusDriver
+SIMULATION_BUS?=basil.utils.sim.BasilSbusDriver
 SIMULATION_END_ON_DISCONNECT?=1
 
-VERILOG_SOURCES = /users/rleiser/work/basil_branch/tests/test_SimTdc.v
+VERILOG_SOURCES = /users/rleiser/work/basil_branch/tests/test_SimGpio.v
 
 TOPLEVEL = tb
 MODULE = basil.utils.sim.Test
 
 ICARUS_INCLUDE_DIRS = -I/users/rleiser/work/basil_branch/basil/firmware/modules -I/users/rleiser/work/basil_branch/basil/firmware/modules/includes
-ICARUS_DEFINES += 
+ICARUS_DEFINES += -DBASIL_SBUS
 
-NOT_ICARUS_DEFINES = 
+NOT_ICARUS_DEFINES = +define+BASIL_SBUS
 NOT_ICARUS_INCLUDE_DIRS=+incdir+./ +incdir+/users/rleiser/work/basil_branch/basil/firmware/modules +incdir+/users/rleiser/work/basil_branch/basil/firmware/modules/includes
 COMPILE_ARGS_DEFINES = 
 BUILD_ARGS_DEFINES = 

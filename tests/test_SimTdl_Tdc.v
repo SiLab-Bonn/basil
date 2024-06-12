@@ -139,7 +139,7 @@ generate
 	for (i = 1; i < 3; i = i + 1) begin: tdc_gen
 		tdc #(
 			.BASEADDR(TDC_BASEADDR + 32'h0100*i),
-			.HIGHADDR(TDC_HIGHADDR + 32'h0100*i),
+			.HIGHADDR(TDC_HIGHADDR + 21'h0100*i),
 			.ABUSWIDTH(ABUSWIDTH),
 			.DATA_IDENTIFIER(4'b0000)
 		) i_tdc (

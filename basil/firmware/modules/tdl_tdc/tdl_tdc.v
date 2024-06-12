@@ -1,7 +1,7 @@
 `include "tdl_tdc/sw_interface.v"
 `include "tdl_tdc/tdc_core.v"
 
-module tdc #(
+module tdl_tdc #(
 	parameter BASEADDR = 16'h0000,
 	parameter HIGHADDR = 16'h0000,
 	parameter ABUSWIDTH = 16,
@@ -73,13 +73,26 @@ tdc_core i_tdc_core (
 wire cdc_fifo_empty;
 wire cdc_fifo_full;
 wire [32-1:0] cdc_data_out;
+wire generic_fifo_full;
+wire bus_clk_rst, bus_clk_rst_long;
+reg [2:0] bus_clk_rst_counter = 0;
+// The syncfifo somehow needs a longer reset signal for the read reset. In
+// simulation, it tristates if only a flag is set for a single BUS_CLK cycle.
+always @(posedge BUS_CLK) begin
+	if (bus_clk_rst)
+		bus_clk_rst_counter <= 3'b111;
+	else if (bus_clk_rst_counter != 0)
+		bus_clk_rst_counter <= bus_clk_rst_counter - 1;
+end
+assign bus_clk_rst_long = |bus_clk_rst_counter;
+
 cdc_syncfifo #(.DSIZE(32), .ASIZE(2)) clock_sync_fifo (
 	.wdata(word_to_cdc_fifo),
 	.wclk(CLK160),
 	.winc(cdc_fifo_write),
 	.wrst(rst),
 	.rclk(BUS_CLK),
-	.rrst(1'b0),
+	.rrst(bus_clk_rst_long),
 	.rinc(!generic_fifo_full),
 
 	.wfull(cdc_fifo_full),
@@ -96,13 +109,12 @@ always @(posedge CLK160) begin
 		fifo_over_cnt <= fifo_over_cnt;
 end
 
-wire generic_fifo_full;
 gerneric_fifo #(
 	.DATA_SIZE(32),
 	.DEPTH(512)
 ) fifo_i (
 	.clk(BUS_CLK),
-	.reset(bus_rst),
+	.reset(bus_clk_rst),
 	.write(!cdc_fifo_empty),
 	.read(fifo_read),
 	.data_in(cdc_data_out),
@@ -133,6 +145,7 @@ tdc_sw_interface #(.VERSION(VERSION),
 
 	.tdc_enabled(en_tdc),
 	.tdc_rst(rst),
+	.bus_clk_rst(bus_clk_rst),
 	.arm_flag(arm_flag),
 	.en_write_timestamp(en_write_timestamp),
 	.en_arm(en_arm_mode),

@@ -8,13 +8,11 @@ set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks rgmii_rxc]
 set_false_path -from [get_clocks rgmii_rxc] -to [get_clocks BUS_CLK_PLL]
 set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks CLK160PLL]
 set_false_path -from [get_clocks CLK160PLL] -to [get_clocks BUS_CLK_PLL]
-set_false_path -from [get_clocks CLK160PLL] -to [get_clocks CLK480PLL]
 set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks CLK480PLL]
-set_false_path -from [get_clocks rgmii_rxc] -to [get_clocks CLK160PLL]
+#set_false_path -from [get_clocks CLK160PLL] -to [get_clocks CLK480PLL]
 
-set_false_path -from [get_cells -hier -filter {NAME =~ */calib_sig_gen/*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */i_controller/* && IS_SEQUENTIAL ==1  }]
-set_false_path -from [get_cells -hier -filter {NAME =~ */input_mux_addr_buf_reg*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */tdl_sampler/carry_chain* && IS_SEQUENTIAL ==1  }]
-set_false_path -from [get_cells -hier -filter {NAME =~ */calib_sig_gen/*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */tdl_sampler/* && IS_SEQUENTIAL ==1  }]
+set_false_path -from [get_cells -hier -filter {NAME =~ */calib_sig_gen/*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */i_controller/* && IS_SEQUENTIAL ==1  }  ]
+set_false_path -from [get_cells -hier -filter {NAME =~ */calib_sig_gen/*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */tdl_sampler/* && IS_SEQUENTIAL ==1  }  ]
 set_false_path -from [get_cells -hier -filter {NAME =~ */conf_en_invert_tdc_synchronizer_dv_clk/* && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */tdl_sampler/carry_chain* && IS_SEQUENTIAL ==1}]
 
 #NET "Clk100"
@@ -99,7 +97,6 @@ set_property SLEW SLOW [get_ports LED*]
 set_property CONFIG_MODE SPIx4 [current_design]
 set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
 set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design]
-
 
 
 
