@@ -6,19 +6,19 @@
 Required modules
 ----------------
 
-	* `utils/3_stage_synchronizer.v`
-	* `utils/flag_domain_crossing.v`
-	* `utils/generic_fifo.v`
-	* `utils/cdc_syncfifo.v`
-	* `utils/clock_divider.v`
+* `utils/3_stage_synchronizer.v`
+* `utils/flag_domain_crossing.v`
+* `utils/generic_fifo.v`
+* `utils/cdc_syncfifo.v`
+* `utils/clock_divider.v`
 
 ----------------
 Key TDC figures
 ----------------
 
-	* 30ps RMS accuracy
-	* 40ns shortest reliably detectable pulse length
-	* 400us dynamic range
+* 30ps RMS accuracy
+* 40ns shortest reliably detectable pulse length
+* 400us dynamic range
 
 
 ----------------
@@ -61,9 +61,9 @@ Data Format
 ----------------
 The Tdc module uses a state machine to send various types of 32 bit data words, however the first seven bits always follow the same structure:
 
-    +-------------------------+-------------------+---------------------------------------------------------+
-    | DATA IDENTIFIER (4 bit) | WORD TYPE (3 bit) |                     Data (25 bits)                      |
-    +-------------------------+-------------------+---------------------------------------------------------+
++-------------------------+-------------------+---------------------------------------------------------+
+| DATA IDENTIFIER (4 bit) | WORD TYPE (3 bit) |                     Data (25 bits)                      |
++-------------------------+-------------------+---------------------------------------------------------+
 
 The most important words are those carrying the measured time information. Those word types are issued in the following order::
         
@@ -78,9 +78,9 @@ TRIGGERED, RISING, FALLING
 
 
 
-    +---------------------------------------------+---------------------------+-----------------------------+
-    |          160 Mhz Counter (16 bits)          |  480 Mhz Counter (2 bits) |      Delay Line (7 bits)    |
-    +---------------------------------------------+---------------------------+-----------------------------+
++---------------------------------------------+---------------------------+-----------------------------+
+|          160 Mhz Counter (16 bits)          |  480 Mhz Counter (2 bits) |      Delay Line (7 bits)    |
++---------------------------------------------+---------------------------+-----------------------------+
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 TIMESTAMP
@@ -88,9 +88,9 @@ TIMESTAMP
 This word comes after the ``FALLING`` word, but the Timestamp is actually sampled two 160Mhz clock cycles after a measurement has been started.
 
 
-    +-------------------------------------------------------------------+-----------------------------------+
-    |                           Timestamp (16 bits)                     |               0 (9 bits)          |
-    +-------------------------------------------------------------------+-----------------------------------+
++-------------------------------------------------------------------+-----------------------------------+
+|                           Timestamp (16 bits)                     |               0 (9 bits)          |
++-------------------------------------------------------------------+-----------------------------------+
 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -100,9 +100,9 @@ If the Tdc is set for self-calibration using ``EN_CALIBRATION_MODE``, it will re
 
 
 
-    +---------------------------------------------+---------------------------+-----------------------------+
-    |          0 (16 bits)                        |  480 Mhz Counter (2 bits) |      Delay Line (7 bits)    |
-    +---------------------------------------------+---------------------------+-----------------------------+
++---------------------------------------------+---------------------------+-----------------------------+
+|          0 (16 bits)                        |  480 Mhz Counter (2 bits) |      Delay Line (7 bits)    |
++---------------------------------------------+---------------------------+-----------------------------+
 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -112,7 +112,7 @@ If a reset is issued to the Tdc, either as a global bus reset or through basil, 
 decoding the words on the receiving end. The Timestamp included is sampled as soon as 
 the reset signal has passed the clock domain circuitry.
 
-    +-------------------------------------------------------------------+-----------------------------------+
-    |                           Timestamp (16 bits)                     |               0 (9 bits)          |
-    +-------------------------------------------------------------------+-----------------------------------+
++-------------------------------------------------------------------+-----------------------------------+
+|                           Timestamp (16 bits)                     |               0 (9 bits)          |
++-------------------------------------------------------------------+-----------------------------------+
 
