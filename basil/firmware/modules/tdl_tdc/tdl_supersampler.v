@@ -1,7 +1,14 @@
 `include "tdl_tdc/delayline/carrysampler_spartan6_20ps.v"
 `include "tdl_tdc/delayline/sample_deser.v"
 
-module tdl_and_detector (
+module tdl_and_detector #(
+	parameter clk_ratio = 3, // This parameter doesn't yet fully work. See sample_deser.v
+	parameter fine_time_bits = 2, // Don't change
+	localparam dlyline_bits = 96, // Don't change
+	localparam resolution = 2,
+	localparam internally_rising = 1'b1,
+	localparam detect_rising = 1'b1
+)(
 	input wire CLK_FAST,
 	input wire CLK_SLOW,
 	input wire sig_in,
@@ -11,14 +18,6 @@ module tdl_and_detector (
 	output wire [1:0] hit_status
 );
 
-parameter clk_ratio = 3; // This parameter doesn't yet fully work. See sample_deser.v
-parameter fine_time_bits = 2; // Don't change
-localparam dlyline_bits = 96; // Don't change
-localparam resolution = 2;
-
-
-localparam internally_rising = 1'b1;
-localparam detect_rising = 1'b1;
 
 wire [dlyline_bits-1:0] tdl_sample;
 // Tapped delay line sampled using the fast clock
@@ -30,9 +29,9 @@ carry_sampler_spartan6 #(.bits(dlyline_bits), .resolution(resolution)) tdl_sampl
 wire [dlyline_bits-1:0] hit_sample;
 sample_deser #(
 	.clk_ratio(clk_ratio),
-       	.fine_time_bits(fine_time_bits),
-       	.dlyline_bits(dlyline_bits),
-       	.internally_rising(internally_rising)
+	.fine_time_bits(fine_time_bits),
+	.dlyline_bits(dlyline_bits),
+	.internally_rising(internally_rising)
 ) tdl_deser (
 	.CLK_FAST(CLK_FAST),
 	.CLK_SLOW(CLK_SLOW),

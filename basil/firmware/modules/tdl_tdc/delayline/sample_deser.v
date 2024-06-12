@@ -1,4 +1,9 @@
-module sample_deser(
+module sample_deser #(
+parameter dlyline_bits = 96,
+parameter internally_rising = 1'b1,
+parameter fine_time_bits = 2,
+parameter clk_ratio = 3 // This parameter almost works, only the mux address generation below needs to be set manually
+)(
 	input wire CLK_FAST,
 	input wire CLK_SLOW,
 	input wire [dlyline_bits-1:0] sample_in,
@@ -14,10 +19,6 @@ localparam HIT = 1;
 localparam MISSED = 2;
 
 
-parameter dlyline_bits = 96;
-parameter internally_rising = 1'b1;
-parameter fine_time_bits = 2;
-parameter clk_ratio = 3; // This parameter almost works, only the mux address generation below needs to be set manually
 
 // shift register of delay line samples on the fast clock
 integer i;
@@ -30,10 +31,10 @@ always @(posedge CLK_FAST) begin
 end
 
 // transferring shift register contents to slow clock
-reg [dlyline_bits-1:0] samples_slow [clk_ratio-1:0];
+reg [dlyline_bits-1:0] samples_160 [clk_ratio-1:0];
 always @(posedge CLK_SLOW) begin
 	for(i=0; i<clk_ratio; i = i +1) begin
-		samples_slow[i] <= samples[i];
+		samples_160[i] <= samples[i];
 	end
 end
 
@@ -48,8 +49,8 @@ wire [clk_ratio-1:0] hit_flags;
 genvar k;
 generate 
 	for(k=0; k<clk_ratio; k = k+1) begin
-			assign hit_flags[k] = ((samples_slow[k][0] ==a) || (samples_slow[k][1]  == a)) &&
-			       	((samples_slow[k][dlyline_bits -2] == b ) || (samples_slow[k][dlyline_bits -1] == b) );
+			assign hit_flags[k] = ((samples_160[k][0] ==a) || (samples_160[k][1]  == a)) &&
+			       	((samples_160[k][dlyline_bits -2] == b ) || (samples_160[k][dlyline_bits -1] == b) );
 	end
 endgenerate
 
@@ -59,9 +60,9 @@ wire [2:0] miss_flags;
 generate
 	for(k=0; k<clk_ratio-1; k = k+1) begin
 		if(internally_rising) begin
-			assign miss_flags[k] = (&samples_slow[k] == 1 && |samples_slow[k+1] == 0);
+			assign miss_flags[k] = (&samples_160[k] == 1 && |samples_160[k+1] == 0);
 		end else begin
-			assign miss_flags[k] = (|samples_slow[k] == 0 && &samples_slow[k+1] == 1);
+			assign miss_flags[k] = (|samples_160[k] == 0 && &samples_160[k+1] == 1);
 		end
 	end
 endgenerate
@@ -88,19 +89,17 @@ always @(hit_flags) begin
 	end
 end
 
-//always @ (mux_address) begin
-//end
-
 always @ (posedge CLK_SLOW) begin
 	// Here we actually multiplex the delay line samples for further processing
-	selected_sample <= samples_slow[mux_address];
+	selected_sample <= samples_160[mux_address];
 	// The multiplexer address also carries the information about on which clock
 	// cycle of the fast clock the signal transition occurred. 
 	fine_time <= clk_ratio-1 - mux_address;
+
 	if (|miss_flags)
 		hit_status <= MISSED;
 	else if (|hit_flags) begin
-		if (clk_ratio - 1 - mux_address == 0 && fine_time == 2)
+		if (clk_ratio-1-mux_address ==0 && fine_time==2)
 			hit_status <= IDLE;
 		else
 			hit_status <= HIT;

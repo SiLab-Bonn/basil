@@ -1,5 +1,6 @@
 //`include "tdl_tdc/counter/slimfast_multioption_counter.xdc"
 //`include "tdl_tdc/counter/signal_clipper.vhdl"
+`include "utils/pulse_gen_rising.v"
 
 //`default_nettype none
 //---------------------------------------------------------------------
@@ -38,90 +39,87 @@
 //-- !!! IMPORTANT !!! Include slimfast_multioption_counter.ucf
 
 
-module slimfast_multioption_counter (countClock,
-                                     count,
-                                     reset,
-                                     countout);
+module slimfast_multioption_counter #(
+	parameter clip_count = 1,
+	parameter clip_reset = 1,
+	parameter size = 31,
+	parameter outputwidth = 32
+)(
+	input wire countClock,
+	input wire count,
+	input wire reset,
+	output wire [outputwidth-1:0]  countout);
 
-	parameter clip_count = 1; 
-	parameter clip_reset = 1;
-	parameter size = 31;
-	parameter outputwidth = 32;
-	
-	input wire countClock;
-	input wire count;
-	input wire reset;
 
-	output wire [outputwidth-1:0] countout;
-	
-	wire [size-3:0] highbits_this;
-	wire [size-3:0] highbits_next;
 
-	//-- Counter
-	slimfast_multioption_counter_core #(.clip_count(clip_count),.clip_reset(clip_reset),.size(size),.outputwidth(outputwidth)) counter(
-		.countClock(countClock),
-		.count(count),
-		.reset(reset),
-		.highbits_this(highbits_this),
-		.highbits_next(highbits_next),
-		.countout(countout)
-		);
 
-	//-- pure combinatorial +1 operation (multi cycle path, this may take up to 40ns without breaking the counter)
-	assign highbits_next = highbits_this + 1;
-	
+wire [size-3:0] highbits_this;
+wire [size-3:0] highbits_next;
+
+//-- Counter
+slimfast_multioption_counter_core #(.clip_count(clip_count),.clip_reset(clip_reset),.size(size),.outputwidth(outputwidth)) counter(
+	.countClock(countClock),
+	.count(count),
+	.reset(reset),
+	.highbits_this(highbits_this),
+	.highbits_next(highbits_next),
+	.countout(countout)
+);
+
+//-- pure combinatorial +1 operation (multi cycle path, this may take up to 40ns without breaking the counter)
+assign highbits_next = highbits_this + 1;
+
 endmodule
 
 
 module slimfast_multioption_counter_core (countClock,
-                                          count,
-                                          reset,
-                                          highbits_this,
-                                          highbits_next,
-                                          countout);
+	count,
+	reset,
+	highbits_this,
+	highbits_next,
+	countout);
 
-	parameter clip_count = 1; 
-	parameter clip_reset = 1;
-	parameter size = 31;
-	parameter outputwidth = 32;
+parameter clip_count = 1;
+parameter clip_reset = 1;
+parameter size = 31;
+parameter outputwidth = 32;
 
-	
-	input wire countClock;
-	input wire count;
-	input wire reset;
+input wire countClock;
+input wire count;
+input wire reset;
 
-	input wire [size-3:0] highbits_next;
-	output wire [size-3:0] highbits_this; 
-	
-	output wire [outputwidth-1:0] countout;
+input wire [size-3:0] highbits_next;
+output wire [size-3:0] highbits_this; 
 
-												 							 
-	wire final_count;
-	wire final_reset;
-	
-	reg [2:0] fast_counts = 3'b0;
-	(* KEEP = "true" *) reg [size-3:0] SFC_slow_counts = 'b0;		//SFC_ prefix to make this name unique
-	wire [size-3:0] slow_counts_next;	
+output wire [outputwidth-1:0] countout;
 
 
+wire final_count;
+wire final_reset;
 
-	//-- if an if-statement compares a value to 1 (not 1'b1), it is a generate-if
-	generate
+reg [2:0] fast_counts = 3'b0;
+(* KEEP = "true" *) reg [size-3:0] SFC_slow_counts = 'b0;		//SFC_ prefix to make this name unique
+wire [size-3:0] slow_counts_next;	
 
-		//-- this is pure combinatorial
-		//-- after change of SFC_slow_counts, the update of slow_counts_next is allowed to take
-		//-- 16clk cycles of countClock
-		assign highbits_this = SFC_slow_counts;
-		assign slow_counts_next[size-4:0] = highbits_next[size-4:0];
 
-		//the overflow bit is counted like all the other bits, but it cannot fall back to zero
-		assign slow_counts_next[size-3] = highbits_next[size-3] || highbits_this[size-3];
-	
-		if (clip_count == 0) assign final_count = count; else
+
+//-- if an if-statement compares a value to 1 (not 1'b1), it is a generate-if
+generate
+
+	//-- this is pure combinatorial
+	//-- after change of SFC_slow_counts, the update of slow_counts_next is allowed to take
+	//-- 16clk cycles of countClock
+	assign highbits_this = SFC_slow_counts;
+	assign slow_counts_next[size-4:0] = highbits_next[size-4:0];
+
+	//the overflow bit is counted like all the other bits, but it cannot fall back to zero
+	assign slow_counts_next[size-3] = highbits_next[size-3] || highbits_this[size-3];
+
+	if (clip_count == 0) assign final_count = count; else
 		if (clip_count == 1)
 		begin
 			wire clipped_count;
-			signal_clipper countclip (	.sig(count),	.CLK(countClock),	.clipped_sig(clipped_count));
+			pulse_gen_rising countclip (	.in(count),	.clk_in(countClock),	.out(clipped_count));
 			assign final_count = clipped_count;
 		end else	begin // I added this, so that one could switch from "clipped" to "not clipped" without changing the number of flip flop stages
 			reg piped_count;
@@ -135,17 +133,17 @@ module slimfast_multioption_counter_core (countClock,
 		if (clip_reset == 0) assign final_reset = reset; else
 		begin
 			wire clipped_reset;
-			signal_clipper resetclip (	.sig(reset),	.CLK(countClock),	.clipped_sig(clipped_reset));
+			pulse_gen_rising resetclip (	.in(reset),	.clk_in(countClock),	.out(clipped_reset));
 			assign final_reset = clipped_reset;
 		end
 
-	
+
 		always@(posedge countClock)
 		begin
-			
+
 			if (final_reset == 1'b1)
 			begin
-			
+
 				fast_counts <= 0; 
 				SFC_slow_counts <= 0;
 
@@ -160,12 +158,12 @@ module slimfast_multioption_counter_core (countClock,
 				if (final_count == 1'b1) fast_counts <= fast_counts + 1'b1; 
 
 			end
-		
-		end
 
-	endgenerate 
-	
-	assign countout[outputwidth-1] = SFC_slow_counts[size-3];
-	assign countout[outputwidth-2:0] = {'b0,SFC_slow_counts[size-4:0],fast_counts};
-	
+	end
+
+endgenerate 
+
+assign countout[outputwidth-1] = SFC_slow_counts[size-3];
+assign countout[outputwidth-2:0] = {SFC_slow_counts[size-4:0],fast_counts};
+
 endmodule

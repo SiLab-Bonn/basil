@@ -1,8 +1,11 @@
 `include "tdl_tdc/utils/graycode_2stage_cdc.v"
-`include "utils/flag_domain_crossing.v"
-`include "utils/3_stage_synchronizer.v"
 
-module tdc_sw_interface (
+module tdc_sw_interface #(
+	parameter VERSION = 8'b00000000,
+	parameter BASEADDR = 16'h0,
+	parameter HIGHADDR = 16'h100,
+	parameter ABUSWIDTH = 16
+)(
 	input wire BUS_CLK,
 	input wire CLK,
 	input wire bus_wr,
@@ -29,10 +32,6 @@ module tdc_sw_interface (
 	output wire en_no_trig_err
 );
 
-parameter VERSION = 8'b00000000;
-parameter BASEADDR = 16'h0;
-parameter HIGHADDR = 16'h100;
-parameter ABUSWIDTH = 16;
 
 wire ip_rd, ip_wr;
 wire [ABUSWIDTH-1:0] ip_add;
@@ -73,13 +72,23 @@ assign soft_rst_flag = ~soft_rst_ff[1] & soft_rst_ff[0];
 assign bus_rst_flag = bus_rst_ff[1] & ~bus_rst_ff[0]; // trailing edge
 
 assign bus_clk_rst = bus_rst_flag | soft_rst_flag;
+wire tdc_rst_short;
 
 flag_domain_crossing rst_flag_domain_crossing (
 	.CLK_A(BUS_CLK),
 	.CLK_B(CLK),
 	.FLAG_IN_CLK_A(bus_clk_rst),
-	.FLAG_OUT_CLK_B(tdc_rst)
+	.FLAG_OUT_CLK_B(tdc_rst_short)
 );
+
+reg[2:0] tdc_rst_counter;
+always @(posedge CLK) begin
+	if (tdc_rst_short)
+		tdc_rst_counter <= 3'b001;
+	else if (tdc_rst_counter != 0)
+		tdc_rst_counter <= tdc_rst_counter - 1;
+end
+assign tdc_rst = |tdc_rst_counter;
 
 
 // Status registers
@@ -121,6 +130,8 @@ always @(posedge BUS_CLK) begin
 end
 
 // Reading of status registers
+wire [7:0] tdc_miss_cnt_bus_clk;
+wire [7:0] fifo_lost_data_cnt_bus_clk;
 always @(posedge BUS_CLK) begin
 	if (ip_rd) begin
 		if (ip_add == 0)
@@ -209,7 +220,6 @@ always @(posedge BUS_CLK) begin
 		event_cnt_buf_read[23:0] <= event_cnt_buf[31:8];
 end
 
-wire [7:0] fifo_lost_data_cnt_bus_clk;
 graycode_2stage_cdc #(.DATA_WIDTH(8)) data_lost_cdc (
 	.IN_CLK(CLK),
 	.OUT_CLK(BUS_CLK),
@@ -217,7 +227,6 @@ graycode_2stage_cdc #(.DATA_WIDTH(8)) data_lost_cdc (
 	.data_out_clk(fifo_lost_data_cnt_bus_clk)
 );
 
-wire [7:0] tdc_miss_cnt_bus_clk;
 graycode_2stage_cdc #(.DATA_WIDTH(8)) tdc_misses_cdc (
 	.IN_CLK(CLK),
 	.OUT_CLK(BUS_CLK),
@@ -227,9 +236,9 @@ graycode_2stage_cdc #(.DATA_WIDTH(8)) tdc_misses_cdc (
 
 wire ext_arm_clk;
 three_stage_synchronizer three_stage_arm_tdc_synchronizer_clk (
-    .CLK(CLK),
-    .IN(ext_arm),
-    .OUT(ext_arm_clk)
+	.CLK(CLK),
+	.IN(ext_arm),
+	.OUT(ext_arm_clk)
 );
 
 reg ext_arm_clk_ff;

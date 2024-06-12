@@ -62,6 +62,7 @@ module carry_sampler_spartan6 (d, q, CLK);
 	input wire CLK;
 	output wire [bits-1:0] q;
 
+`ifndef SIMULATION
 	wire [(bits*resolution/4)-1:0] connect;
 	wire [bits*resolution-1:0] register_out;
 	
@@ -91,5 +92,21 @@ module carry_sampler_spartan6 (d, q, CLK);
 		end
 		
 	endgenerate
+`else
+	reg sim_buffer;
+	reg [bits-1:0] sim_out;
+	always @(posedge CLK) begin
+		sim_buffer <= d;
+		if (d & ~ sim_buffer)
+			sim_out <= 3'b001;
+		else if (~d & sim_buffer)
+			sim_out <= (1 << bits-1);
+		else if (d & sim_buffer)
+			sim_out <= {bits{1'b1}};
+		else if (~d & ~sim_buffer)
+			sim_out <= 0;
+	end
+	assign q = sim_out;
+`endif
 	
 endmodule

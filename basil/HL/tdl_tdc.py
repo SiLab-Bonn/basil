@@ -48,8 +48,7 @@ class tdl_tdc(RegisterHardwareLayer):
 
     def get_tdc_value(self, word):
         # The last 7 bit are tdl data, the first 7 bits are word type and source, so 18 bits are counter information
-        # Of these, the last two bits are timing wrt. the fast clock and the first 16 wrt. to the slow clock
-        return self.CLK_DIV*((word >> 9) & 0x0FFFF)  + (((word >> 7) & 0x3))
+        return word >> 7 & 0x3FFFF
 
     def get_word_type(self, word):
         return (word >> (32 - 7) & 0b111) 
@@ -68,7 +67,6 @@ class tdl_tdc(RegisterHardwareLayer):
         return sample_proportion * 1/self.GHZ_S_FREQ
 
     def set_calib_values(self,  calib_values) :
-        calib_values = np.append(calib_values,np.arange(92))
         data_sort, value_counts = np.unique(calib_values % 128, return_counts = True)
         self.calib_vector = value_counts
         self.calib_sum = np.sum(value_counts)
@@ -80,8 +78,8 @@ class tdl_tdc(RegisterHardwareLayer):
             word_type = self.word_type_codes[self.get_word_type(word)]
             raise ValueError('can not convert tdc word of type %s to time' % word_type )
         tdc_value = self.get_tdc_value(word)
-        tdc_time = 1/self.GHZ_S_FREQ * tdc_value
-        return tdc_time - self.tdl_to_time(self.get_raw_tdl_values(word))
+        tdc_time = (tdc_value & 0b11) * 1/self.GHZ_S_FREQ + (tdc_value >> 2) * self.CLK_DIV/self.GHZ_S_FREQ
+        return tdc_time + self.tdl_to_time(self.get_raw_tdl_values(word))
 
     def disassemble_tdc_word(self, word):
         # Shift away the 32 - 7 data bits and grab 3 bit word type
@@ -90,8 +88,8 @@ class tdl_tdc(RegisterHardwareLayer):
             return {'source_id' : (word >> (32 - 4)),
                     'word_type' : word_type,
                     'tdl_value' : word & 0b1111111,
-                    'fine_time_value' : self.get_tdc_value(word) % self.CLK_DIV,
-                    'fast_clk_value' : self.get_tdc_value(word),
+                    'counter_value' : self.get_tdc_value(word) >> 2,
+                    'fine_clk_value' : self.get_tdc_value(word) & 0b11,
                     'raw_word' : word}
         elif word_type == 'TIMESTAMP' :
             return {'source_id' : (word >> (32 - 4)),

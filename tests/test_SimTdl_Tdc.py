@@ -26,17 +26,17 @@ hw_drivers:
     base_addr : 0x0000
 
   - name      : TDC0
-    type      : tdl_tdc
+    type      : tdc_s3
     interface : INTF
     base_addr : 0x8000
 
   - name      : TDC1
-    type      : tdl_tdc
+    type      : tdc_s3
     interface : INTF
     base_addr : 0x8100
 
   - name      : TDC2
-    type      : tdl_tdc
+    type      : tdc_s3
     interface : INTF
     base_addr : 0x8200
 
@@ -93,8 +93,7 @@ class TestSimTdc(unittest.TestCase):
 
     def test_tdc(self):
         self.chip['TDC0'].ENABLE = 1
-        self.chip['TDC0'].EN_TRIGGER_DIST = 0
-        self.chip['TDC0'].EN_TRIGGER_DIST = 1
+        slef.chip['TDC0'].EN_TRIGGER_DIST = 1
         self.chip['SEQ'].REPEAT = 1
 
         for write_timestamp in range(0,1):
@@ -108,11 +107,10 @@ class TestSimTdc(unittest.TestCase):
                 self.chip['SEQ'].START
                 while not self.chip['SEQ'].is_ready:
                     pass
-                #self.assertEqual(self.chip['FIFO0'].get_FIFO_INT_SIZE(), 3 + write_timestamp)
+                self.assertEqual(self.chip['FIFO0'].get_FIFO_INT_SIZE(), 3 + write_timestamp)
 
                 data = self.chip['FIFO0'].get_data()
                 data = [self.chip['TDC0'].disassemble_tdc_word(w) for w in data]
-                print(data);
                 self.assertEqual(data[0]['word_type'], 'TRIGGERED')
                 self.assertEqual(data[1]['word_type'], 'RISING')
                 self.assertEqual(data[1]['tdc_value'], trigger_dis)

@@ -1,12 +1,13 @@
-module delay_n (
+module delay_n #(
+	parameter n = 3,
+	parameter width = 8
+)(
 	input wire CLK,
 	input wire [width-1:0] signal,
 
 	output wire [width-1:0] delayed_signal
 );
 
-parameter n = 3;
-parameter width = 8;
 
 integer i;
 reg [width-1:0] delay_taps [n-1:0];

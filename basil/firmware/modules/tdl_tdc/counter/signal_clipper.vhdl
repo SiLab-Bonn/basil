@@ -1,4 +1,7 @@
--------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
 ----                                                                 ----
 ---- Company:  University of Bonn                                    ----
 ---- Engineer: John Bieling                                          ----
@@ -21,12 +24,6 @@
 ---- License along with this program; if not, see                    ----
 ---- <http://www.gnu.org/licenses>.                                  ----
 ----                                                                 ----
--------------------------------------------------------------------------
-
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 ---- Uncomment the following library declaration if instantiating
 ---- any Xilinx primitives in this code.
