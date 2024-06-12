@@ -5,7 +5,6 @@
 `include "tdl_tdc/priority_encoder_only.v"
 `include "tdl_tdc/word_broker.v"
 `include "tdl_tdc/utils/delay_n.v"
-`include "utils/cdc_syncfifo.v"
 
 
 module tdc_core(
@@ -48,26 +47,29 @@ localparam word_type_bits = 3; // TODO: this isn't yet parametric
 // corse counter.
 wire [corsebits-1:0] corse_count;
 wire counter_count, counter_reset;
-wire counter_overflow;
-assign counter_overflow = corse_count[corsebits-1];
 // TODO: should clip_reset be set?
 slimfast_multioption_counter #(.clip_count(0), .clip_reset(1), .outputwidth(corsebits), .size(corsebits-1) ) corse_counter (
 .countClock(CLK),
-.count(counter_count && ~counter_overflow),
+.count(counter_count && ~corse_count[corsebits-1]),
 .reset(counter_reset),
 .countout(corse_count));
 
 // TLU timestamp sampling
-reg [15:0] timestamp_register;
+reg [15:0] signal_timestamp;
+reg [15:0] reset_timestamp;
 always @(posedge counter_count) begin
-	timestamp_register <= timestamp;
+	signal_timestamp <= timestamp;
+end
+always @(posedge rst) begin
+	reset_timestamp <= timestamp;
 end
 
 // Test signal generator
 wire sig_calib;
-clk_divide #(.CLK_DIVISOR(7)) calib_sig_gen (
-	.CLK_IN(CALIB_CLK),
-	.calib_sig(sig_calib)
+clock_divider #(.DIVISOR(14)) calib_sig_gen (
+	.CLK(CALIB_CLK),
+	.RESET(1'b0),
+	.CLOCK(sig_calib)
 );
 
 
@@ -148,7 +150,7 @@ wire [fine_time_bits-1:0] fine_time_delayed;
 (* mark_debug = "true" *)
 wire [state_bits-1:0] tdc_state_delayed;
 (* mark_debug = "true" *)
-wire [corsebits-2:0] corse_time_delayed; 
+wire [corsebits-1:0] corse_time_delayed; 
 
 
 // The state is actually one cycle behind the selected sample, so we delay it
@@ -160,9 +162,9 @@ delay_n #(.n(4-1), .width(state_bits)) state_pipe(
 );
 // Since the state machine controls the counter, it is also one cycle behind
 // the selected sample.
-delay_n #(.n(4-1), .width(corsebits-1)) corse_time_pipe(
+delay_n #(.n(4-1), .width(corsebits)) corse_time_pipe(
 	.CLK(CLK),
-	.signal(corse_count[corsebits-2:0]), // We don't need the overflow bit
+	.signal(corse_count[corsebits-1:0]), // We don't need the overflow bit
 	.delayed_signal(corse_time_delayed)
 );
 
@@ -174,19 +176,19 @@ delay_n #(.n(4), .width(fine_time_bits)) fine_time_pipe(
 
 // This module assembles the data output based on the tdc state transitions
 word_broker #(.state_bits(state_bits),
-	.counter_bits(corsebits-1),
+	.counter_bits(corsebits),
 	.fine_time_bits(fine_time_bits),
 	.encodebits(encodebits)
 )  i_broker (
 	.CLK(CLK),
-	.corse_time(corse_time_delayed), // We don't need the overflow bit
-	.counter_overflow(counter_overflow),
+	.corse_count(corse_time_delayed), 
 	.fine_time(fine_time_delayed),
 	.tdl_time(tdl_time),
 	.tdc_state(tdc_state_delayed),
 	.en_write_timestamp(en_write_timestamp),
 	.en_no_trig_err(en_no_trig_err),
-	.timestamp(timestamp_register),
+	.signal_timestamp(signal_timestamp),
+	.reset_timestamp(reset_timestamp),
 
 	.out_valid(out_valid),
 	.out_word(out_word)
