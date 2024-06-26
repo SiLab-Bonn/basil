@@ -78,7 +78,6 @@ while time.time() - start_time < calib_duration:
 
 chip['TDL_TDC'].EN_CALIBRATION_MODE = 0
 
-time.sleep(60*10)
 chip['TDL_TDC'].RESET=1
 chip['FIFO'].get_data()
 
@@ -152,12 +151,12 @@ def load_and_start_trig_seq(trig_dis_cycles):
     chip['SEQ'].START
 
 seq_clk_GHZ = 0.15625
-N_measure = 100
+N_measure = 500
 current_measurements = np.zeros(N_measure)
 measured = []
 stds = []
 actual = []
-for i in tqdm(range(10, 40000, 100)):
+for i in tqdm(range(10, 4000, 100)):
     for j in range(N_measure):
 
         load_and_start_trig_seq(i)
