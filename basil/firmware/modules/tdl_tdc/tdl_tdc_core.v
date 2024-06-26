@@ -1,8 +1,7 @@
 `include "tdl_tdc/tdl_supersampler.v"
 `include "tdl_tdc/counter/slimfast_multioption_counter.v"
-`include "tdl_tdc/clk_divide.v"
 `include "tdl_tdc/controller.v"
-`include "tdl_tdc/priority_encoder_only.v"
+`include "tdl_tdc/priority_encoder.v"
 `include "tdl_tdc/word_broker.v"
 `include "tdl_tdc/utils/delay_n.v"
 
@@ -138,7 +137,7 @@ controller #(.state_bits(state_bits), .mux_bits(input_mux_bits)) i_controller(
 
 (* mark_debug = "true" *)
 wire [encodebits-1 :0] tdl_time;
-priority_encoder_only encoder (
+priority_encoder encoder (
 	.CLK(CLK),
 	.sample(selected_sample),
 	.position_out(tdl_time));

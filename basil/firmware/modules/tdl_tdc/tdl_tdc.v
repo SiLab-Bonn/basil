@@ -1,5 +1,5 @@
 `include "tdl_tdc/sw_interface.v"
-`include "tdl_tdc/tdc_core.v"
+`include "tdl_tdc/tdl_tdc_core.v"
 
 module tdl_tdc #(
 	parameter BASEADDR = 16'h0000,

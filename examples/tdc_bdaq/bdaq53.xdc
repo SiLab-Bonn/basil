@@ -2,18 +2,51 @@
 create_clock -period 10.000 -name clkin -add [get_ports clkin]
 create_clock -period 8.000 -name rgmii_rxc -add [get_ports rgmii_rxc]
 
+create_clock -period 6.250 -name CLK_160_in -add [get_ports Si570_P]
+create_clock -period 6.400 -name CLK_156M250_in -add [get_ports Si511_P]
+
+create_generated_clock -name I2C_CLK -source [get_pins PLLE2_BASE_BUS/CLKOUT0] -divide_by 1600 [get_pins -hier -filter {NAME =~ *i_clock_divisor_i2c/CLOCK_reg/Q}]
+
+
 set_false_path -from [get_clocks CLK125PLLTX] -to [get_clocks BUS_CLK_PLL]
 set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks CLK125PLLTX]
 set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks rgmii_rxc]
 set_false_path -from [get_clocks rgmii_rxc] -to [get_clocks BUS_CLK_PLL]
 set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks CLK160PLL]
 set_false_path -from [get_clocks CLK160PLL] -to [get_clocks BUS_CLK_PLL]
+set_false_path -from [get_clocks CLK160PLL] -to [get_clocks CLK480PLL]
 set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks CLK480PLL]
-#set_false_path -from [get_clocks CLK160PLL] -to [get_clocks CLK480PLL]
+set_false_path -from [get_clocks rgmii_rxc] -to [get_clocks CLK160PLL]
+set_false_path -from [get_clocks CLK_156M250_in] -to [get_clocks CLK160PLL]
+set_false_path -from [get_clocks CLK_156M250_in] -to [get_clocks CLK480PLL]
+set_false_path -from [get_clocks CLK_156M250_in] -to [get_clocks BUS_CLK_PLL]
+set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks CLK_156M250_in]
+set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks I2C_CLK]
 
-set_false_path -from [get_cells -hier -filter {NAME =~ */calib_sig_gen/*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */i_controller/* && IS_SEQUENTIAL ==1  }  ]
-set_false_path -from [get_cells -hier -filter {NAME =~ */calib_sig_gen/*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */tdl_sampler/* && IS_SEQUENTIAL ==1  }  ]
+set_false_path -from [get_cells -hier -filter {NAME =~ */calib_sig_gen/*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */i_controller/* && IS_SEQUENTIAL ==1  }]
+set_false_path -from [get_cells -hier -filter {NAME =~ */input_mux_addr_buf_reg*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */tdl_sampler/carry_chain* && IS_SEQUENTIAL ==1  }]
+set_false_path -from [get_cells -hier -filter {NAME =~ */calib_sig_gen/*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */tdl_sampler/* && IS_SEQUENTIAL ==1  }]
+
 set_false_path -from [get_cells -hier -filter {NAME =~ */conf_en_invert_tdc_synchronizer_dv_clk/* && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */tdl_sampler/carry_chain* && IS_SEQUENTIAL ==1}]
+
+#CLK Mux
+set_property PACKAGE_PIN D23 [get_ports MGT_REF_SEL]
+set_property IOSTANDARD LVCMOS33 [get_ports MGT_REF_SEL]
+set_property PULLUP true [get_ports MGT_REF_SEL]
+
+# I2C pins
+set_property PACKAGE_PIN L23 [get_ports I2C_SCL]
+set_property PACKAGE_PIN C24 [get_ports I2C_SDA]
+set_property IOSTANDARD LVCMOS33 [get_ports I2C_*]
+set_property SLEW SLOW [get_ports I2C_*]
+
+# Si570 Clock, MGT_REFCLK0 in bdaq
+set_property PACKAGE_PIN H6 [get_ports Si570_P]
+set_property PACKAGE_PIN H5 [get_ports Si570_N]
+
+# Si511 Clock, MGT_REFCLK3 in bdaq
+set_property PACKAGE_PIN F6 [get_ports Si511_P]
+set_property PACKAGE_PIN F5 [get_ports Si511_N]
 
 #NET "Clk100"
 set_property PACKAGE_PIN AA4 [get_ports clkin]
@@ -97,6 +130,8 @@ set_property SLEW SLOW [get_ports LED*]
 set_property CONFIG_MODE SPIx4 [current_design]
 set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
 set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design]
+
+
 
 
 
