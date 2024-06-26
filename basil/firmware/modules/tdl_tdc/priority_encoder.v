@@ -4,7 +4,7 @@
 //* SiLab, Physics Institute, University of Bonn
 //* ------------------------------------------------------------
 //*/
-       module priority_encoder_only(
+       module priority_encoder(
 	       input wire CLK,
 	       input wire [96-1:0] sample,
 	       output reg [6:0] position_out);

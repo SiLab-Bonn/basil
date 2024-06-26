@@ -5,20 +5,44 @@
 // * ------------------------------------------------------------
 
 `include "utils/fifo_32_to_8.v"
-`include "utils/generic_fifo.v"
 `include "utils/rgmii_io.v"
 `include "utils/rbcp_to_bus.v"
 `include "utils/bus_to_ip.v"
 `include "rrp_arbiter/rrp_arbiter.v"
 `include "gpio/gpio_core.v"
 `include "gpio/gpio.v"
-`include "tdl_tdc/tdc.v"
+`include "tdl_tdc/tdl_tdc.v"
+
+// tdl_tdc dependencies
+`include "utils/3_stage_synchronizer.v"
+`include "utils/flag_domain_crossing.v"
+`include "utils/generic_fifo.v"
+`include "utils/cdc_syncfifo.v"
+`include "utils/clock_divider.v"
+
+
+// Seq_gen
+`include "seq_gen/seq_gen.v"
+`include "seq_gen/seq_gen_core.v"
+
+// Seq_gen dependencies
+
+`include "utils/cdc_pulse_sync.v"
+`include "utils/ramb_8_to_n.v"
+
+// For Si570
+`include "i2c/i2c.v"
+`include "i2c/i2c_core.v"
 
 module tdc_bdaq(
 	input wire sig_in,
 	input wire trig_in,
 	input wire RESET_N,
 	input wire clkin,
+	input wire Si511_P,
+	input wire Si511_N,
+	input wire Si570_P,
+	input wire Si570_N,
 
 	output wire [3:0] rgmii_txd,
 	output wire rgmii_tx_ctl,
@@ -30,8 +54,45 @@ module tdc_bdaq(
 	inout wire mdio_phy_mdio,
 	output wire phy_rst_n,
 
-	output wire [7:0] LED
+	inout wire I2C_SDA,
+	output wire I2C_SCL,
+
+	output wire [7:0] LED,
+	output wire trig_out,
+	output wire sig_out,
+	output wire MGT_REF_SEL
 );
+assign MGT_REF_SEL = 1;
+
+wire CLK_156M250_in;
+wire CLK_156M250;
+IBUFDS_GTE2 IBUFDS_GTE2_inst_156 (
+   .O(CLK_156M250_in),  // Buffer output
+   .ODIV2(),
+   .CEB(1'b0), 
+   .I(Si511_P),  // Diff_p buffer input (connect directly to top-level port)
+   .IB(Si511_N) // Diff_n buffer input (connect directly to top-level port)
+);
+
+BUFG BUFG_inst (
+	.O(CLK_156M250),
+	.I(CLK_156M250_in)
+);
+
+wire CLK_160_in;
+wire CLK_160;
+IBUFDS_GTE2 IBUFDS_GTE2_inst_160 (
+   .O(CLK_160_in),  // Buffer output
+   .ODIV2(),
+   .CEB(1'b0), 
+   .I(Si570_P),  // Diff_p buffer input (connect directly to top-level port)
+   .IB(Si570_N) // Diff_n buffer input (connect directly to top-level port)
+);
+
+ BUFG BUFG_inst_2 (
+ 	.O(CLK_160),
+ 	.I(CLK_160_in)
+ );
 
 wire RST;
 wire BUS_CLK_PLL, CLK125PLLTX, CLK125PLLTX90;
@@ -82,58 +143,58 @@ PLLE2_BASE_BUS (
 	.CLKFBIN(PLL_FEEDBACK)
 );
 
-wire CLK160, CLK40;
-wire PLL2_FEEDBACK, LOCKED160;
-PLLE2_BASE #(
-	.BANDWIDTH("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
-	.CLKFBOUT_MULT(16),       // Multiply value for all CLKOUT, (2-64)
-	.CLKFBOUT_PHASE(0.0),     // Phase offset in degrees of CLKFB, (-360.000-360.000).
-	.CLKIN1_PERIOD(10.000),      // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
-
-	.CLKOUT0_DIVIDE(10),     // Divide amount for CLKOUT0 (1-128)
-	.CLKOUT0_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
-	.CLKOUT0_PHASE(90.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
-
-	.CLKOUT1_DIVIDE(10),     // Divide amount for CLKOUT0 (1-128)
-	.CLKOUT1_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
-	.CLKOUT1_PHASE(0.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
-
-	.CLKOUT2_DIVIDE(40),     // Divide amount for CLKOUT0 (1-128)
-	.CLKOUT2_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
-	.CLKOUT2_PHASE(0.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
-
-	.CLKOUT3_DIVIDE(8),     // Divide amount for CLKOUT0 (1-128)
-	.CLKOUT3_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
-	.CLKOUT3_PHASE(90.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
-
-	.CLKOUT4_DIVIDE(8),     // Divide amount for CLKOUT0 (1-128)
-	.CLKOUT4_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
-	.CLKOUT4_PHASE(-5.625),      // Phase offset for CLKOUT0 (-360.000-360.000).
-
-	.DIVCLK_DIVIDE(1),        // Master division value, (1-56)
-	.REF_JITTER1(0.0),        // Reference input jitter in UI, (0.000-0.999).
-	.STARTUP_WAIT("FALSE")     // Delay DONE until PLL Locks, ("TRUE"/"FALSE")
-)
-PLLE2_BASE_160 (
-	.CLKOUT0(CLK160),
-	.CLKOUT1(),
-	.CLKOUT2(CLK40),
-	.CLKOUT3(),
-	.CLKOUT4(),
-	.CLKOUT5(),
-	.CLKFBOUT(PLL2_FEEDBACK),
-	.LOCKED(LOCKED160),
-	.CLKIN1(clkin),
-	.PWRDWN(0),
-	.RST(!RESET_N),
-	.CLKFBIN(PLL2_FEEDBACK)
-);
+// wire CLK160, CLK40;
+// wire PLL2_FEEDBACK, LOCKED160;
+// PLLE2_BASE #(
+// 	.BANDWIDTH("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
+// 	.CLKFBOUT_MULT(16),       // Multiply value for all CLKOUT, (2-64)
+// 	.CLKFBOUT_PHASE(0.0),     // Phase offset in degrees of CLKFB, (-360.000-360.000).
+// 	.CLKIN1_PERIOD(10.000),      // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+// 
+// 	.CLKOUT0_DIVIDE(10),     // Divide amount for CLKOUT0 (1-128)
+// 	.CLKOUT0_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
+// 	.CLKOUT0_PHASE(90.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
+// 
+// 	.CLKOUT1_DIVIDE(10),     // Divide amount for CLKOUT0 (1-128)
+// 	.CLKOUT1_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
+// 	.CLKOUT1_PHASE(0.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
+// 
+// 	.CLKOUT2_DIVIDE(40),     // Divide amount for CLKOUT0 (1-128)
+// 	.CLKOUT2_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
+// 	.CLKOUT2_PHASE(0.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
+// 
+// 	.CLKOUT3_DIVIDE(8),     // Divide amount for CLKOUT0 (1-128)
+// 	.CLKOUT3_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
+// 	.CLKOUT3_PHASE(90.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
+// 
+// 	.CLKOUT4_DIVIDE(8),     // Divide amount for CLKOUT0 (1-128)
+// 	.CLKOUT4_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
+// 	.CLKOUT4_PHASE(-5.625),      // Phase offset for CLKOUT0 (-360.000-360.000).
+// 
+// 	.DIVCLK_DIVIDE(1),        // Master division value, (1-56)
+// 	.REF_JITTER1(0.0),        // Reference input jitter in UI, (0.000-0.999).
+// 	.STARTUP_WAIT("FALSE")     // Delay DONE until PLL Locks, ("TRUE"/"FALSE")
+// )
+// PLLE2_BASE_160 (
+// 	.CLKOUT0(CLK160),
+// 	.CLKOUT1(),
+// 	.CLKOUT2(CLK40),
+// 	.CLKOUT3(),
+// 	.CLKOUT4(),
+// 	.CLKOUT5(),
+// 	.CLKFBOUT(PLL2_FEEDBACK),
+// 	.LOCKED(LOCKED160),
+// 	.CLKIN1(clkin),
+// 	.PWRDWN(0),
+// 	.RST(!RESET_N),
+// 	.CLKFBIN(PLL2_FEEDBACK)
+// );
 
 wire PLL3_FEEDBACK, LOCKED480;
 wire CLK160PLL, CLK480PLL;
 
 PLLE2_BASE #(
-	.BANDWIDTH("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
+	.BANDWIDTH("HIGH"),  // OPTIMIZED, HIGH, LOW
 	.CLKFBOUT_MULT(6),       // Multiply value for all CLKOUT, (2-64)
 	.CLKFBOUT_PHASE(0.0),     // Phase offset in degrees of CLKFB, (-360.000-360.000).
 	.CLKIN1_PERIOD(6.250),      // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
@@ -171,7 +232,7 @@ PLLE2_BASE_480 (
 	.CLKOUT5(),
 	.CLKFBOUT(PLL3_FEEDBACK),
 	.LOCKED(LOCKED480),
-	.CLKIN1(CLK160),
+	.CLKIN1(CLK_160),
 	.PWRDWN(0),
 	.RST(!RESET_N),
 	.CLKFBIN(PLL3_FEEDBACK)
@@ -187,7 +248,42 @@ BUFG BUFG_inst_CLK125TX   ( .O(CLK125TX),   .I(CLK125PLLTX)   );
 BUFG BUFG_inst_CLK125TX90 ( .O(CLK125TX90), .I(CLK125PLLTX90) );
 BUFG BUFG_inst_CLK125RX   ( .O(CLK125RX),   .I(rgmii_rxc)     );
 
-assign RST = !RESET_N | !LOCKED | !LOCKED160 | !LOCKED480;
+assign RST = !RESET_N | !LOCKED;
+wire I2C_CLK;
+
+clock_divider #(
+    .DIVISOR(1600)
+) i_clock_divisor_i2c (
+    .CLK(BUS_CLK),
+    .RESET(1'b0),
+    .CE(),
+    .CLOCK(I2C_CLK)
+);
+
+
+localparam I2C_MEM_BYTES = 32;
+
+localparam I2C_BASEADDR = 32'h6000;
+localparam I2C_HIGHADDR = 32'h6100-1;
+
+i2c #(
+    .BASEADDR(I2C_BASEADDR),
+    .HIGHADDR(I2C_HIGHADDR),
+    .ABUSWIDTH(32),
+    .MEM_BYTES(I2C_MEM_BYTES)
+)  i_i2c (
+    .BUS_CLK(BUS_CLK),
+    .BUS_RST(BUS_RST),
+    .BUS_ADD(BUS_ADD),
+    .BUS_DATA(BUS_DATA),
+    .BUS_RD(BUS_RD),
+    .BUS_WR(BUS_WR),
+
+    .I2C_CLK(I2C_CLK),
+    .I2C_SDA(I2C_SDA),
+    .I2C_SCL(I2C_SCL)
+);
+
 
 
 wire   gmii_tx_en;
@@ -360,15 +456,48 @@ gpio #(
 	.IO(GPIO)
 );
 
+
+localparam SEQ_BASEADDR = 32'h1120;
+localparam SEQ_HIGHADDR = 32'h5160 - 1;
+
+wire [7:0] SEQ_OUT;
+seq_gen #(
+    .BASEADDR(SEQ_BASEADDR),
+    .HIGHADDR(SEQ_HIGHADDR),
+    .ABUSWIDTH(32),
+    .MEM_BYTES(16384),
+    .OUT_BITS(8)
+) i_seq_gen (
+    .BUS_CLK(BUS_CLK),
+    .BUS_RST(BUS_RST),
+    .BUS_ADD(BUS_ADD),
+    .BUS_DATA(BUS_DATA[7:0]),
+    .BUS_RD(BUS_RD),
+    .BUS_WR(BUS_WR),
+
+    .SEQ_EXT_START(1'b0),
+    .SEQ_CLK(CLK_156M250),
+    .SEQ_OUT(SEQ_OUT)
+);
+
+reg trig_out_buf, sig_out_buf;
+assign trig_out = SEQ_OUT[0];
+assign sig_out = SEQ_OUT[1];
+
+always @(posedge CLK_156M250) begin
+	trig_out_buf <= trig_out;
+	sig_out_buf <= sig_out;
+end
+
+
 wire EN, ARM;
 assign EN = GPIO[0];
 assign ARM = GPIO[1];
 
-
 localparam TDC_BASEADDR = 32'h1020;
 localparam TDC_HIGHADDR = 32'h111f;
 wire [31:0] tdc_fifo_data;
-tdc #(
+tdl_tdc #(
 	.BASEADDR(TDC_BASEADDR),
 	.HIGHADDR(TDC_HIGHADDR),
 	.ABUSWIDTH(32),
@@ -384,8 +513,8 @@ tdc #(
 	.CLK480(CLK480PLL),
 	.CLK160(CLK160PLL),
 	.CALIB_CLK(CLK125RX),
-	.tdc_in(sig_in),
-	.trig_in(trig_in),
+	.tdc_in(sig_out_buf),//(sig_in),
+	.trig_in(trig_out_buf),//(trig_in),
 
 	.timestamp(42),
 	.ext_en(EN),
@@ -463,7 +592,7 @@ always @(posedge BUS_CLK) begin
 end
 
 assign LED = ~{ TCP_OPEN_ACK, TCP_CLOSE_REQ, TCP_RX_WR, TCP_TX_WR,
-	TCP_FIFO_FULL, TCP_FIFO_EMPTY, ARB_WRITE_OUT, TCP_TX_WR};
+	TCP_FIFO_FULL, TCP_FIFO_EMPTY, sig_out, trig_out};
 
 
 endmodule

@@ -8,11 +8,14 @@
 #
 import logging
 import time
+from tqdm import tqdm
 
 import numpy as np
+from scipy import stats
 import matplotlib.pyplot as plt
 
 from basil.dut import Dut
+from basil.HL import si570
 
 
 def disassemble_tdc_word(word):
@@ -31,50 +34,50 @@ def disassemble_tdc_word(word):
             'fine_value' : (word >> 7) & 0b11,
             'corse_value' : (word >> 9) & 0xFFFF}
 
-GHZ_S_FREQ = 0.48
-CLK_DIV = 3
-
 
 chip = Dut("tdc_bdaq.yaml")
 chip.init()
+
+si570_conf = {'name': 'si570', 'type': 'bdaq53.si570', 'interface': 'intf', 'base_addr': 0xba, 'init': {'frequency': 160}}
+si570_clk = si570.si570(chip['i2c'], si570_conf)
+time.sleep(0.1)
+si570_clk.init()
+time.sleep(0.1)
+
 chip['TDL_TDC'].reset()
 
 
 chip['CONTROL']['EN'] = 0
 chip['CONTROL'].write()
 
-logging.info("Starting data test ...")
+logging.info("Starting TDC...")
 
 chip['CONTROL']['EN'] = 1
 chip['CONTROL'].write()
 
 chip['TDL_TDC'].RESET =1
 
-print(chip['TDL_TDC'].get_en_extern())
-print(chip['TDL_TDC'].get_arming())
-chip['TDL_TDC'].EN_TRIGGER_DIST = 1
+chip['TDL_TDC'].EN_TRIGGER_DIST = 0
 chip['TDL_TDC'].ENABLE = 1
 chip['TDL_TDC'].RESET=0
+chip['TDL_TDC'].EN_TRIGGER_DIST = 1
 
 collected_data = np.empty(0, dtype=np.uint32)
-test_duration = 3
+calib_duration = 3
 start_time = time.time()
 
-chip['TDL_TDC'].EN_CALIBRATION_MOD = 1
-print(chip['TDL_TDC'].EN_CALIBRATION_MOD)
+chip['TDL_TDC'].EN_CALIBRATION_MODE = 1
 
-while time.time() - start_time < test_duration:
+while time.time() - start_time < calib_duration:
     time.sleep(.01)
 
     fifo_data = chip['FIFO'].get_data()
     data_size = len(fifo_data)
     collected_data = np.concatenate((collected_data,fifo_data), dtype=np.uint32)
-    for word_int in fifo_data[-1:] :
-        word_dict = chip['TDL_TDC'].disassemble_tdc_word(word_int)
-        print(word_dict)
 
 
-chip['TDL_TDC'].EN_CALIBRATION_MOD = 0
+chip['TDL_TDC'].EN_CALIBRATION_MODE = 0
+
 chip['TDL_TDC'].RESET=1
 chip['FIFO'].get_data()
 
@@ -84,30 +87,14 @@ chip['CONTROL'].write()
 calib_data_indices = chip['TDL_TDC'].is_calib_word(collected_data)
 print(calib_data_indices)
 
-calib_vector = np.ones(92)
-calib_sum = np.sum(calib_vector)
-
-def histogram_plots(data):
-    if max(data) - min(data) < 1000:
-        d = 1
-        left_of_first_bin = data.min() - float(d)/2
-        right_of_last_bin = data.max() + float(d)/2
-        _ = plt.hist(data, np.arange(left_of_first_bin,right_of_last_bin + d, d))
-    else:
-        #data = np.random.choice(data,,replace=False)
-        _ = plt.hist(data, 1000)
-    plt.title("Histogram of TDL code density")
-    plt.show()
 
 if any(calib_data_indices) :
     calib_values = chip['TDL_TDC'].get_raw_tdl_values(np.array(collected_data[calib_data_indices]))
     print(calib_values[-20:])
     chip['TDL_TDC'].set_calib_values(calib_values)
+    #chip['TDL_TDC'].plot_calib_values(calib_values)
     logging.info("Calibration set using %s samples" % len(calib_values))
 
-    #histogram_plots(calib_values[0:int(np.floor(len(calib_values)*1/3))]) 
-    #histogram_plots(calib_values[0:int(np.floor(len(calib_values)*2/3))]) 
-    histogram_plots(calib_values)
 
 
 
@@ -120,55 +107,91 @@ chip['CONTROL']['EN'] = 1  # start data source
 chip['CONTROL'].write()
 chip['FIFO'].get_data()
 
-chip['TDL_TDC'].EN_CALIBRATION_MOD = 0
 chip['TDL_TDC'].RESET=1
 time.sleep(0.1)
-chip['TDL_TDC'].RESET=0
 chip['FIFO'].get_data()
 logging.info("Ready for measurements")
+chip['TDL_TDC'].EN_TRIGGER_DIST = 1
+chip['TDL_TDC'].EN_WRITE_TIMESTAMP = 0
 
 delta_t = 0
+def reject_outliers(data, m=2):
+    return data[abs(data - np.median(data)) < m]
 
-while True :
-    time.sleep(.01)
 
-    fifo_data = chip['FIFO'].get_data()
-    data_size = len(fifo_data)
-    for word_int in fifo_data[-8:] :
-        word_dict = chip['TDL_TDC'].disassemble_tdc_word(word_int)
-        print(word_dict)
-        if (word_dict['word_type'] in ['TRIGGERED', 'RISING', 'FALLING']) :
-            if (word_dict['word_type'] == 'TRIGGERED') :
-                delta_t = chip['TDL_TDC'].tdc_word_to_time(word_dict)
+def load_and_start_trig_seq(trig_dis_cycles):
+    # 10/0.125Ghz = 80ns
+    sig_cycles = 10
 
-            word_time = chip['TDL_TDC'].tdc_word_to_time(word_dict) - delta_t
+    kilo_trig_cycles = int(np.floor(trig_dis_cycles / 1000))
+    need_kilo_cycles = 0
+    if kilo_trig_cycles > 0:
+        need_kilo_cycles = 1
+    remain_trig_cycles = trig_dis_cycles % 1000
 
-            if (word_dict['word_type'] == 'RISING'):
-                delta_t += word_time
+    trig_total = remain_trig_cycles + need_kilo_cycles*1000
 
-            print('%s Time: %.3f, Delta Time: %.3f' % (word_dict['word_type'], chip['TDL_TDC'].tdc_word_to_time(word_dict), word_time)) 
-            if(word_dict['word_type'] == 'RISING') :
-                collected_rising.append(word_time)
-            elif(word_dict['word_type'] == 'FALLING') :
-                collected_falling.append(word_time)
+    chip['SEQ'].reset()
+    while not chip['SEQ'].is_ready:
+        pass
+    chip['SEQ'].SIZE = sig_cycles + trig_total + 1
+    chip['SEQ']['TDC_IN'][:] = False
+    chip['SEQ']['TDC_IN'][trig_total:sig_cycles + trig_total ] = True
+    chip['SEQ']['TDC_TRIGGER_IN'][0:20] = True
+    chip['SEQ'].write(sig_cycles + trig_total + 1)
 
-    if(len(collected_falling) * len(collected_rising) > 0 and len(collected_falling) % 20 == 19) :
-        plt.subplot(2, 1, 1)
-        d = 0.03
-        left_of_first_bin = np.min(collected_rising) - float(d)/2
-        right_of_last_bin = np.max(collected_rising) + float(d)/2
-        plt.hist(collected_rising, np.arange(left_of_first_bin, right_of_last_bin + d, d))
-        plt.ylabel('# rising signal')
-        plt.xlabel('ns')
-        plt.subplot(2, 1, 2)
-        left_of_first_bin = np.min(collected_falling) - float(d)/2
-        right_of_last_bin = np.max(collected_falling) + float(d)/2
-        plt.hist(collected_falling, np.arange(left_of_first_bin, right_of_last_bin + d, d))
-        plt.ylabel('# falling signal')
-        plt.xlabel('ns')
+    chip['SEQ'].REPEAT = 1
+    # This repeat window isn't optimal as the trigger signal is repeated.
+    # However, once first registered, the repeated trigger signal will
+    # be ignored by the TDC implementation.
+    chip['SEQ'].NESTED_START = 0
+    chip['SEQ'].NESTED_STOP = 1000
+    chip['SEQ'].NESTED_REPEAT = kilo_trig_cycles 
 
-        plt.tight_layout()
-        plt.show()
+    chip['SEQ'].START
+
+seq_clk_GHZ = 0.15625
+N_measure = 500
+current_measurements = np.zeros(N_measure)
+measured = []
+stds = []
+actual = []
+for i in tqdm(range(10, 4000, 100)):
+    for j in range(N_measure):
+
+        load_and_start_trig_seq(i)
+        while not chip['SEQ'].is_ready:
+            time.sleep(0.0001)
+            pass
+        fifo_size = chip['FIFO']._intf._get_tcp_data_size()
+        fifo_int_size = int((fifo_size - (fifo_size % 4)) / 4) 
+        while fifo_int_size < 2:
+            time.sleep(0.0001)
+            fifo_size = chip['FIFO']._intf._get_tcp_data_size()
+            fifo_int_size = int((fifo_size - (fifo_size % 4)) / 4) 
+        fifo_data = chip['FIFO'].get_data()
+        times = chip['TDL_TDC'].tdc_word_to_time(fifo_data)
+        current_measurements[j] = times[1] - times[0]
+    actual.append(i/seq_clk_GHZ)
+    std = np.std(current_measurements)
+    print('Actual time: %5.3f Measured time: %5.3f Difference: %.3f Std %.3f' % (i/seq_clk_GHZ, times[1] - times[0], times[1] - times[0] - i/seq_clk_GHZ, std))
+    measured.append(np.mean(current_measurements))
+    stds.append(std)
+    print()
+actual = np.asarray(actual)
+measured = np.asarray(measured)
+stds = np.asarray(stds)
+res = stats.linregress(actual, measured - actual)
+print(f"R-squared: {res.rvalue**2:.6f}")
+print('Intercept: %f' % (res.intercept))
+print('Slope: %.6e' % (res.slope))
+plt.errorbar(actual, measured - actual, yerr=stds)
+plt.plot(actual, res.intercept + res.slope * actual, 'r')
+plt.show()
+
+plt.plot(actual, stds)
+plt.show()
+
 
 
 
