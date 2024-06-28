@@ -481,12 +481,12 @@ seq_gen #(
 );
 
 reg trig_out_buf, sig_out_buf;
-assign trig_out = SEQ_OUT[0];
-assign sig_out = SEQ_OUT[1];
+assign trig_out = trig_out_buf;
+assign sig_out = sig_out_buf;
 
 always @(posedge CLK_156M250) begin
-	trig_out_buf <= trig_out;
-	sig_out_buf <= sig_out;
+	trig_out_buf <= SEQ_OUT[0];
+	sig_out_buf <= SEQ_OUT[1];
 end
 
 
@@ -513,8 +513,8 @@ tdl_tdc #(
 	.CLK480(CLK480PLL),
 	.CLK160(CLK160PLL),
 	.CALIB_CLK(CLK125RX),
-	.tdc_in(sig_out_buf),//(sig_in),
-	.trig_in(trig_out_buf),//(trig_in),
+	.tdc_in(sig_in),//(sig_out_buf),//(sig_in),
+	.trig_in(trig_in),//(trig_out_buf),//(trig_in),
 
 	.timestamp(42),
 	.ext_en(EN),
