@@ -3,6 +3,8 @@ from os import path, walk
 
 author = 'Tomasz Hemperek, Jens Janssen, David-Leon Pohl'
 author_email = 'hemperek@uni-bonn.de, janssen@physik.uni-bonn.de, pohl@physik.uni-bonn.de'
+maintainer = 'Yannick Dieter, Christian Bespin'
+maintainer_email = 'dieter@physik.uni-bonn.de, bespin@physik.uni-bonn.de'
 
 # https://packaging.python.org/guides/single-sourcing-package-version/
 # Use
@@ -41,8 +43,9 @@ setup(
     long_description='Basil is a modular data acquisition system and system testing framework in Python.\nIt also provides generic FPGA firmware modules for different hardware platforms and drivers for wide range of lab appliances.',
     install_requires=install_requires,
     author=author,
-    maintainer=author,
     author_email=author_email,
+    maintainer=maintainer,
+    maintainer_email=maintainer_email,
     packages=find_packages(),
     include_package_data=True,  # accept all data files and directories matched by MANIFEST.in or found in source control
     package_data={'': ['*.yaml'], 'basil': package_files('basil/firmware')},
