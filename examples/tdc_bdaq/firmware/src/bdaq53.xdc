@@ -7,7 +7,6 @@ create_clock -period 6.400 -name CLK_156M250_in -add [get_ports Si511_P]
 
 create_generated_clock -name I2C_CLK -source [get_pins PLLE2_BASE_BUS/CLKOUT0] -divide_by 1600 [get_pins -hier -filter {NAME =~ *i_clock_divisor_i2c/CLOCK_reg/Q}]
 
-
 set_false_path -from [get_clocks CLK125PLLTX] -to [get_clocks BUS_CLK_PLL]
 set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks CLK125PLLTX]
 set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks rgmii_rxc]
@@ -26,7 +25,6 @@ set_false_path -from [get_clocks BUS_CLK_PLL] -to [get_clocks I2C_CLK]
 set_false_path -from [get_cells -hier -filter {NAME =~ */calib_sig_gen/*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */i_controller/* && IS_SEQUENTIAL ==1  }]
 set_false_path -from [get_cells -hier -filter {NAME =~ */input_mux_addr_buf_reg*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */tdl_sampler/carry_chain* && IS_SEQUENTIAL ==1  }]
 set_false_path -from [get_cells -hier -filter {NAME =~ */calib_sig_gen/*  && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */tdl_sampler/* && IS_SEQUENTIAL ==1  }]
-
 set_false_path -from [get_cells -hier -filter {NAME =~ */conf_en_invert_tdc_synchronizer_dv_clk/* && IS_SEQUENTIAL ==1}] -to [get_cells -hier -filter {NAME =~ */tdl_sampler/carry_chain* && IS_SEQUENTIAL ==1}]
 
 #CLK Mux
@@ -106,7 +104,7 @@ set_property IOSTANDARD LVCMOS33 [get_ports {rgmii_txd[3]}]
 set_property PACKAGE_PIN K22 [get_ports {rgmii_txd[3]}]
 
 # LEDs
-#LED 0..3 are onboard LEDs
+# LED 0..3 are onboard LEDs
 set_property PACKAGE_PIN U9 [get_ports {LED[0]}]
 set_property IOSTANDARD LVCMOS15 [get_ports {LED[0]}]
 set_property PACKAGE_PIN V12 [get_ports {LED[1]}]
@@ -115,7 +113,7 @@ set_property PACKAGE_PIN V13 [get_ports {LED[2]}]
 set_property IOSTANDARD LVCMOS15 [get_ports {LED[2]}]
 set_property PACKAGE_PIN W13 [get_ports {LED[3]}]
 set_property IOSTANDARD LVCMOS15 [get_ports {LED[3]}]
-#LED 4..7 are LEDs on the BDAQ53 base board
+# LED 4..7 are LEDs on the BDAQ53 base board
 set_property PACKAGE_PIN E21 [get_ports {LED[4]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {LED[4]}]
 set_property PACKAGE_PIN E22 [get_ports {LED[5]}]
@@ -126,13 +124,30 @@ set_property PACKAGE_PIN C22 [get_ports {LED[7]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {LED[7]}]
 set_property SLEW SLOW [get_ports LED*]
 
+# DP_ML ("DP2") L_3_P (B148)
+set_property PACKAGE_PIN B17 [get_ports sig_out]
+set_property IOSTANDARD LVCMOS25 [get_ports sig_out]
+
+# DP_ML ("DP2") L_2_P (B154)
+set_property PACKAGE_PIN E18 [get_ports trig_out]
+set_property IOSTANDARD LVCMOS25 [get_ports trig_out]
+
+# TDL input
+# LEMO RX_0
+# set_property PACKAGE_PIN AB22 [get_ports sig_in]
+
+# DP_ML ("DP2") L_1_P (B160)
+set_property PACKAGE_PIN C19 [get_ports sig_in]
+set_property IOSTANDARD LVCMOS25 [get_ports sig_in]
+
+# LEMO RX_1
+#set_property PACKAGE_PIN AD23 [get_ports trig_in]
+
+# DP_ML ("DP2") L_0_P (B164)
+set_property PACKAGE_PIN A18 [get_ports trig_in]
+set_property IOSTANDARD LVCMOS25 [get_ports trig_in]
+
 # SPI configuration flash
 set_property CONFIG_MODE SPIx4 [current_design]
 set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
 set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design]
-
-
-
-
-
-
