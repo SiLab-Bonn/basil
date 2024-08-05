@@ -58,3 +58,8 @@ examples/mmc3_eth/firmware/src/SiTCP/*
 examples/mio3_eth_gpac/firmware/vivado/*
 !examples/mio3_eth_gpac/firmware/vivado/*.xpr
 examples/mio3_eth_gpac/firmware/src/SiTCP/*
+
+examples/tdc_bdaq/firmware/vivado/*
+!examples/tdc_bdaq/firmware/vivado/*.sh
+!examples/tdc_bdaq/firmware/vivado/run.tcl
+examples/tdc_bdaq/firmware/src/SiTCP/*

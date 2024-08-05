@@ -1,10 +1,17 @@
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) All rights reserved
+ * SiLab, Institute of Physics, University of Bonn
+ * ------------------------------------------------------------
+ */
+ 
 `include "tdl_tdc/sw_interface.v"
 `include "tdl_tdc/tdl_tdc_core.v"
 
 module tdl_tdc #(
-	parameter BASEADDR = 16'h0000,
-	parameter HIGHADDR = 16'h0000,
-	parameter ABUSWIDTH = 16,
+	parameter BASEADDR = 32'h0000,
+	parameter HIGHADDR = 32'h0000,
+	parameter ABUSWIDTH = 32,
 	parameter DATA_IDENTIFIER = 4'b0100
 ) (
 	input wire BUS_CLK,

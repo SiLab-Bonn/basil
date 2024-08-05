@@ -1,3 +1,10 @@
+/**
+ * ------------------------------------------------------------
+ * Copyright (c) All rights reserved
+ * SiLab, Institute of Physics, University of Bonn
+ * ------------------------------------------------------------
+ */
+ 
 `include "tdl_tdc/tdl_supersampler.v"
 `include "tdl_tdc/counter/slimfast_multioption_counter.v"
 `include "tdl_tdc/controller.v"
@@ -68,6 +75,7 @@ wire sig_calib;
 clock_divider #(.DIVISOR(14)) calib_sig_gen (
 	.CLK(CALIB_CLK),
 	.RESET(1'b0),
+	.CE(),
 	.CLOCK(sig_calib)
 );
 
