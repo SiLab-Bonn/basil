@@ -36,6 +36,7 @@ def query_identification(rm, resource, baud_rate, read_termination=None, write_t
         reply = inst.query("*IDN?", delay=0.1)
     return reply
 
+
 def find_usb_binds(rm, log,
                    instruments,
                    binds_to_skip=[],
