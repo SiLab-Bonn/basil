@@ -30,9 +30,11 @@ def query_identification(rm, resource, baud_rate, read_termination=None, write_t
     inst.baud_rate = baud_rate
     inst.read_termination = read_termination
     inst.write_termination = write_termination
-
-    return inst.query("*IDN?", delay=0.5)
-
+    try:
+        reply = inst.query("*IDN?", delay=0.1)
+    except pyvisa.VisaIOError:
+        reply = inst.query("*IDN?", delay=0.1)
+    return reply
 
 def find_usb_binds(rm, log,
                    instruments,
@@ -77,11 +79,10 @@ def find_usb_binds(rm, log,
         if "port" in instrument.keys():
             port = instrument.get("port")
 
+            if 'ASRL' not in port:
+                port = f'ASRL{port}::INSTR'
             if port in resources:
-                if 'ASRL' not in port:
-                    instrument["port"] = f'ASRL{port}::INSTR'
-
-                resources = (instrument["port"],) + resources
+                resources = (port,) + resources
 
         for i, res in enumerate(resources):
             log.debug(f"[{i}] Trying {res}")
@@ -216,7 +217,12 @@ def modify_basil_config(conf, log, skip_binds=[], save_modified=None):
         baud_rate = get_baudrate(tf["init"])
         read_termination = tf["init"]["read_termination"]
         write_termination = tf["init"]["write_termination"] if "write_termination" in tf["init"].keys() else "\n"
-        port = tf["init"]["port"] if "port" in tf["init"].keys() else None
+        if "port" in tf["init"].keys():
+            port = tf["init"]["port"]
+        elif "resource_name" in tf["init"].keys():
+            port = tf["init"]["resource_name"]
+        else:
+            port = None
 
         instruments.append({
             "identification": instrument,
