@@ -16,6 +16,7 @@ get_voltage_limit : SENS:VOLT:PROT?
 source_volt : SOUR:FUNC VOLT
 source_current : SOUR:FUNC CURR
 get_source_mode : SOUR:FUNC?
+get_source_voltage: SOUR:VOLT?
 set_current_autorange : SOUR:CURR:RANG:AUTO ON
 get_current_autorange : SOUR:CURR:RANG:AUTO?
 set_voltage_range: SOUR:VOLT:RANGE
