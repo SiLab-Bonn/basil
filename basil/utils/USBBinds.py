@@ -33,6 +33,8 @@ def query_identification(rm, resource, baud_rate, read_termination=None, write_t
     try:
         reply = inst.query("*IDN?", delay=0.1)
     except pyvisa.VisaIOError:
+        # This retries the query a second time, since some devices do not answer the first time.
+        # If a second exception arrises, it will be handled in calling function.
         reply = inst.query("*IDN?", delay=0.1)
     return reply
 
