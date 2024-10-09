@@ -93,12 +93,12 @@ class TestSimTdc(unittest.TestCase):
 
     def test_tdc(self):
         self.chip['TDC0'].ENABLE = 1
-        slef.chip['TDC0'].EN_TRIGGER_DIST = 1
+        self.chip['TDC0'].EN_TRIGGER_DIST = 1
         self.chip['SEQ'].REPEAT = 1
 
-        for write_timestamp in range(0,1):
+        for write_timestamp in range(0, 1):
             for index, i in enumerate(range(1045, 1047)):
-                trigger_dis = 50 
+                trigger_dis = 50
                 length = i + 1 + trigger_dis
                 self.chip['SEQ'].SIZE = length + 1
                 self.chip['SEQ']['TDC_IN'][trigger_dis:length + trigger_dis] = True
@@ -119,7 +119,6 @@ class TestSimTdc(unittest.TestCase):
                 if write_timestamp:
                     self.assertEqual(data[3]['word_type'], 'TIMESTAMP')
                     self.asserEqual(data[3]['timestamp'], 42)
-
 
 #    def test_broadcasting(self):
 #        self.chip['TDC0'].ENABLE = 1
