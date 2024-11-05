@@ -91,7 +91,8 @@ class TestSimTdlTdc(unittest.TestCase):
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
 
-    def skip_tdc(self):
+    @unittest.skip("Currently not compatible with Icarus Verilog")
+    def test_tdc(self):
         self.chip['TDC0'].ENABLE = 1
         self.chip['TDC0'].EN_TRIGGER_DIST = 1
         self.chip['SEQ'].REPEAT = 1
@@ -120,7 +121,8 @@ class TestSimTdlTdc(unittest.TestCase):
                     self.assertEqual(data[3]['word_type'], 'TIMESTAMP')
                     self.asserEqual(data[3]['timestamp'], 42)
 
-    def skip_broadcasting(self):
+    @unittest.skip("Currently not compatible with Icarus Verilog")
+    def test_broadcasting(self):
         self.chip['TDC0'].ENABLE = 1
         self.chip['TDC1'].ENABLE = 1
         self.chip['TDC2'].ENABLE = 1
