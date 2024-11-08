@@ -64,7 +64,7 @@ def get_si_tcp(rel_path=''):
 
     sitcp_folder = os.path.join(os.path.os.getcwd(), rel_path, 'SiTCP/')
 
-    # Only download if the SiTCP git repository is not present 
+    # Only download if the SiTCP git repository is not present
     if not os.path.isdir(os.path.join(sitcp_folder, '.git')):
         print('Downloading SiTCP')
 
@@ -76,14 +76,14 @@ def get_si_tcp(rel_path=''):
         line_prepender(filename=sitcp_folder + 'WRAP_SiTCP_GMII_XC7K_32K.V', line=r'`default_nettype wire')
         for line in fileinput.input([sitcp_folder + 'WRAP_SiTCP_GMII_XC7K_32K.V'], inplace=True):
             print(line.replace("assign\tMY_IP_ADDR[31:0]\t= (~FORCE_DEFAULTn | (EXT_IP_ADDR[31:0]==32'd0) \t? DEFAULT_IP_ADDR[31:0]\t\t: EXT_IP_ADDR[31:0]\t\t);",
-                                'assign\tMY_IP_ADDR[31:0]\t= EXT_IP_ADDR[31:0];'), end='')
+                               'assign\tMY_IP_ADDR[31:0]\t= EXT_IP_ADDR[31:0];'), end='')
     else:  # update if existing
         print('SiTCP already present. Checking for updates')
         g = git.cmd.Git(sitcp_folder)
         g.pull()
 
     sitcp_10G_folder = os.path.join(os.path.os.getcwd(), rel_path, 'SiTCP10G/')
-    # Only download if the SiTCP10G git repository is not present 
+    # Only download if the SiTCP10G git repository is not present
     if not os.path.isdir(os.path.join(sitcp_10G_folder, '.git')):
         print('Downloading SiTCP10G')
 
