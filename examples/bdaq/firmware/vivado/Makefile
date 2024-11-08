@@ -6,12 +6,12 @@ all: download synthesize
 
 # Download SiTCP to the base directory
 download:
-	@echo "Downloading SiTCP"
+	@echo "Downloading SiTCP library"
 	@python -c "from basil.utils import utils; utils.get_si_tcp('..')"
 
 # Start synthesis
 synthesize:
-	@echo "Starrting firmware synthesis"
+	@echo "Starting firmware synthesis"
 	vivado -mode batch -source run.tcl -notrace
 
 # Clean generated files
