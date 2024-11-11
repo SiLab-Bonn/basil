@@ -9,7 +9,17 @@
 #       vivado -mode tcl -source run.tcl
 #
 
+# Use current environment python instead of vivado included python
+if {[info exists ::env(PYTHONPATH)]} {
+    unset ::env(PYTHONPATH)
+}
+if {[info exists ::env(PYTHONHOME)]} {
+    unset ::env(PYTHONHOME)
+}
+# Get rid of Vivado python (since Vivado 2021) in PATH and use python from calling shell
+set env(PATH) [join [lsearch -inline -all -not -regexp [split $::env(PATH) ":"] (.*)lnx64\/python(.*)] ":"]
 
+set firmware_dir [exec python -c "import os; print(os.path.dirname(os.getcwd()))"]
 set basil_dir [exec python -c "import basil, os; print(str(os.path.dirname(basil.__file__)))"]
 set include_dirs [list $basil_dir/firmware/modules $basil_dir/firmware/modules/utils]
 
