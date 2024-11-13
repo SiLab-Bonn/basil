@@ -108,12 +108,12 @@ class IsegHV(HardwareLayer):
         self.ERRORS[f"? UMAX={self.get_voltage_limit}"] = (
             "Set voltage exceeds voltage limit"
         )
-        
+
         self.set_autostart(self._autostart)
-        
+
     def set_high_voltage(self, voltage):
         self.high_voltage = voltage
-        
+
     def get_high_voltage(self):
         return self.high_voltage
 
