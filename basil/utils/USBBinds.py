@@ -46,7 +46,7 @@ def query_identification(rm, resource, baud_rate, read_termination=None, write_t
 def find_usb_binds(rm, log,
                    instruments,
                    binds_to_skip=[],
-                   memorized_binds=[],
+                   memorized_binds={},
                    timeout=1000 * 4
                    ):
     """
@@ -105,7 +105,7 @@ def find_usb_binds(rm, log,
             try:
                 log.debug(f"Trying {res} with baud rate {instrument['baud_rate']}")
 
-                if any(res in bind for bind in memorized_binds):
+                if any(res in bind for bind in memorized_binds.keys()):
                     log.debug(f"Found memorized bind {res}")
                     result = memorized_binds[res]
                 else:
@@ -114,7 +114,7 @@ def find_usb_binds(rm, log,
                     else:
                         result = query_identification(rm, res, instrument['baud_rate'], instrument['read_termination'], instrument['write_termination'], timeout=timeout)
 
-                    memorized_binds.append({res, result})
+                    memorized_binds.update({res: result})
 
                     log.debug(f"Found {result.strip()}")
 
