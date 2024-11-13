@@ -17,3 +17,4 @@ hw_drivers:
         # v_lim : 100 # Set software-side voltage limit to be 100 V
         n_channel : 1 # Set number of channels the ISEG HV PS has 
         channel : 1  # Set channel number
+        autostart : True # Set autostart to True in order to automatically start voltage change when new voltage is set
