@@ -46,10 +46,12 @@ class IsegHV(HardwareLayer):
     }
 
     FORMATS = {
-        "get_voltage_meas": lambda val: f"{val[:-3]}e{val[-3:]}",
-        "get_current_meas": lambda val: f"{val[:-3]}e{val[-3:]}",
-        "get_voltage_set": lambda val: f"{val[:-3]}e{val[-3:]}",
+        "get_voltage": lambda val: f"{val[:-3]}e{val[-3:]}",
+        "get_current": lambda val: f"{val[:-3]}e{val[-3:]}",
+        "get_source_voltage": lambda val: f"{val[:-3]}e{val[-3:]}",
         "get_current_trip": lambda val: f"{val[:-3]}e{val[-3:]}",
+        "get_current_trip_mA": lambda val: f"{val[:-3]}e{val[-3:]}",
+        "get_current_trip_muA": lambda val: f"{val[:-3]}e{val[-3:]}",
     }
 
     ERRORS = {
@@ -81,14 +83,16 @@ class IsegHV(HardwareLayer):
         self.n_channel = self._init.get("n_channel", 1)
         self.channel = self._init.get("channel", 1)
 
-        # Voltage which is considered the high voltage
+        # Voltage which is considered the high voltage when powering on
         self.high_voltage = self._init.get("high_voltage", None)
 
         # Software-side voltage limit, set via self.v_lim property
         self._voltage_limit = self._init.get("v_lim", None)
 
-        if self._voltage_limit is not None:
-            self.voltage_limit = self._init.get("voltage_limit", None)
+        if self._voltage_limit is None:
+            self._voltage_limit = self._init.get("voltage_limit", None)
+
+        self._autostart = self._init.get("autostart", False)
 
     def init(self):
         """Set up the power supply"""
@@ -104,6 +108,14 @@ class IsegHV(HardwareLayer):
         self.ERRORS[f"? UMAX={self.get_voltage_limit}"] = (
             "Set voltage exceeds voltage limit"
         )
+        
+        self.set_autostart(self._autostart)
+        
+    def set_high_voltage(self, voltage):
+        self.high_voltage = voltage
+        
+    def get_high_voltage(self):
+        return self.high_voltage
 
     def get_current(self):
         """
@@ -114,7 +126,7 @@ class IsegHV(HardwareLayer):
         float
             Output current in A
         """
-        return float(self._get_set_property(prop="get_current_meas"))
+        return float(self._get_set_property(prop="get_current"))
 
     def get_voltage(self):
         """
@@ -125,7 +137,7 @@ class IsegHV(HardwareLayer):
         float
             Output voltage in V
         """
-        return float(self._get_set_property(prop="get_voltage_meas"))
+        return float(self._get_set_property(prop="get_voltage"))
 
     def set_voltage(self, voltage):
         # Check hardware voltage limit
@@ -463,7 +475,7 @@ class IsegHV(HardwareLayer):
 
     def on(self):
         try:
-            self.voltage = float(self.high_voltage)
+            self.set_voltage(float(self.high_voltage))
         except TypeError:
             raise ValueError(
                 "High voltage is not set. Set *high_voltage* attribute to numerical value"
@@ -489,19 +501,19 @@ class IsegHV(HardwareLayer):
 
     @property
     def UNIT_NUMBER(self):
-        return self.identifier().split(";")[0]
+        return self.get_identifier().split(";")[0]
 
     @property
     def SOFTWARE_REL(self):
-        return self.identifier().split(";")[1]
+        return self.get_identifier().split(";")[1]
 
     @property
     def V_MAX(self):
-        return self.identifier().split(";")[2]
+        return self.get_identifier().split(";")[2]
 
     @property
     def I_MAX(self):
-        return self.identifier().split(";")[3]
+        return self.get_identifier().split(";")[3]
 
     # BEWLOW DEPRECATED
 
