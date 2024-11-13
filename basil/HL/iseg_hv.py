@@ -504,7 +504,7 @@ class IsegHV(HardwareLayer):
         return self.identifier().split(";")[3]
 
     # BEWLOW DEPRECATED
-    
+
     @property
     def hv_on(self):
         """
