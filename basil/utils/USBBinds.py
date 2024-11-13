@@ -36,7 +36,7 @@ def query_identification(rm, resource, baud_rate, read_termination=None, write_t
         # This retries the query a second time, since some devices do not answer the first time.
         # If a second exception arrises, it will be handled in calling function.
         reply = inst.query(indentifer_cmd, delay=0.1)
-        
+
     if read_after_query:
         return inst.read()
     else:
@@ -236,7 +236,7 @@ def modify_basil_config(conf, log, skip_binds=[], save_modified=None):
 
         instruments.append({
             "name": tf["name"],
-            "type": "", # Standard instruments with *IQN? command
+            "type": "",  # Standard instruments with *IQN? command
             "identification": instrument,
             "baud_rate": baud_rate,
             "read_termination": read_termination,
@@ -245,7 +245,7 @@ def modify_basil_config(conf, log, skip_binds=[], save_modified=None):
         })
 
         insts_idx_map[instrument.lower().strip()] = i
-        
+
     for hw_driver in conf["hw_drivers"]:
         interface = hw_driver["interface"]
         for instrument in instruments:
