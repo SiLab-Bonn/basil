@@ -475,18 +475,18 @@ class IsegHV(HardwareLayer):
     def get_on(self):
         return "0" if self.get_module_status()[4] == "1" else "1"
 
-    def set_voltage_range(self): # Not implemented
+    def set_voltage_range(self):  # Not implemented
         ...
 
-    def set_current(self): # Not implemented
+    def set_current(self):  # Not implemented
         ...
 
-    def source_current(self): # Not implemented
+    def source_current(self):  # Not implemented
         ...
 
-    def soruce_volt(self): # Not implemented
+    def soruce_volt(self):  # Not implemented
         ...
-        
+
     @property
     def UNIT_NUMBER(self):
         return self.identifier().split(";")[0]
@@ -503,8 +503,8 @@ class IsegHV(HardwareLayer):
     def I_MAX(self):
         return self.identifier().split(";")[3]
 
-    #### BEWLOW DEPRECATED ####
-
+    # BEWLOW DEPRECATED
+    
     @property
     def hv_on(self):
         """
