@@ -9,7 +9,7 @@ import pyvisa
 import ruamel.yaml
 
 
-def query_identification(rm, resource, baud_rate, read_termination=None, write_termination=None, timeout=1000 * 5):
+def query_identification(rm, resource, baud_rate, read_termination=None, write_termination=None, timeout=1000 * 5, indentifer_cmd="*IDN?", read_after_query=False):
     """
     Queries the identification of the instrument connected via USB.
 
@@ -31,18 +31,22 @@ def query_identification(rm, resource, baud_rate, read_termination=None, write_t
     inst.read_termination = read_termination
     inst.write_termination = write_termination
     try:
-        reply = inst.query("*IDN?", delay=0.1)
+        reply = inst.query(indentifer_cmd, delay=0.1)
     except pyvisa.VisaIOError:
         # This retries the query a second time, since some devices do not answer the first time.
         # If a second exception arrises, it will be handled in calling function.
-        reply = inst.query("*IDN?", delay=0.1)
-    return reply
+        reply = inst.query(indentifer_cmd, delay=0.1)
+
+    if read_after_query:
+        return inst.read()
+    else:
+        return reply
 
 
 def find_usb_binds(rm, log,
                    instruments,
                    binds_to_skip=[],
-                   memorized_binds=[],
+                   memorized_binds={},
                    timeout=1000 * 4
                    ):
     """
@@ -101,13 +105,16 @@ def find_usb_binds(rm, log,
             try:
                 log.debug(f"Trying {res} with baud rate {instrument['baud_rate']}")
 
-                if any(res in bind for bind in memorized_binds):
+                if any(res in bind for bind in memorized_binds.keys()):
                     log.debug(f"Found memorized bind {res}")
                     result = memorized_binds[res]
                 else:
-                    result = query_identification(rm, res, instrument['baud_rate'], instrument['read_termination'], instrument['write_termination'], timeout=timeout)
+                    if instrument["type"].lower() == "iseg_hv":
+                        result = query_identification(rm, res, instrument['baud_rate'], instrument['read_termination'], instrument['write_termination'], timeout=timeout, indentifer_cmd="#", read_after_query=True)
+                    else:
+                        result = query_identification(rm, res, instrument['baud_rate'], instrument['read_termination'], instrument['write_termination'], timeout=timeout)
 
-                    memorized_binds.append({res, result})
+                    memorized_binds.update({res: result})
 
                     log.debug(f"Found {result.strip()}")
 
@@ -228,6 +235,8 @@ def modify_basil_config(conf, log, skip_binds=[], save_modified=None):
             port = None
 
         instruments.append({
+            "name": tf["name"],
+            "type": "",  # Standard instruments with *IQN? command
             "identification": instrument,
             "baud_rate": baud_rate,
             "read_termination": read_termination,
@@ -236,6 +245,13 @@ def modify_basil_config(conf, log, skip_binds=[], save_modified=None):
         })
 
         insts_idx_map[instrument.lower().strip()] = i
+
+    for hw_driver in conf["hw_drivers"]:
+        interface = hw_driver["interface"]
+        for instrument in instruments:
+            if instrument["name"].lower().strip() == interface.lower().strip():
+                instrument["type"] = hw_driver["type"].lower()
+                break
 
     found_binds = find_usb_binds(rm, log=log, instruments=instruments, binds_to_skip=skip_binds)
 
