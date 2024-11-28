@@ -106,19 +106,25 @@ def find_usb_binds(rm, log,
                     memorized_binds[res] = result
                     log.debug(f"Found {result.strip()}")
 
-                if result.lower().strip() in [inst["identification"].lower().strip() for inst in instruments]:
-                    substring = res.split("/")[2].split("::")[0]
+                for inst in instruments:
+                    if result.lower().strip() in inst["identification"].lower().strip():
+                        substring = res.split("/")[2].split("::")[0]
 
-                    log.info(f"Matched instrument {instrument['identification']} to /dev/{str(substring)}")
-                    skip_binds.append(f"/dev/{str(substring)}")
+                        log.info(f"Matched instrument {inst['identification']} to /dev/{str(substring)}")
+                        skip_binds.append(f"/dev/{str(substring)}")
 
-                    results[result.lower().strip()] = f"/dev/{str(substring)}"
+                        results[result.lower().strip()] = f"/dev/{str(substring)}"
 
-                    if len(results) == len(instruments):
-                        return results
+                        if len(results) == len(instruments):
+                            return results
 
-                    log.debug(f"Found {len(results)} out of {len(instruments)}")
+                        log.debug(f"Found {len(results)} out of {len(instruments)}")
 
+                        break
+                else:
+                    continue
+
+                if inst["identification"].lower().strip() in instrument["identification"].lower().strip():
                     break
 
             except pyvisa.VisaIOError:
