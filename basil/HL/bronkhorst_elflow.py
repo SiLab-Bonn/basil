@@ -73,8 +73,7 @@ class Bronkhorst_ELFLOW(HardwareLayer):
     def get_setpoint(self):
         self._intf.write(self.CMDS['get_setpoint'])
         ret = self.read()
-        answer_in_hex = ret[11:]  # read from the 11th digits to translate what point is set
-        answer = int(answer_in_hex, 16)
+        answer = int(ret[11:], 16)  # read from the 11th digits to translate what point is set
         return answer
 
     def set_mode(self, value):
@@ -92,8 +91,7 @@ class Bronkhorst_ELFLOW(HardwareLayer):
     def get_mode(self):
         self._intf.write(self.CMDS['get_control_mode'])
         ret = self.read()
-        answer_in_hex = ret[11:]        # read from the 11th digits to translate what mode is on
-        answer = int(answer_in_hex, 16)
+        answer = int(ret[11:], 16)        # read from the 11th digits to translate what mode is on
         return answer
 
     def get_flow(self):
@@ -103,14 +101,12 @@ class Bronkhorst_ELFLOW(HardwareLayer):
         # first get the max capacity in %
         self._intf.write(self.CMDS['get_capacity'])
         ret = self.read()
-        answer_in_hex = ret[11:]  # read from the 11th digits to translate what the capacity is
-        cap_100 = struct.unpack('!f', bytes.fromhex(answer_in_hex))[0]
+        cap_100 = struct.unpack('!f', bytes.fromhex(ret[11:]))[0]  # read from the 11th digits to translate what the capacity is
 
         # now measure the flow
         self._intf.write(self.CMDS['get_measure_flow'])
         ret1 = self.read()
-        answer_in_hex = ret1[11:]
-        answer = int(answer_in_hex, 16)
+        answer = int(ret1[11:], 16) # convert reply from hex to integer
 
         val = answer / 32000 * cap_100
         return val
