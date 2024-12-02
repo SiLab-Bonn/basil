@@ -106,7 +106,7 @@ class Bronkhorst_ELFLOW(HardwareLayer):
         # now measure the flow
         self._intf.write(self.CMDS['get_measure_flow'])
         ret1 = self.read()
-        answer = int(ret1[11:], 16) # convert reply from hex to integer
+        answer = int(ret1[11:], 16)  # convert reply from hex to integer
 
         val = answer / 32000 * cap_100
         return val
