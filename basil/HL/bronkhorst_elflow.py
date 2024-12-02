@@ -19,6 +19,7 @@ class Bronkhorst_ELFLOW(HardwareLayer):
     ''' Bronkhorst ELFLOW
     Manual can be found here:
     https://www.bronkhorst.com/getmedia/77a1438f-e547-4a79-95ad-53e81fd38a97/917027-Manual-RS232-interface.pdf
+    and here: https://www.bronkhorst.com/getmedia/257147fc-7f5d-4628-9a47-0533cf68ac08/917099-Manual-EL-FLOW-Select.pdf
     '''
 
     CMDS = {
@@ -64,6 +65,10 @@ class Bronkhorst_ELFLOW(HardwareLayer):
         if not isinstance(value, int):
             raise ValueError(f"Given value has to be of type integer, is {type(value)}!")
 
+        if value > 32000:
+            raise ValueError(f"The valid range is 0 to 32000, the set value is {value}!. Setting setpoint to 32000")
+            value = 32000
+
         hex_val = hex(value)[2:]        # [2:] to remove the 0x from the beginning of the hex number
         command = f"{self.CMDS['set_setpoint']}" + f"{hex_val.zfill(4)}"  # hex should have at least 4 digits
         self._intf.write(command)
@@ -97,8 +102,9 @@ class Bronkhorst_ELFLOW(HardwareLayer):
     def get_flow(self):
         """This should give the flow in l/min
         """
-
-        # first get the max capacity in %
+        # first get the max capacity in capacity unit
+        # the max capacity depends on e.g the fluid, which can be changed
+        # Capacity unit is a command, which returns the used unit in hex
         self._intf.write(self.CMDS['get_capacity'])
         ret = self.read()
         cap_100 = struct.unpack('!f', bytes.fromhex(ret[11:]))[0]  # read from the 11th digits to translate what the capacity is
