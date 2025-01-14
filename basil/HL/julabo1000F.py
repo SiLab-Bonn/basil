@@ -114,21 +114,21 @@ class julabo1000F(HardwareLayer):
         '''Set the power for heater/cooler via serial interface (positive value for heating, negative value for cooling)
         '''
         self.write(f"{self.CMDS['set_power']} {variable}")
-    
+
     def get_power(self):
         '''get the current power for heater/cooler
         '''
         self.write(self.CMDS['get_curr_power'])
         ret = self.read()
         return float(ret)
-    
+
     def get_power(self):
         '''get the power for heater/cooler set via serial interface
         '''
         self.write(self.CMDS['get_power'])
         ret = self.read()
         return float(ret)
-    
+
     def get_mode(self):
         '''get the source for the actuating variable. 0=Thermostat, 1=Serial, 2=Analog (EPROG)
         '''
