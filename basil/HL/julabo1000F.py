@@ -122,7 +122,7 @@ class julabo1000F(HardwareLayer):
         ret = self.read()
         return float(ret)
 
-    def get_power(self):
+    def get_set_power(self):
         '''get the power for heater/cooler set via serial interface
         '''
         self.write(self.CMDS['get_power'])
