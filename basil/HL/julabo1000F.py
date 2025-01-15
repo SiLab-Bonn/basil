@@ -6,7 +6,7 @@
 #
 
 """
-This script is used to communicate with the chiller julabo fp50
+This script is used to communicate with the chiller julabo 1000F
 """
 
 import logging
