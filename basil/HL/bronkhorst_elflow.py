@@ -104,6 +104,7 @@ class Bronkhorst_ELFLOW(HardwareLayer):
         """
         # first get the max capacity in capacity unit
         # the max capacity depends on e.g the fluid, which can be changed
+        # cap_100 represents the maximum flow through the fully open valve measured in the capacity unit of the chosen fluid
         # Capacity unit is a command, which returns the used unit in hex
         self._intf.write(self.CMDS['get_capacity'])
         ret = self.read()
