@@ -42,7 +42,7 @@ def query_identification(rm, resource, baud_rate, read_termination=None, write_t
 def find_usb_binds(rm, log,
                    instruments,
                    binds_to_skip=[],
-                   memorized_binds=[],
+                   memorized_binds={},
                    timeout=1000 * 4
                    ):
     """
@@ -59,8 +59,8 @@ def find_usb_binds(rm, log,
             - 'identification': The identification string for the instrument.
         binds_to_skip (list, optional): List of binds to skip during the search.
             Defaults to an empty list.
-        memorized_binds (list, optional): List of memorized binds.
-            Defaults to an empty list.
+        memorized_binds (dict, optional): Dictionary of memorized binds.
+            Defaults to an empty dictionary.
         timeout (int, optional): Timeout value in milliseconds.
             Defaults to 4000.
 
@@ -101,29 +101,34 @@ def find_usb_binds(rm, log,
             try:
                 log.debug(f"Trying {res} with baud rate {instrument['baud_rate']}")
 
-                if any(res in bind for bind in memorized_binds):
+                if memorized_binds.get(res):
                     log.debug(f"Found memorized bind {res}")
                     result = memorized_binds[res]
                 else:
                     result = query_identification(rm, res, instrument['baud_rate'], instrument['read_termination'], instrument['write_termination'], timeout=timeout)
 
-                    memorized_binds.append({res, result})
-
+                    memorized_binds[res] = result
                     log.debug(f"Found {result.strip()}")
 
-                if result.lower().strip() in [inst["identification"].lower().strip() for inst in instruments]:
-                    substring = res.split("/")[2].split("::")[0]
+                for inst in instruments:
+                    if result.lower().strip() in inst["identification"].lower().strip():
+                        substring = res.split("/")[2].split("::")[0]
 
-                    log.info(f"Matched instrument {instrument['identification']} to /dev/{str(substring)}")
-                    skip_binds.append(f"/dev/{str(substring)}")
+                        log.info(f"Matched instrument {inst['identification']} to /dev/{str(substring)}")
+                        skip_binds.append(f"/dev/{str(substring)}")
 
-                    results[result.lower().strip()] = f"/dev/{str(substring)}"
+                        results[result.lower().strip()] = f"/dev/{str(substring)}"
 
-                    if len(results) == len(instruments):
-                        return results
+                        if len(results) == len(instruments):
+                            return results
 
-                    log.debug(f"Found {len(results)} out of {len(instruments)}")
+                        log.debug(f"Found {len(results)} out of {len(instruments)}")
 
+                        break
+                else:
+                    continue
+
+                if inst["identification"].lower().strip() in instrument["identification"].lower().strip():
                     break
 
             except pyvisa.VisaIOError:
