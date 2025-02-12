@@ -4,7 +4,7 @@ Firmware
 
 FPGA firmware consists of very simple single master bus definition and set of standard modules used by DAQ systems.
 
-Typical firmware consists of basil bus connecting all modules. Control modules witch provide configuration to DUT (like SPI/GPIO) and data taking modules (like data receivers). Received data (32 bit) are stored in the FIFO (large extremal memory) and can be continuously pulled from host application. Data from different modules are identified by source codding in 32bit data words.
+Typical firmware consists of a basil bus connecting all modules. Control modules which provide configuration to DUT (like SPI/GPIO) and data taking modules (like data receivers). Received data (32 bit) are stored in the FIFO (large extremal memory) and can be continuously pulled from host application. Data from different modules are identified by source codding in 32bit data words.
 
 .. blockdiag::
 
