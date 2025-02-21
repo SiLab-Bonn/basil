@@ -13,7 +13,9 @@
 `include "tdl_tdc/utils/delay_n.v"
 
 
-module tdc_core(
+module tdc_core #(
+	parameter DATA_IDENTIFIER = 4'b0100
+)(
 	// All inputs should be synchronous to CLK.
 	input wire CLK_FAST,
 	input wire CLK,
@@ -182,7 +184,9 @@ delay_n #(.n(4), .width(fine_time_bits)) fine_time_pipe(
 );
 
 // This module assembles the data output based on the tdc state transitions
-word_broker #(.state_bits(state_bits),
+word_broker #(
+	.DATA_IDENTIFIER(DATA_IDENTIFIER),
+	.state_bits(state_bits),
 	.counter_bits(corsebits),
 	.fine_time_bits(fine_time_bits),
 	.encodebits(encodebits)

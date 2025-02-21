@@ -1,8 +1,9 @@
 module word_broker  #(
+	parameter DATA_IDENTIFIER = 4'b0100,
 	parameter state_bits = 4,
 	parameter counter_bits = 10,
 	parameter encodebits = 7,
-	parameter fine_time_bits = 2
+	parameter fine_time_bits = 2,
 )(
 	input wire CLK,
 	input wire [counter_bits-1:0] corse_count,
@@ -18,10 +19,6 @@ module word_broker  #(
 	output reg [32-1:0] out_word
 );
 
-
-
-
-localparam DATA_IDENTIFIER = 4'b0100;
 localparam word_type_bits = 3; 
 
 // Word type codes

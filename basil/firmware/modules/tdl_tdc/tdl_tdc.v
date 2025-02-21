@@ -54,7 +54,9 @@ reg [7:0] fifo_over_cnt;
 wire cdc_fifo_write;
 wire [32-1:0] word_to_cdc_fifo;
 
-tdc_core i_tdc_core (
+tdc_core i_tdc_core #(
+	.DATA_IDENTIFIER(DATA_IDENTIFIER)
+) (
 	.CLK_FAST(CLK480),
 	.CLK(CLK160),
 	.CALIB_CLK(CALIB_CLK),
@@ -132,7 +134,8 @@ gerneric_fifo #(
 	.size()
 );
 
-tdc_sw_interface #(.VERSION(VERSION),
+tdc_sw_interface #(
+	.VERSION(VERSION),
 	.BASEADDR(BASEADDR),
 	.HIGHADDR(HIGHADDR),
 	.ABUSWIDTH(ABUSWIDTH)
