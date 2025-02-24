@@ -3,7 +3,7 @@ module word_broker  #(
 	parameter state_bits = 4,
 	parameter counter_bits = 10,
 	parameter encodebits = 7,
-	parameter fine_time_bits = 2,
+	parameter fine_time_bits = 2
 )(
 	input wire CLK,
 	input wire [counter_bits-1:0] corse_count,
