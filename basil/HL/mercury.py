@@ -16,12 +16,17 @@ class Mercury(HardwareLayer):
     '''Driver for the Physiks Instruments Mercury Controller.
     A protocoll via RS 232 serial port is used with 9600/19200/38400/115200 baud rate. The baud rate
     can be set with dip switches, as well as a hardware address to distinguish several
-    devices on one line. Keep in mind that the address that is set via the DIP switches corresponds to (board number + 1). Check p.45 of the overall manual below on how to properly set the address of each controller and what the corresponding board number is. The write termination is CR and the read ends with '\r', '\n', '\x03'.
-    Therefore '\x03' has to be set a read termination in the transport layer! And a read termination
-    of 0.1 s should be set!
-    Despite the manual telling SCPI compatibility, this is not correct for our devices with our
-    firmware. The manual explaining every "native" command: https://twiki.cern.ch/twiki/pub/ILCBDSColl/Phase2Preparations/MercuryNativeCommands_MS176E101.pdf
-    The overall manual: https://www.le.infn.it/~chiodini/allow_listing/pi/Manuals/C-863_Benutzerhandbuch_Kurzversion_MS205Dqu200.pdf'''
+    devices on one line. Keep in mind that the address that is set via the DIP switches corresponds 
+    to (board number + 1). Check p.45 of the overall manual below on how to properly set the address 
+    of each controller and what the corresponding board number is. The write termination is CR and 
+    the read ends with '\r', '\n', '\x03'. Therefore '\x03' has to be set a read termination in the 
+    transport layer! And a read termination of 0.1 s should be set! Despite the manual telling SCPI 
+    compatibility, this is not correct for our devices with our firmware. The manual explaining 
+    every "native" command:
+    https://twiki.cern.ch/twiki/pub/ILCBDSColl/Phase2Preparations/MercuryNativeCommands_MS176E101.pdf
+    The overall manual: 
+    https://www.le.infn.it/~chiodini/allow_listing/pi/Manuals/C-863_Benutzerhandbuch_Kurzversion_MS205Dqu200.pdf
+    '''
 
     def __init__(self, intf, conf):
         super(Mercury, self).__init__(intf, conf)
@@ -29,10 +34,10 @@ class Mercury(HardwareLayer):
     def init(self):
         super(Mercury, self).init()
         self._board_numbers = []
-        for b in range(16):  # Check all possible board numbers
-            self.write(bytearray.fromhex("01%d" % (b + 30)) + "TB".encode())  # Tell board number
-            if self.get_board_number(b):
-                self._board_numbers.append(b)
+        for board_n in range(16):  # Check all possible board numbers
+            self.write(bytearray.fromhex("01%d" % (board_n + 30)) + "TB".encode())  # Tell board number
+            if self.get_board_number(board_n):
+                self._board_numbers.append(board_n)
 
     def write(self, value):
         msg = value + '\r'.encode()  # msg has CR at the end
@@ -46,8 +51,8 @@ class Mercury(HardwareLayer):
         if board_number is not None:
             self.write(bytearray.fromhex("01%d" % (board_number + 30)) + command.encode())
         else:
-            for b in self._board_numbers:
-                self.write(bytearray.fromhex("01%d" % (b + 30)) + command.encode())
+            for board_n in self._board_numbers:
+                self.write(bytearray.fromhex("01%d" % (board_n + 30)) + command.encode())
 
     def get_board_number(self, board_number):
         self._write_command("TB", board_number)
