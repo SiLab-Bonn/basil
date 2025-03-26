@@ -1,5 +1,6 @@
 numpy
 pyyaml
 bitarray>=2.0.0
+GitPython
 six
 ruamel.yaml 
