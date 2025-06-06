@@ -27,7 +27,7 @@ module tdl_tdc #(
 	input wire tdc_in,
 	input wire trig_in,
 
-	input wire [15:0] timestamp,
+	input wire [24:0] timestamp,
 	input wire arm_tdc,
 	input wire ext_en,
 

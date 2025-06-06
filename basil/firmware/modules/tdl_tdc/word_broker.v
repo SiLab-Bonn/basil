@@ -12,8 +12,8 @@ module word_broker  #(
 	input wire [state_bits-1:0] tdc_state,
 	input wire en_write_timestamp,
 	input wire en_no_trig_err, // This is not implemented as there are no trig errors in this design. The tdl expects bubble errors.
-	input wire [15:0] signal_timestamp,
-	input wire [15:0] reset_timestamp,
+	input wire [24:0] signal_timestamp,
+	input wire [24:0] reset_timestamp,
 
 	output reg out_valid,
 	output reg [32-1:0] out_word
@@ -87,7 +87,7 @@ always @(posedge CLK) begin
 		{FAL_EDGE,IDLE}: begin
 			if(en_write_timestamp) begin
 				out_valid <= 1;
-				out_word <= {DATA_IDENTIFIER, TIMESTAMP_WORD,  signal_timestamp, 9'b0};
+				out_word <= {DATA_IDENTIFIER, TIMESTAMP_WORD,  signal_timestamp};
 			end
 			else begin
 				out_valid <= 0;
@@ -97,7 +97,7 @@ always @(posedge CLK) begin
 		{FAL_EDGE,IDLE_TRIG}: begin
 			if(en_write_timestamp) begin
 				out_valid <= 1;
-				out_word <= {DATA_IDENTIFIER, TIMESTAMP_WORD,  signal_timestamp, 9'b0};
+				out_word <= {DATA_IDENTIFIER, TIMESTAMP_WORD,  signal_timestamp};
 			end
 			else begin
 				out_valid <= 0;
@@ -110,7 +110,7 @@ always @(posedge CLK) begin
 		end
 		{RESET, IDLE}: begin
 			out_valid <= 1;
-			out_word <= {DATA_IDENTIFIER, RESET_WORD, reset_timestamp, 9'b0};
+			out_word <= {DATA_IDENTIFIER, RESET_WORD, reset_timestamp};
 		end
 		{CALIB, CALIB_HIT}: begin
 			out_valid <= 1;

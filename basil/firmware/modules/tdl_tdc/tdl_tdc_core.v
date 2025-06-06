@@ -30,7 +30,7 @@ module tdc_core #(
 	input wire en_write_trigger_distance,
 	input wire en_calib_mode,
 	input wire en_no_trig_err,
-	input wire [15:0] timestamp,
+	input wire [24:0] timestamp,
 
 	output wire [31:0] out_word,
 	output wire out_valid,
@@ -63,8 +63,8 @@ slimfast_multioption_counter #(.clip_count(0), .clip_reset(1), .outputwidth(cors
 .countout(corse_count));
 
 // TLU timestamp sampling
-reg [15:0] signal_timestamp;
-reg [15:0] reset_timestamp;
+reg [24:0] signal_timestamp;
+reg [24:0] reset_timestamp;
 always @(posedge counter_count) begin
 	signal_timestamp <= timestamp;
 end
