@@ -66,7 +66,7 @@ class BitLogic(bitarray):
         return struct.unpack_from(fmt, ba.tobytes())[0]
 
     def __str__(self):
-        if self.endian() == 'little':
+        if self.endian == 'little':
             return self.to01()[::-1]
         else:
             return self.to01()
