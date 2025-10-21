@@ -43,12 +43,12 @@ class RelayBoard(ArduinoBase):
 
         ret = self.query(self.create_command(self.CMDS['write'], channel, value))
 
-        error = False
-
         if channel == 99 and int(ret) != value * 1111:
             error = True
         elif channel != 99 and format(int(ret, 2), '04b')[-channel] != str(value):
             error = True
+        else:
+            error = False
 
         if error:
             raise RuntimeError('Got no or wrong response from Arduino!')
