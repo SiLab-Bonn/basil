@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "basil_daq"
+dynamic = ["version"]
+license = { "text" = "BSD 3-Clause ('BSD New' or 'BSD Simplified') License" }
+description = "Basil is a modular data acquisition system and system testing framework in Python.\nIt also provides generic FPGA firmware modules for different hardware platforms and drivers for wide range of lab appliances."
+readme = {file = "README.rst", content-type = "text/markdown"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Tomasz Hemperek", email="hemperek@uni-bonn.de"},
+    {name = "Jens Janssen", email="janssen@physik.uni-bonn.de"},
+    {name = "David-Leon Pohl", email="pohl@physik.uni-bonn.de"}
+]
+
+maintainers = [
+  {name = "Yannick Dieter", email = "dieter@physik.uni-bonn.de"},
+  {name = "Christian Bespin", email = "bespin@physik.uni-bonn.de"},
+]
+
+dependencies = [
+    "numpy",
+    "pyyaml",
+    "bitarray>=3.4.0",
+    "GitPython",
+    "six",
+    "ruamel.yaml",
+]
+
+[project.urls]
+"Documentation" = "https://basil.readthedocs.io/en/latest/"
+"Repository" = "https://github.com/SiLab-Bonn/basil/"
+
+
+[tool.setuptools.dynamic]
+version = {attr = "basil.__version__"}
+
+[tool.flake8]
+ignore = ["E501", "E902", "W503", "W605", "W504"]
+# max-line-length = 160
+
+[tool.pytest.ini_options]
+markers = ["verilator: Verilog tests."]
