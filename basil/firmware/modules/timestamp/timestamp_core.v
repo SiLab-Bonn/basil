@@ -195,7 +195,7 @@ assign fifo_write_data_byte[2] = {IDENTIFIER,4'b0011,8'b0,data_buf[63:48]};
 wire [31:0] fifo_data_in;
 assign fifo_data_in = fifo_write_data_byte[byte2_cnt];
 
-gerneric_fifo #(
+generic_fifo #(
     .DATA_SIZE(32),
     .DEPTH(1024)
 ) fifo_i (

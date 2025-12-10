@@ -344,7 +344,7 @@ cdc_syncfifo #(
     .rrst(RST_LONG)
 );
 
-gerneric_fifo #(
+generic_fifo #(
     .DATA_SIZE(18),
     .DEPTH(2048)
 ) fifo_i (

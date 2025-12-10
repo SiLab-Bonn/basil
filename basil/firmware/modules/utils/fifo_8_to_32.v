@@ -26,7 +26,7 @@ wire FIFO_EMPTY_8;
 wire FIFO_READ_8;
 wire [7:0] FIFO_DATA_OUT_8;
 
-gerneric_fifo #(
+generic_fifo #(
     .DATA_SIZE(8),
     .DEPTH(DEPTH * 4)
 ) fifo_8_i (
@@ -94,7 +94,7 @@ always @(posedge CLK)
 
 assign FIFO_DATA_IN_32 = DATA_BUF;
 
-gerneric_fifo #(
+generic_fifo #(
     .DATA_SIZE(32),
     .DEPTH(DEPTH)
 ) fifo_32_i (
