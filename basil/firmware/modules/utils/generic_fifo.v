@@ -33,7 +33,7 @@ output reg [DATA_SIZE-1:0] data_out;
 
 reg [DATA_SIZE:0] mem [DEPTH-1:0];
 
-parameter POINTER_SIZE = `CLOG2(DEPTH);
+parameter POINTER_SIZE = 16; // `CLOG2(DEPTH);
 
 reg [POINTER_SIZE-1:0] rd_pointer, rd_tmp, wr_pointer;
 output reg [POINTER_SIZE-1:0] size;
