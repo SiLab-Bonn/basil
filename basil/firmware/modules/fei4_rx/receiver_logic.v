@@ -231,7 +231,7 @@ cdc_syncfifo #(
 
 wire [10:0] fifo_size_int;
 
-gerneric_fifo #(
+generic_fifo #(
     .DATA_SIZE(24),
     .DEPTH(2048)
 ) fifo_i (

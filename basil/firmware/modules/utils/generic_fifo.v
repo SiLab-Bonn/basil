@@ -8,7 +8,10 @@
 `default_nettype none
 
 
-module gerneric_fifo (
+module generic_fifo #(
+    parameter DATA_SIZE = 32,
+    parameter DEPTH = 8
+)(   
     clk,
     reset,
     write,
@@ -20,8 +23,6 @@ module gerneric_fifo (
     size
 );
 
-parameter DATA_SIZE = 32;
-parameter DEPTH = 8;
 input wire clk, reset, write, read;
 input wire [DATA_SIZE-1:0] data_in;
 
@@ -33,13 +34,12 @@ output reg [DATA_SIZE-1:0] data_out;
 
 reg [DATA_SIZE:0] mem [DEPTH-1:0];
 
-parameter POINTER_SIZE = `CLOG2(DEPTH);
+parameter POINTER_SIZE = 16; // `CLOG2(DEPTH);
 
 reg [POINTER_SIZE-1:0] rd_pointer, rd_tmp, wr_pointer;
 output reg [POINTER_SIZE-1:0] size;
 
 wire empty_loc;
-
 
 always @(posedge clk) begin
     if(reset)
@@ -101,5 +101,38 @@ always @(*) begin
     else
         size = wr_pointer + (DEPTH-rd_pointer);
 end
+endmodule
+
+// Wrapper for backwards compatibility
+module gerneric_fifo
+#(
+    parameter DATA_SIZE = 32,
+    parameter DEPTH = 8
+) (
+    clk,
+    reset,
+    write,
+    read,
+    data_in,
+    full,
+    empty,
+    data_out,
+    size
+);
+
+generic_fifo #(
+    .DATA_SIZE(DATA_SIZE),
+    .DEPTH(DEPTH)
+) inst_generic_fifo(
+    .clk(clk),
+    .reset(reset),
+    .write(write),
+    .read(read),
+    .data_in(data_in),
+    .full(full),
+    .empty(empty),
+    .data_out(data_out),
+    .size(size)
+);
 
 endmodule
