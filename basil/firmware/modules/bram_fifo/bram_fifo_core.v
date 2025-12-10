@@ -118,7 +118,7 @@ assign FIFO_READ_NEXT_OUT = !FULL_BUF;
 `include "../includes/log2func.v"
 localparam POINTER_SIZE = `CLOG2(DEPTH);
 
-gerneric_fifo #(
+generic_fifo #(
     .DATA_SIZE(32),
     .DEPTH(DEPTH)
 ) i_buf_fifo (

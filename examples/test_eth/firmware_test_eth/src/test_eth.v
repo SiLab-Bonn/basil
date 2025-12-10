@@ -615,7 +615,7 @@ cdc_syncfifo #(
 
 wire GEN_TCP_DATA_FIFO_READ, GEN_TCP_DATA_FIFO_EMPTY;
 wire [31:0] GEN_TCP_FIFO_DATA;
-gerneric_fifo #(
+generic_fifo #(
     .DATA_SIZE(32),
     .DEPTH(8)
 ) fifo_send_tcp_data_i (
