@@ -120,7 +120,7 @@ wire FULL_BUF;
 
 assign FIFO_READ_NEXT_OUT = !FULL_BUF;
 
-gerneric_fifo #(
+generic_fifo #(
     .DATA_SIZE(32),
     .DEPTH(1024)
 ) i_buf_fifo (

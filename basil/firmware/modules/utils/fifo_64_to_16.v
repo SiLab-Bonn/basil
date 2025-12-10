@@ -28,7 +28,7 @@ wire [63:0] FIFO_DATA_OUT;
 assign EMPTY = byte_cnt==0 & FIFO_EMPTY;
 assign READ_FIFO = (byte_cnt==0 & !FIFO_EMPTY && READ);
 
-gerneric_fifo #(
+generic_fifo #(
     .DATA_SIZE(64),
     .DEPTH(DEPTH)
 ) fifo_i (
