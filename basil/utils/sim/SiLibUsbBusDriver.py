@@ -12,7 +12,7 @@
 """
 Abastract away interactions with the control bus
 """
-from cocotb.binary import BinaryValue
+from cocotb.binary import LogicArray
 from cocotb.triggers import RisingEdge, ReadOnly, Timer
 from cocotb_bus.drivers import BusDriver
 
@@ -34,11 +34,11 @@ class SiLibUsbBusDriver(BusDriver):
         BusDriver.__init__(self, entity, "", entity.FCLK_IN)
 
         # Create an appropriately sized high-impedance value
-        self._high_impedance = BinaryValue(n_bits=len(self.bus.BUS_DATA))
+        self._high_impedance = LogicArray(n_bits=len(self.bus.BUS_DATA))
         self._high_impedance.binstr = "Z" * len(self.bus.BUS_DATA)
 
         # Create an appropriately sized high-impedance value
-        self._x = BinaryValue(n_bits=16)
+        self._x = LogicArray(n_bits=16)
         self._x.binstr = "x" * 16
 
     async def init(self):
