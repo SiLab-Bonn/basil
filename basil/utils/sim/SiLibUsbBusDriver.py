@@ -102,7 +102,6 @@ class SiLibUsbBusDriver(BusDriver):
         await RisingEdge(self.clock)
         self.bus.RD_B.value = 0
         await ReadOnly()
-        print(self.bus.BUS_DATA.value)
         result = self.bus.BUS_DATA.value.to_unsigned()
         await RisingEdge(self.clock)
         self.bus.RD_B.value = 1

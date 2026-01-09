@@ -27,10 +27,10 @@ module tb (
     input wire          BUS_RST,
     input wire  [31:0]  BUS_ADD,
 `ifndef SPLIT_BUS
-    inout wire  [31:0]  BUS_DATA,
+    inout wire  [7:0]   BUS_DATA,
 `else
-    input wire  [31:0]  BUS_DATA_IN,
-    output wire [31:0]  BUS_DATA_OUT,
+    input wire  [7:0]   BUS_DATA_IN,
+    output wire [7:0]   BUS_DATA_OUT,
 `endif
     input wire          BUS_RD,
     input wire          BUS_WR
@@ -46,12 +46,12 @@ localparam ABUSWIDTH = 32;
 
 // Connect tb internal bus to external split bus
 `ifdef BASIL_TOPSBUS
-    wire [31:0] BUS_DATA;
+    wire [7:0] BUS_DATA;
     assign BUS_DATA = BUS_DATA_IN;
     assign BUS_DATA_OUT = BUS_DATA;
 `elsif BASIL_SBUS
-    wire [31:0] BUS_DATA_OUT_1;
-    wire [31:0] BUS_DATA_OUT_2;
+    wire [7:0] BUS_DATA_OUT_1;
+    wire [7:0] BUS_DATA_OUT_2;
     assign BUS_DATA_OUT = BUS_DATA_OUT_1 | BUS_DATA_OUT_2;
 `endif
 
