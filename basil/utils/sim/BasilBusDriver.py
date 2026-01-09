@@ -28,7 +28,7 @@ class BasilBusDriver(BusDriver):
         self._high_impedance = LogicArray("Z" * len(self.bus.BUS_DATA))
 
         # Create an appropriately sized high-impedance value
-        self._x = LogicArray("x" * len(self.bus.BUS_DATA))
+        self._x = LogicArray("x" * len(self.bus.BUS_ADD))
 
         self._has_byte_acces = False
 
