@@ -118,7 +118,7 @@ class BasilBusDriver(BusDriver):
 
             await RisingEdge(self.clock)
 
-        if self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value== 0:
+        if self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value == 0:
             raise NotImplementedError("BUS_BYTE_ACCESS for write to be implemented.")
 
         self.bus.BUS_DATA.value = self._high_impedance
