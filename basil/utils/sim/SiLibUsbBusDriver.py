@@ -12,7 +12,7 @@
 """
 Abastract away interactions with the control bus
 """
-from cocotb.binary import LogicArray
+from cocotb.types import LogicArray
 from cocotb.triggers import RisingEdge, ReadOnly, Timer
 from cocotb_bus.drivers import BusDriver
 
@@ -34,12 +34,10 @@ class SiLibUsbBusDriver(BusDriver):
         BusDriver.__init__(self, entity, "", entity.FCLK_IN)
 
         # Create an appropriately sized high-impedance value
-        self._high_impedance = LogicArray(n_bits=len(self.bus.BUS_DATA))
-        self._high_impedance.binstr = "Z" * len(self.bus.BUS_DATA)
+        self._high_impedance = LogicArray("Z" * len(self.bus.BUS_DATA))
 
         # Create an appropriately sized high-impedance value
-        self._x = LogicArray(n_bits=16)
-        self._x.binstr = "x" * 16
+        self._x = LogicArray("x" * 16)
 
     async def init(self):
         # Defaults
@@ -104,7 +102,8 @@ class SiLibUsbBusDriver(BusDriver):
         await RisingEdge(self.clock)
         self.bus.RD_B.value = 0
         await ReadOnly()
-        result = self.bus.BUS_DATA.value.integer
+        print(self.bus.BUS_DATA.value)
+        result = self.bus.BUS_DATA.value.to_unsigned()
         await RisingEdge(self.clock)
         self.bus.RD_B.value = 1
 
@@ -161,7 +160,7 @@ class SiLibUsbBusDriver(BusDriver):
         self.bus.FREAD.value = 1
         self.bus.FSTROBE.value = 1
         await ReadOnly()
-        result = self.bus.FD.value.integer
+        result = self.bus.FD.value.to_unsigned()
         await RisingEdge(self.clock)
         self.bus.FREAD.value = 0
         self.bus.FSTROBE.value = 0

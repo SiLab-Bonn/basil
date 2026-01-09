@@ -24,10 +24,10 @@ class BasilBusDriver(BusDriver):
     def __init__(self, entity):
         BusDriver.__init__(self, entity, "", entity.BUS_CLK)
 
-        # Create an appropriately sized high-impedence value
-        self._high_impedence = LogicArray("Z" * len(self.bus.BUS_DATA))
+        # Create an appropriately sized high-impedance value
+        self._high_impedance = LogicArray("Z" * len(self.bus.BUS_DATA))
 
-        # Create an appropriately sized high-impedence value
+        # Create an appropriately sized high-impedance value
         self._x = LogicArray("x" * len(self.bus.BUS_DATA))
 
         self._has_byte_acces = False
@@ -38,7 +38,7 @@ class BasilBusDriver(BusDriver):
         self.bus.BUS_RD.value = 0
         self.bus.BUS_WR.value = 0
         self.bus.BUS_ADD.value = self._x
-        self.bus.BUS_DATA.value = self._high_impedence
+        self.bus.BUS_DATA.value = self._high_impedance
 
         for _ in range(8):
             await RisingEdge(self.clock)
@@ -59,7 +59,7 @@ class BasilBusDriver(BusDriver):
     async def read(self, address, size):
         result = []
 
-        self.bus.BUS_DATA.value = self._high_impedence
+        self.bus.BUS_DATA.value = self._high_impedance
         self.bus.BUS_ADD.value = self._x
         self.bus.BUS_RD.value = 0
 
@@ -94,7 +94,7 @@ class BasilBusDriver(BusDriver):
                 byte += 1
 
         self.bus.BUS_ADD.value = self._x
-        self.bus.BUS_DATA.value = self._high_impedence
+        self.bus.BUS_DATA.value = self._high_impedance
         await RisingEdge(self.clock)
 
         return result
@@ -102,7 +102,7 @@ class BasilBusDriver(BusDriver):
     async def write(self, address, data):
 
         self.bus.BUS_ADD.value = self._x
-        self.bus.BUS_DATA.value = self._high_impedence
+        self.bus.BUS_DATA.value = self._high_impedance
         self.bus.BUS_WR.value = 0
 
         await RisingEdge(self.clock)
@@ -121,7 +121,7 @@ class BasilBusDriver(BusDriver):
         if self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value== 0:
             raise NotImplementedError("BUS_BYTE_ACCESS for write to be implemented.")
 
-        self.bus.BUS_DATA.value = self._high_impedence
+        self.bus.BUS_DATA.value = self._high_impedance
         self.bus.BUS_ADD.value = self._x
         self.bus.BUS_WR.value = 0
 
