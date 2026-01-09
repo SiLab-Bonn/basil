@@ -23,10 +23,10 @@ class BasilSbusDriver(BusDriver):
         BusDriver.__init__(self, entity, "", entity.BUS_CLK, case_insensitive=False)
 
         # Create an appropriately sized high-impedance value
-        self._high_impedence = LogicArray("Z" * len(self.bus.BUS_DATA))
+        self._high_impedance = LogicArray("Z" * len(self.bus.BUS_DATA_IN))
 
         # Create an appropriately sized high-impedance value
-        self._x = LogicArray("x" * len(self.bus.BUS_DATA))
+        self._x = LogicArray("x" * len(self.bus.BUS_DATA_IN))
 
         self._has_byte_acces = False
 
