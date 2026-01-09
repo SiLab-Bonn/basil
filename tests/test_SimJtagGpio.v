@@ -14,8 +14,8 @@
 module tb (
     input wire          BUS_CLK,
     input wire          BUS_RST,
-    input wire  [15:0]  BUS_ADD,
-    inout wire  [7:0]   BUS_DATA,
+    input wire  [31:0]  BUS_ADD,
+    inout wire  [31:0]  BUS_DATA,
     input wire          BUS_RD,
     input wire          BUS_WR
 );

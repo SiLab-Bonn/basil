@@ -25,12 +25,12 @@
 module tb (
     input wire          BUS_CLK,
     input wire          BUS_RST,
-    input wire  [15:0]  BUS_ADD,
+    input wire  [31:0]  BUS_ADD,
 `ifndef SPLIT_BUS
-    inout wire  [7:0]   BUS_DATA,
+    inout wire  [31:0]  BUS_DATA,
 `else
-    input wire  [7:0]   BUS_DATA_IN,
-    output wire [7:0]   BUS_DATA_OUT,
+    input wire  [31:0]  BUS_DATA_IN,
+    output wire [31:0]  BUS_DATA_OUT,
 `endif
     input wire          BUS_RD,
     input wire          BUS_WR
@@ -42,14 +42,16 @@ localparam GPIO_HIGHADDR = 16'h000f;
 localparam GPIO2_BASEADDR = 16'h0010;
 localparam GPIO2_HIGHADDR = 16'h001f;
 
+localparam ABUSWIDTH = 32;
+
 // Connect tb internal bus to external split bus
 `ifdef BASIL_TOPSBUS
-    wire [7:0] BUS_DATA;
+    wire [31:0] BUS_DATA;
     assign BUS_DATA = BUS_DATA_IN;
     assign BUS_DATA_OUT = BUS_DATA;
 `elsif BASIL_SBUS
-    wire [7:0] BUS_DATA_OUT_1;
-    wire [7:0] BUS_DATA_OUT_2;
+    wire [31:0] BUS_DATA_OUT_1;
+    wire [31:0] BUS_DATA_OUT_2;
     assign BUS_DATA_OUT = BUS_DATA_OUT_1 | BUS_DATA_OUT_2;
 `endif
 
@@ -67,6 +69,7 @@ gpio_sbus #(
 `endif
     .BASEADDR(GPIO_BASEADDR),
     .HIGHADDR(GPIO_HIGHADDR),
+    .ABUSWIDTH(ABUSWIDTH),
     .IO_WIDTH(24),
     .IO_DIRECTION(24'h0000ff),
     .IO_TRI(24'hff0000)
