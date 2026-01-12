@@ -33,6 +33,8 @@ dependencies = [
 "Documentation" = "https://basil.readthedocs.io/en/latest/"
 "Repository" = "https://github.com/SiLab-Bonn/basil/"
 
+[tool.setuptools]
+include-package-data = true
 
 [tool.setuptools.dynamic]
 version = {attr = "basil.__version__"}
