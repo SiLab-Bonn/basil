@@ -26,8 +26,6 @@ module example (
     output wire LED4,
     output wire LED5,
 
-    inout wire FPGA_BUTTON,
-
     inout wire SDA,
     inout wire SCL
 );
@@ -58,7 +56,7 @@ localparam GPIO_BASEADDR = 16'h0000;
 localparam GPIO_HIGHADDR = 16'h000f;
 
 // USER MODULES //
-wire [1:0] GPIO_NOT_USED;
+wire [2:0] GPIO_NOT_USED;
 gpio #(
     .BASEADDR(GPIO_BASEADDR),
     .HIGHADDR(GPIO_HIGHADDR),
@@ -72,10 +70,10 @@ gpio #(
     .BUS_DATA(BUS_DATA),
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
-    .IO({FPGA_BUTTON, GPIO_NOT_USED, LED5, LED4, LED3, LED2, LED1})
+    .IO({GPIO_NOT_USED, LED5, LED4, LED3, LED2, LED1})
 );
 
-assign GPIO_NOT_USED = {LED2, LED1};
+assign GPIO_NOT_USED = {1'b0, LED2, LED1};
 
 //For simulation
 initial begin
@@ -86,7 +84,5 @@ end
 assign SDA = 1'bz;
 assign SCL = 1'bz;
 assign DEBUG_D = 16'ha5a5;
-
-assign FPGA_BUTTON = 1'b0;
 
 endmodule
