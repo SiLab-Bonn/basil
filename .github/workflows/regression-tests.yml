@@ -55,6 +55,7 @@ jobs:
       with:
         miniforge-version: latest
         python-version: ${{matrix.python-version}}
+        conda-remove-defaults: "true" # explicitly remove conda default channel in favor of conda-forge
 
     - name: Install verilator
       if: matrix.sim == 'verilator'
