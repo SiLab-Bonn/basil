@@ -183,7 +183,7 @@ NET "LED1" LOC = P13;
 
 # ------ Button & Spare & more -------------------------------------
 
-NET "FPGA_BUTTON"       LOC=P4		|	IOSTANDARD = LVCMOS33;
+#NET "FPGA_BUTTON"       LOC=P4		|	IOSTANDARD = LVCMOS33;
 #NET "FPGA_SPARE_1"      LOC=C16		|	IOSTANDARD = LVCMOS33;
 #NET "FPGA_SPARE_2"      LOC=K6		|	IOSTANDARD = LVCMOS33;
 
