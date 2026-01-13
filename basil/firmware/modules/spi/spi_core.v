@@ -11,13 +11,16 @@ module spi_core #(
     parameter ABUSWIDTH = 16,
     parameter MEM_BYTES = 16
 ) (
-    input wire                      BUS_CLK,
-    input wire                      BUS_RST,
-    input wire     [ABUSWIDTH-1:0]  BUS_ADD,
-    input wire     [7:0]            BUS_DATA_IN,
-    input wire                      BUS_RD,
-    input wire                      BUS_WR,
-    output reg [7:0]                BUS_DATA_OUT,
+    input wire                 BUS_CLK,
+    input wire                 BUS_RST,
+    input wire [ABUSWIDTH-1:0] BUS_ADD,
+    /* verilator lint_off UNOPTFLAT */
+    // Clocked and safe in synthesis, else circular logic data_in -> memory -> data_out
+    input wire [7:0]           BUS_DATA_IN,
+    /* verilator lint_on UNOPTFLAT */
+    input wire                 BUS_RD,
+    input wire                 BUS_WR,
+    output reg [7:0]           BUS_DATA_OUT,
 
     input wire SPI_CLK,
 

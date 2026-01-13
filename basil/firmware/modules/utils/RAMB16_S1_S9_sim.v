@@ -47,7 +47,10 @@ localparam minWIDTH  = `min(WIDTHA, WIDTHB);
 localparam RATIO     = maxWIDTH / minWIDTH;
 localparam log2RATIO = `CLOG2(RATIO);
 
-reg     [minWIDTH-1:0]  RAM [0:maxSIZE-1];
+/* verilator lint_off MULTIDRIVEN */
+// In synthesis, uses IP block; in this model, memory is multi-driven
+reg [minWIDTH-1:0] RAM [0:maxSIZE-1];
+/* verilator lint_on MULTIDRIVEN */
 
 always @(posedge CLKA)
   if (WEA)
