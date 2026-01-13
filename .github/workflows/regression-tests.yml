@@ -67,7 +67,7 @@ jobs:
     - name: Install Python dependencies
       shell: bash -l {0}
       run: |
-        pip install pyvisa pyvisa-sim pytest coveralls pytest-cov cocotb>=1.8.1 cocotb-bus
+        pip install pyvisa pyvisa-sim pytest coveralls pytest-cov cocotb>=2 cocotb-bus
   
     - name: Install Verilator
       if: matrix.sim == 'verilator'
