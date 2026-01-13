@@ -1,14 +1,7 @@
-from importlib.metadata import version, PackageNotFoundError
 import collections
 import yaml
 
-
-__version__ = None  # required for initial installation
-
-try:
-    __version__ = version("basil_daq")
-except PackageNotFoundError:
-    __version__ = "(local)"
+__version__ = "3.3.0"
 
 
 # Have OrderedDict

@@ -1,6 +1,0 @@
-numpy
-pyyaml
-bitarray>=3.4.0
-GitPython
-six
-ruamel.yaml 
