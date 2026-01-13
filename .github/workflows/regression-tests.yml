@@ -15,14 +15,12 @@ jobs:
     name: flake8
     strategy:
       fail-fast: false
-      matrix:
-        python-version: [3.11]
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{matrix.python-version}}
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v6
+    - name: Set up Python
+      uses: actions/setup-python@v6
       with:
-        python-version: ${{matrix.python-version}}
+        python-version: 3.11
     - name: flake8
       run: |
         pip install flake8
@@ -31,7 +29,7 @@ jobs:
   tests:
 
     name: Python ${{matrix.python-version}} | ${{matrix.sim}} 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       SIM: ${{matrix.sim}}
 
@@ -46,44 +44,34 @@ jobs:
             python-version: '3.10'
 
           - sim: verilator
-            sim-version: v5.020
+            sim-version: 5.044
             python-version: '3.10'
             pytest-marker: "-m verilator"
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Anaconda ${{matrix.python-version}}
-      uses: conda-incubator/setup-miniconda@v2
+    - uses: actions/checkout@v6
+    - name: Set up miniforge ${{matrix.python-version}}
+      uses: conda-incubator/setup-miniconda@v3
       with:
-        auto-update-conda: true
+        miniforge-version: latest
         python-version: ${{matrix.python-version}}
+        conda-remove-defaults: "true" # explicitly remove conda default channel in favor of conda-forge
 
-    - name: Install Conda dependencies
-      shell: bash -l {0}
-      run: |
-        conda info -a
-        conda install numpy bitarray nose pyyaml coverage six
-
-    - name: Install Python dependencies
-      shell: bash -l {0}
-      run: |
-        pip install pyvisa pyvisa-sim pytest coveralls pytest-cov cocotb>=1.8.1 cocotb-bus
-  
-    - name: Install Verilator
+    - name: Install verilator
       if: matrix.sim == 'verilator'
+      shell: bash -l {0}
       run: |
-        sudo apt install -y --no-install-recommends make g++ help2man perl autoconf flex bison libfl2 libfl-dev zlib1g zlib1g-dev
-        git clone https://github.com/verilator/verilator.git -b ${{matrix.sim-version}}
-        cd verilator
-        autoconf
-        ./configure
-        make -j $(nproc)
-        sudo make install
+        conda install verilator==${{matrix.sim-version}}
 
     - name: Install Icarus Verilog
       if: matrix.sim == 'icarus'
       run: |
         sudo apt install -y --no-install-recommends iverilog
+
+    - name: Install Python dependencies
+      shell: bash -l {0}
+      run: |
+        pip install pyvisa pyvisa-sim pytest coverage coveralls pytest-cov cocotb>=2 cocotb-bus
 
     - name: Install basil
       shell: bash -l {0}
@@ -93,7 +81,6 @@ jobs:
     - name: Test
       shell: bash -l {0}
       run: |
-        pip install -e .
         pytest ${{matrix.pytest-marker}} --cov=basil tests/test_*.py examples/*/*/test_*.py
 
     - name: Upload to codecov

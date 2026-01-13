@@ -73,11 +73,11 @@ async def test(dut, debug=False):
 
     # Kick off a clock generator
     if bus_clock:
-        cocotb.fork(Clock(bus.clock, bus_clk_freq).start())
+        cocotb.start_soon(Clock(bus.clock, bus_clk_freq).start())
 
     # start sim_modules
     for mod in sim_modules:
-        cocotb.fork(mod.run())
+        cocotb.start_soon(mod.run())
 
     await bus.init()
 

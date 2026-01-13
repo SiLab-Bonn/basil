@@ -10,7 +10,7 @@
 # pylint: disable=pointless-statement, expression-not-assigned
 
 
-from cocotb.binary import BinaryValue
+from cocotb.types import LogicArray
 from cocotb.triggers import RisingEdge, Timer
 from cocotb_bus.drivers import BusDriver
 
@@ -24,13 +24,11 @@ class BasilBusDriver(BusDriver):
     def __init__(self, entity):
         BusDriver.__init__(self, entity, "", entity.BUS_CLK)
 
-        # Create an appropriately sized high-impedence value
-        self._high_impedence = BinaryValue(n_bits=len(self.bus.BUS_DATA))
-        self._high_impedence.binstr = "Z" * len(self.bus.BUS_DATA)
+        # Create an appropriately sized high-impedance value
+        self._high_impedance = LogicArray("Z" * len(self.bus.BUS_DATA))
 
-        # Create an appropriately sized high-impedence value
-        self._x = BinaryValue(n_bits=len(self.bus.BUS_ADD))
-        self._x.binstr = "x" * len(self.bus.BUS_ADD)
+        # Create an appropriately sized high-impedance value
+        self._x = LogicArray("x" * len(self.bus.BUS_ADD))
 
         self._has_byte_acces = False
 
@@ -40,7 +38,7 @@ class BasilBusDriver(BusDriver):
         self.bus.BUS_RD.value = 0
         self.bus.BUS_WR.value = 0
         self.bus.BUS_ADD.value = self._x
-        self.bus.BUS_DATA.value = self._high_impedence
+        self.bus.BUS_DATA.value = self._high_impedance
 
         for _ in range(8):
             await RisingEdge(self.clock)
@@ -61,7 +59,7 @@ class BasilBusDriver(BusDriver):
     async def read(self, address, size):
         result = []
 
-        self.bus.BUS_DATA.value = self._high_impedence
+        self.bus.BUS_DATA.value = self._high_impedance
         self.bus.BUS_ADD.value = self._x
         self.bus.BUS_RD.value = 0
 
@@ -79,25 +77,24 @@ class BasilBusDriver(BusDriver):
             await RisingEdge(self.clock)
 
             if byte != 0:
-                if self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value.integer == 0:
-                    result.append(self.bus.BUS_DATA.value.integer & 0x000000FF)
-                    result.append((self.bus.BUS_DATA.value.integer & 0x0000FF00) >> 8)
-                    result.append((self.bus.BUS_DATA.value.integer & 0x00FF0000) >> 16)
-                    result.append((self.bus.BUS_DATA.value.integer & 0xFF000000) >> 24)
+                if self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value == 0:
+                    result.append(self.bus.BUS_DATA.value.to_unsigned() & 0x000000FF)
+                    result.append((self.bus.BUS_DATA.value.to_unsigned() & 0x0000FF00) >> 8)
+                    result.append((self.bus.BUS_DATA.value.to_unsigned() & 0x00FF0000) >> 16)
+                    result.append((self.bus.BUS_DATA.value.to_unsigned() & 0xFF000000) >> 24)
                 else:
-                    #    result.append(self.bus.BUS_DATA.value[24:31].integer & 0xff)
                     if len(self.bus.BUS_DATA.value) == 8:
-                        result.append(self.bus.BUS_DATA.value.integer & 0xFF)
+                        result.append(self.bus.BUS_DATA.value.to_unsigned() & 0xFF)
                     else:
-                        result.append(self.bus.BUS_DATA.value[24:31].integer & 0xFF)
+                        result.append(self.bus.BUS_DATA.value[7:0].to_unsigned() & 0xFF)
 
-            if self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value.integer == 0:
+            if self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value == 0:
                 byte += 4
             else:
                 byte += 1
 
         self.bus.BUS_ADD.value = self._x
-        self.bus.BUS_DATA.value = self._high_impedence
+        self.bus.BUS_DATA.value = self._high_impedance
         await RisingEdge(self.clock)
 
         return result
@@ -105,7 +102,7 @@ class BasilBusDriver(BusDriver):
     async def write(self, address, data):
 
         self.bus.BUS_ADD.value = self._x
-        self.bus.BUS_DATA.value = self._high_impedence
+        self.bus.BUS_DATA.value = self._high_impedance
         self.bus.BUS_WR.value = 0
 
         await RisingEdge(self.clock)
@@ -121,10 +118,10 @@ class BasilBusDriver(BusDriver):
 
             await RisingEdge(self.clock)
 
-        if self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value.integer == 0:
+        if self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value == 0:
             raise NotImplementedError("BUS_BYTE_ACCESS for write to be implemented.")
 
-        self.bus.BUS_DATA.value = self._high_impedence
+        self.bus.BUS_DATA.value = self._high_impedance
         self.bus.BUS_ADD.value = self._x
         self.bus.BUS_WR.value = 0
 
