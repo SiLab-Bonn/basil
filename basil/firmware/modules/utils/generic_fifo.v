@@ -109,15 +109,15 @@ module gerneric_fifo
     parameter DATA_SIZE = 32,
     parameter DEPTH = 8
 ) (
-    clk,
-    reset,
-    write,
-    read,
-    data_in,
-    full,
-    empty,
-    data_out,
-    size
+    input wire clk,
+    input wire reset,
+    input wire write,
+    input wire read,
+    input wire data_in,
+    output wire full,
+    output reg empty,
+    output reg data_out,
+    output reg size
 );
 
 generic_fifo #(
