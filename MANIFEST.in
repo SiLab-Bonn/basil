@@ -1,4 +1,4 @@
-include README.* VERSION LICENSE.txt requirements.txt
+include README.* VERSION LICENSE.txt
 recursive-include docs *
 recursive-include examples *
 recursive-include basil/firmware *
