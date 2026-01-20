@@ -7,7 +7,7 @@ name = "basil_daq"
 dynamic = ["version"]
 license = { "text" = "BSD 3-Clause ('BSD New' or 'BSD Simplified') License" }
 description = "Basil is a modular data acquisition system and system testing framework in Python.\nIt also provides generic FPGA firmware modules for different hardware platforms and drivers for wide range of lab appliances."
-readme = {file = "README.rst", content-type = "text/markdown"}
+readme = {file = "README.rst", content-type = "text/x-rst"}
 requires-python = ">=3.10"
 authors = [
     {name = "Tomasz Hemperek", email="hemperek@uni-bonn.de"},
