@@ -115,8 +115,7 @@ wire FULL_BUF;
 
 assign FIFO_READ_NEXT_OUT = !FULL_BUF;
 
-`include "../includes/log2func.v"
-localparam POINTER_SIZE = `CLOG2(DEPTH);
+localparam POINTER_SIZE = 32;
 
 generic_fifo #(
     .DATA_SIZE(32),
@@ -132,7 +131,6 @@ generic_fifo #(
     .data_out(FIFO_DATA_BUF[31:0]),
     .size(CONF_SIZE[POINTER_SIZE-1:0])
 );
-assign CONF_SIZE[31:POINTER_SIZE] = 0;
 
 always @(posedge BUS_CLK)
     BUS_DATA_OUT_DATA <= FIFO_DATA_BUF;
