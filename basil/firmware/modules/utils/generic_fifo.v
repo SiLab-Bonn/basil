@@ -27,16 +27,16 @@ input wire clk, reset, write, read;
 input wire [DATA_SIZE-1:0] data_in;
 
 output wire full;
-output wire empty;
+output reg empty;
 
-output wire [DATA_SIZE-1:0] data_out;
+output reg [DATA_SIZE-1:0] data_out;
 
 reg [DATA_SIZE:0] mem [DEPTH-1:0];
 
 localparam POINTER_SIZE = 16;
 
 reg [POINTER_SIZE-1:0] rd_pointer, rd_tmp, wr_pointer;
-output wire [POINTER_SIZE-1:0] size;
+output reg [POINTER_SIZE-1:0] size;
 
 wire empty_loc;
 
