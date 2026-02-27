@@ -114,9 +114,9 @@ module gerneric_fifo
     input wire read,
     input wire data_in,
     output wire full,
-    output reg empty,
-    output reg data_out,
-    output reg size
+    output wire empty,
+    output wire data_out,
+    output wire size
 );
 
 generic_fifo #(
