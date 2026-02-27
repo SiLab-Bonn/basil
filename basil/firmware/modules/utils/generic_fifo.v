@@ -27,16 +27,16 @@ input wire clk, reset, write, read;
 input wire [DATA_SIZE-1:0] data_in;
 
 output wire full;
-output reg empty;
+output wire empty;
 
-output reg [DATA_SIZE-1:0] data_out;
+output wire [DATA_SIZE-1:0] data_out;
 
 reg [DATA_SIZE:0] mem [DEPTH-1:0];
 
 localparam POINTER_SIZE = 16;
 
 reg [POINTER_SIZE-1:0] rd_pointer, rd_tmp, wr_pointer;
-output reg [POINTER_SIZE-1:0] size;
+output wire [POINTER_SIZE-1:0] size;
 
 wire empty_loc;
 
@@ -114,9 +114,9 @@ module gerneric_fifo
     input wire read,
     input wire data_in,
     output wire full,
-    output reg empty,
-    output reg data_out,
-    output reg size
+    output wire empty,
+    output wire data_out,
+    output wire size
 );
 
 generic_fifo #(
