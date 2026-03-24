@@ -90,7 +90,7 @@ Result of simulation:
 .. image:: _static/spi_example_timing.png
 
 
-A workin example can be seen in tests/test_SimSpi.py.
+A working example can be seen in tests/test_SimSpi.py.
 
 gpio
 -------

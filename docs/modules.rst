@@ -11,8 +11,7 @@ Modules
 
 .. include:: ../basil/firmware/modules/gpio/README.rst
 
-Driver
--------
+**Driver:**
 
 .. automodule:: basil.HL.gpio
 
@@ -26,8 +25,7 @@ Driver
 
 .. include:: ../basil/firmware/modules/spi/README.rst
 
-Driver
--------
+**Driver:**
 
 .. automodule:: basil.HL.spi
 
@@ -40,8 +38,7 @@ Driver
 
 .. include:: ../basil/firmware/modules/seq_gen/README.rst
 
-Driver
--------
+**Driver:**
 
 .. automodule:: basil.HL.seq_gen
 
@@ -54,8 +51,7 @@ Driver
 
 .. include:: ../basil/firmware/modules/pulse_gen/README.rst
 
-Driver
--------
+**Driver:**
 
 .. automodule:: basil.HL.pulse_gen
 
@@ -68,14 +64,15 @@ Driver
 
 .. include:: ../basil/firmware/modules/rrp_arbiter/README.rst
 
+No Python driver — this module operates autonomously in the FPGA fabric.
+
 .. !!!!!!!!!!!!!
 .. !SEQ_REC!
 .. !!!!!!!!!!!!!
 
 .. include:: ../basil/firmware/modules/seq_rec/README.rst
 
-Driver
--------
+**Driver:**
 
 .. automodule:: basil.HL.seq_rec
 
@@ -88,8 +85,7 @@ Driver
 
 .. include:: ../basil/firmware/modules/cmd_seq/README.rst
 
-Driver
--------
+**Driver:**
 
 .. automodule:: basil.HL.cmd_seq
 
@@ -102,8 +98,7 @@ Driver
 
 .. include:: ../basil/firmware/modules/fei4_rx/README.rst
 
-Driver
--------
+**Driver:**
 
 .. automodule:: basil.HL.fei4_rx
 
@@ -116,8 +111,7 @@ Driver
 
 .. include:: ../basil/firmware/modules/fast_spi_rx/README.rst
 
-Driver
--------
+**Driver:**
 
 .. automodule:: basil.HL.fast_spi_rx
 
@@ -130,8 +124,7 @@ Driver
 
 .. include:: ../basil/firmware/modules/tlu/README.rst
 
-Driver
--------
+**Driver:**
 
 .. automodule:: basil.HL.tlu
 
@@ -144,8 +137,7 @@ Driver
 
 .. include:: ../basil/firmware/modules/tdc_s3/README.rst
 
-Driver
--------
+**Driver:**
 
 .. automodule:: basil.HL.tdc_s3
 
@@ -158,8 +150,7 @@ Driver
 
 .. include:: ../basil/firmware/modules/bram_fifo/README.rst
 
-Driver
--------
+**Driver:**
 
 .. automodule:: basil.HL.sram_fifo
 
@@ -173,8 +164,7 @@ Driver
 
 .. include:: ../basil/firmware/modules/gpac_adc_rx/README.rst
 
-Driver
--------
+**Driver:**
 
 .. automodule:: basil.HL.fadc_rx
 
@@ -187,8 +177,7 @@ Driver
 
 .. include:: ../basil/firmware/modules/i2c/README.rst
 
-Driver
--------
+**Driver:**
 
 .. automodule:: basil.HL.i2c
 

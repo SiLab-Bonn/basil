@@ -1,4 +1,15 @@
-/* Force light mode only */
-html[data-theme="dark"] {
-  --pst-color-background: white;
+/* Hide dark mode toggle button */
+button.theme-switch-button {
+  display: none !important;
+}
+
+/* Center WaveDrom diagrams */
+svg[id^="svgcontent_"] {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Remove underline from links */
+a {
+  text-decoration: none !important;
 }

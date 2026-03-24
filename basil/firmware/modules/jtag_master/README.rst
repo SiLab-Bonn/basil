@@ -1,6 +1,6 @@
 
 ======================================
-**jtag** - serial peripheral interface
+**jtag** - JTAG master
 ======================================
 
 Module implements master jtag peripheral interface. Supports simple internal loops.
@@ -9,14 +9,14 @@ Module implements master jtag peripheral interface. Supports simple internal loo
 `test_SimJtagMaster.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimJtagMaster.v>`_ 
 `test_SimJtagMaster.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimJtagMaster.py>`_
 
-Parameters
+**Parameters:**
     +--------------+---------------------+-------------------------------------------------------------------------+ 
     | Name         | Default             | Description                                                             | 
     +==============+=====================+=========================================================================+ 
     | MEM_BYTES    | 16                  | Amount of meemory allocated for data (maximum single transfer in bytes) | 
     +--------------+---------------------+-------------------------------------------------------------------------+ 
 
-Pins
+**Pins:**
     +--------------+---------------------+-----------------------+------------------------------------------------------+ 
     | Name         | Size                | Direction             | Description                                          | 
     +==============+=====================+=======================+======================================================+ 
@@ -35,7 +35,7 @@ Pins
     | SLD          | 1                   |  output               | active high strobe indicating end of transfer        | 
     +--------------+---------------------+-----------------------+------------------------------------------------------+ 
   
-Registers
+**Registers:**
     +--------------+-----------------------------------+--------+-------+-------------+---------------------------------------------------------+ 
     | Name         | Address                           | Bits   | r/w   | Default     | Description                                             | 
     +==============+===================================+========+=======+=============+=========================================================+ 

@@ -1,6 +1,6 @@
 
 ================================
-**seq_gen** - pattern generator
+**seq_gen** - Pattern generator
 ================================
 
 Module implements a simple sequencer/pattern generator base on block ram. Supports 2 levels of internal loops and external start.
@@ -10,7 +10,7 @@ For OUT_BITS != 8 user need to provide block memory module (seq_gen_blk_mem) wit
 `test_SimSeq.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimSeq.v>`_ 
 `test_SimSeq.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimSeq.py>`_
 
-Parameters
+**Parameters:**
     +--------------+---------------------+-------------------------------------------------------------------------+ 
     | Name         | Default             | Description                                                             | 
     +==============+=====================+=========================================================================+ 
@@ -19,7 +19,7 @@ Parameters
     | OUT_BITS     | 8                   | Size (bit) for output pattern - word size                               | 
     +--------------+---------------------+-------------------------------------------------------------------------+ 
     
-Pins
+**Pins:**
     +---------------+---------------------+-----------------------+------------------------------------------------------+ 
     | Name          | Size                | Direction             | Description                                          | 
     +===============+=====================+=======================+======================================================+ 
@@ -30,7 +30,7 @@ Pins
     | SEQ_OUT       | OUT_BITS            |  output               | sequencer output                                     | 
     +---------------+---------------------+-----------------------+------------------------------------------------------+ 
   
-Registers
+**Registers:**
     +---------------+----------------------------------+--------+-------+-------------+--------------------------------------------------------------------------------------------+
     | Name          | Address                          | Bits   | r/w   | Default     | Description                                                                                |
     +===============+==================================+========+=======+=============+============================================================================================+

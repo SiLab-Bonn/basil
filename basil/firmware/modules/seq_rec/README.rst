@@ -1,6 +1,6 @@
 
 ============================
-**seq_rec** - data recorder
+**seq_rec** - Data recorder
 ============================
 
 Simple module that allow recording arbitrary data vector.

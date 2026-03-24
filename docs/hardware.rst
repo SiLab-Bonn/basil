@@ -60,7 +60,9 @@ Features:
     - via JTAG
     - via USB2.0
 
-`Documentation for MIO card. <https://silab-redmine.physik.uni-bonn.de/documents/5>`_
+.. note::
+
+    Documentation for the MIO card was previously hosted on SiLab Redmine (no longer publicly available).
 
 
 GPAC (General Purpose Analog Card)
@@ -71,7 +73,7 @@ GPAC Card is developed as an easy to use multi purpose analog IO card compatible
 .. image:: _static/MIO_GPAC_DUT.png
 
 Features:
-  - 4 regulated power supples, 0.8-1.83/2.83 V, max. 1000 mA,  (controlled by I2C)
+  - 4 regulated power supplies, 0.8-1.83/2.83 V, max. 1000 mA,  (controlled by I2C)
   - 4 RX and 4 TX LVDS Lines
   - 4 channel ADC, 25MS, 14bit
   - 16 CMOS Outputs
@@ -81,7 +83,9 @@ Features:
   - 64x (4 available to DUT) channel slow ADC for monitoring (controlled by I2C)
   - Injection Pulse Generator with programmable voltage levels (high and low)
 
-`Documentation for GPAC card. <https://silab-redmine.physik.uni-bonn.de/documents/6>`_
+.. note::
+
+    Documentation for the GPAC card was previously hosted on SiLab Redmine (no longer publicly available).
 
 
 MIO3 (Multi IO Card USB3)
@@ -93,7 +97,7 @@ TBD.
 LX9
 ==========================
 
-`LX9 Board. <http://www.em.avnet.com/en-us/design/drc/Pages/Xilinx-Spartan-6-FPGA-LX9-MicroBoard.aspx>`_
+The Avnet Xilinx Spartan-6 LX9 MicroBoard (discontinued).
 
 **4 channel FE-I4 adepter with TLU:**
 

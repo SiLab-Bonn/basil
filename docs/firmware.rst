@@ -2,9 +2,7 @@
 Firmware
 ############
 
-FPGA firmware consists of very simple single master bus definition and set of standard modules used by DAQ systems.
-
-Typical firmware consists of a basil bus connecting all modules. Control modules which provide configuration to DUT (like SPI/GPIO) and data taking modules (like data receivers). Received data (32 bit) are stored in the FIFO (large extremal memory) and can be continuously pulled from host application. Data from different modules are identified by source codding in 32bit data words.
+The FPGA firmware is built around a simple single-master bus connecting a set of standard modules. Control modules (SPI, GPIO) configure the DUT, while data-taking modules (receivers, TDCs) pass 32-bit words through an arbiter into a FIFO that the host can continuously read. Each word carries a source identifier so the host can demultiplex data from different modules.
 
 .. graphviz::
 
@@ -22,11 +20,14 @@ Typical firmware consists of a basil bus connecting all modules. Control modules
      Arbiter -> FIFO [color=green];
    }
 
-basil bus
-=========
+Timing diagrams
+================
 
-single write
-  .. raw:: html
+The bus signals are ``BUS_CLK``, ``BUS_WR``, ``BUS_RD``, ``BUS_ADD`` (address), and ``BUS_DATA``. Writes and reads each complete in a single clock cycle.
+
+**Single write:** assert ``BUS_WR`` for one cycle while placing the address and data on the bus.
+
+.. raw:: html
 
     <script type="WaveDrom">
     { signal : [
@@ -38,9 +39,9 @@ single write
     ]}
     </script>
 
+**Single read:** assert ``BUS_RD`` for one cycle with the address. The module responds with data on the following cycle.
 
-single read
-  .. raw:: html
+.. raw:: html
 
     <script type="WaveDrom">
     { signal : [

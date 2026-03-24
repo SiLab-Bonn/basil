@@ -1,6 +1,6 @@
 
 ===============================
-**pulse_gen** - pulse generator
+**pulse_gen** - Pulse generator
 ===============================
 
 Simple pulse generator with configurable delay and width.
@@ -9,7 +9,7 @@ Simple pulse generator with configurable delay and width.
 `test_SimSeq.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimSeq.v>`_ 
 `test_SimSeq.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimSeq.py>`_
 
-Pins
+**Pins:**
     +---------------+---------------------+-----------------------+------------------------------------------------------+ 
     | Name          | Size                | Direction             | Description                                          | 
     +===============+=====================+=======================+======================================================+ 
@@ -20,7 +20,7 @@ Pins
     | PULSE         | 1                   |  output               | output pulse                                         | 
     +---------------+---------------------+-----------------------+------------------------------------------------------+ 
   
-Registers
+**Registers:**
     +---------------+----------------------------------+--------+-------+-------------+--------------------------------------------------------------------------------------------+ 
     | Name          | Address                          | Bits   | r/w   | Default     | Description                                                                                | 
     +===============+==================================+========+=======+=============+============================================================================================+ 

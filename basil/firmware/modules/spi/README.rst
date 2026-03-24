@@ -1,6 +1,6 @@
 
 ======================================
-**spi** - serial peripheral interface
+**spi** - Serial peripheral interface
 ======================================
 
 Module implements master serial peripheral interface. Supports simple internal loops.
@@ -9,14 +9,14 @@ Module implements master serial peripheral interface. Supports simple internal l
 `test_SimSpi.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimSpi.v>`_ 
 `test_SimSpi.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimSpi.py>`_
 
-Parameters
+**Parameters:**
     +--------------+---------------------+-------------------------------------------------------------------------+ 
     | Name         | Default             | Description                                                             | 
     +==============+=====================+=========================================================================+ 
-    | MEM_BYTES    | 16                  | Amount of meemory allocated for data (maximum single transfer in bytes) | 
+    | MEM_BYTES    | 16                  | Amount of memory allocated for data (maximum single transfer in bytes) | 
     +--------------+---------------------+-------------------------------------------------------------------------+ 
 
-Pins
+**Pins:**
     +--------------+---------------------+-----------------------+------------------------------------------------------+ 
     | Name         | Size                | Direction             | Description                                          | 
     +==============+=====================+=======================+======================================================+ 
@@ -35,7 +35,7 @@ Pins
     | EXT_START    | 1                   |  input                | active high start signal (synchronous to SPI_CLK)    | 
     +--------------+---------------------+-----------------------+------------------------------------------------------+
   
-Registers
+**Registers:**
     +--------------+----------------------------------+--------+-------+-------------+---------------------------------------------+ 
     | Name         | Address                          | Bits   | r/w   | Default     | Description                                 | 
     +==============+==================================+========+=======+=============+=============================================+ 
