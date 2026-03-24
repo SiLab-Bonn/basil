@@ -67,8 +67,7 @@ class i2c(RegisterHardwareLayer):
     @property
     def is_ready(self):
         '''
-         :raises ExceptionType: IOError
-        Transfer not acknowledged.
+        :raises IOError: Transfer not acknowledged.
         '''
         if self.NO_ACK:
             raise IOError('i2c:Transfer not acknowledged')

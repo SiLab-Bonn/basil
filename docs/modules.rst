@@ -2,14 +2,14 @@
 Modules
 ############
 
-.. include:: ../firmware/modules/README.rst
+.. include:: ../basil/firmware/modules/README.rst
     :start-after: begin-include
 
 .. !!!!!!!!!!!!!    
 .. !GPIO!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/gpio/README.rst
+.. include:: ../basil/firmware/modules/gpio/README.rst
 
 Driver
 -------
@@ -24,7 +24,7 @@ Driver
 .. !SPI!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/spi/README.rst
+.. include:: ../basil/firmware/modules/spi/README.rst
 
 Driver
 -------
@@ -38,7 +38,7 @@ Driver
 .. !SEQ_GET!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/seq_gen/README.rst
+.. include:: ../basil/firmware/modules/seq_gen/README.rst
 
 Driver
 -------
@@ -52,7 +52,7 @@ Driver
 .. !PULSE_GEN!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/pulse_gen/README.rst
+.. include:: ../basil/firmware/modules/pulse_gen/README.rst
 
 Driver
 -------
@@ -66,13 +66,13 @@ Driver
 .. !RRP_ARBITER!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/rrp_arbiter/README.rst
+.. include:: ../basil/firmware/modules/rrp_arbiter/README.rst
 
 .. !!!!!!!!!!!!!
 .. !SEQ_REC!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/seq_rec/README.rst
+.. include:: ../basil/firmware/modules/seq_rec/README.rst
 
 Driver
 -------
@@ -86,7 +86,7 @@ Driver
 .. !CMD_SEQ!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/cmd_seq/README.rst
+.. include:: ../basil/firmware/modules/cmd_seq/README.rst
 
 Driver
 -------
@@ -100,7 +100,7 @@ Driver
 .. !FEI4_RX!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/fei4_rx/README.rst
+.. include:: ../basil/firmware/modules/fei4_rx/README.rst
 
 Driver
 -------
@@ -114,7 +114,7 @@ Driver
 .. !FAST_SPI_RX!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/fast_spi_rx/README.rst
+.. include:: ../basil/firmware/modules/fast_spi_rx/README.rst
 
 Driver
 -------
@@ -128,7 +128,7 @@ Driver
 .. !TLU!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/tlu/README.rst
+.. include:: ../basil/firmware/modules/tlu/README.rst
 
 Driver
 -------
@@ -142,7 +142,7 @@ Driver
 .. !TDC!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/tdc_s3/README.rst
+.. include:: ../basil/firmware/modules/tdc_s3/README.rst
 
 Driver
 -------
@@ -156,7 +156,7 @@ Driver
 .. !BRAM_FIFO!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/bram_fifo/README.rst
+.. include:: ../basil/firmware/modules/bram_fifo/README.rst
 
 Driver
 -------
@@ -171,7 +171,7 @@ Driver
 .. !GPAC_ADC_RX!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/gpac_adc_rx/README.rst
+.. include:: ../basil/firmware/modules/gpac_adc_rx/README.rst
 
 Driver
 -------
@@ -185,7 +185,7 @@ Driver
 .. !I2C!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/i2c/README.rst
+.. include:: ../basil/firmware/modules/i2c/README.rst
 
 Driver
 -------
@@ -201,11 +201,11 @@ Driver
 .. !UART!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/uart/README.rst
+.. include:: ../basil/firmware/modules/uart/README.rst
 
 
 .. !!!!!!!!!!!!!
 .. !UTILS!
 .. !!!!!!!!!!!!!
 
-.. include:: ../firmware/modules/utils/README.rst
+.. include:: ../basil/firmware/modules/utils/README.rst

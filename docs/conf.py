@@ -14,7 +14,6 @@
 
 import sys
 import os
-import sphinx_rtd_theme
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -37,7 +36,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
-    'sphinxcontrib.blockdiag',
+    'sphinx.ext.graphviz',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -54,15 +53,17 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'basil'
-copyright = '2015, SiLab, Institute of Physics, University of Bonn'
+copyright = '2013-2026, SiLab, Institute of Physics, University of Bonn'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-f = open('../VERSION', 'r')
-basil_version = f.readline().strip()
-f.close()
+try:
+    from importlib.metadata import version as get_version
+    basil_version = get_version("basil_daq")
+except Exception:
+    basil_version = "dev"
 
 # The short X.Y version.
 version = basil_version
@@ -112,33 +113,19 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-# html_theme = 'default'
-html_theme = "sphinx_rtd_theme"
+html_theme = "sphinx_book_theme"
+html_logo = "_static/logo_silab.png"
+html_theme_options = {
+    "repository_url": "https://github.com/SiLab-Bonn/basil",
+    "use_repository_button": True,
+    "use_issues_button": True,
+    "use_download_button": False,
+}
 
-# Theme options are theme-specific and customize the look and feel of a theme
-# further.  For a list of options available for each theme, see the
-# documentation.
-# html_theme_options = {}
-
-# Add any paths that contain custom themes here, relative to this directory.
-# html_theme_path = []
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
-# html_title = None
-
-# A shorter title for the navigation bar.  Default is the same as html_title.
-# html_short_title = None
-
-# The name of an image file (relative to this directory) to place at the top
-# of the sidebar.
-# html_logo = None
-
-# The name of an image file (within the static path) to use as favicon of the
-# docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
-# pixels large.
-# html_favicon = None
+# Force light mode only (no dark mode toggle)
+html_context = {
+    "default_mode": "light",
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

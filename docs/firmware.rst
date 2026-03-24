@@ -6,20 +6,20 @@ FPGA firmware consists of very simple single master bus definition and set of st
 
 Typical firmware consists of a basil bus connecting all modules. Control modules which provide configuration to DUT (like SPI/GPIO) and data taking modules (like data receivers). Received data (32 bit) are stored in the FIFO (large extremal memory) and can be continuously pulled from host application. Data from different modules are identified by source codding in 32bit data words.
 
-.. blockdiag::
+.. graphviz::
 
-   diagram {
+   digraph {
+     rankdir=LR;
+     node [shape=box];
 
-    Interface <-> SPI [color = "blue"];
-    Interface <-> GPIO [color = "blue"];
-    Interface <-> RX [color = "blue", label = "bus"];
-    Interface <-> TDC [color = "blue"];
-    Interface <-> FIFO [color = "blue"];
-    TDC -> Arbiter [color = "green", label = "data"];
-    RX -> Arbiter [color = "green"];
-    Arbiter -> FIFO  [color = "green"];
-
-    Arbiter -> FIFO [folded];
+     Interface -> SPI [color=blue, dir=both, label="bus"];
+     Interface -> GPIO [color=blue, dir=both];
+     Interface -> RX [color=blue, dir=both, label="bus"];
+     Interface -> TDC [color=blue, dir=both];
+     Interface -> FIFO [color=blue, dir=both];
+     TDC -> Arbiter [color=green, label="data"];
+     RX -> Arbiter [color=green];
+     Arbiter -> FIFO [color=green];
    }
 
 basil bus

@@ -25,6 +25,8 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+uv.lock
+.venv/
 
 # icarus verilog
 host/tests/Makefile

@@ -12,9 +12,7 @@ Basil
     :target: http://basil.rtfd.org
     :alt: Documentation
 
-Basil is a modular data acquisition system and system testing framework in Python.
-
-It also provides generic FPGA firmware modules for different hardware platforms and drivers for wide range of lab appliances.
+Basil is a modular data acquisition (DAQ) framework built for the characterization of `monolithic <https://en.wikipedia.org/wiki/Monolithic_active_pixel_sensor>`_ and `hybrid <https://en.wikipedia.org/wiki/Hybrid_pixel_detector>`_ pixel detectors. It comprises a library of HDL modules (written in Verilog) for custom FPGA readout boards, paired with a collection of Python code that control the hardware over TCP from a host PC.
 
 Features
 ========
@@ -26,36 +24,28 @@ Software:
   - layer structure following hardware
   - generation based on yaml file
   - register abstract layer (RAL)
-  - simulator interface allows software test against simulated RTL (thanks to `cocotb <https://github.com/potentialventures/cocotb>`_)
+  - simulator interface allows software test against simulated RTL (thanks to `cocotb <https://github.com/cocotb/cocotb>`_)
 
 Installation
 ============
 
-Clone the repository to get a copy of the source code (for developers):
+Install via PyPI:
+
+.. code-block:: bash
+
+    pip install basil-daq
+
+.. note::
+
+    The PyPI package may be outdated. Installing from source (below) is recommended to get the latest version.
+
+Or install from source:
 
 .. code-block:: bash
 
     git clone https://github.com/SiLab-Bonn/basil.git
     cd basil
     pip install -e .
-
-or install via PyPI into the Python's site-packages folder (for non-developers):
-
-.. code-block:: bash
-
-    pip install basil_daq==version
-
-where version is a version number (e.g., 3.0.1)
-
-or install from git, when no PyPI package is available (for non-developers):
-
-.. code-block:: bash
-
-    pip install git+https://github.com/SiLab-Bonn/basil.git@branch
-
-where branch is a branch name or tag (e.g., master or v3.0.1).
-
-Check `.travis.yml <.travis.yml>`_ for installation/testing hints.
 
 Support
 =======
@@ -69,11 +59,12 @@ Documentation
 
 Documentation can be found under: https://basil.rtfd.org
 
-Example Projects:
-=================
-- `pyBAR <https://github.com/SiLab-Bonn/pyBAR>`_ - Bonn ATLAS Readout in Python
-- `MCA <https://github.com/SiLab-Bonn/MCA>`_ - Multi Channel Analyzer
-- `fe65_p2 <https://github.com/SiLab-Bonn/fe65_p2>`_ - DAQ for FE65P2 prototype
+Example Projects
+================
+- `TJ-Monopix2 <https://github.com/SiLab-Bonn/tj-monopix2-daq>`_ - DAQ for TJ-Monopix2 depleted monolithic pixel sensor
+- `BDAQ53 <https://gitlab.cern.ch/silab/bdaq53>`_ - Readout system for ATLAS ITkPix (RD53) chips
+- `LF-Monopix2 <https://github.com/SiLab-Bonn/lf-monopix2-daq>`_ - DAQ for LF-Monopix2 depleted monolithic pixel sensor
+- `FRIDA <https://github.com/kcaisley/frida>`_ - DAQ for FRIDA, an ADC test array for frame-based imaging detectors
 
 License
 =======

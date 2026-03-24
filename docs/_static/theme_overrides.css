@@ -1,4 +1,4 @@
-
-html body div.wy-nav-content {
-  max-width: 100%
+/* Force light mode only */
+html[data-theme="dark"] {
+  --pst-color-background: white;
 }

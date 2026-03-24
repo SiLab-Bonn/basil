@@ -1,4 +1,3 @@
-sphinxcontrib-blockdiag
 sphinx_rtd_theme
-bitarray 
+bitarray
 pyyaml
