@@ -6,19 +6,34 @@ The FPGA firmware is built around a simple single-master bus connecting a set of
 
 .. graphviz::
 
-   digraph {
-     rankdir=LR;
-     node [shape=box];
-
-     Interface -> SPI [color=blue, dir=both, label="bus"];
-     Interface -> GPIO [color=blue, dir=both];
-     Interface -> RX [color=blue, dir=both, label="bus"];
-     Interface -> TDC [color=blue, dir=both];
-     Interface -> FIFO [color=blue, dir=both];
-     TDC -> Arbiter [color=green, label="data"];
-     RX -> Arbiter [color=green];
-     Arbiter -> FIFO [color=green];
-   }
+    digraph {
+        rankdir=LR;
+        splines=polyline;
+        nodesep=0.5;
+        ranksep=0.8;
+        node [shape=box, fixedsize=true, width=0.75, height=0.4];
+        j1 [shape=point, width=0.01];
+        j2 [shape=point, width=0.01];
+        j3 [shape=point, width=0.01];
+        j4 [shape=point, width=0.01];
+        j5 [shape=point, width=0.01];
+        Interface [fixedsize=true, width=0.9, height=0.4];
+        Interface -> j3 [color=blue, arrowhead=none, dir=back];
+        j1 -> j2 [color=blue, arrowhead=none];
+        j2 -> j3 [color=blue, arrowhead=none];
+        j3 -> j4 [color=blue, arrowhead=none];
+        j4 -> j5 [color=blue, arrowhead=none];
+        j1 -> SPI   [color=blue, headport=w, tailport=e];
+        j2 -> GPIO  [color=blue, headport=w, tailport=e];
+        j3 -> RX    [color=blue, headport=w, tailport=e];
+        j4 -> TDC   [color=blue, headport=w, tailport=e];
+        j5 -> FIFO  [color=blue, headport=w, tailport=e];
+        RX -> Arbiter [color=green, headport=n, tailport=e];
+        TDC -> Arbiter [color=green, headport=w, tailport=e];
+        Arbiter -> FIFO [color=green, headport=e, tailport=s];
+        { rank=same; j1; j2; j3; j4; j5; }
+        { rank=same; SPI; GPIO; RX; TDC; FIFO; }
+    }
 
 Timing diagrams
 ================
@@ -52,4 +67,3 @@ The bus signals are ``BUS_CLK``, ``BUS_WR``, ``BUS_RD``, ``BUS_ADD`` (address), 
       { name: "BUS_DATA", wave: "x4xx",   data: "addr" },
     ]}
     </script>
-

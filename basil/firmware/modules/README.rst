@@ -37,7 +37,7 @@ The following parameters, pins, and registers are common to all bus-connected mo
 +--------------+-------------------------+-----------+------------------------------------------------------+
 | BUS_ADD      | ABUSWIDTH               | input     | Address bus                                          |
 +--------------+-------------------------+-----------+------------------------------------------------------+
-| BUS_DATA     | DBUSWIDTH (typically 8) | inout     | Data bus                                             |
+| BUS_DATA     | DBUSWIDTH               | inout     | Data bus                                             |
 +--------------+-------------------------+-----------+------------------------------------------------------+
 
 **Common registers:**

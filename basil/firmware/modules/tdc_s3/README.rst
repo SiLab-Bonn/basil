@@ -13,8 +13,8 @@ NOTE:
  4. ARM_TDC and EXT_EN are assumed to be slower than DV_CLK.
 
 **Unit test/Example:**
-`test_SimTlu.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTdc.v>`_
-`test_SimTlu.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTdc.py>`_
+`test_SimTdc.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTdc.v>`_
+`test_SimTdc.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimTdc.py>`_
 
 Data format (Standard)
     +-------------------------+--------------------------------------------------------+--------------------+

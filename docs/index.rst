@@ -2,26 +2,28 @@
 Overview
 ############
 
-Basil is a modular data acquisition (DAQ) framework developed by `SiLab <https://silab-bonn.github.io/>`_ for the characterization of `monolithic <https://en.wikipedia.org/wiki/Monolithic_active_pixel_sensor>`_ and `hybrid <https://en.wikipedia.org/wiki/Hybrid_pixel_detector>`_ pixel detectors. It comprises a library of HDL modules (written in Verilog) for custom FPGA readout boards, paired with a collection of Python code that control the hardware over TCP/IP from a host PC.
+Basil is a modular data acquisition (DAQ) framework developed by `SiLab <https://silab-bonn.github.io/>`_ for the characterization of `monolithic <https://en.wikipedia.org/wiki/Monolithic_active_pixel_sensor>`_ and `hybrid <https://en.wikipedia.org/wiki/Hybrid_pixel_detector>`_ pixel detectors. It comprises a library of HDL modules (written in Verilog) for custom FPGA readout boards, paired with a collection of Python code that control the hardware over USB, Ethernet, or serial interfaces from a host PC. Basil also includes Python drivers for common lab instruments such as X-ray tubs, chillers, power supplies, oscilloscopes, and other lab equipment.
 
 Features
 ===========================
 
 Firmware:
-  - very simple single master `bus definition`_
-  - multiple `basic modules <https://github.com/SiLab-Bonn/basil/tree/master/basil/firmware/modules>`_ (ex. SPI, SEQ)
-  - multiple `interfaces <https://github.com/SiLab-Bonn/basil/tree/master/basil/TL>`_ (UART, USB2, USB3, Ethernet)
+  - Simple single control `bus definition`_
+  - Multiple `HDL modules <https://github.com/SiLab-Bonn/basil/tree/master/basil/firmware/modules>`_ (ex. SPI, SEQ)
+  - Multiple `interfaces <https://github.com/SiLab-Bonn/basil/tree/master/basil/TL>`_ (UART, USB2, USB3, Ethernet)
 Software:
-  - layer structure following hardware
-  - generation based on yaml file
-  - register abstract layer (RAL)
-  - simulator interface allows software test against simulated RTL (thanks to `cocotb <https://github.com/cocotb/cocotb>`_ )
+  - Layer structure following hardware
+  - Generation based on YAML file
+  - Simulator interface allows software test against simulated RTL (thanks to `cocotb <https://github.com/cocotb/cocotb>`_)
+  - Python drivers for lab instruments (power supplies, oscilloscopes, chillers, X-ray tubes, etc.)
 
 
 .. _`bus definition`: firmware.html#basil-bus
 
 Installation
 ========================
+
+A (currently-in-need-of-update) version is available via PyPi:
 
 .. code-block:: bash
 
