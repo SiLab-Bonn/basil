@@ -2,7 +2,7 @@
 Overview
 ############
 
-Basil is a modular data acquisition (DAQ) framework developed by `SiLab <https://silab-bonn.github.io/>`_ for the characterization of `monolithic <https://en.wikipedia.org/wiki/Monolithic_active_pixel_sensor>`_ and `hybrid <https://en.wikipedia.org/wiki/Hybrid_pixel_detector>`_ pixel detectors. It comprises a library of HDL modules (written in Verilog) for custom FPGA readout boards, paired with a collection of Python code that control the hardware over USB, Ethernet, or serial interfaces from a host PC. Basil also includes Python drivers for common lab instruments such as X-ray tubs, chillers, power supplies, oscilloscopes, and other lab equipment.
+Basil is a modular data acquisition (DAQ) framework developed by `SiLab <https://silab-bonn.github.io/>`_ for the characterization of `monolithic <https://en.wikipedia.org/wiki/Monolithic_active_pixel_sensor>`_ and `hybrid <https://en.wikipedia.org/wiki/Hybrid_pixel_detector>`_ pixel detectors. It comprises a library of HDL modules (written in Verilog) for custom FPGA readout boards, paired with a collection of Python code that control the hardware over USB, Ethernet, or serial interfaces from a host PC. Basil also includes Python drivers for common lab instruments such as power supplies, oscilloscopes, and other lab equipment.
 
 Features
 ===========================
