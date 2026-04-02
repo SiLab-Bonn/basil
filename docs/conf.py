@@ -116,6 +116,7 @@ pygments_style = "sphinx"
 # a list of builtin themes.
 html_theme = "sphinx_book_theme"
 html_logo = "_static/logo_silab.png"
+html_favicon = "_static/silab.ico"
 html_theme_options = {
     "repository_url": "https://github.com/SiLab-Bonn/basil",
     "use_repository_button": True,
