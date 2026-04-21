@@ -48,12 +48,9 @@ markers = ["verilator: Verilog tests."]
 [tool.isort]
 profile = "black"
 
-[tool.pylint.format]
-max-line-length = 120
-
 [tool.ruff]
-# Set the maximum line length to 120.
-line-length = 120
+# Set the maximum line length to 180.
+line-length = 180
 
 [tool.ruff.lint]
 extend-select = ["E501"]
