@@ -1,4 +1,4 @@
-# Device description for the Agilent 33250A Function/Arbitrary Waveform Generator. 
+# Device description for the Agilent 33250A Function/Arbitrary Waveform Generator.
 # set_ function expect a parameter, get_ function return a parameter.
 # Almost all available commands are implemented except arbitrary signals, commands
 # to save/reset device states, statusregister commands, IEEE 488.2 commands
@@ -11,13 +11,13 @@ identifier : Agilent Technologies,33250A
 ######
 # Set function type (frequency, amplitude, offset)
 ######
-set_sin: APPLy:SINusoid 
-set_square: APPLy:SQUare 
-set_ramp: APPLy:RAMP 
-set_pulse: APPLy:PULSe 
-set_noise: APPLy:NOISe 
+set_sin: APPLy:SINusoid
+set_square: APPLy:SQUare
+set_ramp: APPLy:RAMP
+set_pulse: APPLy:PULSe
+set_noise: APPLy:NOISe
 set_DC: APPLy:DC
-set_arb: APPLy:USER 
+set_arb: APPLy:USER
 get_function: APPLy?
 
 ######
@@ -146,9 +146,9 @@ get_trigger_source: TRIGger:SOURce?
 trigger: TRIG
 set_trigger_delay: TRIGger:DELay #{Seconds|MINimum|MAXimum}
 get_trigger_delay: TRIGger:DELay? #[MINimum|MAXimum]
-set_trigger_slope: TRIGger:SLOPe #{POSitive|NEGative} 
+set_trigger_slope: TRIGger:SLOPe #{POSitive|NEGative}
 get_trigger_slope: TRIGger:SLOPe?BURSt:GATE:POLarity #{NORMal|INVerted}
-set_trigger_output_slope: OUTPut:TRIGger:SLOPe #{POSitive|NEGative} 
+set_trigger_output_slope: OUTPut:TRIGger:SLOPe #{POSitive|NEGative}
 get_trigger_output_slope: OUTPut:TRIGger:SLOPe?
 set_trigger_output: OUTPut:TRIGger #{OFF|ON}
 get_trigger_output: OUTPut:TRIGger?

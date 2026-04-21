@@ -10,14 +10,13 @@ import time
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
-
 logger = logging.getLogger(__name__)
 
 
 class julaboF32HD(HardwareLayer):
-    ''' Driver for the Julabo F32-HD chiller.
+    """Driver for the Julabo F32-HD chiller.
     A simple protocol via RS 232 serial port is used with 4800 baud rate.
-    '''
+    """
 
     def __init__(self, intf, conf):
         super(julaboF32HD, self).__init__(intf, conf)
@@ -39,28 +38,24 @@ class julaboF32HD(HardwareLayer):
         self.pre_time = time.time()
 
     def get_identifier(self):
-        ''' Read identifier
-        '''
+        """Read identifier"""
         self.write("version")
         ret = self.read()
         return ret
 
     def start_thermostat(self, start=True):
-        ''' Start chiller
-        '''
+        """Start chiller"""
         if start is True:
             self.write("out_mode_05 1")
         else:
             self.write("out_mode_05 0")
 
     def stop_thermostat(self):
-        ''' Stop chiller
-        '''
+        """Stop chiller"""
         self.start_thermostat(False)
 
     def get_status(self):
-        ''' Get status
-        '''
+        """Get status"""
         self.write("status")
         ret = self.read()
         logger.debug("status:{:s}".format(ret))

@@ -11,14 +11,14 @@ transfer_layer:
     init:
       #avoid_download : True
       bit_file : ./firmware/ise/sram_test.bit
-    
+
 hw_drivers:
   - name      : GPIO_CONTROL_DRV
     type      : gpio
     interface : USB
     base_addr : 0x10000
     size      : 8
-    
+
   - name      : GPIO_PATTERN_DRV
     type      : gpio
     interface : USB
@@ -30,12 +30,12 @@ hw_drivers:
     interface : USB
     base_addr : 0x10020
     base_data_addr: 0x0001000000000000
-    
+
   - name      : PULSE
     type      : pulse_gen
     interface : USB
     base_addr : 0x10030
-    
+
 registers:
   - name        : CONTROL
     type        : StdRegister
@@ -50,7 +50,7 @@ registers:
         offset  : 1
       - name    : COUNTER_DIRECT
         size    : 1
-        offset  : 2        
+        offset  : 2
 
   - name        : PATTERN
     type        : StdRegister

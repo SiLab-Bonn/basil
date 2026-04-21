@@ -4,39 +4,40 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-import pyvisa as visa
 import logging
 import time
 
-from basil.TL.TransferLayer import TransferLayer
+import pyvisa as visa
 from pyvisa.errors import VisaIOError
+
+from basil.TL.TransferLayer import TransferLayer
 
 logger = logging.getLogger(__name__)
 
 
 class Visa(TransferLayer):
-    '''Transfer layer for a Virtual Instrument Software Architecture (VISA) provided by pyVisa.
+    """Transfer layer for a Virtual Instrument Software Architecture (VISA) provided by pyVisa.
     Several interfaces are available (GPIB, RS232, USB, Ethernet). To be able to use pyVisa without
     the proprietary NI-VISA driver a pyVisa backend pyVisa-py can be used.
     GPIB under linux is not supported via pyVisa-py right now.
-    '''
+    """
 
     def __init__(self, conf):
         super(Visa, self).__init__(conf)
         self._resource = None
 
     def init(self):
-        '''
+        """
         Initialize the device.
         Parameters of visa.ResourceManager().open_resource()
-        '''
+        """
         super(Visa, self).init()
-        backend = self._init.get('backend', '')  # Empty string means std. backend (NI VISA)
+        backend = self._init.get("backend", "")  # Empty string means std. backend (NI VISA)
         rm = visa.ResourceManager(backend)
         try:
-            logger.info('BASIL VISA TL with %s backend found the following devices: %s', backend, ", ".join(rm.list_resources()))
+            logger.info("BASIL VISA TL with %s backend found the following devices: %s", backend, ", ".join(rm.list_resources()))
         except NotImplementedError:  # some backends do not always implement the list_resources function
-            logger.info('BASIL VISA TL with %s backend', backend)
+            logger.info("BASIL VISA TL with %s backend", backend)
 
         # make interface compatible with other transfer layers (serial)
         if "baudrate" in self._init.keys():

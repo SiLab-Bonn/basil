@@ -4,7 +4,7 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
- 
+
 `include "tdl_tdc/sw_interface.v"
 `include "tdl_tdc/tdl_tdc_core.v"
 

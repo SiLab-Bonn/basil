@@ -73,4 +73,3 @@ set_property PACKAGE_PIN L25 [get_ports {LED[6]}]
 set_property PACKAGE_PIN P23 [get_ports {LED[7]}]
 set_property IOSTANDARD LVCMOS33 [get_ports LED*]
 set_property SLEW SLOW [get_ports LED*]
-

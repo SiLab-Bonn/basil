@@ -6,10 +6,12 @@
 #
 
 
-from basil.HL.scpi import scpi
 from collections import namedtuple
 from enum import Enum
+
 from pyvisa.errors import VisaIOError
+
+from basil.HL.scpi import scpi
 
 Identity = namedtuple("Identity", "company, model, serial, config")
 XScale = namedtuple("XScale", "slope, offset, unit")
@@ -65,7 +67,7 @@ class TektronixOscilloscope(scpi):
         }
 
         results = {}
-        sources = ['CH' + str(channel)]
+        sources = ["CH" + str(channel)]
         for source in sources:
             if source.split("_")[0] not in results:
                 # Determine the type of waveform and set key interface parameters
@@ -74,11 +76,9 @@ class TektronixOscilloscope(scpi):
                 encoding, bit_nr, datatype = encoding_table[wave_type]
 
                 # Set the start and stop point of the record
-                rec_len = int(self._intf.query("horizontal:recordlength?").split(' ')[1].strip())
+                rec_len = int(self._intf.query("horizontal:recordlength?").split(" ")[1].strip())
                 # Keep track of each super channel and math source that has been handled
-                results[source.split("_")[0]] = JobParameters(
-                    wave_type, channel, encoding, bit_nr, datatype, rec_len
-                )
+                results[source.split("_")[0]] = JobParameters(wave_type, channel, encoding, bit_nr, datatype, rec_len)
         return results
 
     def _classify_waveform(self, source):
@@ -97,14 +97,14 @@ class TektronixOscilloscope(scpi):
         # available and the channel is enabled.
         result = None
         try:
-            xincr = self._intf.query("WFMPre:XINCR?").split(' ')[1].strip()
+            xincr = self._intf.query("WFMPre:XINCR?").split(" ")[1].strip()
         except VisaIOError:
             pass
         else:
             # collect more horizontal data
-            pt_off = self._intf.query("WFMPre:PT_OFF?").split(' ')[1].strip()
-            xzero = self._intf.query("WFMPre:XZERO?").split(' ')[1].strip()
-            xunit = self._intf.query("WFMPre:XUNIT?").split(' ')[1].strip()
+            pt_off = self._intf.query("WFMPre:PT_OFF?").split(" ")[1].strip()
+            xzero = self._intf.query("WFMPre:XZERO?").split(" ")[1].strip()
+            xunit = self._intf.query("WFMPre:XUNIT?").split(" ")[1].strip()
             # calculate horizontal scale
             slope = float(xincr)
             offset = float(pt_off) * -slope + float(xzero)
@@ -113,11 +113,11 @@ class TektronixOscilloscope(scpi):
         return result
 
     def _get_yscale(self, channel=1):
-        scale = float(self._intf.query("{}:SCALE?".format('CH' + str(channel))).split(' ')[1])
-        position = float(self._intf.query("{}:POSITION?".format('CH' + str(channel))).split(' ')[1])
+        scale = float(self._intf.query("{}:SCALE?".format("CH" + str(channel))).split(" ")[1])
+        position = float(self._intf.query("{}:POSITION?".format("CH" + str(channel))).split(" ")[1])
         top = scale * (5 - position)
         bottom = scale * (-5 - position)
-        yunit = self._intf.query("WFMPre:YUNIT?").split(' ')[1].strip()
+        yunit = self._intf.query("WFMPre:YUNIT?").split(" ")[1].strip()
         return YScale(scale=scale, top=top, bottom=bottom, unit=yunit)
 
     def _has_data_available(self, source):
@@ -133,15 +133,15 @@ class TektronixOscilloscope(scpi):
         """Setup the instrument for the curve query operation"""
 
         # extract the job parameters
-        wave_type, channel, encoding, bit_nr, datatype, rec_len = parameters['CH' + str(channel)]
+        wave_type, channel, encoding, bit_nr, datatype, rec_len = parameters["CH" + str(channel)]
 
         # Switch to the source and setup the data encoding
-        self._intf.write("data:source {}".format('CH' + channel))
-        self.set_data_encoding('ascii')
+        self._intf.write("data:source {}".format("CH" + channel))
+        self.set_data_encoding("ascii")
         self._intf.write("WFMOUTPRE:BIT_NR {}".format(bit_nr))
 
         # Set the start and stop point of the record
-        rec_len = self._intf.query("horizontal:recordlength?").split(' ')[1]
+        rec_len = self._intf.query("horizontal:recordlength?").split(" ")[1]
         self._intf.write("data:start 1")
         self._intf.write("data:stop {}".format(rec_len))
         return wave_type
@@ -149,8 +149,8 @@ class TektronixOscilloscope(scpi):
     def _post_process_analog(self, source_data, x_scale, channel=1):
         """Post processes analog channel data"""
         # Normal analog channels must have the vertical scale and offset applied
-        offset = float(self._intf.query("WFMPre:YZEro?").split(' ')[1])
-        scale = float(self._intf.query("WFMPre:YMUlt?").split(' ')[1])
+        offset = float(self._intf.query("WFMPre:YZEro?").split(" ")[1])
+        scale = float(self._intf.query("WFMPre:YMUlt?").split(" ")[1])
         source_data = [scale * i + offset for i in source_data]
 
         # Include y-scale information with analog channel waveforms
@@ -168,7 +168,7 @@ class TektronixOscilloscope(scpi):
         x_scale = self._get_xscale()
         ret_val = None
         if x_scale is not None:
-            source_data = [int(i) for i in self.get_data(channel=channel).split(' ')[1].replace('\n', '').split(',')]
+            source_data = [int(i) for i in self.get_data(channel=channel).split(" ")[1].replace("\n", "").split(",")]
             if wave_type is WaveType.ANALOG:
                 ret_val = self._post_process_analog(source_data, x_scale, channel=channel)
             else:
@@ -179,6 +179,6 @@ class TektronixOscilloscope(scpi):
         return ret_val
 
     def get_y_info(self, channel=1):
-        scale = float(self._intf.query("{}:SCALE?".format('CH' + str(channel))).split(' ')[1])
-        position = float(self._intf.query("{}:POSITION?".format('CH' + str(channel))).split(' ')[1])
+        scale = float(self._intf.query("{}:SCALE?".format("CH" + str(channel))).split(" ")[1])
+        position = float(self._intf.query("{}:POSITION?".format("CH" + str(channel))).split(" ")[1])
         return scale, position

@@ -17,17 +17,20 @@ Communicate via a socket to the simulator
 
 """
 
-
-import socket
 import array
+import socket
 
-from basil.utils.sim.Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
+from basil.utils.sim.Protocol import (
+    PickleInterface,
+    ReadRequest,
+    ReadResponse,
+    WriteRequest,
+)
 
 __version__ = "0.0.3"
 
 
 class SiUSBDevice(object):
-
     """Simulation library to emulate SiUSBDevices"""
 
     BASE_ADDRESS_I2C = 0x00000

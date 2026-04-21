@@ -28,4 +28,3 @@
 # We should have up to 8 cycles to do this computation, as the fast count has 3 bits
 set_multicycle_path -setup -from [get_pins -hier *SFC_*/C] -to [get_pins -hier *SFC_*/D] 8;
 set_multicycle_path -hold -end -from [get_pins -hier *SFC_*/C] -to [get_pins -hier *SFC_*/D] 7;
-

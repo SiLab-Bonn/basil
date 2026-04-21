@@ -5,10 +5,12 @@
 # ------------------------------------------------------------
 #
 
-from basil.HL.scpi import scpi
 from collections import namedtuple
 from enum import Enum
+
 from pyvisa.errors import VisaIOError
+
+from basil.HL.scpi import scpi
 
 Identity = namedtuple("Identity", "company, model, serial, config")
 XScale = namedtuple("XScale", "slope, offset, unit")
@@ -64,7 +66,7 @@ class TektronixOscilloscope(scpi):
         }
 
         results = {}
-        sources = ['CH' + str(channel)]
+        sources = ["CH" + str(channel)]
         for source in sources:
             if source.split("_")[0] not in results:
                 # Determine the type of waveform and set key interface parameters
@@ -76,9 +78,7 @@ class TektronixOscilloscope(scpi):
                 rec_len = int(self._intf.query("horizontal:recordlength?").strip())
 
                 # Keep track of each super channel and math source that has been handled
-                results[source.split("_")[0]] = JobParameters(
-                    wave_type, channel, encoding, bit_nr, datatype, rec_len
-                )
+                results[source.split("_")[0]] = JobParameters(wave_type, channel, encoding, bit_nr, datatype, rec_len)
         return results
 
     def _classify_waveform(self, source):
@@ -114,8 +114,8 @@ class TektronixOscilloscope(scpi):
         return result
 
     def _get_yscale(self, channel=1):
-        scale = float(self._intf.query("{}:SCALE?".format('CH' + str(channel))))
-        position = float(self._intf.query("{}:POSITION?".format('CH' + str(channel))))
+        scale = float(self._intf.query("{}:SCALE?".format("CH" + str(channel))))
+        position = float(self._intf.query("{}:POSITION?".format("CH" + str(channel))))
         top = scale * (5 - position)
         bottom = scale * (-5 - position)
         return YScale(top=top, bottom=bottom)
@@ -133,11 +133,11 @@ class TektronixOscilloscope(scpi):
         """Setup the instrument for the curve query operation"""
 
         # extract the job parameters
-        wave_type, channel, encoding, bit_nr, datatype, rec_len = parameters['CH' + str(channel)]
+        wave_type, channel, encoding, bit_nr, datatype, rec_len = parameters["CH" + str(channel)]
 
         # Switch to the source and setup the data encoding
-        self._intf.write("data:source {}".format('CH' + channel))
-        self.set_data_encoding('ascii')
+        self._intf.write("data:source {}".format("CH" + channel))
+        self.set_data_encoding("ascii")
         self._intf.write("WFMOUTPRE:BIT_NR {}".format(bit_nr))
 
         # Set the start and stop point of the record
@@ -173,7 +173,7 @@ class TektronixOscilloscope(scpi):
         x_scale = self._get_xscale()
         ret_val = None
         if x_scale is not None:
-            source_data = [int(i) for i in self.get_data(channel=channel).replace('\n', '').split(',')]
+            source_data = [int(i) for i in self.get_data(channel=channel).replace("\n", "").split(",")]
             if wave_type is WaveType.ANALOG:
                 ret_val = self._post_process_analog(source_data, x_scale, channel=channel)
             else:

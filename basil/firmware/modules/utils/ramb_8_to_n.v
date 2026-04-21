@@ -15,7 +15,7 @@ module ramb_8_to_n (clkA,
                     doA,
                     diB,
                     doB);
-    
+
 parameter SIZE  = 1024;
 parameter WIDTH = 8;
 
@@ -74,7 +74,7 @@ generate
         end
     end
 endgenerate
-    
+
 generate
     if (WIDTH < 8) begin
         always @(posedge clkB)
@@ -84,11 +84,11 @@ generate
 
             doB <= RAM[addrB];
         end
-        
+
         always @(posedge clkA) begin : portA
             integer i;
             reg [log2RATIO-1:0] lsbaddr ;
-        
+
             for (i = 0; i< RATIO; i = i + 1) begin
                 lsbaddr = i;
                 if (weA)
@@ -110,7 +110,7 @@ generate
 
             doA <= RAM[addrA];
         end
-        
+
         always @(posedge clkB) begin : portA
             integer i;
             reg [log2RATIO-1:0] lsbaddr ;
@@ -124,6 +124,6 @@ generate
         end
     end
 endgenerate
-    
-    
+
+
 endmodule

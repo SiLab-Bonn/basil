@@ -47,7 +47,7 @@ assign b = ~internally_rising;
 // line samples by comparing their respective first and last bits.
 wire [clk_ratio-1:0] hit_flags;
 genvar k;
-generate 
+generate
 	for(k=0; k<clk_ratio; k = k+1) begin
 			assign hit_flags[k] = ((samples_160[k][0] ==a) || (samples_160[k][1]  == a)) &&
 			       	((samples_160[k][dlyline_bits -2] == b ) || (samples_160[k][dlyline_bits -1] == b) );
@@ -67,7 +67,7 @@ generate
 	end
 endgenerate
 
-// Multiplexer to select the sample of the delay line with an input signal transition, ie. a hit. 
+// Multiplexer to select the sample of the delay line with an input signal transition, ie. a hit.
 reg [1:0] mux_address;
 always @(hit_flags) begin
 	// This is the code that needs to be changed depending on clk_ratio
@@ -93,7 +93,7 @@ always @ (posedge CLK_SLOW) begin
 	// Here we actually multiplex the delay line samples for further processing
 	selected_sample <= samples_160[mux_address];
 	// The multiplexer address also carries the information about on which clock
-	// cycle of the fast clock the signal transition occurred. 
+	// cycle of the fast clock the signal transition occurred.
 	fine_time <= clk_ratio-1 - mux_address;
 
 	if (|miss_flags)
@@ -103,7 +103,7 @@ always @ (posedge CLK_SLOW) begin
 			hit_status <= IDLE;
 		else
 			hit_status <= HIT;
-	end else 
+	end else
 		hit_status <= IDLE;
 end
 

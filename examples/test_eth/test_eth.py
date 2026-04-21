@@ -1,18 +1,19 @@
+import datetime
 import logging
 import signal
-import time
-import datetime
-# import random
-from threading import Thread, Event  # , Lock, Condition
-from array import array
 import struct
+import time
+from array import array
+
+# import random
+from threading import Event, Thread  # , Lock, Condition
 
 import numpy as np
 
 from basil.dut import Dut
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
-conf = '''
+conf = """
 name    : test_eth
 version : 1.0
 
@@ -36,26 +37,27 @@ hw_drivers:
     interface : ETH
     base_addr : 0x0
 
-'''
+"""
 
 stop_thread = False
 
 
 class test_eth(RegisterHardwareLayer):
-    '''Register Hardware Layer.
+    """Register Hardware Layer.
 
     Implementation of advanced register operations.
-    '''
+    """
+
     _registers = {
-        'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
-        'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['readonly']}},
-        'SETUP': {'default': 0, 'descr': {'addr': 1, 'size': 8, 'offset': 0}},
-        'TEST_DATA': {'descr': {'addr': 2, 'size': 64, 'offset': 0}},
-        'BUS_WRITE_CNT': {'descr': {'addr': 10, 'size': 32, 'offset': 0}},
-        'TCP_WRITE_DLY': {'default': 0, 'descr': {'addr': 14, 'size': 16, 'offset': 0}},
-        'TCP_WRITE_CNT': {'descr': {'addr': 16, 'size': 64, 'offset': 0, 'properties': ['readonly']}},
-        'TCP_FAILED_WRITE_CNT': {'descr': {'addr': 24, 'size': 64, 'offset': 0, 'properties': ['readonly']}},
-        'TCP_RECV_WRITE_CNT': {'descr': {'addr': 32, 'size': 64, 'offset': 0, 'properties': ['readonly']}}
+        "RESET": {"descr": {"addr": 0, "size": 8, "properties": ["writeonly"]}},
+        "VERSION": {"descr": {"addr": 0, "size": 8, "properties": ["readonly"]}},
+        "SETUP": {"default": 0, "descr": {"addr": 1, "size": 8, "offset": 0}},
+        "TEST_DATA": {"descr": {"addr": 2, "size": 64, "offset": 0}},
+        "BUS_WRITE_CNT": {"descr": {"addr": 10, "size": 32, "offset": 0}},
+        "TCP_WRITE_DLY": {"default": 0, "descr": {"addr": 14, "size": 16, "offset": 0}},
+        "TCP_WRITE_CNT": {"descr": {"addr": 16, "size": 64, "offset": 0, "properties": ["readonly"]}},
+        "TCP_FAILED_WRITE_CNT": {"descr": {"addr": 24, "size": 64, "offset": 0, "properties": ["readonly"]}},
+        "TCP_RECV_WRITE_CNT": {"descr": {"addr": 32, "size": 64, "offset": 0, "properties": ["readonly"]}},
     }
 
 
@@ -64,17 +66,17 @@ class Test(object):
         self.dut = Dut(conf)
         self.dut.init()
         # fw_version = dut['ETH'].read(0x0000, 1)[0]
-        logging.info("Firmware version: %s" % self.dut['REGISTERS'].VERSION)
+        logging.info("Firmware version: %s" % self.dut["REGISTERS"].VERSION)
 
         signal.signal(signal.SIGINT, self.signal_handler)
-        logging.info('Press Ctrl-C to stop')
+        logging.info("Press Ctrl-C to stop")
 
         self.stop_thread = Event()
         self.total_tcp_err_cnt = 0
 
     def signal_handler(self, signum, frame):
-        logging.info('Pressed Ctrl-C...')
-        self.dut['REGISTERS'].TCP_WRITE_DLY = 0  # no TCP data
+        logging.info("Pressed Ctrl-C...")
+        self.dut["REGISTERS"].TCP_WRITE_DLY = 0  # no TCP data
         self.time_stop = time.time()
         self.stop_thread.set()
         signal.signal(signal.SIGINT, signal.SIG_DFL)  # setting default handler
@@ -85,13 +87,13 @@ class Test(object):
         self.test_tcp = test_tcp
         self.test_bus = test_bus
         # reset registers
-        self.dut['REGISTERS'].RESET
+        self.dut["REGISTERS"].RESET
         # setup register values
         # Monitor
         self.monitor_delay = monitor_interval  # Speed of displaying netowrk speed
         # TCP
         self.tcp_readout_delay = 0.1  # Delay between reading TCP buffer
-        self.dut['REGISTERS'].TCP_WRITE_DLY = 0  # no TCP data
+        self.dut["REGISTERS"].TCP_WRITE_DLY = 0  # no TCP data
         self.time_start = time.time()
         self.total_tcp_err_cnt = 0
         self.total_tcp_data_words_read = 0
@@ -105,19 +107,19 @@ class Test(object):
         self.bus_read_write_speeds = None
         # initializing threads
         self.stop_thread.clear()
-        self.mon_t = Thread(target=self.monitor, name='Monitor thread', kwargs={})
+        self.mon_t = Thread(target=self.monitor, name="Monitor thread", kwargs={})
         self.mon_t.daemon = True
         self.mon_t.start()
         if test_tcp:
-            self.tcp_t = Thread(target=self.tcp_read, name='TCP thread', kwargs={})
+            self.tcp_t = Thread(target=self.tcp_read, name="TCP thread", kwargs={})
             self.tcp_t.daemon = True
             self.tcp_t.start()
         if test_bus:
-            self.bus_t = Thread(target=self.bus_read_write, name='BUS thread', kwargs={})
+            self.bus_t = Thread(target=self.bus_read_write, name="BUS thread", kwargs={})
             self.bus_t.daemon = True
             self.bus_t.start()
         if test_tcp:
-            self.dut['REGISTERS'].TCP_WRITE_DLY = tcp_write_delay  # set TCP write delay: 1 equivalent to write data every clock cycle (1/133MHz=0.0075us=7.5ns)
+            self.dut["REGISTERS"].TCP_WRITE_DLY = tcp_write_delay  # set TCP write delay: 1 equivalent to write data every clock cycle (1/133MHz=0.0075us=7.5ns)
         self.time_start = time.time()
         self.time_stop = self.time_start + 1.0
         # while loop for signal handler
@@ -142,8 +144,10 @@ class Test(object):
             logging.info("=== TCP transfer statistics ===")
             logging.info("TCP data error counter: %d" % self.total_tcp_err_cnt)
             logging.info("TCP exception counter: %d" % self.tcp_exception_cnt)
-            logging.info("TCP write busy counter: %d" % self.dut['REGISTERS'].TCP_FAILED_WRITE_CNT)
-            logging.info("TCP data words: read: %d, expected: %d" % (self.dut['REGISTERS'].TCP_WRITE_CNT * 4 + self.dut['REGISTERS'].TCP_RECV_WRITE_CNT, self.total_tcp_data_words_read * 4))
+            logging.info("TCP write busy counter: %d" % self.dut["REGISTERS"].TCP_FAILED_WRITE_CNT)
+            logging.info(
+                "TCP data words: read: %d, expected: %d" % (self.dut["REGISTERS"].TCP_WRITE_CNT * 4 + self.dut["REGISTERS"].TCP_RECV_WRITE_CNT, self.total_tcp_data_words_read * 4)
+            )
             if self.total_tcp_data_words_read * 4 / 10.0**6 > 1000000:
                 logging.info("Total amount transmitted: %.2f TB" % (self.total_tcp_data_words_read * 4 / 10.0**12))
             elif self.total_tcp_data_words_read * 4 / 10.0**6 > 1000:
@@ -157,15 +161,26 @@ class Test(object):
                 logging.info("Total average TCP read speed: %.2f Mbit/s" % (total_tcp_avg_read_speed))
             if self.tcp_read_speeds:
                 if np.average(self.tcp_read_speeds) < 1.0:
-                    logging.info("TCP read speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f kbit/s" % (np.min(self.tcp_read_speeds) * 10**3, np.median(self.tcp_read_speeds) * 10**3, np.average(self.tcp_read_speeds) * 10**3, np.max(self.tcp_read_speeds) * 10**3))
+                    logging.info(
+                        "TCP read speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f kbit/s"
+                        % (
+                            np.min(self.tcp_read_speeds) * 10**3,
+                            np.median(self.tcp_read_speeds) * 10**3,
+                            np.average(self.tcp_read_speeds) * 10**3,
+                            np.max(self.tcp_read_speeds) * 10**3,
+                        )
+                    )
                 else:
-                    logging.info("TCP read speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f Mbit/s" % (np.min(self.tcp_read_speeds), np.median(self.tcp_read_speeds), np.average(self.tcp_read_speeds), np.max(self.tcp_read_speeds)))
+                    logging.info(
+                        "TCP read speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f Mbit/s"
+                        % (np.min(self.tcp_read_speeds), np.median(self.tcp_read_speeds), np.average(self.tcp_read_speeds), np.max(self.tcp_read_speeds))
+                    )
 
         if test_bus:
             logging.info("=== BUS transfer statistics ===")
             logging.info("BUS data error counter: %d" % self.total_bus_err_cnt)
             logging.info("BUS exception counter: %d" % self.bus_exception_cnt)
-            logging.info("BUS read/write counter: read: %d, expected: %d" % (self.dut['REGISTERS'].BUS_WRITE_CNT, self.total_bus_read_write_cnt * 8))
+            logging.info("BUS read/write counter: read: %d, expected: %d" % (self.dut["REGISTERS"].BUS_WRITE_CNT, self.total_bus_read_write_cnt * 8))
             if self.total_bus_read_write_cnt * 8 / 10.0**6 > 1000000:
                 logging.info("Total amount transmitted: %.2f TB" % (self.total_bus_read_write_cnt * 8 / 10.0**12))
             elif self.total_bus_read_write_cnt * 8 / 10.0**6 > 1000:
@@ -179,9 +194,20 @@ class Test(object):
                 logging.info("Total average BUS read/write speed: %.2f Mbit/s" % (total_bus_avg_read_speed))
             if self.bus_read_write_speeds:
                 if np.average(self.bus_read_write_speeds) < 1.0:
-                    logging.info("BUS read/write speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f kbit/s" % (np.min(self.bus_read_write_speeds) * 10**3, np.median(self.bus_read_write_speeds) * 10**3, np.average(self.bus_read_write_speeds) * 10**3, np.max(self.bus_read_write_speeds) * 10**3))
+                    logging.info(
+                        "BUS read/write speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f kbit/s"
+                        % (
+                            np.min(self.bus_read_write_speeds) * 10**3,
+                            np.median(self.bus_read_write_speeds) * 10**3,
+                            np.average(self.bus_read_write_speeds) * 10**3,
+                            np.max(self.bus_read_write_speeds) * 10**3,
+                        )
+                    )
                 else:
-                    logging.info("BUS read/write speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f Mbit/s" % (np.min(self.bus_read_write_speeds), np.median(self.bus_read_write_speeds), np.average(self.bus_read_write_speeds), np.max(self.bus_read_write_speeds)))
+                    logging.info(
+                        "BUS read/write speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f Mbit/s"
+                        % (np.min(self.bus_read_write_speeds), np.median(self.bus_read_write_speeds), np.average(self.bus_read_write_speeds), np.max(self.bus_read_write_speeds))
+                    )
 
         # close DUT
         self.dut.close()
@@ -231,7 +257,7 @@ class Test(object):
         while not self.stop_thread.wait(max(0.0, self.tcp_readout_delay - time_read + time.time())) or fifo_was_empty < 1:
             time_read = time.time()
             try:
-                fifo_data = self.dut['SITCP_FIFO'].get_data()
+                fifo_data = self.dut["SITCP_FIFO"].get_data()
             except Exception as e:
                 logging.error(e)
                 self.tcp_exception_cnt += 1
@@ -259,32 +285,38 @@ class Test(object):
             time_read = time.time()
             write_value = int(np.random.randint(2**64, size=None, dtype=np.uint64))  # random.randint(0, 2**64 - 1)
             try:
-                self.dut['REGISTERS'].TEST_DATA = write_value
+                self.dut["REGISTERS"].TEST_DATA = write_value
             except Exception as e:
                 logging.error(e)
                 self.bus_exception_cnt += 1
             else:
                 try:
-                    read_value = self.dut['REGISTERS'].TEST_DATA
+                    read_value = self.dut["REGISTERS"].TEST_DATA
                 except Exception as e:
                     logging.error(e)
                     self.bus_exception_cnt += 1
                 else:
                     self.total_bus_read_write_cnt += 1
                     if read_value != write_value:
-                        logging.warning("BUS data not correct: read: %s, expected: %s" % (array('B', struct.unpack("BBBBBBBB", struct.pack("Q", read_value))), array('B', struct.unpack("BBBBBBBB", struct.pack("Q", write_value)))))
+                        logging.warning(
+                            "BUS data not correct: read: %s, expected: %s"
+                            % (array("B", struct.unpack("BBBBBBBB", struct.pack("Q", read_value))), array("B", struct.unpack("BBBBBBBB", struct.pack("Q", write_value))))
+                        )
                         self.total_bus_err_cnt += 1
         logging.info("Stopping BUS thread...")
 
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description='Testing MMC3 Ethernet Interface %s\nExample: python test_eth.py -t 1.0 -d 6 --no-bus', formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('-w', '--deadline', type=float, metavar='<deadline>', action='store', help='timeout in seconds before application exits')
-    parser.add_argument('-i', '--interval', type=float, metavar='<interval time>', action='store', help='time interval in seconds for the monitor')
-    parser.add_argument('-d', '--delay', type=int, metavar='<clock cycles>', action='store', help='clock cycles between TCP writes')
-    parser.add_argument('--no-bus', dest='no_bus', action='store_true', help='disable BUS tests')
-    parser.add_argument('--no-tcp', dest='no_tcp', action='store_true', help='disable TCP downstream tests')
+
+    parser = argparse.ArgumentParser(
+        description="Testing MMC3 Ethernet Interface %s\nExample: python test_eth.py -t 1.0 -d 6 --no-bus", formatter_class=argparse.RawTextHelpFormatter
+    )
+    parser.add_argument("-w", "--deadline", type=float, metavar="<deadline>", action="store", help="timeout in seconds before application exits")
+    parser.add_argument("-i", "--interval", type=float, metavar="<interval time>", action="store", help="time interval in seconds for the monitor")
+    parser.add_argument("-d", "--delay", type=int, metavar="<clock cycles>", action="store", help="clock cycles between TCP writes")
+    parser.add_argument("--no-bus", dest="no_bus", action="store_true", help="disable BUS tests")
+    parser.add_argument("--no-tcp", dest="no_tcp", action="store_true", help="disable TCP downstream tests")
     parser.set_defaults(no_m26_jtag_configuration=False)
     args = parser.parse_args()
 

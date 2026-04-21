@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -8,7 +8,7 @@
 `default_nettype none
 
 
-module BUFG ( 
+module BUFG (
     input wire I,
     output wire O
 );

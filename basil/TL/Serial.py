@@ -14,28 +14,27 @@ logger = logging.getLogger(__name__)
 
 
 class Serial(TransferLayer):
-    '''Transfer layer of serial device using the pySerial module.
-    '''
+    """Transfer layer of serial device using the pySerial module."""
 
     def __init__(self, conf):
         super(Serial, self).__init__(conf)
         self._port = None
 
     def init(self):
-        '''
+        """
         Initialize serial device.
         Parameters of serial.Serial: http://pyserial.sourceforge.net/pyserial_api.html
         Plus termination string parameter eol
-        '''
+        """
         super(Serial, self).init()
-        self.read_termination = self._init.get('read_termination', None)
-        self.write_termination = self._init.get('write_termination', self.read_termination)
+        self.read_termination = self._init.get("read_termination", None)
+        self.write_termination = self._init.get("write_termination", self.read_termination)
         try:
-            self.read_termination = bytes(self.read_termination, 'utf-8')
-            self.write_termination = bytes(self.write_termination, 'utf-8')
+            self.read_termination = bytes(self.read_termination, "utf-8")
+            self.write_termination = bytes(self.write_termination, "utf-8")
         except TypeError as e:
             logger.debug(e)
-        self.timeout = self._init.get('timeout', None)  # timeout of 0 returns immediately
+        self.timeout = self._init.get("timeout", None)  # timeout of 0 returns immediately
 
         # make interface compatible with other transfer layes (visa)
         if "baud_rate" in self._init.keys():
@@ -50,12 +49,12 @@ class Serial(TransferLayer):
     def write(self, data):
         if self.write_termination is None:
             try:
-                self._port.write(bytes(data, 'utf-8'))
+                self._port.write(bytes(data, "utf-8"))
             except TypeError:  # Python 2.7
                 self._port.write(bytes(data))
         else:
             try:
-                self._port.write(bytes(data, 'utf-8') + self.write_termination)
+                self._port.write(bytes(data, "utf-8") + self.write_termination)
             except TypeError:  # Python 2.7
                 self._port.write(bytes(data + self.write_termination))
 
@@ -77,7 +76,7 @@ class Serial(TransferLayer):
         # 2. termination of "" will return immediately
         # 3. timeout of None will never return
         if not self.read_termination and self.timeout is None:
-            raise RuntimeError('Requested serial read will not terminate due to missing termination string and missing timeout')
+            raise RuntimeError("Requested serial read will not terminate due to missing termination string and missing timeout")
 
         data = bytearray()
         count = len(self.read_termination) if self.read_termination else 0
@@ -86,4 +85,4 @@ class Serial(TransferLayer):
             data += character
             if not character:
                 break
-        return data.decode('utf-8', errors='ignore')
+        return data.decode("utf-8", errors="ignore")

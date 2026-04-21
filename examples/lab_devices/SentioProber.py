@@ -1,14 +1,15 @@
-from basil.dut import Dut
 import os
 import sys
 
+from basil.dut import Dut
+
 print(os.path.dirname(sys.executable))
 # Sentio Prober Control
-dut = Dut('SentioProber_config.yaml')
+dut = Dut("SentioProber_config.yaml")
 dut.init()
 
 # print(dut['Prober'].separate())
-print(dut['Prober'].set_position(160000, -40000))
+print(dut["Prober"].set_position(160000, -40000))
 # print(dut['Prober'].move_position(100,-50))
 # print(dut['Prober'].get_position())
 # print(dut['Prober'].goto_next_die())

@@ -65,7 +65,7 @@ void setup() {
 
 
 void loop() {
-  
+
   if (Serial.available()) {
 
     processIncoming();
@@ -100,7 +100,7 @@ void loop() {
           varPin = atoi(serialBuffer);
           processIncoming();
           varState = atoi(serialBuffer);
-          
+
           if (varPin == 99) {
             for (int x = 2; x <= 11; x++){
               digitalWrite(x, varState);

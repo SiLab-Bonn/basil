@@ -4,7 +4,7 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
- 
+
 module gpio_core #(
     parameter ABUSWIDTH = 16,
     parameter IO_WIDTH = 8,

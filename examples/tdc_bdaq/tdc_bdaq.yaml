@@ -47,7 +47,7 @@ registers:
     type      : TrackRegister
     hw_driver : SEQ_GEN
     seq_width : 8
-    seq_size  : 65535 
+    seq_size  : 65535
     tracks:
       - name      : TDC_TRIGGER_IN
         position  : 0

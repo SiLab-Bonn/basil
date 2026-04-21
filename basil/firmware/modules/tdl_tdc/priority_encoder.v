@@ -21,7 +21,7 @@
        endfunction
 
        // converts a onehot vector to binary
-       function [3:0] onehot2bin; 
+       function [3:0] onehot2bin;
 	       input [96/6 - 2 : 0] onehot;
 	       integer i;
 	       begin
@@ -52,10 +52,10 @@
        //reg [96-1 : 0] position, position_dly;
        integer j;
        always @(posedge CLK) begin
-	       
+
 	       for(j =0; j<96/6; j = j + 1) begin //corse position is calculated in thermo
 		       corse_code[j] <= (sample[j*6 +: 6] == 6'b111111) ? 1 : 0;
-	       end 
+	       end
 	       bins_extended <= {8'h00, sample};
 	       // cycle
 	       corse_position <= onehot2bin(therm2onehot(corse_code)); //conversion to binary
@@ -68,6 +68,5 @@
 	       //cycle
 
        end
-       
-       endmodule
 
+       endmodule

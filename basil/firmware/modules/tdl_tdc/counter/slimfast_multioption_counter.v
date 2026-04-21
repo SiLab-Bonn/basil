@@ -89,7 +89,7 @@ input wire count;
 input wire reset;
 
 input wire [size-3:0] highbits_next;
-output wire [size-3:0] highbits_this; 
+output wire [size-3:0] highbits_this;
 
 output wire [outputwidth-1:0] countout;
 
@@ -99,7 +99,7 @@ wire final_reset;
 
 reg [2:0] fast_counts = 3'b0;
 (* KEEP = "true" *) reg [size-3:0] SFC_slow_counts = 'b0;		//SFC_ prefix to make this name unique
-wire [size-3:0] slow_counts_next;	
+wire [size-3:0] slow_counts_next;
 
 
 
@@ -123,7 +123,7 @@ generate
 			assign final_count = clipped_count;
 		end else	begin // I added this, so that one could switch from "clipped" to "not clipped" without changing the number of flip flop stages
 			reg piped_count;
-			always@(posedge countClock) 
+			always@(posedge countClock)
 			begin
 				piped_count <= count;
 			end
@@ -144,7 +144,7 @@ generate
 			if (final_reset == 1'b1)
 			begin
 
-				fast_counts <= 0; 
+				fast_counts <= 0;
 				SFC_slow_counts <= 0;
 
 			end else begin
@@ -155,13 +155,13 @@ generate
 				end
 
 				//-- uses final_count as CE
-				if (final_count == 1'b1) fast_counts <= fast_counts + 1'b1; 
+				if (final_count == 1'b1) fast_counts <= fast_counts + 1'b1;
 
 			end
 
 	end
 
-endgenerate 
+endgenerate
 
 assign countout[outputwidth-1] = SFC_slow_counts[size-3];
 assign countout[outputwidth-2:0] = {SFC_slow_counts[size-4:0],fast_counts};

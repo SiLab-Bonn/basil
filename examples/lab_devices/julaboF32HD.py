@@ -5,12 +5,11 @@
 # ------------------------------------------------------------
 #
 
-''' Example how to use the chiller.
-'''
+"""Example how to use the chiller."""
 
 from basil.dut import Dut
 
-dut = Dut('julaboF32HD.yaml')
+dut = Dut("julaboF32HD.yaml")
 dut.init()
 print("ID: {}".format(dut["chiller"].get_identifier()))
 print("Status: {}".format(dut["chiller"].get_status()))

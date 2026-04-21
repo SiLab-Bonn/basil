@@ -21,7 +21,7 @@ jobs:
 
   tests:
 
-    name: Python ${{matrix.python-version}} | ${{matrix.sim}} 
+    name: Python ${{matrix.python-version}} | ${{matrix.sim}}
     runs-on: ubuntu-24.04
     env:
       SIM: ${{matrix.sim}}

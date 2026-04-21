@@ -1,12 +1,9 @@
 import os
-
 from pathlib import Path
 
-from six import string_types
-
 import pyvisa
-
 import ruamel.yaml
+from six import string_types
 
 
 def query_identification(rm, resource, baud_rate, read_termination=None, write_termination=None, timeout=1000 * 5):
@@ -39,12 +36,7 @@ def query_identification(rm, resource, baud_rate, read_termination=None, write_t
     return reply
 
 
-def find_usb_binds(rm, log,
-                   instruments,
-                   binds_to_skip=[],
-                   memorized_binds={},
-                   timeout=1000 * 4
-                   ):
+def find_usb_binds(rm, log, instruments, binds_to_skip=[], memorized_binds={}, timeout=1000 * 4):
     """
     Finds the USB bind for each instrument in the given list of instruments.
 
@@ -68,9 +60,7 @@ def find_usb_binds(rm, log,
         dict: A dictionary mapping the identification strings of the instruments
             to their corresponding USB binds.
     """
-    skip_binds = binds_to_skip + [
-        str(Path(f"/dev/{bind}").resolve()) for bind in binds_to_skip
-    ]
+    skip_binds = binds_to_skip + [str(Path(f"/dev/{bind}").resolve()) for bind in binds_to_skip]
 
     results = {}
 
@@ -82,8 +72,8 @@ def find_usb_binds(rm, log,
         if "port" in instrument.keys():
             port = instrument.get("port")
 
-            if 'ASRL' not in port:
-                port = f'ASRL{port}::INSTR'
+            if "ASRL" not in port:
+                port = f"ASRL{port}::INSTR"
             if port in resources:
                 resources = (port,) + resources
 
@@ -105,7 +95,7 @@ def find_usb_binds(rm, log,
                     log.debug(f"Found memorized bind {res}")
                     result = memorized_binds[res]
                 else:
-                    result = query_identification(rm, res, instrument['baud_rate'], instrument['read_termination'], instrument['write_termination'], timeout=timeout)
+                    result = query_identification(rm, res, instrument["baud_rate"], instrument["read_termination"], instrument["write_termination"], timeout=timeout)
 
                     memorized_binds[res] = result
                     log.debug(f"Found {result.strip()}")
@@ -173,7 +163,7 @@ def load_yaml_with_comments(conf):
     elif isinstance(conf, string_types):  # parse the first YAML document in a stream
         yaml = ruamel.yaml.YAML()
         if os.path.isfile(conf):
-            with open(conf, 'r') as f:
+            with open(conf, "r") as f:
                 yaml = ruamel.yaml.YAML()
                 conf_dict.update(yaml.load(f))
         else:  # YAML string
@@ -181,7 +171,7 @@ def load_yaml_with_comments(conf):
                 conf_dict.update(yaml.load(conf))
             except ValueError:  # invalid path/filename
                 raise IOError("File not found: %s" % conf)
-    elif hasattr(conf, 'read'):  # parse the first YAML document in a stream
+    elif hasattr(conf, "read"):  # parse the first YAML document in a stream
         yaml = ruamel.yaml.YAML()
         conf_dict.update(yaml.load(conf))
         conf.close()
@@ -213,11 +203,7 @@ def modify_basil_config(conf, log, skip_binds=[], save_modified=None):
 
     # Iterate over transfer layers in the configuration
     for i, tf in enumerate(conf["transfer_layer"]):
-        if (
-            "identification" not in tf["init"].keys()
-            or "read_termination" not in tf["init"].keys()
-            or not any(e in tf["init"].keys() for e in ["baud_rate", "baudrate"])
-        ):
+        if "identification" not in tf["init"].keys() or "read_termination" not in tf["init"].keys() or not any(e in tf["init"].keys() for e in ["baud_rate", "baudrate"]):
             log.debug(f"Skipping {tf['type']} transfer layer with name {tf['name']}")
             continue
 
@@ -232,13 +218,15 @@ def modify_basil_config(conf, log, skip_binds=[], save_modified=None):
         else:
             port = None
 
-        instruments.append({
-            "identification": instrument,
-            "baud_rate": baud_rate,
-            "read_termination": read_termination,
-            "write_termination": write_termination,
-            "port": port,
-        })
+        instruments.append(
+            {
+                "identification": instrument,
+                "baud_rate": baud_rate,
+                "read_termination": read_termination,
+                "write_termination": write_termination,
+                "port": port,
+            }
+        )
 
         insts_idx_map[instrument.lower().strip()] = i
 
@@ -255,8 +243,8 @@ def modify_basil_config(conf, log, skip_binds=[], save_modified=None):
 
     if save_modified is not None:
         yaml = ruamel.yaml.YAML()
-        log.info(f'Saving modified periphery file: {save_modified}')
-        with open(save_modified, 'w') as f:
+        log.info(f"Saving modified periphery file: {save_modified}")
+        with open(save_modified, "w") as f:
             yaml.dump(conf, f)
 
     for inst in found_binds.keys():

@@ -9,8 +9,7 @@ from basil.HL.scpi import scpi
 
 
 class agilent33250a(scpi):
-    '''Interface for Agilent 33250A Function/Arbitrary Waveform Generator implementing additional functionality.
-    '''
+    """Interface for Agilent 33250A Function/Arbitrary Waveform Generator implementing additional functionality."""
 
     def __init__(self, intf, conf):
         super(agilent33250a, self).__init__(intf, conf)
@@ -21,25 +20,25 @@ class agilent33250a(scpi):
     def get_repeat(self, repeat):
         raise NotImplementedError("get_repeat() not implemented")
 
-    def set_voltage(self, low, high=0.75, unit='mV'):
-        if unit == 'raw':
+    def set_voltage(self, low, high=0.75, unit="mV"):
+        if unit == "raw":
             raw_low, raw_high = low, high
-        elif unit == 'V':
+        elif unit == "V":
             raw_low, raw_high = low, high
-        elif unit == 'mV':
+        elif unit == "mV":
             raw_low, raw_high = low * 0.001, high * 0.001
         else:
             raise TypeError("Invalid unit type.")
         self.set_voltage_high(raw_high)
         self.set_voltage_low(raw_low)
 
-    def get_voltage(self, channel, unit='mV'):
+    def get_voltage(self, channel, unit="mV"):
         raw_low, raw_high = float(self.get_voltage_low()), float(self.get_voltage_high())
-        if unit == 'raw':
+        if unit == "raw":
             return raw_low, raw_high
-        elif unit == 'V':
+        elif unit == "V":
             return raw_low, raw_high
-        elif unit == 'mV':
+        elif unit == "mV":
             return raw_low * 1000, raw_high * 1000
         else:
             raise TypeError("Invalid unit type.")

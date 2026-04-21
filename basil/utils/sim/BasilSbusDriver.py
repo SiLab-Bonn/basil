@@ -8,8 +8,8 @@
 # pylint: disable=pointless-statement, expression-not-assigned
 
 
+from cocotb.triggers import ReadOnly, RisingEdge
 from cocotb.types import LogicArray
-from cocotb.triggers import RisingEdge, ReadOnly
 from cocotb_bus.drivers import BusDriver
 
 
@@ -68,7 +68,6 @@ class BasilSbusDriver(BusDriver):
         byte = 0
 
         while byte < size:
-
             await RisingEdge(self.clock)
 
             if self._has_byte_acces and self.bus.BUS_BYTE_ACCESS.value == 0:
@@ -102,7 +101,6 @@ class BasilSbusDriver(BusDriver):
         return result
 
     async def write(self, address, data):
-
         await RisingEdge(self.clock)
 
         for index, byte in enumerate(data):

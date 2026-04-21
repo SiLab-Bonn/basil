@@ -9,17 +9,17 @@ from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
 class seq_rec(RegisterHardwareLayer):
-    '''Sequencer receiver controller interface for seq_rec FPGA module.
-    '''
+    """Sequencer receiver controller interface for seq_rec FPGA module."""
 
-    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
-                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
-                  'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
-                  'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
-                  'EN_EXT_START': {'descr': {'addr': 2, 'size': 8}},
-                  'SIZE': {'descr': {'addr': 4, 'size': 32}},
-                  'MEM_BYTES': {'descr': {'addr': 8, 'size': 32, 'properties': ['ro']}},
-                  }
+    _registers = {
+        "RESET": {"descr": {"addr": 0, "size": 8, "properties": ["writeonly"]}},
+        "VERSION": {"descr": {"addr": 0, "size": 8, "properties": ["ro"]}},
+        "READY": {"descr": {"addr": 1, "size": 1, "properties": ["ro"]}},
+        "START": {"descr": {"addr": 1, "size": 8, "properties": ["writeonly"]}},
+        "EN_EXT_START": {"descr": {"addr": 2, "size": 8}},
+        "SIZE": {"descr": {"addr": 4, "size": 32}},
+        "MEM_BYTES": {"descr": {"addr": 8, "size": 32, "properties": ["ro"]}},
+    }
     _require_version = "==1"
 
     def __init__(self, intf, conf):
@@ -66,8 +66,8 @@ class seq_rec(RegisterHardwareLayer):
 
     def get_data(self, size=None, addr=0):
         if size and self._seq_mem_size < size:
-            raise ValueError('Size is too big memory=%d requested_size=%d' % (self._seq_mem_size, size))
+            raise ValueError("Size is too big memory=%d requested_size=%d" % (self._seq_mem_size, size))
         if not size:
-            return self._intf.read(self._conf['base_addr'] + self._seq_mem_offset + addr, self._seq_mem_size)
+            return self._intf.read(self._conf["base_addr"] + self._seq_mem_offset + addr, self._seq_mem_size)
         else:
-            return self._intf.read(self._conf['base_addr'] + self._seq_mem_offset + addr, size)
+            return self._intf.read(self._conf["base_addr"] + self._seq_mem_offset + addr, size)

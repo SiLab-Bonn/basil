@@ -6,25 +6,19 @@ class I2CTransmissionError(ValueError):
 
 
 class SerialToI2C(ArduinoBase):
-
-    CMDS = {
-        'write': 'W',
-        'read': 'R',
-        'address': 'A',
-        'check': 'T'
-    }
+    CMDS = {"write": "W", "read": "R", "address": "A", "check": "T"}
 
     ERRORS = {
-        'error': "Serial transmission error"  # Custom return code for unsuccesful serial communciation
+        "error": "Serial transmission error"  # Custom return code for unsuccesful serial communciation
     }
 
     # Check https://www.arduino.cc/en/Reference/WireEndTransmission
     I2C_RETURN_CODES = {
-        '0': "Success",
-        '1': "Data too long to fit in transmit buffer",
-        '2': "Received NACK on transmit of address",
-        '3': "Received NACK on transmit of data",
-        '4': "Other error"
+        "0": "Success",
+        "1": "Data too long to fit in transmit buffer",
+        "2": "Received NACK on transmit of address",
+        "3": "Received NACK on transmit of data",
+        "4": "Other error",
     }
 
     @property
@@ -37,7 +31,7 @@ class SerialToI2C(ArduinoBase):
         int
             I2C address
         """
-        return int(self.query(self.create_command(self.CMDS['address'])))
+        return int(self.query(self.create_command(self.CMDS["address"])))
 
     @i2c_address.setter
     def i2c_address(self, addr):
@@ -54,7 +48,7 @@ class SerialToI2C(ArduinoBase):
         I2CTransmissionError
             If the set address on the Arduino does not match with what has been sent
         """
-        self._set_and_retrieve(cmd='address', val=int(addr), exception_=I2CTransmissionError)
+        self._set_and_retrieve(cmd="address", val=int(addr), exception_=I2CTransmissionError)
 
     def __init__(self, intf, conf):
         super(SerialToI2C, self).__init__(intf, conf)
@@ -85,7 +79,7 @@ class SerialToI2C(ArduinoBase):
         try:
             i2c_return_code = self.query(msg)
 
-            if i2c_return_code != '0':
+            if i2c_return_code != "0":
                 if i2c_return_code not in self.I2C_RETURN_CODES:
                     raise NotImplementedError(f"Unknown return code {i2c_return_code}")
                 raise I2CTransmissionError(self.I2C_RETURN_CODES[i2c_return_code])
@@ -109,7 +103,7 @@ class SerialToI2C(ArduinoBase):
         int
             Data read from *reg*
         """
-        self.query_i2c(self.create_command(self.CMDS['read'], reg))
+        self.query_i2c(self.create_command(self.CMDS["read"], reg))
         return int(self.read())
 
     def write_register(self, reg, data):
@@ -123,10 +117,10 @@ class SerialToI2C(ArduinoBase):
         data : int
             Data to write to register *reg*
         """
-        self.query_i2c(self.create_command(self.CMDS['write'], reg, data))
+        self.query_i2c(self.create_command(self.CMDS["write"], reg, data))
 
     def check_i2c_connection(self):
         """
         Checks the i2c connection from arduino to bus device
         """
-        self.query_i2c(self.create_command(self.CMDS['check']))
+        self.query_i2c(self.create_command(self.CMDS["check"]))

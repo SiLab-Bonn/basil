@@ -4,16 +4,17 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-from basil.HL.RegisterHardwareLayer import HardwareLayer
 import logging
 import time
+
+from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 logger = logging.getLogger(__name__)
 # logger.setLevel(logging.DEBUG)
 
 
 class Mercury(HardwareLayer):
-    '''Driver for the Physiks Instruments Mercury Controller.
+    """Driver for the Physiks Instruments Mercury Controller.
     A protocoll via RS 232 serial port is used with 9600/19200/38400/115200 baud rate. The baud rate
     can be set with dip switches, as well as a hardware address to distinguish several
     devices on one line. Keep in mind that the address that is set via the DIP switches corresponds
@@ -26,7 +27,7 @@ class Mercury(HardwareLayer):
     https://twiki.cern.ch/twiki/pub/ILCBDSColl/Phase2Preparations/MercuryNativeCommands_MS176E101.pdf
     The overall manual:
     https://www.le.infn.it/~chiodini/allow_listing/pi/Manuals/C-863_Benutzerhandbuch_Kurzversion_MS205Dqu200.pdf
-    '''
+    """
 
     def __init__(self, intf, conf):
         super(Mercury, self).__init__(intf, conf)
@@ -40,7 +41,7 @@ class Mercury(HardwareLayer):
                 self._board_numbers.append(board_n)
 
     def write(self, value):
-        msg = value + '\r'.encode()  # msg has CR at the end
+        msg = value + "\r".encode()  # msg has CR at the end
         self._intf.write(msg)
 
     def read(self):

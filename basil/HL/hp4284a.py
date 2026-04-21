@@ -6,6 +6,7 @@
 #
 
 import logging
+
 from basil.HL.scpi import scpi
 
 
@@ -48,10 +49,10 @@ def get_meas_func(self, meas_func):
         self._check_trigger()
 
         # Get primary and secondary measurement quantities as well as the measurement status
-        primary_meas, secondary_meas, meas_status = self.get_value().strip().split(',')
+        primary_meas, secondary_meas, meas_status = self.get_value().strip().split(",")
 
         # Check status
-        if meas_status != '+0':
+        if meas_status != "+0":
             if meas_status not in self.ERROR_STATES:
                 err_msg = f"Unknown measurement status {meas_status} retrieved"
             else:
@@ -71,35 +72,35 @@ class hp4284A(scpi):
 
     # Available measurement functions; see manual 8-24, p.264
     MEAS_FUNCS = {
-        'CPD': "Set function to C_p-D",
-        'CPQ': "Set function to C_p-Q",
-        'CPG': "Set function to C_p-G",
-        'CPRP': "Set function to C_p-R_p",
-        'CSD': "Set function to C_s-D",
-        'CSQ': "Set function to C_s-Q",
-        'CSRS': "Set function to C_s-R_s",
-        'LPQ': "Set function to L_p-Q",
-        'LPD': "Set function to L_p-D",
-        'LPG': "Set function to L_p-G",
-        'LPRP': "Set function to L_r-R_p",
-        'LSD': "Set function to L_s-D",
-        'LSQ': "Set function to L_s-Q",
-        'LSRS': "Set function to L_s-R_s",
-        'RX': "Set function to R-X",
-        'ZTD': "Set function to Z-Theta(deg)",
-        'ZTR': "Set function to Z-Theta(rad)",
-        'GB': "Set function to G-B",
-        'YTD': "Set function to Y-Theta(deg)",
-        'YTR': "Set function to Y-Theta(rad)"
+        "CPD": "Set function to C_p-D",
+        "CPQ": "Set function to C_p-Q",
+        "CPG": "Set function to C_p-G",
+        "CPRP": "Set function to C_p-R_p",
+        "CSD": "Set function to C_s-D",
+        "CSQ": "Set function to C_s-Q",
+        "CSRS": "Set function to C_s-R_s",
+        "LPQ": "Set function to L_p-Q",
+        "LPD": "Set function to L_p-D",
+        "LPG": "Set function to L_p-G",
+        "LPRP": "Set function to L_r-R_p",
+        "LSD": "Set function to L_s-D",
+        "LSQ": "Set function to L_s-Q",
+        "LSRS": "Set function to L_s-R_s",
+        "RX": "Set function to R-X",
+        "ZTD": "Set function to Z-Theta(deg)",
+        "ZTR": "Set function to Z-Theta(rad)",
+        "GB": "Set function to G-B",
+        "YTD": "Set function to Y-Theta(deg)",
+        "YTR": "Set function to Y-Theta(rad)",
     }
 
     # Measurement error states; see manual 7-8, p.208
     ERROR_STATES = {
-        '-1': "No data (in the data buffer memory)",
-        '+1': "Analog bridge is unbalanced",
-        '+2': "A/D converter is not working",
-        '+3': "Signal source overloaded",
-        '+4': "ALC unable to regulate"
+        "-1": "No data (in the data buffer memory)",
+        "+1": "Analog bridge is unbalanced",
+        "+2": "A/D converter is not working",
+        "+3": "Signal source overloaded",
+        "+4": "ALC unable to regulate",
     }
 
     @property
@@ -124,7 +125,7 @@ class hp4284A(scpi):
         ac : float, str
             AC voltage in V. Allowed string values 'MIN'/'MAX' for min/max values.
         """
-        self.set_ac_voltage(f'{ac}' if self._is_min_max(ac) else f'{ac} V')
+        self.set_ac_voltage(f"{ac}" if self._is_min_max(ac) else f"{ac} V")
 
     @property
     def frequency(self):
@@ -148,7 +149,7 @@ class hp4284A(scpi):
         freq : float, str
             Frequency in Hz. Allowed string values 'MIN'/'MAX' for min/max values.
         """
-        self.set_frequency(f'{freq}' if self._is_min_max(freq) else f'{freq}HZ')
+        self.set_frequency(f"{freq}" if self._is_min_max(freq) else f"{freq}HZ")
 
     def __init__(self, intf, conf):
         super(hp4284A, self).__init__(intf, conf)
@@ -172,8 +173,8 @@ class hp4284A(scpi):
         setattr(cls, meas_func, property(getter_func))
 
     def _is_min_max(self, val):
-        return val in ('MIN', 'MAX')
+        return val in ("MIN", "MAX")
 
     def _check_trigger(self):
-        if self.get_trigger_mode().strip() == 'HOLD':
+        if self.get_trigger_mode().strip() == "HOLD":
             self.trigger()

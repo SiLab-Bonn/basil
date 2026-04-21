@@ -31,11 +31,11 @@ Before every experiment, the Tdc should be calibrated, ideally after it had time
         chip['TDL_TDC'].EN_CALIBRATION_MOD = 0
 
 
- 
+
 
 This will cause the Tdc to write many ``CALIB`` words to the fifo. Subsequently any required configuration bits for the particular experiment may be set. During analysis the recorded
 calibration stream is easily incorporated::
-        
+
         calib_data_indices = chip['TDL_TDC'].is_calib_word(collected_data)
 
         if any(calib_data_indices) :
@@ -48,7 +48,7 @@ Optionally, you can view a histogram of the calibration using ``chip['TDL_TDC'].
         If measurements are made over a longer time span, recalibration might be necessary, however note that the above example lumps all the calibration(s) in ``collected_data`` together.
 
 The calibrated basil module can then be used the following way::
-        
+
         time_word_indices = chip['TDL_TDC'].is_time_word(collected_data)
         time_data = collected_data[time_word_indices]
         if any(calib_data_indices) :
@@ -60,7 +60,7 @@ The calibrated basil module can then be used the following way::
 Test module
 ----------------
 
-Under ``examples/tdc_bdaq`` you can find an example implementation of the module along side a sequence generator to generate test signals. The TDC uses the external Si570 oscillator while the signal generator uses the external Si550. The script generates pulses of varying trigger distance and creates a plot of the difference of measured and expected time values, alongside errorbars of the standard deviation. 
+Under ``examples/tdc_bdaq`` you can find an example implementation of the module along side a sequence generator to generate test signals. The TDC uses the external Si570 oscillator while the signal generator uses the external Si550. The script generates pulses of varying trigger distance and creates a plot of the difference of measured and expected time values, alongside errorbars of the standard deviation.
 
 **Unit test/Example:**
 `test_SimTdl_Tlu.v <https://github.com/SiLab-Bonn/basil/blob/tdl_tdc/tests/test_SimTdl_Tdc.v>`_
@@ -147,7 +147,7 @@ The Tdc module uses a state machine to send various types of 32 bit data words, 
 +-------------------------+-------------------+---------------------------------------------------------+
 
 The three bit codes for the individual word types can be found in `word_broker.v <https://github.com/SiLab-Bonn/basil/blob/tdl_tdc/basil/firmware/modules/tdl_tdc/word_broker.v>`_, but the basil driver can decode these without manual effort. The words containing the tdc information are in the following order::
-        
+
         [TRIGGERED] -> RISING -> FALLING -> [TIMESTAMP]
 
 ``TRIGGERED`` is only sent if ``EN_TRIGGER_DIST``, and ``TIMESTAMP`` only if ``EN_WRITE_TIMESTAMP`` is set. Note however, that this sequence can be interrupted and appear incomplete, for example if the module is reset during a measurement.
@@ -192,7 +192,7 @@ If the Tdc is set for self-calibration using ``EN_CALIBRATION_MODE``, it will re
 RESET
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 If a reset is issued to the Tdc, either as a global bus reset or through basil, this word is sent. It might be useful for resetting a state machine
-decoding the words on the receiving end. The Timestamp included is sampled as soon as 
+decoding the words on the receiving end. The Timestamp included is sampled as soon as
 the reset signal has passed the clock domain crossing circuitry.
 
 +-------------------------------------------------------------------+-----------------------------------+
@@ -212,5 +212,3 @@ In order to sample the delay elements at a high enough rate while still being ab
 The most distinct design choice in this implementation is that it uses only a single delay line for measuring rising and falling edges of two inputs. As rising and falling edges propagate delay elements differently it makes sense to treat with distinct calibrations or even separate delay lines. To circumvent this additional space requirement and complexity, we use a multiplexer co-ordinating which input, in which polarity, gets seen by the delay elements. This induces a lower bound on width of pulses we can measure as this input multiplexer needs some time to switch between signals. To drive the multiplexer we use a simple state machine, which also drives the word output generation in the ``word_broker`` module.
 
 .. image:: architecture.png
-
-

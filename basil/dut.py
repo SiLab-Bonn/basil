@@ -4,20 +4,21 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-import os
-from importlib import import_module
-from inspect import getmembers, isclass
-from yaml import safe_load
-import warnings
-from collections import OrderedDict
-from six import string_types
-
 # FIXME: Bad practice
 # Logger settings should not be defined in a module, but once by the
 # application developer. Thus outside of basil. Otherwise multiple calls to
 # the basic config are possible. This is left here at the moment for backward
 # compatibility and since our logging format is the same everywhere (?).
 import logging
+import os
+import warnings
+from collections import OrderedDict
+from importlib import import_module
+from inspect import getmembers, isclass
+
+from six import string_types
+from yaml import safe_load
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
 
 
@@ -29,27 +30,27 @@ class Base(object):
         self.parent = None
         self._init = {}
         self._conf = self._open_conf(conf)
-        if 'name' in self._conf:
-            self.name = self._conf['name']
-        if 'version' in self._conf:
-            self.version = self._conf['version']
-        if 'conf_path' in self._conf:
-            self.conf_path = self._conf['conf_path']
-        if 'parent' in self._conf:
-            self.parent = self._conf['parent']
-        if 'init' in self._conf:
-            self._update_init(self._conf['init'])
+        if "name" in self._conf:
+            self.name = self._conf["name"]
+        if "version" in self._conf:
+            self.version = self._conf["version"]
+        if "conf_path" in self._conf:
+            self.conf_path = self._conf["conf_path"]
+        if "parent" in self._conf:
+            self.parent = self._conf["parent"]
+        if "init" in self._conf:
+            self._update_init(self._conf["init"])
 
     def _open_conf(self, conf):
         def isFile(f):
-            return hasattr(f, 'read')
+            return hasattr(f, "read")
 
         conf_dict = {}
         if not conf:
             pass
         elif isinstance(conf, string_types):  # parse the first YAML document in a stream
             if os.path.isfile(conf):
-                with open(conf, 'r') as f:
+                with open(conf, "r") as f:
                     conf_dict.update(safe_load(f))
                     conf_dict.update(conf_path=f.name)
             else:  # YAML string
@@ -91,8 +92,8 @@ class Base(object):
 
 
 class Dut(Base):
-    '''Device
-    '''
+    """Device"""
+
     def __init__(self, conf):
         super(Dut, self).__init__(conf)
         self._transfer_layer = None
@@ -147,7 +148,7 @@ class Dut(Base):
         conf = self._open_conf(conf)
         if conf:
             for item, item_conf in conf.items():
-                if item != 'conf_path':
+                if item != "conf_path":
                     try:
                         self[item].set_configuration(item_conf)
                     except NotImplementedError:
@@ -180,73 +181,73 @@ class Dut(Base):
             self._conf = conf
 
         if not extend_config:
-            if 'name' in self._conf:
-                self.name = self._conf['name']
+            if "name" in self._conf:
+                self.name = self._conf["name"]
             else:
                 self.name = None
-            if 'version' in self._conf:
-                self.version = self._conf['version']
+            if "version" in self._conf:
+                self.version = self._conf["version"]
             else:
                 self.version = None
             self._transfer_layer = OrderedDict()
             self._hardware_layer = OrderedDict()
             self._registers = OrderedDict()
 
-        if 'transfer_layer' in conf:
-            for intf in conf['transfer_layer']:
-                intf['parent'] = self
+        if "transfer_layer" in conf:
+            for intf in conf["transfer_layer"]:
+                intf["parent"] = self
                 kargs = {}
-                kargs['conf'] = intf
-                self._transfer_layer[intf['name']] = self._factory('basil.TL.' + intf['type'], *(), **kargs)
+                kargs["conf"] = intf
+                self._transfer_layer[intf["name"]] = self._factory("basil.TL." + intf["type"], *(), **kargs)
 
-        if 'hw_drivers' in conf:
-            if conf['hw_drivers']:
-                for hwdrv in conf['hw_drivers']:
-                    hwdrv['parent'] = self
+        if "hw_drivers" in conf:
+            if conf["hw_drivers"]:
+                for hwdrv in conf["hw_drivers"]:
+                    hwdrv["parent"] = self
                     kargs = {}
-                    if 'interface' in hwdrv:
-                        if hwdrv['interface'].lower() == 'none':
-                            kargs['intf'] = None
+                    if "interface" in hwdrv:
+                        if hwdrv["interface"].lower() == "none":
+                            kargs["intf"] = None
                         else:
-                            kargs['intf'] = self._transfer_layer[hwdrv['interface']]
-                    elif 'hw_driver' in hwdrv:
-                        kargs['intf'] = self._hardware_layer[hwdrv['hw_driver']]
+                            kargs["intf"] = self._transfer_layer[hwdrv["interface"]]
+                    elif "hw_driver" in hwdrv:
+                        kargs["intf"] = self._hardware_layer[hwdrv["hw_driver"]]
                     else:
-                        kargs['intf'] = None
-                    kargs['conf'] = hwdrv
-                    self._hardware_layer[hwdrv['name']] = self._factory('basil.HL.' + hwdrv['type'], *(), **kargs)
+                        kargs["intf"] = None
+                    kargs["conf"] = hwdrv
+                    self._hardware_layer[hwdrv["name"]] = self._factory("basil.HL." + hwdrv["type"], *(), **kargs)
 
-        if 'user_drivers' in conf:
+        if "user_drivers" in conf:
             warnings.warn("Deprecated: user_drivers move modules to hw_drivers", DeprecationWarning)
-            if conf['user_drivers']:
-                for userdrv in conf['user_drivers']:
-                    userdrv['parent'] = self
+            if conf["user_drivers"]:
+                for userdrv in conf["user_drivers"]:
+                    userdrv["parent"] = self
                     kargs = {}
-                    kargs['intf'] = self._hardware_layer[userdrv['hw_driver']]
-                    kargs['conf'] = userdrv
-                    self._hardware_layer[userdrv['name']] = self._factory('basil.HL.' + userdrv['type'], *(), **kargs)
+                    kargs["intf"] = self._hardware_layer[userdrv["hw_driver"]]
+                    kargs["conf"] = userdrv
+                    self._hardware_layer[userdrv["name"]] = self._factory("basil.HL." + userdrv["type"], *(), **kargs)
 
-        if 'registers' in conf:
-            if conf['registers']:
-                for reg in conf['registers']:
-                    reg['parent'] = self
+        if "registers" in conf:
+            if conf["registers"]:
+                for reg in conf["registers"]:
+                    reg["parent"] = self
                     kargs = {}
-                    if 'driver' in reg:
-                        if not reg['driver'] or reg['driver'].lower() == 'none':
-                            kargs['driver'] = None
+                    if "driver" in reg:
+                        if not reg["driver"] or reg["driver"].lower() == "none":
+                            kargs["driver"] = None
                         else:
-                            kargs['driver'] = self._hardware_layer[reg['driver']]
-                        kargs['conf'] = reg
-                        self._registers[reg['name']] = self._factory('basil.RL.' + reg['type'], *(), **kargs)
-                    elif 'hw_driver' in reg:
-                        kargs['driver'] = self._hardware_layer[reg['hw_driver']]
-                        kargs['conf'] = reg
-                        self._registers[reg['name']] = self._factory('basil.RL.' + reg['type'], *(), **kargs)
+                            kargs["driver"] = self._hardware_layer[reg["driver"]]
+                        kargs["conf"] = reg
+                        self._registers[reg["name"]] = self._factory("basil.RL." + reg["type"], *(), **kargs)
+                    elif "hw_driver" in reg:
+                        kargs["driver"] = self._hardware_layer[reg["hw_driver"]]
+                        kargs["conf"] = reg
+                        self._registers[reg["name"]] = self._factory("basil.RL." + reg["type"], *(), **kargs)
                     else:
-                        raise ValueError('No driver specified for register: %s' % (reg['name'],))
+                        raise ValueError("No driver specified for register: %s" % (reg["name"],))
 
     def _factory(self, importname, *args, **kargs):
-        splitted_import_name = importname.split('.')
+        splitted_import_name = importname.split(".")
 
         def is_basil_base_class(item):
             return isclass(item) and issubclass(item, Base) and item.__module__ == importname
@@ -254,15 +255,15 @@ class Dut(Base):
         try:
             mod = import_module(importname)
         except ImportError:  # give it another try
-            if len(splitted_import_name) > 2 and splitted_import_name[0] == 'basil':
-                importname = '.'.join(splitted_import_name[2:])  # remove "basil.RL." etc.
+            if len(splitted_import_name) > 2 and splitted_import_name[0] == "basil":
+                importname = ".".join(splitted_import_name[2:])  # remove "basil.RL." etc.
                 mod = import_module(importname)
             else:  # raise initial exception
                 raise
         basil_base_classes = getmembers(mod, is_basil_base_class)
         cls = None
         if not basil_base_classes:  # found no base class
-            raise ValueError('Found no matching class in %s.' % importname)
+            raise ValueError("Found no matching class in %s." % importname)
         elif len(basil_base_classes) > 1:  # found more than 1 base class
             mod_name = splitted_import_name[-1]
             for basil_base_class in basil_base_classes:
@@ -270,7 +271,7 @@ class Dut(Base):
                     cls = basil_base_class[1]
                     break
             if cls is None:
-                raise ValueError('Found more than one matching class in %s.' % importname)
+                raise ValueError("Found more than one matching class in %s." % importname)
         else:  # found single class
             cls = basil_base_classes[0][1]
         return cls(*args, **kargs)
@@ -282,10 +283,10 @@ class Dut(Base):
             return self._hardware_layer[item]
         elif item in self._transfer_layer:
             return self._transfer_layer[item]
-        raise KeyError('Item not existing: %s' % (item,))
+        raise KeyError("Item not existing: %s" % (item,))
 
     def get_modules(self, type_name):
-        '''Getting modules by type name.
+        """Getting modules by type name.
 
         Parameters
         ----------
@@ -295,7 +296,7 @@ class Dut(Base):
         Returns
         -------
         List of modules of given type name else empty list.
-        '''
+        """
         modules = []
         for module in self:
             if module.__class__.__name__ == type_name:

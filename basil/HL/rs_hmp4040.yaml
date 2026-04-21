@@ -14,4 +14,3 @@ get_target_voltage: VOLT?
 get_target_current: CURR?
 set_ovp: VOLT:PROT
 get_ovp: VOLT:PROT?
-

@@ -5,21 +5,21 @@
 # ------------------------------------------------------------
 #
 ---
-name    : ExamplePixelDut 
+name    : ExamplePixelDut
 version : 0.01
 
 transfer_layer:
   - name  : usb
     type  : SiUsb # or SimSiUsb to run as simulation
-    init:      
+    init:
         bit_file : "./firmware/ise/pixel.bit"
         avoid_download : False
-    
-hw_drivers:    
+
+hw_drivers:
   - name      : DATA
     type      : sram_fifo
     interface : usb
-    base_addr : 0x10020 
+    base_addr : 0x10020
     base_data_addr: 0x0001000000000000
 
   - name      : SEQ_GEN
@@ -37,7 +37,7 @@ hw_drivers:
     type      : fast_spi_rx
     interface : usb
     base_addr : 0x10100
-  
+
   - name      : gpio
     type      : gpio
     interface : usb
@@ -57,15 +57,15 @@ registers:
     type        : StdRegister
     driver      : None
     size        : 144
-    fields  : 
-          - name     : global_readout_enable 
-            size     : 1         
+    fields  :
+          - name     : global_readout_enable
+            size     : 1
             offset   : 143
-          - name     : SRDO_load 
-            size     : 1         
+          - name     : SRDO_load
+            size     : 1
             offset   : 142
-          - name     : NCout2 
-            size     : 1         
+          - name     : NCout2
+            size     : 1
             offset   : 141
           - name     : count_hits_not
             size     : 1
@@ -138,11 +138,11 @@ registers:
     hw_driver   : SEQ_GEN
     seq_width   : 8
     seq_size    : 8192
-    tracks  : 
+    tracks  :
       - name     : SHIFT_IN
         position : 0
       - name     : GLOBAL_SHIFT_EN
-        position : 1  
+        position : 1
       - name     : GLOBAL_CTR_LD
         position : 2
       - name     : GLOBAL_DAC_LD

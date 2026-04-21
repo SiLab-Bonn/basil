@@ -1,4 +1,4 @@
-# Device description for the Keithley 2634b Sourcemeter. 
+# Device description for the Keithley 2634b Sourcemeter.
 # set_ function expect a parameter, get_ function return a parameter.
 # Just the very basic commands are implemented here.
 identifier : Keithley Instruments Inc., Model 2634B
@@ -69,7 +69,7 @@ channel 2:
     get_voltage_sense_range: print(smub.measure.rangev)
     set_mode_measure_current : display.smub.measure.func = display.MEASURE_DCAMPS
 
-    
+
 on : smua.source.output = 1
 off : smua.source.output = 0
 get_on : print(smua.source.output)
@@ -101,4 +101,3 @@ get_current_sense_range: print(smua.measure.rangei)
 set_voltage_sense_range: smua.measure.rangev =
 get_voltage_sense_range: print(smua.measure.rangev)
 set_mode_measure_current : display.smua.measure.func = display.MEASURE_DCAMPS
-

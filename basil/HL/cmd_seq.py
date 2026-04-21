@@ -7,39 +7,39 @@
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
-
 output_modes = {
-    'PE': 0,  # positive edge (default)
-    'NE': 1,  # negative edge
-    'MC': 2,  # Manchester Code IEEE 802.3 (for capacitively coupled transmission)
-    'MC_THOMAS': 3  # Manchester Code G.E. Thomas
+    "PE": 0,  # positive edge (default)
+    "NE": 1,  # negative edge
+    "MC": 2,  # Manchester Code IEEE 802.3 (for capacitively coupled transmission)
+    "MC_THOMAS": 3,  # Manchester Code G.E. Thomas
 }
 
 
 class cmd_seq(RegisterHardwareLayer):
-    '''FEI4 Command Sequencer Controller Interface for cmd_seq FPGA module.
-    '''
+    """FEI4 Command Sequencer Controller Interface for cmd_seq FPGA module."""
 
-    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
-                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
-                  'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
-                  'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
-                  'EN_EXT_TRIGGER': {'descr': {'addr': 2, 'size': 1, 'offset': 0}},
-                  'OUTPUT_MODE': {'descr': {'addr': 2, 'size': 2, 'offset': 1}},
-                  'CLOCK_GATE': {'descr': {'addr': 2, 'size': 1, 'offset': 3}},
-                  'CMD_PULSE': {'descr': {'addr': 2, 'size': 1, 'offset': 4}},
-                  'CMD_SIZE': {'descr': {'addr': 3, 'size': 16}},
-                  'CMD_REPEAT': {'descr': {'addr': 5, 'size': 32}},
-                  'START_SEQUENCE_LENGTH': {'descr': {'addr': 9, 'size': 16}},
-                  'STOP_SEQUENCE_LENGTH': {'descr': {'addr': 11, 'size': 16}},
-                  'OUTPUT_ENABLE': {'descr': {'addr': 13, 'size': 8}, 'default': 0xff}}
+    _registers = {
+        "RESET": {"descr": {"addr": 0, "size": 8, "properties": ["writeonly"]}},
+        "VERSION": {"descr": {"addr": 0, "size": 8, "properties": ["ro"]}},
+        "START": {"descr": {"addr": 1, "size": 8, "properties": ["writeonly"]}},
+        "READY": {"descr": {"addr": 1, "size": 1, "properties": ["ro"]}},
+        "EN_EXT_TRIGGER": {"descr": {"addr": 2, "size": 1, "offset": 0}},
+        "OUTPUT_MODE": {"descr": {"addr": 2, "size": 2, "offset": 1}},
+        "CLOCK_GATE": {"descr": {"addr": 2, "size": 1, "offset": 3}},
+        "CMD_PULSE": {"descr": {"addr": 2, "size": 1, "offset": 4}},
+        "CMD_SIZE": {"descr": {"addr": 3, "size": 16}},
+        "CMD_REPEAT": {"descr": {"addr": 5, "size": 32}},
+        "START_SEQUENCE_LENGTH": {"descr": {"addr": 9, "size": 16}},
+        "STOP_SEQUENCE_LENGTH": {"descr": {"addr": 11, "size": 16}},
+        "OUTPUT_ENABLE": {"descr": {"addr": 13, "size": 8}, "default": 0xFF},
+    }
     _require_version = "==1"
 
     def __init__(self, intf, conf):
         super(cmd_seq, self).__init__(intf, conf)
         self._cmd_mem_offset = 16  # in bytes
         try:
-            self._cmd_mem_size = conf['mem_size'] - self._cmd_mem_offset  # in bytes
+            self._cmd_mem_size = conf["mem_size"] - self._cmd_mem_offset  # in bytes
         except KeyError:
             self._cmd_mem_size = 2048  # default is 2048 bytes, user should be aware of address ranges in FPGA
 
@@ -100,13 +100,13 @@ class cmd_seq(RegisterHardwareLayer):
 
     def set_data(self, data, addr=0):
         if self._cmd_mem_size < len(data):
-            raise ValueError('Size of data (%d bytes) is too big for memory (%d bytes)' % (len(data), self._cmd_mem_size))
-        self._intf.write(self._conf['base_addr'] + self._cmd_mem_offset + addr, data)
+            raise ValueError("Size of data (%d bytes) is too big for memory (%d bytes)" % (len(data), self._cmd_mem_size))
+        self._intf.write(self._conf["base_addr"] + self._cmd_mem_offset + addr, data)
 
     def get_data(self, size=None, addr=0):
         if self._cmd_mem_size < size:
-            raise ValueError('Size is too big')
+            raise ValueError("Size is too big")
         if not size:
-            return self._intf.read(self._conf['base_addr'] + self._cmd_mem_offset + addr, self._cmd_mem_size)
+            return self._intf.read(self._conf["base_addr"] + self._cmd_mem_offset + addr, self._cmd_mem_size)
         else:
-            return self._intf.read(self._conf['base_addr'] + self._cmd_mem_offset + addr, size)
+            return self._intf.read(self._conf["base_addr"] + self._cmd_mem_offset + addr, size)

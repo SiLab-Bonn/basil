@@ -87,7 +87,7 @@ uint8_t checkWire(){
    * 1:data too long to fit in transmit buffer
    * 2:received NACK on transmit of address
    * 3:received NACK on transmit of data
-   * 4:other error  
+   * 4:other error
    */
    Wire.beginTransmission(i2cAddress);
    return Wire.endTransmission();
@@ -143,7 +143,7 @@ void loop(){
 
       // Lowercase means we want to set some value and print back that value on the serial bus
       if (isLowerCase(serialBuffer[0])){
-        
+
         // Set I2C address
         if (toupper(serialBuffer[0]) == ADDR_CMD){
           processIncoming();
@@ -157,7 +157,7 @@ void loop(){
           serialDelayMillis = atoi(serialBuffer);
           Serial.println(serialDelayMillis);
         }
-      
+
       }
 
       // Here we want to read something or interact with the I2C bus
@@ -187,7 +187,7 @@ void loop(){
           Serial.println(readCurrentReg());
 
         }
-        
+
         // Write
         if (serialBuffer[0] == WRITE_CMD){
           processIncoming();

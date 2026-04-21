@@ -6,11 +6,12 @@
 #
 
 import unittest
+
 import yaml
 
 from basil.dut import Dut
 
-cnfg_yaml = '''
+cnfg_yaml = """
 transfer_layer:
   - name     : Visa
     type     : Visa
@@ -26,11 +27,10 @@ hw_drivers:
     interface : Visa
     init      :
         device : scpi sim device
-'''
+"""
 
 
 class TestSimScpi(unittest.TestCase):
-
     def setUp(self):
         self.cfg = yaml.safe_load(cnfg_yaml)
         self.device = Dut(self.cfg)
@@ -40,20 +40,20 @@ class TestSimScpi(unittest.TestCase):
         self.device.close()
 
     def test_read(self):
-        self.assertEqual(self.device['Pulser'].get_frequency(), '100.00')
+        self.assertEqual(self.device["Pulser"].get_frequency(), "100.00")
 
     def test_write(self):
-        self.device['Pulser'].set_on(1)
-        self.assertEqual(self.device['Pulser'].get_on(), 'OK')
+        self.device["Pulser"].set_on(1)
+        self.assertEqual(self.device["Pulser"].get_on(), "OK")
 
     def test_invalid_parameter(self):
         with self.assertRaises(ValueError):
-            self.device['Pulser'].set_on(1, 2)
+            self.device["Pulser"].set_on(1, 2)
 
     def test_exception(self):
         with self.assertRaises(ValueError):
-            self.device['Pulser'].unknown_function()
+            self.device["Pulser"].unknown_function()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

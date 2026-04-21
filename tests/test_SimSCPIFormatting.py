@@ -1,6 +1,8 @@
-import unittest
-import yaml
 import os
+import unittest
+
+import yaml
+
 from basil.dut import Dut
 
 k2410def_yaml = os.path.join(os.path.dirname(__file__), "formatting.yaml")
@@ -26,35 +28,34 @@ hw_drivers:
 
 
 class TestSimScpi(unittest.TestCase):
-
     def setUp(self):
         self.cfg = yaml.safe_load(cnfg_yaml)
         self.device = Dut(self.cfg)
         self.device.init()
         # Check that formatting is present
-        self.assertTrue(self.device['Sourcemeter'].has_formatting)
+        self.assertTrue(self.device["Sourcemeter"].has_formatting)
         # Check that formatting is enabled after init
-        self.assertTrue(self.device['Sourcemeter'].formatting_enabled)
+        self.assertTrue(self.device["Sourcemeter"].formatting_enabled)
 
     def tearDown(self):
         self.device.close()
 
     def test_read_voltage(self):
-        voltage = self.device['Sourcemeter'].get_voltage()
-        self.assertEqual(voltage, '-5.124E-05')
+        voltage = self.device["Sourcemeter"].get_voltage()
+        self.assertEqual(voltage, "-5.124E-05")
 
     def test_read_voltage_unformatted(self):
         # Check that formatting is enabled
-        self.assertTrue(self.device['Sourcemeter'].formatting_enabled)
+        self.assertTrue(self.device["Sourcemeter"].formatting_enabled)
         # Disable formatting
-        self.device['Sourcemeter'].disable_formatting()
-        voltage = self.device['Sourcemeter'].get_voltage().split(',')[0]
-        self.assertEqual(voltage, '-5.124E-05')
+        self.device["Sourcemeter"].disable_formatting()
+        voltage = self.device["Sourcemeter"].get_voltage().split(",")[0]
+        self.assertEqual(voltage, "-5.124E-05")
         # Check that formatting is disabled
-        self.assertFalse(self.device['Sourcemeter'].formatting_enabled)
+        self.assertFalse(self.device["Sourcemeter"].formatting_enabled)
         # Enable formatting
-        self.device['Sourcemeter'].enable_formatting()
+        self.device["Sourcemeter"].enable_formatting()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

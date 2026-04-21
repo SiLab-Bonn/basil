@@ -155,14 +155,14 @@ wire WEA, WEB;
 assign WEA = BUS_WR && BUS_ADD >=16 && BUS_ADD < 16 + MEM_BYTES && !WEB;
 
 ramb_8_to_n #(.SIZE(MEM_BYTES), .WIDTH(IN_BITS)) mem (
-    .clkA(BUS_CLK), 
-    .clkB(SEQ_CLK), 
-    .weA(WEA), 
-    .weB(WEB), 
-    .addrA(memout_addra), 
-    .addrB(memout_addrb), 
-    .diA(BUS_DATA_IN), 
-    .doA(BUS_IN_MEM), 
+    .clkA(BUS_CLK),
+    .clkB(SEQ_CLK),
+    .weA(WEA),
+    .weB(WEB),
+    .addrA(memout_addra),
+    .addrB(memout_addrb),
+    .diA(BUS_DATA_IN),
+    .doA(BUS_IN_MEM),
     .diB(SEQ_IN),
     .doB()
 );

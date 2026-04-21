@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -9,13 +9,13 @@
 
 
 module ODDR (
-    input wire D1, D2, 
+    input wire D1, D2,
     input wire C, CE, R, S,
     output wire Q
 );
 
 OFDDRRSE OFDDRRSE_INST (
-    .CE(CE), 
+    .CE(CE),
     .C0(C),
     .C1(~C),
     .D0(D1),

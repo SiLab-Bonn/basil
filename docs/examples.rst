@@ -17,14 +17,14 @@ Instantiate a verilog spi module in the firmware verilog code.
 
 .. code-block:: verilog
 
-    localparam SPI_BASEADDR = 32'h1000; 
-    localparam SPI_HIGHADDR = 32'h1FFF;  
+    localparam SPI_BASEADDR = 32'h1000;
+    localparam SPI_HIGHADDR = 32'h1FFF;
 
-    spi 
-    #( 
-        .BASEADDR(SPI_BASEADDR), 
+    spi
+    #(
+        .BASEADDR(SPI_BASEADDR),
         .HIGHADDR(SPI_HIGHADDR),
-        .MEM_BYTES(4) 
+        .MEM_BYTES(4)
     )  i_spi
     (
         .BUS_CLK(BUS_CLK),
@@ -96,5 +96,3 @@ gpio
 -------
 
 TBD.
-
-

@@ -1,6 +1,6 @@
 from basil.dut import Dut
 
-dut = Dut('julaboFP50_pyserial.yaml')
+dut = Dut("julaboFP50_pyserial.yaml")
 dut.init()
 
 

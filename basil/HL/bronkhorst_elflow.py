@@ -11,25 +11,24 @@ import time
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
-
 logger = logging.getLogger(__name__)
 
 
 class Bronkhorst_ELFLOW(HardwareLayer):
-    ''' Bronkhorst ELFLOW
+    """Bronkhorst ELFLOW
     Manual can be found here:
     https://www.bronkhorst.com/getmedia/77a1438f-e547-4a79-95ad-53e81fd38a97/917027-Manual-RS232-interface.pdf
     and here: https://www.bronkhorst.com/getmedia/257147fc-7f5d-4628-9a47-0533cf68ac08/917099-Manual-EL-FLOW-Select.pdf
-    '''
+    """
 
     CMDS = {
-        'get_measure_flow': ':06800401210120',
-        'get_capacity': ':068004014D014D',
-        'get_control_mode': ':06800401040104',
-        'set_control_mode': ':0580010104',
-        'set_setpoint': ':0680010121',
-        'get_setpoint': ':06800401210121',
-        'get_valve': ':06800472417241',
+        "get_measure_flow": ":06800401210120",
+        "get_capacity": ":068004014D014D",
+        "get_control_mode": ":06800401040104",
+        "set_control_mode": ":0580010104",
+        "set_setpoint": ":0680010121",
+        "get_setpoint": ":06800401210121",
+        "get_valve": ":06800472417241",
     }
 
     def __init__(self, intf, conf):
@@ -54,13 +53,12 @@ class Bronkhorst_ELFLOW(HardwareLayer):
         return ret.strip()
 
     def get_valve_output(self):
-        self._intf.write(self.CMDS['get_valve'])
+        self._intf.write(self.CMDS["get_valve"])
         ret = int(self.read()[11:], 16)
         return ret * 61.7 / 10345949  # converts int in percentage
 
     def set_setpoint(self, value):
-        """value range from 0 - 32000
-        """
+        """value range from 0 - 32000"""
 
         if not isinstance(value, int):
             raise ValueError(f"Given value has to be of type integer, is {type(value)}!")
@@ -69,49 +67,48 @@ class Bronkhorst_ELFLOW(HardwareLayer):
             raise ValueError(f"The valid range is 0 to 32000, the set value is {value}!. Setting setpoint to 32000")
             value = 32000
 
-        hex_val = hex(value)[2:]        # [2:] to remove the 0x from the beginning of the hex number
+        hex_val = hex(value)[2:]  # [2:] to remove the 0x from the beginning of the hex number
         command = f"{self.CMDS['set_setpoint']}" + f"{hex_val.zfill(4)}"  # hex should have at least 4 digits
         self._intf.write(command)
         ret = self.read()
         return ret
 
     def get_setpoint(self):
-        self._intf.write(self.CMDS['get_setpoint'])
+        self._intf.write(self.CMDS["get_setpoint"])
         ret = self.read()
         answer = int(ret[11:], 16)  # read from the 11th digits to translate what point is set
         return answer
 
     def set_mode(self, value):
-        """ 0 setpoint source RS232
-            3 valve close
-            4 freeze valve out
-            8 valve fully open
-            20 valve steering """
-        hex_val = hex(value)[2:]        # [2:] to remove the 0x from the beginning of the hex number
+        """0 setpoint source RS232
+        3 valve close
+        4 freeze valve out
+        8 valve fully open
+        20 valve steering"""
+        hex_val = hex(value)[2:]  # [2:] to remove the 0x from the beginning of the hex number
         command = f"{self.CMDS['set_control_mode']}" + f"{hex_val.zfill(2)}"  # hex should have at least two digits
         self._intf.write(command)
         ret = self.read()
         return ret
 
     def get_mode(self):
-        self._intf.write(self.CMDS['get_control_mode'])
+        self._intf.write(self.CMDS["get_control_mode"])
         ret = self.read()
-        answer = int(ret[11:], 16)        # read from the 11th digits to translate what mode is on
+        answer = int(ret[11:], 16)  # read from the 11th digits to translate what mode is on
         return answer
 
     def get_flow(self):
-        """This should give the flow in l/min
-        """
+        """This should give the flow in l/min"""
         # first get the max capacity in capacity unit
         # the max capacity depends on e.g the fluid, which can be changed
         # cap_100 represents the maximum flow through the fully open valve measured in the capacity unit of the chosen fluid
         # Capacity unit is a command, which returns the used unit in hex
-        self._intf.write(self.CMDS['get_capacity'])
+        self._intf.write(self.CMDS["get_capacity"])
         ret = self.read()
-        cap_100 = struct.unpack('!f', bytes.fromhex(ret[11:]))[0]  # read from the 11th digits to translate what the capacity is
+        cap_100 = struct.unpack("!f", bytes.fromhex(ret[11:]))[0]  # read from the 11th digits to translate what the capacity is
 
         # now measure the flow
-        self._intf.write(self.CMDS['get_measure_flow'])
+        self._intf.write(self.CMDS["get_measure_flow"])
         ret1 = self.read()
         answer = int(ret1[11:], 16)  # convert reply from hex to integer
 

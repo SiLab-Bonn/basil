@@ -9,34 +9,31 @@ from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
 class gpio(RegisterHardwareLayer):
-    '''GPIO interface
-    '''
+    """GPIO interface"""
 
     def __init__(self, intf, conf):
-
-        self._registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
-                           'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}}}
+        self._registers = {"RESET": {"descr": {"addr": 0, "size": 8, "properties": ["writeonly"]}}, "VERSION": {"descr": {"addr": 0, "size": 8, "properties": ["ro"]}}}
         self._require_version = "==0"
 
         self._size = 8
-        if 'size' in conf.keys():
-            self._size = conf['size']
+        if "size" in conf.keys():
+            self._size = conf["size"]
 
         io_bytes = int(((self._size - 1) / 8) + 1)
 
-        self._registers['INPUT'] = {'descr': {'addr': 1, 'size': io_bytes, 'properties': ['ro', 'byte_array']}}
-        self._registers['OUTPUT'] = {'descr': {'addr': 2 + io_bytes - 1, 'size': io_bytes, 'properties': ['byte_array']}}
-        self._registers['OUTPUT_EN'] = {'descr': {'addr': 3 + 2 * (io_bytes - 1), 'size': io_bytes, 'properties': ['byte_array']}}
+        self._registers["INPUT"] = {"descr": {"addr": 1, "size": io_bytes, "properties": ["ro", "byte_array"]}}
+        self._registers["OUTPUT"] = {"descr": {"addr": 2 + io_bytes - 1, "size": io_bytes, "properties": ["byte_array"]}}
+        self._registers["OUTPUT_EN"] = {"descr": {"addr": 3 + 2 * (io_bytes - 1), "size": io_bytes, "properties": ["byte_array"]}}
         # __init__() after updating register
         super(gpio, self).__init__(intf, conf)
 
     def init(self):
         super(gpio, self).init()
-        if 'output_en' in self._init:
-            self.OUTPUT_EN = self._init['output_en']
+        if "output_en" in self._init:
+            self.OUTPUT_EN = self._init["output_en"]
 
     def reset(self):
-        '''Soft reset the module.'''
+        """Soft reset the module."""
         self.RESET = 0
 
     def set_output_en(self, value):

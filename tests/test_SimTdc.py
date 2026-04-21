@@ -5,8 +5,8 @@
 # ------------------------------------------------------------
 #
 
-import unittest
 import os
+import unittest
 
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
@@ -86,73 +86,73 @@ registers:
 
 class TestSimTdc(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), 'test_SimTdc.v')])
+        cocotb_compile_and_run([os.path.join(os.path.dirname(__file__), "test_SimTdc.v")])
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
 
     def test_tdc(self):
-        self.chip['TDC0'].ENABLE = 1
-        self.chip['SEQ'].REPEAT = 1
+        self.chip["TDC0"].ENABLE = 1
+        self.chip["SEQ"].REPEAT = 1
 
         for index, i in enumerate(range(0, 10)):
             length = i + 1
-            self.chip['SEQ'].SIZE = length + 1
-            self.chip['SEQ']['TDC_IN'][0:length] = True
-            self.chip['SEQ'].write(length)
-            self.chip['SEQ'].START
-            while not self.chip['SEQ'].is_ready:
+            self.chip["SEQ"].SIZE = length + 1
+            self.chip["SEQ"]["TDC_IN"][0:length] = True
+            self.chip["SEQ"].write(length)
+            self.chip["SEQ"].START
+            while not self.chip["SEQ"].is_ready:
                 pass
-            self.assertEqual(self.chip['FIFO0'].get_FIFO_INT_SIZE(), 1)
+            self.assertEqual(self.chip["FIFO0"].get_FIFO_INT_SIZE(), 1)
 
-            data = self.chip['FIFO0'].get_data()
+            data = self.chip["FIFO0"].get_data()
             self.assertEqual(data[0], (index << 12) + length)
 
     def test_tdc_overflow(self):
-        self.chip['TDC0'].ENABLE = 1
-        self.chip['SEQ'].REPEAT = 1
+        self.chip["TDC0"].ENABLE = 1
+        self.chip["SEQ"].REPEAT = 1
 
         for index, i in enumerate(range(4094, 4097)):
             length = i + 1
-            self.chip['SEQ_GEN'].SIZE = length + 1
-            self.chip['SEQ']['TDC_IN'][0:length] = True
-            self.chip['SEQ'].write(length)
-            self.chip['SEQ'].START
-            while not self.chip['SEQ_GEN'].is_ready:
+            self.chip["SEQ_GEN"].SIZE = length + 1
+            self.chip["SEQ"]["TDC_IN"][0:length] = True
+            self.chip["SEQ"].write(length)
+            self.chip["SEQ"].START
+            while not self.chip["SEQ_GEN"].is_ready:
                 pass
-            self.assertEqual(self.chip['FIFO0'].get_FIFO_INT_SIZE(), 1)
+            self.assertEqual(self.chip["FIFO0"].get_FIFO_INT_SIZE(), 1)
 
-            data = self.chip['FIFO0'].get_data()
+            data = self.chip["FIFO0"].get_data()
             self.assertEqual(data[0], (index << 12) + min(length, 4095))  # overflow 12bit
 
     def test_broadcasting(self):
-        self.chip['TDC0'].ENABLE = 1
-        self.chip['TDC1'].ENABLE = 1
-        self.chip['TDC2'].ENABLE = 1
-        self.chip['TDC0'].EN_TRIGGER_DIST = 1
-        self.chip['TDC1'].EN_TRIGGER_DIST = 1
-        self.chip['TDC2'].EN_TRIGGER_DIST = 1
-        self.chip['SEQ'].REPEAT = 1
+        self.chip["TDC0"].ENABLE = 1
+        self.chip["TDC1"].ENABLE = 1
+        self.chip["TDC2"].ENABLE = 1
+        self.chip["TDC0"].EN_TRIGGER_DIST = 1
+        self.chip["TDC1"].EN_TRIGGER_DIST = 1
+        self.chip["TDC2"].EN_TRIGGER_DIST = 1
+        self.chip["SEQ"].REPEAT = 1
         TDC_TRIG_DIST_MASK = 0x0FF00000
         TDC_VALUE_MASK = 0x00000FFF
 
         for _, i in enumerate([1045, 1046, 1047]):
-            offset = 50   # trigger distance
+            offset = 50  # trigger distance
             length = i + 1 + offset
-            self.chip['SEQ_GEN'].SIZE = length + 1
-            self.chip['SEQ']['TDC_IN'][offset:length + offset] = True
-            self.chip['SEQ']['TDC_TRIGGER_IN'][0:10] = True
-            self.chip['SEQ'].write(length)
-            self.chip['SEQ'].START
-            while not self.chip['SEQ_GEN'].is_ready:
+            self.chip["SEQ_GEN"].SIZE = length + 1
+            self.chip["SEQ"]["TDC_IN"][offset : length + offset] = True
+            self.chip["SEQ"]["TDC_TRIGGER_IN"][0:10] = True
+            self.chip["SEQ"].write(length)
+            self.chip["SEQ"].START
+            while not self.chip["SEQ_GEN"].is_ready:
                 pass
-            self.assertEqual(self.chip['FIFO0'].get_FIFO_INT_SIZE(), 1)
-            self.assertEqual(self.chip['FIFO1'].get_FIFO_INT_SIZE(), 1)
-            self.assertEqual(self.chip['FIFO2'].get_FIFO_INT_SIZE(), 1)
+            self.assertEqual(self.chip["FIFO0"].get_FIFO_INT_SIZE(), 1)
+            self.assertEqual(self.chip["FIFO1"].get_FIFO_INT_SIZE(), 1)
+            self.assertEqual(self.chip["FIFO2"].get_FIFO_INT_SIZE(), 1)
 
-            data0 = self.chip['FIFO0'].get_data()
-            data1 = self.chip['FIFO1'].get_data()
-            data2 = self.chip['FIFO2'].get_data()
+            data0 = self.chip["FIFO0"].get_data()
+            data1 = self.chip["FIFO1"].get_data()
+            data2 = self.chip["FIFO2"].get_data()
 
             # Check data from first TDC module
             self.assertEqual(data0[0] & TDC_VALUE_MASK, i + 1)  # TDC value
@@ -161,22 +161,22 @@ class TestSimTdc(unittest.TestCase):
             self.assertEqual(data0[0], data1[0])  # Compare TDC0 with TDC1
             self.assertEqual(data0[0], data2[0])  # Compare TDC0 with TDC2
 
-#     def test_tdc_delay(self):
-#         pass
-#
-#     def test_tdc_delay_overflow(self):
-#         pass
-#
-#     def test_tdc_delay_late_trigger(self):
-#         pass
-#
-#     def test_tdc_arm(self):
-#         pass
+    #     def test_tdc_delay(self):
+    #         pass
+    #
+    #     def test_tdc_delay_overflow(self):
+    #         pass
+    #
+    #     def test_tdc_delay_late_trigger(self):
+    #         pass
+    #
+    #     def test_tdc_arm(self):
+    #         pass
 
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

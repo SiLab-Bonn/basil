@@ -68,7 +68,7 @@ always @(posedge BUS_CLK) begin
 end
 
 wire soft_rst_flag, bus_rst_flag;
-assign soft_rst_flag = ~soft_rst_ff[1] & soft_rst_ff[0]; 
+assign soft_rst_flag = ~soft_rst_ff[1] & soft_rst_ff[0];
 assign bus_rst_flag = bus_rst_ff[1] & ~bus_rst_ff[0]; // trailing edge
 
 assign bus_clk_rst = bus_rst_flag | soft_rst_flag;
@@ -213,7 +213,7 @@ graycode_2stage_cdc #(.DATA_WIDTH(32)) event_count_cdc (
 	.data_out_clk(event_cnt)
 );
 
-// This is a strange additional buffer from the original tdc_s3 (L:420). 
+// This is a strange additional buffer from the original tdc_s3 (L:420).
 always @(posedge BUS_CLK) begin
 	event_cnt_buf <= event_cnt;
 	if (ip_add == 2 && ip_rd)

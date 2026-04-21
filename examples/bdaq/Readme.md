@@ -4,9 +4,9 @@ This example shows how to control a GPIO module and how to receive data via the 
 2. FPGA starts to send data from a 32 bit counter through a BRAM FIFO.
 3. The Python script checks the received data and counts the transferred bytes during a given time period.
 4. At the end, the average data rate is printed and the FPGA data source is stopped by clearing bit [0].
- 
+
 ## Build script
-To build this example firmware, navigate to `firmware/vivado` and start the process using the Makefile 
+To build this example firmware, navigate to `firmware/vivado` and start the process using the Makefile
 ```terminal
 cd firmware/vivado
 make
