@@ -46,12 +46,10 @@ class weissSB22(HardwareLayer):
         self.max_temp = self._init["max_temp"]  # define the maximum temperature one can set, for safety
         self.min_humidity = self._init["min_humidity"]  # define the minimum humidity one can set, for safety
         self.max_humidity = self._init["max_humidity"]  # define the maximum humidity one can set, for safety
-        self._temperature = (
-            self.get_temperature()
-        )  # tmp variable to store last value set, needed since always temp and humidity has to be set
-        self._humidity = (
-            self.get_humidity()
-        )  # tmp variable to store last value set, needed since always temp and humidity has to be set
+        # tmp variable to store last value set, needed since always temp and humidity has to be set
+        self._temperature = self.get_temperature()
+        # tmp variable to store last value set, needed since always temp and humidity has to be set
+        self._humidity = self.get_humidity()
         self._digital_ch = self.get_digital_ch()  # the digital channels define the functions (humiditiy control, dew protection, ..., in binary coding, 1000000000000000 is temperature control only)
 
     def get_temperature(self):
