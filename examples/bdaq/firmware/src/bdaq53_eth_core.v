@@ -53,7 +53,7 @@ module bdaq53_eth_core(
     assign EN = GPIO[0];
 
     reg [31:0] FIFO_DATA_REG = 0;
-    
+
     always @(posedge BUS_CLK)
         if(EN) begin
             if(FIFO_READY) begin

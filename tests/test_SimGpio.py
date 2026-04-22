@@ -5,13 +5,13 @@
 # ------------------------------------------------------------
 #
 
-import unittest
-import pytest
 import os
+import unittest
+
+import pytest
 
 from basil.dut import Dut
 from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
-
 
 cnfg_yaml = """
 transfer_layer:
@@ -56,45 +56,48 @@ registers:
 
 
 class TestSimGpio(unittest.TestCase):
-    def __init__(self, testname, tb='test_SimGpio.v', bus_drv='basil.utils.sim.BasilBusDriver', bus_split=False):
+    def __init__(self, testname, tb="test_SimGpio.v", bus_drv="basil.utils.sim.BasilBusDriver", bus_split=False):
         super(TestSimGpio, self).__init__(testname)
         self._test_tb = tb
         self._sim_bus = bus_drv
         self._bus_split_def = ()
         if bus_split is not False:
-            if bus_split == 'sbus':
+            if bus_split == "sbus":
                 self._bus_split_def = ("BASIL_SBUS",)
-            elif bus_split == 'top':
+            elif bus_split == "top":
                 self._bus_split_def = ("BASIL_TOPSBUS",)
 
     def setUp(self):
-        cocotb_compile_and_run(sim_files=[os.path.join(os.path.dirname(__file__), self._test_tb)], sim_bus=self._sim_bus, extra_defines=self._bus_split_def)
+        cocotb_compile_and_run(
+            sim_files=[os.path.join(os.path.dirname(__file__), self._test_tb)],
+            sim_bus=self._sim_bus,
+            extra_defines=self._bus_split_def,
+        )
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
 
     def test_io(self):
-        self.chip['GPIO'].set_output_en([0xff, 0, 0])  # to remove 'z in simulation
+        self.chip["GPIO"].set_output_en([0xFF, 0, 0])  # to remove 'z in simulation
 
-        ret = self.chip['GPIO'].get_data()
+        ret = self.chip["GPIO"].get_data()
         self.assertEqual([0, 0, 0], ret)
 
-        self.chip['GPIO'].set_output_en([0x0f, 0, 0])
-        self.chip['GPIO'].set_data([0xe3, 0xfa, 0x5a])
-        ret = self.chip['GPIO'].get_data()
-        self.assertEqual([0x33, 0x5a, 0x5a], ret)
-        ret = self.chip['GPIO2'].get_data()
-        self.assertEqual([0xa5, 0xcd], ret)
+        self.chip["GPIO"].set_output_en([0x0F, 0, 0])
+        self.chip["GPIO"].set_data([0xE3, 0xFA, 0x5A])
+        ret = self.chip["GPIO"].get_data()
+        self.assertEqual([0x33, 0x5A, 0x5A], ret)
+        ret = self.chip["GPIO2"].get_data()
+        self.assertEqual([0xA5, 0xCD], ret)
 
     def test_io_register(self):
+        self.chip["GPIO"].set_output_en([0xFF, 0, 0])  # to remove 'z in simulation
 
-        self.chip['GPIO'].set_output_en([0xff, 0, 0])  # to remove 'z in simulation
+        self.chip["GPIO"]["OUT"] = 0xA5
 
-        self.chip['GPIO']['OUT'] = 0xa5
-
-        self.chip['GPIO'].write()
-        ret = self.chip['GPIO'].get_data()
-        self.assertEqual([0, 0xa5, 0xa5], ret)
+        self.chip["GPIO"].write()
+        ret = self.chip["GPIO"].get_data()
+        self.assertEqual([0, 0xA5, 0xA5], ret)
         # TODO: Add register readback and comparison
 
     def tearDown(self):
@@ -105,14 +108,18 @@ class TestSimGpio(unittest.TestCase):
 @pytest.mark.verilator
 class TestSimGpioSbus(TestSimGpio):
     def __init__(self, testname):
-        super(TestSimGpioSbus, self).__init__(testname=testname, tb='test_SimGpio.v', bus_drv='basil.utils.sim.BasilSbusDriver', bus_split='sbus')
+        super(TestSimGpioSbus, self).__init__(
+            testname=testname, tb="test_SimGpio.v", bus_drv="basil.utils.sim.BasilSbusDriver", bus_split="sbus"
+        )
 
 
 @pytest.mark.verilator
 class TestSimGpioSbusTop(TestSimGpio):
     def __init__(self, testname):
-        super(TestSimGpioSbusTop, self).__init__(testname=testname, tb='test_SimGpio.v', bus_drv='basil.utils.sim.BasilSbusDriver', bus_split='top')
+        super(TestSimGpioSbusTop, self).__init__(
+            testname=testname, tb="test_SimGpio.v", bus_drv="basil.utils.sim.BasilSbusDriver", bus_split="top"
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

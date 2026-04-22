@@ -1,6 +1,6 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
@@ -9,10 +9,10 @@
 
 
 module IDDR (
-    output wire Q1, Q2, 
+    output wire Q1, Q2,
     input wire C, CE, D, R, S
 );
-              
+
 FDRSE F0 (
     .C(C),
     .CE(CE),

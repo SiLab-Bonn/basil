@@ -11,7 +11,7 @@ transfer_layer:
     init:
       avoid_download : True
       bit_file : ../ise/example.bit
-    
+
 hw_drivers:
   - name      : GPIO_DRV
     type      : gpio

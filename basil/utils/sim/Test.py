@@ -11,13 +11,18 @@
 import logging
 import os
 import socket
-import yaml
 
 import cocotb
-from cocotb.triggers import Timer
+import yaml
 from cocotb.clock import Clock
+from cocotb.triggers import Timer
 
-from basil.utils.sim.Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
+from basil.utils.sim.Protocol import (
+    PickleInterface,
+    ReadRequest,
+    ReadResponse,
+    WriteRequest,
+)
 
 
 def get_bus():

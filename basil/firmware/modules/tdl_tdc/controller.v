@@ -1,5 +1,5 @@
 // Main state machine of the tdc. Contains the logic for switching the
-// multiplexer, controling the corse counter, arming, calibration 
+// multiplexer, controling the corse counter, arming, calibration
 // states and the trigger distance mode. Furthermore counts successful events
 // and tdl misses.
 module controller #(
@@ -104,7 +104,7 @@ always @(state, en_write_trigger_distance) begin
 		FAL_EDGE: begin
 			if (en_write_trigger_distance)
 				mux_addr <= TRIG_IN;
-			else 
+			else
 				mux_addr <= SIG_IN;
 			counter_reset <= 1;
 			counter_count <= 0;
@@ -148,7 +148,7 @@ always @(posedge CLK) begin
 				event_cnt <= event_cnt + 1; // This is really a multicycle path: Only every 4 cycles can this occur.
 		end
 		MISSED:
-			miss_cnt <= miss_cnt + 1; 
+			miss_cnt <= miss_cnt + 1;
 	endcase
 end
 
@@ -175,7 +175,7 @@ always @(posedge CLK) begin
 					state <= CALIB;
 				end else if (en_write_trigger_distance) begin
 					state <= IDLE_TRIG;
-				end else if (armed) begin 
+				end else if (armed) begin
 					if (hit)
 						state <= RIS_EDGE;
 				end else begin
@@ -187,7 +187,7 @@ always @(posedge CLK) begin
 					state <= CALIB;
 				end else if (~en_write_trigger_distance) begin
 					state <= IDLE;
-				end else if (armed) begin 
+				end else if (armed) begin
 					if (hit)
 						state <= TRIGGERED;
 				end else begin

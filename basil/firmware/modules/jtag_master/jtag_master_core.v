@@ -172,15 +172,15 @@ assign memout_addrb = (out_word_cnt * CONF_BIT_OUT) + CONF_BIT_OUT - 1 - out_bit
 
 
 ramb_8_to_n #(.SIZE(MEM_BYTES), .WIDTH(1)) memout (
-.clkA(BUS_CLK), 
-.clkB(JTAG_CLK), 
-.weA(BUS_WR && BUS_ADD >= 16 && BUS_ADD < 16+MEM_BYTES), 
-.weB(1'b0), 
-.addrA(memout_addra), 
-.addrB(memout_addrb), 
-.diA(BUS_DATA_IN_IB), 
-.doA(BUS_IN_MEM_IB), 
-.diB(), 
+.clkA(BUS_CLK),
+.clkB(JTAG_CLK),
+.weA(BUS_WR && BUS_ADD >= 16 && BUS_ADD < 16+MEM_BYTES),
+.weB(1'b0),
+.addrA(memout_addra),
+.addrB(memout_addrb),
+.diA(BUS_DATA_IN_IB),
+.doA(BUS_IN_MEM_IB),
+.diB(),
 .doB(SDI_MEM)
 );
 
@@ -191,15 +191,15 @@ assign ADDRB_MIN = (out_word_cnt * CONF_BIT_OUT) + CONF_BIT_OUT - out_bit_cnt;
 reg SEN_INT;
 
 ramb_8_to_n #(.SIZE(MEM_BYTES), .WIDTH(1)) memin (
-    .clkA(BUS_CLK), 
-    .clkB(JTAG_CLK), 
-    .weA(1'b0), 
-    .weB(SEN_INT && (state == SHIFT_DR || state == SHIFT_IR)), 
-    .addrA(ADDRA_MIN), 
-    .addrB(ADDRB_MIN), 
-    .diA(BUS_DATA_IN_IB), 
-    .doA(BUS_OUT_MEM_IB), 
-    .diB(TDO), 
+    .clkA(BUS_CLK),
+    .clkB(JTAG_CLK),
+    .weA(1'b0),
+    .weB(SEN_INT && (state == SHIFT_DR || state == SHIFT_IR)),
+    .addrA(ADDRA_MIN),
+    .addrB(ADDRB_MIN),
+    .diA(BUS_DATA_IN_IB),
+    .doA(BUS_OUT_MEM_IB),
+    .diB(TDO),
     .doB()
 );
 

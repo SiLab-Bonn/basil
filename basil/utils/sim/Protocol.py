@@ -11,9 +11,10 @@
 These classes are pickled and sent over a socket to communicate with the sim
 Protocol is very simple, simply prefix the pickled data with a 4-byte length
 """
+
 import pickle
-import struct
 import socket
+import struct
 
 
 class ProtocolBase(object):

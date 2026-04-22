@@ -1,12 +1,12 @@
 /**
  * ------------------------------------------------------------
- * Copyright (c) All rights reserved 
+ * Copyright (c) All rights reserved
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
 `timescale 1ps/1ps
 `default_nettype none
- 
+
 module blk_mem_gen_8_to_1_2k (
     CLKA, CLKB, DOUTA, DOUTB, WEA, WEB, ADDRA, ADDRB, DINA, DINB
 );

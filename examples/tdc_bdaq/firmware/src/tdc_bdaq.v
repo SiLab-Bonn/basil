@@ -69,7 +69,7 @@ wire CLK_156M250;
 IBUFDS_GTE2 IBUFDS_GTE2_inst_156 (
    .O(CLK_156M250_in),  // Buffer output
    .ODIV2(),
-   .CEB(1'b0), 
+   .CEB(1'b0),
    .I(Si511_P),  // Diff_p buffer input (connect directly to top-level port)
    .IB(Si511_N) // Diff_n buffer input (connect directly to top-level port)
 );
@@ -84,7 +84,7 @@ wire CLK_160;
 IBUFDS_GTE2 IBUFDS_GTE2_inst_160 (
    .O(CLK_160_in),  // Buffer output
    .ODIV2(),
-   .CEB(1'b0), 
+   .CEB(1'b0),
    .I(Si570_P),  // Diff_p buffer input (connect directly to top-level port)
    .IB(Si570_N) // Diff_n buffer input (connect directly to top-level port)
 );
@@ -150,27 +150,27 @@ PLLE2_BASE_BUS (
 // 	.CLKFBOUT_MULT(16),       // Multiply value for all CLKOUT, (2-64)
 // 	.CLKFBOUT_PHASE(0.0),     // Phase offset in degrees of CLKFB, (-360.000-360.000).
 // 	.CLKIN1_PERIOD(10.000),      // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
-// 
+//
 // 	.CLKOUT0_DIVIDE(10),     // Divide amount for CLKOUT0 (1-128)
 // 	.CLKOUT0_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
 // 	.CLKOUT0_PHASE(90.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
-// 
+//
 // 	.CLKOUT1_DIVIDE(10),     // Divide amount for CLKOUT0 (1-128)
 // 	.CLKOUT1_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
 // 	.CLKOUT1_PHASE(0.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
-// 
+//
 // 	.CLKOUT2_DIVIDE(40),     // Divide amount for CLKOUT0 (1-128)
 // 	.CLKOUT2_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
 // 	.CLKOUT2_PHASE(0.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
-// 
+//
 // 	.CLKOUT3_DIVIDE(8),     // Divide amount for CLKOUT0 (1-128)
 // 	.CLKOUT3_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
 // 	.CLKOUT3_PHASE(90.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
-// 
+//
 // 	.CLKOUT4_DIVIDE(8),     // Divide amount for CLKOUT0 (1-128)
 // 	.CLKOUT4_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
 // 	.CLKOUT4_PHASE(-5.625),      // Phase offset for CLKOUT0 (-360.000-360.000).
-// 
+//
 // 	.DIVCLK_DIVIDE(1),        // Master division value, (1-56)
 // 	.REF_JITTER1(0.0),        // Reference input jitter in UI, (0.000-0.999).
 // 	.STARTUP_WAIT("FALSE")     // Delay DONE until PLL Locks, ("TRUE"/"FALSE")
@@ -574,9 +574,9 @@ always @(posedge BUS_CLK) begin
 	ETH_START_SENDING_temp <= ETH_START_SENDING;
 
 	// RX FIFO word counter
-	if (TCP_RX_WR) 
+	if (TCP_RX_WR)
 		TCP_RX_WC_11B <= TCP_RX_WC_11B + 1;
-	else 
+	else
 		TCP_RX_WC_11B <= 11'd0;
 
 
@@ -587,7 +587,7 @@ always @(posedge BUS_CLK) begin
 		FIFO_NEXT <= 1'b0;
 
 	// stop, if connection is closed by host
-	if (TCP_CLOSE_REQ || !EN) 
+	if (TCP_CLOSE_REQ || !EN)
 		ETH_START_SENDING_LOCK <= 0;
 end
 

@@ -1,4 +1,4 @@
-# Device description for the Keithley 2001 Multimeter. 
+# Device description for the Keithley 2001 Multimeter.
 # Only GPIB is possible with this device!
 identifier : KEITHLEY INSTRUMENTS INC.,MODEL 2001
 get_current : MEAS:CURR?

@@ -42,9 +42,12 @@ include-package-data = true
 [tool.setuptools.dynamic]
 version = {attr = "basil.__version__"}
 
-[tool.flake8]
-ignore = ["E501", "E902", "W503", "W605", "W504"]
-# max-line-length = 160
-
 [tool.pytest.ini_options]
 markers = ["verilator: Verilog tests."]
+
+[tool.isort]
+profile = "black"
+
+[tool.ruff]
+# Set the maximum line length to 180.
+line-length = 120

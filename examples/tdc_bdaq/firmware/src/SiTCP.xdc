@@ -24,9 +24,3 @@ set_max_delay -datapath_only -from [get_pins -hier -filter {name =~ */GMII_RXCNT
 set_max_delay -datapath_only -from [get_pins -hier -filter {name =~ */GMII_RXCNT/orMacPause/C}] -to [get_pins -hier -filter {name =~ */GMII_TXCNT/irMacPauseExe_0/D}] 5.500
 
 set_false_path -from [get_pins -hier -filter {name =~ */SiTCP_INT/SiTCP_RESET_OUT/C}]
-
-
-
-
-
-

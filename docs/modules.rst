@@ -5,7 +5,7 @@ Modules
 .. include:: ../basil/firmware/modules/README.rst
     :start-after: begin-include
 
-.. !!!!!!!!!!!!!    
+.. !!!!!!!!!!!!!
 .. !GPIO!
 .. !!!!!!!!!!!!!
 
@@ -44,7 +44,7 @@ Modules
 
 .. autoclass:: seq_gen
     :members:
-    
+
 .. !!!!!!!!!!!!!
 .. !PULSE_GEN!
 .. !!!!!!!!!!!!!
@@ -184,8 +184,8 @@ No Python driver — this module operates autonomously in the FPGA fabric.
 .. autoclass:: i2c
     :members:
 
-    
-    
+
+
 .. !!!!!!!!!!!!!
 .. !UART!
 .. !!!!!!!!!!!!!

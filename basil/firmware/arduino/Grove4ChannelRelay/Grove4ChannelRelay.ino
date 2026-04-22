@@ -93,14 +93,14 @@ void loop() {
                     varPin = atoi(serialBuffer);
                     processIncoming();
                     varState = atoi(serialBuffer);
-                    
+
                     if (varState == 0) {
                         if (varPin == 99) {
                             relay.channelCtrl(0);
                         }
                         else {
                             relay.turn_off_channel(varPin);
-                        }  
+                        }
                     }
                     if (varState == 1) {
                         if (varPin == 99) {

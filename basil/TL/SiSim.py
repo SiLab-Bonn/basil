@@ -9,20 +9,24 @@
 # Verilog testbenches in Python.
 #
 
-import socket
 import array
-import time
 import logging
+import socket
+import time
 from threading import Lock
 
 from basil.TL.SiTransferLayer import SiTransferLayer
-from basil.utils.sim.Protocol import WriteRequest, ReadRequest, ReadResponse, PickleInterface
+from basil.utils.sim.Protocol import (
+    PickleInterface,
+    ReadRequest,
+    ReadResponse,
+    WriteRequest,
+)
 
 logger = logging.getLogger(__name__)
 
 
 class SiSim(SiTransferLayer):
-
     def __init__(self, conf):
         super(SiSim, self).__init__(conf)
         self._sock = None
@@ -31,18 +35,18 @@ class SiSim(SiTransferLayer):
         super(SiSim, self).init()
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        host = 'localhost'
-        if 'host' in self._init.keys():
-            host = self._init['host']
+        host = "localhost"
+        if "host" in self._init.keys():
+            host = self._init["host"]
 
         port = 12345
-        if 'port' in self._init.keys():
-            port = self._init['port']
+        if "port" in self._init.keys():
+            port = self._init["port"]
 
         # try few times for simulator to setup
         try_cnt = 120
-        if 'timeout' in self._init.keys():
-            try_cnt = self._init['timeout']
+        if "timeout" in self._init.keys():
+            try_cnt = self._init["timeout"]
 
         while self._sock.connect_ex((host, port)) != 0:
             logger.debug("Trying to connect to simulator.")
@@ -56,7 +60,7 @@ class SiSim(SiTransferLayer):
         self._lock = Lock()
 
     def write(self, addr, data):
-        ad = array.array('B', data)
+        ad = array.array("B", data)
         req = WriteRequest(addr, ad)
 
         with self._lock:
@@ -71,7 +75,7 @@ class SiSim(SiTransferLayer):
 
         if not isinstance(resp, ReadResponse):
             raise ValueError("Communication error with Simulation: got %s" % repr(resp))
-        return array.array('B', resp.data)
+        return array.array("B", resp.data)
 
     def close(self):
         super(SiSim, self).close()

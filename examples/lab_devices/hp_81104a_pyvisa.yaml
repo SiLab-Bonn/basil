@@ -3,7 +3,7 @@ transfer_layer:
     type  : Visa
     init  :
         resource_name    : GPIB0::1::INSTR
-        
+
 hw_drivers:
   - name      : ClockGenerator
     type      : scpi

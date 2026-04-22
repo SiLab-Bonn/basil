@@ -1,15 +1,15 @@
 #
 # ------------------------------------------------------------
-# Copyright (c) SILAB , Physics Institute of Bonn University 
+# Copyright (c) SILAB , Physics Institute of Bonn University
 # ------------------------------------------------------------
 #
 # SVN revision information:
 #  $Rev::                       $:
-#  $Author::                    $: 
+#  $Author::                    $:
 #  $Date::                      $:
 #
 #--------------------------------------------------------------
- 
+
 
 #...............................................................................
 #  Constraints File - Xilinx UCF format
@@ -57,7 +57,7 @@ TIMESPEC TS_FCLK_IN = PERIOD "TNM_FCLK_IN" 20 ns HIGH 50 %;
 
 NET "FCLK_IN" IOSTANDARD = LVCMOS33;
 NET "FCLK_IN" LOC = N10;
-#NET "LCK1"              LOC = "P9"      |	IOSTANDARD = LVCMOS33;		
+#NET "LCK1"              LOC = "P9"      |	IOSTANDARD = LVCMOS33;
 #NET "UCLK_IN"              LOC = "P10"     |	IOSTANDARD = LVCMOS33;
 
 # NET "BUSY_CONF" LOC=V10;
@@ -431,4 +431,3 @@ NET "SCL" LOC = D14;
 #NET "DOUT13"  LOC = B6; #DOUT13
 #NET "DOUT14"  LOC = A4; #DOUT14
 #NET "DOUT15"  LOC = C8; #DOUT15
-

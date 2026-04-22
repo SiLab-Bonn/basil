@@ -1,6 +1,6 @@
 #
 # ------------------------------------------------------------
-# Copyright (c) SILAB , Physics Institute of Bonn University 
+# Copyright (c) SILAB , Physics Institute of Bonn University
 # ------------------------------------------------------------
 #
 
@@ -33,7 +33,7 @@ TIMESPEC TS_FCLK_IN = PERIOD "TNM_FCLK_IN" 20 ns HIGH 50 %;
 
 NET "FCLK_IN" IOSTANDARD = LVCMOS33;
 NET "FCLK_IN" LOC = N10;
-#NET "LCK1"              LOC = "P9"      |	IOSTANDARD = LVCMOS33;		
+#NET "LCK1"              LOC = "P9"      |	IOSTANDARD = LVCMOS33;
 #NET "UCLK_IN"              LOC = "P10"     |	IOSTANDARD = LVCMOS33;
 
 # NET "BUSY_CONF" LOC=V10;
@@ -362,4 +362,3 @@ NET "SRAM_IO[0]" LOC = D17;
 
 NET "SDA" LOC = D10;
 NET "SCL" LOC = D14;
-

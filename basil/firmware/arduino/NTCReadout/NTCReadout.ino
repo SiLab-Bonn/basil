@@ -54,7 +54,7 @@ bool oneLastProcess;
 
 // Define vars potentially coming in from serial
 int nSamples;
-uint16_t serialDelayMillis; 
+uint16_t serialDelayMillis;
 float ntcNominalRes;
 float resistorRes;
 float tempNominalDegreeC;
@@ -78,7 +78,7 @@ void restoreDefaults(){
 
 float steinhartHartNTC(float res){
   /*
-  Steinhart-Hart equation for NTC: 1/T = 1/T_0 + 1/B * ln(R/R_0)  
+  Steinhart-Hart equation for NTC: 1/T = 1/T_0 + 1/B * ln(R/R_0)
   */
 
   // Do calculation
@@ -86,7 +86,7 @@ float steinhartHartNTC(float res){
 
   // To Kelvin
   temperature -= KELVIN;
-  
+
   return temperature;
 }
 
@@ -118,7 +118,7 @@ float getRes(int ntc){
 
   // Voltage divider is measured over the fixed RESISTOR_RES
   else {
-    resistance = resistorRes * resistance;  
+    resistance = resistorRes * resistance;
   }
 
   return resistance;
@@ -157,9 +157,9 @@ void printNTCMeasurements(int kind){
   /*
   Read the input buffer, read pins to read and print the respective temp or resistance to serial
   */
-  
+
   while (processIncoming()){
-  
+
     ntcPin = atoi(serialBuffer);
 
     // We only have 8 analog pins

@@ -5,13 +5,13 @@
 # ------------------------------------------------------------
 #
 
-''' This script shows how to use a Motor Stage
-'''
+"""This script shows how to use a Motor Stage"""
 
 import time
+
 from basil.dut import Dut
 
-dut = Dut('mercury_pyserial.yaml')
+dut = Dut("mercury_pyserial.yaml")
 dut.init()
 
 # setup (for c-862)

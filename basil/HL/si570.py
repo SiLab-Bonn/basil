@@ -10,7 +10,6 @@ import logging
 from basil.HL.HardwareLayer import HardwareLayer
 from basil.RL.StdRegister import StdRegister
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -48,7 +47,7 @@ class si570(HardwareLayer):
 
         HS_DIV, N1, RFREQ = self.read_registers()
 
-        fxtal = float(f0 * HS_DIV * N1) / (float(RFREQ) / 2 ** 28)
+        fxtal = float(f0 * HS_DIV * N1) / (float(RFREQ) / 2**28)
 
         new_fdco = freq * HS_DIV * N1
 
@@ -61,9 +60,7 @@ class si570(HardwareLayer):
             for hs in HS_DIV_avaiable:
                 for n in N1_avaiable:
                     fdco = freq * 1e6 * hs * n
-                    if (fdco >= 4.85e9) & (
-                        fdco <= 5.67e9
-                    ):  # fdco range defined by manufacturer
+                    if (fdco >= 4.85e9) & (fdco <= 5.67e9):  # fdco range defined by manufacturer
                         HS_DIV = hs
                         N1 = n
                         found_new_values = True
@@ -74,12 +71,10 @@ class si570(HardwareLayer):
             new_fdco = freq * HS_DIV * N1
 
         new_RFREQ_freq = new_fdco / fxtal
-        new_RFREQ = int(new_RFREQ_freq * 2 ** 28)
+        new_RFREQ = int(new_RFREQ_freq * 2**28)
 
         self.modify_register(HS_DIV, N1, new_RFREQ)
-        logger.info(
-            "Changed Si570 reference frequency to %s MHz", new_fdco / (HS_DIV * N1)
-        )
+        logger.info("Changed Si570 reference frequency to %s MHz", new_fdco / (HS_DIV * N1))
 
     def modify_register(self, HS_DIV, N1, RFREQ):
         # Preparation of the array that needs to be send
@@ -112,12 +107,6 @@ class si570(HardwareLayer):
         N1 = ((reg_val[0] & 0x1F) << 2) | ((reg_val[1] & 0xC0) >> 6)
         N1 += 1
 
-        RFREQ = (
-            ((reg_val[1] & 0x3F) << 32)
-            | reg_val[2] << 24
-            | reg_val[3] << 16
-            | reg_val[4] << 8
-            | reg_val[5]
-        )
+        RFREQ = ((reg_val[1] & 0x3F) << 32) | reg_val[2] << 24 | reg_val[3] << 16 | reg_val[4] << 8 | reg_val[5]
 
         return HS_DIV, N1, RFREQ

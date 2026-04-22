@@ -9,21 +9,22 @@ from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
 class tdc_s3(RegisterHardwareLayer):
-    '''TDC controller interface
-    '''
+    """TDC controller interface"""
 
-    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
-                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
-                  'ENABLE': {'descr': {'addr': 1, 'size': 1, 'offset': 0}},
-                  'ENABLE_EXTERN': {'descr': {'addr': 1, 'size': 1, 'offset': 1}},
-                  'EN_ARMING': {'descr': {'addr': 1, 'size': 1, 'offset': 2}},
-                  'EN_WRITE_TIMESTAMP': {'descr': {'addr': 1, 'size': 1, 'offset': 3}},
-                  'EN_TRIGGER_DIST': {'descr': {'addr': 1, 'size': 1, 'offset': 4}},
-                  'EN_NO_WRITE_TRIG_ERR': {'descr': {'addr': 1, 'size': 1, 'offset': 5}},
-                  'EN_INVERT_TDC': {'descr': {'addr': 1, 'size': 1, 'offset': 6}},
-                  'EN_INVERT_TRIGGER': {'descr': {'addr': 1, 'size': 1, 'offset': 7}},
-                  'EVENT_COUNTER': {'descr': {'addr': 2, 'size': 32, 'properties': ['ro']}},
-                  'LOST_DATA_COUNTER': {'descr': {'addr': 6, 'size': 8, 'properties': ['ro']}}}
+    _registers = {
+        "RESET": {"descr": {"addr": 0, "size": 8, "properties": ["writeonly"]}},
+        "VERSION": {"descr": {"addr": 0, "size": 8, "properties": ["ro"]}},
+        "ENABLE": {"descr": {"addr": 1, "size": 1, "offset": 0}},
+        "ENABLE_EXTERN": {"descr": {"addr": 1, "size": 1, "offset": 1}},
+        "EN_ARMING": {"descr": {"addr": 1, "size": 1, "offset": 2}},
+        "EN_WRITE_TIMESTAMP": {"descr": {"addr": 1, "size": 1, "offset": 3}},
+        "EN_TRIGGER_DIST": {"descr": {"addr": 1, "size": 1, "offset": 4}},
+        "EN_NO_WRITE_TRIG_ERR": {"descr": {"addr": 1, "size": 1, "offset": 5}},
+        "EN_INVERT_TDC": {"descr": {"addr": 1, "size": 1, "offset": 6}},
+        "EN_INVERT_TRIGGER": {"descr": {"addr": 1, "size": 1, "offset": 7}},
+        "EVENT_COUNTER": {"descr": {"addr": 2, "size": 32, "properties": ["ro"]}},
+        "LOST_DATA_COUNTER": {"descr": {"addr": 6, "size": 8, "properties": ["ro"]}},
+    }
     _require_version = "==2"
 
     def __init__(self, intf, conf):

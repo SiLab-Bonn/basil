@@ -1,18 +1,14 @@
 from time import sleep
+
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
 
 class ArduinoBase(HardwareLayer):
+    CMD_DELIMITER = ":"
 
-    CMD_DELIMITER = ':'
+    CMDS = {"communication_delay": "D"}
 
-    CMDS = {
-        'communication_delay': 'D'
-    }
-
-    ERRORS = {
-        'error': "An error occured"
-    }
+    ERRORS = {"error": "An error occured"}
 
     @property
     def communication_delay(self):
@@ -24,7 +20,7 @@ class ArduinoBase(HardwareLayer):
         int
             Communication delay in milliseconds
         """
-        return int(self.query(self.create_command(self.CMDS['communication_delay'])))
+        return int(self.query(self.create_command(self.CMDS["communication_delay"])))
 
     @communication_delay.setter
     def communication_delay(self, comm_delay):
@@ -36,7 +32,7 @@ class ArduinoBase(HardwareLayer):
         comm_delay : int
             Communication delay in milliseconds
         """
-        self._set_and_retrieve(cmd='communication_delay', val=comm_delay)
+        self._set_and_retrieve(cmd="communication_delay", val=comm_delay)
 
     def __init__(self, intf, conf):
         super(ArduinoBase, self).__init__(intf, conf)
@@ -134,4 +130,4 @@ class ArduinoBase(HardwareLayer):
         str
             Formatted command string
         """
-        return f'{self.CMD_DELIMITER.join(str(a) for a in args)}{self.CMD_DELIMITER}'.encode()
+        return f"{self.CMD_DELIMITER.join(str(a) for a in args)}{self.CMD_DELIMITER}".encode()

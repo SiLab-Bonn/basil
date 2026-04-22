@@ -5,10 +5,10 @@
 # ------------------------------------------------------------
 #
 import logging
-from types import MethodType
 from time import sleep
-from basil.HL.scpi import scpi
+from types import MethodType
 
+from basil.HL.scpi import scpi
 
 logger = logging.getLogger(__name__)
 
@@ -42,14 +42,14 @@ class keithley6517A(scpi):
         # Overwrite TL write to add a delay after each write; Keithley 6517A needs this because otherwise errors occur
         self._intf.write = MethodType(_write_with_delay(self._intf.write), self._intf)
 
-    def setup_current_measurement(self, current_range=None, limit_current=True, voltage_range=None, filter=('REP', 10)):
+    def setup_current_measurement(self, current_range=None, limit_current=True, voltage_range=None, filter=("REP", 10)):
         # See manual p.2-23 ff.
         # Enable zero check before switching functions
         self.zero_check_on()
         # Select current measurement function
         self.select_current()
         # Set lowest range (20 pA) to do zero correction, works by scaling
-        self.set_current_range('MIN')
+        self.set_current_range("MIN")
         # Zero correct
         self.zero_correct_on()
         if current_range is None:
@@ -80,5 +80,5 @@ class keithley6517A(scpi):
     def get_current(self):
         if not self._setup_for_current_measurement:
             self.setup_current_measurement()
-        res = self.get_read().split(',')[0][:-4]
+        res = self.get_read().split(",")[0][:-4]
         return float(res)

@@ -3,15 +3,14 @@ import time
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
 
-
 logger = logging.getLogger(__name__)
 
 
 class rs_HMP4040(HardwareLayer):
-    '''
+    """
     HL for the RS HMP4040
     !! Analog to tti ql355tp for compatibility with bdaq53
-    '''
+    """
 
     def __init__(self, intf, conf):
         super(rs_HMP4040, self).__init__(intf, conf)
@@ -36,7 +35,7 @@ class rs_HMP4040(HardwareLayer):
         return ret
 
     def set_channel(self, channel):
-        """ channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4"""
+        """channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4"""
         cmd = "INST:NSEL %d" % channel
         self.write(cmd)
 
@@ -45,7 +44,7 @@ class rs_HMP4040(HardwareLayer):
         return ret
 
     def set_enable(self, on, channel=1):
-        """ channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4, ALL=all channels"""
+        """channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4, ALL=all channels"""
         if channel == "ALL":
             for i in [1, 2, 3, 4]:
                 self.set_enable(on, channel=i)
@@ -64,41 +63,41 @@ class rs_HMP4040(HardwareLayer):
         return self.ask("*IDN?")
 
     def get_current(self, channel):
-        """ channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4"""
+        """channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4"""
         self.set_channel(channel)
         ret = self.ask("MEAS:CURR?")
 
         return float(ret)
 
     def get_voltage(self, channel):
-        """ channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4"""
+        """channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4"""
         self.set_channel(channel)
         ret = self.ask("MEAS:VOLT?")
 
         return float(ret)
 
     def get_set_voltage(self, channel):
-        """ channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4"""
+        """channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4"""
         self.set_channel(channel)
         ret = self.ask("VOLT?")
 
         return float(ret)
 
     def get_current_limit(self, channel):
-        """ channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4"""
+        """channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4"""
         self.set_channel(channel)
         ret = self.ask("CURR?")
 
         return float(ret)
 
     def set_voltage(self, value, channel=1):
-        """ channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4"""
+        """channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4"""
         self.set_channel(channel)
         cmd = "VOLT %f" % value
         self.write(cmd)
 
     def set_current_limit(self, value, channel=1):
-        """ channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4"""
+        """channel: 1=OP1, 2=OP2, 3=OP3, 4=OP4"""
         self.set_channel(channel)
         cmd = "CURR %f" % value
         self.write(cmd)

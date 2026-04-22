@@ -5,7 +5,7 @@
 # ------------------------------------------------------------
 #
 
-''' This script shows how to use a Suss or Signatone Probe station.
+"""This script shows how to use a Suss or Signatone Probe station.
 
 BTW:
 For the PA-200 it is not forseen to be able to communicate with the prober bench software
@@ -16,17 +16,16 @@ client PC. To be able to use the Probe station directly with BASIL on the host P
 comport has to be created connecting the real comport (that is set in the RS232 Interface
 application, pbrs232.exe) to a virtual one.
 This virtual one is then used to steer the probe station within BASIL.
-'''
-
+"""
 
 from basil.dut import Dut
 
-dut = Dut('suss_pa_200.yaml')
+dut = Dut("suss_pa_200.yaml")
 dut.init()
-print(dut['SussProber'].get_position())
-print(dut['SussProber'].get_die())
+print(dut["SussProber"].get_position())
+print(dut["SussProber"].get_die())
 
-dut2 = Dut('SignatoneProber.yaml')
+dut2 = Dut("SignatoneProber.yaml")
 dut2.init()
-print(dut2['SignatoneProber'].get_position())
-print(dut2['SignatoneProber'].get_die())
+print(dut2["SignatoneProber"].get_position())
+print(dut2["SignatoneProber"].get_die())

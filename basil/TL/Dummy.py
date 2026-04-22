@@ -5,8 +5,8 @@
 # ------------------------------------------------------------
 #
 
-import logging
 import array
+import logging
 
 from basil.TL.SiTransferLayer import SiTransferLayer
 
@@ -14,8 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class Dummy(SiTransferLayer):
-    '''Dummy device
-    '''
+    """Dummy device"""
 
     def __init__(self, conf):
         self.mem = {}  # dummy memory dict, keys are addresses, values are of type int
@@ -23,18 +22,17 @@ class Dummy(SiTransferLayer):
 
     def init(self):
         super(Dummy, self).init()
-        logger.debug(
-            "Dummy SiTransferLayer.init configuration: %s" % str(self._conf))
-        if 'mem' in self._init:
-            if isinstance(self._init['mem'], dict):
-                self.mem = self._init['mem']
+        logger.debug("Dummy SiTransferLayer.init configuration: %s" % str(self._conf))
+        if "mem" in self._init:
+            if isinstance(self._init["mem"], dict):
+                self.mem = self._init["mem"]
             else:
-                self.mem = {i: j for i, j in enumerate(self._init['mem'])}
+                self.mem = {i: j for i, j in enumerate(self._init["mem"])}
         else:
             self.mem = {}
 
     def write(self, addr, data):
-        '''Write to dummy memory
+        """Write to dummy memory
 
         Parameters
         ----------
@@ -46,14 +44,13 @@ class Dummy(SiTransferLayer):
         Returns
         -------
         nothing
-        '''
-        logger.debug(
-            "Dummy SiTransferLayer.write addr: %s data: %s" % (hex(addr), data))
+        """
+        logger.debug("Dummy SiTransferLayer.write addr: %s data: %s" % (hex(addr), data))
         for curr_addr, d in enumerate(data, start=addr):
-            self.mem[curr_addr] = array.array('B', [d])[0]  # write int
+            self.mem[curr_addr] = array.array("B", [d])[0]  # write int
 
     def read(self, addr, size):
-        '''
+        """
         Parameters
         ----------
         addr : int
@@ -65,6 +62,8 @@ class Dummy(SiTransferLayer):
         -------
         array : array
             Data (byte array) read from memory. Returns 0 for each byte if it hasn't been written to.
-        '''
+        """
         logger.debug("Dummy SiTransferLayer.read addr: %s size: %s" % (hex(addr), size))
-        return array.array('B', [self.mem[curr_addr] if curr_addr in self.mem else 0 for curr_addr in range(addr, addr + size)])
+        return array.array(
+            "B", [self.mem[curr_addr] if curr_addr in self.mem else 0 for curr_addr in range(addr, addr + size)]
+        )

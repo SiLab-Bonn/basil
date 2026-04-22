@@ -18,5 +18,3 @@ set_property MARK_DEBUG true [get_nets {i_tdc/i_tdc_core/tdc_state_delayed[2]}]
 set_property MARK_DEBUG true [get_nets {i_tdc/i_tdc_core/tdc_state_delayed[3]}]
 set_property MARK_DEBUG true [get_nets {i_tdc/i_tdc_core/fine_time_delayed[0]}]
 set_property MARK_DEBUG true [get_nets {i_tdc/i_tdc_core/fine_time_delayed[1]}]
-
-

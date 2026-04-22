@@ -5,14 +5,15 @@
 # ------------------------------------------------------------
 #
 
-import unittest
 import os
+import unittest
+
 import yaml
 
 from basil.dut import Dut
-from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
-from basil.utils.BitLogic import BitLogic
 from basil.RL.StdRegister import StdRegister
+from basil.utils.BitLogic import BitLogic
+from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
 cnfg_yaml = """
 transfer_layer:
@@ -158,115 +159,116 @@ DEV:
 
 class TestSimJtagGpio(unittest.TestCase):
     def setUp(self):
-        cocotb_compile_and_run([
-            os.path.join(os.path.dirname(__file__), 'jtag_tap.v'),
-            os.path.join(os.path.dirname(__file__), 'test_SimJtagGpio.v')]
+        cocotb_compile_and_run(
+            [
+                os.path.join(os.path.dirname(__file__), "jtag_tap.v"),
+                os.path.join(os.path.dirname(__file__), "test_SimJtagGpio.v"),
+            ]
         )
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init(init_yaml)
 
     def test_gpio(self):
+        ID_CODE = BitLogic("0010")
+        BYPASS = BitLogic("1111")
+        DEBUG = BitLogic("1000")
 
-        ID_CODE = BitLogic('0010')
-        BYPASS = BitLogic('1111')
-        DEBUG = BitLogic('1000')
-
-        ret_ir = BitLogic('0101')
+        ret_ir = BitLogic("0101")
 
         # TEST REG INIT
         dev1ret = StdRegister(driver=None, conf=yaml.safe_load(gpio_yaml))
         dev1ret.init()
-        dev1ret['F1'] = 0x1
-        dev1ret['F2'] = 0x2f
-        dev1ret['F3'] = 0x2
-        dev1ret['F4'] = 0x17cf4
-        self.assertEqual(dev1ret[:], self.chip['DEV1'][:])
+        dev1ret["F1"] = 0x1
+        dev1ret["F2"] = 0x2F
+        dev1ret["F3"] = 0x2
+        dev1ret["F4"] = 0x17CF4
+        self.assertEqual(dev1ret[:], self.chip["DEV1"][:])
 
-        self.chip['DEV1']['F2'] = 0
-        self.assertFalse(dev1ret[:] == self.chip['DEV1'][:])
+        self.chip["DEV1"]["F2"] = 0
+        self.assertFalse(dev1ret[:] == self.chip["DEV1"][:])
 
         self.chip.set_configuration(init_yaml)
-        self.assertEqual(dev1ret[:], self.chip['DEV1'][:])
+        self.assertEqual(dev1ret[:], self.chip["DEV1"][:])
 
-        self.chip['JTAG'].reset()
+        self.chip["JTAG"].reset()
 
         # IR CODE
-        ret = self.chip['JTAG'].scan_ir([ID_CODE] * 2)
+        ret = self.chip["JTAG"].scan_ir([ID_CODE] * 2)
         self.assertEqual(ret, [ret_ir] * 2)
 
         # ID CODE
-        id_code = BitLogic.from_value(0x149B51C3, fmt='I')
-        ret = self.chip['JTAG'].scan_dr(['0' * 32] * 2)
+        id_code = BitLogic.from_value(0x149B51C3, fmt="I")
+        ret = self.chip["JTAG"].scan_dr(["0" * 32] * 2)
         self.assertEqual(ret, [id_code] * 2)
 
         # BYPASS + ID CODE
-        bypass_code = BitLogic('0')
-        ret = self.chip['JTAG'].scan_ir([ID_CODE, BYPASS])
+        bypass_code = BitLogic("0")
+        ret = self.chip["JTAG"].scan_ir([ID_CODE, BYPASS])
         self.assertEqual(ret, [ret_ir] * 2)
-        ret = self.chip['JTAG'].scan_dr(['0' * 32, '1'])
+        ret = self.chip["JTAG"].scan_dr(["0" * 32, "1"])
         self.assertEqual(ret, [id_code, bypass_code])
 
-        ret = self.chip['JTAG'].scan_ir([BYPASS, ID_CODE])
+        ret = self.chip["JTAG"].scan_ir([BYPASS, ID_CODE])
         self.assertEqual(ret, [ret_ir] * 2)
-        ret = self.chip['JTAG'].scan_dr(['1', '0' * 32])
+        ret = self.chip["JTAG"].scan_dr(["1", "0" * 32])
         self.assertEqual(ret, [bypass_code, id_code])
 
         # DEBUG
-        ret = self.chip['JTAG'].scan_ir([DEBUG, DEBUG])
+        ret = self.chip["JTAG"].scan_ir([DEBUG, DEBUG])
         self.assertEqual(ret, [ret_ir] * 2)
 
-        self.chip['JTAG'].scan_dr(['1' * 32, '0' * 1 + '1' * 30 + '0' * 1])
-        ret = self.chip['JTAG'].scan_dr(['0' * 32, '1' * 32])
-        self.assertEqual(ret, [BitLogic('1' * 32), BitLogic('0' * 1 + '1' * 30 + '0' * 1)])
-        ret = self.chip['JTAG'].scan_dr(['0' * 32, '0' * 32])
-        self.assertEqual(ret, [BitLogic('0' * 32), BitLogic('1' * 32)])
+        self.chip["JTAG"].scan_dr(["1" * 32, "0" * 1 + "1" * 30 + "0" * 1])
+        ret = self.chip["JTAG"].scan_dr(["0" * 32, "1" * 32])
+        self.assertEqual(ret, [BitLogic("1" * 32), BitLogic("0" * 1 + "1" * 30 + "0" * 1)])
+        ret = self.chip["JTAG"].scan_dr(["0" * 32, "0" * 32])
+        self.assertEqual(ret, [BitLogic("0" * 32), BitLogic("1" * 32)])
 
         # SHIT IN DEV REG/DEBUG
-        self.chip['JTAG'].scan_dr([self.chip['DEV1'][:], self.chip['DEV2'][:]])
+        self.chip["JTAG"].scan_dr([self.chip["DEV1"][:], self.chip["DEV2"][:]])
 
         # GPIO RETURN
-        dev1ret.frombytes(self.chip['GPIO_DEV1'].get_data())
-        self.assertEqual(dev1ret[:], self.chip['DEV1'][:])
+        dev1ret.frombytes(self.chip["GPIO_DEV1"].get_data())
+        self.assertEqual(dev1ret[:], self.chip["DEV1"][:])
 
-        self.assertFalse(dev1ret[:] == self.chip['DEV2'][:])
-        dev1ret.frombytes(self.chip['GPIO_DEV2'].get_data())
-        self.assertEqual(dev1ret[:], self.chip['DEV2'][:])
+        self.assertFalse(dev1ret[:] == self.chip["DEV2"][:])
+        dev1ret.frombytes(self.chip["GPIO_DEV2"].get_data())
+        self.assertEqual(dev1ret[:], self.chip["DEV2"][:])
 
         # JTAG RETURN
-        ret = self.chip['JTAG'].scan_dr(['0' * 32, '0' * 32])
+        ret = self.chip["JTAG"].scan_dr(["0" * 32, "0" * 32])
         dev1ret.set(ret[0])
-        self.assertEqual(dev1ret[:], self.chip['DEV1'][:])
+        self.assertEqual(dev1ret[:], self.chip["DEV1"][:])
 
         dev1ret.set(ret[1])
-        self.assertEqual(dev1ret[:], self.chip['DEV2'][:])
+        self.assertEqual(dev1ret[:], self.chip["DEV2"][:])
 
         # REPEATING REGISTER
-        self.chip['JTAG'].scan_dr([self.chip['DEV'][:]])
-        ret1 = self.chip['JTAG'].scan_dr([self.chip['DEV'][:]])
-        self.chip['JTAG'].scan_dr([self.chip['DEV1'][:], self.chip['DEV2'][:]])
-        ret2 = self.chip['JTAG'].scan_dr([self.chip['DEV1'][:] + self.chip['DEV2'][:]])
-        ret3 = self.chip['JTAG'].scan_dr([self.chip['DEV1'][:] + self.chip['DEV2'][:]])
+        self.chip["JTAG"].scan_dr([self.chip["DEV"][:]])
+        ret1 = self.chip["JTAG"].scan_dr([self.chip["DEV"][:]])
+        self.chip["JTAG"].scan_dr([self.chip["DEV1"][:], self.chip["DEV2"][:]])
+        ret2 = self.chip["JTAG"].scan_dr([self.chip["DEV1"][:] + self.chip["DEV2"][:]])
+        ret3 = self.chip["JTAG"].scan_dr([self.chip["DEV1"][:] + self.chip["DEV2"][:]])
         self.assertEqual(ret1[:], ret2[:])
         self.assertEqual(ret2[:], ret3[:])
 
         # REPEATING SETTING
-        self.chip['JTAG'].scan_dr(['1' * 32 + '0' * 32])
-        ret = self.chip['JTAG'].scan_dr(['0' * 32 + '0' * 32])
+        self.chip["JTAG"].scan_dr(["1" * 32 + "0" * 32])
+        ret = self.chip["JTAG"].scan_dr(["0" * 32 + "0" * 32])
 
-        self.chip['DEV'].set(ret[0])
-        self.assertEqual(self.chip['DEV'][:], BitLogic('0' * 32 + '1' * 32))
+        self.chip["DEV"].set(ret[0])
+        self.assertEqual(self.chip["DEV"][:], BitLogic("0" * 32 + "1" * 32))
 
-        self.chip['JTAG'].scan_dr([self.chip['DEV1'][:] + self.chip['DEV2'][:]])
-        ret = self.chip['JTAG'].scan_dr([self.chip['DEV1'][:] + self.chip['DEV2'][:]])
+        self.chip["JTAG"].scan_dr([self.chip["DEV1"][:] + self.chip["DEV2"][:]])
+        ret = self.chip["JTAG"].scan_dr([self.chip["DEV1"][:] + self.chip["DEV2"][:]])
 
-        self.chip['DEV'].set(ret[0])
-        self.assertEqual(self.chip['DEV'][:], self.chip['DEV1'][:] + self.chip['DEV2'][:])
+        self.chip["DEV"].set(ret[0])
+        self.assertEqual(self.chip["DEV"][:], self.chip["DEV1"][:] + self.chip["DEV2"][:])
 
     def tearDown(self):
         self.chip.close()  # let it close connection and stop simulator
         cocotb_compile_clean()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

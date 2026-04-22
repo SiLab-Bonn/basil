@@ -5,15 +5,16 @@
 # ------------------------------------------------------------
 #
 
-import unittest
 import os
-import yaml
+import unittest
+
 import numpy as np
+import yaml
 
 from basil.dut import Dut
-from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
-from basil.utils.BitLogic import BitLogic
 from basil.RL.StdRegister import StdRegister
+from basil.utils.BitLogic import BitLogic
+from basil.utils.sim.utils import cocotb_compile_and_run, cocotb_compile_clean
 
 cnfg_yaml = """
 transfer_layer:
@@ -228,7 +229,6 @@ class TestSimJtagMaster(unittest.TestCase):
             pass
 
     def jtag_tests(self):
-
         ID_CODE_STR = "0010"
         ID_CODE = BitLogic(ID_CODE_STR)
         BYPASS = BitLogic("1111")

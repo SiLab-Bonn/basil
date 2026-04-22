@@ -4,9 +4,10 @@
 # ------------------------------------------------------------
 #
 
-import numpy as np
 import logging
 import struct
+
+import numpy as np
 
 from basil.HL.SensirionBridgeDevice import SensirionBridgeI2CDevice
 
@@ -15,7 +16,7 @@ logging.getLogger("sensirion_shdlc_driver.connection").setLevel(logging.ERROR)
 
 
 class sensirionSHT85(SensirionBridgeI2CDevice):
-    '''
+    """
     Driver for the Sensirion SHT85 temperature and humidity sensor.
     Measurements can be performed in three repeatability modes:
     low (0.15°C 0.21%RH) (default), medium (0.08°C 0.15%RH), high (0.04°C 0.08%RH)
@@ -26,7 +27,7 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
     A non-blocking call to the asynchrounous read function may return None if no data is available.
     In ART mode the humidity response is accelerated.
     A heater may be turned on for debugging purposes.
-    '''
+    """
 
     def __init__(self, intf, conf):
         super(sensirionSHT85, self).__init__(intf, conf)
@@ -36,26 +37,27 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
 
         try:
             import crcmod
+
             self.crc_func = crcmod.mkCrcFun(0x131, initCrc=0xFF, rev=False, xorOut=0x00)
         except ImportError:
             logger.warning("You have to install the package 'crcmod'! Transmission errors will not be caught.")
             self.crc_func = lambda x: 0
 
-        self.repeatability = self._init.get('repeatability', 'low')
+        self.repeatability = self._init.get("repeatability", "low")
 
     def _read(self, command, read_n_words=0, timeout_us=20e3, n_tries=10):
         for _ in range(n_tries):
             rx_data = super(sensirionSHT85, self)._read(command, read_n_words * 3, timeout_us)
             data = [0] * read_n_words
             for i in range(read_n_words):
-                if self.crc_func(rx_data[i * 3:(i + 1) * 3]):
+                if self.crc_func(rx_data[i * 3 : (i + 1) * 3]):
                     break
                 else:
-                    data[i] = struct.unpack('>H', rx_data[i * 3: i * 3 + 2])[0]
+                    data[i] = struct.unpack(">H", rx_data[i * 3 : i * 3 + 2])[0]
             else:
                 return data
             continue
-        raise Exception('Checksum repeatedly ({0}x) wrong'.format(n_tries), rx_data)
+        raise Exception("Checksum repeatedly ({0}x) wrong".format(n_tries), rx_data)
 
     def _write(self, command):
         super(sensirionSHT85, self)._write(command)
@@ -109,7 +111,7 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
                     2: [0x22, 0x36],
                     4: [0x23, 0x34],
                     10: [0x27, 0x37],
-                }[measurments_per_second]
+                }[measurments_per_second],
             }[self.repeatability]
         self._write(cmd)
 
@@ -137,6 +139,7 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
 
             def read_synchronous(self_a, timeout_us=100e3):
                 return self.read_asynchronous(timeout_us)
+
         return Asynchronous()
 
     def _get_status(self):
@@ -162,10 +165,10 @@ class sensirionSHT85(SensirionBridgeI2CDevice):
         return 100 * (float(data[1]) / (2**16 - 1))
 
     def to_dew_point(self, T, RH):
-        ''' returns the dew point using an approximation
-            approximation specified by Sensirion:
-            http://irtfweb.ifa.hawaii.edu/~tcs3/tcs3/Misc/Dewpoint_Calculation_Humidity_Sensor_E.pdf
-        '''
+        """returns the dew point using an approximation
+        approximation specified by Sensirion:
+        http://irtfweb.ifa.hawaii.edu/~tcs3/tcs3/Misc/Dewpoint_Calculation_Humidity_Sensor_E.pdf
+        """
         if RH == 0:
             RH = self._to_humidity((0, 1))  # lowest non-zero rel. humidity
         H = (np.log10(RH) - 2) / 0.4343 + (17.62 * T) / (243.12 + T)

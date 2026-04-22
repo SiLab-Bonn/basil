@@ -10,25 +10,18 @@ on:
 
 jobs:
 
-  lint-flake8:
+  pre-commit:
     runs-on: ubuntu-latest
-    name: flake8
-    strategy:
-      fail-fast: false
     steps:
-    - uses: actions/checkout@v6
-    - name: Set up Python
-      uses: actions/setup-python@v6
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
       with:
-        python-version: 3.11
-    - name: flake8
-      run: |
-        pip install flake8
-        flake8 --ignore=E501,W503,W504
+        python-version: "3.12"
+    - uses: pre-commit/action@v3.0.1
 
   tests:
 
-    name: Python ${{matrix.python-version}} | ${{matrix.sim}} 
+    name: Python ${{matrix.python-version}} | ${{matrix.sim}}
     runs-on: ubuntu-24.04
     env:
       SIM: ${{matrix.sim}}

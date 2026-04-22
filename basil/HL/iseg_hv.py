@@ -105,9 +105,7 @@ class IsegHV(HardwareLayer):
         self.answer_delay = 1  # ms
 
         # # Add error response for attempting to set voltage too high
-        self.ERRORS[f"? UMAX={self.get_voltage_limit}"] = (
-            "Set voltage exceeds voltage limit"
-        )
+        self.ERRORS[f"? UMAX={self.get_voltage_limit}"] = "Set voltage exceeds voltage limit"
 
         self.set_autostart(self._autostart)
 
@@ -142,28 +140,20 @@ class IsegHV(HardwareLayer):
     def set_voltage(self, voltage):
         # Check hardware voltage limit
         if abs(voltage) > abs(self.voltage_limit):
-            raise ValueError(
-                f"Voltage of {voltage}V too high! Maximum voltage is {self.voltage_limit} V"
-            )
+            raise ValueError(f"Voltage of {voltage}V too high! Maximum voltage is {self.voltage_limit} V")
 
         # Get module status for checks
         ms = self.get_module_status()
 
         # Issue warning if PSU is in different polarity as value
         if ms[5] == "1" and voltage < 0:
-            raise ValueError(
-                f"Power supply polarity is set to positive but target voltage of {voltage}V is negative!"
-            )
+            raise ValueError(f"Power supply polarity is set to positive but target voltage of {voltage}V is negative!")
         elif ms[5] == "0" and voltage > 0:
-            raise ValueError(
-                f"Power supply polarity is set to negative but target voltage of {voltage}V is positive!"
-            )
+            raise ValueError(f"Power supply polarity is set to negative but target voltage of {voltage}V is positive!")
 
         # Check software voltage limit
         if self._voltage_limit is not None:
-            if (ms[5] == "1" and voltage > self._voltage_limit) or (
-                ms[5] == "0" and voltage < self._voltage_limit
-            ):
+            if (ms[5] == "1" and voltage > self._voltage_limit) or (ms[5] == "0" and voltage < self._voltage_limit):
                 raise ValueError(
                     f"Voltage of {voltage}V too high! Increase *v_lim={self._v_lim}V* to enable higher voltage!"
                 )
@@ -171,9 +161,7 @@ class IsegHV(HardwareLayer):
         # Issue warning if PSU is in manual mode
         # Then voltage can only be changed manually, at the device
         if ms[6] == "1":
-            logging.warning(
-                "Power supply in manual mode; voltage changes have no effect!"
-            )
+            logging.warning("Power supply in manual mode; voltage changes have no effect!")
 
         self._get_set_property(prop="set_voltage", value=abs(voltage))
 
@@ -199,11 +187,7 @@ class IsegHV(HardwareLayer):
             Voltage limit in V
         """
         # Property get_v_lim returns voltage limit as percentage of max voltage
-        return (
-            int(self._get_set_property(prop="get_voltage_limit"))
-            / 100.0
-            * float(self.V_MAX[:-1])
-        )
+        return int(self._get_set_property(prop="get_voltage_limit")) / 100.0 * float(self.V_MAX[:-1])
 
     def get_voltage_limit(self):
         """
@@ -217,9 +201,7 @@ class IsegHV(HardwareLayer):
         return self._voltage_limit
 
     def set_voltage_limit(self, voltage_limit):
-        self._voltage_limit = (
-            voltage_limit if voltage_limit is None else float(voltage_limit)
-        )
+        self._voltage_limit = voltage_limit if voltage_limit is None else float(voltage_limit)
 
     def get_current_limit(self):
         """
@@ -231,9 +213,7 @@ class IsegHV(HardwareLayer):
             Current limit in A
         """
         # Property get_i_lim returns voltage limit as percentage of max current
-        return (
-            int(self._get_set_property(prop="get_current_limit")) / 100.0 * float(self.I_MAX[:-2])
-        )
+        return int(self._get_set_property(prop="get_current_limit")) / 100.0 * float(self.I_MAX[:-2])
 
     def get_current_trip(self, resolution="mA"):
         """
@@ -408,7 +388,6 @@ class IsegHV(HardwareLayer):
         return module_description
 
     def _get_set_property(self, prop, value=None):
-
         if "{channel}" in self.CMDS[prop] and "{value}" in self.CMDS[prop]:
             cmd = self.CMDS[prop].format(channel=self.channel, value=value)
         elif "{channel}" in self.CMDS[prop]:
@@ -468,18 +447,14 @@ class IsegHV(HardwareLayer):
         # RECV -> actual data        // recv the actual data
         echo = str(self._intf.query(msg)).strip()
         if echo != msg:
-            raise RuntimeError(
-                f"Issued command ({msg}) and echoed command ({echo}) differ."
-            )
+            raise RuntimeError(f"Issued command ({msg}) and echoed command ({echo}) differ.")
         return self.read()
 
     def on(self):
         try:
             self.set_voltage(float(self.high_voltage))
         except TypeError:
-            raise ValueError(
-                "High voltage is not set. Set *high_voltage* attribute to numerical value"
-            )
+            raise ValueError("High voltage is not set. Set *high_voltage* attribute to numerical value")
 
     def off(self):
         self.set_voltage(0)

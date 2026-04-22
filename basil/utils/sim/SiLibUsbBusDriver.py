@@ -12,13 +12,13 @@
 """
 Abastract away interactions with the control bus
 """
+
+from cocotb.triggers import ReadOnly, RisingEdge, Timer
 from cocotb.types import LogicArray
-from cocotb.triggers import RisingEdge, ReadOnly, Timer
 from cocotb_bus.drivers import BusDriver
 
 
 class SiLibUsbBusDriver(BusDriver):
-
     _signals = ["FCLK_IN", "BUS_DATA", "ADD", "RD_B", "WR_B", "FD", "FREAD", "FSTROBE", "FMODE"]
 
     BASE_ADDRESS_I2C = 0x00000

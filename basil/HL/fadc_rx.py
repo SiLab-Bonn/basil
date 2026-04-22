@@ -9,20 +9,20 @@ from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
 class fadc_rx(RegisterHardwareLayer):
+    """Fast ADC channel receiver"""
 
-    '''Fast ADC channel receiver
-    '''
-
-    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
-                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
-                  'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
-                  'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
-                  'ALIGN_TO_SYNC': {'descr': {'addr': 2, 'size': 1}},
-                  'EN_TRIGGER': {'descr': {'addr': 2, 'size': 1, 'offset': 1}},
-                  'SINGLE_DATA': {'descr': {'addr': 2, 'size': 1, 'offset': 2}},
-                  'SAMPLE_DLY': {'descr': {'addr': 7, 'size': 8}},
-                  'COUNT': {'descr': {'addr': 3, 'size': 24}},
-                  'COUNT_LOST': {'descr': {'addr': 8, 'size': 8, 'properties': ['ro']}}}
+    _registers = {
+        "RESET": {"descr": {"addr": 0, "size": 8, "properties": ["writeonly"]}},
+        "VERSION": {"descr": {"addr": 0, "size": 8, "properties": ["ro"]}},
+        "READY": {"descr": {"addr": 1, "size": 1, "properties": ["ro"]}},
+        "START": {"descr": {"addr": 1, "size": 8, "properties": ["writeonly"]}},
+        "ALIGN_TO_SYNC": {"descr": {"addr": 2, "size": 1}},
+        "EN_TRIGGER": {"descr": {"addr": 2, "size": 1, "offset": 1}},
+        "SINGLE_DATA": {"descr": {"addr": 2, "size": 1, "offset": 2}},
+        "SAMPLE_DLY": {"descr": {"addr": 7, "size": 8}},
+        "COUNT": {"descr": {"addr": 3, "size": 24}},
+        "COUNT_LOST": {"descr": {"addr": 8, "size": 8, "properties": ["ro"]}},
+    }
 
     _require_version = "==1"
 
@@ -36,14 +36,13 @@ class fadc_rx(RegisterHardwareLayer):
         self.START = 0
 
     def set_align_to_sync(self, value):
-        '''
+        """
         Align data taking to a synchronization signal, reset signal is the synchronization signal (hard coded connection in Verilog source code)
-        '''
+        """
         self.ALIGN_TO_SYNC = value
 
     def set_single_data(self, value):
-        '''
-        '''
+        """ """
         self.SINGLE_DATA = value
 
     def get_align_to_sync(self):

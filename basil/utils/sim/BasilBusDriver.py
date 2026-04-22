@@ -10,8 +10,8 @@
 # pylint: disable=pointless-statement, expression-not-assigned
 
 
-from cocotb.types import LogicArray
 from cocotb.triggers import RisingEdge, Timer
+from cocotb.types import LogicArray
 from cocotb_bus.drivers import BusDriver
 
 
@@ -100,7 +100,6 @@ class BasilBusDriver(BusDriver):
         return result
 
     async def write(self, address, data):
-
         self.bus.BUS_ADD.value = self._x
         self.bus.BUS_DATA.value = self._high_impedance
         self.bus.BUS_WR.value = 0

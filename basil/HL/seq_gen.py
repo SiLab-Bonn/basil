@@ -9,24 +9,24 @@ from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
 class seq_gen(RegisterHardwareLayer):
-    '''Sequencer generator controller interface for seq_gen FPGA module.
-    '''
+    """Sequencer generator controller interface for seq_gen FPGA module."""
 
-    _registers = {'RESET': {'descr': {'addr': 0, 'size': 8, 'properties': ['writeonly']}},
-                  'VERSION': {'descr': {'addr': 0, 'size': 8, 'properties': ['ro']}},
-                  'READY': {'descr': {'addr': 1, 'size': 1, 'properties': ['ro']}},
-                  'START': {'descr': {'addr': 1, 'size': 8, 'properties': ['writeonly']}},
-                  'EN_EXT_START': {'descr': {'addr': 2, 'size': 1}},
-                  'CLK_DIV': {'descr': {'addr': 3, 'size': 8}},
-                  'SIZE': {'descr': {'addr': 4, 'size': 32}},
-                  'WAIT': {'descr': {'addr': 8, 'size': 32}},
-                  'REPEAT': {'descr': {'addr': 12, 'size': 32}},
-                  'REPEAT_START': {'descr': {'addr': 16, 'size': 32}},
-                  'NESTED_START': {'descr': {'addr': 20, 'size': 32}},
-                  'NESTED_STOP': {'descr': {'addr': 24, 'size': 32}},
-                  'NESTED_REPEAT': {'descr': {'addr': 28, 'size': 32}},
-                  'MEM_BYTES': {'descr': {'addr': 32, 'size': 32, 'properties': ['ro']}},
-                  }
+    _registers = {
+        "RESET": {"descr": {"addr": 0, "size": 8, "properties": ["writeonly"]}},
+        "VERSION": {"descr": {"addr": 0, "size": 8, "properties": ["ro"]}},
+        "READY": {"descr": {"addr": 1, "size": 1, "properties": ["ro"]}},
+        "START": {"descr": {"addr": 1, "size": 8, "properties": ["writeonly"]}},
+        "EN_EXT_START": {"descr": {"addr": 2, "size": 1}},
+        "CLK_DIV": {"descr": {"addr": 3, "size": 8}},
+        "SIZE": {"descr": {"addr": 4, "size": 32}},
+        "WAIT": {"descr": {"addr": 8, "size": 32}},
+        "REPEAT": {"descr": {"addr": 12, "size": 32}},
+        "REPEAT_START": {"descr": {"addr": 16, "size": 32}},
+        "NESTED_START": {"descr": {"addr": 20, "size": 32}},
+        "NESTED_STOP": {"descr": {"addr": 24, "size": 32}},
+        "NESTED_REPEAT": {"descr": {"addr": 28, "size": 32}},
+        "MEM_BYTES": {"descr": {"addr": 32, "size": 32, "properties": ["ro"]}},
+    }
     _require_version = "==3"
 
     def __init__(self, intf, conf):
@@ -112,13 +112,15 @@ class seq_gen(RegisterHardwareLayer):
 
     def set_data(self, data, addr=0):
         if self._seq_mem_size < len(data):
-            raise ValueError('Size of data (%d bytes) is too big for memory (%d bytes)' % (len(data), self._seq_mem_size))
-        self._intf.write(self._conf['base_addr'] + self._seq_mem_offset + addr, data)
+            raise ValueError(
+                "Size of data (%d bytes) is too big for memory (%d bytes)" % (len(data), self._seq_mem_size)
+            )
+        self._intf.write(self._conf["base_addr"] + self._seq_mem_offset + addr, data)
 
     def get_data(self, size=None, addr=0):
         if size and self._seq_mem_size < size:
-            raise ValueError('Size is too big')
+            raise ValueError("Size is too big")
         if not size:
-            return self._intf.read(self._conf['base_addr'] + self._seq_mem_offset + addr, self._seq_mem_size)
+            return self._intf.read(self._conf["base_addr"] + self._seq_mem_offset + addr, self._seq_mem_size)
         else:
-            return self._intf.read(self._conf['base_addr'] + self._seq_mem_offset + addr, size)
+            return self._intf.read(self._conf["base_addr"] + self._seq_mem_offset + addr, size)

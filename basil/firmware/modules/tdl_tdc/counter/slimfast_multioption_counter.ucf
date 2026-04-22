@@ -23,7 +23,7 @@
 ##--                                                                 --
 ##---------------------------------------------------------------------
 
-TIMEGRP "SFCounter" = ffs("*/SFC_*");			
+TIMEGRP "SFCounter" = ffs("*/SFC_*");
 TIMESPEC TS_SlimFastCounter = FROM "SFCounter" TO "SFCounter" 40 ns;
 #set_multicycle_path -setup 15 -from [get_cells -hier *SFC_*] -to [get_cells -hier *SFC_* ]
 #set_multicycle_path -hold 2 -from [get_cells -hier *SFC_*] -to [get_cells -hier *SFC_* ]

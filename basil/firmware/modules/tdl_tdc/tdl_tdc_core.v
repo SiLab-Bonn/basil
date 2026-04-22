@@ -4,7 +4,7 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
- 
+
 `include "tdl_tdc/tdl_supersampler.v"
 `include "tdl_tdc/counter/slimfast_multioption_counter.v"
 `include "tdl_tdc/controller.v"
@@ -99,7 +99,7 @@ wire [input_mux_bits-1:0] input_mux_addr;
 // The mux address that the controller computes might contain glitches which
 // this buffer removes
 reg [input_mux_bits-1:0] input_mux_addr_buf;
-always @ (posedge CLK) 
+always @ (posedge CLK)
 	input_mux_addr_buf <= input_mux_addr;
 always @(*) begin
 	case(input_mux_addr_buf)
@@ -159,7 +159,7 @@ wire [fine_time_bits-1:0] fine_time_delayed;
 (* mark_debug = "true" *)
 wire [state_bits-1:0] tdc_state_delayed;
 (* mark_debug = "true" *)
-wire [corsebits-1:0] corse_time_delayed; 
+wire [corsebits-1:0] corse_time_delayed;
 
 
 // The state is actually one cycle behind the selected sample, so we delay it
@@ -192,7 +192,7 @@ word_broker #(
 	.encodebits(encodebits)
 )  i_broker (
 	.CLK(CLK),
-	.corse_count(corse_time_delayed), 
+	.corse_count(corse_time_delayed),
 	.fine_time(fine_time_delayed),
 	.tdl_time(tdl_time),
 	.tdc_state(tdc_state_delayed),

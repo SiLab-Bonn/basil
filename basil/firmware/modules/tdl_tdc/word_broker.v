@@ -19,7 +19,7 @@ module word_broker  #(
 	output reg [32-1:0] out_word
 );
 
-localparam word_type_bits = 3; 
+localparam word_type_bits = 3;
 
 // Word type codes
 localparam [word_type_bits-1:0] TRIGGERED_WORD = 0;
@@ -74,7 +74,7 @@ always @(posedge CLK) begin
 			out_valid <= 1;
 			if (~counter_overflow)
 				out_word <= {DATA_IDENTIFIER, RISING_WORD, corse_time, fine_time, tdl_time};
-			else 
+			else
 				out_word <= {DATA_IDENTIFIER, RISING_WORD, {(counter_bits-1){1'b1}}, {fine_time_bits{1'b1}}, tdl_time};
 		end
 		{RIS_EDGE,FAL_EDGE}: begin

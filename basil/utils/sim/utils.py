@@ -5,18 +5,30 @@
 # ------------------------------------------------------------
 #
 
-import subprocess
-import basil
 import os
+import subprocess
+
+import basil
 
 
 def get_basil_dir():
     return str(os.path.dirname(basil.__file__))
 
 
-def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test', sim_host='localhost', sim_port=12345, sim_bus='basil.utils.sim.BasilBusDriver',
-                    end_on_disconnect=True, include_dirs=(), extra_defines=(), compile_args=(), build_args=(), extra=''):
-
+def cocotb_makefile(
+    sim_files,
+    top_level="tb",
+    test_module="basil.utils.sim.Test",
+    sim_host="localhost",
+    sim_port=12345,
+    sim_bus="basil.utils.sim.BasilBusDriver",
+    end_on_disconnect=True,
+    include_dirs=(),
+    extra_defines=(),
+    compile_args=(),
+    build_args=(),
+    extra="",
+):
     basil_dir = get_basil_dir()
     include_dirs += (basil_dir + "/firmware/modules", basil_dir + "/firmware/modules/includes")
 
@@ -31,21 +43,27 @@ def cocotb_makefile(sim_files, top_level='tb', test_module='basil.utils.sim.Test
 
     mkfile += "TOPLEVEL = %s\nMODULE = %s\n\n" % (top_level, test_module)
 
-    mkfile += "ICARUS_INCLUDE_DIRS = %s\n" % (" ".join('-I' + str(e) for e in include_dirs))
-    mkfile += "ICARUS_DEFINES += %s\n\n" % (" ".join('-D' + str(e) for e in extra_defines))
+    mkfile += "ICARUS_INCLUDE_DIRS = %s\n" % (" ".join("-I" + str(e) for e in include_dirs))
+    mkfile += "ICARUS_DEFINES += %s\n\n" % (" ".join("-D" + str(e) for e in extra_defines))
 
-    mkfile += "NOT_ICARUS_DEFINES = %s\n" % (" ".join('+define+' + str(e) for e in extra_defines))
-    mkfile += "NOT_ICARUS_INCLUDE_DIRS=+incdir+./ %s\n" % (" ".join('+incdir+' + str(e) for e in include_dirs))  # this is for modelsim better full path?
+    mkfile += "NOT_ICARUS_DEFINES = %s\n" % (" ".join("+define+" + str(e) for e in extra_defines))
+    mkfile += "NOT_ICARUS_INCLUDE_DIRS=+incdir+./ %s\n" % (
+        " ".join("+incdir+" + str(e) for e in include_dirs)
+    )  # this is for modelsim better full path?
 
-    mkfile += "COMPILE_ARGS_DEFINES = %s\n" % (" ".join(str(e) for e in compile_args))  # extra compiler args, e.g., for adding Xilinx's glbl.v to Icarus use "-s glbl"
-    mkfile += "BUILD_ARGS_DEFINES = %s\n" % (" ".join(str(e) for e in build_args))  # extra build args passed to build stage in supported simulators
+    mkfile += "COMPILE_ARGS_DEFINES = %s\n" % (
+        " ".join(str(e) for e in compile_args)
+    )  # extra compiler args, e.g., for adding Xilinx's glbl.v to Icarus use "-s glbl"
+    mkfile += "BUILD_ARGS_DEFINES = %s\n" % (
+        " ".join(str(e) for e in build_args)
+    )  # extra build args passed to build stage in supported simulators
 
     mkfile += "\n"
     mkfile += extra
     mkfile += "\n"
 
     try:
-        if os.environ['SIM'] == 'verilator':
+        if os.environ["SIM"] == "verilator":
             mkfile += "EXTRA_ARGS += -DVERILATOR_SIM\n"
             mkfile += "EXTRA_ARGS += -Wno-WIDTH -Wno-TIMESCALEMOD -Wwarn-ASSIGNDLY\n"
     except KeyError:
@@ -91,11 +109,11 @@ include $(shell cocotb-config --makefiles)/Makefile.sim
 
 def cocotb_compile_and_run(*args, **kw):
     # run simulator in background
-    with open('Makefile', 'w') as f:
+    with open("Makefile", "w") as f:
         f.write(cocotb_makefile(*args, **kw))
-    subprocess.Popen(['make'])
+    subprocess.Popen(["make"])
 
 
 def cocotb_compile_clean():
-    subprocess.call('make clean', shell=True)
-    subprocess.call('rm -f Makefile', shell=True)
+    subprocess.call("make clean", shell=True)
+    subprocess.call("rm -f Makefile", shell=True)

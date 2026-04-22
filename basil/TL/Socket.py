@@ -5,30 +5,32 @@ from basil.TL.TransferLayer import TransferLayer
 
 
 class Socket(TransferLayer):
-    '''
-        General direct socket TL implementation.
-        Used for TCP/IP based direct communication with devices.
-        Commands are handled including encoding, read and write termination.
-    '''
+    """
+    General direct socket TL implementation.
+    Used for TCP/IP based direct communication with devices.
+    Commands are handled including encoding, read and write termination.
+    """
 
     def __init__(self, conf):
         super(Socket, self).__init__(conf)
 
     def init(self):
-        '''
-            Create socket object and connect to specified ip address and port.
-        '''
+        """
+        Create socket object and connect to specified ip address and port.
+        """
         super(Socket, self).init()
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        self.encoding = self._init.get('encoding', 'utf-8')
-        self.write_termination = self._init.get('write_termination', '').encode(self.encoding).decode('unicode_escape')
-        self.read_termination = self._init.get('read_termination', self.write_termination).encode(self.encoding).decode('unicode_escape')
-        self.query_delay = self._init.get('query_delay', 0)
-        self.handle_as_byte = self._init.get('handle_as_byte', False)
+        self.encoding = self._init.get("encoding", "utf-8")
+        self.write_termination = self._init.get("write_termination", "").encode(self.encoding).decode("unicode_escape")
+        self.read_termination = (
+            self._init.get("read_termination", self.write_termination).encode(self.encoding).decode("unicode_escape")
+        )
+        self.query_delay = self._init.get("query_delay", 0)
+        self.handle_as_byte = self._init.get("handle_as_byte", False)
 
-        address = self._init.get('address')
-        port = self._init.get('port')
+        address = self._init.get("address")
+        port = self._init.get("port")
 
         self._sock.connect((address, port))
 
@@ -43,7 +45,7 @@ class Socket(TransferLayer):
             cmd = data.encode(self.encoding)
         cmd += self.write_termination.encode(self.encoding)
         if not self.handle_as_byte:
-            cmd.decode('unicode_escape')
+            cmd.decode("unicode_escape")
         self._sock.send(cmd)
 
     def read(self, buffer_size=1):

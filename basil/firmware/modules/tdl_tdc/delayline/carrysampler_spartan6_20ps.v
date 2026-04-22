@@ -30,8 +30,8 @@ module CHAIN_CELL (CINIT, CI, CO, DO, CLK);
 	output wire CO;
 	input wire CI;
 	input wire CLK;
-	input wire CINIT;	
-		
+	input wire CINIT;
+
 	wire [3:0] carry_out;
 
 	 CARRY4 CARRY4_inst (
@@ -43,7 +43,7 @@ module CHAIN_CELL (CINIT, CI, CO, DO, CLK);
 	  .S(4'b1111)         // 4-bit carry-MUX select input
 	);
 	assign CO = carry_out[3];
-			
+
 	(* BEL = "FFD" *) FDCE #(.INIT(1'b0)) TDL_FF_D (.D(carry_out[3]), .Q(DO[3]), .C(CLK), .CE(1'b1), .CLR(1'b0));
 	(* BEL = "FFC" *) FDCE #(.INIT(1'b0)) TDL_FF_C (.D(carry_out[2]), .Q(DO[2]), .C(CLK), .CE(1'b1), .CLR(1'b0));
 	(* BEL = "FFB" *) FDCE #(.INIT(1'b0)) TDL_FF_B (.D(carry_out[1]), .Q(DO[1]), .C(CLK), .CE(1'b1), .CLR(1'b0));
@@ -57,7 +57,7 @@ module carry_sampler_spartan6 (d, q, CLK);
 
 	parameter bits = 74;
 	parameter resolution = 1;
-	
+
 	input wire d;
 	input wire CLK;
 	output wire [bits-1:0] q;
@@ -65,32 +65,32 @@ module carry_sampler_spartan6 (d, q, CLK);
 `ifndef SIMULATION
 	wire [(bits*resolution/4)-1:0] connect;
 	wire [bits*resolution-1:0] register_out;
-	
+
 	genvar i,j;
 	generate
-	
+
 		CHAIN_CELL FirstCell(
 		  .DO({register_out[2],register_out[3],register_out[0],register_out[1]}),
 		  .CINIT(d),
 		  .CI(1'b0),
 		  .CO(connect[0]),
 		  .CLK(CLK)
-		);			
-	
-		for (i=1; i < bits*resolution/4; i=i+1) begin : carry_chain			
+		);
+
+		for (i=1; i < bits*resolution/4; i=i+1) begin : carry_chain
 			CHAIN_CELL MoreCells(
 			  .DO({register_out[4*i+2],register_out[4*i+3],register_out[4*i+0],register_out[4*i+1]}),	//swapped to avoid empty bins
 			  .CINIT(1'b0),
 			  .CI(connect[i-1]),
 			  .CO(connect[i]),
 			  .CLK(CLK)
-			);			
-		end	
+			);
+		end
 
-		for (j=0; j < bits; j=j+1) begin : carry_sampler	
+		for (j=0; j < bits; j=j+1) begin : carry_sampler
 			assign q[j] = register_out[j*resolution];
 		end
-		
+
 	endgenerate
 `else
 	reg sim_buffer;
@@ -108,5 +108,5 @@ module carry_sampler_spartan6 (d, q, CLK);
 	end
 	assign q = sim_out;
 `endif
-	
+
 endmodule

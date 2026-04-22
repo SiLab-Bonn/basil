@@ -12,7 +12,7 @@ module generic_fifo #(
     parameter DATA_SIZE = 32,
     parameter DEPTH = 8,
     parameter POINTER_SIZE = 16 // maximum in Xilinx 7-series
-)(   
+)(
     clk,
     reset,
     write,

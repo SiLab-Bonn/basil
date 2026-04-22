@@ -33,15 +33,15 @@ class RegisterLayer(Base):
 
             def method(*args, **kargs):
                 arg = ()
-                if 'arg_names' in self._conf:
+                if "arg_names" in self._conf:
                     for i in range(len(args)):
-                        kargs[self._conf['arg_names'][i]] = args[i]
+                        kargs[self._conf["arg_names"][i]] = args[i]
                 else:
                     arg = args
 
-                if 'arg_add' in self._conf:
-                    for argn in self._conf['arg_add']:
-                        kargs[argn] = self._conf['arg_add'][argn]
+                if "arg_add" in self._conf:
+                    for argn in self._conf["arg_add"]:
+                        kargs[argn] = self._conf["arg_add"][argn]
 
                 return attr(*arg, **kargs)
 

@@ -193,14 +193,14 @@ wire WEA;
 assign WEA = BUS_WR && BUS_ADD >=MEM_OFFSET && BUS_ADD < MEM_OFFSET+MEM_BYTES;
 
 ramb_8_to_n #(.SIZE(MEM_BYTES), .WIDTH(OUT_BITS)) mem (
-    .clkA(BUS_CLK), 
-    .clkB(SEQ_CLK), 
-    .weA(WEA), 
-    .weB(1'b0), 
-    .addrA(memout_addra), 
-    .addrB(memout_addrb), 
-    .diA(BUS_DATA_IN), 
-    .doA(BUS_IN_MEM), 
+    .clkA(BUS_CLK),
+    .clkB(SEQ_CLK),
+    .weA(WEA),
+    .weB(1'b0),
+    .addrA(memout_addra),
+    .addrB(memout_addrb),
+    .diA(BUS_DATA_IN),
+    .doA(BUS_IN_MEM),
     .diB({OUT_BITS{1'b0}}),
     .doB(SEQ_OUT_MEM)
 );

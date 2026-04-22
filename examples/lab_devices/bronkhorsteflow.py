@@ -5,12 +5,11 @@
 # ------------------------------------------------------------
 #
 
-''' This script shows how to use EFLOW
-'''
+"""This script shows how to use EFLOW"""
 
 from basil.dut import Dut
 
-dut = Dut('bronkhorstELFLOW_pyserial.yaml')
+dut = Dut("bronkhorstELFLOW_pyserial.yaml")
 dut.init()
 
 # setting set point

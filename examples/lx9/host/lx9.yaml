@@ -5,42 +5,42 @@
 # ------------------------------------------------------------
 #
 
-name    : ExampleLx9Design 
+name    : ExampleLx9Design
 version : 0.01
 
 transfer_layer:
   - name  : inf
     type  : SiTcp
-    init:      
+    init:
         ip : "192.168.10.16"
         udp_port : 4660
         tcp_port : 24
         tcp_connection : True
-    
-hw_drivers:    
+
+hw_drivers:
   - name      : gpio
     type      : gpio
     interface : inf
     base_addr : 0x0
     size      : 8
-  
+
   - name      : SEQ_GEN
     type      : seq_gen
     interface : inf
     mem_size  : 8192
     base_addr : 0x1000
-   
+
   - name      : PIXEL_RX
     type      : fast_spi_rx
     interface : inf
     base_addr : 0x0100
-   
+
   - name      : DATA
     type      : sram_fifo
     interface : inf
     base_addr : 0x200000000
     base_data_addr: 0x100000000
-          
+
 registers:
   - name        : GPIO
     type        : StdRegister
@@ -67,15 +67,15 @@ registers:
     type        : StdRegister
     driver      : None
     size        : 144
-    fields  : 
-          - name     : global_readout_enable 
-            size     : 1         
+    fields  :
+          - name     : global_readout_enable
+            size     : 1
             offset   : 143
-          - name     : SRDO_load 
-            size     : 1         
+          - name     : SRDO_load
+            size     : 1
             offset   : 142
-          - name     : NCout2 
-            size     : 1         
+          - name     : NCout2
+            size     : 1
             offset   : 141
           - name     : count_hits_not
             size     : 1
@@ -148,11 +148,11 @@ registers:
     hw_driver   : SEQ_GEN
     seq_width   : 8
     seq_size    : 8192
-    tracks  : 
+    tracks  :
       - name     : SHIFT_IN
         position : 0
       - name     : GLOBAL_SHIFT_EN
-        position : 1  
+        position : 1
       - name     : GLOBAL_CTR_LD
         position : 2
       - name     : GLOBAL_DAC_LD

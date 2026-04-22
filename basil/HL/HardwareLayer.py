@@ -11,8 +11,8 @@ from basil.dut import Base
 
 
 class HardwareLayer(Base):
-    '''Hardware layer (HL) base class.
-    '''
+    """Hardware layer (HL) base class."""
+
     def __init__(self, intf, conf):
         super(HardwareLayer, self).__init__(conf)
         # interface not required for some cases
@@ -24,7 +24,7 @@ class HardwareLayer(Base):
         raise NotImplementedError("is_ready() not implemented")
 
     def wait_for_ready(self, timeout=None, times=None, delay=None, delay_between=None, abort=None):
-        '''Determine the ready state of the device and wait until device is ready.
+        """Determine the ready state of the device and wait until device is ready.
 
         Parameters
         ----------
@@ -42,7 +42,7 @@ class HardwareLayer(Base):
         Returns
         -------
         True if state is ready, else False.
-        '''
+        """
         if delay:
             try:
                 sleep(delay)
@@ -60,7 +60,9 @@ class HardwareLayer(Base):
             if abort and abort.is_set():
                 False
             if timeout is not None and stop <= now:
-                raise RuntimeError('Time out while waiting for ready in %s, module %s' % (self.name, self.__class__.__module__))
+                raise RuntimeError(
+                    "Time out while waiting for ready in %s, module %s" % (self.name, self.__class__.__module__)
+                )
             if times and times > times_checked:
                 False
             if delay_between:

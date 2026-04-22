@@ -42,7 +42,7 @@ sample_deser #(
 	.selected_sample(hit_sample)
 );
 // The output sample must be presented as if it was a rising edge for the
-// encoder to make sense of it, irregardless of the detect_rising bit. 
+// encoder to make sense of it, irregardless of the detect_rising bit.
 assign sample = internally_rising ? hit_sample : ~hit_sample;
 
 endmodule

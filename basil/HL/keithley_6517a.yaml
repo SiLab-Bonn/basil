@@ -1,5 +1,5 @@
 ########################################################
-# Device description for the Keithley 6517A Electrometer 
+# Device description for the Keithley 6517A Electrometer
 # Last Modified: Do 02 Jun 2022 11:22:30  CEST
 # Note:
 #     A delay is required between most of the commands.
@@ -59,7 +59,7 @@ current_filter_off: SENS:CURR:AVER OFF
 voltage_filter_off: SENS:CURR:AVER OFF
 # Status
 get_current_filter: SENS:CURR:AVER:STAT?
-get_voltage_filter: SENS:VOLT:AVER:STAT? 
+get_voltage_filter: SENS:VOLT:AVER:STAT?
 # System
 get_config : CONF?
 get_error : SYST:ERR?

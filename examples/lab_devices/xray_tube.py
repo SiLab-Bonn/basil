@@ -1,8 +1,9 @@
 import time
+
 from basil.dut import Dut
 
 # Initialize x-ray tube
-devices = Dut('xray_tube_pyserial.yaml')
+devices = Dut("xray_tube_pyserial.yaml")
 devices.init()
 
 # Set high voltage and current

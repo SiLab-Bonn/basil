@@ -5,10 +5,11 @@
 # ------------------------------------------------------------
 #
 
+import numpy as np
+from bitarray import bitarray
+
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 from basil.utils.BitLogic import BitLogic
-from bitarray import bitarray
-import numpy as np
 
 
 class JtagMaster(RegisterHardwareLayer):
@@ -188,13 +189,12 @@ class JtagMaster(RegisterHardwareLayer):
 
         last_data_len = 0
         for i in original_data:
-            rlist.append(BitLogic(binary_string[last_data_len:len(i) + last_data_len]))
+            rlist.append(BitLogic(binary_string[last_data_len : len(i) + last_data_len]))
             last_data_len += len(i)
 
         return rlist
 
     def _raw_data2bytes(self, data):
-
         all_data = "".join(data)
 
         # pad with zero if not a multiple of 8
@@ -202,4 +202,4 @@ class JtagMaster(RegisterHardwareLayer):
             all_data += "0" * (8 - (len(all_data) % 8))
 
         # convert string to byte
-        return bytes(int(all_data[i:i + 8], 2) for i in range(0, len(all_data), 8))
+        return bytes(int(all_data[i : i + 8], 2) for i in range(0, len(all_data), 8))
