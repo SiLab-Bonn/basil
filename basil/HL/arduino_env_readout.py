@@ -80,7 +80,12 @@ class EnvironmentReadout(NTCReadout):
         if adc_range is None:
             adc_range = self.adc_range
 
-        return {s: self.fixed_resistors[s] / (adc_range / analog_read[s] - 1.0) if abs(adc_range / analog_read[s] - 1) > 0.01 else None for s in sensor}
+        return {
+            s: self.fixed_resistors[s] / (adc_range / analog_read[s] - 1.0)
+            if abs(adc_range / analog_read[s] - 1) > 0.01
+            else None
+            for s in sensor
+        }
 
     def get_voltage(self, sensor, adc_range=None):
         analog_read = self.analog_read(sensor)
@@ -107,7 +112,10 @@ class EnvironmentReadout(NTCReadout):
 
         resistances = self.get_resistance(sensor, adc_range)
 
-        return {s: self.steinharthart(resistances[s], **self.steinharthart_params) if resistances[s] is not None else None for s in sensor}
+        return {
+            s: self.steinharthart(resistances[s], **self.steinharthart_params) if resistances[s] is not None else None
+            for s in sensor
+        }
 
     def humidity(self, temperature_correction=None, adc_range=None):
         if self.humidity_pin < 0:
@@ -119,7 +127,10 @@ class EnvironmentReadout(NTCReadout):
         RH = (voltage - self.humidity_params["offset"]) / self.humidity_params["slope"]
 
         if temperature_correction is not None:
-            RH = RH / (self.humidity_temp_correction_params["slope"] * temperature_correction + self.humidity_temp_correction_params["offset"])
+            RH = RH / (
+                self.humidity_temp_correction_params["slope"] * temperature_correction
+                + self.humidity_temp_correction_params["offset"]
+            )
 
         return max(float(RH), 0.0)
 

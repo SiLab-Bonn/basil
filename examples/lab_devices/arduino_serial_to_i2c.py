@@ -26,4 +26,6 @@ print(f"I2C bus address to write to is {dut['SerialToI2C'].i2c_address}")
 
 dut["SerialToI2C"].check_i2c_connection()  # Check if connection is established on I2C bus with given address
 dut["SerialToI2C"].read_register(reg=0x00)  # Read register 0x00 at adress dut['SerialToI2C'].i2c_address
-dut["SerialToI2C"].write_register(reg=0x00, data=0x00)  # Write 0 to register 0x00 at adress dut['SerialToI2C'].i2c_address
+dut["SerialToI2C"].write_register(
+    reg=0x00, data=0x00
+)  # Write 0 to register 0x00 at adress dut['SerialToI2C'].i2c_address

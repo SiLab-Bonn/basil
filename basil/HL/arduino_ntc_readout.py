@@ -8,7 +8,17 @@ logger = logging.getLogger(__name__)
 class NTCReadout(ArduinoBase):
     """Class to read from Arduino temperature sensor setup"""
 
-    CMDS = {"temp": "T", "res": "Q", "samples": "S", "beta": "B", "nominal_res": "O", "nominal_temp": "C", "resistance": "R", "restore": "X", "measure_ntc": "Y"}
+    CMDS = {
+        "temp": "T",
+        "res": "Q",
+        "samples": "S",
+        "beta": "B",
+        "nominal_res": "O",
+        "nominal_temp": "C",
+        "resistance": "R",
+        "restore": "X",
+        "measure_ntc": "Y",
+    }
 
     ERRORS = {
         "999": "Invalid NTC pin",
@@ -85,7 +95,9 @@ class NTCReadout(ArduinoBase):
         """
         Restores default values in the firmware which correspond to this classes properties
         """
-        self._set_and_retrieve(cmd="restore", val=int(111))  # *val* can be any int, just used to test that the command was received
+        self._set_and_retrieve(
+            cmd="restore", val=int(111)
+        )  # *val* can be any int, just used to test that the command was received
 
     def get_temp(self, sensor):
         """Gets temperature of sensor where 0 <= sensor <= 7 is the physical pin number of the sensor on

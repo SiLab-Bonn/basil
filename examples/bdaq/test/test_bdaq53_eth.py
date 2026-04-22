@@ -25,7 +25,11 @@ class TestSimBDAQ53Eth(unittest.TestCase):
         sys.path = [os.path.dirname(os.getcwd())] + sys.path
         proj_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-        cocotb_compile_and_run(sim_files=[proj_dir + "/test/bdaq53_eth_tb.v"], top_level="tb", include_dirs=(proj_dir, proj_dir + "/firmware/src"))
+        cocotb_compile_and_run(
+            sim_files=[proj_dir + "/test/bdaq53_eth_tb.v"],
+            top_level="tb",
+            include_dirs=(proj_dir, proj_dir + "/firmware/src"),
+        )
 
         with open(proj_dir + "/bdaq53_eth.yaml") as conf_file:
             try:
@@ -36,7 +40,15 @@ class TestSimBDAQ53Eth(unittest.TestCase):
         conf["transfer_layer"][0]["type"] = "SiSim"
         conf["transfer_layer"][0]["tcp_connection"] = "False"
 
-        conf["hw_drivers"].append({"name": "FIFO", "type": "sram_fifo", "interface": "intf", "base_addr": 0x8000, "base_data_addr": 0x80000000})
+        conf["hw_drivers"].append(
+            {
+                "name": "FIFO",
+                "type": "sram_fifo",
+                "interface": "intf",
+                "base_addr": 0x8000,
+                "base_data_addr": 0x80000000,
+            }
+        )
 
         self.chip = Dut(conf)
         self.chip.init()
@@ -71,7 +83,11 @@ class TestSimBDAQ53Eth(unittest.TestCase):
                 break
 
         total_len_bits = total_len * 32  # 32-bit ints to bits
-        print("Bits received: {}; Data rate: {}Mbit/s".format(total_len_bits, round((total_len_bits / 1e6 / testduration), 2)))
+        print(
+            "Bits received: {}; Data rate: {}Mbit/s".format(
+                total_len_bits, round((total_len_bits / 1e6 / testduration), 2)
+            )
+        )
 
         self.chip["CONTROL"]["EN"] = 0x00  # stop data source
         self.chip["CONTROL"].write()

@@ -68,20 +68,33 @@ class RegisterHardwareLayer(HardwareLayer):
             version = None
         logger.info(
             "Initializing %s (firmware version: %s), module %s, base_addr %s"
-            % (self.name, version if "VERSION" in self._registers else "n/a", self.__class__.__module__, hex(self._base_addr))
+            % (
+                self.name,
+                version if "VERSION" in self._registers else "n/a",
+                self.__class__.__module__,
+                hex(self._base_addr),
+            )
         )
         if self._require_version and not eval(version + self._require_version):
-            raise Exception("FPGA module %s does not satisfy version requirements (read: %s, require: %s)" % (self.__class__.__module__, version, self._require_version.strip()))
+            raise Exception(
+                "FPGA module %s does not satisfy version requirements (read: %s, require: %s)"
+                % (self.__class__.__module__, version, self._require_version.strip())
+            )
         for reg, value in self._registers.items():
             if reg in self._init:
                 self[reg] = self._init[reg]
-            elif "default" in value and not ("properties" in value["descr"] and [i for i in read_only if i in value["descr"]["properties"]]):
+            elif "default" in value and not (
+                "properties" in value["descr"] and [i for i in read_only if i in value["descr"]["properties"]]
+            ):
                 self[reg] = value["default"]
             else:  # do nothing here, keep existing value
                 pass
         unknown_regs = set(self._init.keys()).difference(set(self._registers.keys()))
         if unknown_regs:
-            raise KeyError("Attempt to write to unknown register(s) in %s, module %s during initialization: %s" % (self.name, self.__class__.__module__, ", ".join(unknown_regs)))
+            raise KeyError(
+                "Attempt to write to unknown register(s) in %s, module %s during initialization: %s"
+                % (self.name, self.__class__.__module__, ", ".join(unknown_regs))
+            )
 
     def set_value(self, value, addr, size, offset, **kwargs):
         """Writing a value of any arbitrary size (max. unsigned int 64) and offset to a register
@@ -214,7 +227,10 @@ class RegisterHardwareLayer(HardwareLayer):
 
     def set_default(self):
         for reg, value in self._registers.items():
-            if "default" in value and not ("properties" in value["descr"] and [i for i in read_only if i in self._registers[reg]["descr"]["properties"]]):
+            if "default" in value and not (
+                "properties" in value["descr"]
+                and [i for i in read_only if i in self._registers[reg]["descr"]["properties"]]
+            ):
                 self._set(reg, value["default"])
 
     def _get(self, reg):
@@ -241,8 +257,15 @@ class RegisterHardwareLayer(HardwareLayer):
                     ret_val = curr_val
                 else:
                     ret_val = self.get_value(**descr)
-                    if curr_val is not None and "properties" in descr and not [i for i in read_only if i in descr["properties"]] and curr_val != ret_val:
-                        raise ValueError("Read value was not expected: read: %s, expected: %s" % (str(ret_val), str(curr_val)))
+                    if (
+                        curr_val is not None
+                        and "properties" in descr
+                        and not [i for i in read_only if i in descr["properties"]]
+                        and curr_val != ret_val
+                    ):
+                        raise ValueError(
+                            "Read value was not expected: read: %s, expected: %s" % (str(ret_val), str(curr_val))
+                        )
             return ret_val
 
     def _set(self, reg, value):

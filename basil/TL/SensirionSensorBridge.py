@@ -60,7 +60,9 @@ class SensirionSensorBridge(TransferLayer):
         logger.info("Version: {}".format(device.get_version()))
 
     def read_i2c(self, device, port, address, command, read_n_bytes=0, timeout_us=100e3):
-        rx_data = device.transceive_i2c(port, address=address, tx_data=command, rx_length=read_n_bytes, timeout_us=timeout_us)
+        rx_data = device.transceive_i2c(
+            port, address=address, tx_data=command, rx_length=read_n_bytes, timeout_us=timeout_us
+        )
         return rx_data
 
     def write_i2c(self, device, port, address, command):

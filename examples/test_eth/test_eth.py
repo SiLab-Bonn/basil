@@ -119,7 +119,9 @@ class Test(object):
             self.bus_t.daemon = True
             self.bus_t.start()
         if test_tcp:
-            self.dut["REGISTERS"].TCP_WRITE_DLY = tcp_write_delay  # set TCP write delay: 1 equivalent to write data every clock cycle (1/133MHz=0.0075us=7.5ns)
+            self.dut[
+                "REGISTERS"
+            ].TCP_WRITE_DLY = tcp_write_delay  # set TCP write delay: 1 equivalent to write data every clock cycle (1/133MHz=0.0075us=7.5ns)
         self.time_start = time.time()
         self.time_stop = self.time_start + 1.0
         # while loop for signal handler
@@ -146,7 +148,11 @@ class Test(object):
             logging.info("TCP exception counter: %d" % self.tcp_exception_cnt)
             logging.info("TCP write busy counter: %d" % self.dut["REGISTERS"].TCP_FAILED_WRITE_CNT)
             logging.info(
-                "TCP data words: read: %d, expected: %d" % (self.dut["REGISTERS"].TCP_WRITE_CNT * 4 + self.dut["REGISTERS"].TCP_RECV_WRITE_CNT, self.total_tcp_data_words_read * 4)
+                "TCP data words: read: %d, expected: %d"
+                % (
+                    self.dut["REGISTERS"].TCP_WRITE_CNT * 4 + self.dut["REGISTERS"].TCP_RECV_WRITE_CNT,
+                    self.total_tcp_data_words_read * 4,
+                )
             )
             if self.total_tcp_data_words_read * 4 / 10.0**6 > 1000000:
                 logging.info("Total amount transmitted: %.2f TB" % (self.total_tcp_data_words_read * 4 / 10.0**12))
@@ -154,7 +160,9 @@ class Test(object):
                 logging.info("Total amount transmitted: %.2f GB" % (self.total_tcp_data_words_read * 4 / 10.0**9))
             else:
                 logging.info("Total amount transmitted: %.2f MB" % (self.total_tcp_data_words_read * 4 / 10.0**6))
-            total_tcp_avg_read_speed = self.total_tcp_data_words_read * 32 / (self.time_stop - self.time_start) / 10.0**6
+            total_tcp_avg_read_speed = (
+                self.total_tcp_data_words_read * 32 / (self.time_stop - self.time_start) / 10.0**6
+            )
             if total_tcp_avg_read_speed < 1.0:
                 logging.info("Total average TCP read speed: %.2f kbit/s" % (total_tcp_avg_read_speed * 10**3))
             else:
@@ -173,14 +181,22 @@ class Test(object):
                 else:
                     logging.info(
                         "TCP read speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f Mbit/s"
-                        % (np.min(self.tcp_read_speeds), np.median(self.tcp_read_speeds), np.average(self.tcp_read_speeds), np.max(self.tcp_read_speeds))
+                        % (
+                            np.min(self.tcp_read_speeds),
+                            np.median(self.tcp_read_speeds),
+                            np.average(self.tcp_read_speeds),
+                            np.max(self.tcp_read_speeds),
+                        )
                     )
 
         if test_bus:
             logging.info("=== BUS transfer statistics ===")
             logging.info("BUS data error counter: %d" % self.total_bus_err_cnt)
             logging.info("BUS exception counter: %d" % self.bus_exception_cnt)
-            logging.info("BUS read/write counter: read: %d, expected: %d" % (self.dut["REGISTERS"].BUS_WRITE_CNT, self.total_bus_read_write_cnt * 8))
+            logging.info(
+                "BUS read/write counter: read: %d, expected: %d"
+                % (self.dut["REGISTERS"].BUS_WRITE_CNT, self.total_bus_read_write_cnt * 8)
+            )
             if self.total_bus_read_write_cnt * 8 / 10.0**6 > 1000000:
                 logging.info("Total amount transmitted: %.2f TB" % (self.total_bus_read_write_cnt * 8 / 10.0**12))
             elif self.total_bus_read_write_cnt * 8 / 10.0**6 > 1000:
@@ -206,7 +222,12 @@ class Test(object):
                 else:
                     logging.info(
                         "BUS read/write speed (min/median/average/max): %.2f/%.2f/%.2f/%.2f Mbit/s"
-                        % (np.min(self.bus_read_write_speeds), np.median(self.bus_read_write_speeds), np.average(self.bus_read_write_speeds), np.max(self.bus_read_write_speeds))
+                        % (
+                            np.min(self.bus_read_write_speeds),
+                            np.median(self.bus_read_write_speeds),
+                            np.average(self.bus_read_write_speeds),
+                            np.max(self.bus_read_write_speeds),
+                        )
                     )
 
         # close DUT
@@ -222,7 +243,12 @@ class Test(object):
             tmp_total_tcp_data_words_read = self.total_tcp_data_words_read
             tmp_total_bus_read_write_cnt = self.total_bus_read_write_cnt
             if self.test_tcp:
-                tcp_read_speed = (tmp_total_tcp_data_words_read - last_total_tcp_data_words_read) * 32 / (tmp_time_read - time_read) / 10**6
+                tcp_read_speed = (
+                    (tmp_total_tcp_data_words_read - last_total_tcp_data_words_read)
+                    * 32
+                    / (tmp_time_read - time_read)
+                    / 10**6
+                )
                 if self.tcp_read_speeds is None:  # add on second iteration
                     self.tcp_read_speeds = []
                 else:
@@ -232,7 +258,12 @@ class Test(object):
                 else:
                     logging.info("TCP read speed: %0.2f Mbit/s" % tcp_read_speed)
             if self.test_bus:
-                bus_read_write_speed = (tmp_total_bus_read_write_cnt - last_total_bus_read_write_cnt) * 64 / (tmp_time_read - time_read) / 10**6
+                bus_read_write_speed = (
+                    (tmp_total_bus_read_write_cnt - last_total_bus_read_write_cnt)
+                    * 64
+                    / (tmp_time_read - time_read)
+                    / 10**6
+                )
                 if self.bus_read_write_speeds is None:  # add on second iteration
                     self.bus_read_write_speeds = []
                 else:
@@ -254,7 +285,9 @@ class Test(object):
         fifo_data_last_value = -1
         fifo_was_empty = 0
         time_read = time.time()
-        while not self.stop_thread.wait(max(0.0, self.tcp_readout_delay - time_read + time.time())) or fifo_was_empty < 1:
+        while (
+            not self.stop_thread.wait(max(0.0, self.tcp_readout_delay - time_read + time.time())) or fifo_was_empty < 1
+        ):
             time_read = time.time()
             try:
                 fifo_data = self.dut["SITCP_FIFO"].get_data()
@@ -300,7 +333,10 @@ class Test(object):
                     if read_value != write_value:
                         logging.warning(
                             "BUS data not correct: read: %s, expected: %s"
-                            % (array("B", struct.unpack("BBBBBBBB", struct.pack("Q", read_value))), array("B", struct.unpack("BBBBBBBB", struct.pack("Q", write_value))))
+                            % (
+                                array("B", struct.unpack("BBBBBBBB", struct.pack("Q", read_value))),
+                                array("B", struct.unpack("BBBBBBBB", struct.pack("Q", write_value))),
+                            )
                         )
                         self.total_bus_err_cnt += 1
         logging.info("Stopping BUS thread...")
@@ -310,11 +346,28 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Testing MMC3 Ethernet Interface %s\nExample: python test_eth.py -t 1.0 -d 6 --no-bus", formatter_class=argparse.RawTextHelpFormatter
+        description="Testing MMC3 Ethernet Interface %s\nExample: python test_eth.py -t 1.0 -d 6 --no-bus",
+        formatter_class=argparse.RawTextHelpFormatter,
     )
-    parser.add_argument("-w", "--deadline", type=float, metavar="<deadline>", action="store", help="timeout in seconds before application exits")
-    parser.add_argument("-i", "--interval", type=float, metavar="<interval time>", action="store", help="time interval in seconds for the monitor")
-    parser.add_argument("-d", "--delay", type=int, metavar="<clock cycles>", action="store", help="clock cycles between TCP writes")
+    parser.add_argument(
+        "-w",
+        "--deadline",
+        type=float,
+        metavar="<deadline>",
+        action="store",
+        help="timeout in seconds before application exits",
+    )
+    parser.add_argument(
+        "-i",
+        "--interval",
+        type=float,
+        metavar="<interval time>",
+        action="store",
+        help="time interval in seconds for the monitor",
+    )
+    parser.add_argument(
+        "-d", "--delay", type=int, metavar="<clock cycles>", action="store", help="clock cycles between TCP writes"
+    )
     parser.add_argument("--no-bus", dest="no_bus", action="store_true", help="disable BUS tests")
     parser.add_argument("--no-tcp", dest="no_tcp", action="store_true", help="disable TCP downstream tests")
     parser.set_defaults(no_m26_jtag_configuration=False)

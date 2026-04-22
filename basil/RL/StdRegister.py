@@ -25,7 +25,13 @@ class StdRegister(RegisterLayer):
         if "fields" in self._conf:
             for field in self._conf["fields"]:
                 if field["offset"] + 1 < field["size"]:
-                    raise ValueError("Register " + self._conf["name"] + ":" + field["name"] + ": Invalid offset value. Specify MSB position.")
+                    raise ValueError(
+                        "Register "
+                        + self._conf["name"]
+                        + ":"
+                        + field["name"]
+                        + ": Invalid offset value. Specify MSB position."
+                    )
 
                 if "repeat" in field:
                     reg_list = []

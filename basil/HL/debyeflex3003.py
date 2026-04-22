@@ -132,7 +132,11 @@ class debyeflex3003(HardwareLayer):
             s = (dur % 3600) % 60
             self.write("TP:{:1d},{:02d},{:02d},{:02d}".format(timer, h, m, s))
             time = self.get_nominal_time(timer)
-            logger.info("Set timer number {:1d} to {:02d}:{:02d}:{:02d} (HH:MM:SS)".format(timer, time // 3600, (time % 3600) // 60, (time % 3600) % 60))
+            logger.info(
+                "Set timer number {:1d} to {:02d}:{:02d}:{:02d} (HH:MM:SS)".format(
+                    timer, time // 3600, (time % 3600) // 60, (time % 3600) % 60
+                )
+            )
 
     def get_actual_time(self, timer=1):
         """Get the actual time of the given timer in s"""

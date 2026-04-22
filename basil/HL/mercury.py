@@ -89,7 +89,11 @@ class Mercury(HardwareLayer):
             if abs(pos - value) <= precision:
                 logger.debug("At position {pos}, Target at {target}".format(pos=pos, target=value))
             else:
-                logger.warning("Target not reached! Target: {target}, actual position: {pos}, precision: {pre}".format(target=value, pos=pos, pre=precision))
+                logger.warning(
+                    "Target not reached! Target: {target}, actual position: {pos}, precision: {pre}".format(
+                        target=value, pos=pos, pre=precision
+                    )
+                )
 
     def move_relative(self, value, precision=100, board_number=None, wait=False):
         target = self.get_position(board_number) + value
@@ -99,7 +103,11 @@ class Mercury(HardwareLayer):
             if abs(pos - target) <= precision:
                 logger.debug("At position {pos}, Target at {target}".format(pos=pos, target=target))
             else:
-                logger.warning("Target not reached! Target: {target}, actual position: {pos}, precision: {pre}".format(target=target, pos=pos, pre=precision))
+                logger.warning(
+                    "Target not reached! Target: {target}, actual position: {pos}, precision: {pre}".format(
+                        target=target, pos=pos, pre=precision
+                    )
+                )
 
     def abort(self, board_number=None):
         self._write_command("AB", board_number)

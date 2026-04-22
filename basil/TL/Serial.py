@@ -40,7 +40,9 @@ class Serial(TransferLayer):
         if "baud_rate" in self._init.keys():
             self._init["baudrate"] = self._init.pop("baud_rate")
 
-        self._port = serial.Serial(**{key: value for key, value in self._init.items() if key not in ("read_termination", "write_termination")})
+        self._port = serial.Serial(
+            **{key: value for key, value in self._init.items() if key not in ("read_termination", "write_termination")}
+        )
 
     def close(self):
         super(Serial, self).close()
@@ -65,7 +67,10 @@ class Serial(TransferLayer):
 
     def query(self, data):
         if self._port.inWaiting():
-            logger.warning("Found %d bytes in the input buffer of interface %s which will be flushed" % (self._port.inWaiting(), self.name))
+            logger.warning(
+                "Found %d bytes in the input buffer of interface %s which will be flushed"
+                % (self._port.inWaiting(), self.name)
+            )
             self._port.flushInput()
         self.write(data)
         return self._readline()
@@ -76,7 +81,9 @@ class Serial(TransferLayer):
         # 2. termination of "" will return immediately
         # 3. timeout of None will never return
         if not self.read_termination and self.timeout is None:
-            raise RuntimeError("Requested serial read will not terminate due to missing termination string and missing timeout")
+            raise RuntimeError(
+                "Requested serial read will not terminate due to missing termination string and missing timeout"
+            )
 
         data = bytearray()
         count = len(self.read_termination) if self.read_termination else 0

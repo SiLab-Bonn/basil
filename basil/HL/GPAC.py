@@ -65,14 +65,18 @@ class GpioPca9554(HardwareLayer):
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_OUT, 0x00))
 
     def _write_output_port_select(self, value):
-        self._intf.write(self._base_addr + self.PCA9554_ADD, array("B", pack("BB", self.PCA9554_CFG, value)))  # configure output lines
+        self._intf.write(
+            self._base_addr + self.PCA9554_ADD, array("B", pack("BB", self.PCA9554_CFG, value))
+        )  # configure output lines
 
     def _read_input_port(self):
         self._intf.write(self._base_addr + self.PCA9554_ADD, array("B", pack("B", self.PCA9554_IN)))  # set command byte
         return unpack_from("B", self._intf.read(self._base_addr + self.PCA9554_ADD | 1, size=1))[0]  # read input lines
 
     def _write_output_port(self, value):
-        self._intf.write(self._base_addr + self.PCA9554_ADD, array("B", pack("BB", self.PCA9554_OUT, value)))  # write output lines
+        self._intf.write(
+            self._base_addr + self.PCA9554_ADD, array("B", pack("BB", self.PCA9554_OUT, value))
+        )  # write output lines
 
     def _read_output_port(self):
         self._intf.write(self._base_addr + self.PCA9554_ADD, array("B", pack("B", self.PCA9554_OUT)))
@@ -190,7 +194,9 @@ class AdcMax11644(HardwareLayer):
 
     def _get_adc_value(self, average=None):
         def read_data():
-            self._intf.write(self._base_addr + self.MAX11644_ADD, array("B", pack("B", self.ADC_CONF)))  # single-ended inputs, conversion of both channels in a scan
+            self._intf.write(
+                self._base_addr + self.MAX11644_ADD, array("B", pack("B", self.ADC_CONF))
+            )  # single-ended inputs, conversion of both channels in a scan
 
             data = self._intf.read(self._base_addr + self.MAX11644_ADD | 1, size=4)
             raw = unpack_from(">HH", data)
@@ -790,15 +796,22 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
         for i in range(12):
             self.set_current("ISRC" + str(i), 0.0)
 
-    def read_eeprom_calibration(self):  # use default values for temperature, EEPROM values are usually not calibrated and random
+    def read_eeprom_calibration(
+        self,
+    ):
+        # use default values for temperature, EEPROM values are usually not calibrated and random
         """Reading EEPROM calibration for sources and regulators"""
         header = self.get_format()
         if header == self.HEADER_GPAC:
             data = self._read_eeprom(self.CAL_DATA_ADDR, size=calcsize(self.CAL_DATA_GPAC_FORMAT))
             for idx, channel in enumerate(self._ch_cal.keys()):
-                ch_data = data[idx * calcsize(self.CAL_DATA_CH_GPAC_FORMAT) : (idx + 1) * calcsize(self.CAL_DATA_CH_GPAC_FORMAT)]
+                ch_data = data[
+                    idx * calcsize(self.CAL_DATA_CH_GPAC_FORMAT) : (idx + 1) * calcsize(self.CAL_DATA_CH_GPAC_FORMAT)
+                ]
                 values = unpack_from(self.CAL_DATA_CH_GPAC_FORMAT, ch_data)
-                self._ch_cal[channel]["name"] = "".join([c for c in values[0].decode("utf-8", errors="ignore") if (c in string.printable)])  # values[0].strip()
+                self._ch_cal[channel]["name"] = "".join(
+                    [c for c in values[0].decode("utf-8", errors="ignore") if (c in string.printable)]
+                )  # values[0].strip()
                 self._ch_cal[channel]["default"] = values[1]
                 self._ch_cal[channel]["min"] = values[2]
                 self._ch_cal[channel]["max"] = values[3]
@@ -924,7 +937,9 @@ class GPAC(I2cAnalogChannel, I2cEeprom):
         else:
             raise TypeError("Invalid unit type.")
 
-        I2cAnalogChannel._set_dac_value(self, address=self.CURRENT_LIMIT_DAC_SLAVE_ADD, dac_ch=self.CURRENT_LIMIT_DAC_CH, value=value)
+        I2cAnalogChannel._set_dac_value(
+            self, address=self.CURRENT_LIMIT_DAC_SLAVE_ADD, dac_ch=self.CURRENT_LIMIT_DAC_CH, value=value
+        )
 
     def set_current(self, channel, value, unit="A"):
         """Setting current of current source"""

@@ -149,7 +149,9 @@ class TestSimSeq(unittest.TestCase):
             pass
 
         ret = self.chip["SEQ_REC"].get_data(size=rec_size)
-        self.assertEqual(ret.tolist(), [0x80] * 2 + pattern + pattern[12:] * 3 + [0x80] * 3 * 12 + [0x80] * 6)  # 2 clk delay 0x80 > from last pattern + ...
+        self.assertEqual(
+            ret.tolist(), [0x80] * 2 + pattern + pattern[12:] * 3 + [0x80] * 3 * 12 + [0x80] * 6
+        )  # 2 clk delay 0x80 > from last pattern + ...
 
         self.chip["SEQ"].set_wait(4)
         self.chip["PULSE_GEN"].START
@@ -159,7 +161,9 @@ class TestSimSeq(unittest.TestCase):
 
         ret = self.chip["SEQ_REC"].get_data(size=rec_size)
         lpat = pattern[12:] + [0x80] * 4
-        self.assertEqual(ret.tolist(), [0x80] * 2 + pattern + [0x80] * 4 + lpat * 3 + [0x80] * (3 * 12 - 4 * 4) + [0x80] * 6)
+        self.assertEqual(
+            ret.tolist(), [0x80] * 2 + pattern + [0x80] * 4 + lpat * 3 + [0x80] * (3 * 12 - 4 * 4) + [0x80] * 6
+        )
 
         #
         rec_size = rec_size * 3

@@ -95,7 +95,14 @@ def find_usb_binds(rm, log, instruments, binds_to_skip=[], memorized_binds={}, t
                     log.debug(f"Found memorized bind {res}")
                     result = memorized_binds[res]
                 else:
-                    result = query_identification(rm, res, instrument["baud_rate"], instrument["read_termination"], instrument["write_termination"], timeout=timeout)
+                    result = query_identification(
+                        rm,
+                        res,
+                        instrument["baud_rate"],
+                        instrument["read_termination"],
+                        instrument["write_termination"],
+                        timeout=timeout,
+                    )
 
                     memorized_binds[res] = result
                     log.debug(f"Found {result.strip()}")
@@ -203,7 +210,11 @@ def modify_basil_config(conf, log, skip_binds=[], save_modified=None):
 
     # Iterate over transfer layers in the configuration
     for i, tf in enumerate(conf["transfer_layer"]):
-        if "identification" not in tf["init"].keys() or "read_termination" not in tf["init"].keys() or not any(e in tf["init"].keys() for e in ["baud_rate", "baudrate"]):
+        if (
+            "identification" not in tf["init"].keys()
+            or "read_termination" not in tf["init"].keys()
+            or not any(e in tf["init"].keys() for e in ["baud_rate", "baudrate"])
+        ):
             log.debug(f"Skipping {tf['type']} transfer layer with name {tf['name']}")
             continue
 

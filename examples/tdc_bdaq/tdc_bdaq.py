@@ -19,7 +19,16 @@ from basil.HL import si570
 
 
 def disassemble_tdc_word(word):
-    word_type_codes = {0: "TRIGGERED", 1: "RISING", 2: "FALLING", 3: "TIMESTAMP", 4: "OVFLOW", 5: "CALIB", 6: "MISS", 7: "RST"}
+    word_type_codes = {
+        0: "TRIGGERED",
+        1: "RISING",
+        2: "FALLING",
+        3: "TIMESTAMP",
+        4: "OVFLOW",
+        5: "CALIB",
+        6: "MISS",
+        7: "RST",
+    }
     # Shift away the 32 - 7 data bits and grab 3 bit word type
     return {
         "source_id": (word >> (32 - 4)),
@@ -33,7 +42,13 @@ def disassemble_tdc_word(word):
 chip = Dut("tdc_bdaq.yaml")
 chip.init()
 
-si570_conf = {"name": "si570", "type": "bdaq53.si570", "interface": "intf", "base_addr": 0xBA, "init": {"frequency": 160}}
+si570_conf = {
+    "name": "si570",
+    "type": "bdaq53.si570",
+    "interface": "intf",
+    "base_addr": 0xBA,
+    "init": {"frequency": 160},
+}
 si570_clk = si570.si570(chip["i2c"], si570_conf)
 time.sleep(0.1)
 si570_clk.init()
@@ -166,7 +181,10 @@ for i in tqdm(range(10, 4000, 100)):
         current_measurements[j] = times[1] - times[0]
     actual.append(i / seq_clk_GHZ)
     std = np.std(current_measurements)
-    print("Actual time: %5.3f Measured time: %5.3f Difference: %.3f Std %.3f" % (i / seq_clk_GHZ, times[1] - times[0], times[1] - times[0] - i / seq_clk_GHZ, std))
+    print(
+        "Actual time: %5.3f Measured time: %5.3f Difference: %.3f Std %.3f"
+        % (i / seq_clk_GHZ, times[1] - times[0], times[1] - times[0] - i / seq_clk_GHZ, std)
+    )
     measured.append(np.mean(current_measurements))
     stds.append(std)
     print()

@@ -101,7 +101,9 @@ class MIO_PLL(HardwareLayer):
 
     def setFrequency(self, value):  # value in MHz
         if float(value) < 0.08 or float(value) > 200.0:
-            raise ValueError("[MIO_PLL ERROR] PLL frequency (" + str(value) + " MHz) out of range. Allowed range: 80 kHz to 200 MHz")
+            raise ValueError(
+                "[MIO_PLL ERROR] PLL frequency (" + str(value) + " MHz) out of range. Allowed range: 80 kHz to 200 MHz"
+            )
         if self._calculateParameters(value):
             self._updateRegisters()
             return True
@@ -142,7 +144,9 @@ class MIO_PLL(HardwareLayer):
                                 break
                             if self.p_total > 1023:
                                 break
-                        if (self.fref * self.p_total / self.q_total) < 100 or (self.fref * self.p_total / self.q_total) > 400:  # PLL constraint
+                        if (self.fref * self.p_total / self.q_total) < 100 or (
+                            self.fref * self.p_total / self.q_total
+                        ) > 400:  # PLL constraint
                             break
                         if int(self.p_total) % 2 == 0:
                             self.p_0 = 0

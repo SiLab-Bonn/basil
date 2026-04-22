@@ -37,7 +37,11 @@ class weissLabEvent(HardwareLayer):
 
         info = self.get_info()
         if info != self.CHAMBER_TYPE:
-            raise ValueError("Not the expected climatechamber! Expected '{0}', chamber reported '{1}'.".format(self.CHAMBER_TYPE, info))
+            raise ValueError(
+                "Not the expected climatechamber! Expected '{0}', chamber reported '{1}'.".format(
+                    self.CHAMBER_TYPE, info
+                )
+            )
 
     def query(self, cmd):
         ret = self._intf.query(cmd, buffer_size=512)[0]
@@ -69,12 +73,15 @@ class weissLabEvent(HardwareLayer):
             raise ValueError("Invalid feature id!")
 
         feature_name = self.query(b"14010\xb61\xb6" + str(id).encode("ascii"))[1]
-        feature_status = self.query(b"14003\xb61\xb6" + str(id + 1).encode("ascii"))[1]  # For get and set status, id = id + 1
+        # For get and set status, id = id + 1
+        feature_status = self.query(b"14003\xb61\xb6" + str(id + 1).encode("ascii"))[1]
         logger.debug("Feature {0} has status {1}".format(feature_name, feature_status))
         return bool(int(feature_status))
 
     def _set_feature_status(self, id, value):
-        return self.query(b"14001\xb61\xb6" + str(id + 1).encode("ascii") + b"\xb6" + str(int(value)).encode("ascii"))  # For get and set status, id = id + 1
+        return self.query(
+            b"14001\xb61\xb6" + str(id + 1).encode("ascii") + b"\xb6" + str(int(value)).encode("ascii")
+        )  # For get and set status, id = id + 1
 
     def get_info(self):
         return self.query(b"99997\xb61\xb61")[1]

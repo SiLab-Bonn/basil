@@ -76,7 +76,11 @@ class TestSimSpi(unittest.TestCase):
                 self._bus_split_def = ("BASIL_TOPSBUS",)
 
     def setUp(self):
-        cocotb_compile_and_run(sim_files=[os.path.join(os.path.dirname(__file__), self._test_tb)], sim_bus=self._sim_bus, extra_defines=self._bus_split_def)
+        cocotb_compile_and_run(
+            sim_files=[os.path.join(os.path.dirname(__file__), self._test_tb)],
+            sim_bus=self._sim_bus,
+            extra_defines=self._bus_split_def,
+        )
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
@@ -171,7 +175,9 @@ class TestSimSpi(unittest.TestCase):
 @pytest.mark.verilator
 class TestSimSpiSbusTop(TestSimSpi):
     def __init__(self, testname):
-        super(TestSimSpiSbusTop, self).__init__(testname=testname, tb="test_SimSpi.v", bus_drv="basil.utils.sim.BasilSbusDriver", bus_split="top")
+        super(TestSimSpiSbusTop, self).__init__(
+            testname=testname, tb="test_SimSpi.v", bus_drv="basil.utils.sim.BasilSbusDriver", bus_split="top"
+        )
 
 
 if __name__ == "__main__":

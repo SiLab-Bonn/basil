@@ -158,7 +158,8 @@ if __name__ == "__main__":
 
     data0 = rxd.astype(np.uint8)  # Change type to unsigned int 8 bits and take from rxd only the last 8 bits
     data1 = np.right_shift(rxd, 8).astype(np.uint8)  # Rightshift rxd 8 bits and take again last 8 bits
-    data = np.reshape(np.vstack((data1, data0)), -1, order="F")  # data is now a 1 dimensional array of all bytes read from the FIFO
+    # data is now a 1 dimensional array of all bytes read from the FIFO
+    data = np.reshape(np.vstack((data1, data0)), -1, order="F")
     bdata = np.unpackbits(data)
 
     print("data = {}".format(data))

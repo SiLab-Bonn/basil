@@ -110,9 +110,20 @@ class tdl_tdc(RegisterHardwareLayer):
         # Shift away the 32 - 7 data bits and grab 3 bit word type
         word_type = self.word_type_codes[self.get_word_type(word)]
         if word_type in ["CALIB", "TRIGGERED", "RISING", "FALLING"]:
-            return {"source_id": (word >> (32 - 4)), "word_type": word_type, "tdl_value": word & 0b1111111, "fine_clk_value": self.get_tdc_value(word), "raw_word": word}
+            return {
+                "source_id": (word >> (32 - 4)),
+                "word_type": word_type,
+                "tdl_value": word & 0b1111111,
+                "fine_clk_value": self.get_tdc_value(word),
+                "raw_word": word,
+            }
         elif word_type in ["TIMESTAMP", "RST"]:
-            return {"source_id": (word >> (32 - 4)), "word_type": word_type, "timestamp": (word >> 9) & 0xFFFF, "raw_word": word}
+            return {
+                "source_id": (word >> (32 - 4)),
+                "word_type": word_type,
+                "timestamp": (word >> 9) & 0xFFFF,
+                "raw_word": word,
+            }
         else:
             return {"source_id": (word >> (32 - 4)), "word_type": word_type, "raw_word": word}
 

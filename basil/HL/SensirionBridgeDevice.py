@@ -28,7 +28,14 @@ class SensirionBridgeI2CDevice(HardwareLayer):
         self.power_on()
 
     def _read(self, command, read_n_bytes=0, timeout_us=100e3):
-        return self._intf.read_i2c(device=self.device, port=self.port, address=self.address, command=command, read_n_bytes=read_n_bytes, timeout_us=timeout_us)
+        return self._intf.read_i2c(
+            device=self.device,
+            port=self.port,
+            address=self.address,
+            command=command,
+            read_n_bytes=read_n_bytes,
+            timeout_us=timeout_us,
+        )
 
     def _write(self, command):
         self._intf.write_i2c(device=self.device, port=self.port, address=self.address, command=command)

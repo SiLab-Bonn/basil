@@ -50,7 +50,4 @@ profile = "black"
 
 [tool.ruff]
 # Set the maximum line length to 180.
-line-length = 180
-
-[tool.ruff.lint]
-extend-select = ["E501"]
+line-length = 120

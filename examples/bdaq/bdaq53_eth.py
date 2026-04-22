@@ -63,4 +63,6 @@ while time.time() - start_time < testduration:
 chip["CONTROL"]["EN"] = 0x0  # stop data source
 chip["CONTROL"].write()
 
-logging.info("Bytes received: %s, average data rate: %s Mbit/s" % (total_len, round((total_len / 1e6 / testduration), 2)))
+logging.info(
+    "Bytes received: %s, average data rate: %s Mbit/s" % (total_len, round((total_len / 1e6 / testduration), 2))
+)

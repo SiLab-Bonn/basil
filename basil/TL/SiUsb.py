@@ -47,7 +47,14 @@ class SiUsb(SiTransferLayer):
                 logger.info(
                     "Found USB board(s): {}".format(
                         ", ".join(
-                            ("%s with ID %s (FW %s)" % (device.board_name, "".join(filter(str.isdigit, device.board_id)), "".join(filter(str.isdigit, device.fw_version))))
+                            (
+                                "%s with ID %s (FW %s)"
+                                % (
+                                    device.board_name,
+                                    "".join(filter(str.isdigit, device.board_id)),
+                                    "".join(filter(str.isdigit, device.fw_version)),
+                                )
+                            )
                             for device in devices
                         )
                     )
@@ -56,7 +63,11 @@ class SiUsb(SiTransferLayer):
                     raise ValueError("Please specify ID of USB board")
                 self._sidev = devices[0]
         if "bit_file" in self._init.keys():
-            if "avoid_download" in self._init.keys() and self._init["avoid_download"] is True and self._sidev.XilinxAlreadyLoaded():
+            if (
+                "avoid_download" in self._init.keys()
+                and self._init["avoid_download"] is True
+                and self._sidev.XilinxAlreadyLoaded()
+            ):
                 logger.info("FPGA already programmed, skipping download")
             else:
                 # invert polarity of the interface clock (IFCONFIG.4) -> IFCLK & UCLK are in-phase

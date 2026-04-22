@@ -154,7 +154,9 @@ class IsegHV(HardwareLayer):
         # Check software voltage limit
         if self._voltage_limit is not None:
             if (ms[5] == "1" and voltage > self._voltage_limit) or (ms[5] == "0" and voltage < self._voltage_limit):
-                raise ValueError(f"Voltage of {voltage}V too high! Increase *v_lim={self._v_lim}V* to enable higher voltage!")
+                raise ValueError(
+                    f"Voltage of {voltage}V too high! Increase *v_lim={self._v_lim}V* to enable higher voltage!"
+                )
 
         # Issue warning if PSU is in manual mode
         # Then voltage can only be changed manually, at the device

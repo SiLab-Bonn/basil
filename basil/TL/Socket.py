@@ -23,7 +23,9 @@ class Socket(TransferLayer):
 
         self.encoding = self._init.get("encoding", "utf-8")
         self.write_termination = self._init.get("write_termination", "").encode(self.encoding).decode("unicode_escape")
-        self.read_termination = self._init.get("read_termination", self.write_termination).encode(self.encoding).decode("unicode_escape")
+        self.read_termination = (
+            self._init.get("read_termination", self.write_termination).encode(self.encoding).decode("unicode_escape")
+        )
         self.query_delay = self._init.get("query_delay", 0)
         self.handle_as_byte = self._init.get("handle_as_byte", False)
 

@@ -47,10 +47,16 @@ def cocotb_makefile(
     mkfile += "ICARUS_DEFINES += %s\n\n" % (" ".join("-D" + str(e) for e in extra_defines))
 
     mkfile += "NOT_ICARUS_DEFINES = %s\n" % (" ".join("+define+" + str(e) for e in extra_defines))
-    mkfile += "NOT_ICARUS_INCLUDE_DIRS=+incdir+./ %s\n" % (" ".join("+incdir+" + str(e) for e in include_dirs))  # this is for modelsim better full path?
+    mkfile += "NOT_ICARUS_INCLUDE_DIRS=+incdir+./ %s\n" % (
+        " ".join("+incdir+" + str(e) for e in include_dirs)
+    )  # this is for modelsim better full path?
 
-    mkfile += "COMPILE_ARGS_DEFINES = %s\n" % (" ".join(str(e) for e in compile_args))  # extra compiler args, e.g., for adding Xilinx's glbl.v to Icarus use "-s glbl"
-    mkfile += "BUILD_ARGS_DEFINES = %s\n" % (" ".join(str(e) for e in build_args))  # extra build args passed to build stage in supported simulators
+    mkfile += "COMPILE_ARGS_DEFINES = %s\n" % (
+        " ".join(str(e) for e in compile_args)
+    )  # extra compiler args, e.g., for adding Xilinx's glbl.v to Icarus use "-s glbl"
+    mkfile += "BUILD_ARGS_DEFINES = %s\n" % (
+        " ".join(str(e) for e in build_args)
+    )  # extra build args passed to build stage in supported simulators
 
     mkfile += "\n"
     mkfile += extra

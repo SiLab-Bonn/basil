@@ -82,14 +82,18 @@ class GpioPca9554(HardwareLayer):
         self._intf.write(self._base_addr + self.PCA9554_ADD, (self.PCA9554_OUT, 0x00))
 
     def _write_output_port_select(self, value):
-        self._intf.write(self._base_addr + self.PCA9554_ADD, array("B", pack("BB", self.PCA9554_CFG, value)))  # configure output lines
+        self._intf.write(
+            self._base_addr + self.PCA9554_ADD, array("B", pack("BB", self.PCA9554_CFG, value))
+        )  # configure output lines
 
     def _read_input_port(self):
         self._intf.write(self._base_addr + self.PCA9554_ADD, array("B", pack("B", self.PCA9554_IN)))  # set command byte
         return unpack_from("B", self._intf.read(self._base_addr + self.PCA9554_ADD | 1, size=1))[0]  # read input lines
 
     def _write_output_port(self, value):
-        self._intf.write(self._base_addr + self.PCA9554_ADD, array("B", pack("BB", self.PCA9554_OUT, value)))  # write output lines
+        self._intf.write(
+            self._base_addr + self.PCA9554_ADD, array("B", pack("BB", self.PCA9554_OUT, value))
+        )  # write output lines
 
     def _read_output_port(self):
         self._intf.write(self._base_addr + self.PCA9554_ADD, array("B", pack("B", self.PCA9554_OUT)))
@@ -154,7 +158,10 @@ class ADN_XPT(I2C_INTF):
         mask = self._calculate_mask(cat, regname)
         reg_read = self._get_reg(addr)
         val = (reg_read & ~mask) | ((val << self.map[cat][regname]["offset"]) & mask)
-        logging.debug("Writing in register %s (address %s). Register content: %s" % (cat + " " + regname, hex(addr), format(reg_read, "#010b")))
+        logging.debug(
+            "Writing in register %s (address %s). Register content: %s"
+            % (cat + " " + regname, hex(addr), format(reg_read, "#010b"))
+        )
         logging.debug("Use mask: %s. Write data: %s" % (format(mask, "#010b"), format(val, "#010b")))
         self._set_reg(addr, val)
         logging.debug("Register content after writing: %s" % format(self._get_reg(addr), "#010b"))
@@ -166,7 +173,10 @@ class ADN_XPT(I2C_INTF):
         addr = self.get_addr(cat, regname)
         mask = self._calculate_mask(cat, regname)
         reg_read = (self._get_reg(addr) & mask) >> self.map[cat][regname]["offset"]
-        logging.info("Reading register %s (address %s). Masked register content: %s" % (cat + " " + regname, hex(addr), format(reg_read, "#010b")))
+        logging.info(
+            "Reading register %s (address %s). Masked register content: %s"
+            % (cat + " " + regname, hex(addr), format(reg_read, "#010b"))
+        )
         return reg_read
 
     def _calculate_mask(self, cat, regname):

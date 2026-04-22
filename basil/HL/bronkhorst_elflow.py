@@ -105,7 +105,8 @@ class Bronkhorst_ELFLOW(HardwareLayer):
         # Capacity unit is a command, which returns the used unit in hex
         self._intf.write(self.CMDS["get_capacity"])
         ret = self.read()
-        cap_100 = struct.unpack("!f", bytes.fromhex(ret[11:]))[0]  # read from the 11th digits to translate what the capacity is
+        # read from the 11th digits to translate what the capacity is
+        cap_100 = struct.unpack("!f", bytes.fromhex(ret[11:]))[0]
 
         # now measure the flow
         self._intf.write(self.CMDS["get_measure_flow"])

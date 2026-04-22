@@ -28,9 +28,13 @@ class binderMK56(binderMK53):
 
     def set_temperature(self, temperature, reps=10):
         if temperature < self.min_temp:
-            raise RuntimeWarning(f"Set temperature {temperature} is lower than minimum allowed temperature {self.min_temp}")
+            raise RuntimeWarning(
+                f"Set temperature {temperature} is lower than minimum allowed temperature {self.min_temp}"
+            )
         if temperature > self.max_temp:
-            raise RuntimeWarning(f"Set temperature {temperature} is higher than maximum allowed temperature {self.max_temp}")
+            raise RuntimeWarning(
+                f"Set temperature {temperature} is higher than maximum allowed temperature {self.max_temp}"
+            )
         for _ in range(reps):
             try:
                 self.write(self.ADDR_MANSETPT, self._encode_float(temperature))

@@ -42,19 +42,31 @@ class TestRegisterHardwareLayer(unittest.TestCase):
 
     def test_lazy_programming(self):
         self.dut["test_register"].set_default()
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem)
+        self.assertDictEqual(
+            {0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem
+        )
         self.dut["test_register"].REG5_WO = 255
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 255, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem)
+        self.assertDictEqual(
+            {0: 12, 1: 128, 2: 255, 3: 255, 5: 255, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem
+        )
         self.dut["test_register"].REG5_WO  # get value from write-only register, but this will write zero instead
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem)
+        self.assertDictEqual(
+            {0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem
+        )
 
     def test_get_configuration(self):
-        self.dut.set_configuration(os.path.join(os.path.dirname(__file__), "test_RegisterHardwareLayer_configuration.yaml"))
+        self.dut.set_configuration(
+            os.path.join(os.path.dirname(__file__), "test_RegisterHardwareLayer_configuration.yaml")
+        )
         conf = self.dut["test_register"].get_configuration()
-        self.assertDictEqual({"REG1": 257, "REG2": 1, "REG3": 2, "REG_TEST_INIT": 0, "REG_BYTE_ARRAY": [1, 2, 3, 4]}, conf)
+        self.assertDictEqual(
+            {"REG1": 257, "REG2": 1, "REG3": 2, "REG_TEST_INIT": 0, "REG_BYTE_ARRAY": [1, 2, 3, 4]}, conf
+        )
 
     def test_set_configuration(self):
-        self.dut.set_configuration(os.path.join(os.path.dirname(__file__), "test_RegisterHardwareLayer_configuration.yaml"))
+        self.dut.set_configuration(
+            os.path.join(os.path.dirname(__file__), "test_RegisterHardwareLayer_configuration.yaml")
+        )
         self.assertDictEqual({0: 1, 1: 129, 2: 2, 3: 0, 5: 5, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem)
 
     def test_set_configuration_non_existing(self):
@@ -69,16 +81,24 @@ class TestRegisterHardwareLayer(unittest.TestCase):
 
     def test_write_only_lazy_programming(self):
         self.dut["test_register"].set_default()
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem)
+        self.assertDictEqual(
+            {0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem
+        )
         self.dut["test_register"].REG5_WO = 20
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 20, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem)
+        self.assertDictEqual(
+            {0: 12, 1: 128, 2: 255, 3: 255, 5: 20, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem
+        )
         self.dut["test_register"].REG5_WO
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem)
+        self.assertDictEqual(
+            {0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem
+        )
         self.assertIs(None, self.dut["test_register"]._get("REG5_WO"))
 
     def test_set_default(self):
         self.dut["test_register"].set_default()
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem)
+        self.assertDictEqual(
+            {0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem
+        )
 
     def test_set_attribute_add(self):
         val = self.dut["test_register"]._registers["REG1"]["default"]
@@ -94,11 +114,15 @@ class TestRegisterHardwareLayer(unittest.TestCase):
             self.dut["test_register"]._set(reg, val)
             ret_val = self.dut["test_register"]._get(reg)
             self.assertEqual(ret_val, val)
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem)
+        self.assertDictEqual(
+            {0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem
+        )
 
     def test_set_attribute_by_value(self):
         self.dut["test_register"].set_default()
-        self.assertDictEqual({0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem)
+        self.assertDictEqual(
+            {0: 12, 1: 128, 2: 255, 3: 255, 5: 0, 16: 1, 17: 2, 18: 3, 19: 4}, self.dut["dummy_tl"].mem
+        )
         self.dut["test_register"].REG2 = 0
         mem = self.dut["dummy_tl"].mem.copy()
         mem[1] = 0
@@ -140,12 +164,36 @@ class TestRegisterHardwareLayer(unittest.TestCase):
         self.dut["test_register"].set_default()
         self.dut.init({"test_register": _test_init})
         conf = self.dut.get_configuration()
-        self.assertDictEqual({"test_register": {"REG1": 120, "REG2": 1, "REG3": 65535, "REG_TEST_INIT": 15, "REG_BYTE_ARRAY": [4, 3, 2, 1]}, "dummy_tl": {}}, conf)
+        self.assertDictEqual(
+            {
+                "test_register": {
+                    "REG1": 120,
+                    "REG2": 1,
+                    "REG3": 65535,
+                    "REG_TEST_INIT": 15,
+                    "REG_BYTE_ARRAY": [4, 3, 2, 1],
+                },
+                "dummy_tl": {},
+            },
+            conf,
+        )
 
     def test_get_dut_configuration(self):
         self.dut["test_register"].set_default()
         conf = self.dut.get_configuration()
-        self.assertDictEqual({"test_register": {"REG1": 12, "REG2": 1, "REG3": 65535, "REG_TEST_INIT": 0, "REG_BYTE_ARRAY": [1, 2, 3, 4]}, "dummy_tl": {}}, conf)
+        self.assertDictEqual(
+            {
+                "test_register": {
+                    "REG1": 12,
+                    "REG2": 1,
+                    "REG3": 65535,
+                    "REG_TEST_INIT": 0,
+                    "REG_BYTE_ARRAY": [1, 2, 3, 4],
+                },
+                "dummy_tl": {},
+            },
+            conf,
+        )
 
     def test_get_set_value(self):
         for val in range(256):

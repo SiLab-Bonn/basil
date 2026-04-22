@@ -68,7 +68,11 @@ class TestSimGpio(unittest.TestCase):
                 self._bus_split_def = ("BASIL_TOPSBUS",)
 
     def setUp(self):
-        cocotb_compile_and_run(sim_files=[os.path.join(os.path.dirname(__file__), self._test_tb)], sim_bus=self._sim_bus, extra_defines=self._bus_split_def)
+        cocotb_compile_and_run(
+            sim_files=[os.path.join(os.path.dirname(__file__), self._test_tb)],
+            sim_bus=self._sim_bus,
+            extra_defines=self._bus_split_def,
+        )
 
         self.chip = Dut(cnfg_yaml)
         self.chip.init()
@@ -104,13 +108,17 @@ class TestSimGpio(unittest.TestCase):
 @pytest.mark.verilator
 class TestSimGpioSbus(TestSimGpio):
     def __init__(self, testname):
-        super(TestSimGpioSbus, self).__init__(testname=testname, tb="test_SimGpio.v", bus_drv="basil.utils.sim.BasilSbusDriver", bus_split="sbus")
+        super(TestSimGpioSbus, self).__init__(
+            testname=testname, tb="test_SimGpio.v", bus_drv="basil.utils.sim.BasilSbusDriver", bus_split="sbus"
+        )
 
 
 @pytest.mark.verilator
 class TestSimGpioSbusTop(TestSimGpio):
     def __init__(self, testname):
-        super(TestSimGpioSbusTop, self).__init__(testname=testname, tb="test_SimGpio.v", bus_drv="basil.utils.sim.BasilSbusDriver", bus_split="top")
+        super(TestSimGpioSbusTop, self).__init__(
+            testname=testname, tb="test_SimGpio.v", bus_drv="basil.utils.sim.BasilSbusDriver", bus_split="top"
+        )
 
 
 if __name__ == "__main__":

@@ -30,7 +30,13 @@ class binderMK53(HardwareLayer):
     ADDR_MODE = 0x1A22
 
     # Error codes
-    ERROR_CODES = {1: "Invalid function", 2: "Invalid parameter address", 3: "Parameter value outside range of values", 4: "Slave not ready", 5: "Write access to parameter denied"}
+    ERROR_CODES = {
+        1: "Invalid function",
+        2: "Invalid parameter address",
+        3: "Parameter value outside range of values",
+        4: "Slave not ready",
+        5: "Write access to parameter denied",
+    }
 
     def __init__(self, intf, conf):
         super(binderMK53, self).__init__(intf, conf)
@@ -73,9 +79,13 @@ class binderMK53(HardwareLayer):
 
     def set_temperature(self, temperature):
         if temperature < self.min_temp:
-            raise RuntimeWarning(f"Set temperature {temperature} is lower than minimum allowed temperature {self.min_temp}")
+            raise RuntimeWarning(
+                f"Set temperature {temperature} is lower than minimum allowed temperature {self.min_temp}"
+            )
         if temperature > self.max_temp:
-            raise RuntimeWarning(f"Set temperature {temperature} is higher than maximum allowed temperature {self.max_temp}")
+            raise RuntimeWarning(
+                f"Set temperature {temperature} is higher than maximum allowed temperature {self.max_temp}"
+            )
 
         self.write(self.ADDR_MANSETPT, self._encode_float(temperature))
         self.write(self.ADDR_BASICSETPT, self._encode_float(temperature))

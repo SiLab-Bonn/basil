@@ -96,7 +96,14 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
                         "ADCV": {"offset": 0.0, "gain": 1000.0},
                         "DACI": {"offset": 0.0, "gain": 0.0078125},
                         "ADCI": {"offset": 0.0, "gain": 1000.0, "iq_offset": 1.5, "iq_gain": 7.0},
-                        "NTC": {"B_NTC": 3425.0, "R_NTC_25": 10000.0, "R1": 39200.0, "R2": 4750.0, "R4": 10000.0, "VREF": 4.5},
+                        "NTC": {
+                            "B_NTC": 3425.0,
+                            "R_NTC_25": 10000.0,
+                            "R1": 39200.0,
+                            "R2": 4750.0,
+                            "R4": 10000.0,
+                            "VREF": 4.5,
+                        },
                     },
                 ),
                 (
@@ -108,7 +115,14 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
                         "ADCV": {"offset": 0.0, "gain": 1000.0},
                         "DACI": {"offset": 0.0, "gain": 0.0078125},
                         "ADCI": {"offset": 0.0, "gain": 1000.0, "iq_offset": 1.5, "iq_gain": 7.0},
-                        "NTC": {"B_NTC": 3425.0, "R_NTC_25": 10000.0, "R1": 39200.0, "R2": 4750.0, "R4": 10000.0, "VREF": 4.5},
+                        "NTC": {
+                            "B_NTC": 3425.0,
+                            "R_NTC_25": 10000.0,
+                            "R1": 39200.0,
+                            "R2": 4750.0,
+                            "R4": 10000.0,
+                            "VREF": 4.5,
+                        },
                     },
                 ),
                 (
@@ -120,7 +134,14 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
                         "ADCV": {"offset": 0.0, "gain": 1000.0},
                         "DACI": {"offset": 0.0, "gain": 0.0078125},
                         "ADCI": {"offset": 0.0, "gain": 1000.0, "iq_offset": 1.5, "iq_gain": 7.0},
-                        "NTC": {"B_NTC": 3425.0, "R_NTC_25": 10000.0, "R1": 39200.0, "R2": 4750.0, "R4": 10000.0, "VREF": 4.5},
+                        "NTC": {
+                            "B_NTC": 3425.0,
+                            "R_NTC_25": 10000.0,
+                            "R1": 39200.0,
+                            "R2": 4750.0,
+                            "R4": 10000.0,
+                            "VREF": 4.5,
+                        },
                     },
                 ),
                 (
@@ -132,7 +153,14 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
                         "ADCV": {"offset": 0.0, "gain": 1000.0},
                         "DACI": {"offset": 0.0, "gain": 0.0078125},
                         "ADCI": {"offset": 0.0, "gain": 1000.0, "iq_offset": 1.5, "iq_gain": 7.0},
-                        "NTC": {"B_NTC": 3425.0, "R_NTC_25": 10000.0, "R1": 39200.0, "R2": 4750.0, "R4": 10000.0, "VREF": 4.5},
+                        "NTC": {
+                            "B_NTC": 3425.0,
+                            "R_NTC_25": 10000.0,
+                            "R1": 39200.0,
+                            "R2": 4750.0,
+                            "R4": 10000.0,
+                            "VREF": 4.5,
+                        },
                     },
                 ),
             ]
@@ -154,15 +182,20 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
             self.set_current_limit(ch_name, 1.0)
         logger.info("Found adapter card: {}".format("%s with ID %s" % ("Quad Module Adapter Card", self.get_id())))
 
-    def read_eeprom_calibration(self, temperature=False):  # use default values for temperature, EEPROM values are usually not calibrated and random
+    def read_eeprom_calibration(self, temperature=False):
+        # use default values for temperature, EEPROM values are usually not calibrated and random
         """Reading EEPROM calibration for power regulators and temperature"""
         header = self.get_format()
         if header == self.HEADER_V2:
             data = self._read_eeprom(self.CAL_DATA_ADDR, size=calcsize(self.CAL_DATA_V2_FORMAT))
             for idx, channel in enumerate(self._ch_cal.keys()):
-                ch_data = data[idx * calcsize(self.CAL_DATA_CH_V2_FORMAT) : (idx + 1) * calcsize(self.CAL_DATA_CH_V2_FORMAT)]
+                ch_data = data[
+                    idx * calcsize(self.CAL_DATA_CH_V2_FORMAT) : (idx + 1) * calcsize(self.CAL_DATA_CH_V2_FORMAT)
+                ]
                 values = unpack_from(self.CAL_DATA_CH_V2_FORMAT, ch_data)
-                self._ch_cal[channel]["name"] = "".join([c for c in values[0].decode("utf-8", errors="ignore") if (c in string.printable)])  # values[0].strip()
+                self._ch_cal[channel]["name"] = "".join(
+                    [c for c in values[0].decode("utf-8", errors="ignore") if (c in string.printable)]
+                )  # values[0].strip()
                 self._ch_cal[channel]["default"] = values[1]
                 self._ch_cal[channel]["ADCI"]["gain"] = values[2]
                 self._ch_cal[channel]["ADCI"]["offset"] = values[3]
@@ -208,12 +241,22 @@ class FEI4QuadModuleAdapterCard(AdcMax1239, DacDs4424, DacMax5380, Eeprom24Lc128
         kwargs = self._ch_map[channel]["NTC"]
         temp_raw = self._get_adc_value(**kwargs)
 
-        v_adc = (temp_raw - self._ch_cal[channel]["ADCV"]["offset"]) / self._ch_cal[channel]["ADCV"]["gain"]  # voltage, VDDA1
-        k = self._ch_cal[channel]["NTC"]["R4"] / (self._ch_cal[channel]["NTC"]["R2"] + self._ch_cal[channel]["NTC"]["R4"])  # reference voltage divider
-        r_ntc = self._ch_cal[channel]["NTC"]["R1"] * (k - v_adc / self._ch_cal[channel]["NTC"]["VREF"]) / (1 - k + v_adc / self._ch_cal[channel]["NTC"]["VREF"])  # NTC resistance
+        # voltage, VDDA1
+        v_adc = (temp_raw - self._ch_cal[channel]["ADCV"]["offset"]) / self._ch_cal[channel]["ADCV"]["gain"]
+        # reference voltage divider
+        k = self._ch_cal[channel]["NTC"]["R4"] / (
+            self._ch_cal[channel]["NTC"]["R2"] + self._ch_cal[channel]["NTC"]["R4"]
+        )
+        # NTC resistance
+        r_ntc = (
+            self._ch_cal[channel]["NTC"]["R1"]
+            * (k - v_adc / self._ch_cal[channel]["NTC"]["VREF"])
+            / (1 - k + v_adc / self._ch_cal[channel]["NTC"]["VREF"])
+        )
 
         return (self._ch_cal[channel]["NTC"]["B_NTC"] * self.T_KELVIN_25) / (
-            self._ch_cal[channel]["NTC"]["B_NTC"] + self.T_KELVIN_25 * log(r_ntc / self._ch_cal[channel]["NTC"]["R_NTC_25"])
+            self._ch_cal[channel]["NTC"]["B_NTC"]
+            + self.T_KELVIN_25 * log(r_ntc / self._ch_cal[channel]["NTC"]["R_NTC_25"])
         ) - self.T_KELVIN_0  # NTC temperature
 
     def set_current_limit(self, channel, value, unit="A"):

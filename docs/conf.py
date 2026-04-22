@@ -250,7 +250,15 @@ man_pages = [("index", "basil", "basil Documentation", ["SiLab, University of Bo
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ("index", "basil", "basil Documentation", "SiLab, University of Bonn", "basil", "Modular DAQ framework for pixel detectors.", "Miscellaneous"),
+    (
+        "index",
+        "basil",
+        "basil Documentation",
+        "SiLab, University of Bonn",
+        "basil",
+        "Modular DAQ framework for pixel detectors.",
+        "Miscellaneous",
+    ),
 ]
 
 # Documents to append as an appendix to all manuals.

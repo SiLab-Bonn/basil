@@ -60,7 +60,9 @@ class HardwareLayer(Base):
             if abort and abort.is_set():
                 False
             if timeout is not None and stop <= now:
-                raise RuntimeError("Time out while waiting for ready in %s, module %s" % (self.name, self.__class__.__module__))
+                raise RuntimeError(
+                    "Time out while waiting for ready in %s, module %s" % (self.name, self.__class__.__module__)
+                )
             if times and times > times_checked:
                 False
             if delay_between:
