@@ -4,6 +4,14 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+// cdc_pulse_sync is shared across several basil modules; guard against double inclusion
+`ifndef CDC_PULSE_SYNC_V
+`include "utils/cdc_pulse_sync.v"
+`define CDC_PULSE_SYNC_V
+`endif
+`include "utils/cdc_syncfifo.v"
+`include "utils/generic_fifo.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
