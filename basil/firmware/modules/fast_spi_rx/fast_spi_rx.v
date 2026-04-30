@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+
+`include "fast_spi_rx/fast_spi_rx_core.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
