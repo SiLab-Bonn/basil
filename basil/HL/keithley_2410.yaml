@@ -1,28 +1,54 @@
 # Device description for the Keithley 2410 Sourcemeter. 
 # set_ function expect a parameter, get_ function return a parameter.
 # Just the very basic commands are implemented here.
-identifier : KEITHLEY INSTRUMENTS INC.,MODEL 2410
-on : OUTP ON
-off : OUTP OFF
+identifier: KEITHLEY INSTRUMENTS INC.,MODEL 2410
+on: OUTP ON
+off: OUTP OFF
 get_on: OUTP?
-get_current : SENSE:FUNC 'CURR';:READ?
-set_current : SOUR:CURR
-set_voltage : SOUR:VOLT
-get_voltage : SENSE:FUNC 'VOLT';:READ?
-set_current_limit : SENS:CURR:PROT
-get_current_limit : SENS:CURR:PROT?
-set_voltage_limit : SENS:VOLT:PROT
-get_voltage_limit : SENS:VOLT:PROT?
-source_volt : SOUR:FUNC VOLT
-source_current : SOUR:FUNC CURR
-get_source_mode : SOUR:FUNC?
-set_current_autorange : SOUR:CURR:RANG:AUTO ON
-get_current_autorange : SOUR:CURR:RANG:AUTO?
+set_current_limit: SENS:CURR:PROT
+get_current_limit: SENS:CURR:PROT?
+set_voltage_limit: SENS:VOLT:PROT
+get_voltage_limit: SENS:VOLT:PROT?
+source_volt: SOUR:FUNC VOLT
+source_current: SOUR:FUNC CURR
+get_source_mode: SOUR:FUNC?
+set_current_range: SOUR:CURR:RANGE
 set_voltage_range: SOUR:VOLT:RANGE
+get_current_range: SOUR:CURR:RANGE?
+get_voltage_range: SOUR:VOLT:RANGE?
+get_current_autorange: SOUR:CURR:RANG:AUTO?
+get_voltage_autorange: SOUR:VOLT:RANG:AUTO?
+set_current_autorange: SOUR:CURR:RANG:AUTO ON
+set_voltage_autorange: SOUR:VOLT:RANG:AUTO ON
+set_current: SOUR:CURR
+set_voltage: SOUR:VOLT
+get_source_current: SOUR:CURR?
+get_source_voltage: SOUR:VOLT?
 four_wire_on: SYST:RSEN ON
 four_wire_off: SYST:RSEN OFF
 get_remote_sense: SYST:RSEN?
-set_current_sense_range: SENS:CURR:RANGE
-get_current_sense_range: SENS:CURR:RANGE?
-get_reading: READ?
 set_current_nlpc: SENS:CURR:NPLC
+set_voltage_nlpc: SENS:VOLT:NPLC
+get_current_nlpc: SENS:CURR:NPLC?
+get_voltage_nlpc: SENS:VOLT:NPLC?
+get_current_sense_autorange: SENS:CURR:RANG:AUTO?
+get_voltage_sense_autorange: SENS:VOLT:RANG:AUTO?
+set_current_sense_autorange: SENS:CURR:RANG:AUTO
+set_voltage_sense_autorange: SENS:VOLT:RANG:AUTO
+set_current_sense_range: SENS:CURR:RANGE
+set_voltage_sense_range: SENS:VOLT:RANGE
+get_current_sense_range: SENS:CURR:RANGE?
+get_voltage_sense_range: SENS:VOLT:RANGE?
+get_current: SENSE:FUNC 'CURR';:READ?
+get_voltage: SENSE:FUNC 'VOLT';:READ?
+get_reading: READ?
+
+clear_errors: SYST:ERR:CLEAR
+get_n_errors: SYST:ERR:COUNT?
+get_error_code: SYST:ERR?
+# Special keyword for formatting query results to allow direct conversions to numeric types (e.g. float(get_current()))
+__scpi_query_fmt:
+  fmt_sep: ','
+  fmt_method:
+    get_voltage: '{0}'
+    get_current: '{1}'

@@ -1,47 +1,143 @@
-# Device description for the Keithley 2602A Sourcemeter. 
+# Device description for the Keithley 2602A Sourcemeter.
 # set_ function expect a parameter, get_ function return a parameter.
 # Just the very basic commands are implemented here.
-identifier : Keithley Instruments Inc., Model 2602A
+identifier: Keithley Instruments Inc., Model 2602A
 
 channel 1:
-    reset : smua.reset()
-    on : smua.source.output = 1
-    off : smua.source.output = 0
-    source_current : smua.source.func = smua.OUTPUT_DCAMPS
-    source_volt : smua.source.func = smua.OUTPUT_DCVOLTS
-    set_voltage_limit : smua.source.limitv = 
-    set_current_limit : smua.source.limiti =
-    set_voltage_range : smua.source.rangev = 
-    set_current_range : smua.source.rangei = 
-    set_current : smua.source.leveli =
-    get_current : print(smua.measure.i())
-    set_voltage : smua.source.levelv =
-    get_voltage : print(smua.measure.v())
-    set_mode_measure_current_A : display.smua.measure.func = display.MEASURE_DCAMPS
-    four_wire_on : smua.sense = smua.SENSE_REMOTE
-    four_wire_off : smua.sense = smua.SENSE_LOCAL
+  reset: smua.reset()
+  on: smua.source.output = 1
+  off: smua.source.output = 0
+  get_buffer1_mode: print(smua.nvbuffer1.appendmode)
+  set_buffer1_mode: smua.nvbuffer1.appendmode =
+  get_buffer2_mode: print(smua.nvbuffer2.appendmode)
+  set_buffer2_mode: smua.nvbuffer2.appendmode =
+  clear_buffer1: smua.nvbuffer1.clear()
+  clear_buffer2: smua.nvbuffer2.clear()
+  source_current: smua.source.func = smua.OUTPUT_DCAMPS
+  source_volt: smua.source.func = smua.OUTPUT_DCVOLTS
+  set_current_limit: smua.source.limiti =
+  set_voltage_limit: smua.source.limitv =
+  set_current_range: smua.source.rangei =
+  set_voltage_range: smua.source.rangev =
+  get_current_autorange: print(smua.source.autorangei)
+  get_voltage_autorange: print(smua.source.autorangev)
+  set_current_autorange: smua.source.autorangei =
+  set_voltage_autorange: smua.source.autorangev =
+  get_source_current: print(smua.source.leveli)
+  get_source_voltage: print(smua.source.levelv)
+  set_current: smua.source.leveli =
+  set_voltage: smua.source.levelv =
+  four_wire_on: smua.sense = smua.SENSE_REMOTE
+  four_wire_off: smua.sense = smua.SENSE_LOCAL
+  get_remote_sense: smua.sense
+  set_current_nlpc: smua.measure.nplc =
+  set_voltage_nlpc: smua.measure.nplc =
+  get_current_nlpc: print(smua.measure.nplc)
+  get_voltage_nlpc: print(smua.measure.nplc)
+  get_current_sense_autorange: print(smua.measure.autorangei)
+  get_voltage_sense_autorange: print(smua.measure.autorangev)
+  set_current_sense_autorange: smua.measure.autorangei =
+  set_voltage_sense_autorange: smua.measure.autorangev =
+  set_current_sense_range: smua.measure.rangei =
+  set_voltage_sense_range: smua.measure.rangev =
+  get_current_sense_range: print(smua.measure.rangei)
+  get_voltage_sense_range: print(smua.measure.rangev)
+  get_current: print(smua.measure.i())
+  get_voltage: print(smua.measure.v())
+  get_reading: print(smua.measure.iv())
+  multi_current_measurement: smua.measure.i(smua.nvbuffer1)
+  multi_voltage_measurement: smua.measure.v(smua.nvbuffer2)
+  get_multi_current: printbuffer(1, smua.measure.count, smua.nvbuffer1)
+  get_multi_voltage: printbuffer(1, smua.measure.count, smua.nvbuffer2)
+  create_average_current: statistics1 = smua.buffer.getstats(smua.nvbuffer1)
+  create_average_voltage: statistics2 = smua.buffer.getstats(smua.nvbuffer2)
+  get_averaged_current: print(statistics1.mean,statistics1.stddev)
+  get_averaged_voltage: printbuffer(1,4,statistics2)
+  set_number_measurements: smua.measure.count =
+  get_number_measurements: print(smua.measure.count)
+  get_sense_interval: print(smua.measure.interval)
+  set_sense_interval: smua.measure.interval =
+  set_mode_measure_current_A: display.smua.measure.func = display.MEASURE_DCAMPS
 
 channel 2:
-    reset : smub.reset()
-    on : smub.source.output = 1
-    off : smub.source.output = 0
-    source_current : smub.source.func = smub.OUTPUT_DCAMPS
-    source_volt : smub.source.func = smub.OUTPUT_DCVOLTS
-    set_voltage_range : smub.source.rangev =
-    set_current_range : smub.source.rangei = 
-    set_voltage_limit : smub.source.limitv = 
-    set_current_limit : smub.source.limiti =
-    set_current : smub.source.leveli = 
-    get_current : print(smub.measure.i())
-    set_voltage : smub.source.levelv =
-    get_voltage : print(smub.measure.v())
-    set_mode_measure_current : display.smub.measure.func = display.MEASURE_DCAMPS
-    four_wire_on : smub.sense = smub.SENSE_REMOTE
-    four_wire_off : smub.sense = smub.SENSE_LOCAL
-    
-#on : smua.source.output = 1
-#off : smua.source.output = 0
-#get_current : print(smua.measure.i())
-#set_voltage : smua.source.levelv =
-#get_voltage : print(smua.measure.v())
-#set_mode_measure_current : display.smua.measure.func = display.MEASURE_DCAMPS
+  reset: smub.reset()
+  on: smub.source.output = 1
+  off: smub.source.output = 0
+  get_buffer1_mode: print(smub.nvbuffer1.appendmode)
+  set_buffer1_mode: smub.nvbuffer1.appendmode =
+  get_buffer2_mode: print(smub.nvbuffer2.appendmode)
+  set_buffer2_mode: smub.nvbuffer2.appendmode =
+  clear_buffer1: smub.nvbuffer1.clear()
+  clear_buffer2: smub.nvbuffer2.clear()
+  source_current: smub.source.func = smub.OUTPUT_DCAMPS
+  source_volt: smub.source.func = smub.OUTPUT_DCVOLTS
+  set_current_limit: smub.source.limiti =
+  set_voltage_limit: smub.source.limitv =
+  set_current_range: smub.source.rangei =
+  set_voltage_range: smub.source.rangev =
+  get_current_autorange: print(smub.source.autorangei)
+  get_voltage_autorange: print(smub.source.autorangev)
+  set_current_autorange: smub.source.autorangei =
+  set_voltage_autorange: smub.source.autorangev =
+  get_source_current: print(smub.source.leveli)
+  get_source_voltage: print(smub.source.levelv)
+  set_current: smub.source.leveli =
+  set_voltage: smub.source.levelv =
+  four_wire_on: smub.sense = smub.SENSE_REMOTE
+  four_wire_off: smub.sense = smub.SENSE_LOCAL
+  get_remote_sense: smub.sense
+  set_current_nlpc: smub.measure.nplc =
+  set_voltage_nlpc: smub.measure.nplc =
+  get_current_nlpc: print(smub.measure.nplc)
+  get_voltage_nlpc: print(smub.measure.nplc)
+  get_current_sense_autorange: print(smub.measure.autorangei)
+  get_voltage_sense_autorange: print(smub.measure.autorangev)
+  set_current_sense_autorange: smub.measure.autorangei =
+  set_voltage_sense_autorange: smub.measure.autorangev =
+  set_current_sense_range: smub.measure.rangei =
+  set_voltage_sense_range: smub.measure.rangev =
+  get_current_sense_range: print(smub.measure.rangei)
+  get_voltage_sense_range: print(smub.measure.rangev)
+  get_current: print(smub.measure.i())
+  get_voltage: print(smub.measure.v())
+  get_reading: print(smub.measure.iv())
+  multi_current_measurement: smub.measure.i(smub.nvbuffer1)
+  multi_voltage_measurement: smub.measure.v(smub.nvbuffer2)
+  get_multi_current: printbuffer(1, smub.measure.count, smub.nvbuffer1)
+  get_multi_voltage: printbuffer(1, smub.measure.count, smub.nvbuffer2)
+  create_average_current: statistics1 = smub.buffer.getstats(smub.nvbuffer1)
+  create_average_voltage: statistics2 = smub.buffer.getstats(smub.nvbuffer2)
+  get_averaged_current: print(statistics1.mean,statistics1.stddev)
+  get_averaged_voltage: printbuffer(1,4,statistics2)
+  set_number_measurements: smub.measure.count =
+  get_number_measurements: print(smub.measure.count)
+  get_sense_interval: print(smub.measure.interval)
+  set_sense_interval: smub.measure.interval =
+  set_mode_measure_current_A: display.smub.measure.func = display.MEASURE_DCAMPS
+
+binary_format: format.data = format.DREAL
+text_format: format.data = format.ASCII
+set_ascii_precision: format.asciiprecision =
+set_byte_order: format.byteorder =
+clear_errors: errorqueue.clear()
+get_n_errors: print(errorqueue.count)
+load_error: errorCode, message, severity, errorNode = errorqueue.next()
+get_error_code: print(errorCode)
+get_error_message: print(message)
+get_error_severity: print(severity)
+get_error_node: print(errorNode)
+
+__scpi_binary_commands:
+  get_multi_current:
+    datatype: f
+  get_multi_voltage:
+    datatype: f
+  get_averaged_voltage:
+    datatype: f
+
+#on : smuX.source.output = 1
+#off : smuX.source.output = 0
+#get_current : print(smuX.measure.i())
+#set_voltage : smuX.source.levelv =
+#get_voltage : print(smuX.measure.v())
+#set_mode_measure_current : display.smuX.measure.func = display.MEASURE_DCAMPS
