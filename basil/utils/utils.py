@@ -23,6 +23,35 @@ def logging(fn):
     return wrapped
 
 
+def log_exception(logger: logging.Logger, msg, *args, level=logging.ERROR, e=None, **kwargs):
+    """
+            Convenience method for logging an ERROR with exception information.
+            """
+    if not (isinstance(e, Exception) or e is None):
+        raise TypeError("e must be an instance of Exception or None")
+    if isinstance(logger, logging.Logger):
+        raise TypeError("logger must be an instance of logging.Logger")
+
+    reraise = kwargs.pop('reraise', False)
+    if reraise and e is None:
+        raise ValueError("reraise=True requires e to be set")
+
+    exc_info = kwargs.pop('exc_info', True)
+    if exc_info and e is not None:
+        exc_info = e
+    logger.log(level, msg, *args, exc_info=exc_info, **kwargs)
+
+    if reraise:
+        raise e
+
+
+def basil_config():
+    """Convenience method for setting up the logging module for use with basil.
+    Could be used from the main script of the particular application.
+    """
+    logging.basicConfig(level=logging.INFO,
+                        format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
+
 def lsbits(b):
     return (b * 0x0202020202 & 0x010884422010) % 1023
 
@@ -38,15 +67,28 @@ def bitvector_to_byte_array(bitvector):
 
 
 def bitarray_to_byte_array(bitarr):
-    ba = bitarray(bitarr, endian=bitarr.endian())
+    # current download on silab is using bitarr.endian
+    ba = bitarray(bitarr, endian=bit_endian(bitarr))
     ba.reverse()  # this flip the byte order and the bit order of each byte
+    # current instance on silab is using np.fromstring; but this should not make any difference!
     bs = np.frombuffer(ba.tobytes(), dtype=np.uint8)  # byte padding happens here, bitarray.tobytes()
-    bs = (bs * 0x0202020202 & 0x010884422010) % 1023
+    # current instance on silab is not using this type conversion!
+    # this should also make no difference.
+    bs = (bs * np.uint64(0x0202020202) & 0x010884422010) % 1023
     return array('B', bs.astype(np.uint8))
 
 
 # Python 2/3 compatibility function for array.tobytes function
 
+
+if callable(bitarray.endian):
+    # installed version is prior to 3.4.0
+    def bit_endian(bitarr):
+        return bitarr.endian()
+else:
+    # bitarray version is at least 3.4.0
+    def bit_endian(bitarr):
+        return bitarr.endian
 
 try:
     array.tobytes
