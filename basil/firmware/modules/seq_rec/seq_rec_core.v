@@ -4,6 +4,23 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+// flag_domain_crossing is shared across several basil modules; guard against double inclusion
+`ifndef FLAG_DOMAIN_CROSSING_V
+`include "utils/flag_domain_crossing.v"
+`define FLAG_DOMAIN_CROSSING_V
+`endif
+// three_stage_synchronizer is shared across several basil modules; guard against double inclusion
+`ifndef THREE_STAGE_SYNCHRONIZER_V
+`include "utils/3_stage_synchronizer.v"
+`define THREE_STAGE_SYNCHRONIZER_V
+`endif
+// cdc_pulse_sync is shared across several basil modules; guard against double inclusion
+`ifndef CDC_PULSE_SYNC_V
+`include "utils/cdc_pulse_sync.v"
+`define CDC_PULSE_SYNC_V
+`endif
+`include "utils/ramb_8_to_n.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 

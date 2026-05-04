@@ -4,6 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`include "utils/generic_fifo.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 

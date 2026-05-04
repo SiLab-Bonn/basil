@@ -7,6 +7,17 @@
 
 `include "tdl_tdc/sw_interface.v"
 `include "tdl_tdc/tdl_tdc_core.v"
+// bus_to_ip is shared across several basil modules; guard against double inclusion
+`ifndef BUS_TO_IP_V
+`include "utils/bus_to_ip.v"
+`define BUS_TO_IP_V
+`endif
+// cdc_syncfifo is shared across several basil modules; guard against double inclusion
+`ifndef CDC_SYNCFIFO_V
+`include "utils/cdc_syncfifo.v"
+`define CDC_SYNCFIFO_V
+`endif
+`include "utils/generic_fifo.v"
 
 module tdl_tdc #(
 	parameter BASEADDR = 32'h0000,

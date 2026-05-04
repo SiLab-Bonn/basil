@@ -4,6 +4,21 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+// flag_domain_crossing is shared across several basil modules; guard against double inclusion
+`ifndef FLAG_DOMAIN_CROSSING_V
+`include "utils/flag_domain_crossing.v"
+`define FLAG_DOMAIN_CROSSING_V
+`endif
+// cdc_syncfifo is shared across several basil modules; guard against double inclusion
+`ifndef CDC_SYNCFIFO_V
+`include "utils/cdc_syncfifo.v"
+`define CDC_SYNCFIFO_V
+`endif
+`include "utils/generic_fifo.v"
+`include "fei4_rx/sync_master.v"
+`include "fei4_rx/rec_sync.v"
+`include "fei4_rx/decode_8b10b.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
