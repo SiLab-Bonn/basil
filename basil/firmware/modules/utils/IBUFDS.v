@@ -9,7 +9,8 @@
 
 module IBUFDS #(
     parameter DIFF_TERM = "TRUE",
-    parameter IOSTANDARD   = "LVDS_25"
+    parameter IBUF_LOW_PWR = "FALSE",
+    parameter IOSTANDARD = "LVDS_25"
 ) (
     output wire O,
     input wire I, IB
