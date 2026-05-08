@@ -105,17 +105,18 @@ endmodule
 module gerneric_fifo
 #(
     parameter DATA_SIZE = 32,
-    parameter DEPTH = 8
+    parameter DEPTH = 8,
+    parameter POINTER_SIZE = 16 // maximum in Xilinx 7-series
 ) (
     input wire clk,
     input wire reset,
     input wire write,
     input wire read,
-    input wire data_in,
+    input wire [DATA_SIZE-1:0] data_in,
     output wire full,
     output wire empty,
-    output wire data_out,
-    output wire size
+    output wire [DATA_SIZE-1:0] data_out,
+    output wire [POINTER_SIZE-1:0] size
 );
 
 generic_fifo #(
