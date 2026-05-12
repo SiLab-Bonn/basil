@@ -23,6 +23,17 @@ _scpi_ieee_488_2 = {
 class scpi(HardwareLayer):
     """Implement Standard Commands for Programmable Instruments (SCPI)."""
 
+    # this could break the code; CHECK: whether slots here will break the module.
+    __slots__ = [
+        '_scpi_commands',
+        '_scpi_query_fmt',
+        '_formatting_enabled',
+        '_scpi_binary_enabled',
+        '_scpi_error_available',
+        '_scpi_binary_commands',
+        '_logger'
+    ]
+
     @property
     def has_formatting(self):
         """Whether or not device has SCPI query formatting specified in device description"""
