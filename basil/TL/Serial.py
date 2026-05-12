@@ -5,10 +5,9 @@
 # ------------------------------------------------------------
 #
 import logging
-import struct
-
-import serial
 import numpy as np
+import serial
+import struct
 
 from basil.TL.TransferLayer import TransferLayer
 
@@ -76,13 +75,13 @@ class Serial(TransferLayer):
         self.write(data)
         return self._readline()
 
-    def query_binary(self, data, data_type='f', max_tries=10000):
+    def query_binary(self, data, data_type='f', max_tries=10000, data_points=0):
         if self._port.inWaiting():
             logger.warning("Found %d bytes in the input buffer of interface %s which will be flushed",
                            self._port.inWaiting(), self.name)
             self._port.flushInput()
         self.write(data)
-        return self._read_binary_line()
+        return self._read_binary_line(data_type, data_points)
 
     def _read_raw(self):  # http://stackoverflow.com/questions/16470903/pyserial-2-6-specify-end-of-line-in-readline
         # catch a few cases:
@@ -108,25 +107,45 @@ class Serial(TransferLayer):
         data = self._read_raw()
         # should convert the data if necessary
         try:
-            from pyvisa.util import parse_ieee_block_header, from_binary_block
+           # from pyvisa.util import parse_ieee_block_header, from_binary_block
+           from ..utils.DataConverter import parse_ieee_block_header, from_binary_block
         except ImportError:
             logger.exception("Missed pyvisa module. Will try the alternative implementation.")
             from ..utils.DataConverter import parse_ieee_block_header, from_binary_block
         offset, data_length = parse_ieee_block_header(data)
 
         # allow support for instruments that do not report the block length
-        data_length = data_length if data_length >= 0 else data_points * struct.calcsize(datatype)
-
-        expected_length = offset + data_length
-
-        if data_length > 0:
-            data.extend(self._port.read(expected_length - len(data)))
-
-        parsed_data = from_binary_block(data, offset, data_length, datatype, False, container=np.ndarray)
-        if data.shape[0] > 1:
-            return parsed_data
+        if data_length >= 0:
+            pass
+        elif data_points > 0:
+            data_length = int(data_points * struct.calcsize(datatype))
         else:
-            return parsed_data[0]
+            data_length = None
+
+        # data_length = data_length if data_length >= 0 else data_points *struct.calcsize(datatype)
+
+        if data_length is None:
+            expected_length = -1
+        else:
+            expected_length = offset + data_length
+
+        if data_length is not None and data_length > 0 and expected_length > len(data):
+           # read one more byte here for the expected termination string.
+           data.extend(self._port.read(expected_length - len(data)+1))
+
+        parsed_data = from_binary_block(data, offset, data_length, datatype, False, container=np.array)
+        if not data.endswith(b'\n'):
+            res = self._read_raw()
+        try:
+            if parsed_data.shape[0] > 1:
+                return parsed_data
+            else:
+                return parsed_data[0]
+        except:
+            print("error data")
+            print(data)
+            print(parsed_data)
+            raise
 
     def _readline(self):  # http://stackoverflow.com/questions/16470903/pyserial-2-6-specify-end-of-line-in-readline
         data = self._read_raw()
