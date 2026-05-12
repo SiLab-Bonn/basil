@@ -23,6 +23,17 @@ class scpi(HardwareLayer):
     '''Implement Standard Commands for Programmable Instruments (SCPI).
     '''
 
+    # this could break the code; CHECK: whether slots here will break the module.
+    __slots__ = [
+        '_scpi_commands',
+        '_scpi_query_fmt',
+        '_formatting_enabled',
+        '_scpi_binary_enabled',
+        '_scpi_error_available',
+        '_scpi_binary_commands',
+        '_logger'
+    ]
+
     @property
     def has_formatting(self):
         '''Whether or not device has SCPI query formatting specified in device description'''
@@ -107,7 +118,7 @@ class scpi(HardwareLayer):
             binary_stream = kwargs.pop('binary_enabled', False)
             try:
                 command = self._scpi_commands['channel %s' % channel][name] if channel is not None else \
-                self._scpi_commands[name]
+                    self._scpi_commands[name]
             except Exception:
                 raise ValueError('SCPI command %s is not defined for device %s' % (name, self.name))
 
