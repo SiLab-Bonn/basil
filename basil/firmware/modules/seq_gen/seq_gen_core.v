@@ -71,8 +71,8 @@ always @(posedge BUS_CLK) begin
         status_regs[6] <= DEF_BIT_OUT[23:16]; // -||-
         status_regs[7] <= DEF_BIT_OUT[31:24]; // -||-
 
-        status_regs[8] <= 0; // wait
-        status_regs[9] <= 0; // -||-
+        status_regs[8] <= 0;  // wait
+        status_regs[9] <= 0;  // -||-
         status_regs[10] <= 0; // -||-
         status_regs[11] <= 0; // -||-
 
@@ -81,7 +81,7 @@ always @(posedge BUS_CLK) begin
         status_regs[14] <= 0; // -||-
         status_regs[15] <= 0; // -||-
 
-        status_regs[16] <= 0; //repeat start
+        status_regs[16] <= 0; // repeat start
         status_regs[17] <= 0; // -||-
         status_regs[18] <= 0; // -||-
         status_regs[19] <= 0; // -||-
@@ -96,7 +96,7 @@ always @(posedge BUS_CLK) begin
         status_regs[26] <= 0; // -||-
         status_regs[27] <= 0; // -||-
 
-        status_regs[28] <= 0; // nested loop repat count
+        status_regs[28] <= 0; // nested loop repeat count
         status_regs[29] <= 0; // -||-
         status_regs[30] <= 0; // -||-
         status_regs[31] <= 0; // -||-

@@ -45,6 +45,7 @@ always @(posedge clk_out) begin
     out_sync_ff_3 <= out_sync_ff_2;
 end
 
+// Fire output for one clock period, when transition is detected
 assign pulse_out = !out_sync_ff_3 && out_sync_ff_2;
 
 (* ASYNC_REG = "TRUE" *) reg aq_sync_ff_1;
