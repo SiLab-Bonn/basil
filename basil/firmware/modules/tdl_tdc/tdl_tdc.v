@@ -118,7 +118,7 @@ always @(posedge CLK160) begin
 		fifo_over_cnt <= fifo_over_cnt;
 end
 
-gerneric_fifo #(
+generic_fifo #(
 	.DATA_SIZE(32),
 	.DEPTH(512)
 ) fifo_i (
