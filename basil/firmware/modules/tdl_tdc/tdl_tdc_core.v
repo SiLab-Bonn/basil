@@ -38,8 +38,6 @@ module tdc_core #(
 	output wire [31:0] event_cnt
 );
 
-
-
 localparam dlyline_bits = 96; // TODO: should this be a localparam?
 localparam clk_ratio = 3;
 // The following numbers of bits should add up to 33, as the bus is 32 bit and
@@ -50,9 +48,7 @@ localparam fine_time_bits = 2; // We need that clk_ratio <= 2^fine_time_bits
 localparam state_bits = 4;
 localparam word_type_bits = 3; // TODO: this isn't yet parametric
 
-
-
-// corse counter.
+// Coarse counter
 wire [corsebits-1:0] corse_count;
 wire counter_count, counter_reset;
 // TODO: should clip_reset be set?
@@ -81,6 +77,26 @@ clock_divider #(.DIVISOR(14)) calib_sig_gen (
 	.CLOCK(sig_calib)
 );
 
+// Stretch trig_in to make sure we do not miss very short pulses (such as scintillator)
+reg [1:0] cnt;
+reg trig_in_delayed;
+always @(posedge trig_in or posedge CLK or posedge rst) begin
+	if (rst) begin
+		trig_in_delayed <= 0;
+		cnt <= 0;
+	end
+	else if (trig_in) begin // asynchronous trigger in
+		trig_in_delayed <= 1'b1;
+		cnt             <= 2'd2;
+	end
+	else begin // synchronous trigger out
+		if (cnt != 0)
+			cnt <= cnt - 1;
+		
+		if (cnt == 1)
+			trig_in_delayed <= 0;
+	end
+end
 
 // Input mux addresses for more verbose code
 // For 4 inputs, 2 bits are sufficient
@@ -103,7 +119,7 @@ always @ (posedge CLK)
 	input_mux_addr_buf <= input_mux_addr;
 always @(*) begin
 	case(input_mux_addr_buf)
-		TRIG_IN: tdl_input <= trig_in;
+		TRIG_IN: tdl_input <= trig_in_delayed;
 		SIG_IN: tdl_input <= sig_in;
 		SIG_IN_B: tdl_input <= ~sig_in;
 		CALIB_OSC: tdl_input <= sig_calib;
