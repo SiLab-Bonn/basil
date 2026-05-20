@@ -33,7 +33,7 @@ class spi(RegisterHardwareLayer):
         self._mem_bytes = self.MEM_BYTES
 
     def reset(self):
-        """Soft reset the module."""
+        """Soft reset the SPI module. Aborts any in-progress transfer, clears internal state."""
         self.RESET = 0
 
     def start(self):
@@ -94,20 +94,23 @@ class spi(RegisterHardwareLayer):
 
     def is_done(self):
         """
-        Get the status of transfer/sequence.
+        Return True if the SPI transfer is complete, False if still in progress. Aliases is_ready.
         """
         return self.is_ready
 
     @property
     def is_ready(self):
+        """Read the DONE/READY register at address 1. Returns True when the transfer is complete, False while shifting."""
         return self.READY
 
     def get_mem_size(self):
+        """Return the SPI memory size in bytes (from MEM_BYTES register at address 14-15). This is the maximum single transfer size."""
         return self.MEM_BYTES
 
     def set_data(self, data, addr=0):
         """
-        Sets data for outgoing stream
+        Write data to the SPI transmit memory at the bus memory offset. Data bytes are shifted out MSB-first on SDI.
+        Args: data (bytes), addr (int, optional byte offset into memory).
         """
         if self._mem_bytes < len(data):
             raise ValueError("Size of data (%d bytes) is too big for memory (%d bytes)" % (len(data), self._mem_bytes))
@@ -116,7 +119,8 @@ class spi(RegisterHardwareLayer):
     # This needs to be changed to return written value
     def get_data(self, size=None, addr=None):
         """
-        Gets data for incoming stream
+        Read data from the SPI receive memory at the bus memory offset. Incoming bytes captured from SDO are stored here.
+        Args: size (int, number of bytes to read, default all), addr (int, optional byte offset).
         """
         # readback memory offset
         if addr is None:
