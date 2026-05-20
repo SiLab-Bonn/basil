@@ -4,6 +4,12 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
+"""Fast SPI receive interface for reading variable-width serial data.
+
+Provides a register-level hardware layer to arm/disarm capture, query
+frame-size configuration, check for lost words, and parse 32-bit FIFO
+words into (identifier, frame_counter, spi_data) tuples.
+"""
 
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
@@ -34,10 +40,18 @@ class fast_spi_rx(RegisterHardwareLayer):
     _require_version = "==0"
 
     def __init__(self, intf, conf):
+        """Initialize the fast_spi_rx hardware layer.
+
+        Args:
+            intf: The low-level interface to the hardware.
+            conf: Configuration dictionary passed to the base class.
+
+        """
         super(fast_spi_rx, self).__init__(intf, conf)
 
     def get_size(self):
         """Return the DATA_SIZE (SPI data width in bits) used for parsing captured words.
+
         Reads the value from the hardware DATA_SIZE register (addr 4).
         """
         return self.DATA_SIZE
@@ -48,6 +62,7 @@ class fast_spi_rx(RegisterHardwareLayer):
 
     def set_en(self, value):
         """Arm/disarm capture.
+
         When enabled, serial data on SDI is captured on each rising edge of
         SEQ_CLK while SEN is high.
         """
@@ -59,6 +74,7 @@ class fast_spi_rx(RegisterHardwareLayer):
 
     def get_lost_count(self):
         """Return the count of lost data words due to CDC FIFO overflow.
+
         Non-zero indicates the capture rate exceeded the readout rate.
         """
         return self.LOST_COUNT
@@ -74,6 +90,7 @@ class fast_spi_rx(RegisterHardwareLayer):
 
         Returns:
             tuple: (identifier, frame_counter, spi_data)
+
         """
         data_size = self.get_size()
         identifier = (word >> 28) & 0xF

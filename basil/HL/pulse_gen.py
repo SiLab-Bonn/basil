@@ -5,12 +5,13 @@
 # ------------------------------------------------------------
 #
 
+"""Register-based interface to the pulse_gen hardware block."""
+
 from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
 class pulse_gen(RegisterHardwareLayer):
-    """
-    Pulse generator"""
+    """Pulse generator."""
 
     _registers = {
         "RESET": {"descr": {"addr": 0, "size": 8, "properties": ["writeonly"]}},
@@ -25,40 +26,34 @@ class pulse_gen(RegisterHardwareLayer):
     _require_version = "==3"
 
     def __init__(self, intf, conf):
+        """Initialize pulse generator layer."""
         super(pulse_gen, self).__init__(intf, conf)
 
     def start(self):
-        """
-        Software start of pulse at random time
-        """
+        """Software start of pulse at random time."""
         self.START = 0
 
     def reset(self):
-        """
-        Soft reset the pulse generator. Clears internal state on the next clock edge."""
+        """Soft reset the pulse generator. Clears internal state on the next clock edge."""
         self.RESET = 0
 
     def set_delay(self, value):
-        """
-        Set the pulse delay in clock cycles from start.
+        """Set the pulse delay in clock cycles from start.
+
         The delay is relative to the start trigger (software .start() or EXT_START pin).
         """
         self.DELAY = value
 
     def get_delay(self):
-        """
-        Return the pulse delay in clock cycles."""
+        """Return the pulse delay in clock cycles."""
         return self.DELAY
 
     def set_width(self, value):
-        """
-        Pulse width in terms of clock cycles
-        """
+        """Set the pulse width in terms of clock cycles."""
         self.WIDTH = value
 
     def get_width(self):
-        """
-        Return the pulse width in clock cycles."""
+        """Return the pulse width in clock cycles."""
         return self.WIDTH
 
     def set_repeat(self, value):
@@ -66,8 +61,7 @@ class pulse_gen(RegisterHardwareLayer):
         self.REPEAT = value
 
     def get_repeat(self):
-        """
-        Return the repeat count."""
+        """Return the repeat count."""
         return self.REPEAT
 
     def is_done(self):
@@ -76,12 +70,12 @@ class pulse_gen(RegisterHardwareLayer):
 
     @property
     def is_ready(self):
-        """
-        Read the READY register (addr 1, bit 0). Returns True when the pulse generator
-        is idle and ready to accept a new start trigger. While the pulse is running
+        """Return True when the pulse generator is idle and ready to accept a new start trigger.
+
+        Reads the READY register (addr 1, bit 0). While the pulse is running
         (including all configured repetitions) this reads False.
 
-        The `@property` decorator makes this an attribute-like access — call it
+        The `@property` decorator makes this an attribute-like access - call it
         without parentheses as ``daq["pulse0"].is_ready``, not ``.is_ready()``.
 
         `.is_done()` is an alias that returns the same value.
@@ -89,14 +83,13 @@ class pulse_gen(RegisterHardwareLayer):
         return self.READY
 
     def set_en(self, value):
-        """
+        """Configure whether the pulse synchronizes with an external trigger.
+
         If true: The pulse comes with a fixed delay with respect to the external trigger (EXT_START).
         If false: The pulse comes only at software start.
         """
         self.EN = value
 
     def get_en(self):
-        """
-        Return info if pulse starts with a fixed delay w.r.t. shift register finish signal (true) or if it only starts with .start() (false)
-        """
+        """Return whether the pulse uses a fixed delay w.r.t. the shift register finish signal."""
         return self.EN
