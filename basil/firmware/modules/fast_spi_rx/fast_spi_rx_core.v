@@ -37,7 +37,7 @@ module fast_spi_rx_core #(
     input wire BUS_RD
 );
 
-localparam VERSION = 0;
+localparam VERSION = 1;
 
 // Output format #ID (as parameter IDENTIFIER + 12 id-frame + 16 bit data)
 
