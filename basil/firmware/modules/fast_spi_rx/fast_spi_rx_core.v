@@ -17,7 +17,8 @@
 
 module fast_spi_rx_core #(
     parameter ABUSWIDTH = 16,
-    parameter IDENTIFIER = 4'b0001
+    parameter IDENTIFIER = 4'b0001,
+    parameter DATA_SIZE = 16
 ) (
     input wire SCLK,
     input wire SDI,
@@ -38,7 +39,7 @@ module fast_spi_rx_core #(
 
 localparam VERSION = 0;
 
-//output format #ID (as parameter IDENTIFIER + 12 id-frame + 16 bit data)
+// Output format #ID (as parameter IDENTIFIER + 12 id-frame + 16 bit data)
 
 wire SOFT_RST;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
@@ -75,6 +76,7 @@ end
 
 wire RST_SYNC;
 wire RST_SOFT_SYNC;
+// Reset is syncrhonized by the sclk
 cdc_pulse_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(SCLK), .pulse_out(RST_SOFT_SYNC));
 assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
 
@@ -92,7 +94,7 @@ end
 wire RST_LONG;
 assign RST_LONG = sync_cnt[7];
 
-reg [11:0] frame_cnt;
+reg [27-DATA_SIZE:0] frame_cnt;
 wire SEN_START, SEN_FINISH;
 reg SEN_DLY;
 always @(posedge SCLK) begin
@@ -120,16 +122,16 @@ always @(posedge SCLK) begin
         bit_cnt <= bit_cnt + 1;
 end
 
-assign cdc_fifo_write = ( (bit_cnt == 15) || SEN_FINISH ) && CONF_EN_SYNC;
+assign cdc_fifo_write = ( (bit_cnt == DATA_SIZE - 1) || SEN_FINISH ) && CONF_EN_SYNC;
 
-reg [15:0] spi_data;
+reg [DATA_SIZE-1:0] spi_data;
 always @(posedge SCLK) begin
     if(RST_SYNC | SEN_FINISH)
         spi_data <= 0;
     else if(cdc_fifo_write)
-        spi_data <= {15'b0, SDI};
+        spi_data <= {DATA_SIZE-1'b0, SDI};
     else if(SEN)
-        spi_data <= {spi_data[14:0], SDI};
+        spi_data <= {spi_data[DATA_SIZE-2:0], SDI};
 end
 
 wire fifo_full,cdc_fifo_empty;
@@ -143,7 +145,7 @@ always @(posedge SCLK) begin
 end
 
 wire [31:0] cdc_data;
-assign cdc_data = {IDENTIFIER, frame_cnt[11:0], spi_data};
+assign cdc_data = {IDENTIFIER, frame_cnt[27-DATA_SIZE:0], spi_data};
 
 wire [31:0] cdc_data_out;
 cdc_syncfifo #(

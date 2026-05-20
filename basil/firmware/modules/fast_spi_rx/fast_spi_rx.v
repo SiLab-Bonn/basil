@@ -20,7 +20,8 @@ module fast_spi_rx #(
     parameter HIGHADDR = 16'h0000,
     parameter ABUSWIDTH = 16,
 
-    parameter IDENTIFIER = 4'b0001
+    parameter IDENTIFIER = 4'b0001,
+    parameter DATA_SIZE = 16
 ) (
     input wire BUS_CLK,
     input wire [ABUSWIDTH-1:0] BUS_ADD,
@@ -63,7 +64,8 @@ bus_to_ip #(
 
 fast_spi_rx_core #(
     .ABUSWIDTH(ABUSWIDTH),
-    .IDENTIFIER(IDENTIFIER)
+    .IDENTIFIER(IDENTIFIER),
+    .DATA_SIZE(DATA_SIZE)
 ) i_fast_spi_rx_core (
     .BUS_CLK(BUS_CLK),
     .BUS_RST(BUS_RST),

@@ -217,7 +217,7 @@ wire RST_SOFT_SYNC;
 cdc_pulse_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(SEQ_CLK), .pulse_out(RST_SOFT_SYNC));
 assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
 
-wire  START_SYNC_CDC;
+wire START_SYNC_CDC;
 wire START_SYNC;
 cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(SEQ_CLK), .pulse_out(START_SYNC_CDC));
 
