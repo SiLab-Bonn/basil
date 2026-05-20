@@ -30,7 +30,7 @@ class fast_spi_rx(RegisterHardwareLayer):
         "EN": {"descr": {"addr": 2, "size": 1, "offset": 0}},
         "LOST_COUNT": {"descr": {"addr": 3, "size": 8, "properties": ["ro"]}},
     }
-    _require_version = "==0"
+    _require_version = "==1"
 
     def __init__(self, intf, conf):
         super(fast_spi_rx, self).__init__(intf, conf)
