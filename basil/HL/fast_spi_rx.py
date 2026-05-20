@@ -37,7 +37,7 @@ class fast_spi_rx(RegisterHardwareLayer):
         "LOST_COUNT": {"descr": {"addr": 3, "size": 8, "properties": ["ro"]}},
         "DATA_SIZE": {"descr": {"addr": 4, "size": 8, "properties": ["ro"]}},
     }
-    _require_version = "==1"
+    _require_version = "==0"
 
     def __init__(self, intf, conf):
         """Initialize the fast_spi_rx hardware layer.

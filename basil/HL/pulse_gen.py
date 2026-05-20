@@ -34,7 +34,8 @@ class pulse_gen(RegisterHardwareLayer):
         self.START = 0
 
     def reset(self):
-        """Soft reset the pulse generator. Clears internal state on the next clock edge."""
+        """
+        Soft reset the pulse generator. Clears internal state on the next clock edge."""
         self.RESET = 0
 
     def set_delay(self, value):
@@ -45,7 +46,8 @@ class pulse_gen(RegisterHardwareLayer):
         self.DELAY = value
 
     def get_delay(self):
-        """Return the pulse delay in clock cycles."""
+        """
+        Return the pulse delay in clock cycles."""
         return self.DELAY
 
     def set_width(self, value):
@@ -53,7 +55,8 @@ class pulse_gen(RegisterHardwareLayer):
         self.WIDTH = value
 
     def get_width(self):
-        """Return the pulse width in clock cycles."""
+        """
+        Return the pulse width in clock cycles."""
         return self.WIDTH
 
     def set_repeat(self, value):
@@ -61,7 +64,8 @@ class pulse_gen(RegisterHardwareLayer):
         self.REPEAT = value
 
     def get_repeat(self):
-        """Return the repeat count."""
+        """
+        Return the repeat count."""
         return self.REPEAT
 
     def is_done(self):
