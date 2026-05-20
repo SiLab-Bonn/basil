@@ -13,19 +13,19 @@ Module implements a simple sequencer/pattern generator based on block ram. Suppo
 
 * **Tracks**: The seq_gen supports OUT_BITS from 1 to at least 256. Each output bit
   is a separate track. To fill track data in software, instantiate a
-  `TrackRegister` in the basil configuration YAML. This provides named track
+  ``TrackRegister`` in the basil configuration YAML. This provides named track
   access like ``daq["seq0"]["INIT"][0:40] = bitarray("...")``.
-* **Start**: The sequence can be started via a write to the `START` register
-  (software start), or via the `SEQ_EXT_START` pin with `EN_EXT_START` set
+* **Start**: The sequence can be started via a write to the ``START`` register
+  (software start), or via the `SEQ_EXT_START` pin with ``EN_EXT_START`` set
   (external start). The external start is typically driven by a GPIO or
   pulse_gen output.
-* **Repeat mode**: A value of 0 in the `REPEAT` register causes the sequence to
+* **Repeat mode**: A value of 0 in the ``REPEAT`` register causes the sequence to
   repeat forever (until reset or reconfiguration).
 * **Output hold**: When the sequence finishes or stops, the last output state
-  is held on `SEQ_OUT` — it does not return to zero. The sequencer does not
+  is held on ``SEQ_OUT`` — it does not return to zero. The sequencer does not
   reset its outputs on completion.
-* **START and READY share the same address**: The `START` (write-only) and
-  `DONE` (read-only) registers are aliased at the same address. Writing to
+* **START and READY share the same address**: The ``START`` (write-only) and
+  ``DONE`` (read-only) registers are aliased at the same address. Writing to
   address 1 triggers a start, reading address 1 returns the done flag.
   This pattern is consistent across seq_gen, spi, and pulse_gen.
 

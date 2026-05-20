@@ -12,7 +12,7 @@ General purpose input output (gpio) is a generic pins whose behavior, including 
 **Usage notes**
 
 * **StdRegister usage**: Rather than reading/writing the raw `INPUT` and
-  `OUTPUT` bytes directly, instantiate a `StdRegister` in the basil
+  `OUTPUT` bytes directly, instantiate a ``StdRegister`` in the basil
   configuration YAML with named fields for each GPIO bit. This provides
   access like ``daq["gpio0"]["RST_B"] = 1`` followed by `.write()` to push
   the full byte to hardware.

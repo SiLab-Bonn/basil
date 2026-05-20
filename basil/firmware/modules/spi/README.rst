@@ -11,12 +11,12 @@ Module implements master serial peripheral interface. Supports simple internal l
 
 **Usage notes**
 
-* **External start**: When `EN` is set, the SPI transfer can be triggered via
-  the `EXT_START` pin instead of a software write to `START`.
-* **Repeat mode**: A value of 0 in the `REPEAT` register causes the transfer
+* **External start**: When ``EN`` is set, the SPI transfer can be triggered via
+  the ``EXT_START`` pin instead of a software write to ``START``.
+* **Repeat mode**: A value of 0 in the ``REPEAT`` register causes the transfer
   to repeat forever.
-* **START and DONE share the same address**: The `START` (write-only) and
-  `DONE` (read-only) registers are aliased at the same address. Writing to
+* **START and DONE share the same address**: The ``START`` (write-only) and
+  ``DONE`` (read-only) registers are aliased at the same address. Writing to
   address 1 triggers a start, reading address 1 returns the done flag.
   This pattern is consistent across seq_gen, spi, and pulse_gen.
 
