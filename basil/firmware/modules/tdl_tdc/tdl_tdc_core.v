@@ -92,7 +92,7 @@ always @(posedge trig_in or posedge CLK or posedge rst) begin
 	else begin // synchronous trigger out
 		if (cnt != 0)
 			cnt <= cnt - 1;
-		
+
 		if (cnt == 1)
 			trig_in_delayed <= 0;
 	end
