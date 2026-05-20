@@ -44,13 +44,17 @@ class gpio(RegisterHardwareLayer):
         self.RESET = 0
 
     def set_output_en(self, value):
+        """Set the output enable mask. Each bit enables output mode for the corresponding pin (1=output, 0=high-impedance/input). Requires IO_TRI to be configured in the firmware parameter."""
         self.OUTPUT_EN = value
 
     def get_output_en(self):
+        """Return the output enable mask. Each bit indicates whether the corresponding pin is in output mode (1) or input mode (0)."""
         return self.OUTPUT_EN
 
     def set_data(self, value):
+        """Set the GPIO OUTPUT register. Writes the full IO_WIDTH byte to the FPGA, driving output pins to the specified logic levels. Typically used via StdRegister .write() for field-level access."""
         self.OUTPUT = value
 
     def get_data(self):
+        """Read the GPIO INPUT register. Returns the current logic levels on all pins as a byte array. Reads the physical pin state regardless of direction configuration."""
         return self.INPUT
