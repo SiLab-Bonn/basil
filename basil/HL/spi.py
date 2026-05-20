@@ -10,8 +10,7 @@ from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
 class spi(RegisterHardwareLayer):
-    """
-    Implement serial programming interface (SPI) driver."""
+    """Implement serial programming interface (SPI) driver."""
 
     _registers = {
         "RESET": {"descr": {"addr": 0, "size": 8, "properties": ["writeonly"]}},
@@ -98,8 +97,7 @@ class spi(RegisterHardwareLayer):
 
     @property
     def is_ready(self):
-        """
-        Read the DONE/READY register at address 1. Returns True when the transfer is complete, False while shifting."""
+        """Read the DONE/READY register at address 1. Returns True when the transfer is complete, False while shifting."""
         return self.READY
 
     def get_mem_size(self):
