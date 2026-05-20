@@ -37,8 +37,7 @@ class fast_spi_rx(RegisterHardwareLayer):
         super(fast_spi_rx, self).__init__(intf, conf)
 
     def get_size(self):
-        """
-        Return the DATA_SIZE (SPI data width in bits) used for parsing captured words.
+        """Return the DATA_SIZE (SPI data width in bits) used for parsing captured words.
         Reads the value from the hardware DATA_SIZE register (addr 4).
         """
         return self.DATA_SIZE
@@ -48,8 +47,7 @@ class fast_spi_rx(RegisterHardwareLayer):
         self.RESET = 0
 
     def set_en(self, value):
-        """
-        Arm/disarm capture.
+        """Arm/disarm capture.
         When enabled, serial data on SDI is captured on each rising edge of
         SEQ_CLK while SEN is high.
         """
@@ -60,8 +58,7 @@ class fast_spi_rx(RegisterHardwareLayer):
         return self.EN
 
     def get_lost_count(self):
-        """
-        Return the count of lost data words due to CDC FIFO overflow.
+        """Return the count of lost data words due to CDC FIFO overflow.
         Non-zero indicates the capture rate exceeded the readout rate.
         """
         return self.LOST_COUNT
