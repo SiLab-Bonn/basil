@@ -12,10 +12,7 @@ requires-python = ">=3.10"
 authors = [
     {name = "Tomasz Hemperek", email="hemperek@uni-bonn.de"},
     {name = "Jens Janssen", email="janssen@physik.uni-bonn.de"},
-    {name = "David-Leon Pohl", email="pohl@physik.uni-bonn.de"},
-    {name = "Kian Caisley", email="kcaisley@uni-bonn.de"},
-    {name = "Christian Bespin", email="bespin@physik.uni-bonn.de"},
-    {name = "Rasmus Partzsch", email="partzsch@physik.uni-bonn.de"},
+    {name = "David-Leon Pohl", email="pohl@physik.uni-bonn.de"}
 ]
 
 maintainers = [
