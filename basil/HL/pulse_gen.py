@@ -9,7 +9,8 @@ from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
 class pulse_gen(RegisterHardwareLayer):
-    """Pulse generator"""
+    """
+    Pulse generator"""
 
     _registers = {
         "RESET": {"descr": {"addr": 0, "size": 8, "properties": ["writeonly"]}},
@@ -33,7 +34,8 @@ class pulse_gen(RegisterHardwareLayer):
         self.START = 0
 
     def reset(self):
-        """Soft reset the pulse generator. Clears internal state on the next clock edge."""
+        """
+        Soft reset the pulse generator. Clears internal state on the next clock edge."""
         self.RESET = 0
 
     def set_delay(self, value):
@@ -44,7 +46,8 @@ class pulse_gen(RegisterHardwareLayer):
         self.DELAY = value
 
     def get_delay(self):
-        """Return the pulse delay in clock cycles."""
+        """
+        Return the pulse delay in clock cycles."""
         return self.DELAY
 
     def set_width(self, value):
@@ -54,7 +57,8 @@ class pulse_gen(RegisterHardwareLayer):
         self.WIDTH = value
 
     def get_width(self):
-        """Return the pulse width in clock cycles."""
+        """
+        Return the pulse width in clock cycles."""
         return self.WIDTH
 
     def set_repeat(self, value):
@@ -62,7 +66,8 @@ class pulse_gen(RegisterHardwareLayer):
         self.REPEAT = value
 
     def get_repeat(self):
-        """Return the repeat count."""
+        """
+        Return the repeat count."""
         return self.REPEAT
 
     def is_done(self):
@@ -71,7 +76,8 @@ class pulse_gen(RegisterHardwareLayer):
 
     @property
     def is_ready(self):
-        """Read the READY register (addr 1, bit 0). Returns True when the pulse generator
+        """
+        Read the READY register (addr 1, bit 0). Returns True when the pulse generator
         is idle and ready to accept a new start trigger. While the pulse is running
         (including all configured repetitions) this reads False.
 

@@ -29,37 +29,30 @@ class fast_spi_rx(RegisterHardwareLayer):
         "VERSION": {"descr": {"addr": 0, "size": 8, "properties": ["ro"]}},
         "EN": {"descr": {"addr": 2, "size": 1, "offset": 0}},
         "LOST_COUNT": {"descr": {"addr": 3, "size": 8, "properties": ["ro"]}},
+        "DATA_SIZE": {"descr": {"addr": 4, "size": 8, "properties": ["ro"]}},
     }
-    _require_version = "==1"
+    _require_version = "==0"
 
     def __init__(self, intf, conf):
         super(fast_spi_rx, self).__init__(intf, conf)
-        # DATA_SIZE: number of bits for SPI data in the FIFO output
-        # Must match the DATA_SIZE parameter in the FPGA firmware
-        self._data_size = conf.get("DATA_SIZE", 16)  # default 16 for backward compatibility
-        if self._data_size < 1 or self._data_size > 28:
-            raise ValueError("DATA_SIZE must be between 1 and 28")
-
-    def set_size(self, value):
-        """Set the Python-only DATA_SIZE attribute tracking the SPI data width in bits.
-
-        Must match the DATA_SIZE parameter set in the FPGA firmware (fast_spi_rx_core.v).
-        Valid range: 1-28.
-        """
-        if value < 1 or value > 28:
-            raise ValueError("DATA_SIZE must be between 1 and 28")
-        self._data_size = value
 
     def get_size(self):
-        """Return the DATA_SIZE (SPI data width in bits) used for parsing captured words."""
-        return self._data_size
+        """
+        Return the DATA_SIZE (SPI data width in bits) used for parsing captured words.
+        Reads the value from the hardware DATA_SIZE register (addr 4).
+        """
+        return self.DATA_SIZE
 
     def reset(self):
         """Soft reset the module. Clears internal counters and shift registers on the next SEQ_CLK edge."""
         self.RESET = 0
 
     def set_en(self, value):
-        """Arm/disarm capture. When enabled, serial data on SDI is captured on each rising edge of SEQ_CLK while SEN is high."""
+        """
+        Arm/disarm capture.
+        When enabled, serial data on SDI is captured on each rising edge of
+        SEQ_CLK while SEN is high.
+        """
         self.EN = value
 
     def get_en(self):
@@ -67,7 +60,10 @@ class fast_spi_rx(RegisterHardwareLayer):
         return self.EN
 
     def get_lost_count(self):
-        """Return the count of lost data words due to CDC FIFO overflow. Non-zero indicates the capture rate exceeded the readout rate."""
+        """
+        Return the count of lost data words due to CDC FIFO overflow.
+        Non-zero indicates the capture rate exceeded the readout rate.
+        """
         return self.LOST_COUNT
 
     def parse_word(self, word):

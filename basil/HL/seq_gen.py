@@ -9,7 +9,8 @@ from basil.HL.RegisterHardwareLayer import RegisterHardwareLayer
 
 
 class seq_gen(RegisterHardwareLayer):
-    """Sequence generator controller interface for seq_gen FPGA module."""
+    """
+    Sequence generator controller interface for seq_gen FPGA module."""
 
     _registers = {
         "RESET": {"descr": {"addr": 0, "size": 8, "properties": ["writeonly"]}},
@@ -42,7 +43,8 @@ class seq_gen(RegisterHardwareLayer):
         self.RESET = 0
 
     def start(self):
-        """Start the sequencer. Writes to the START register (addr 1). The sequence begins on the next SEQ_CLK edge after the write. Only effective when DONE/READY is high (sequence not already running)."""
+        """
+        Start the sequencer. Writes to the START register (addr 1). The sequence begins on the next SEQ_CLK edge after the write. Only effective when DONE/READY is high (sequence not already running)."""
         self.START = 0
 
     def set_size(self, value):
@@ -50,7 +52,8 @@ class seq_gen(RegisterHardwareLayer):
         self.SIZE = value
 
     def get_size(self):
-        """Return the configured sequence size in output words."""
+        """
+        Return the configured sequence size in output words."""
         return self.SIZE
 
     def set_wait(self, value):
@@ -58,7 +61,8 @@ class seq_gen(RegisterHardwareLayer):
         self.WAIT = value
 
     def get_wait(self):
-        """Return the configured wait cycles between repetitions."""
+        """
+        Return the configured wait cycles between repetitions."""
         return self.WAIT
 
     def set_clk_divide(self, value):
@@ -66,7 +70,8 @@ class seq_gen(RegisterHardwareLayer):
         self.CLK_DIV = value
 
     def get_clk_divide(self):
-        """Return the clock division factor."""
+        """
+        Return the clock division factor."""
         return self.CLK_DIV
 
     def set_repeat_start(self, value):
@@ -74,7 +79,8 @@ class seq_gen(RegisterHardwareLayer):
         self.REPEAT_START = value
 
     def get_repeat_start(self):
-        """Return the repeat start position."""
+        """
+        Return the repeat start position."""
         return self.REPEAT_START
 
     def set_repeat(self, value):
@@ -82,7 +88,8 @@ class seq_gen(RegisterHardwareLayer):
         self.REPEAT = value
 
     def get_repeat(self):
-        """Return the repeat count."""
+        """
+        Return the repeat count."""
         return self.REPEAT
 
     def is_done(self):
@@ -91,7 +98,8 @@ class seq_gen(RegisterHardwareLayer):
 
     @property
     def is_ready(self):
-        """Read the DONE/READY register (addr 1, bit 0). Returns True when the sequencer
+        """
+        Read the DONE/READY register (addr 1, bit 0). Returns True when the sequencer
         is idle and ready to accept a new start trigger. While the sequence is running
         (including all configured repetitions) this reads False.
 
@@ -103,7 +111,8 @@ class seq_gen(RegisterHardwareLayer):
         return self.READY
 
     def get_done(self):
-        """Alias for is_ready. Returns True if sequencer is finished."""
+        """
+        Alias for is_ready. Returns True if sequencer is finished."""
         return self.is_ready
 
     def set_en_ext_start(self, value):
@@ -111,7 +120,8 @@ class seq_gen(RegisterHardwareLayer):
         self.EN_EXT_START = value
 
     def get_en_ext_start(self):
-        """Return whether external start is enabled."""
+        """
+        Return whether external start is enabled."""
         return self.EN_EXT_START
 
     def set_nested_start(self, value):
@@ -122,7 +132,8 @@ class seq_gen(RegisterHardwareLayer):
         return self.NESTED_START
 
     def set_nested_stop(self, value):
-        """Set the nested loop stop position. Addresses 24-27."""
+        """
+        Set the nested loop stop position. Addresses 24-27."""
         self.NESTED_STOP = value
 
     def get_nested_stop(self):
@@ -139,7 +150,8 @@ class seq_gen(RegisterHardwareLayer):
         return self.MEM_BYTES
 
     def set_data(self, data, addr=0):
-        """Write sequencer memory (the pattern data) via the bus interface at the memory offset. Data is interleaved per track by the TrackRegister RL. Args are bytes to write and optional byte address offset."""
+        """
+        Write sequencer memory (the pattern data) via the bus interface at the memory offset. Data is interleaved per track by the TrackRegister RL. Args are bytes to write and optional byte address offset."""
         if self._seq_mem_size < len(data):
             raise ValueError(
                 "Size of data (%d bytes) is too big for memory (%d bytes)" % (len(data), self._seq_mem_size)

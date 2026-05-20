@@ -61,6 +61,8 @@ end
 
 reg [7:0] LOST_DATA_CNT;
 
+localparam DATA_SIZE_READ = DATA_SIZE;
+
 always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if(BUS_ADD == 0)
@@ -69,6 +71,8 @@ always @(posedge BUS_CLK) begin
             BUS_DATA_OUT <= {7'b0, CONF_EN};
         else if(BUS_ADD == 3)
             BUS_DATA_OUT <= LOST_DATA_CNT;
+        else if(BUS_ADD == 4)
+            BUS_DATA_OUT <= DATA_SIZE_READ;
         else
             BUS_DATA_OUT <= 8'b0;
     end
@@ -76,7 +80,7 @@ end
 
 wire RST_SYNC;
 wire RST_SOFT_SYNC;
-// Reset is syncrhonized by the sclk
+// Reset is synchronized by the sclk
 cdc_pulse_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(SCLK), .pulse_out(RST_SOFT_SYNC));
 assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
 
