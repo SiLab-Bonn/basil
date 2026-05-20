@@ -9,6 +9,17 @@ Simple pulse generator with configurable delay and width.
 `test_SimSeq.v <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimSeq.v>`_
 `test_SimSeq.py <https://github.com/SiLab-Bonn/basil/blob/master/tests/test_SimSeq.py>`_
 
+**Usage notes**
+
+* **Start**: The pulse can be started via a write to the `START` register
+  (software start), or via the `EXT_START` pin with `EN` set (external start).
+* **Repeat mode**: A value of 0 in the `REPEAT` register causes the pulse to
+  repeat forever.
+* **START and READY share the same address**: The `START` (write-only) and
+  `READY` (read-only) registers are aliased at the same address. Writing to
+  address 1 triggers a start, reading address 1 returns the ready flag.
+  This pattern is consistent across seq_gen, spi, and pulse_gen.
+
 **Pins:**
     +---------------+---------------------+-----------------------+------------------------------------------------------+
     | Name          | Size                | Direction             | Description                                          |
@@ -24,15 +35,15 @@ Simple pulse generator with configurable delay and width.
     +---------------+----------------------------------+--------+-------+-------------+--------------------------------------------------------------------------------------------+
     | Name          | Address                          | Bits   | r/w   | Default     | Description                                                                                |
     +===============+==================================+========+=======+=============+============================================================================================+
-    | START         | 1                                |        | wo    |             | software start on write to address                                                         |
+    | START         | 1                                |        | wo    |             | Software start on write to address                                                         |
     +---------------+----------------------------------+--------+-------+-------------+--------------------------------------------------------------------------------------------+
-    | READY         | 1                                | [0]    | ro    | 0           | indicate finish                                                                            |
+    | READY         | 1                                | [0]    | ro    | 0           | Indicate finish                                                                            |
     +---------------+----------------------------------+--------+-------+-------------+--------------------------------------------------------------------------------------------+
-    | EN            | 2                                | [0]    | r/w   | 0           | enable external start                                                                      |
+    | EN            | 2                                | [0]    | r/w   | 0           | Enable external start                                                                      |
     +---------------+----------------------------------+--------+-------+-------------+--------------------------------------------------------------------------------------------+
-    | DELAY         | 6 - 3                            | [31:0] | r/w   | 0           | pulse delay from start                                                                     |
+    | DELAY         | 6 - 3                            | [31:0] | r/w   | 0           | Pulse delay from start                                                                     |
     +---------------+----------------------------------+--------+-------+-------------+--------------------------------------------------------------------------------------------+
-    | WIDTH         | 10 - 7                           | [31:0] | r/w   | 0           | pulse width                                                                                |
+    | WIDTH         | 10 - 7                           | [31:0] | r/w   | 0           | Pulse width                                                                                |
     +---------------+----------------------------------+--------+-------+-------------+--------------------------------------------------------------------------------------------+
-    | REPEAT        | 11 - 14                          | [31:0] | r/w   | 1           | repeat count (0 ->forever)                                                                 |
+    | REPEAT        | 14 - 11                          | [31:0] | r/w   | 1           | Repeat count (0 -> forever)                                                                |
     +---------------+----------------------------------+--------+-------+-------------+--------------------------------------------------------------------------------------------+
