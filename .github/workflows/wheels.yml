@@ -1,0 +1,46 @@
+name: Build wheels
+
+on: [push]
+
+jobs:
+  build:
+    name: Build wheels
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: 3.14
+    - name: Install build
+      run: |
+        python -m pip install --upgrade pip
+        pip install build
+
+    - name: Build
+      run:
+        python3 -m build
+
+    - uses: actions/upload-artifact@v7
+      with:
+        name: package-dist
+        path: dist
+
+  upload:
+    name: Upload wheels and sdist
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    needs: [build]
+    environment:
+      name: pypi
+      url: https://pypi.org/p/basil-daq/
+    permissions:
+      id-token: write
+
+    steps:
+    - uses: actions/download-artifact@v8
+      with:
+        name: package-dist
+        path: dist
+    - uses: pypa/gh-action-pypi-publish@release/v1
