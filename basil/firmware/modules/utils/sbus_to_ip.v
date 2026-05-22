@@ -5,6 +5,10 @@
  * ------------------------------------------------------------
  */
 
+
+`ifndef BASIL_UTILS_SBUS_TO_IP_V
+`define BASIL_UTILS_SBUS_TO_IP_V
+
 module sbus_to_ip
 #(
     parameter BASEADDR = 0,
@@ -47,3 +51,5 @@ end
 assign BUS_DATA_OUT = (CS_PREV ? IP_DATA_OUT : {DBUSWIDTH{1'b0}});
 
 endmodule
+
+`endif

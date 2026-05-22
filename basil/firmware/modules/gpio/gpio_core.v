@@ -5,6 +5,10 @@
  * ------------------------------------------------------------
  */
 
+
+`ifndef BASIL_GPIO_GPIO_CORE_V
+`define BASIL_GPIO_GPIO_CORE_V
+
 module gpio_core #(
     parameter ABUSWIDTH = 16,
     parameter IO_WIDTH = 8,
@@ -104,3 +108,5 @@ always @(*)
 
 
 endmodule
+
+`endif

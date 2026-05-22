@@ -9,6 +9,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
+`ifndef BASIL_UTILS_RGMII_IO_V
+`define BASIL_UTILS_RGMII_IO_V
+
 module rgmii_io (
     //-----------------------------------------------------------------------
     //-- Pad side signals
@@ -353,3 +356,5 @@ assign gmii_col_int = (gmii_tx_en_int | gmii_tx_er_int) & (gmii_rx_dv_reg | gmii
 assign gmii_crs_int = (gmii_tx_en_int | gmii_tx_er_int) | (gmii_rx_dv_reg | gmii_rx_er_reg);
 
 endmodule // rgmii_io
+
+`endif

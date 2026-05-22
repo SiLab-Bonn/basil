@@ -4,10 +4,14 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_BRAM_FIFO_BRAM_FIFO_CORE_V
+`define BASIL_BRAM_FIFO_BRAM_FIFO_CORE_V
+
 `include "utils/generic_fifo.v"
 
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module bram_fifo_core #(
     parameter                   DEPTH = 32'h8000,
@@ -163,3 +167,5 @@ always @(posedge BUS_CLK) begin
 end
 
 endmodule
+
+`endif

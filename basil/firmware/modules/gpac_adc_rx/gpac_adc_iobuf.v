@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_GPAC_ADC_RX_GPAC_ADC_IOBUF_V
+`define BASIL_GPAC_ADC_RX_GPAC_ADC_IOBUF_V
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -182,3 +185,5 @@ assign ADC_IN3 = adc_out_sync[3];
 `endif
 
 endmodule
+
+`endif

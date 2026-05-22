@@ -4,15 +4,15 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_SEQ_GEN_SEQ_GEN_CORE_V
+`define BASIL_SEQ_GEN_SEQ_GEN_CORE_V
+
 `include "utils/ramb_8_to_n.v"
-// cdc_pulse_sync is shared across several basil modules; guard against double inclusion
-`ifndef CDC_PULSE_SYNC_V
 `include "utils/cdc_pulse_sync.v"
-`define CDC_PULSE_SYNC_V
-`endif
 
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module seq_gen_core #(
     parameter ABUSWIDTH = 16,
@@ -302,3 +302,5 @@ always @(posedge BUS_CLK)
 
 
 endmodule
+
+`endif

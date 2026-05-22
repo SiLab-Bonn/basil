@@ -24,6 +24,9 @@
 //--                                                                 --
 //---------------------------------------------------------------------
 
+`ifndef BASIL_TDL_TDC_DELAYLINE_CARRYSAMPLER_SPARTAN6_20PS_V
+`define BASIL_TDL_TDC_DELAYLINE_CARRYSAMPLER_SPARTAN6_20PS_V
+
 module CHAIN_CELL (CINIT, CI, CO, DO, CLK);
 
 	output wire [3:0] DO;
@@ -110,3 +113,5 @@ module carry_sampler_spartan6 (d, q, CLK);
 `endif
 
 endmodule
+
+`endif

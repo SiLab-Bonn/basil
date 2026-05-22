@@ -4,26 +4,18 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-// flag_domain_crossing is shared across several basil modules; guard against double inclusion
-`ifndef FLAG_DOMAIN_CROSSING_V
+`ifndef BASIL_M26_RX_M26_RX_CORE_V
+`define BASIL_M26_RX_M26_RX_CORE_V
+
 `include "utils/flag_domain_crossing.v"
-`define FLAG_DOMAIN_CROSSING_V
-`endif
-// three_stage_synchronizer is shared across several basil modules; guard against double inclusion
-`ifndef THREE_STAGE_SYNCHRONIZER_V
 `include "utils/3_stage_synchronizer.v"
-`define THREE_STAGE_SYNCHRONIZER_V
-`endif
 `include "m26_rx/m26_rx_ch.v"
-// cdc_syncfifo is shared across several basil modules; guard against double inclusion
-`ifndef CDC_SYNCFIFO_V
 `include "utils/cdc_syncfifo.v"
-`define CDC_SYNCFIFO_V
-`endif
 `include "utils/generic_fifo.v"
 
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module m26_rx_core #(
     parameter ABUSWIDTH = 16,
@@ -54,6 +46,9 @@ module m26_rx_core #(
 );
 
 localparam VERSION = 2;
+
+reg M26_FRAME_START;
+reg WRITE_FRAME;
 
 //output format #ID (as parameter IDENTIFIER + 1 frame start + 16 bit data)
 
@@ -314,7 +309,6 @@ always @(posedge CLK_RX) begin
     end
 end
 
-reg M26_FRAME_START;
 always @(posedge CLK_RX) begin
     M26_FRAME_START <= FRAME_START_CH0;
 end
@@ -324,7 +318,6 @@ assign cdc_data[17] = m26_data_lost;  // M26 data loss flag
 assign cdc_data[16] = M26_FRAME_START;  // start of M26 frame flag
 assign cdc_data[15:0] = data_field;  // M26 data
 
-reg WRITE_FRAME;
 always @(posedge CLK_RX) begin
     if (RST_SYNC)
         WRITE_FRAME <= 1'b0;
@@ -422,3 +415,5 @@ assign FIFO_DATA[31:24] = HEADER[7:0];
 
 
 endmodule
+
+`endif

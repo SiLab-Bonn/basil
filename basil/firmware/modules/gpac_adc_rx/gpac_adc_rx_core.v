@@ -4,26 +4,18 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-// cdc_reset_sync is shared across several basil modules; guard against double inclusion
-`ifndef CDC_RESET_SYNC_V
+`ifndef BASIL_GPAC_ADC_RX_GPAC_ADC_RX_CORE_V
+`define BASIL_GPAC_ADC_RX_GPAC_ADC_RX_CORE_V
+
 `include "utils/cdc_reset_sync.v"
-`define CDC_RESET_SYNC_V
-`endif
-// cdc_pulse_sync is shared across several basil modules; guard against double inclusion
-`ifndef CDC_PULSE_SYNC_V
 `include "utils/cdc_pulse_sync.v"
-`define CDC_PULSE_SYNC_V
-`endif
 `include "utils/pulse_gen_rising.v"
-// cdc_syncfifo is shared across several basil modules; guard against double inclusion
-`ifndef CDC_SYNCFIFO_V
 `include "utils/cdc_syncfifo.v"
-`define CDC_SYNCFIFO_V
-`endif
 `include "utils/generic_fifo.v"
 
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module gpac_adc_rx_core #(
     parameter   ABUSWIDTH = 16,
@@ -304,3 +296,5 @@ always @(posedge BUS_CLK)
         CONF_DONE <= 1;
 
 endmodule
+
+`endif

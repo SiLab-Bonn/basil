@@ -4,12 +4,11 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_TLU_TLU_CONTROLLER_V
+`define BASIL_TLU_TLU_CONTROLLER_V
+
 `include "tlu/tlu_controller_core.v"
-// bus_to_ip is shared across several basil modules; guard against double inclusion
-`ifndef BUS_TO_IP_V
 `include "utils/bus_to_ip.v"
-`define BUS_TO_IP_V
-`endif
 
 `timescale 1ps/1ps
 `default_nettype none
@@ -126,3 +125,5 @@ tlu_controller_core #(
 );
 
 endmodule
+
+`endif

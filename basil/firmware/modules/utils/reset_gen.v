@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_UTILS_RESET_GEN_V
+`define BASIL_UTILS_RESET_GEN_V
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -29,3 +32,5 @@ always @(posedge CLK)
 assign RST = (rst_cnt != 0 );
 
 endmodule
+
+`endif

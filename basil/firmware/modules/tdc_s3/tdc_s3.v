@@ -4,12 +4,11 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_TDC_S3_TDC_S3_V
+`define BASIL_TDC_S3_TDC_S3_V
+
 `include "tdc_s3/tdc_s3_core.v"
-// bus_to_ip is shared across several basil modules; guard against double inclusion
-`ifndef BUS_TO_IP_V
 `include "utils/bus_to_ip.v"
-`define BUS_TO_IP_V
-`endif
 
 `timescale 1ps/1ps
 `default_nettype none
@@ -112,3 +111,5 @@ tdc_s3_core #(
 );
 
 endmodule
+
+`endif

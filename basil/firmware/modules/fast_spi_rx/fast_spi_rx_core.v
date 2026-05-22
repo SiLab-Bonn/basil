@@ -4,16 +4,16 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-// cdc_pulse_sync is shared across several basil modules; guard against double inclusion
-`ifndef CDC_PULSE_SYNC_V
+`ifndef BASIL_FAST_SPI_RX_FAST_SPI_RX_CORE_V
+`define BASIL_FAST_SPI_RX_FAST_SPI_RX_CORE_V
+
 `include "utils/cdc_pulse_sync.v"
-`define CDC_PULSE_SYNC_V
-`endif
 `include "utils/cdc_syncfifo.v"
 `include "utils/generic_fifo.v"
 
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module fast_spi_rx_core #(
     parameter ABUSWIDTH = 16,
@@ -186,3 +186,5 @@ generic_fifo #(
 //assign FIFO_DATA[31:30]  = 0;
 
 endmodule
+
+`endif

@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_FX3_IF_FX3_IF_V
+`define BASIL_FX3_IF_FX3_IF_V
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -363,3 +366,5 @@ for (gen = 0; gen < 32; gen = gen + 1)
 endgenerate
 
 endmodule
+
+`endif

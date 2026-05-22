@@ -4,20 +4,16 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_JTAG_MASTER_JTAG_MASTER_CORE_V
+`define BASIL_JTAG_MASTER_JTAG_MASTER_CORE_V
+
 `include "utils/ramb_8_to_n.v"
-// cdc_reset_sync is shared across several basil modules; guard against double inclusion
-`ifndef CDC_RESET_SYNC_V
 `include "utils/cdc_reset_sync.v"
-`define CDC_RESET_SYNC_V
-`endif
-// cdc_pulse_sync is shared across several basil modules; guard against double inclusion
-`ifndef CDC_PULSE_SYNC_V
 `include "utils/cdc_pulse_sync.v"
-`define CDC_PULSE_SYNC_V
-`endif
 `include "utils/CG_MOD_pos.v"
 
 `default_nettype none
+
 
 module jtag_master_core #(
     parameter ABUSWIDTH = 16,
@@ -487,3 +483,5 @@ always @(negedge JTAG_CLK)
 ///
 
 endmodule
+
+`endif

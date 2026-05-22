@@ -4,11 +4,10 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-// flag_domain_crossing is shared across several basil modules; guard against double inclusion
-`ifndef FLAG_DOMAIN_CROSSING_V
+`ifndef BASIL_FEI4_RX_REC_SYNC_V
+`define BASIL_FEI4_RX_REC_SYNC_V
+
 `include "utils/flag_domain_crossing.v"
-`define FLAG_DOMAIN_CROSSING_V
-`endif
 
 `timescale 1ps/1ps
 `default_nettype none
@@ -175,3 +174,5 @@ chipscope_ila ichipscope_ila
 `endif
 
 endmodule
+
+`endif

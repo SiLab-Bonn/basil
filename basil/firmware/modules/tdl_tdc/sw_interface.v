@@ -1,19 +1,10 @@
+`ifndef BASIL_TDL_TDC_SW_INTERFACE_V
+`define BASIL_TDL_TDC_SW_INTERFACE_V
+
 `include "tdl_tdc/utils/graycode_2stage_cdc.v"
-// bus_to_ip is shared across several basil modules; guard against double inclusion
-`ifndef BUS_TO_IP_V
 `include "utils/bus_to_ip.v"
-`define BUS_TO_IP_V
-`endif
-// flag_domain_crossing is shared across several basil modules; guard against double inclusion
-`ifndef FLAG_DOMAIN_CROSSING_V
 `include "utils/flag_domain_crossing.v"
-`define FLAG_DOMAIN_CROSSING_V
-`endif
-// three_stage_synchronizer is shared across several basil modules; guard against double inclusion
-`ifndef THREE_STAGE_SYNCHRONIZER_V
 `include "utils/3_stage_synchronizer.v"
-`define THREE_STAGE_SYNCHRONIZER_V
-`endif
 
 module tdc_sw_interface #(
 	parameter VERSION = 8'b00000000,
@@ -265,3 +256,5 @@ assign arm_flag = ~ext_arm_clk_ff & ext_arm_clk;
 
 
 endmodule
+
+`endif

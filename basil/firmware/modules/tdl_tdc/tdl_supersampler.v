@@ -1,3 +1,6 @@
+`ifndef BASIL_TDL_TDC_TDL_SUPERSAMPLER_V
+`define BASIL_TDL_TDC_TDL_SUPERSAMPLER_V
+
 `include "tdl_tdc/delayline/carrysampler_spartan6_20ps.v"
 `include "tdl_tdc/delayline/sample_deser.v"
 
@@ -46,3 +49,5 @@ sample_deser #(
 assign sample = internally_rising ? hit_sample : ~hit_sample;
 
 endmodule
+
+`endif

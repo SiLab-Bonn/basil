@@ -1,3 +1,6 @@
+`ifndef BASIL_TDL_TDC_DELAYLINE_SAMPLE_DESER_V
+`define BASIL_TDL_TDC_DELAYLINE_SAMPLE_DESER_V
+
 module sample_deser #(
 parameter dlyline_bits = 96,
 parameter internally_rising = 1'b1,
@@ -113,3 +116,5 @@ always @(posedge CLK_SLOW) begin
 end
 
 endmodule
+
+`endif

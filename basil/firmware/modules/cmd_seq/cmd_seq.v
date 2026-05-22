@@ -4,12 +4,11 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_CMD_SEQ_CMD_SEQ_V
+`define BASIL_CMD_SEQ_CMD_SEQ_V
+
 `include "cmd_seq/cmd_seq_core.v"
-// bus_to_ip is shared across several basil modules; guard against double inclusion
-`ifndef BUS_TO_IP_V
 `include "utils/bus_to_ip.v"
-`define BUS_TO_IP_V
-`endif
 
 `timescale 1ps/1ps
 `default_nettype none
@@ -83,3 +82,5 @@ cmd_seq_core #(
 );
 
 endmodule
+
+`endif

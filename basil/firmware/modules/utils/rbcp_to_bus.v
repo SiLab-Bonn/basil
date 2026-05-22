@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_UTILS_RBCP_TO_BUS_V
+`define BASIL_UTILS_RBCP_TO_BUS_V
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -65,3 +68,5 @@ chipscope_ila ichipscope_ila
  */
 
 endmodule
+
+`endif

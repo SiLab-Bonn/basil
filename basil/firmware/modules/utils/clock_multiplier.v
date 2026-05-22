@@ -1,3 +1,6 @@
+`ifndef BASIL_UTILS_CLOCK_MULTIPLIER_V
+`define BASIL_UTILS_CLOCK_MULTIPLIER_V
+
 `timescale 1ps / 1ps
 
 module clock_multiplier #(
@@ -28,3 +31,5 @@ initial begin
 end
 
 endmodule
+
+`endif

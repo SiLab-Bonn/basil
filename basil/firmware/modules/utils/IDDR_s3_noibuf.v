@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_UTILS_IDDR_S3_NOIBUF_V
+`define BASIL_UTILS_IDDR_S3_NOIBUF_V
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -34,3 +37,5 @@ FDRSE F1 (
 defparam F1.INIT = "0";
 
 endmodule
+
+`endif

@@ -14,14 +14,9 @@
 `endif
 
 `ifndef BASIL_SBUS
-`include "utils/bus_to_ip.v"
-
-`include "utils/cdc_syncfifo.v"
-`include "utils/fifo_8_to_32.v"
-`include "utils/generic_fifo.v"
-
-`include "bram_fifo/bram_fifo_core.v"
 `include "bram_fifo/bram_fifo.v"
+`include "utils/fifo_8_to_32.v"
+`include "utils/cdc_syncfifo.v"
 `else
     $fatal("Sbus modules not implemented yet");
 `endif

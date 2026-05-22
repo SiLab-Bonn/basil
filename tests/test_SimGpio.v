@@ -13,9 +13,7 @@
     `define SPLIT_BUS
 `endif
 
-`include "gpio/gpio_core.v"
 `ifndef BASIL_SBUS
-    `include "utils/bus_to_ip.v"
     `include "gpio/gpio.v"
 `else
     `include "utils/sbus_to_ip.v"

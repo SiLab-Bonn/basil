@@ -1,3 +1,6 @@
+`ifndef BASIL_TB_UARTLIB_V
+`define BASIL_TB_UARTLIB_V
+
 `timescale 1ns / 100ps
 
 module uartlib(
@@ -97,3 +100,5 @@ module uartlib(
     endtask
 
 endmodule
+
+`endif

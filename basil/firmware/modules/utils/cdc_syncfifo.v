@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_UTILS_CDC_SYNCFIFO_V
+`define BASIL_UTILS_CDC_SYNCFIFO_V
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -116,8 +119,6 @@ always @(posedge wclk)
 
 endmodule
 
-
-
 module rptr_empty #(
     parameter ADDRSIZE = 2
 ) (
@@ -221,3 +222,5 @@ always @(posedge rclk)
     else {rq2_wptr,cdc_sync_rq1_wptr} <= {cdc_sync_rq1_wptr,wptr};
 
 endmodule
+
+`endif

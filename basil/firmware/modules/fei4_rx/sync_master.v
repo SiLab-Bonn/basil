@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_FEI4_RX_SYNC_MASTER_V
+`define BASIL_FEI4_RX_SYNC_MASTER_V
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -185,3 +188,5 @@ assign dz[1] = DATA_IN_DLY[0];
 //FDC ff_dz1(.D(dz[0]),     .C(clk90), .CLR(rst), .Q(dz[1]))/*synthesis rloc = "x3y0" */;
 
 endmodule
+
+`endif

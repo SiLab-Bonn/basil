@@ -25,8 +25,12 @@
  * Read behaviour: read-first on both ports (consistent with legacy primitive).
  * ------------------------------------------------------------
  */
+`ifndef BASIL_SPI_BLK_MEM_GEN_8_TO_1_2K_V
+`define BASIL_SPI_BLK_MEM_GEN_8_TO_1_2K_V
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module blk_mem_gen_8_to_1_2k (
     CLKA, CLKB, DOUTA, DOUTB, WEA, WEB, ADDRA, ADDRB, DINA, DINB
@@ -79,3 +83,5 @@ always @(posedge CLKB) begin
 end
 
 endmodule
+
+`endif

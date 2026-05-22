@@ -7,21 +7,9 @@
 
 `timescale 1ps / 1ps
 
-`include "utils/bus_to_ip.v"
-
 `include "pulse_gen/pulse_gen.v"
-`include "pulse_gen/pulse_gen_core.v"
-
 `include "seq_gen/seq_gen.v"
-`include "seq_gen/seq_gen_core.v"
-
 `include "seq_rec/seq_rec.v"
-`include "seq_rec/seq_rec_core.v"
-
-`include "utils/3_stage_synchronizer.v"
-`include "utils/flag_domain_crossing.v"
-`include "utils/cdc_pulse_sync.v"
-`include "utils/ramb_8_to_n.v"
 
 
 module tb (

@@ -1,5 +1,8 @@
 // Blackbox simulation model for PLLE2_BASE primitive
 // Xilinx PLL base module
+`ifndef BASIL_UTILS_PLLE2_BASE_V
+`define BASIL_UTILS_PLLE2_BASE_V
+
 (* blackbox *)
 module PLLE2_BASE #(
     parameter BANDWIDTH = "OPTIMIZED",
@@ -42,3 +45,5 @@ module PLLE2_BASE #(
     input wire CLKFBIN
 );
 endmodule
+
+`endif

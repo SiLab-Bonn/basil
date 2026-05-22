@@ -4,16 +4,16 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_SPI_SPI_CORE_V
+`define BASIL_SPI_SPI_CORE_V
+
 `include "spi/blk_mem_gen_8_to_1_2k.v"
-// cdc_pulse_sync is shared across several basil modules; guard against double inclusion
-`ifndef CDC_PULSE_SYNC_V
 `include "utils/cdc_pulse_sync.v"
-`define CDC_PULSE_SYNC_V
-`endif
 `include "utils/CG_MOD_pos.v"
 
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module spi_core #(
     parameter ABUSWIDTH = 16,
@@ -279,3 +279,5 @@ always @(negedge SPI_CLK)
     SEN <= SEN_INT;
 
 endmodule
+
+`endif

@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_UTILS_BUS_TO_IP_V
+`define BASIL_UTILS_BUS_TO_IP_V
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -42,3 +45,5 @@ assign IP_DATA_IN =  BUS_DATA;
 assign BUS_DATA = (CS && BUS_WR) ? {DBUSWIDTH{1'bz}} : (CS ? IP_DATA_OUT : {DBUSWIDTH{1'bz}});
 
 endmodule
+
+`endif

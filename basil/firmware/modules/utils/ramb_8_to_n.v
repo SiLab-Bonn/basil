@@ -5,6 +5,10 @@
  * ------------------------------------------------------------
  */
 
+
+`ifndef BASIL_UTILS_RAMB_8_TO_N_V
+`define BASIL_UTILS_RAMB_8_TO_N_V
+
 module ramb_8_to_n (clkA,
                     clkB,
                     weA,
@@ -127,3 +131,5 @@ endgenerate
 
 
 endmodule
+
+`endif

@@ -2,6 +2,9 @@
 // multiplexer, controling the corse counter, arming, calibration
 // states and the trigger distance mode. Furthermore counts successful events
 // and tdl misses.
+`ifndef BASIL_TDL_TDC_CONTROLLER_V
+`define BASIL_TDL_TDC_CONTROLLER_V
+
 module controller #(
 	parameter state_bits = 4,
 	parameter mux_bits =2
@@ -228,3 +231,5 @@ always @(posedge CLK) begin
 	end
 end
 endmodule
+
+`endif

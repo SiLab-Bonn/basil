@@ -4,6 +4,9 @@
 //* SiLab, Physics Institute, University of Bonn
 //* ------------------------------------------------------------
 //*/
+`ifndef BASIL_TDL_TDC_PRIORITY_ENCODER_V
+`define BASIL_TDL_TDC_PRIORITY_ENCODER_V
+
        module priority_encoder(
 	       input wire CLK,
 	       input wire [96-1:0] sample,
@@ -70,3 +73,5 @@
        end
 
        endmodule
+
+`endif

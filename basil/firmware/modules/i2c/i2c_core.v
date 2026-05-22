@@ -4,14 +4,14 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-// cdc_pulse_sync is shared across several basil modules; guard against double inclusion
-`ifndef CDC_PULSE_SYNC_V
+`ifndef BASIL_I2C_I2C_CORE_V
+`define BASIL_I2C_I2C_CORE_V
+
 `include "utils/cdc_pulse_sync.v"
-`define CDC_PULSE_SYNC_V
-`endif
 
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module i2c_core #(
     parameter ABUSWIDTH = 16,
@@ -349,3 +349,5 @@ always @(posedge BUS_CLK)
 
 
 endmodule
+
+`endif

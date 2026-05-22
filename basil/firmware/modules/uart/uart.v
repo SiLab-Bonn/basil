@@ -1,3 +1,6 @@
+`ifndef BASIL_UART_UART_V
+`define BASIL_UART_UART_V
+
 `timescale 1ns / 1ps
 // Documented Verilog UART
 // Copyright (C) 2010 Timothy Goddard (tim@goddard.net.nz)
@@ -194,3 +197,5 @@ always @(posedge clk) begin //or posedge rst
 end
 
 endmodule
+
+`endif

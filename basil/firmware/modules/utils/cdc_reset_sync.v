@@ -4,8 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_UTILS_CDC_RESET_SYNC_V
+`define BASIL_UTILS_CDC_RESET_SYNC_V
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 // Closed loop solution
 
@@ -52,3 +56,5 @@ end
 assign aq_sync = aq_sync_ff_2;
 
 endmodule
+
+`endif

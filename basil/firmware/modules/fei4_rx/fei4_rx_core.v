@@ -4,11 +4,10 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-// three_stage_synchronizer is shared across several basil modules; guard against double inclusion
-`ifndef THREE_STAGE_SYNCHRONIZER_V
+`ifndef BASIL_FEI4_RX_FEI4_RX_CORE_V
+`define BASIL_FEI4_RX_FEI4_RX_CORE_V
+
 `include "utils/3_stage_synchronizer.v"
-`define THREE_STAGE_SYNCHRONIZER_V
-`endif
 `include "fei4_rx/receiver_logic.v"
 
 `timescale 1ps/1ps
@@ -265,3 +264,5 @@ receiver_logic #(
 );
 
 endmodule
+
+`endif

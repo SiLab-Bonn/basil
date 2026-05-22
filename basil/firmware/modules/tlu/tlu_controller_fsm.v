@@ -4,8 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_TLU_TLU_CONTROLLER_FSM_V
+`define BASIL_TLU_TLU_CONTROLLER_FSM_V
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module tlu_controller_fsm #(
     parameter                   DIVISOR = 8,
@@ -581,3 +585,5 @@ chipscope_ila ichipscope_ila
 `endif
 
 endmodule
+
+`endif

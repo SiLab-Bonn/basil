@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_UTILS_FIFO_64_TO_16_V
+`define BASIL_UTILS_FIFO_64_TO_16_V
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -62,3 +65,5 @@ assign FIFO_DATA_OUT_BYTE[3] = DATA_BUF[63:48];
 assign DATA_OUT = FIFO_DATA_OUT_BYTE[byte_cnt];
 
 endmodule
+
+`endif

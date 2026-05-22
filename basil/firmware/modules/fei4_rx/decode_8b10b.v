@@ -15,6 +15,9 @@
  * notice is preserved.
  * per Widmer and Franaszek
  */
+`ifndef BASIL_FEI4_RX_DECODE_8B10B_V
+`define BASIL_FEI4_RX_DECODE_8B10B_V
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -171,3 +174,5 @@ module decode_8b10b (datain, dispin, dataout, dispout, code_err, disp_err);
           (disp6p & disp4p) | (disp6n & disp4n));
 
 endmodule
+
+`endif
