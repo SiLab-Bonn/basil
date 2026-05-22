@@ -4,11 +4,18 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_UTILS_OBUF_V
+`define BASIL_UTILS_OBUF_V
+
 `timescale 1ps/1ps
 `default_nettype none
 
 
-module OBUF (
+module OBUF #(
+    parameter DRIVE = 12,
+    parameter IOSTANDARD = "DEFAULT",
+    parameter SLEW = "SLOW"
+) (
     output wire O,
     input wire I
 );
@@ -16,3 +23,5 @@ module OBUF (
 assign O = I;
 
 endmodule
+
+`endif

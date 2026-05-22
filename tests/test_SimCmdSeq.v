@@ -7,23 +7,10 @@
 
 `timescale 1ps / 1ps
 
-`include "utils/bus_to_ip.v"
-
 `include "pulse_gen/pulse_gen.v"
-`include "pulse_gen/pulse_gen_core.v"
-
 `include "cmd_seq/cmd_seq.v"
-`include "cmd_seq/cmd_seq_core.v"
-
 `include "seq_rec/seq_rec.v"
-`include "seq_rec/seq_rec_core.v"
-`include "utils/ramb_8_to_n.v"
-
-// `include "utils/glbl.v"
-`include "utils/ODDR_sim.v"
-`include "utils/cdc_pulse_sync.v"
-`include "utils/3_stage_synchronizer.v"
-`include "utils/flag_domain_crossing.v"
+`include "utils/ODDR.v"
 
 module tb (
     input wire          BUS_CLK,
@@ -106,7 +93,7 @@ end
 
 reg CMD_DATA_FF;
 always @(posedge BUS_CLK) begin
-    CMD_DATA_FF <= CMD_DATA;  // delay data, SEQ_EXT_START signal hast to come first by 1 clock cycle
+    CMD_DATA_FF <= CMD_DATA;  // delay data, SEQ_EXT_START signal has to come first by 1 clock cycle
 end
 
 reg CMD_READY_FF, CMD_READY_FF2, CMD_READY_FF3;

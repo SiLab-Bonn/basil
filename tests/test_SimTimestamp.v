@@ -8,27 +8,12 @@
 `timescale 1ps / 1ps
 
 
-`include "utils/bus_to_ip.v"
-`include "gpio/gpio_core.v"
 `include "gpio/gpio.v"
-
 `include "pulse_gen/pulse_gen.v"
-`include "pulse_gen/pulse_gen_core.v"
-`include "utils/clock_multiplier.v"
-
-`include "bram_fifo/bram_fifo_core.v"
-`include "bram_fifo/bram_fifo.v"
-
 `include "timestamp/timestamp.v"
-`include "timestamp/timestamp_core.v"
-
-`include "utils/cdc_syncfifo.v"
-`include "utils/generic_fifo.v"
-`include "utils/cdc_pulse_sync.v"
-`include "utils/CG_MOD_pos.v"
+`include "bram_fifo/bram_fifo.v"
 `include "utils/clock_divider.v"
-`include "utils/3_stage_synchronizer.v"
-`include "utils/RAMB16_S1_S9_sim.v"
+`include "utils/clock_multiplier.v"
 
 
 module tb (

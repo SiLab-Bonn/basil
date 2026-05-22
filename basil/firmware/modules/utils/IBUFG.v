@@ -4,14 +4,14 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_IBUF_V
-`define BASIL_UTILS_IBUF_V
+`ifndef BASIL_UTILS_IBUFG_V
+`define BASIL_UTILS_IBUFG_V
 
 `timescale 1ps/1ps
 `default_nettype none
 
 
-module IBUF #(
+module IBUFG #(
     parameter IBUF_LOW_PWR = "TRUE",
     parameter IOSTANDARD = "DEFAULT"
 ) (

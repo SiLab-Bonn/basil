@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_UTILS_ODDR_V
+`define BASIL_UTILS_ODDR_V
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -13,7 +16,7 @@ module ODDR #(
     parameter INIT = 1'b0,
     parameter SRTYPE = "SYNC"
 )(
-    output reg Q,
+    output wire Q,
     input wire C,
     input wire CE,
     input wire D1,
@@ -22,18 +25,16 @@ module ODDR #(
     input wire S
 );
 
-always @(posedge C or negedge C) begin
-    if (R) begin
-        Q <= INIT;
-    end else if (CE) begin
-        if (DDR_CLK_EDGE == "OPPOSITE_EDGE") begin
-            if (C) Q <= D2;
-            else Q <= D1;
-        end else begin
-            if (C) Q <= D1;
-            else Q <= D2;
-        end
-    end
-end
+reg Q1, Q2;
+
+always @(posedge C)
+    Q1 <= D1;
+
+always @(negedge C)
+    Q2 <= D2;
+
+assign Q = C ? Q1 & CE : Q2 & CE;
 
 endmodule
+
+`endif

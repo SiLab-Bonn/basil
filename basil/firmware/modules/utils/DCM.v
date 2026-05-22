@@ -1,8 +1,12 @@
 /**
 Based on: https://github.com/dirjud/Nitro-Parts-lib-Xilinx
  */
+`ifndef BASIL_UTILS_DCM_V
+`define BASIL_UTILS_DCM_V
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module clock_divider_sim #(
     parameter DIVISOR = 2
@@ -129,5 +133,8 @@ clock_divider_sim #(
 );
 
 assign LOCKED = 1'b1;
+assign PSDONE = 1'b0;
 
 endmodule
+
+`endif

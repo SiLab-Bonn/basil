@@ -9,17 +9,11 @@
 `timescale 1ps / 1ps
 
 `include "utils/clock_multiplier.v"
+`include "utils/DCM.v"
 `include "utils/clock_divider.v"
-
 `include "seq_gen/seq_gen.v"
-`include "seq_gen/seq_gen_core.v"
-`include "utils/ramb_8_to_n.v"
-
-`include "tdl_tdc/tdc.v"
-
-`include "bram_fifo/bram_fifo_core.v"
+`include "tdl_tdc/tdl_tdc.v"
 `include "bram_fifo/bram_fifo.v"
-
 `include "utils/bus_to_ip.v"
 
 
@@ -61,7 +55,7 @@ assign TDC_IN[2] = SEQ_OUT[1];
 assign TDC_ARM = SEQ_OUT[2];
 assign TDC_EXT_EN = SEQ_OUT[3];
 
-wire  CLK_160, CLK_480, CLK_160_TO_DCM,
+wire  CLK_160, CLK_480, CLK_160_TO_DCM;
 
 DCM #(
 	.CLKFX_MULTIPLY(20),

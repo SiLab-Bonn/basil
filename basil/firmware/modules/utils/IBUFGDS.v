@@ -4,12 +4,16 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef BASIL_UTILS_IBUFGDS_V
+`define BASIL_UTILS_IBUFGDS_V
+
 `timescale 1ps/1ps
 `default_nettype none
 
 module IBUFGDS #(
     parameter DIFF_TERM = "TRUE",
-    parameter IOSTANDARD   = "LVDS_25"
+    parameter IBUF_LOW_PWR = "FALSE",
+    parameter IOSTANDARD = "LVDS_25"
 ) (
     output wire O,
     input wire I, IB
@@ -18,3 +22,5 @@ module IBUFGDS #(
 assign O = I && !IB;
 
 endmodule
+
+`endif
