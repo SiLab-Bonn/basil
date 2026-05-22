@@ -552,6 +552,10 @@ begin
                     FIFO_ACKNOWLEDGED <= 1'b1;
             end
 
+            default:
+            begin
+            end
+
         endcase
     end
 end

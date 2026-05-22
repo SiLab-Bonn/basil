@@ -152,6 +152,8 @@ always @(posedge CLK) begin
 		end
 		MISSED:
 			miss_cnt <= miss_cnt + 1;
+		default: begin
+		end
 	endcase
 end
 
@@ -227,6 +229,7 @@ always @(posedge CLK) begin
 			CALIB_HIT: state <= CALIB;
 			MISSED: state <= IDLE_TRIG;
 			RESET: state <= IDLE;
+			default: state <= RESET;
 		endcase
 	end
 end

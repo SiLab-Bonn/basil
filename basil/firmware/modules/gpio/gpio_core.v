@@ -12,8 +12,8 @@
 module gpio_core #(
     parameter ABUSWIDTH = 16,
     parameter IO_WIDTH = 8,
-    parameter IO_DIRECTION = 0,
-    parameter IO_TRI = 0
+    parameter [IO_WIDTH-1:0] IO_DIRECTION = 0,
+    parameter [IO_WIDTH-1:0] IO_TRI = 0
 ) (
     BUS_CLK,
     BUS_RST,

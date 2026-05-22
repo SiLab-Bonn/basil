@@ -100,7 +100,7 @@ wire [2:0] TDC_FIFO_EMPTY;
 wire [31:0] TDC_FIFO_DATA [2:0];
 wire [2:0] TDC_FIFO_READ;
 // First TDC module: creates fast sampled trigger signal to use it for other TDC modules.
-tdc #(
+tdl_tdc #(
 .BASEADDR(TDC_BASEADDR),
 .HIGHADDR(TDC_HIGHADDR),
 .ABUSWIDTH(ABUSWIDTH),
@@ -113,9 +113,9 @@ tdc #(
 	.bus_wr(BUS_WR),
 	.bus_rd(BUS_RD),
 
-	.CLK480(CLK480),
-	.CLK160(CLK160),
-	.CALIB_CLK(CLK125RX),
+	.CLK480(CLK_480),
+	.CLK160(CLK_160),
+	.CALIB_CLK(BUS_CLK),
 	.tdc_in(TDC_IN[0]),
 	.trig_in(TDC_TRIGGER_IN),
 
@@ -131,7 +131,7 @@ tdc #(
 genvar i;
 generate
 	for (i = 1; i < 3; i = i + 1) begin: tdc_gen
-		tdc #(
+		tdl_tdc #(
 			.BASEADDR(TDC_BASEADDR + 32'h0100*i),
 			.HIGHADDR(TDC_HIGHADDR + 21'h0100*i),
 			.ABUSWIDTH(ABUSWIDTH),
@@ -144,9 +144,9 @@ generate
 			.bus_wr(BUS_WR),
 			.bus_rd(BUS_RD),
 
-			.CLK480(CLK480),
-			.CLK160(CLK160),
-			.CALIB_CLK(CLK125RX),
+			.CLK480(CLK_480),
+			.CLK160(CLK_160),
+			.CALIB_CLK(BUS_CLK),
 			.tdc_in(TDC_IN[i]),
 			.trig_in(TDC_TRIGGER_IN),
 

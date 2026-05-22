@@ -137,8 +137,8 @@ gpio #(
     .IO(debug_reg1)
 );
 
-output reg wr_fifo_FF;
-output reg fifo_strobe;
+reg wr_fifo_FF;
+wire fifo_strobe;
 always @(posedge BUS_CLK)
 begin
     wr_fifo_FF <= wr_fifo;
