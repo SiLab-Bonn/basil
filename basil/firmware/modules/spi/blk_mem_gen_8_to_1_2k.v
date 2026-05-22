@@ -32,7 +32,12 @@
 `default_nettype none
 
 
-module blk_mem_gen_8_to_1_2k (
+module blk_mem_gen_8_to_1_2k #(
+    // Disable a port's write logic when its write enable is tied low.
+    // This avoids elaborating unused cross-clock RAM write paths.
+    parameter PORT_A_WRITABLE = 1,
+    parameter PORT_B_WRITABLE = 1
+) (
     CLKA, CLKB, DOUTA, DOUTB, WEA, WEB, ADDRA, ADDRB, DINA, DINB
 );
 
@@ -65,22 +70,38 @@ reg [0:0] ram [0:16383];
 // ------------------------------
 integer i;
 
-always @(posedge CLKA) begin
-    for (i = 0; i < 8; i = i + 1) begin
-        DOUTA[i] <= ram[{ADDRA, i[2:0]}];
-        if (WEA)
-            ram[{ADDRA, i[2:0]}] <= DINA[i];
+generate
+    if (PORT_A_WRITABLE) begin : port_a_read_write
+        always @(posedge CLKA) begin
+            for (i = 0; i < 8; i = i + 1) begin
+                DOUTA[i] <= ram[{ADDRA, i[2:0]}];
+                if (WEA)
+                    ram[{ADDRA, i[2:0]}] <= DINA[i];
+            end
+        end
+    end else begin : port_a_read_only
+        always @(posedge CLKA) begin
+            for (i = 0; i < 8; i = i + 1)
+                DOUTA[i] <= ram[{ADDRA, i[2:0]}];
+        end
     end
-end
+endgenerate
 
 // ------------------------------
 // Port B — 1-bit synchronous (simple, one port)
 // ------------------------------
-always @(posedge CLKB) begin
-    DOUTB          <= ram[ADDRB];
-    if (WEB)
-        ram[ADDRB] <= DINB[0];
-end
+generate
+    if (PORT_B_WRITABLE) begin : port_b_read_write
+        always @(posedge CLKB) begin
+            DOUTB          <= ram[ADDRB];
+            if (WEB)
+                ram[ADDRB] <= DINB[0];
+        end
+    end else begin : port_b_read_only
+        always @(posedge CLKB)
+            DOUTB <= ram[ADDRB];
+    end
+endgenerate
 
 endmodule
 

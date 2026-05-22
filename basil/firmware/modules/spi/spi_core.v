@@ -157,7 +157,10 @@ end
 
 wire SDI_MEM;
 
-blk_mem_gen_8_to_1_2k memout(
+blk_mem_gen_8_to_1_2k #(
+    .PORT_A_WRITABLE(1),
+    .PORT_B_WRITABLE(0)
+) memout(
     .CLKA(BUS_CLK),
     .CLKB(SPI_CLK),
     .DOUTA(BUS_IN_MEM_IB),
@@ -177,7 +180,10 @@ wire [13:0] ADDRB_MIN;
 assign ADDRB_MIN = out_bit_cnt-1;
 reg SEN_INT;
 
-blk_mem_gen_8_to_1_2k memin(
+blk_mem_gen_8_to_1_2k #(
+    .PORT_A_WRITABLE(0),
+    .PORT_B_WRITABLE(1)
+) memin(
     .CLKA(BUS_CLK),
     .CLKB(SPI_CLK),
     .DOUTA(BUS_OUT_MEM_IB),

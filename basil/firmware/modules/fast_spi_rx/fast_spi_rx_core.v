@@ -133,7 +133,7 @@ always @(posedge SCLK) begin
     if(RST_SYNC | SEN_FINISH)
         spi_data <= 0;
     else if(cdc_fifo_write)
-        spi_data <= {DATA_SIZE-1'b0, SDI};
+        spi_data <= {{(DATA_SIZE-1){1'b0}}, SDI};
     else if(SEN)
         spi_data <= {spi_data[DATA_SIZE-2:0], SDI};
 end
