@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef IDDR
-`define IDDR
+`ifndef IDDR_SIM
+`define IDDR_SIM
 
 `timescale 1ps/1ps
 `default_nettype none

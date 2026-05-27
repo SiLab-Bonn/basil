@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef RAMB16_S1_S2
-`define RAMB16_S1_S2
+`ifndef RAMB16_S1_S2_SIM
+`define RAMB16_S1_S2_SIM
 
 `timescale 1ps/1ps
 `default_nettype none

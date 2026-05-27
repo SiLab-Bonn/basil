@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef OBUFDS
-`define OBUFDS
+`ifndef OBUFDS_SIM
+`define OBUFDS_SIM
 
 `timescale 1ps/1ps
 `default_nettype none

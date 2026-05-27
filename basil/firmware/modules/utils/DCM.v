@@ -1,8 +1,8 @@
 /**
 Based on: https://github.com/dirjud/Nitro-Parts-lib-Xilinx
  */
-`ifndef DCM
-`define DCM
+`ifndef DCM_SIM
+`define DCM_SIM
 
 `timescale 1ps/1ps
 `default_nettype none

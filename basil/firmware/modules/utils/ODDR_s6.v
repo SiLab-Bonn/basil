@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef ODDR_S6
-`define ODDR_S6
+`ifndef ODDR_S6_SIM
+`define ODDR_S6_SIM
 
 `timescale 1ps/1ps
 `default_nettype none
