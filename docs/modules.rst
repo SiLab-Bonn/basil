@@ -145,6 +145,32 @@ No Python driver — this module operates autonomously in the FPGA fabric.
     :members:
 
 .. !!!!!!!!!!!!!
+.. !TDL_TDC!
+.. !!!!!!!!!!!!!
+
+.. include:: ../basil/firmware/modules/tdl_tdc/README.rst
+
+**Driver:**
+
+.. automodule:: basil.HL.tdl_tdc
+
+.. autoclass:: tdl_tdc
+    :members:
+
+.. !!!!!!!!!!!!!
+.. !TIMESTAMP!
+.. !!!!!!!!!!!!!
+
+.. include:: ../basil/firmware/modules/timestamp/README.rst
+
+**Driver:**
+
+.. automodule:: basil.HL.timestamp
+
+.. autoclass:: timestamp
+    :members:
+
+.. !!!!!!!!!!!!!
 .. !BRAM_FIFO!
 .. !!!!!!!!!!!!!
 
@@ -172,6 +198,19 @@ No Python driver — this module operates autonomously in the FPGA fabric.
     :members:
 
 .. !!!!!!!!!!!!!
+.. !M26_RX!
+.. !!!!!!!!!!!!!
+
+.. include:: ../basil/firmware/modules/m26_rx/README.rst
+
+**Driver:**
+
+.. automodule:: basil.HL.m26_rx
+
+.. autoclass:: m26_rx
+    :members:
+
+.. !!!!!!!!!!!!!
 .. !I2C!
 .. !!!!!!!!!!!!!
 
@@ -184,7 +223,18 @@ No Python driver — this module operates autonomously in the FPGA fabric.
 .. autoclass:: i2c
     :members:
 
+.. !!!!!!!!!!!!!
+.. !JTAG_MASTER!
+.. !!!!!!!!!!!!!
 
+.. include:: ../basil/firmware/modules/jtag_master/README.rst
+
+**Driver:**
+
+.. automodule:: basil.HL.JtagMaster
+
+.. autoclass:: JtagMaster
+    :members:
 
 .. !!!!!!!!!!!!!
 .. !UART!
@@ -198,3 +248,18 @@ No Python driver — this module operates autonomously in the FPGA fabric.
 .. !!!!!!!!!!!!!
 
 .. include:: ../basil/firmware/modules/utils/README.rst
+
+.. !!!!!!!!!!!!!
+.. !ARDUINO FIRMWARE!
+.. !!!!!!!!!!!!!
+
+Arduino firmware
+================
+
+.. include:: ../basil/firmware/arduino/EnvironmentReadout/README.rst
+
+.. include:: ../basil/firmware/arduino/NTCReadout/README.rst
+
+.. include:: ../basil/firmware/arduino/RelayBoard/README.rst
+
+.. include:: ../basil/firmware/arduino/SerialToI2C/README.rst
