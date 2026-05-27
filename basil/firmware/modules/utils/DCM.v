@@ -1,8 +1,8 @@
 /**
 Based on: https://github.com/dirjud/Nitro-Parts-lib-Xilinx
  */
-`ifndef BASIL_UTILS_DCM_V
-`define BASIL_UTILS_DCM_V
+`ifndef DCM
+`define DCM
 
 `timescale 1ps/1ps
 `default_nettype none

@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_PULSE_GEN_RISING_V
-`define BASIL_UTILS_PULSE_GEN_RISING_V
+`ifndef PULSE_GEN_RISING
+`define PULSE_GEN_RISING
 
 `timescale 1ps/1ps
 `default_nettype none

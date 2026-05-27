@@ -1,5 +1,5 @@
-`ifndef BASIL_TB_UARTLIB_V
-`define BASIL_TB_UARTLIB_V
+`ifndef UARTLIB
+`define UARTLIB
 
 `timescale 1ns / 100ps
 

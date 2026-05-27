@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_ODDR_S3_V
-`define BASIL_UTILS_ODDR_S3_V
+`ifndef ODDR_S3
+`define ODDR_S3
 
 `timescale 1ps/1ps
 `default_nettype none

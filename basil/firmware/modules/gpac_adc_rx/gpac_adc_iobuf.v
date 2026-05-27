@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_GPAC_ADC_RX_GPAC_ADC_IOBUF_V
-`define BASIL_GPAC_ADC_RX_GPAC_ADC_IOBUF_V
+`ifndef GPAC_ADC_IOBUF
+`define GPAC_ADC_IOBUF
 
 `timescale 1ps/1ps
 `default_nettype none

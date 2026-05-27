@@ -1,5 +1,5 @@
-`ifndef BASIL_TDL_TDC_WORD_BROKER_V
-`define BASIL_TDL_TDC_WORD_BROKER_V
+`ifndef WORD_BROKER
+`define WORD_BROKER
 
 module word_broker  #(
 	parameter DATA_IDENTIFIER = 4'b0100,

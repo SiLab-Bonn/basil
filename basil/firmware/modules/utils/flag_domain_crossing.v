@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_FLAG_DOMAIN_CROSSING_V
-`define BASIL_UTILS_FLAG_DOMAIN_CROSSING_V
+`ifndef FLAG_DOMAIN_CROSSING
+`define FLAG_DOMAIN_CROSSING
 
 `timescale 1ps/1ps
 `default_nettype none

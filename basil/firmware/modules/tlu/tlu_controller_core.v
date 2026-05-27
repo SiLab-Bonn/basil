@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_TLU_TLU_CONTROLLER_CORE_V
-`define BASIL_TLU_TLU_CONTROLLER_CORE_V
+`ifndef TLU_CONTROLLER_CORE
+`define TLU_CONTROLLER_CORE
 
 `include "utils/flag_domain_crossing.v"
 `include "utils/3_stage_synchronizer.v"

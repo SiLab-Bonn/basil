@@ -1,5 +1,5 @@
-`ifndef BASIL_TDL_TDC_SW_INTERFACE_V
-`define BASIL_TDL_TDC_SW_INTERFACE_V
+`ifndef TDC_SW_INTERFACE
+`define TDC_SW_INTERFACE
 
 `include "tdl_tdc/utils/graycode_2stage_cdc.v"
 `include "utils/bus_to_ip.v"

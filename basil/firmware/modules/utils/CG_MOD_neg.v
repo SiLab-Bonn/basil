@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_CG_MOD_NEG_V
-`define BASIL_UTILS_CG_MOD_NEG_V
+`ifndef CG_MOD_NEG
+`define CG_MOD_NEG
 
 `timescale 1ps/1ps
 `default_nettype none

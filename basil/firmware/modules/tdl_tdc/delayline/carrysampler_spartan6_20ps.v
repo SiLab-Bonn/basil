@@ -24,8 +24,8 @@
 //--                                                                 --
 //---------------------------------------------------------------------
 
-`ifndef BASIL_TDL_TDC_DELAYLINE_CARRYSAMPLER_SPARTAN6_20PS_V
-`define BASIL_TDL_TDC_DELAYLINE_CARRYSAMPLER_SPARTAN6_20PS_V
+`ifndef CARRYSAMPLER_SPARTAN6_20PS
+`define CARRYSAMPLER_SPARTAN6_20PS
 
 module CHAIN_CELL (CINIT, CI, CO, DO, CLK);
 

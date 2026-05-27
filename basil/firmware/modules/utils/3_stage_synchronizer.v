@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_3_STAGE_SYNCHRONIZER_V
-`define BASIL_UTILS_3_STAGE_SYNCHRONIZER_V
+`ifndef THREE_STAGE_SYNCHRONIZER
+`define THREE_STAGE_SYNCHRONIZER
 
 `timescale 1ps/1ps
 `default_nettype none

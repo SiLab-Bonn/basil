@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_IDDR_S3_NOIBUF_V
-`define BASIL_UTILS_IDDR_S3_NOIBUF_V
+`ifndef IDDR_S3_NOIBUF
+`define IDDR_S3_NOIBUF
 
 `timescale 1ps/1ps
 `default_nettype none

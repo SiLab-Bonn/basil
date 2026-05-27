@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_TLU_TLU_CONTROLLER_FSM_V
-`define BASIL_TLU_TLU_CONTROLLER_FSM_V
+`ifndef TLU_CONTROLLER_FSM
+`define TLU_CONTROLLER_FSM
 
 `timescale 1ps/1ps
 `default_nettype none

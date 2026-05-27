@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_PULSE_GEN_PULSE_GEN_V
-`define BASIL_PULSE_GEN_PULSE_GEN_V
+`ifndef PULSE_GEN
+`define PULSE_GEN
 
 `include "pulse_gen/pulse_gen_core.v"
 `include "utils/bus_to_ip.v"

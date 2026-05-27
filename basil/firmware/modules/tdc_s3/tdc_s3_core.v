@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_TDC_S3_TDC_S3_CORE_V
-`define BASIL_TDC_S3_TDC_S3_CORE_V
+`ifndef TDC_S3_CORE
+`define TDC_S3_CORE
 
 `include "utils/flag_domain_crossing.v"
 `include "utils/3_stage_synchronizer.v"

@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_GPIO_GPIO_SBUS_V
-`define BASIL_GPIO_GPIO_SBUS_V
+`ifndef GPIO_SBUS
+`define GPIO_SBUS
 
 `include "gpio/gpio_core.v"
 `include "utils/sbus_to_ip.v"

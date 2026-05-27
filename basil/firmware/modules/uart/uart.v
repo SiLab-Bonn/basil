@@ -1,5 +1,5 @@
-`ifndef BASIL_UART_UART_V
-`define BASIL_UART_UART_V
+`ifndef UART
+`define UART
 
 `timescale 1ns / 1ps
 // Documented Verilog UART

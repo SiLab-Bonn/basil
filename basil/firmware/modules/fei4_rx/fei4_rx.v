@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_FEI4_RX_FEI4_RX_V
-`define BASIL_FEI4_RX_FEI4_RX_V
+`ifndef FEI4_RX
+`define FEI4_RX
 
 `include "fei4_rx/fei4_rx_core.v"
 `include "utils/bus_to_ip.v"

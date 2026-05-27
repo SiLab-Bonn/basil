@@ -1,5 +1,5 @@
-`ifndef BASIL_INCLUDES_JTAG_TAP_V
-`define BASIL_INCLUDES_JTAG_TAP_V
+`ifndef JTAG_TAP
+`define JTAG_TAP
 
 `timescale 1ps / 1ps
 

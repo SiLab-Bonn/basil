@@ -12,8 +12,8 @@
  * Initial version: M. Lemarenko
  */
 
-`ifndef BASIL_UART_UART_MASTER_V
-`define BASIL_UART_UART_MASTER_V
+`ifndef UART_MASTER
+`define UART_MASTER
 
 module uart_master(
     input                UART_CLK_X4,

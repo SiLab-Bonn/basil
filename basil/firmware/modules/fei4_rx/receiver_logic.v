@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_FEI4_RX_RECEIVER_LOGIC_V
-`define BASIL_FEI4_RX_RECEIVER_LOGIC_V
+`ifndef RECEIVER_LOGIC
+`define RECEIVER_LOGIC
 
 `include "utils/flag_domain_crossing.v"
 `include "utils/cdc_syncfifo.v"

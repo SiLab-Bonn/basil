@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_FAST_SPI_RX_FAST_SPI_RX_CORE_V
-`define BASIL_FAST_SPI_RX_FAST_SPI_RX_CORE_V
+`ifndef FAST_SPI_RX_CORE
+`define FAST_SPI_RX_CORE
 
 `include "utils/cdc_pulse_sync.v"
 `include "utils/cdc_syncfifo.v"

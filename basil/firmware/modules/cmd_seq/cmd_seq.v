@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_CMD_SEQ_CMD_SEQ_V
-`define BASIL_CMD_SEQ_CMD_SEQ_V
+`ifndef CMD_SEQ
+`define CMD_SEQ
 
 `include "cmd_seq/cmd_seq_core.v"
 `include "utils/bus_to_ip.v"

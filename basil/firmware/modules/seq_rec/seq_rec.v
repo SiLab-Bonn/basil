@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_SEQ_REC_SEQ_REC_V
-`define BASIL_SEQ_REC_SEQ_REC_V
+`ifndef SEQ_REC
+`define SEQ_REC
 
 `include "seq_rec/seq_rec_core.v"
 `include "utils/bus_to_ip.v"

@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_FEI4_RX_SYNC_MASTER_V
-`define BASIL_FEI4_RX_SYNC_MASTER_V
+`ifndef SYNC_MASTER
+`define SYNC_MASTER
 
 `timescale 1ps/1ps
 `default_nettype none

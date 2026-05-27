@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_BUS_TO_IP_V
-`define BASIL_UTILS_BUS_TO_IP_V
+`ifndef BUS_TO_IP
+`define BUS_TO_IP
 
 `timescale 1ps/1ps
 `default_nettype none

@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_TIMESTAMP_TIMESTAMP_V
-`define BASIL_TIMESTAMP_TIMESTAMP_V
+`ifndef TIMESTAMP
+`define TIMESTAMP
 
 `include "timestamp/timestamp_core.v"
 `include "utils/bus_to_ip.v"

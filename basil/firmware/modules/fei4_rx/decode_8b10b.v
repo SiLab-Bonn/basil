@@ -15,8 +15,8 @@
  * notice is preserved.
  * per Widmer and Franaszek
  */
-`ifndef BASIL_FEI4_RX_DECODE_8B10B_V
-`define BASIL_FEI4_RX_DECODE_8B10B_V
+`ifndef DECODE_8B10B
+`define DECODE_8B10B
 
 `timescale 1ps/1ps
 `default_nettype none

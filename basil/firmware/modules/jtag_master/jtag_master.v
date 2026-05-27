@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_JTAG_MASTER_JTAG_MASTER_V
-`define BASIL_JTAG_MASTER_JTAG_MASTER_V
+`ifndef JTAG_MASTER
+`define JTAG_MASTER
 
 `include "jtag_master/jtag_master_core.v"
 `include "utils/bus_to_ip.v"

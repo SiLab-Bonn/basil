@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_TLU_TLU_CONTROLLER_V
-`define BASIL_TLU_TLU_CONTROLLER_V
+`ifndef TLU_CONTROLLER
+`define TLU_CONTROLLER
 
 `include "tlu/tlu_controller_core.v"
 `include "utils/bus_to_ip.v"

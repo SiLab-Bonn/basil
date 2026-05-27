@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_SPI_SPI_V
-`define BASIL_SPI_SPI_V
+`ifndef SPI
+`define SPI
 
 `include "spi/spi_core.v"
 `include "utils/bus_to_ip.v"

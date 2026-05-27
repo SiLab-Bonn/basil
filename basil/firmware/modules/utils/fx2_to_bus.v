@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_FX2_TO_BUS_V
-`define BASIL_UTILS_FX2_TO_BUS_V
+`ifndef FX2_TO_BUS
+`define FX2_TO_BUS
 
 `timescale 1ps/1ps
 `default_nettype none

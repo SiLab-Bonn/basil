@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_CLOCK_DIVIDER_V
-`define BASIL_UTILS_CLOCK_DIVIDER_V
+`ifndef CLOCK_DIVIDER
+`define CLOCK_DIVIDER
 
 `timescale 1ps/1ps
 `default_nettype none

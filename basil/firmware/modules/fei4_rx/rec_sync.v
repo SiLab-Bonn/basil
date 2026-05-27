@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_FEI4_RX_REC_SYNC_V
-`define BASIL_FEI4_RX_REC_SYNC_V
+`ifndef REC_SYNC
+`define REC_SYNC
 
 `include "utils/flag_domain_crossing.v"
 

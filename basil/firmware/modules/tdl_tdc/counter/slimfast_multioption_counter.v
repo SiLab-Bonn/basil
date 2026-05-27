@@ -1,7 +1,7 @@
 //`include "tdl_tdc/counter/slimfast_multioption_counter.xdc"
 //`include "tdl_tdc/counter/signal_clipper.vhdl"
-`ifndef BASIL_TDL_TDC_COUNTER_SLIMFAST_MULTIOPTION_COUNTER_V
-`define BASIL_TDL_TDC_COUNTER_SLIMFAST_MULTIOPTION_COUNTER_V
+`ifndef SLIMFAST_MULTIOPTION_COUNTER
+`define SLIMFAST_MULTIOPTION_COUNTER
 
 `include "utils/pulse_gen_rising.v"
 

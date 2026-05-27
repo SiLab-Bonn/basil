@@ -1,5 +1,5 @@
-`ifndef BASIL_TDL_TDC_DELAYLINE_SAMPLE_DESER_V
-`define BASIL_TDL_TDC_DELAYLINE_SAMPLE_DESER_V
+`ifndef SAMPLE_DESER
+`define SAMPLE_DESER
 
 module sample_deser #(
 parameter dlyline_bits = 96,

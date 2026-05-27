@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_IDDR_S6_V
-`define BASIL_UTILS_IDDR_S6_V
+`ifndef IDDR_S6
+`define IDDR_S6
 
 `timescale 1ps/1ps
 `default_nettype none

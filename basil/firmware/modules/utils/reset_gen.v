@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_RESET_GEN_V
-`define BASIL_UTILS_RESET_GEN_V
+`ifndef RESET_GEN
+`define RESET_GEN
 
 `timescale 1ps/1ps
 `default_nettype none

@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_CDC_SYNCFIFO_V
-`define BASIL_UTILS_CDC_SYNCFIFO_V
+`ifndef CDC_SYNCFIFO
+`define CDC_SYNCFIFO
 
 `timescale 1ps/1ps
 `default_nettype none

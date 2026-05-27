@@ -5,8 +5,8 @@
  * ------------------------------------------------------------
  */
 
-`ifndef BASIL_UTILS_TCP_TO_BUS_V
-`define BASIL_UTILS_TCP_TO_BUS_V
+`ifndef TCP_TO_BUS
+`define TCP_TO_BUS
 
 `timescale 1ps / 1ps
 `default_nettype none

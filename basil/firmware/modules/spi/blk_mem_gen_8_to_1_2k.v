@@ -25,8 +25,8 @@
  * Read behaviour: read-first on both ports (consistent with legacy primitive).
  * ------------------------------------------------------------
  */
-`ifndef BASIL_SPI_BLK_MEM_GEN_8_TO_1_2K_V
-`define BASIL_SPI_BLK_MEM_GEN_8_TO_1_2K_V
+`ifndef BLK_MEM_GEN_8_TO_1_2K
+`define BLK_MEM_GEN_8_TO_1_2K
 
 `timescale 1ps/1ps
 `default_nettype none

@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_IOBUF_V
-`define BASIL_UTILS_IOBUF_V
+`ifndef IOBUF
+`define IOBUF
 
 `timescale 1ps/1ps
 `default_nettype none

@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_SEQ_GEN_SEQ_GEN_CORE_V
-`define BASIL_SEQ_GEN_SEQ_GEN_CORE_V
+`ifndef SEQ_GEN_CORE
+`define SEQ_GEN_CORE
 
 `include "utils/ramb_8_to_n.v"
 `include "utils/cdc_pulse_sync.v"

@@ -5,8 +5,8 @@
  * ------------------------------------------------------------
  */
 
-`ifndef BASIL_FAST_SPI_RX_FAST_SPI_RX_V
-`define BASIL_FAST_SPI_RX_FAST_SPI_RX_V
+`ifndef FAST_SPI_RX
+`define FAST_SPI_RX
 
 `include "fast_spi_rx/fast_spi_rx_core.v"
 `include "utils/bus_to_ip.v"

@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_SEQ_REC_SEQ_REC_CORE_V
-`define BASIL_SEQ_REC_SEQ_REC_CORE_V
+`ifndef SEQ_REC_CORE
+`define SEQ_REC_CORE
 
 `include "utils/flag_domain_crossing.v"
 `include "utils/3_stage_synchronizer.v"

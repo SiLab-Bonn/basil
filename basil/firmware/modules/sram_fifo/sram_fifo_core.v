@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_SRAM_FIFO_SRAM_FIFO_CORE_V
-`define BASIL_SRAM_FIFO_SRAM_FIFO_CORE_V
+`ifndef SRAM_FIFO_CORE
+`define SRAM_FIFO_CORE
 
 `include "utils/generic_fifo.v"
 

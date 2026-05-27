@@ -10,8 +10,8 @@
  *  $Date::                      $:
  */
 
-`ifndef BASIL_TB_SILBUSB_V
-`define BASIL_TB_SILBUSB_V
+`ifndef SILIBUSB
+`define SILIBUSB
 
 module SiLibUSB (input FCLK);
 

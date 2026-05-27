@@ -1,5 +1,5 @@
-`ifndef BASIL_TDL_TDC_UTILS_DELAY_N_V
-`define BASIL_TDL_TDC_UTILS_DELAY_N_V
+`ifndef DELAY_N
+`define DELAY_N
 
 module delay_n #(
 	parameter n = 3,

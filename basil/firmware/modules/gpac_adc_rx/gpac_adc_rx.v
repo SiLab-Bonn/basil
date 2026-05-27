@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_GPAC_ADC_RX_GPAC_ADC_RX_V
-`define BASIL_GPAC_ADC_RX_GPAC_ADC_RX_V
+`ifndef GPAC_ADC_RX
+`define GPAC_ADC_RX
 
 `include "gpac_adc_rx/gpac_adc_rx_core.v"
 `include "utils/bus_to_ip.v"

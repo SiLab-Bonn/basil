@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_FIFO_64_TO_16_V
-`define BASIL_UTILS_FIFO_64_TO_16_V
+`ifndef FIFO_64_TO_16
+`define FIFO_64_TO_16
 
 `timescale 1ps/1ps
 `default_nettype none

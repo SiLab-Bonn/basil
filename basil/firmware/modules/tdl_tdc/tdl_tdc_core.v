@@ -5,8 +5,8 @@
  * ------------------------------------------------------------
  */
 
-`ifndef BASIL_TDL_TDC_TDL_TDC_CORE_V
-`define BASIL_TDL_TDC_TDL_TDC_CORE_V
+`ifndef TDC_CORE
+`define TDC_CORE
 
 `include "tdl_tdc/tdl_supersampler.v"
 `include "tdl_tdc/counter/slimfast_multioption_counter.v"

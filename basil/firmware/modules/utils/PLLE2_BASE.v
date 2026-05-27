@@ -1,7 +1,7 @@
 // Blackbox simulation model for PLLE2_BASE primitive
 // Xilinx PLL base module
-`ifndef BASIL_UTILS_PLLE2_BASE_V
-`define BASIL_UTILS_PLLE2_BASE_V
+`ifndef PLLE2_BASE
+`define PLLE2_BASE
 
 (* blackbox *)
 module PLLE2_BASE #(

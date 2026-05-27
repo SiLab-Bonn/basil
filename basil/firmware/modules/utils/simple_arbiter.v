@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_UTILS_SIMPLE_ARBITER_V
-`define BASIL_UTILS_SIMPLE_ARBITER_V
+`ifndef ARBITER
+`define ARBITER
 
 `timescale 1ps/1ps
 `default_nettype none

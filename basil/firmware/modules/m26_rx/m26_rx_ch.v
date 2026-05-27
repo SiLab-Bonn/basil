@@ -6,8 +6,8 @@
  */
 
 
-`ifndef BASIL_M26_RX_M26_RX_CH_V
-`define BASIL_M26_RX_M26_RX_CH_V
+`ifndef M26_RX_CH
+`define M26_RX_CH
 
 module m26_rx_ch
 (

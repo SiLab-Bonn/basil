@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_RRP_ARBITER_RRP_ARBITER_V
-`define BASIL_RRP_ARBITER_RRP_ARBITER_V
+`ifndef RRP_ARBITER
+`define RRP_ARBITER
 
 `timescale 1ps/1ps
 `default_nettype none

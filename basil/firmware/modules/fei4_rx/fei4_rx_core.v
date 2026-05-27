@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_FEI4_RX_FEI4_RX_CORE_V
-`define BASIL_FEI4_RX_FEI4_RX_CORE_V
+`ifndef FEI4_RX_CORE
+`define FEI4_RX_CORE
 
 `include "utils/3_stage_synchronizer.v"
 `include "fei4_rx/receiver_logic.v"

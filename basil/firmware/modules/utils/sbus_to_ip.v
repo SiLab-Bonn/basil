@@ -6,8 +6,8 @@
  */
 
 
-`ifndef BASIL_UTILS_SBUS_TO_IP_V
-`define BASIL_UTILS_SBUS_TO_IP_V
+`ifndef SBUS_TO_IP
+`define SBUS_TO_IP
 
 module sbus_to_ip
 #(

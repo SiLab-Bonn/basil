@@ -1,5 +1,5 @@
-`ifndef BASIL_TDL_TDC_UTILS_GRAYCODE_2STAGE_CDC_V
-`define BASIL_TDL_TDC_UTILS_GRAYCODE_2STAGE_CDC_V
+`ifndef GRAYCODE_2STAGE_CDC
+`define GRAYCODE_2STAGE_CDC
 
 module graycode_2stage_cdc #(DATA_WIDTH = 8) (
 	input wire IN_CLK,

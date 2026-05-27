@@ -6,8 +6,8 @@
  */
 
 
-`ifndef BASIL_UTILS_RAMB_8_TO_N_V
-`define BASIL_UTILS_RAMB_8_TO_N_V
+`ifndef RAMB_8_TO_N
+`define RAMB_8_TO_N
 
 module ramb_8_to_n (clkA,
                     clkB,

@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_I2C_I2C_V
-`define BASIL_I2C_I2C_V
+`ifndef I2C
+`define I2C
 
 `include "i2c/i2c_core.v"
 `include "utils/bus_to_ip.v"

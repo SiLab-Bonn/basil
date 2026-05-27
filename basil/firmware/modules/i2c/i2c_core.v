@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_I2C_I2C_CORE_V
-`define BASIL_I2C_I2C_CORE_V
+`ifndef I2C_CORE
+`define I2C_CORE
 
 `include "utils/cdc_pulse_sync.v"
 

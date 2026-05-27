@@ -9,8 +9,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-`ifndef BASIL_UTILS_RGMII_IO_V
-`define BASIL_UTILS_RGMII_IO_V
+`ifndef RGMII_IO
+`define RGMII_IO
 
 module rgmii_io (
     //-----------------------------------------------------------------------

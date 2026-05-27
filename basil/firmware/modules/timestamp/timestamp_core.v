@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_TIMESTAMP_TIMESTAMP_CORE_V
-`define BASIL_TIMESTAMP_TIMESTAMP_CORE_V
+`ifndef TIMESTAMP_CORE
+`define TIMESTAMP_CORE
 
 `include "utils/cdc_pulse_sync.v"
 `include "utils/cdc_syncfifo.v"

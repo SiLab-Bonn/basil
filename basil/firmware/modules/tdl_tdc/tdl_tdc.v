@@ -5,8 +5,8 @@
  * ------------------------------------------------------------
  */
 
-`ifndef BASIL_TDL_TDC_TDL_TDC_V
-`define BASIL_TDL_TDC_TDL_TDC_V
+`ifndef TDL_TDC
+`define TDL_TDC
 
 `include "tdl_tdc/sw_interface.v"
 `include "tdl_tdc/tdl_tdc_core.v"

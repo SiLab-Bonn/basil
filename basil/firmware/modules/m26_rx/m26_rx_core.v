@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_M26_RX_M26_RX_CORE_V
-`define BASIL_M26_RX_M26_RX_CORE_V
+`ifndef M26_RX_CORE
+`define M26_RX_CORE
 
 `include "utils/flag_domain_crossing.v"
 `include "utils/3_stage_synchronizer.v"

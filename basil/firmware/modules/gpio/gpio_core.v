@@ -6,8 +6,8 @@
  */
 
 
-`ifndef BASIL_GPIO_GPIO_CORE_V
-`define BASIL_GPIO_GPIO_CORE_V
+`ifndef GPIO_CORE
+`define GPIO_CORE
 
 module gpio_core #(
     parameter ABUSWIDTH = 16,

@@ -4,8 +4,8 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef BASIL_SPI_SPI_CORE_V
-`define BASIL_SPI_SPI_CORE_V
+`ifndef SPI_CORE
+`define SPI_CORE
 
 `include "spi/blk_mem_gen_8_to_1_2k.v"
 `include "utils/cdc_pulse_sync.v"
