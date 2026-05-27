@@ -4,15 +4,15 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`timescale 1ps/1ps
+`timescale 1ps / 1ps
 `default_nettype none
 
 
 module generic_fifo #(
     parameter DATA_SIZE = 32,
     parameter DEPTH = 8,
-    parameter POINTER_SIZE = 16 // maximum in Xilinx 7-series
-)(
+    parameter POINTER_SIZE = 16  // maximum in Xilinx 7-series
+) (
     clk,
     reset,
     write,
@@ -24,89 +24,72 @@ module generic_fifo #(
     size
 );
 
-input wire clk, reset, write, read;
-input wire [DATA_SIZE-1:0] data_in;
+    input wire clk, reset, write, read;
+    input wire [DATA_SIZE-1:0] data_in;
 
-output wire full;
-output reg empty;
+    output wire full;
+    output reg empty;
 
-output reg [DATA_SIZE-1:0] data_out;
+    output reg [DATA_SIZE-1:0] data_out;
 
-reg [DATA_SIZE:0] mem [DEPTH-1:0];
+    reg [DATA_SIZE:0] mem[DEPTH-1:0];
 
-reg [POINTER_SIZE-1:0] rd_pointer, rd_tmp, wr_pointer;
-output reg [POINTER_SIZE-1:0] size;
+    reg [POINTER_SIZE-1:0] rd_pointer, rd_tmp, wr_pointer;
+    output reg [POINTER_SIZE-1:0] size;
 
-wire empty_loc;
+    wire empty_loc;
 
-always @(posedge clk) begin
-    if(reset)
-        rd_pointer <= 0;
-    else if(read && !empty) begin
-        if(rd_pointer == DEPTH-1'b1)
-            rd_pointer <= 0;
-        else
-            rd_pointer <= rd_pointer + 1'b1;
+    always @(posedge clk) begin
+        if (reset) rd_pointer <= 0;
+        else if (read && !empty) begin
+            if (rd_pointer == DEPTH - 1'b1) rd_pointer <= 0;
+            else rd_pointer <= rd_pointer + 1'b1;
+        end
     end
-end
 
-always @(*) begin
-    rd_tmp = rd_pointer;
-    if(read && !empty) begin
-        if(rd_pointer == DEPTH-1'b1)
-            rd_tmp = 0;
-        else
-            rd_tmp = rd_pointer + 1'b1;
+    always @(*) begin
+        rd_tmp = rd_pointer;
+        if (read && !empty) begin
+            if (rd_pointer == DEPTH - 1'b1) rd_tmp = 0;
+            else rd_tmp = rd_pointer + 1'b1;
+        end
     end
-end
 
-always @(posedge clk) begin
-    if(reset)
-        wr_pointer <= 0;
-    else if(write && !full) begin
-        if(wr_pointer == DEPTH-1'b1)
-            wr_pointer <= 0;
-        else
-            wr_pointer <= wr_pointer + 1;
+    always @(posedge clk) begin
+        if (reset) wr_pointer <= 0;
+        else if (write && !full) begin
+            if (wr_pointer == DEPTH - 1'b1) wr_pointer <= 0;
+            else wr_pointer <= wr_pointer + 1;
+        end
     end
-end
 
-always @(posedge clk)
-    if (reset)
-        empty <= 1;
-    else if(read && !empty)
-        if(rd_pointer == DEPTH-1'b1)
-            empty <= (wr_pointer == 0);
-        else
-            empty <= (wr_pointer == rd_pointer+1'b1);
-    else
-        empty <= empty_loc;
+    always @(posedge clk)
+        if (reset) empty <= 1;
+        else if (read && !empty)
+            if (rd_pointer == DEPTH - 1'b1) empty <= (wr_pointer == 0);
+            else empty <= (wr_pointer == rd_pointer + 1'b1);
+        else empty <= empty_loc;
 
-assign empty_loc = (wr_pointer == rd_pointer);
-assign full = ((wr_pointer==(DEPTH-1'b1) && rd_pointer==0) || (wr_pointer!=(DEPTH-1'b1) && wr_pointer+1'b1 == rd_pointer));
+    assign empty_loc = (wr_pointer == rd_pointer);
+    assign full = ((wr_pointer==(DEPTH-1'b1) && rd_pointer==0) || (wr_pointer!=(DEPTH-1'b1) && wr_pointer+1'b1 == rd_pointer));
 
-always @(posedge clk)
-    if(write && !full)
-        mem[wr_pointer] <= data_in;
+    always @(posedge clk) if (write && !full) mem[wr_pointer] <= data_in;
 
-always @(posedge clk)
-    //if(read && !empty)
+    always @(posedge clk)
+        //if(read && !empty)
         data_out <= mem[rd_tmp];
 
-always @(*) begin
-    if(wr_pointer >= rd_pointer)
-        size = wr_pointer - rd_pointer;
-    else
-        size = wr_pointer + (DEPTH-rd_pointer);
-end
+    always @(*) begin
+        if (wr_pointer >= rd_pointer) size = wr_pointer - rd_pointer;
+        else size = wr_pointer + (DEPTH - rd_pointer);
+    end
 endmodule
 
 // Wrapper for backwards compatibility
-module gerneric_fifo
-#(
+module gerneric_fifo #(
     parameter DATA_SIZE = 32,
     parameter DEPTH = 8,
-    parameter POINTER_SIZE = 16 // maximum in Xilinx 7-series
+    parameter POINTER_SIZE = 16  // maximum in Xilinx 7-series
 ) (
     input wire clk,
     input wire reset,
@@ -119,19 +102,19 @@ module gerneric_fifo
     output wire [POINTER_SIZE-1:0] size
 );
 
-generic_fifo #(
-    .DATA_SIZE(DATA_SIZE),
-    .DEPTH(DEPTH)
-) inst_generic_fifo(
-    .clk(clk),
-    .reset(reset),
-    .write(write),
-    .read(read),
-    .data_in(data_in),
-    .full(full),
-    .empty(empty),
-    .data_out(data_out),
-    .size(size)
-);
+    generic_fifo #(
+        .DATA_SIZE(DATA_SIZE),
+        .DEPTH(DEPTH)
+    ) inst_generic_fifo (
+        .clk(clk),
+        .reset(reset),
+        .write(write),
+        .read(read),
+        .data_in(data_in),
+        .full(full),
+        .empty(empty),
+        .data_out(data_out),
+        .size(size)
+    );
 
 endmodule
