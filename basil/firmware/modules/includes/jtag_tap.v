@@ -54,7 +54,10 @@
 /////////////////////////////
 `define UNIQUE
 `define FINISH_WITH_ERROR_EXIT_CODE
-`define ASSERT_FALSE $display( "ERROR: Assertion failed in module %m." ); `FINISH_WITH_ERROR_EXIT_CODE
+
+// WARNING: __FILE__ and __LINE only available in SystemVerilog 2009 and later
+// A Verilog only solution would be: define ASSERT_FALSE $display( "ERROR: Assertion failed in module %m." ); `FINISH_WITH_ERROR_EXIT_CODE
+`define ASSERT_FALSE $display("ERROR: Assertion failed at %0s:%0d in module %m.", `__FILE__, `__LINE__ ); `FINISH_WITH_ERROR_EXIT_CODE
 
 /////////////////////////////
 //`include "tap_defines.v"
