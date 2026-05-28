@@ -49,6 +49,9 @@ test = [
     "pytest-cov",
     "PyVISA",
     "pyvisa-sim",
+docs = [
+    "sphinx",
+    "sphinx-book-theme",
 ]
 
 [tool.setuptools]

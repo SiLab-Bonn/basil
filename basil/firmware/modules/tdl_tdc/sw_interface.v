@@ -219,7 +219,7 @@ graycode_2stage_cdc #(.DATA_WIDTH(32)) event_count_cdc (
 	.data_out_clk(event_cnt)
 );
 
-// This is a strange additional buffer from the original tdc_s3 (L:420).
+// Buffer upper bits of counter to preserve while reading in blocks of 1 byte (width of bus data)
 always @(posedge BUS_CLK) begin
 	event_cnt_buf <= event_cnt;
 	if (ip_add == 2 && ip_rd)

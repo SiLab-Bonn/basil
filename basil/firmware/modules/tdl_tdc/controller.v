@@ -27,7 +27,6 @@ module controller #(
 	output reg [mux_bits-1:0] mux_addr
 );
 
-
 // 2 bit flag to store hit and miss information of the group of
 // samples. This needs to be in sync with the sample deser
 localparam TDL_IDLE = 0;
@@ -41,12 +40,6 @@ localparam SIG_IN = 1;
 localparam SIG_IN_B = 2;
 localparam CALIB_OSC = 3;
 
-// function [state_bits-1:0] int_to_gray;
-// 	input [state_bits-1:0] int;
-// 	begin
-// 		int_to_gray = int ^ (int >> 1);
-// 	end
-// endfunction
 // TDC states
 // These need to be in sync with the word broker.
 localparam [state_bits-1:0] IDLE = 0;
@@ -72,9 +65,6 @@ wire hit;
 // sampling. Only if a hit was detected and on the next cycle the input is
 // still a solid 1 do we count a hit.
 assign hit = (hit_status == TDL_HIT) && tdl_status;
-
-
-
 
 always @(state, en_write_trigger_distance) begin
 	// State dependent control outputs
