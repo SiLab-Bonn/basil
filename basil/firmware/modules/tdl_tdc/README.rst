@@ -207,8 +207,8 @@ The TDC is built around the delay line found in the `Link jTDC <https://github.c
 
 In order to sample the delay elements at a high enough rate while still being able to process them, we use a 3x multisampling approach: There is a shift register shifting in the entire information of the delay line using the 3x clock and at every slow clock tick the contents of the shift register are copied for further processing in the slow clock domain. Only then do we detect signal transitions and convert the thermometer code to binary.
 
-.. image:: delayline.png
+.. image:: ../basil/firmware/modules/tdl_tdc/delayline.png
 
 The most distinct design choice in this implementation is that it uses only a single delay line for measuring rising and falling edges of two inputs. As rising and falling edges propagate delay elements differently it makes sense to treat with distinct calibrations or even separate delay lines. To circumvent this additional space requirement and complexity, we use a multiplexer co-ordinating which input, in which polarity, gets seen by the delay elements. This induces a lower bound on width of pulses we can measure as this input multiplexer needs some time to switch between signals. To drive the multiplexer we use a simple state machine, which also drives the word output generation in the ``word_broker`` module.
 
-.. image:: architecture.png
+.. image:: ../basil/firmware/modules/tdl_tdc/architecture.png
