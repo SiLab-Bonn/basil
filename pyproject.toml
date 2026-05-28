@@ -39,6 +39,7 @@ dependencies = [
 
 [project.optional-dependencies]
 hw = ["pyserial", "PyVISA"]
+
 test = [
     "coverage",
     "coveralls",
@@ -49,6 +50,8 @@ test = [
     "pytest-cov",
     "PyVISA",
     "pyvisa-sim",
+]
+
 docs = [
     "sphinx",
     "sphinx-book-theme",
