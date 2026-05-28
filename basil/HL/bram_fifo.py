@@ -16,7 +16,16 @@ logger = logging.getLogger(__name__)
 
 
 class bram_fifo(RegisterHardwareLayer):
-    """BRAM FIFO controller interface for bram_fifo FPGA module."""
+    """BRAM-backed FIFO controller.
+
+    The corresponding firmware module stores incoming 32-bit FIFO words in
+    FPGA BRAM. The regular ``base_addr`` configuration key addresses the
+    control registers, while ``base_data_addr`` must point to the 32-bit data
+    window used by :meth:`get_data`.
+
+    ``FIFO_SIZE`` reports the amount of buffered data in bytes. The driver
+    rounds this down to complete 32-bit words before reading data.
+    """
 
     _registers = {
         "RESET": {"descr": {"addr": 0, "size": 8, "properties": ["writeonly"]}},
@@ -29,9 +38,20 @@ class bram_fifo(RegisterHardwareLayer):
     _require_version = "==2"
 
     def __init__(self, intf, conf):
+        """Create a BRAM FIFO driver.
+
+        Parameters
+        ----------
+        intf : basil transfer layer
+            Interface used for control-register and data-window access.
+        conf : dict
+            Driver configuration. Requires ``base_addr`` for the control
+            registers and ``base_data_addr`` for the FIFO data window.
+        """
         super(bram_fifo, self).__init__(intf, conf)
 
     def reset(self):
+        """Soft-reset the FIFO and wait briefly for the firmware to settle."""
         self.RESET = 0
         sleep(0.01)  # wait some time for initialization
 
@@ -59,12 +79,17 @@ class bram_fifo(RegisterHardwareLayer):
         return self.FIFO_INT_SIZE
 
     def get_data(self):
-        """Reading data in BRAM.
+        """Read all currently buffered complete 32-bit words.
+
+        The method reads ``FIFO_SIZE`` twice and uses the smaller value to
+        avoid requesting more data while the FIFO size is changing. Data are
+        read from ``base_data_addr`` and returned as little-endian unsigned
+        32-bit integers.
 
         Returns
         -------
         array : numpy.ndarray
-            Array of unsigned integers (32 bit).
+            Array of unsigned 32-bit FIFO words.
         """
         fifo_int_size_1 = self.FIFO_INT_SIZE
         fifo_int_size_2 = self.FIFO_INT_SIZE

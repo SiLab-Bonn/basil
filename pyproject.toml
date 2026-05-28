@@ -35,6 +35,10 @@ dependencies = [
 
 [project.optional-dependencies]
 hw = ["pyserial", "PyVISA"]
+docs = [
+    "sphinx",
+    "sphinx-book-theme",
+]
 
 [tool.setuptools]
 include-package-data = true

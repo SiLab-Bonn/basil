@@ -178,11 +178,23 @@ No Python driver — this module operates autonomously in the FPGA fabric.
 
 **Driver:**
 
+.. automodule:: basil.HL.bram_fifo
+
+.. autoclass:: bram_fifo
+    :members:
+
+.. !!!!!!!!!!!!!
+.. !SRAM_FIFO!
+.. !!!!!!!!!!!!!
+
+.. include:: ../basil/firmware/modules/sram_fifo/README.rst
+
+**Driver:**
+
 .. automodule:: basil.HL.sram_fifo
 
 .. autoclass:: sram_fifo
     :members:
-
 
 .. !!!!!!!!!!!!!
 .. !GPAC_ADC_RX!
@@ -253,6 +265,7 @@ No Python driver — this module operates autonomously in the FPGA fabric.
 .. !ARDUINO FIRMWARE!
 .. !!!!!!!!!!!!!
 
+================
 Arduino firmware
 ================
 

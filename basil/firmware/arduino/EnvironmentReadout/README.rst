@@ -1,6 +1,6 @@
-======================================
+=========================================================================
 Arduino Firmware for Environment Readout (temperature, humidity/pressure)
-======================================
+=========================================================================
 
 Arduino Nano firmware to read out NTCs via the 8 analog input pins A0 to A7 and the internal (multiplexed) ADC.
 
