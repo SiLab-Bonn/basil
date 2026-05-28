@@ -1,3 +1,6 @@
+`ifndef DELAY_N
+`define DELAY_N
+
 module delay_n #(
 	parameter n = 3,
 	parameter width = 8
@@ -21,3 +24,5 @@ end
 assign delayed_signal = delay_taps[n-1];
 
 endmodule
+
+`endif

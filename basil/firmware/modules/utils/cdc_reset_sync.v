@@ -4,8 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef CDC_RESET_SYNC
+`define CDC_RESET_SYNC
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 // Closed loop solution
 
@@ -52,3 +56,5 @@ end
 assign aq_sync = aq_sync_ff_2;
 
 endmodule
+
+`endif

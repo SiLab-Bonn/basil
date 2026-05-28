@@ -8,17 +8,10 @@
 `timescale 1ps / 1ps
 
 
-`include "utils/bus_to_ip.v"
-
 `include "i2c/i2c.v"
-`include "i2c/i2c_core.v"
-
-`include "utils/cdc_pulse_sync.v"
 `include "utils/clock_divider.v"
-
-
-`include "utils/ODDR_sim.v"
-`include "utils/IDDR_sim.v"
+`include "utils/ODDR.v"
+`include "utils/IDDR.v"
 
 
 module i2c_slave_model (

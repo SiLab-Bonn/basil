@@ -4,6 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef TDC_S3
+`define TDC_S3
+
+`include "tdc_s3/tdc_s3_core.v"
+`include "utils/bus_to_ip.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -105,3 +111,5 @@ tdc_s3_core #(
 );
 
 endmodule
+
+`endif

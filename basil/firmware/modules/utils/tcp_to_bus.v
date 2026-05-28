@@ -5,6 +5,9 @@
  * ------------------------------------------------------------
  */
 
+`ifndef TCP_TO_BUS
+`define TCP_TO_BUS
+
 `timescale 1ps / 1ps
 `default_nettype none
 
@@ -153,3 +156,5 @@ assign BUS_ADD = (TCP_TO_BUS_WR) ? TCP_TO_BUS_ADD : RBCP_ADDR;
 assign BUS_DATA = (BUS_WR) ? ((TCP_TO_BUS_WR) ? TCP_RX_DATA : RBCP_WD) : 8'bz;
 
 endmodule
+
+`endif

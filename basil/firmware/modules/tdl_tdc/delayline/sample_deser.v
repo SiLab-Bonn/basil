@@ -1,3 +1,6 @@
+`ifndef SAMPLE_DESER
+`define SAMPLE_DESER
+
 module sample_deser #(
 parameter dlyline_bits = 96,
 parameter internally_rising = 1'b1,
@@ -113,3 +116,5 @@ always @(posedge CLK_SLOW) begin
 end
 
 endmodule
+
+`endif

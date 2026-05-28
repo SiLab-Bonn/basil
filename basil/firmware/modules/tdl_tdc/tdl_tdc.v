@@ -5,8 +5,14 @@
  * ------------------------------------------------------------
  */
 
+`ifndef TDL_TDC
+`define TDL_TDC
+
 `include "tdl_tdc/sw_interface.v"
 `include "tdl_tdc/tdl_tdc_core.v"
+`include "utils/bus_to_ip.v"
+`include "utils/cdc_syncfifo.v"
+`include "utils/generic_fifo.v"
 
 module tdl_tdc #(
 	parameter BASEADDR = 32'h0000,
@@ -167,3 +173,5 @@ tdc_sw_interface #(
 );
 
 endmodule
+
+`endif

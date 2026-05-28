@@ -1,4 +1,10 @@
+`ifndef TDC_SW_INTERFACE
+`define TDC_SW_INTERFACE
+
 `include "tdl_tdc/utils/graycode_2stage_cdc.v"
+`include "utils/bus_to_ip.v"
+`include "utils/flag_domain_crossing.v"
+`include "utils/3_stage_synchronizer.v"
 
 module tdc_sw_interface #(
 	parameter VERSION = 8'b00000000,
@@ -250,3 +256,5 @@ assign arm_flag = ~ext_arm_clk_ff & ext_arm_clk;
 
 
 endmodule
+
+`endif

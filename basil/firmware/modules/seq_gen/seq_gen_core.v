@@ -4,8 +4,15 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef SEQ_GEN_CORE
+`define SEQ_GEN_CORE
+
+`include "utils/ramb_8_to_n.v"
+`include "utils/cdc_pulse_sync.v"
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module seq_gen_core #(
     parameter ABUSWIDTH = 16,
@@ -64,8 +71,8 @@ always @(posedge BUS_CLK) begin
         status_regs[6] <= DEF_BIT_OUT[23:16]; // -||-
         status_regs[7] <= DEF_BIT_OUT[31:24]; // -||-
 
-        status_regs[8] <= 0; // wait
-        status_regs[9] <= 0; // -||-
+        status_regs[8] <= 0;  // wait
+        status_regs[9] <= 0;  // -||-
         status_regs[10] <= 0; // -||-
         status_regs[11] <= 0; // -||-
 
@@ -74,7 +81,7 @@ always @(posedge BUS_CLK) begin
         status_regs[14] <= 0; // -||-
         status_regs[15] <= 0; // -||-
 
-        status_regs[16] <= 0; //repeat start
+        status_regs[16] <= 0; // repeat start
         status_regs[17] <= 0; // -||-
         status_regs[18] <= 0; // -||-
         status_regs[19] <= 0; // -||-
@@ -89,7 +96,7 @@ always @(posedge BUS_CLK) begin
         status_regs[26] <= 0; // -||-
         status_regs[27] <= 0; // -||-
 
-        status_regs[28] <= 0; // nested loop repat count
+        status_regs[28] <= 0; // nested loop repeat count
         status_regs[29] <= 0; // -||-
         status_regs[30] <= 0; // -||-
         status_regs[31] <= 0; // -||-
@@ -210,7 +217,7 @@ wire RST_SOFT_SYNC;
 cdc_pulse_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(SEQ_CLK), .pulse_out(RST_SOFT_SYNC));
 assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
 
-wire  START_SYNC_CDC;
+wire START_SYNC_CDC;
 wire START_SYNC;
 cdc_pulse_sync start_pulse_sync (.clk_in(BUS_CLK), .pulse_in(START), .clk_out(SEQ_CLK), .pulse_out(START_SYNC_CDC));
 
@@ -295,3 +302,5 @@ always @(posedge BUS_CLK)
 
 
 endmodule
+
+`endif

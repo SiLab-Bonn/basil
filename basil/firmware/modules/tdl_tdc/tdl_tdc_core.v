@@ -5,6 +5,9 @@
  * ------------------------------------------------------------
  */
 
+`ifndef TDC_CORE
+`define TDC_CORE
+
 `include "tdl_tdc/tdl_supersampler.v"
 `include "tdl_tdc/counter/slimfast_multioption_counter.v"
 `include "tdl_tdc/controller.v"
@@ -221,3 +224,5 @@ word_broker #(
 	.out_word(out_word)
 );
 endmodule
+
+`endif

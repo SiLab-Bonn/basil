@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef CDC_PULSE_SYNC_CNT
+`define CDC_PULSE_SYNC_CNT
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -35,3 +38,5 @@ end
 assign pulse_out = !out_sync_ff_3 && out_sync_ff_2;
 
 endmodule
+
+`endif

@@ -4,10 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef THREE_STAGE_SYNCHRONIZER
+`define THREE_STAGE_SYNCHRONIZER
+
 `timescale 1ps/1ps
 `default_nettype none
 
-// synchronizing asynchronous signals/flags, prevents metastable events
 
 module three_stage_synchronizer #(
     parameter WIDTH = 1
@@ -39,3 +41,5 @@ end
 assign OUT = out_d_ff_3;
 
 endmodule
+
+`endif

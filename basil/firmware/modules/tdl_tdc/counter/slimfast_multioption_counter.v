@@ -1,5 +1,8 @@
 //`include "tdl_tdc/counter/slimfast_multioption_counter.xdc"
 //`include "tdl_tdc/counter/signal_clipper.vhdl"
+`ifndef SLIMFAST_MULTIOPTION_COUNTER
+`define SLIMFAST_MULTIOPTION_COUNTER
+
 `include "utils/pulse_gen_rising.v"
 
 //`default_nettype none
@@ -167,3 +170,5 @@ assign countout[outputwidth-1] = SFC_slow_counts[size-3];
 assign countout[outputwidth-2:0] = {SFC_slow_counts[size-4:0],fast_counts};
 
 endmodule
+
+`endif

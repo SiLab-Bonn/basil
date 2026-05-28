@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef DDR_DES
+`define DDR_DES
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -57,3 +60,5 @@ always @(posedge WCLK)
     OUT <= DATA_IN_SR;
 
 endmodule
+
+`endif

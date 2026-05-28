@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef PULSE_GEN_RISING
+`define PULSE_GEN_RISING
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -21,3 +24,5 @@ always @(posedge clk_in)
 assign out = !ff && in;
 
 endmodule
+
+`endif

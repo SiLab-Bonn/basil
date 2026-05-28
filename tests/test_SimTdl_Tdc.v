@@ -9,17 +9,11 @@
 `timescale 1ps / 1ps
 
 `include "utils/clock_multiplier.v"
+`include "utils/DCM.v"
 `include "utils/clock_divider.v"
-
 `include "seq_gen/seq_gen.v"
-`include "seq_gen/seq_gen_core.v"
-`include "utils/ramb_8_to_n.v"
-
-`include "tdl_tdc/tdc.v"
-
-`include "bram_fifo/bram_fifo_core.v"
+`include "tdl_tdc/tdl_tdc.v"
 `include "bram_fifo/bram_fifo.v"
-
 `include "utils/bus_to_ip.v"
 
 
@@ -61,7 +55,7 @@ assign TDC_IN[2] = SEQ_OUT[1];
 assign TDC_ARM = SEQ_OUT[2];
 assign TDC_EXT_EN = SEQ_OUT[3];
 
-wire  CLK_160, CLK_480, CLK_160_TO_DCM,
+wire  CLK_160, CLK_480, CLK_160_TO_DCM;
 
 DCM #(
 	.CLKFX_MULTIPLY(20),
@@ -106,7 +100,7 @@ wire [2:0] TDC_FIFO_EMPTY;
 wire [31:0] TDC_FIFO_DATA [2:0];
 wire [2:0] TDC_FIFO_READ;
 // First TDC module: creates fast sampled trigger signal to use it for other TDC modules.
-tdc #(
+tdl_tdc #(
 .BASEADDR(TDC_BASEADDR),
 .HIGHADDR(TDC_HIGHADDR),
 .ABUSWIDTH(ABUSWIDTH),
@@ -119,9 +113,9 @@ tdc #(
 	.bus_wr(BUS_WR),
 	.bus_rd(BUS_RD),
 
-	.CLK480(CLK480),
-	.CLK160(CLK160),
-	.CALIB_CLK(CLK125RX),
+	.CLK480(CLK_480),
+	.CLK160(CLK_160),
+	.CALIB_CLK(BUS_CLK),
 	.tdc_in(TDC_IN[0]),
 	.trig_in(TDC_TRIGGER_IN),
 
@@ -137,7 +131,7 @@ tdc #(
 genvar i;
 generate
 	for (i = 1; i < 3; i = i + 1) begin: tdc_gen
-		tdc #(
+		tdl_tdc #(
 			.BASEADDR(TDC_BASEADDR + 32'h0100*i),
 			.HIGHADDR(TDC_HIGHADDR + 21'h0100*i),
 			.ABUSWIDTH(ABUSWIDTH),
@@ -150,9 +144,9 @@ generate
 			.bus_wr(BUS_WR),
 			.bus_rd(BUS_RD),
 
-			.CLK480(CLK480),
-			.CLK160(CLK160),
-			.CALIB_CLK(CLK125RX),
+			.CLK480(CLK_480),
+			.CLK160(CLK_160),
+			.CALIB_CLK(BUS_CLK),
 			.tdc_in(TDC_IN[i]),
 			.trig_in(TDC_TRIGGER_IN),
 

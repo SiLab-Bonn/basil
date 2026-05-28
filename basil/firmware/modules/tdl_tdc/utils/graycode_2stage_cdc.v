@@ -1,3 +1,6 @@
+`ifndef GRAYCODE_2STAGE_CDC
+`define GRAYCODE_2STAGE_CDC
+
 module graycode_2stage_cdc #(DATA_WIDTH = 8) (
 	input wire IN_CLK,
 	input wire OUT_CLK,
@@ -26,3 +29,5 @@ end
 assign data_out_clk = data_bus_clk;
 
 endmodule
+
+`endif

@@ -21,6 +21,7 @@ class sitcp_fifo(HardwareLayer):
 
     _version = 0
 
+    # Adding these registers via these magic methods is essentially a poor man's version of _registers dict
     def __getitem__(self, name):
         if name == "RESET":
             self._intf.reset()  # returns None
@@ -38,7 +39,7 @@ class sitcp_fifo(HardwareLayer):
             super(sitcp_fifo, self).__setitem__(name, value)
 
     def __getattr__(self, name):
-        """called only on last resort if there are no attributes in the instance that match the name"""
+        """Called only as a last resort if there are no attributes in the instance that match the name"""
         if name.isupper():
             return self[name]
         else:

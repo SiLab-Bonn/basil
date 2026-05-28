@@ -4,8 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef CLOCK_DIVIDER
+`define CLOCK_DIVIDER
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 // clock divider generating clock and clock enable
 
@@ -96,3 +100,5 @@ always @(posedge CLK or posedge RESET)
     end
 
 endmodule
+
+`endif

@@ -4,8 +4,15 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef CMD_SEQ_CORE
+`define CMD_SEQ_CORE
+
+`include "utils/flag_domain_crossing.v"
+`include "utils/3_stage_synchronizer.v"
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module cmd_seq_core #(
     parameter                   ABUSWIDTH = 16,
@@ -470,3 +477,5 @@ always @(posedge BUS_CLK)
             CONF_READY <= 1;
 
 endmodule
+
+`endif

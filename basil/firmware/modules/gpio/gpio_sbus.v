@@ -4,6 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef GPIO_SBUS
+`define GPIO_SBUS
+
+`include "gpio/gpio_core.v"
+`include "utils/sbus_to_ip.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -70,3 +76,5 @@ gpio_core #(
 );
 
 endmodule
+
+`endif

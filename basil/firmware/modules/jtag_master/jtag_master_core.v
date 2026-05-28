@@ -4,8 +4,16 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef JTAG_MASTER_CORE
+`define JTAG_MASTER_CORE
+
+`include "utils/ramb_8_to_n.v"
+`include "utils/cdc_reset_sync.v"
+`include "utils/cdc_pulse_sync.v"
+`include "utils/CG_MOD_pos.v"
 
 `default_nettype none
+
 
 module jtag_master_core #(
     parameter ABUSWIDTH = 16,
@@ -475,3 +483,5 @@ always @(negedge JTAG_CLK)
 ///
 
 endmodule
+
+`endif

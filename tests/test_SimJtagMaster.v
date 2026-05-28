@@ -7,28 +7,11 @@
 `timescale 1ps / 1ps
 
 
-`include "utils/bus_to_ip.v"
-`include "gpio/gpio_core.v"
 `include "gpio/gpio.v"
-
-`include "spi/blk_mem_gen_8_to_1_2k.v"
-`include "utils/ramb_8_to_n.v"
 `include "jtag_master/jtag_master.v"
-`include "jtag_master/jtag_master_core.v"
-
 `include "pulse_gen/pulse_gen.v"
-`include "pulse_gen/pulse_gen_core.v"
-
-`include "utils/cdc_pulse_sync.v"
-`include "utils/cdc_reset_sync.v"
-`include "utils/CG_MOD_pos.v"
-`include "utils/clock_divider.v"
-
-`include "utils/RAMB16_S1_S9_sim.v"
-
-`include "bram_fifo/bram_fifo_core.v"
 `include "bram_fifo/bram_fifo.v"
-`include "utils/generic_fifo.v"
+`include "utils/clock_divider.v"
 
 module tb (
     input wire          BUS_CLK,
@@ -154,8 +137,8 @@ gpio #(
     .IO(debug_reg1)
 );
 
-output reg wr_fifo_FF;
-output reg fifo_strobe;
+reg wr_fifo_FF;
+wire fifo_strobe;
 always @(posedge BUS_CLK)
 begin
     wr_fifo_FF <= wr_fifo;

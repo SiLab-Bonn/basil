@@ -4,6 +4,14 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef TLU_CONTROLLER_CORE
+`define TLU_CONTROLLER_CORE
+
+`include "utils/flag_domain_crossing.v"
+`include "utils/3_stage_synchronizer.v"
+`include "tlu/tlu_controller_fsm.v"
+`include "utils/cdc_syncfifo.v"
+`include "utils/generic_fifo.v"
 
 `timescale 1ps/1ps
 `default_nettype none
@@ -15,6 +23,8 @@
  *
  * TLU controller supporting EUDET TLU 0.1/0.2
  */
+`default_nettype none
+
 
 module tlu_controller_core #(
     parameter                   ABUSWIDTH = 16,
@@ -926,3 +936,5 @@ chipscope_ila ichipscope_ila
 `endif
 
 endmodule
+
+`endif

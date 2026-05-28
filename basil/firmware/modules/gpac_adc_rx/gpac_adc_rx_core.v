@@ -4,8 +4,18 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef GPAC_ADC_RX_CORE
+`define GPAC_ADC_RX_CORE
+
+`include "utils/cdc_reset_sync.v"
+`include "utils/cdc_pulse_sync.v"
+`include "utils/pulse_gen_rising.v"
+`include "utils/cdc_syncfifo.v"
+`include "utils/generic_fifo.v"
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module gpac_adc_rx_core #(
     parameter   ABUSWIDTH = 16,
@@ -286,3 +296,5 @@ always @(posedge BUS_CLK)
         CONF_DONE <= 1;
 
 endmodule
+
+`endif

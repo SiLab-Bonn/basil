@@ -7,25 +7,10 @@
 
 `timescale 1ps / 1ps
 
-`include "utils/bus_to_ip.v"
-
 `include "seq_gen/seq_gen.v"
-`include "seq_gen/seq_gen_core.v"
-`include "utils/ramb_8_to_n.v"
-
 `include "m26_rx/m26_rx.v"
-`include "m26_rx/m26_rx_core.v"
-`include "m26_rx/m26_rx_ch.v"
-
-`include "utils/cdc_syncfifo.v"
-`include "utils/generic_fifo.v"
-`include "utils/cdc_pulse_sync.v"
-`include "utils/3_stage_synchronizer.v"
-`include "utils/flag_domain_crossing.v"
-
-`include "bram_fifo/bram_fifo_core.v"
 `include "bram_fifo/bram_fifo.v"
-`include "utils/IDDR_sim.v"
+`include "utils/IDDR.v"
 
 module tb (
     input wire          BUS_CLK,

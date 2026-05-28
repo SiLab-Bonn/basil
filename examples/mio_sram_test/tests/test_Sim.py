@@ -28,7 +28,7 @@ class TestSram(unittest.TestCase):
                 os.path.join(fw_path, "utils/reset_gen.v"),
                 os.path.join(fw_path, "utils/bus_to_ip.v"),
                 os.path.join(fw_path, "rrp_arbiter/rrp_arbiter.v"),
-                os.path.join(fw_path, "utils/ODDR_sim.v"),
+                os.path.join(fw_path, "utils/ODDR.v"),
                 os.path.join(fw_path, "utils/generic_fifo.v"),
                 os.path.join(fw_path, "utils/cdc_pulse_sync.v"),
                 os.path.join(fw_path, "utils/3_stage_synchronizer.v"),

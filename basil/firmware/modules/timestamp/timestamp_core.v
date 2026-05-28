@@ -4,8 +4,16 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef TIMESTAMP_CORE
+`define TIMESTAMP_CORE
+
+`include "utils/cdc_pulse_sync.v"
+`include "utils/cdc_syncfifo.v"
+`include "utils/generic_fifo.v"
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module timestamp_core #(
     parameter ABUSWIDTH = 16,
@@ -211,3 +219,5 @@ generic_fifo #(
 );
 
 endmodule
+
+`endif

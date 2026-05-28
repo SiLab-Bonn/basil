@@ -4,8 +4,15 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef PULSE_GEN_CORE
+`define PULSE_GEN_CORE
+
+`include "utils/3_stage_synchronizer.v"
+`include "utils/cdc_pulse_sync.v"
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module pulse_gen_core #(
     parameter ABUSWIDTH = 16
@@ -225,3 +232,5 @@ always @(posedge BUS_CLK)
         CONF_DONE <= 1;
 
 endmodule
+
+`endif

@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef ODDR_S3_SIM
+`define ODDR_S3_SIM
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -26,3 +29,5 @@ OFDDRRSE OFDDRRSE_INST (
 );
 
 endmodule
+
+`endif

@@ -4,32 +4,22 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
-`ifndef RESET_GEN
-`define RESET_GEN
+`ifndef IBUFGDS_SIM
+`define IBUFGDS_SIM
 
 `timescale 1ps/1ps
 `default_nettype none
 
-
-module reset_gen #(
-    parameter CNT = 8'd128
+module IBUFGDS #(
+    parameter DIFF_TERM = "TRUE",
+    parameter IBUF_LOW_PWR = "FALSE",
+    parameter IOSTANDARD = "LVDS_25"
 ) (
-    CLK,
-    RST
+    output wire O,
+    input wire I, IB
 );
 
-input wire CLK;
-output wire RST;
-
-reg [7:0] rst_cnt;
-
-initial rst_cnt = CNT;
-
-always @(posedge CLK)
-     if(rst_cnt != 0)
-        rst_cnt <= rst_cnt -1;
-
-assign RST = (rst_cnt != 0 );
+assign O = I && !IB;
 
 endmodule
 

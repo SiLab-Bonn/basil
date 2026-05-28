@@ -4,6 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef SEQ_GEN
+`define SEQ_GEN
+
+`include "seq_gen/seq_gen_core.v"
+`include "utils/bus_to_ip.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -68,3 +74,5 @@ seq_gen_core #(
 );
 
 endmodule
+
+`endif

@@ -4,6 +4,9 @@
 //* SiLab, Physics Institute, University of Bonn
 //* ------------------------------------------------------------
 //*/
+`ifndef PRIORITY_ENCODER
+`define PRIORITY_ENCODER
+
        module priority_encoder(
 	       input wire CLK,
 	       input wire [96-1:0] sample,
@@ -70,3 +73,5 @@
        end
 
        endmodule
+
+`endif

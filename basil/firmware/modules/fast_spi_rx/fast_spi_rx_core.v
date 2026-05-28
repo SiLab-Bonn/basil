@@ -4,12 +4,21 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef FAST_SPI_RX_CORE
+`define FAST_SPI_RX_CORE
+
+`include "utils/cdc_pulse_sync.v"
+`include "utils/cdc_syncfifo.v"
+`include "utils/generic_fifo.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
+
 module fast_spi_rx_core #(
     parameter ABUSWIDTH = 16,
-    parameter IDENTIFIER = 4'b0001
+    parameter IDENTIFIER = 4'b0001,
+    parameter DATA_SIZE = 16
 ) (
     input wire SCLK,
     input wire SDI,
@@ -28,9 +37,9 @@ module fast_spi_rx_core #(
     input wire BUS_RD
 );
 
-localparam VERSION = 0;
+localparam VERSION = 1;
 
-//output format #ID (as parameter IDENTIFIER + 12 id-frame + 16 bit data)
+// Output format #ID (as parameter IDENTIFIER + 12 id-frame + 16 bit data)
 
 wire SOFT_RST;
 assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
@@ -52,6 +61,8 @@ end
 
 reg [7:0] LOST_DATA_CNT;
 
+localparam DATA_SIZE_READ = DATA_SIZE;
+
 always @(posedge BUS_CLK) begin
     if(BUS_RD) begin
         if(BUS_ADD == 0)
@@ -60,6 +71,8 @@ always @(posedge BUS_CLK) begin
             BUS_DATA_OUT <= {7'b0, CONF_EN};
         else if(BUS_ADD == 3)
             BUS_DATA_OUT <= LOST_DATA_CNT;
+        else if(BUS_ADD == 4)
+            BUS_DATA_OUT <= DATA_SIZE_READ;
         else
             BUS_DATA_OUT <= 8'b0;
     end
@@ -67,6 +80,7 @@ end
 
 wire RST_SYNC;
 wire RST_SOFT_SYNC;
+// Reset is synchronized by the sclk
 cdc_pulse_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(SCLK), .pulse_out(RST_SOFT_SYNC));
 assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
 
@@ -84,7 +98,7 @@ end
 wire RST_LONG;
 assign RST_LONG = sync_cnt[7];
 
-reg [11:0] frame_cnt;
+reg [27-DATA_SIZE:0] frame_cnt;
 wire SEN_START, SEN_FINISH;
 reg SEN_DLY;
 always @(posedge SCLK) begin
@@ -112,16 +126,16 @@ always @(posedge SCLK) begin
         bit_cnt <= bit_cnt + 1;
 end
 
-assign cdc_fifo_write = ( (bit_cnt == 15) || SEN_FINISH ) && CONF_EN_SYNC;
+assign cdc_fifo_write = ( (bit_cnt == DATA_SIZE - 1) || SEN_FINISH ) && CONF_EN_SYNC;
 
-reg [15:0] spi_data;
+reg [DATA_SIZE-1:0] spi_data;
 always @(posedge SCLK) begin
     if(RST_SYNC | SEN_FINISH)
         spi_data <= 0;
     else if(cdc_fifo_write)
-        spi_data <= {15'b0, SDI};
+        spi_data <= {{(DATA_SIZE-1){1'b0}}, SDI};
     else if(SEN)
-        spi_data <= {spi_data[14:0], SDI};
+        spi_data <= {spi_data[DATA_SIZE-2:0], SDI};
 end
 
 wire fifo_full,cdc_fifo_empty;
@@ -135,7 +149,7 @@ always @(posedge SCLK) begin
 end
 
 wire [31:0] cdc_data;
-assign cdc_data = {IDENTIFIER, frame_cnt[11:0], spi_data};
+assign cdc_data = {IDENTIFIER, frame_cnt[27-DATA_SIZE:0], spi_data};
 
 wire [31:0] cdc_data_out;
 cdc_syncfifo #(
@@ -172,3 +186,5 @@ generic_fifo #(
 //assign FIFO_DATA[31:30]  = 0;
 
 endmodule
+
+`endif

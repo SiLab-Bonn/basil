@@ -12,6 +12,9 @@
  * Initial version: M. Lemarenko
  */
 
+`ifndef UART_MASTER
+`define UART_MASTER
+
 module uart_master(
     input                UART_CLK_X4,
     input                UART_RST,
@@ -271,3 +274,5 @@ always @(posedge clk or posedge UART_RST)
 
 
 endmodule
+
+`endif

@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef CG_MOD_NEG
+`define CG_MOD_NEG
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -27,3 +30,5 @@ if (ck_in)
 assign ck_out = ck_in | ~enl;
 
 endmodule
+
+`endif

@@ -8,27 +8,12 @@
 `timescale 1ps / 1ps
 
 `include "utils/clock_multiplier.v"
-`include "utils/DCM_sim.v"
-`include "utils/IDDR_sim.v"
+`include "utils/DCM.v"
+`include "utils/IDDR.v"
 `include "utils/ddr_des.v"
-
 `include "seq_gen/seq_gen.v"
-`include "seq_gen/seq_gen_core.v"
-`include "utils/ramb_8_to_n.v"
-
-`include "tdc_s3/tdc_s3_core.v"
 `include "tdc_s3/tdc_s3.v"
-
-`include "bram_fifo/bram_fifo_core.v"
 `include "bram_fifo/bram_fifo.v"
-
-`include "utils/bus_to_ip.v"
-
-`include "utils/cdc_syncfifo.v"
-`include "utils/cdc_pulse_sync.v"
-`include "utils/flag_domain_crossing.v"
-`include "utils/generic_fifo.v"
-`include "utils/3_stage_synchronizer.v"
 
 
 module tb (

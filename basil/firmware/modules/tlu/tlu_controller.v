@@ -4,6 +4,11 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef TLU_CONTROLLER
+`define TLU_CONTROLLER
+
+`include "tlu/tlu_controller_core.v"
+`include "utils/bus_to_ip.v"
 
 `timescale 1ps/1ps
 `default_nettype none
@@ -120,3 +125,5 @@ tlu_controller_core #(
 );
 
 endmodule
+
+`endif

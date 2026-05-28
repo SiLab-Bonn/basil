@@ -4,6 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef PULSE_GEN
+`define PULSE_GEN
+
+`include "pulse_gen/pulse_gen_core.v"
+`include "utils/bus_to_ip.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -63,3 +69,5 @@ pulse_gen_core #(
 );
 
 endmodule
+
+`endif

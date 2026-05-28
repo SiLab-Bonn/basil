@@ -4,8 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef TLU_CONTROLLER_FSM
+`define TLU_CONTROLLER_FSM
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module tlu_controller_fsm #(
     parameter                   DIVISOR = 8,
@@ -548,6 +552,10 @@ begin
                     FIFO_ACKNOWLEDGED <= 1'b1;
             end
 
+            default:
+            begin
+            end
+
         endcase
     end
 end
@@ -581,3 +589,5 @@ chipscope_ila ichipscope_ila
 `endif
 
 endmodule
+
+`endif

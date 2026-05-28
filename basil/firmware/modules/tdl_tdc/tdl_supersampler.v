@@ -1,3 +1,6 @@
+`ifndef TDL_AND_DETECTOR
+`define TDL_AND_DETECTOR
+
 `include "tdl_tdc/delayline/carrysampler_spartan6_20ps.v"
 `include "tdl_tdc/delayline/sample_deser.v"
 
@@ -46,3 +49,5 @@ sample_deser #(
 assign sample = internally_rising ? hit_sample : ~hit_sample;
 
 endmodule
+
+`endif

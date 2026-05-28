@@ -4,8 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef FLAG_DOMAIN_CROSSING
+`define FLAG_DOMAIN_CROSSING
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 // synchronize flag (signal lasts just one clock cycle) to new clock domain (CLK_B)
 
@@ -49,3 +53,5 @@ end
 assign FLAG_OUT_CLK_B = (flag_out_d_ff_3 ^ flag_out_d_ff_2); // XOR
 
 endmodule
+
+`endif

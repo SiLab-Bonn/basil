@@ -1,3 +1,6 @@
+`ifndef WORD_BROKER
+`define WORD_BROKER
+
 module word_broker  #(
 	parameter DATA_IDENTIFIER = 4'b0100,
 	parameter state_bits = 4,
@@ -124,3 +127,5 @@ always @(posedge CLK) begin
 end
 
 endmodule
+
+`endif

@@ -4,6 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef SRAM_FIFO
+`define SRAM_FIFO
+
+`include "sram_fifo/sram_fifo_core.v"
+`include "utils/bus_to_ip.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -101,3 +107,5 @@ sram_fifo_core #(
 );
 
 endmodule
+
+`endif

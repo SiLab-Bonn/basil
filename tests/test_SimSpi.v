@@ -14,30 +14,12 @@
 `endif
 
 `ifndef BASIL_SBUS
-    `include "utils/bus_to_ip.v"
-    `include "gpio/gpio_core.v"
     `include "gpio/gpio.v"
-
     `include "spi/spi.v"
-    `include "spi/spi_core.v"
-    `include "spi/blk_mem_gen_8_to_1_2k.v"
-
     `include "pulse_gen/pulse_gen.v"
-    `include "pulse_gen/pulse_gen_core.v"
-
-    `include "bram_fifo/bram_fifo_core.v"
     `include "bram_fifo/bram_fifo.v"
-
     `include "fast_spi_rx/fast_spi_rx.v"
-    `include "fast_spi_rx/fast_spi_rx_core.v"
-
-    `include "utils/cdc_syncfifo.v"
-    `include "utils/generic_fifo.v"
-    `include "utils/cdc_pulse_sync.v"
-    `include "utils/CG_MOD_pos.v"
     `include "utils/clock_divider.v"
-    `include "utils/3_stage_synchronizer.v"
-    `include "utils/RAMB16_S1_S9_sim.v"
 `else
     $fatal("Sbus modules not implemented yet");
 `endif

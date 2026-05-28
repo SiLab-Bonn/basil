@@ -7,35 +7,12 @@
 
 `timescale 1ps / 1ps
 
-`include "utils/bus_to_ip.v"
-`include "utils/cdc_pulse_sync.v"
-
 `include "pulse_gen/pulse_gen.v"
-`include "pulse_gen/pulse_gen_core.v"
-
 `include "seq_gen/seq_gen.v"
-`include "seq_gen/seq_gen_core.v"
-`include "utils/ramb_8_to_n.v"
-
 `include "spi/spi.v"
-`include "spi/spi_core.v"
-`include "spi/blk_mem_gen_8_to_1_2k.v"
-`include "utils/RAMB16_S1_S9_sim.v"
-
-`include "utils/CG_MOD_pos.v"
-
-`include "gpac_adc_rx/gpac_adc_rx_core.v"
 `include "gpac_adc_rx/gpac_adc_rx.v"
-
-`include "bram_fifo/bram_fifo_core.v"
 `include "bram_fifo/bram_fifo.v"
-
-`include "utils/generic_fifo.v"
-`include "utils/cdc_syncfifo.v"
-`include "utils/pulse_gen_rising.v"
 `include "utils/clock_divider.v"
-`include "utils/3_stage_synchronizer.v"
-`include "utils/cdc_reset_sync.v"
 
 module tb (
     input wire          BUS_CLK,

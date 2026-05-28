@@ -4,24 +4,23 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef IBUFDS_SIM
+`define IBUFDS_SIM
+
 `timescale 1ps/1ps
 `default_nettype none
 
-
-module ODDR (
-    input wire D1, D2,
-    input wire C, CE, R, S,
-    output wire Q
+module IBUFDS #(
+    parameter DIFF_TERM = "TRUE",
+    parameter IBUF_LOW_PWR = "FALSE",
+    parameter IOSTANDARD = "LVDS_25"
+) (
+    output wire O,
+    input wire I, IB
 );
 
-reg Q1, Q2;
-
-always @(posedge C)
-    Q1 <= D1;
-
-always @(negedge C)
-    Q2 <= D2;
-
-assign Q = C ? Q1 & CE : Q2 & CE;
+assign O = I && !IB;
 
 endmodule
+
+`endif

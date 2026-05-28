@@ -4,15 +4,17 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef SEQ_REC_CORE
+`define SEQ_REC_CORE
+
+`include "utils/flag_domain_crossing.v"
+`include "utils/3_stage_synchronizer.v"
+`include "utils/cdc_pulse_sync.v"
+`include "utils/ramb_8_to_n.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
-/*
- * Possible extra options:
- * - delay block that allow SEQ_EXT_START in past (enabled by parameter - for speed needed applications a simple memory circular buffer)
- * - SEQ_EXT_START selections as pulse or as gate/enable
- * - multi window recording (sorted with but multiple times)
- */
 
 module seq_rec_core #(
     parameter MEM_BYTES = 2*1024,
@@ -246,3 +248,5 @@ always @(posedge BUS_CLK)
         CONF_READY <= 1'b1;
 
 endmodule
+
+`endif

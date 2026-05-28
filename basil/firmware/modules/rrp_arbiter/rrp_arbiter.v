@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef RRP_ARBITER
+`define RRP_ARBITER
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -107,3 +110,5 @@ endgenerate
 assign READ_GRANT = select & {WIDTH{READY_OUT}} & WRITE_REQ;
 
 endmodule
+
+`endif

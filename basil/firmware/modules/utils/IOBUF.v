@@ -4,17 +4,28 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef IOBUF_SIM
+`define IOBUF_SIM
+
 `timescale 1ps/1ps
 `default_nettype none
 
-module IBUFGDS #(
-    parameter DIFF_TERM = "TRUE",
-    parameter IOSTANDARD   = "LVDS_25"
+
+module IOBUF #(
+    parameter DRIVE = 12,
+    parameter IBUF_LOW_PWR = "TRUE",
+    parameter IOSTANDARD = "DEFAULT",
+    parameter SLEW = "SLOW"
 ) (
+    inout wire IO,
+    input wire I,
     output wire O,
-    input wire I, IB
+    input wire T
 );
 
-assign O = I && !IB;
+assign IO = T ? 1'bz : I;
+assign O = IO;
 
 endmodule
+
+`endif

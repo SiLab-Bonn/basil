@@ -4,6 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef JTAG_MASTER
+`define JTAG_MASTER
+
+`include "jtag_master/jtag_master_core.v"
+`include "utils/bus_to_ip.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -79,3 +85,5 @@ jtag_master_core #(
 );
 
 endmodule
+
+`endif

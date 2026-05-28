@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef GENERIC_FIFO
+`define GENERIC_FIFO
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -135,3 +138,5 @@ generic_fifo #(
 );
 
 endmodule
+
+`endif

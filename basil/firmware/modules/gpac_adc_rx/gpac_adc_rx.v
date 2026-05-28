@@ -4,6 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef GPAC_ADC_RX
+`define GPAC_ADC_RX
+
+`include "gpac_adc_rx/gpac_adc_rx_core.v"
+`include "utils/bus_to_ip.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -84,3 +90,5 @@ gpac_adc_rx_core #(
 
 
 endmodule
+
+`endif

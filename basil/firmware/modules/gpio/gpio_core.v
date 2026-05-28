@@ -5,11 +5,15 @@
  * ------------------------------------------------------------
  */
 
+
+`ifndef GPIO_CORE
+`define GPIO_CORE
+
 module gpio_core #(
     parameter ABUSWIDTH = 16,
     parameter IO_WIDTH = 8,
-    parameter IO_DIRECTION = 0,
-    parameter IO_TRI = 0
+    parameter [IO_WIDTH-1:0] IO_DIRECTION = {0,0,0,0,0,0,0,0,0},
+    parameter [IO_WIDTH-1:0] IO_TRI = {0,0,0,0,0,0,0,0,0}
 ) (
     BUS_CLK,
     BUS_RST,
@@ -24,14 +28,14 @@ module gpio_core #(
 
 localparam VERSION = 0;
 
-// --------
+// ----
 // ORDER:
 // 0 - RESET
 // 1*B - INPUT (readback)
 // 2*B - OUTPUT
 // 3*B - DIRECTION/OUTPUT_ENABLE
 // B = IO_WIDTH/8+1
-//----
+// ----
 
 input wire                  BUS_CLK;
 input wire                  BUS_RST;
@@ -42,7 +46,7 @@ input wire                  BUS_RD;
 input wire                  BUS_WR;
 inout wire [IO_WIDTH-1:0]   IO;
 
-// CORE //
+// CORE
 wire SOFT_RST; //0
 
 localparam IO_BYTES = ((IO_WIDTH-1)/8)+1;
@@ -104,3 +108,5 @@ always @(*)
 
 
 endmodule
+
+`endif

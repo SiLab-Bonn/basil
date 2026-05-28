@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef FIFO_32_TO_8
+`define FIFO_32_TO_8
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -62,3 +65,5 @@ assign FIFO_DATA_OUT_BYTE[3] = DATA_BUF[31:24];
 assign DATA_OUT = FIFO_DATA_OUT_BYTE[byte_cnt];
 
 endmodule
+
+`endif

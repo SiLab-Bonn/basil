@@ -4,6 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef CMD_SEQ
+`define CMD_SEQ
+
+`include "cmd_seq/cmd_seq_core.v"
+`include "utils/bus_to_ip.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -76,3 +82,5 @@ cmd_seq_core #(
 );
 
 endmodule
+
+`endif

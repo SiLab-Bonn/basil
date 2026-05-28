@@ -4,8 +4,18 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef TDC_S3_CORE
+`define TDC_S3_CORE
+
+`include "utils/flag_domain_crossing.v"
+`include "utils/3_stage_synchronizer.v"
+`include "utils/ddr_des.v"
+`include "utils/cdc_syncfifo.v"
+`include "utils/generic_fifo.v"
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module tdc_s3_core #(
     parameter DATA_IDENTIFIER = 4'b0100,
@@ -690,3 +700,5 @@ end
 
 
 endmodule
+
+`endif

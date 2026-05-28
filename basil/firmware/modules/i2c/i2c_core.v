@@ -4,8 +4,14 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef I2C_CORE
+`define I2C_CORE
+
+`include "utils/cdc_pulse_sync.v"
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 module i2c_core #(
     parameter ABUSWIDTH = 16,
@@ -343,3 +349,5 @@ always @(posedge BUS_CLK)
 
 
 endmodule
+
+`endif

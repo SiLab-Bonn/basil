@@ -4,6 +4,9 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef RAMB16_S1_S2_SIM
+`define RAMB16_S1_S2_SIM
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -28,6 +31,8 @@ input wire SSRA;
 input wire SSRB;
 input wire DIPB;
 output wire DOPB;
+
+assign DOPB = 1'b0;
 
 parameter WIDTHA      = 1;
 parameter SIZEA       = 16384;
@@ -68,3 +73,5 @@ end
 endgenerate
 
 endmodule
+
+`endif

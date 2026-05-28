@@ -1,3 +1,6 @@
+`ifndef CLOCK_MULTIPLIER
+`define CLOCK_MULTIPLIER
+
 `timescale 1ps / 1ps
 
 module clock_multiplier #(
@@ -28,3 +31,5 @@ initial begin
 end
 
 endmodule
+
+`endif

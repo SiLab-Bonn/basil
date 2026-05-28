@@ -4,6 +4,16 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef RECEIVER_LOGIC
+`define RECEIVER_LOGIC
+
+`include "utils/flag_domain_crossing.v"
+`include "utils/cdc_syncfifo.v"
+`include "utils/generic_fifo.v"
+`include "fei4_rx/sync_master.v"
+`include "fei4_rx/rec_sync.v"
+`include "fei4_rx/decode_8b10b.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -282,3 +292,5 @@ chipscope_ila ichipscope_ila
 `endif
 
 endmodule
+
+`endif

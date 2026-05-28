@@ -24,6 +24,9 @@
 //--                                                                 --
 //---------------------------------------------------------------------
 
+`ifndef CARRYSAMPLER_SPARTAN6_20PS
+`define CARRYSAMPLER_SPARTAN6_20PS
+
 module CHAIN_CELL (CINIT, CI, CO, DO, CLK);
 
 	output wire [3:0] DO;
@@ -110,3 +113,5 @@ module carry_sampler_spartan6 (d, q, CLK);
 `endif
 
 endmodule
+
+`endif

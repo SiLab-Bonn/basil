@@ -7,8 +7,8 @@ name = "basil_daq"
 dynamic = ["version"]
 license = { "text" = "BSD 3-Clause ('BSD New' or 'BSD Simplified') License" }
 description = "Basil is a modular data acquisition system and system testing framework in Python.\nIt also provides generic FPGA firmware modules for different hardware platforms and drivers for wide range of lab appliances."
-readme = {file = "README.rst", content-type = "text/x-rst"}
-requires-python = ">=3.10"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
 authors = [
     {name = "Tomasz Hemperek", email="hemperek@uni-bonn.de"},
     {name = "Jens Janssen", email="janssen@physik.uni-bonn.de"},
@@ -27,6 +27,10 @@ dependencies = [
     "GitPython",
     "six",
     "ruamel.yaml",
+    "cocotb>=2.0.1",
+    "cocotb-bus>=0.3.0",
+    "pytest>=9.0.3",
+    "cocotb-test>=0.2.6",
 ]
 
 [project.urls]
@@ -35,6 +39,16 @@ dependencies = [
 
 [project.optional-dependencies]
 hw = ["pyserial", "PyVISA"]
+test = [
+    "coverage",
+    "coveralls",
+    "cocotb>=2.0.1",
+    "cocotb-bus>=0.3.0",
+    "cocotb-test>=0.2.6",
+    "pytest>=9.0.3",
+    "pytest-cov",
+    "PyVISA",
+    "pyvisa-sim",
 docs = [
     "sphinx",
     "sphinx-book-theme",
@@ -55,3 +69,6 @@ profile = "black"
 [tool.ruff]
 # Set the maximum line length to 180.
 line-length = 120
+
+[tool.uv.sources]
+cocotb-test = { git = "https://github.com/themperek/cocotb-test.git", rev = "4e6b7db" }

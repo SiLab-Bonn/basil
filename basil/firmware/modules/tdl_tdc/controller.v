@@ -2,6 +2,9 @@
 // multiplexer, controling the corse counter, arming, calibration
 // states and the trigger distance mode. Furthermore counts successful events
 // and tdl misses.
+`ifndef CONTROLLER
+`define CONTROLLER
+
 module controller #(
 	parameter state_bits = 4,
 	parameter mux_bits =2
@@ -139,6 +142,8 @@ always @(posedge CLK) begin
 		end
 		MISSED:
 			miss_cnt <= miss_cnt + 1;
+		default: begin
+		end
 	endcase
 end
 
@@ -214,7 +219,10 @@ always @(posedge CLK) begin
 			CALIB_HIT: state <= CALIB;
 			MISSED: state <= IDLE_TRIG;
 			RESET: state <= IDLE;
+			default: state <= RESET;
 		endcase
 	end
 end
 endmodule
+
+`endif

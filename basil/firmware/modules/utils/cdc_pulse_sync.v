@@ -4,8 +4,12 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef CDC_PULSE_SYNC
+`define CDC_PULSE_SYNC
+
 `timescale 1ps/1ps
 `default_nettype none
+
 
 // Closed loop solution
 
@@ -45,6 +49,7 @@ always @(posedge clk_out) begin
     out_sync_ff_3 <= out_sync_ff_2;
 end
 
+// Fire output for one clock period, when transition is detected
 assign pulse_out = !out_sync_ff_3 && out_sync_ff_2;
 
 (* ASYNC_REG = "TRUE" *) reg aq_sync_ff_1;
@@ -57,3 +62,5 @@ end
 assign aq_sync = aq_sync_ff_2;
 
 endmodule
+
+`endif

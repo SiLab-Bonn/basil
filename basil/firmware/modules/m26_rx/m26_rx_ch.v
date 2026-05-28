@@ -5,6 +5,10 @@
  * ------------------------------------------------------------
  */
 
+
+`ifndef M26_RX_CH
+`define M26_RX_CH
+
 module m26_rx_ch
 (
     input wire RST,
@@ -119,3 +123,5 @@ always @(posedge CLK_RX)
             DATA <= data_sr[15:0];
 
 endmodule
+
+`endif

@@ -10,6 +10,9 @@
  *  $Date::                      $:
  */
 
+`ifndef SILIBUSB
+`define SILIBUSB
+
 module SiLibUSB (input FCLK);
 
   reg         RD_B;
@@ -103,3 +106,5 @@ module SiLibUSB (input FCLK);
     endtask
 
 endmodule
+
+`endif

@@ -164,10 +164,11 @@ DEV:
 
 class TestSimJtagMaster(unittest.TestCase):
     def setUp(self):
+        test_dir = os.path.dirname(__file__)
         cocotb_compile_and_run(
             [
-                os.path.join(os.path.dirname(__file__), "jtag_tap.v"),
-                os.path.join(os.path.dirname(__file__), "test_SimJtagMaster.v"),
+                os.path.join(test_dir, "../basil/firmware/modules/includes/jtag_tap.v"),
+                os.path.join(test_dir, "test_SimJtagMaster.v"),
             ]
         )
 

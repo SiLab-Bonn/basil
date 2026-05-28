@@ -5,6 +5,10 @@
  * ------------------------------------------------------------
  */
 
+
+`ifndef RAMB_8_TO_N
+`define RAMB_8_TO_N
+
 module ramb_8_to_n (clkA,
                     clkB,
                     weA,
@@ -127,3 +131,5 @@ endgenerate
 
 
 endmodule
+
+`endif

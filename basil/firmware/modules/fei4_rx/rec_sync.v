@@ -4,6 +4,11 @@
  * SiLab, Institute of Physics, University of Bonn
  * ------------------------------------------------------------
  */
+`ifndef REC_SYNC
+`define REC_SYNC
+
+`include "utils/flag_domain_crossing.v"
+
 `timescale 1ps/1ps
 `default_nettype none
 
@@ -169,3 +174,5 @@ chipscope_ila ichipscope_ila
 `endif
 
 endmodule
+
+`endif
