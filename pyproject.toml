@@ -27,10 +27,6 @@ dependencies = [
     "GitPython",
     "six",
     "ruamel.yaml",
-    "cocotb>=2.0.1",
-    "cocotb-bus>=0.3.0",
-    "pytest>=9.0.3",
-    "cocotb-test>=0.2.6",
 ]
 
 [project.urls]
