@@ -277,7 +277,9 @@ def warn_verilog_missing_from_yaml(yaml_entries: list[dict], verilog_entries: li
 
 
 # Step 5: Print the address maps and any mismatches.
-def print_report(yaml_entries: list[dict], verilog_entries: list[dict], problems: list[str], warnings: list[str]) -> None:
+def print_report(
+    yaml_entries: list[dict], verilog_entries: list[dict], problems: list[str], warnings: list[str]
+) -> None:
     # Print YAML first, then Verilog, so mismatches can be compared visually.
     for title, entries in (("YAML", yaml_entries), ("Verilog", verilog_entries)):
         print(f"{title}:")
