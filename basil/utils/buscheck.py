@@ -262,22 +262,22 @@ def compare_yaml_to_verilog(yaml_entries: list[dict], verilog_entries: list[dict
     return problems
 
 
-# Step 4 helper: Check each Verilog address exists in YAML.
-def compare_verilog_to_yaml(yaml_entries: list[dict], verilog_entries: list[dict]) -> list[str]:
-    problems = []
-    # Report Verilog blocks that have no YAML entry at the same base address.
+# Step 4 helper: Warn about Verilog addresses that are intentionally absent from YAML.
+def warn_verilog_missing_from_yaml(yaml_entries: list[dict], verilog_entries: list[dict]) -> list[str]:
+    warnings = []
+    # Direct bus accesses and similar blocks may intentionally have no Basil YAML entry.
     for entry in verilog_entries:
         found = False
         for other in yaml_entries:
             if other["base"] == entry["base"]:
                 found = True
         if not found:
-            problems.append(f"missing in YAML: {entry['name']} {fmt_range(entry)}")
-    return problems
+            warnings.append(f"missing in YAML: {entry['name']} {fmt_range(entry)}")
+    return warnings
 
 
 # Step 5: Print the address maps and any mismatches.
-def print_report(yaml_entries: list[dict], verilog_entries: list[dict], problems: list[str]) -> None:
+def print_report(yaml_entries: list[dict], verilog_entries: list[dict], problems: list[str], warnings: list[str]) -> None:
     # Print YAML first, then Verilog, so mismatches can be compared visually.
     for title, entries in (("YAML", yaml_entries), ("Verilog", verilog_entries)):
         print(f"{title}:")
@@ -302,8 +302,14 @@ def print_report(yaml_entries: list[dict], verilog_entries: list[dict], problems
         print("Problems:")
         for problem in problems:
             print(f"  - {problem}")
-    else:
+    if warnings:
+        print("Warnings:")
+        for warning in warnings:
+            print(f"  - {warning}")
+    if not problems and not warnings:
         print("Address maps match.")
+    elif not problems:
+        print("Address maps match with warnings.")
 
 
 # Step 1 helper: Classify command-line paths by file type.
@@ -362,10 +368,10 @@ def main(argv: list[str] | None = None) -> int:
     problems += compare_overlaps("YAML", yaml_entries)
     problems += compare_overlaps("Verilog", verilog_entries)
     problems += compare_yaml_to_verilog(yaml_entries, verilog_entries)
-    problems += compare_verilog_to_yaml(yaml_entries, verilog_entries)
+    warnings = warn_verilog_missing_from_yaml(yaml_entries, verilog_entries)
 
     # Step 5: Print the report and return a shell-friendly status code.
-    print_report(yaml_entries, verilog_entries, problems)
+    print_report(yaml_entries, verilog_entries, problems, warnings)
     return 1 if problems else 0
 
 
