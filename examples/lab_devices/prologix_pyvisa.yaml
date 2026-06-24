@@ -1,0 +1,14 @@
+transfer_layer:
+  - name     : PrologixVisa
+    type     : PrologixVisa
+    init     :
+        resource_name : ASRL::INSTR
+        read_termination : "\n"
+        backend : "@py"
+
+hw_drivers:
+  - name      : Powersupply
+    type      : scpi
+    interface : PrologixVisa
+    init      :
+        device : hp e3632a
