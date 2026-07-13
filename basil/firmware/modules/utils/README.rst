@@ -20,8 +20,12 @@ Various Verilog modules used by basil.
 - generic_fifo
 - IDDR
 - IDDR_s3
+- IDELAYCTRL
+- IDELAYE2
 - ODDR
 - ODDR_s3
+- ODELAYE2
+- OSERDESE2
 - pulse_gen_rising
 - RAMB16_S1_S2
 - RAMB16_S1_S9
