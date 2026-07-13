@@ -26,6 +26,7 @@ Various Verilog modules used by basil.
 - ODDR_s3
 - ODELAYE2
 - OSERDESE2
+- PLLE2_BASE
 - pulse_gen_rising
 - RAMB16_S1_S2
 - RAMB16_S1_S9
