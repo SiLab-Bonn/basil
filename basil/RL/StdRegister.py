@@ -127,7 +127,10 @@ class StdRegister(RegisterLayer):
                 self._drv.start()
 
     def read(self):
-        raise NotImplementedError("read() not implemented")
+        """Read the backing hardware layer and update all named fields."""
+        data = self._drv.get_data()
+        self.frombytes(data)
+        return data
 
     def _construct_reg(self):
         for field in self._fields:
