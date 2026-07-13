@@ -6,11 +6,13 @@
 #
 
 import unittest
+from unittest.mock import Mock
 
 import yaml
 from bitarray import bitarray
 
 from basil.dut import Dut
+from basil.RL.StdRegister import StdRegister
 
 cnfg_yaml = """
 transfer_layer:
@@ -75,6 +77,29 @@ class TestClass(unittest.TestCase):
         self.dut["spi_module"]._mem_bytes = 4
         self.assertEqual(4, self.dut["spi_module"].MEM_BYTES)
         self.assertRaises(ValueError, self.dut["spi_module"].set_data, [1, 2, 3, 4, 5])
+
+    def test_read(self):
+        driver = Mock()
+        data = [0xA5, 0x5A]
+        driver.get_data.return_value = data
+        register = StdRegister(
+            driver,
+            {
+                "name": "READBACK",
+                "size": 16,
+                "fields": [
+                    {"name": "UPPER", "size": 8, "offset": 15},
+                    {"name": "LOWER", "size": 8, "offset": 7},
+                ],
+            },
+        )
+
+        result = register.read()
+
+        driver.get_data.assert_called_once_with()
+        self.assertIs(result, data)
+        self.assertEqual(register["UPPER"].tovalue(), 0xA5)
+        self.assertEqual(register["LOWER"].tovalue(), 0x5A)
 
     def test_init_simple(self):
         self.dut["TEST1"].write()
