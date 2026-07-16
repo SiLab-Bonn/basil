@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 class Visa(TransferLayer):
     """Transfer layer for a Virtual Instrument Software Architecture (VISA) provided by pyVisa.
     Several interfaces are available (GPIB, RS232, USB, Ethernet). To be able to use pyVisa without
-    the proprietary NI-VISA driver a pyVisa backend pyVisa-py can be used.
-    GPIB under linux is not supported via pyVisa-py right now.
+    the proprietary NI-VISA driver a pyVisa backend pyVisa-py can be used. GPIB under Linux also
+    requires Linux-GPIB and Python bindings such as gpib-ctypes.
     """
 
     def __init__(self, conf):
@@ -34,19 +34,24 @@ class Visa(TransferLayer):
         super(Visa, self).init()
         backend = self._init.get("backend", "")  # Empty string means std. backend (NI VISA)
         rm = visa.ResourceManager(backend)
-        try:
-            logger.info(
-                "BASIL VISA TL with %s backend found the following devices: %s", backend, ", ".join(rm.list_resources())
-            )
-        except NotImplementedError:  # some backends do not always implement the list_resources function
-            logger.info("BASIL VISA TL with %s backend", backend)
+        if self._init.get("list_resources", True):
+            try:
+                logger.info(
+                    "BASIL VISA TL with %s backend found the following devices: %s",
+                    backend,
+                    ", ".join(rm.list_resources()),
+                )
+            except NotImplementedError:  # some backends do not always implement the list_resources function
+                logger.info("BASIL VISA TL with %s backend", backend)
+        else:
+            logger.info("BASIL VISA TL with %s backend; resource discovery disabled", backend)
 
         # make interface compatible with other transfer layers (serial)
         if "baudrate" in self._init.keys():
             self._init["baud_rate"] = self._init.pop("baudrate")
 
         self._resource = rm.open_resource(
-            **{key: value for key, value in self._init.items() if key not in ("backend",)}
+            **{key: value for key, value in self._init.items() if key not in ("backend", "list_resources")}
         )
 
     def close(self):

@@ -20,6 +20,7 @@ transfer_layer:
         read_termination : "\\n"
         write_termination : "\\r\\n"
         backend : "@sim"
+        list_resources : false
 
 hw_drivers:
   - name      : Pulser
