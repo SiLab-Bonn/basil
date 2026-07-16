@@ -12,15 +12,15 @@
 `default_nettype none
 
 module IBUFDS_GTE2 #(
-    parameter CLKCM_CFG = "TRUE",
-    parameter CLKRCV_TRST = "TRUE",
+    parameter CLKCM_CFG    = "TRUE",
+    parameter CLKRCV_TRST  = "TRUE",
     parameter CLKSWING_CFG = 2'b11
 ) (
     output wire O,
     output wire ODIV2,
-    input wire CEB,
-    input wire I,
-    input wire IB
+    input  wire CEB,
+    input  wire I,
+    input  wire IB
 );
 
     reg divided_clock;
@@ -28,8 +28,8 @@ module IBUFDS_GTE2 #(
     wire configuration_used;
 
     assign differential_high = I && !IB;
-    assign O = CEB ? 1'b0 : differential_high;
-    assign ODIV2 = CEB ? 1'b0 : divided_clock;
+    assign O                 = CEB ? 1'b0 : differential_high;
+    assign ODIV2             = CEB ? 1'b0 : divided_clock;
 
     initial divided_clock = 1'b0;
 

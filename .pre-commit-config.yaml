@@ -15,3 +15,58 @@ repos:
     hooks:
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
+  - repo: local
+    hooks:
+      - id: verilator-lint
+        name: verilator lint (Verilog-2005)
+        entry: >-
+          bash -c 'status=0; for file in "$@"; do
+          verilator --lint-only --language 1364-2005 --timing -Wall -Wno-fatal
+          -Ibasil/firmware/modules
+          -Ibasil/firmware/modules/utils
+          -Ibasil/firmware/modules/includes
+          -y "$(dirname "$file")"
+          -y basil/firmware/modules/utils
+          "$file" || status=$?;
+          done; exit "$status"' --
+        language: system
+        types: [verilog]
+        files: '\.v$'
+        # Keep every -Wall diagnostic visible, but do not make Basil's existing
+        # warning baseline fatal. Syntax and elaboration errors still fail.
+      - id: verible-format
+        name: verible format
+        entry: >-
+          verible-verilog-format --inplace
+          --assignment_statement_alignment=align
+          --class_member_variable_alignment=align
+          --distribution_items_alignment=align
+          --enum_assignment_statement_alignment=align
+          --expand_coverpoints=true
+          --formal_parameters_alignment=align
+          --formal_parameters_indentation=indent
+          --module_net_variable_alignment=flush-left
+          --named_parameter_alignment=align
+          --named_parameter_indentation=indent
+          --named_port_alignment=align
+          --named_port_indentation=indent
+          --port_declarations_alignment=align
+          --port_declarations_indentation=indent
+          --port_declarations_right_align_packed_dimensions=true
+          --port_declarations_right_align_unpacked_dimensions=true
+          --struct_union_members_alignment=align
+          --indentation_spaces=4
+        language: system
+        types: [verilog]
+        files: '\.(v|sv)$'
+      - id: verible-lint
+        name: verible style lint
+        entry: verible-verilog-lint --rules=-module-filename,-always-comb,-explicit-parameter-storage-type,-unpacked-dimensions-range-ordering
+        language: system
+        types: [verilog]
+        files: '\.(v|sv)$'
+        # module-filename: Basil has intentional module/filename mismatches.
+        # always-comb: Verilog-2005 uses always @*, not SystemVerilog always_comb.
+        # explicit-parameter-storage-type: Typed strings require SystemVerilog.
+        # unpacked-dimensions-range-ordering: Verible requires SystemVerilog's
+        # [size] shorthand; Verilog-2005 uses explicit unpacked ranges.
