@@ -51,10 +51,10 @@ class sensirionSHT45(SensirionBridgeI2CDevice):
             rx_data = super(sensirionSHT45, self)._read(command, read_n_words * 3, timeout_us)
             data = [0] * read_n_words
             for i in range(read_n_words):
-                if self.crc_func(rx_data[i * 3: (i + 1) * 3]):
+                if self.crc_func(rx_data[i * 3 : (i + 1) * 3]):
                     break
                 else:
-                    data[i] = struct.unpack(">H", rx_data[i * 3: i * 3 + 2])[0]
+                    data[i] = struct.unpack(">H", rx_data[i * 3 : i * 3 + 2])[0]
             else:
                 return data
             continue
@@ -118,10 +118,10 @@ class sensirionSHT45(SensirionBridgeI2CDevice):
         self._write([0x94])
 
     def _to_temperature(self, data):
-        return -45 + 175 * (float(data[0]) / (2 ** 16 - 1))
+        return -45 + 175 * (float(data[0]) / (2**16 - 1))
 
     def _to_humidity(self, data):
-        RH = -6 + 125 * (float(data[1]) / (2 ** 16 - 1))
+        RH = -6 + 125 * (float(data[1]) / (2**16 - 1))
         return min(max(RH, 0), 100)
 
     def to_dew_point(self, T, RH):
