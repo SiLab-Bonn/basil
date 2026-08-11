@@ -24,15 +24,15 @@ class scpi(HardwareLayer):
     '''
 
     # this could break the code; CHECK: whether slots here will break the module.
-    __slots__ = [
-        '_scpi_commands',
-        '_scpi_query_fmt',
-        '_formatting_enabled',
-        '_scpi_binary_enabled',
-        '_scpi_error_available',
-        '_scpi_binary_commands',
-        '_logger'
-    ]
+    # __slots__ = [
+    #     '_scpi_commands',
+    #     '_scpi_query_fmt',
+    #     '_formatting_enabled',
+    #     '_scpi_binary_enabled',
+    #     '_scpi_error_available',
+    #     '_scpi_binary_commands',
+    #     '_logger'
+    # ]
 
     @property
     def has_formatting(self):
@@ -70,6 +70,8 @@ class scpi(HardwareLayer):
     def __init__(self, intf, conf):
         super(scpi, self).__init__(intf, conf)
         self._logger = logging.getLogger(__name__)
+        # CHECK: used for what?
+        self._scpi_binary_commands = {}
 
     def init(self):
         super(scpi, self).init()
@@ -102,7 +104,7 @@ class scpi(HardwareLayer):
         # Device commands using binary data to return
         self._scpi_binary_commands = self._scpi_commands.pop('__scpi_binary_commands', None)
         if self._init.get('enable_binary_commands', False):
-            self.enable_binary_commands()
+            self.enable_binary_query()
         # Enable the devices error queue if available
         if self._init.get('enable_errors', False):
             self.enable_error_queue()
@@ -116,6 +118,7 @@ class scpi(HardwareLayer):
 
             # some devices could use a binary stream to transmit data
             binary_stream = kwargs.pop('binary_enabled', False)
+            binary_data_points = kwargs.pop('data_points', 1)
             try:
                 command = self._scpi_commands['channel %s' % channel][name] if channel is not None else \
                     self._scpi_commands[name]
@@ -124,14 +127,20 @@ class scpi(HardwareLayer):
 
             name_split = name.split('_', 1)
             if len(name_split) == 2 and name_split[0] == 'set' and len(args) == 1 and not kwargs:
-                self._intf.write(command + ' ' + str(args[0]))
+                eff_cmd = command + ' ' + str(args[0])
+                # print(eff_cmd)
+                self._intf.write(eff_cmd)
             elif len(name_split) == 2 and name_split[0] == 'get' and not args and not kwargs:
                 # should be backwards compatible as one explicit keyword argument needs to be provided to enable this
                 # addition
-                if binary_stream and self._scpi_binary_enabled and name in self._scpi_binary_command:
-                    res = self._intf.query_binary(command, datatype=self._scpi_binary_commands[name]['datatype'])
-                else:
-                    res = self._intf.query(command)
+                try:
+                    if binary_stream and self._scpi_binary_enabled and name in self._scpi_binary_commands:
+                        res = self._intf.query_binary(command, data_type=self._scpi_binary_commands[name]['datatype'], data_points=binary_data_points)
+                    else:
+                        res = self._intf.query(command)
+                except TypeError:
+                    print(self._scpi_binary_commands)
+                    raise
                 if self.has_formatting and self._formatting_enabled and name in self._scpi_query_fmt['fmt_method']:
                     res = self._scpi_query_fmt['fmt_method'][name].format(
                         *res.strip().split(self._scpi_query_fmt['fmt_sep']))
@@ -207,10 +216,10 @@ class scpi(HardwareLayer):
 
     def fetch_n_errors(self):
         assert self.has_error_queue
-        assert "get_n_errors" not in self._scpi_commands
+        assert "get_n_errors" in self._scpi_commands
         temp_result = self.get_n_errors()
         assert isinstance(temp_result, str)
-        return int(temp_result)
+        return int(float(temp_result.strip('\n')))
 
     def drain_error_queue(self, raise_error=False):
         """

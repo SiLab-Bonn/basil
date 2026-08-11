@@ -37,6 +37,7 @@ class Serial(TransferLayer):
         except TypeError as e:
             logger.debug(e)
         self.timeout = self._init.get('timeout', None)  # timeout of 0 returns immediately
+        # perhaps we should raise a timeout error in case the timeout is exceeded.
 
         # make interface compatible with other transfer layers (visa)
         if "baud_rate" in self._init.keys():
@@ -106,10 +107,10 @@ class Serial(TransferLayer):
         data = self._read_raw()
         # should convert the data if necessary
         try:
-           # from pyvisa.util import parse_ieee_block_header, from_binary_block
-           from ..utils.DataConverter import parse_ieee_block_header, from_binary_block
+           from pyvisa.util import parse_ieee_block_header, from_binary_block
         except ImportError:
-            logger.exception("Missed pyvisa module. Will try the alternative implementation.")
+            # TODO: adjust this!
+            logger.debug("Missed pyvisa module. Will try the alternative implementation.", exc_info=True)
             from ..utils.DataConverter import parse_ieee_block_header, from_binary_block
         offset, data_length = parse_ieee_block_header(data)
 

@@ -23,9 +23,27 @@ class ttiQl355tp(HardwareLayer):
 
     def init(self):
         super(ttiQl355tp, self).init()
+        if self.version is None:
+            self.version = "1.6"
+        if "vendor_key" not in self._init:
+            self._init["vendor_key"] = "THURLBY-THANDAR"
+        if "device_key" not in self._init:
+            self._init["device_key"] = "QL355TP"
+
+        # give it some time and check whether it is the correct device
+        time.sleep(2)
+        self.identify_device()
+
+    @property
+    def id_name(self):
+        return "{vendor},{device},0,{version}".format(vendor=self._init["vendor_key"], device=self._init["device_key"], version=self.version)
 
     def reinit(self):
         self._intf.init()
+
+        # give it some time and check whether it is the correct device connected
+        time.sleep(2)
+        self.identify_device()
 
     def write(self, command):
         self._intf.write(command)
@@ -48,6 +66,7 @@ class ttiQl355tp(HardwareLayer):
         elif isinstance(channel, int):
             cmd = "OP%d %d" % (channel, int(on))
         self.write(cmd)
+
 
     def get_name(self):
         return self.ask("*IDN?")
@@ -97,3 +116,16 @@ class ttiQl355tp(HardwareLayer):
     def reset_trip(self):
         cmd = "TRIPRST"
         self.write(cmd)
+
+    def identify_device(self):
+        cmd = "*IDN?"
+        answer = self.ask(command=cmd)
+        if answer != self.id_name:
+            raise ValueError("The identified device '%s'n is not the requested one: '%s'", answer, self.id_name)
+        return answer
+
+    def close(self):
+        # make sure all the outputs are off and the device is set back to local mode
+        self.set_enable(0, channel="ALL")
+        self.write("LOCAL")
+        super(ttiQl355tp, self).close()

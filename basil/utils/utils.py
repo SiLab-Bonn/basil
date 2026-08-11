@@ -72,9 +72,7 @@ def bitarray_to_byte_array(bitarr):
     ba.reverse()  # this flip the byte order and the bit order of each byte
     # current instance on silab is using np.fromstring; but this should not make any difference!
     bs = np.frombuffer(ba.tobytes(), dtype=np.uint8)  # byte padding happens here, bitarray.tobytes()
-    # current instance on silab is not using this type conversion!
-    # this should also make no difference.
-    bs = (bs * np.uint64(0x0202020202) & 0x010884422010) % 1023
+    bs = (bs * hex_conversion(0x0202020202) & 0x010884422010) % 1023
     return array('B', bs.astype(np.uint8))
 
 
@@ -85,10 +83,18 @@ if callable(bitarray.endian):
     # installed version is prior to 3.4.0
     def bit_endian(bitarr):
         return bitarr.endian()
+
+    def hex_conversion(num):
+        return num
+
 else:
     # bitarray version is at least 3.4.0
     def bit_endian(bitarr):
         return bitarr.endian
+
+    def hex_conversion(num):
+        return np.uint64(num)
+
 
 try:
     array.tobytes

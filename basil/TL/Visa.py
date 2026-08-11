@@ -48,8 +48,7 @@ class Visa(TransferLayer):
             visa.log_to_screen(self._init.get('visa_log_level', logging.ERROR))
         rm = visa.ResourceManager(backend)
         try:
-            logger.info('BASIL VISA TL with %s backend found the following devices: %s', backend,
-                        ", ".join(rm.list_resources()))
+            logger.info('BASIL VISA TL with %s backend found the following devices: %s', backend, ", ".join(rm.list_resources()))
         except NotImplementedError:  # some backends do not always implement the list_resources function
             log_exception(logger, 'BASIL VISA TL WITH %s backend', backend, level=logging.INFO)
             # logger.info('BASIL VISA TL with %s backend', backend)
@@ -58,8 +57,7 @@ class Visa(TransferLayer):
         if "baudrate" in self._init.keys():
             self._init["baud_rate"] = self._init.pop("baudrate")
 
-        self._resource = rm.open_resource(
-            **{key: value for key, value in self._init.items() if key not in self.propagation_exception})
+        self._resource = rm.open_resource(**{key: value for key, value in self._init.items() if key not in self.propagation_exception})
 
     def __enter__(self):
         self.init()
@@ -69,11 +67,9 @@ class Visa(TransferLayer):
         if exc_type is not None:
             if isinstance(exc_value, IterableType):
                 for e_type, e, e_trace in zip(exc_type, exc_value, traceback):
-                    log_exception(logger, "While handling communication with the lab device an error occurred.",
-                                  exc_value=(e_type, e, e_trace))
+                    log_exception(logger, "While handling communication with the lab device an error occurred.", exc_value=(e_type, e, e_trace))
             else:
-                log_exception(logger, "While handling communication with the lab device an error occurred.",
-                              exc_value=(exc_type, exc_value, traceback))
+                log_exception(logger, "While handling communication with the lab device an error occurred.", exc_value=(exc_type, exc_value, traceback))
         self.close()
         return False
 
@@ -108,7 +104,7 @@ class Visa(TransferLayer):
                     break
         elif self._use_binary_mode:
             # when providing the correct keyword arguments, this should allow for parsing of binary data and faster readout of multiple data
-            ret = self._resource.query_binary_values(data, datatype='f', container=np.ndarray, is_big_endian=False, )
+            ret = self._resource.query_binary_values(data, datatype='f', container=np.ndarray, is_big_endian=False,)
         else:
             ret = self._resource.query(data)
         return ret
@@ -119,4 +115,4 @@ class Visa(TransferLayer):
         if not self._use_binary_mode or self._resource.read_termination == "":
             logger.warning("query_binary() is not supported for this device.")
             return self.query(data, max_tries)
-        return self._resource.query_binary_values(data, datatype=data_type, container=np.ndarray, is_big_endian=False, )
+        return self._resource.query_binary_values(data, datatype=data_type, container=np.ndarray, is_big_endian=False,)
