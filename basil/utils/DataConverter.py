@@ -10,10 +10,11 @@ try:
 
     np = numpy
 except ImportError:
+    print("There was an numpy import error")
     np = None
 
-
 def _use_numpy_routines(container: Callable) -> bool:
+    return True
     return np is not None and isinstance(container, np.ndarray)
 
 
@@ -188,7 +189,7 @@ def from_binary_block(
         Parsed data.
 
     """
-    if data_length is None:
+    if data_length is None or data_length < 0:
         data_length = len(block) - offset
 
     element_length = struct.calcsize(datatype)
@@ -197,7 +198,8 @@ def from_binary_block(
 
     if _use_numpy_routines(container):
         assert np  # for typing
-        return np.frombuffer(block, endianess + datatype, array_length, offset)
+        res = np.frombuffer(block, endianess + datatype, array_length, offset)
+        return res
 
     fullfmt = "%s%d%s" % (endianess, array_length, datatype)
 
