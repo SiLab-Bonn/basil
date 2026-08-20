@@ -59,6 +59,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
+      with:
+        fetch-depth: ${{ matrix.coverage && '0' || '1' }}
     - name: Set up miniforge ${{matrix.python-version}}
       uses: conda-incubator/setup-miniconda@v3
       with:
@@ -107,14 +109,6 @@ jobs:
           tests/test_*.py examples/*/*/test_*.py
         coverage xml -o coverage.xml
         coverage report --format=total | awk '{print "### Test coverage: " $1 "%"}' >> "$GITHUB_STEP_SUMMARY"
-
-    - name: Fetch pull request base
-      if: matrix.coverage && github.event_name == 'pull_request'
-      env:
-        BASE_REF: ${{github.base_ref}}
-      run: |
-        git fetch --no-tags --depth=1 origin \
-          "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
 
     - name: Create differential coverage report
       if: matrix.coverage && github.event_name == 'pull_request'
