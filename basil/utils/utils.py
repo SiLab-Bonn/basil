@@ -6,6 +6,7 @@
 #
 
 
+import logging as logging_util
 from array import array
 
 import numpy as np
@@ -23,13 +24,13 @@ def logging(fn):
     return wrapped
 
 
-def log_exception(logger: logging.Logger, msg, *args, level=logging.ERROR, e=None, **kwargs):
+def log_exception(logger: logging_util.Logger, msg, *args, level=logging_util.ERROR, e=None, **kwargs):
     """
             Convenience method for logging an ERROR with exception information.
             """
     if not (isinstance(e, Exception) or e is None):
         raise TypeError("e must be an instance of Exception or None")
-    if isinstance(logger, logging.Logger):
+    if isinstance(logger, logging_util.Logger):
         raise TypeError("logger must be an instance of logging.Logger")
 
     reraise = kwargs.pop('reraise', False)
@@ -49,8 +50,9 @@ def basil_config():
     """Convenience method for setting up the logging module for use with basil.
     Could be used from the main script of the particular application.
     """
-    logging.basicConfig(level=logging.INFO,
+    logging.basicConfig(level=logging_util.INFO,
                         format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
+
 
 def lsbits(b):
     return (b * 0x0202020202 & 0x010884422010) % 1023
