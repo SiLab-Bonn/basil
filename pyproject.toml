@@ -43,7 +43,6 @@ test = [
     "cocotb-test>=0.2.6",
     "diff-cover",
     "pytest>=9.0.3",
-    "pytest-cov",
     "PyVISA",
     "pyvisa-sim",
 ]

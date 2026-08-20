@@ -86,7 +86,7 @@ jobs:
       if: matrix.coverage
       shell: bash -l {0}
       run: |
-        pip install pytest-cov diff-cover
+        pip install coverage diff-cover
 
     - name: Install basil
       shell: bash -l {0}
@@ -103,10 +103,9 @@ jobs:
       if: matrix.coverage
       shell: bash -l {0}
       run: |
-        pytest ${{matrix.pytest-marker}} \
-          --cov=basil \
-          --cov-report=xml:coverage.xml \
+        coverage run --source=basil -m pytest ${{matrix.pytest-marker}} \
           tests/test_*.py examples/*/*/test_*.py
+        coverage xml -o coverage.xml
         coverage report --format=total | awk '{print "### Test coverage: " $1 "%"}' >> "$GITHUB_STEP_SUMMARY"
 
     - name: Fetch pull request base

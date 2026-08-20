@@ -20,10 +20,10 @@ repos:
       - id: diff-coverage
         name: Differential test coverage
         entry: >-
-          bash -c 'SIM=icarus pytest
-          --cov=basil
-          --cov-report=xml:coverage.xml
+          bash -c 'SIM=icarus coverage run
+          --source=basil -m pytest
           tests/test_*.py examples/*/*/test_*.py
+          && coverage xml -o coverage.xml
           && diff-cover coverage.xml
           --compare-branch=origin/master
           --show-uncovered'
