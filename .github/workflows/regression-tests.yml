@@ -22,7 +22,7 @@ jobs:
         python-version: "3.12"
     - uses: pre-commit/action@v3.0.1
       env:
-        SKIP: diff-coverage # Run all normal formatting hooks in CI, but skip the local diff-coverage hook because the coverage job handles it separately.
+        SKIP: coverage # Run all normal formatting hooks in CI, but skip the local coverage hook because the coverage job handles it separately.
 
   tests:
 

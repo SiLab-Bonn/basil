@@ -17,13 +17,14 @@ repos:
     -   id: trailing-whitespace
   - repo: local
     hooks:
-      - id: diff-coverage
-        name: Differential test coverage
+      - id: coverage
+        name: Coverage
         entry: >-
           bash -c 'SIM=icarus coverage run
           --source=basil -m pytest
+          -q --disable-warnings
           tests/test_*.py examples/*/*/test_*.py
-          && coverage xml -o coverage.xml
+          && coverage xml -q -o coverage.xml
           && diff-cover coverage.xml
           --compare-branch=origin/master
           --show-uncovered'
