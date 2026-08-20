@@ -8,6 +8,9 @@ on:
     branches:
     - master
 
+permissions:
+  contents: read
+
 jobs:
 
   pre-commit:
@@ -18,11 +21,16 @@ jobs:
       with:
         python-version: "3.12"
     - uses: pre-commit/action@v3.0.1
+      env:
+        SKIP: diff-coverage # Run all normal formatting hooks in CI, but skip the local diff-coverage hook because the coverage job handles it separately.
 
   tests:
 
     name: Python ${{matrix.python-version}} | ${{matrix.sim}}
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      checks: write
     env:
       SIM: ${{matrix.sim}}
 
@@ -78,7 +86,7 @@ jobs:
       if: matrix.coverage
       shell: bash -l {0}
       run: |
-        pip install pytest-cov
+        pip install pytest-cov diff-cover
 
     - name: Install basil
       shell: bash -l {0}
@@ -95,5 +103,49 @@ jobs:
       if: matrix.coverage
       shell: bash -l {0}
       run: |
-        pytest ${{matrix.pytest-marker}} --cov=basil tests/test_*.py examples/*/*/test_*.py
+        pytest ${{matrix.pytest-marker}} \
+          --cov=basil \
+          --cov-report=xml:coverage.xml \
+          tests/test_*.py examples/*/*/test_*.py
         coverage report --format=total | awk '{print "### Test coverage: " $1 "%"}' >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Fetch pull request base
+      if: matrix.coverage && github.event_name == 'pull_request'
+      env:
+        BASE_REF: ${{github.base_ref}}
+      run: |
+        git fetch --no-tags --depth=1 origin \
+          "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
+
+    - name: Create differential coverage report
+      if: matrix.coverage && github.event_name == 'pull_request'
+      env:
+        BASE_REF: ${{github.base_ref}}
+      shell: bash -l {0}
+      run: |
+        diff-cover coverage.xml \
+          --compare-branch="origin/${BASE_REF}" \
+          --format=markdown:diff-cover.md
+        cat diff-cover.md >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Publish differential coverage check
+      if: >-
+        matrix.coverage &&
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository
+      continue-on-error: true
+      env:
+        GH_TOKEN: ${{github.token}}
+        HEAD_SHA: ${{github.event.pull_request.head.sha}}
+      run: |
+        gh api --method POST \
+          --header "Accept: application/vnd.github+json" \
+          --header "X-GitHub-Api-Version: 2022-11-28" \
+          "repos/${GITHUB_REPOSITORY}/check-runs" \
+          --raw-field name="Coverage (informational)" \
+          --raw-field head_sha="$HEAD_SHA" \
+          --raw-field status=completed \
+          --raw-field conclusion=neutral \
+          --raw-field "output[title]=Differential coverage" \
+          --field "output[summary]=@diff-cover.md" \
+          --silent
