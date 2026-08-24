@@ -6,6 +6,7 @@
 #
 import logging
 import os
+
 from yaml import load, BaseLoader, scanner
 
 from basil.HL.RegisterHardwareLayer import HardwareLayer
@@ -285,3 +286,9 @@ class scpi(HardwareLayer):
             else:
                 logging.getLogger(__name__).info(
                     "Device {} at node {} with code {}: {}".format(self.name, err_node, err_code, err_msg))
+
+    def identify_device(self):
+        answer = self.get_name()
+        if self._scpi_commands['identifier'] not in answer:
+            raise ValueError("The identified device '%s'n is not the requested one: '%s'", answer, self.id_name)
+        return answer
