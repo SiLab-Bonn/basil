@@ -7,7 +7,14 @@
 
 import logging
 from copy import deepcopy
-from collections.abc import Iterable
+
+try:
+    # noinspection PyCompatibility
+    from collections.abc import Iterable
+except ImportError:
+    # python 2.7
+    # noinspection PyProtectedMember,PyUnresolvedReferences
+    from collections import Iterable
 import array
 from collections import namedtuple
 from six import integer_types

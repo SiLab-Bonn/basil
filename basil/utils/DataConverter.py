@@ -1,7 +1,16 @@
 import functools
 import struct
 import warnings
-from typing import Callable, Iterable, Optional, Sequence, Union, Dict, Literal, Any, Tuple
+try:
+    # noinspection PyCompatibility
+    from collections.abc import Callable, Sequence, Iterable
+except ImportError:
+    # python 2.7
+    # noinspection PyProtectedMember,PyUnresolvedReferences
+    from typing import Callable, Sequence, Iterable
+finally:
+    from typing import Union, Optional, Literal, Dict, Tuple, Any
+
 from types import ModuleType
 
 np: Optional[ModuleType]
@@ -14,6 +23,7 @@ except ImportError:
     np = None
 
 def _use_numpy_routines(container: Callable) -> bool:
+    # TODO: Need to verify whether this would now operate correctly.
     return True
     return np is not None and isinstance(container, np.ndarray)
 
