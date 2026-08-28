@@ -15,3 +15,21 @@ repos:
     hooks:
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
+  - repo: local
+    hooks:
+      - id: coverage
+        name: Coverage
+        entry: >-
+          bash -c 'SIM=icarus coverage run
+          --source=basil -m pytest
+          -q --disable-warnings
+          tests/test_*.py examples/*/*/test_*.py
+          && coverage xml -q -o coverage.xml
+          && diff-cover coverage.xml
+          --compare-branch=origin/master
+          --show-uncovered'
+        language: system
+        pass_filenames: false
+        verbose: true
+        files: ^(basil/|tests/|examples/).*\.py$
+        stages: [pre-commit]

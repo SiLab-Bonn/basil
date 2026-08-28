@@ -41,6 +41,10 @@ Makefile
 *.out
 examples/lx9/device/src/SiTCP
 
+# Test coverage
+.coverage
+coverage.xml
+
 # PyDev files
 .project
 .pydevproject
