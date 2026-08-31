@@ -110,7 +110,6 @@ class Serial(TransferLayer):
         try:
            from pyvisa.util import parse_ieee_block_header, from_binary_block
         except ImportError:
-            # TODO: adjust this!
             logger.debug("Missed pyvisa module. Will try the alternative implementation.", exc_info=True)
             from ..utils.DataConverter import parse_ieee_block_header, from_binary_block
         offset, data_length = parse_ieee_block_header(data)
