@@ -14,6 +14,7 @@ except ImportError:
     np = None
 
 def _use_numpy_routines(container: Callable) -> bool:
+    # TODO: Need to verify whether this would now operate correctly.
     return True
     return np is not None and isinstance(container, np.ndarray)
 
