@@ -25,7 +25,8 @@ except ImportError:
 def _use_numpy_routines(container: Callable) -> bool:
     # TODO: Need to verify whether this would now operate correctly.
     return True
-    return np is not None and isinstance(container, np.ndarray)
+    containerd = container([])
+    return np is not None and isinstance(containerd, np.ndarray)
 
 
 DEFAULT_LENGTH_BEFORE_BLOCK = 25
