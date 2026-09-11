@@ -124,3 +124,24 @@ class i2c(RegisterHardwareLayer):
             pass
 
         return self.get_data(size)
+
+    def scan_i2c_address(self) -> list:
+        """Scans the whole i2c address space by writing an empty command to each address,
+        and checking if a acknowledge flag is set.
+        Note: basil uses an additional [R/W] bit for addressing compared to the I2C hardware address.
+
+        Returns:
+            list: List of all found I2C address
+        """
+        addr = []
+        for address in range(0x80):
+            try:
+                self.write(address << 1, [0])
+                # Basil uses the additional [R/W] bit for addressing
+                print("Found I2C at basil address:   ", hex(address << 1))
+                print("Corresponding to I2C address: ", hex(address), ",", bin(address))
+                print("-----------------------------------------------")
+                addr.append(bin(address))
+            except OSError:
+                pass
+        return addr
