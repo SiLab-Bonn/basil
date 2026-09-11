@@ -1,0 +1,9 @@
+test/sim_build/
+test/Makefile
+firmware/vivado/designs
+firmware/vivado/output
+firmware/vivado/reports
+firmware/SiTCP
+
+*.log
+*.history
