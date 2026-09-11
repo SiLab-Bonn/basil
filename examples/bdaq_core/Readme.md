@@ -1,4 +1,4 @@
-# Ethernet example for the BDAQ53 hardware
+# Example for the BDAQ core board
 This example shows how to control a GPIO module and how to receive data via the Ethernet interface.
 1. Data transfer is started by setting a bit [0] in the GPIO.
 2. FPGA starts to send data from a 32 bit counter through a BRAM FIFO.
