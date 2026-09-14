@@ -37,7 +37,6 @@ docs/_build
 *.vcd
 tests/results.xml
 sim_build
-Makefile
 *.out
 examples/lx9/device/src/SiTCP
 
