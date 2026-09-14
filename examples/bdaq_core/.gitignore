@@ -3,7 +3,9 @@ test/Makefile
 firmware/vivado/designs
 firmware/vivado/output
 firmware/vivado/reports
+firmware/vivado/.*
 firmware/SiTCP
 
 *.log
 *.history
+*.jou

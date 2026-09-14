@@ -14,7 +14,7 @@
 `include "gpio/gpio.v"
 
 
-module bdaq_core_throughput_test(
+module bdaq_core(
         input wire RESET_N,
         input wire clkin,
 

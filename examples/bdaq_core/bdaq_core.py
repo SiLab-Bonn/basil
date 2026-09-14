@@ -13,7 +13,7 @@ import numpy as np
 
 from basil.dut import Dut
 
-chip = Dut("bdaq53_eth.yaml")
+chip = Dut("bdaq_core.yaml")
 chip.init()
 
 chip["CONTROL"]["EN"] = 0

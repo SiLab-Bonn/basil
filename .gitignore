@@ -71,3 +71,4 @@ examples/tdc_bdaq/firmware/vivado/*
 !examples/tdc_bdaq/firmware/vivado/*.sh
 !examples/tdc_bdaq/firmware/vivado/run.tcl
 examples/tdc_bdaq/firmware/src/SiTCP/*
+examples/bdaq_core/firmware/vivado/dfx_runtime.txt
