@@ -39,6 +39,7 @@ class sensirionSHT45(SensirionBridgeI2CDevice):
 
         try:
             import crcmod
+
             self.crc_func = crcmod.mkCrcFun(0x131, initCrc=0xFF, rev=False, xorOut=0x00)
         except ImportError:
             logger.warning("You have to install the package 'crcmod'! Transmission errors will not be caught.")
@@ -130,6 +131,7 @@ class sensirionSHT45(SensirionBridgeI2CDevice):
         http://irtfweb.ifa.hawaii.edu/~tcs3/tcs3/Misc/Dewpoint_Calculation_Humidity_Sensor_E.pdf
         """
         import numpy as np
+
         if RH == 0:
             RH = self._to_humidity((0, 1))  # lowest non-zero rel. humidity
         H = (np.log10(RH) - 2) / 0.4343 + (17.62 * T) / (243.12 + T)
