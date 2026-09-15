@@ -1,8 +1,8 @@
 # Targets
-.PHONY: all clean
+.PHONY: all download synthesize clean
 
 # Run the main process
-all: download synthesize
+all: synthesize
 
 # Download SiTCP to the base directory
 download:
@@ -10,7 +10,7 @@ download:
 	@python -c "from basil.utils import utils; utils.get_si_tcp('..')"
 
 # Start synthesis
-synthesize:
+synthesize: download
 	@echo "Starting firmware synthesis"
 	vivado -mode batch -source run.tcl -notrace
 

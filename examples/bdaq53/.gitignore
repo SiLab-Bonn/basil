@@ -1,9 +1,25 @@
-test/sim_build/
-test/Makefile
-firmware/vivado/designs
-firmware/vivado/output
-firmware/vivado/reports
-firmware/SiTCP
+# SiTCP repositories downloaded by make download
+/firmware/SiTCP/
+/firmware/SiTCP10G/
 
-*.log
-*.history
+# Cocotb output when running from the example or its test directory
+/Makefile
+/test/Makefile
+/sim_build/
+/test/sim_build/
+
+# Vivado project, bitstreams, reports, and temporary files
+/firmware/vivado/designs/
+/firmware/vivado/output/
+/firmware/vivado/reports/
+/firmware/vivado/.Xil/
+/firmware/vivado/.ngc2edfcache/
+/firmware/vivado/ipcore.*
+/firmware/vivado/*.log
+/firmware/vivado/*.jou
+/firmware/vivado/*.str
+/firmware/vivado/*.history
+/firmware/vivado/clockInfo.txt
+/firmware/vivado/dfx_runtime.txt
+/firmware/vivado/usage_statistics_webtalk.*
+/firmware/vivado/webtalk*

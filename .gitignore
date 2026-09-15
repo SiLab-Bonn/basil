@@ -28,17 +28,26 @@ var/
 uv.lock
 .venv/
 
+# Cocotb-generated Makefiles (the simulator runs in the current directory)
+/Makefile
+/tests/Makefile
+
+# Python test/lint caches
+.pytest_cache/
+.ruff_cache/
+
 # icarus verilog
 host/tests/Makefile
 *.vvp
 
-#docs
+# Docs
 docs/_build
+
+# FPGA build artifacts
 *.vcd
 tests/results.xml
 sim_build
 *.out
-examples/lx9/device/src/SiTCP
 
 # Test coverage
 .coverage
@@ -59,6 +68,8 @@ firmware/modules/chipscope/*
 !firmware/modules/chipscope/*.xise
 !firmware/modules/chipscope/*.xco
 
+examples/lx9/device/src/SiTCP
+
 examples/mmc3_eth/firmware/vivado/*
 !examples/mmc3_eth/firmware/vivado/*.xpr
 examples/mmc3_eth/firmware/src/SiTCP/*
@@ -71,5 +82,3 @@ examples/tdc_bdaq/firmware/vivado/*
 !examples/tdc_bdaq/firmware/vivado/*.sh
 !examples/tdc_bdaq/firmware/vivado/run.tcl
 examples/tdc_bdaq/firmware/src/SiTCP/*
-examples/bdaq_core/firmware/vivado/dfx_runtime.txt
-examples/bdaq_core/firmware/SiTCP10G/*
