@@ -30,8 +30,7 @@ proc read_design_files {} {
     read_verilog ../src/bdaq_core.v
     read_verilog ../src/bdaq_core_core.v
 
-#    read_edif ../SiTCP/SiTCP_XC7K_32K_BBT_V110.ngc
-    read_edif ../SiTCP/SiTCP_XC7K_32K_BBT_V110.edif
+    read_edif ../SiTCP/SiTCP_XC7K_32K_BBT_V110.edf
     read_verilog ../SiTCP/TIMER.v
     read_verilog ../SiTCP/SiTCP_XC7K_32K_BBT_V110.V
     read_verilog ../SiTCP/WRAP_SiTCP_GMII_XC7K_32K.V
@@ -43,7 +42,7 @@ proc run_bit { part board connector xdc_file size option} {
 
     read_design_files
     read_xdc $xdc_file
-    read_xdc ../src/SiTCP.xdc
+    read_xdc ../SiTCP/EDF_SiTCP.xdc
 
     global include_dirs
 

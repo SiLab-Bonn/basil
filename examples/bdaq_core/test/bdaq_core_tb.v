@@ -7,7 +7,7 @@
 
 `timescale 1ps / 1ps
 
-`include "firmware/src/bdaq53_eth_core.v"
+`include "firmware/src/bdaq_core_core.v"
 `include "gpio/gpio_core.v"
 `include "gpio/gpio.v"
 `include "bram_fifo/bram_fifo.v"
@@ -81,7 +81,7 @@ wire [7:0] GPIO;
 wire ENABLE;
 assign ENABLE = GPIO[0];
 
-bdaq53_eth_core i_bdaq53_eth_core(
+bdaq_core_core i_bdaq_core_core(
     .RESET_N(RESET_N),
 
     // clocks from PLL
@@ -90,7 +90,7 @@ bdaq53_eth_core i_bdaq53_eth_core(
 
     .BUS_RST(BUS_RST),
     .BUS_ADD(BUS_ADD),
-    .BUS_DATA(BUS_DATA),
+    .BUS_DATA(BUS_DATA[7:0]),
     .BUS_RD(BUS_RD),
     .BUS_WR(BUS_WR),
 
@@ -103,7 +103,7 @@ bdaq53_eth_core i_bdaq53_eth_core(
 
 
 initial begin
-    $dumpfile("/tmp/mmc3_eth.vcd");
+    $dumpfile("bdaq_core.vcd");
     $dumpvars(0);
 end
 

@@ -20,18 +20,18 @@ doprint = True
 IntsToReceive = 1000
 
 
-class TestSimBDAQ53Eth(unittest.TestCase):
+class TestSimBDAQCore(unittest.TestCase):
     def setUp(self):
         sys.path = [os.path.dirname(os.getcwd())] + sys.path
         proj_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
         cocotb_compile_and_run(
-            sim_files=[proj_dir + "/test/bdaq53_eth_tb.v"],
+            sim_files=[proj_dir + "/test/bdaq_core_tb.v"],
             top_level="tb",
             include_dirs=(proj_dir, proj_dir + "/firmware/src"),
         )
 
-        with open(proj_dir + "/bdaq53_eth.yaml") as conf_file:
+        with open(proj_dir + "/bdaq_core.yaml") as conf_file:
             try:
                 conf = yaml.safe_load(conf_file)
             except yaml.YAMLError as exception:
