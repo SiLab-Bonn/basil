@@ -17,7 +17,7 @@ module i2c #(
     parameter BASEADDR = 16'h0000,
     parameter HIGHADDR = 16'h0000,
     parameter ABUSWIDTH = 16,
-    parameter MEM_BYTES = 1,
+    parameter MEM_BYTES = 32, // must be > 1
     parameter IGNORE_ACK = 0
 ) (
     input wire                 BUS_CLK,
