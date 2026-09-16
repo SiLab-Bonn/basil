@@ -60,7 +60,7 @@ class tdl_tdc(RegisterHardwareLayer):
             return self.word_type_codes[self.get_word_type(word)] in ["TRIGGERED", "RISING", "FALLING"]
 
     def get_raw_tdl_values(self, word):
-        return word & 0b1111111
+        return word & 0x7F
 
     def tdl_to_time(self, tdl_value):
         sample_proportion = self.calib_vector[tdl_value]
@@ -111,17 +111,17 @@ class tdl_tdc(RegisterHardwareLayer):
         word_type = self.word_type_codes[self.get_word_type(word)]
         if word_type in ["CALIB", "TRIGGERED", "RISING", "FALLING"]:
             return {
-                "source_id": (word >> (32 - 4)),
+                "source_id": word >> (32 - 4),
                 "word_type": word_type,
-                "tdl_value": word & 0b1111111,
+                "tdl_value": word & 0x7F,
                 "fine_clk_value": self.get_tdc_value(word),
                 "raw_word": word,
             }
         elif word_type in ["TIMESTAMP", "RST"]:
             return {
-                "source_id": (word >> (32 - 4)),
+                "source_id": word >> (32 - 4),
                 "word_type": word_type,
-                "timestamp": (word >> 9) & 0xFFFF,
+                "timestamp": word & 0x1FFFFFF,
                 "raw_word": word,
             }
         else:
