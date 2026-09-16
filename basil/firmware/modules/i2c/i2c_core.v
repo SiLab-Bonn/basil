@@ -15,7 +15,7 @@
 
 module i2c_core #(
     parameter ABUSWIDTH = 16,
-    parameter MEM_BYTES = 1,
+    parameter MEM_BYTES = 32, // must be > 1
     parameter IGNORE_ACK = 0
 ) (
     input wire BUS_CLK,
@@ -115,7 +115,7 @@ wire [ABUSWIDTH-1:0] BUS_MEM_ADD;
 assign BUS_MEM_EN = (BUS_WR | BUS_RD) & BUS_ADD >= 8;
 assign BUS_MEM_ADD = BUS_ADD-8;
 
-(* RAM_STYLE="{BLOCK_POWER2}" *)
+(* ram_style = "block" *)
 reg [7:0] mem [MEM_BYTES-1:0];
 
 always @(posedge BUS_CLK)
