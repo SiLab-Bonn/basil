@@ -18,10 +18,17 @@ Various Verilog modules used by basil.
 - flag_domain_crossing
 - flag_domain_crossing_ce
 - generic_fifo
+- IBUFDS_GTE2
 - IDDR
 - IDDR_s3
+- IDELAYCTRL
+- IDELAYE2
 - ODDR
 - ODDR_s3
+- ODELAYE2
+- OSERDESE2
+- PLLE2_ADV
+- PLLE2_BASE
 - pulse_gen_rising
 - RAMB16_S1_S2
 - RAMB16_S1_S9
