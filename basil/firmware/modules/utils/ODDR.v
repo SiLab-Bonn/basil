@@ -7,33 +7,31 @@
 `ifndef ODDR_SIM
 `define ODDR_SIM
 
-`timescale 1ps/1ps
+`timescale 1ps / 1ps
 `default_nettype none
 
 
 module ODDR #(
     parameter DDR_CLK_EDGE = "OPPOSITE_EDGE",
-    parameter INIT = 1'b0,
-    parameter SRTYPE = "SYNC"
-)(
+    parameter INIT         = 1'b0,
+    parameter SRTYPE       = "SYNC"
+) (
     output wire Q,
-    input wire C,
-    input wire CE,
-    input wire D1,
-    input wire D2,
-    input wire R,
-    input wire S
+    input  wire C,
+    input  wire CE,
+    input  wire D1,
+    input  wire D2,
+    input  wire R,
+    input  wire S
 );
 
-reg Q1, Q2;
+    reg Q1, Q2;
 
-always @(posedge C)
-    Q1 <= D1;
+    always @(posedge C) Q1 <= D1;
 
-always @(negedge C)
-    Q2 <= D2;
+    always @(negedge C) Q2 <= D2;
 
-assign Q = C ? Q1 & CE : Q2 & CE;
+    assign Q = C ? Q1 & CE : Q2 & CE;
 
 endmodule
 

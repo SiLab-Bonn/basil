@@ -7,21 +7,20 @@
 `ifndef PULSE_GEN_RISING
 `define PULSE_GEN_RISING
 
-`timescale 1ps/1ps
+`timescale 1ps / 1ps
 `default_nettype none
 
 
 module pulse_gen_rising (
-    input wire clk_in,
-    input wire in,
+    input  wire clk_in,
+    input  wire in,
     output wire out
 );
 
-reg ff;
-always @(posedge clk_in)
-    ff <= in;
+    reg ff;
+    always @(posedge clk_in) ff <= in;
 
-assign out = !ff && in;
+    assign out = !ff && in;
 
 endmodule
 

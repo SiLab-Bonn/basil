@@ -7,16 +7,16 @@
 `ifndef BUFG_SIM
 `define BUFG_SIM
 
-`timescale 1ps/1ps
+`timescale 1ps / 1ps
 `default_nettype none
 
 
 module BUFG (
-    input wire I,
+    input  wire I,
     output wire O
 );
 
-assign O = I;
+    assign O = I;
 
 endmodule
 

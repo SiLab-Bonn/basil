@@ -7,20 +7,20 @@
 `ifndef OBUF_SIM
 `define OBUF_SIM
 
-`timescale 1ps/1ps
+`timescale 1ps / 1ps
 `default_nettype none
 
 
 module OBUF #(
-    parameter DRIVE = 12,
+    parameter DRIVE      = 12,
     parameter IOSTANDARD = "DEFAULT",
-    parameter SLEW = "SLOW"
+    parameter SLEW       = "SLOW"
 ) (
     output wire O,
-    input wire I
+    input  wire I
 );
 
-assign O = I;
+    assign O = I;
 
 endmodule
 

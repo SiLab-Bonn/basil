@@ -8,44 +8,44 @@
 `timescale 1ps / 1ps
 
 `ifdef BASIL_SBUS
-    `define SPLIT_BUS
+`define SPLIT_BUS
 `elsif BASIL_TOPSBUS
-    `define SPLIT_BUS
+`define SPLIT_BUS
 `endif
 
 `ifndef BASIL_SBUS
-    `include "gpio/gpio.v"
+`include "gpio/gpio.v"
 `else
-    `include "utils/sbus_to_ip.v"
-    `include "gpio/gpio_sbus.v"
+`include "utils/sbus_to_ip.v"
+`include "gpio/gpio_sbus.v"
 `endif
 
 module tb (
-    input wire          BUS_CLK,
-    input wire          BUS_RST,
-    input wire  [31:0]  BUS_ADD,
+    input  wire        BUS_CLK,
+    input  wire        BUS_RST,
+    input  wire [31:0] BUS_ADD,
 `ifndef SPLIT_BUS
-    inout wire  [7:0]   BUS_DATA,
+    inout  wire [ 7:0] BUS_DATA,
 `else
-    input wire  [7:0]   BUS_DATA_IN,
-    output wire [7:0]   BUS_DATA_OUT,
+    input  wire [ 7:0] BUS_DATA_IN,
+    output wire [ 7:0] BUS_DATA_OUT,
 `endif
-    input wire          BUS_RD,
-    input wire          BUS_WR
+    input  wire        BUS_RD,
+    input  wire        BUS_WR
 );
 
-localparam GPIO_BASEADDR = 16'h0000;
-localparam GPIO_HIGHADDR = 16'h000f;
+    localparam GPIO_BASEADDR = 16'h0000;
+    localparam GPIO_HIGHADDR = 16'h000f;
 
-localparam GPIO2_BASEADDR = 16'h0010;
-localparam GPIO2_HIGHADDR = 16'h001f;
+    localparam GPIO2_BASEADDR = 16'h0010;
+    localparam GPIO2_HIGHADDR = 16'h001f;
 
-localparam ABUSWIDTH = 32;
+    localparam ABUSWIDTH = 32;
 
-// Connect tb internal bus to external split bus
+    // Connect tb internal bus to external split bus
 `ifdef BASIL_TOPSBUS
     wire [7:0] BUS_DATA;
-    assign BUS_DATA = BUS_DATA_IN;
+    assign BUS_DATA     = BUS_DATA_IN;
     assign BUS_DATA_OUT = BUS_DATA;
 `elsif BASIL_SBUS
     wire [7:0] BUS_DATA_OUT_1;
@@ -53,71 +53,75 @@ localparam ABUSWIDTH = 32;
     assign BUS_DATA_OUT = BUS_DATA_OUT_1 | BUS_DATA_OUT_2;
 `endif
 
-/* verilator lint_off UNOPTFLAT */
-wire [23:0] IO;
+    /* verilator lint_off UNOPTFLAT */
+    wire [23:0] IO;
 
-assign IO[15:8] = IO[7:0];
-assign IO[23:20] = IO[19:16];
-/* verilator lint_on UNOPTFLAT */
-
-`ifndef BASIL_SBUS
-gpio #(
-`else
-gpio_sbus #(
-`endif
-    .BASEADDR(GPIO_BASEADDR),
-    .HIGHADDR(GPIO_HIGHADDR),
-    .ABUSWIDTH(ABUSWIDTH),
-    .IO_WIDTH(24),
-    .IO_DIRECTION(24'h0000ff),
-    .IO_TRI(24'hff0000)
-) i_gpio (
-    .BUS_CLK(BUS_CLK),
-    .BUS_RST(BUS_RST),
-    .BUS_ADD(BUS_ADD),
-`ifndef BASIL_SBUS
-    .BUS_DATA(BUS_DATA),
-`else
-    .BUS_DATA_IN(BUS_DATA_IN),
-    .BUS_DATA_OUT(BUS_DATA_OUT_1),
-`endif
-    .BUS_RD(BUS_RD),
-    .BUS_WR(BUS_WR),
-    .IO(IO)
-);
-
-wire [15:0] IO_2;
-assign IO_2 = 16'ha5cd;
+    assign IO[15:8]  = IO[7:0];
+    assign IO[23:20] = IO[19:16];
+    /* verilator lint_on UNOPTFLAT */
 
 `ifndef BASIL_SBUS
-gpio #(
+    `define BASIL_TEST_GPIO gpio
 `else
-gpio_sbus #(
+    `define BASIL_TEST_GPIO gpio_sbus
 `endif
-    .BASEADDR(GPIO2_BASEADDR),
-    .HIGHADDR(GPIO2_HIGHADDR),
-    .IO_WIDTH(16),
-    .IO_DIRECTION(16'h0000)
-) i_gpio2 (
-    .BUS_CLK(BUS_CLK),
-    .BUS_RST(BUS_RST),
-    .BUS_ADD(BUS_ADD),
+    `BASIL_TEST_GPIO #(
+        .BASEADDR    (GPIO_BASEADDR),
+        .HIGHADDR    (GPIO_HIGHADDR),
+        .ABUSWIDTH   (ABUSWIDTH),
+        .IO_WIDTH    (24),
+        .IO_DIRECTION(24'h0000ff),
+        .IO_TRI      (24'hff0000)
+    ) i_gpio (
+        .BUS_CLK     (BUS_CLK),
+        .BUS_RST     (BUS_RST),
+        .BUS_ADD     (BUS_ADD),
 `ifndef BASIL_SBUS
-    .BUS_DATA(BUS_DATA),
+        .BUS_DATA    (BUS_DATA),
 `else
-    .BUS_DATA_IN(BUS_DATA_IN),
-    .BUS_DATA_OUT(BUS_DATA_OUT_2),
+        .BUS_DATA_IN (BUS_DATA_IN),
+        .BUS_DATA_OUT(BUS_DATA_OUT_1),
 `endif
-    .BUS_RD(BUS_RD),
-    .BUS_WR(BUS_WR),
-    .IO(IO_2)
-);
+        .BUS_RD      (BUS_RD),
+        .BUS_WR      (BUS_WR),
+        .IO          (IO)
+    );
+
+    wire [15:0] IO_2;
+    assign IO_2 = 16'ha5cd;
+
+`ifndef BASIL_SBUS
+    `define BASIL_TEST_GPIO gpio
+`else
+    `define BASIL_TEST_GPIO gpio_sbus
+`endif
+    `BASIL_TEST_GPIO #(
+        .BASEADDR    (GPIO2_BASEADDR),
+        .HIGHADDR    (GPIO2_HIGHADDR),
+        .IO_WIDTH    (16),
+        .IO_DIRECTION(16'h0000)
+    ) i_gpio2 (
+        .BUS_CLK     (BUS_CLK),
+        .BUS_RST     (BUS_RST),
+        .BUS_ADD     (BUS_ADD),
+`ifndef BASIL_SBUS
+        .BUS_DATA    (BUS_DATA),
+`else
+        .BUS_DATA_IN (BUS_DATA_IN),
+        .BUS_DATA_OUT(BUS_DATA_OUT_2),
+`endif
+        .BUS_RD      (BUS_RD),
+        .BUS_WR      (BUS_WR),
+        .IO          (IO_2)
+    );
 
 `ifndef VERILATOR_SIM
-initial begin
-    $dumpfile("gpio.vcd");
-    $dumpvars(0);
-end
+    initial begin
+        $dumpfile("gpio.vcd");
+        $dumpvars(0);
+    end
 `endif
 
 endmodule
+
+`undef BASIL_TEST_GPIO

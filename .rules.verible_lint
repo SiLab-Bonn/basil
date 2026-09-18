@@ -1,0 +1,7 @@
+# Basil permits module names that differ from file names.
+-module-filename
+# These rules require SystemVerilog syntax.
+-always-comb
+-explicit-parameter-storage-type
+-unpacked-dimensions-range-ordering
+parameter-name-style=localparam_style:CamelCase|ALL_CAPS
