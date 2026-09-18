@@ -29,19 +29,19 @@ class si570(HardwareLayer):
         super(si570, self).__init__(intf, conf)
         self._base_addr = conf["base_addr"]
         self._reg = StdRegister(driver=None, conf=si570_reg)
-        self._freq = conf["init"]
+        self._factory_frequency = float(conf.get("init", {}).get("factory_frequency", 156.25))
 
     def init(self):
         super(si570, self).init()
         self.frequency_change(float(self._init["frequency"]))
 
     def reset(self):
-        self._intf.write(0xBA, [135])
-        RECALL = self._intf.read(0xBA, 1)
-        self._intf.write(0xBA, [135] + [RECALL[0] | 0b1])
+        self._intf.write(self._base_addr, [135])
+        RECALL = self._intf.read(self._base_addr, 1)
+        self._intf.write(self._base_addr, [135] + [RECALL[0] | 0b1])
 
     def frequency_change(self, freq):  # freq in MHz
-        f0 = 156.25
+        f0 = self._factory_frequency
 
         self.reset()
 
@@ -82,24 +82,24 @@ class si570(HardwareLayer):
         self._reg["N1"] = N1 - 1
         self._reg["RFREQ"] = RFREQ
 
-        self._intf.write(0xBA, [137])
-        dco_freeze = self._intf.read(0xBA, 1)
+        self._intf.write(self._base_addr, [137])
+        dco_freeze = self._intf.read(self._base_addr, 1)
 
-        self._intf.write(0xBA, [135])
-        new_freq_flag = self._intf.read(0xBA, 1)
+        self._intf.write(self._base_addr, [135])
+        new_freq_flag = self._intf.read(self._base_addr, 1)
 
         # Freeze the DCO
-        self._intf.write(0xBA, [137] + [dco_freeze[0] | 0b10000])
+        self._intf.write(self._base_addr, [137] + [dco_freeze[0] | 0b10000])
         # Write the new frequency configuration
-        self._intf.write(0xBA, [7] + self._reg.tobytes().tolist())
+        self._intf.write(self._base_addr, [7] + self._reg.tobytes().tolist())
         # Unfreeze the DCO
-        self._intf.write(0xBA, [137] + [dco_freeze[0] & 0b01111])
+        self._intf.write(self._base_addr, [137] + [dco_freeze[0] & 0b01111])
         # Assert the NewFreq bit
-        self._intf.write(0xBA, [135] + [new_freq_flag[0] | 0b01000000])
+        self._intf.write(self._base_addr, [135] + [new_freq_flag[0] | 0b01000000])
 
     def read_registers(self):
-        self._intf.write(0xBA, [7])
-        reg_val = self._intf.read(0xBA, 6)
+        self._intf.write(self._base_addr, [7])
+        reg_val = self._intf.read(self._base_addr, 6)
 
         HS_DIV = (reg_val[0] & 0xE0) >> 5
         HS_DIV += 4

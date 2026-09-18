@@ -58,9 +58,11 @@ get_horizontal_delay_time : HORizontal:DELay:TIMe?
 channel 1:
     set_coupling : CH1:COUPling
     get_coupling : CH1:COUPling?
-    set_impedance : CH1:IMPedance
-    get_impedance : CH1:IMPedance?
+    set_impedance : CH1:TERmination
+    get_impedance : CH1:TERmination?
     set_trigger_source : TRIGger:A:EDGe:SOUrce CH1
+    set_trigger_level : TRIGger:A:LEVel:CH1
+    get_trigger_level : TRIGger:A:LEVel:CH1?
     get_data : DATA:SOURCE CH1;:CURVe?  # read data from channel 1
     get_parameters : DATA:SOURCE CH1;:WFMPRe?
     set_vertical_scale : CH1:SCAle
@@ -74,9 +76,11 @@ channel 1:
 channel 2:
     set_coupling : CH2:COUPling
     get_coupling : CH2:COUPling?
-    set_impedance : CH2:IMPedance
-    get_impedance : CH2:IMPedance?
+    set_impedance : CH2:TERmination
+    get_impedance : CH2:TERmination?
     set_trigger_source : TRIGger:A:EDGe:SOUrce CH2
+    set_trigger_level : TRIGger:A:LEVel:CH2
+    get_trigger_level : TRIGger:A:LEVel:CH2?
     get_data : DATA:SOURCE CH2;:CURVe?  # read data from channel 2
     get_parameters : DATA:SOURCE CH2;:WFMPRe?
     set_vertical_scale : CH2:SCAle
@@ -90,9 +94,11 @@ channel 2:
 channel 3:
     set_coupling : CH3:COUPling
     get_coupling : CH3:COUPling?
-    set_impedance : CH3:IMPedance
-    get_impedance : CH3:IMPedance?
+    set_impedance : CH3:TERmination
+    get_impedance : CH3:TERmination?
     set_trigger_source : TRIGger:A:EDGe:SOUrce CH3
+    set_trigger_level : TRIGger:A:LEVel:CH3
+    get_trigger_level : TRIGger:A:LEVel:CH3?
     get_data : DATA:SOURCE CH3;:CURVe?  # read data from channel 3
     get_parameters : DATA:SOURCE CH3;:WFMPRe?
     set_vertical_scale : CH3:SCAle
@@ -106,9 +112,11 @@ channel 3:
 channel 4:
     set_coupling : CH4:COUPling
     get_coupling : CH4:COUPling?
-    set_impedance : CH4:IMPedance
-    get_impedance : CH4:IMPedance?
+    set_impedance : CH4:TERmination
+    get_impedance : CH4:TERmination?
     set_trigger_source : TRIGger:A:EDGe:SOUrce CH4
+    set_trigger_level : TRIGger:A:LEVel:CH4
+    get_trigger_level : TRIGger:A:LEVel:CH4?
     get_data : DATA:SOURCE CH4;:CURVe?  # read data from channel 4
     get_parameters : DATA:SOURCE CH4;:WFMPRe?
     set_vertical_scale : CH4:SCAle

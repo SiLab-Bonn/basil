@@ -21,7 +21,18 @@ source_current : SOUR:FUNC CURR
 get_source_mode : SOUR:FUNC?
 set_autorange : SOUR:CURR:RANG:AUTO ON
 set_voltage_range : SOUR:VOLT:RANGE
+get_voltage_range : SOUR:VOLT:RANGE?
 get_autorange : SOUR:CURR:RANG:AUTO?
+current_sense_autorange_on: SENS:CURR:RANG:AUTO ON
+current_sense_autorange_off: SENS:CURR:RANG:AUTO OFF
+get_current_sense_autorange: SENS:CURR:RANG:AUTO?
+set_current_sense_range: SENS:CURR:RANGE
+get_current_sense_range: SENS:CURR:RANGE?
+set_current_nplc: SENS:CURR:NPLC
+get_current_nplc: SENS:CURR:NPLC?
+autozero_on: SYST:AZER:STAT ON
+autozero_off: SYST:AZER:STAT OFF
+get_autozero: SYST:AZER:STAT?
 four_wire_on: SYST:RSEN ON
 four_wire_off: SYST:RSEN OFF
 get_remote_sense: SYST:RSEN ?
