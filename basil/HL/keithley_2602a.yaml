@@ -49,15 +49,32 @@ channel 1:
   multi_voltage_measurement: smua.measure.v(smua.nvbuffer2)
   get_multi_current: printbuffer(1, smua.measure.count, smua.nvbuffer1)
   get_multi_voltage: printbuffer(1, smua.measure.count, smua.nvbuffer2)
+  get_advanced_current: smua.measure.i(smua.nvbuffer1);printbuffer(1, 
+    smua.measure.count, smua.nvbuffer1)
+  get_advanced_voltage: smua.measure.v(smua.nvbuffer2);printbuffer(1, 
+    smua.measure.count, smua.nvbuffer2)
   create_average_current: statistics1 = smua.buffer.getstats(smua.nvbuffer1)
   create_average_voltage: statistics2 = smua.buffer.getstats(smua.nvbuffer2)
   get_averaged_current: print(statistics1.mean,statistics1.stddev)
-  get_averaged_voltage: printbuffer(1,4,statistics2)
+  get_averaged_voltage: print(statistics2.mean, statistics2.stddev)
+  get_avg_current: smua.measure.i(smua.nvbuffer1);statistics1 = 
+    smua.buffer.getstats(smua.nvbuffer1);print(statistics1.mean,statistics1.stddev)
+  get_avg_voltage: smua.measure.v(smua.nvbuffer2);statistics2 = 
+    smua.buffer.getstats(smua.nvbuffer2);print(statistics2.mean,statistics2.stddev)
   set_number_measurements: smua.measure.count =
   get_number_measurements: print(smua.measure.count)
   get_sense_interval: print(smua.measure.interval)
   set_sense_interval: smua.measure.interval =
   set_mode_measure_current_A: display.smua.measure.func = display.MEASURE_DCAMPS
+  set_mode_measure_voltage_V: display.smua.measure.func = 
+    display.MEASURE_DCVOLTS
+  set_mode_measure_ohms_O: display.smua.measure.func = display.MEASURE_OHMS
+  set_mode_measure_watts_W: display.smua.measure.func = display.MEASURE_WATTS
+  get_mode_measure: print(display.smua.measure.func)
+  enable_filter: smua.measure.filter.enable = smua.FILTER_ON
+  disable_filter: smua.measure.filter.enable = smua.FILTER_OFF
+  set_filter_count: smua.measure.filter.count =
+  get_filter_count: print(smua.measure.filter.count)
 
 channel 2:
   reset: smub.reset()
@@ -105,15 +122,32 @@ channel 2:
   multi_voltage_measurement: smub.measure.v(smub.nvbuffer2)
   get_multi_current: printbuffer(1, smub.measure.count, smub.nvbuffer1)
   get_multi_voltage: printbuffer(1, smub.measure.count, smub.nvbuffer2)
+  get_advanced_current: smub.measure.i(smub.nvbuffer1);printbuffer(1, 
+    smub.measure.count, smub.nvbuffer1)
+  get_advanced_voltage: smub.measure.v(smub.nvbuffer2);printbuffer(1, 
+    smub.measure.count, smub.nvbuffer2)
   create_average_current: statistics1 = smub.buffer.getstats(smub.nvbuffer1)
   create_average_voltage: statistics2 = smub.buffer.getstats(smub.nvbuffer2)
   get_averaged_current: print(statistics1.mean,statistics1.stddev)
-  get_averaged_voltage: printbuffer(1,4,statistics2)
+  get_averaged_voltage: print(statistics2.mean, statistics2.stddev)
+  get_avg_current: smub.measure.i(smub.nvbuffer1);statistics1 = 
+    smub.buffer.getstats(smub.nvbuffer1);print(statistics1.mean,statistics1.stddev)
+  get_avg_voltage: smub.measure.v(smub.nvbuffer2);statistics2 = 
+    smub.buffer.getstats(smub.nvbuffer2);print(statistics2.mean,statistics2.stddev)
   set_number_measurements: smub.measure.count =
   get_number_measurements: print(smub.measure.count)
   get_sense_interval: print(smub.measure.interval)
   set_sense_interval: smub.measure.interval =
   set_mode_measure_current_A: display.smub.measure.func = display.MEASURE_DCAMPS
+  set_mode_measure_voltage_V: display.smub.measure.func = 
+    display.MEASURE_DCVOLTS
+  set_mode_measure_ohms_O: display.smub.measure.func = display.MEASURE_OHMS
+  set_mode_measure_watts_W: display.smub.measure.func = display.MEASURE_WATTS
+  get_mode_measure: print(display.smub.measure.func)
+  enable_filter: smub.measure.filter.enable = smub.FILTER_ON
+  disable_filter: smub.measure.filter.enable = smub.FILTER_OFF
+  set_filter_count: smub.measure.filter.count =
+  get_filter_count: print(smub.measure.filter.count)
 
 binary_format: format.data = format.DREAL
 text_format: format.data = format.ASCII
@@ -126,14 +160,22 @@ get_error_code: print(errorCode)
 get_error_message: print(message)
 get_error_severity: print(severity)
 get_error_node: print(errorNode)
+get_lan_config_method: print(lan.config.method)
+get_lan_ip_adress: print(lan.config.ipaddress)
 
 __scpi_binary_commands:
   get_multi_current:
-    datatype: f
+    datatype: d
   get_multi_voltage:
-    datatype: f
+    datatype: d
   get_averaged_voltage:
-    datatype: f
+    datatype: d
+  get_advanced_current:
+    datatype: d
+  get_advanced_voltage:
+    datatype: d
+
+
 
 #on : smuX.source.output = 1
 #off : smuX.source.output = 0

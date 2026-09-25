@@ -14,9 +14,8 @@ except ImportError:
     np = None
 
 def _use_numpy_routines(container: Callable) -> bool:
-    # TODO: Need to verify whether this would now operate correctly.
-    return True
-    return np is not None and isinstance(container, np.ndarray)
+    containerd = container([])
+    return np is not None and isinstance(containerd, np.ndarray)
 
 
 DEFAULT_LENGTH_BEFORE_BLOCK = 25
@@ -153,7 +152,6 @@ def parse_ieee_block_header(
         data_length = -1
 
     return offset, data_length
-
 
 def from_binary_block(
         block: Union[bytes, bytearray],
