@@ -4,13 +4,14 @@
 # SiLab, Institute of Physics, University of Bonn
 # ------------------------------------------------------------
 #
-import pyvisa as visa
-import numpy as np
 import logging
 import time
 
-from basil.TL.TransferLayer import TransferLayer
+import numpy as np
+import pyvisa as visa
 from pyvisa.errors import VisaIOError
+
+from basil.TL.TransferLayer import TransferLayer
 from basil.utils.utils import log_exception
 
 # get the IterableType
@@ -112,7 +113,7 @@ class Visa(TransferLayer):
     def query_binary(self, data, data_type='f', max_tries=10000):
         ''' Use a dedicated handler to query binary data from the device. This could speed up acquiring large datasets.'''
         # TODO: merge this into query()
-        if not self._use_binary_mode or self._resource.read_termination == "":
+        if self._resource.read_termination == "":
             logger.warning("query_binary() is not supported for this device.")
             return self.query(data, max_tries)
         return self._resource.query_binary_values(data, datatype=data_type, container=np.ndarray, is_big_endian=False,)
