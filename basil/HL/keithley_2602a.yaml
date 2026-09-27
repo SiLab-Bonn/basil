@@ -175,6 +175,12 @@ __scpi_binary_commands:
   get_advanced_voltage:
     datatype: d
 
+__scpi_query_fmt:
+  fmt_sep: ','
+  fmt_method:
+    get_voltage: '{0}'
+    get_current: '{0}'
+
 
 
 #on : smuX.source.output = 1

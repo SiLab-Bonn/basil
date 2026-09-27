@@ -25,14 +25,24 @@ devices:
           q: "SENSE:FUNC '{}'"
     channels:
       type1:
-        ids: ['VOLT']
-        can_select: False
+        ids: ['smua', 'smub']
+        can_select: True
         properties:
-          value:
+          value_volts:
             default: 1.0
             getter:
-              q: ':READ?'
+              q: 'print({ch_id}.measure.v())'
               r: '-5.124E-05,+1.789E-10,+1.001E37,1.001E5'
-  resources:
-    ASRL1::INSTR:
-      device: device 1
+          value_current:
+            default: 1.0
+            getter:
+              q: 'print({ch_id}.measure.i())'
+              r: '-5.124E-05,+1.789E-10,+1.001E37,1.001E5'
+          value_reading:
+            default: 1.0
+            getter:
+              q: 'print({ch_id}.measure.iv())'
+              r: '-5.124E-05,+1.789E-10,+1.001E37,1.001E5'
+resources:
+  ASRL1::INSTR:
+    device: device 1
