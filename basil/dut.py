@@ -15,8 +15,8 @@ import warnings
 from collections import OrderedDict
 from importlib import import_module
 from inspect import getmembers, isclass
+from pathlib import Path
 
-from six import string_types
 from yaml import safe_load
 
 logging.basicConfig(
@@ -50,11 +50,13 @@ class Base(object):
         conf_dict = {}
         if not conf:
             pass
-        elif isinstance(conf, string_types):  # parse the first YAML document in a stream
+        elif isinstance(conf, (str, Path)):  # parse the first YAML document in a stream
             if os.path.isfile(conf):
                 with open(conf, "r") as f:
                     conf_dict.update(safe_load(f))
-                    conf_dict.update(conf_path=f.name)
+                    conf_dict.update(conf_path=str(f.name))
+            elif isinstance(conf, Path):
+                raise IOError("File not found: %s" % conf)
             else:  # YAML string
                 try:
                     conf_dict.update(safe_load(conf))
