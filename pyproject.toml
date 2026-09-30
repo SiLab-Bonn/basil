@@ -47,6 +47,11 @@ test = [
     "pyvisa-sim",
 ]
 
+hdl-lint = [
+    "pyslang==11.0.0",
+    "tomli==2.2.1; python_version < '3.11'",
+]
+
 docs = [
     "sphinx",
     "sphinx-book-theme",
@@ -61,12 +66,101 @@ version = {attr = "basil.__version__"}
 [tool.pytest.ini_options]
 markers = ["verilator: Verilog tests."]
 
-[tool.isort]
-profile = "black"
-
 [tool.ruff]
-# Set the maximum line length to 180.
+# Set the maximum line length to 120.
 line-length = 120
+
+[tool.ruff.lint]
+extend-select = ["I"]
 
 [tool.uv.sources]
 cocotb-test = { git = "https://github.com/themperek/cocotb-test.git", rev = "4e6b7db" }
+
+# Repository scripts translate these settings into native HDL tool arguments.
+[tool.basil-hdl]
+verilog-standard = "1364-2005"
+systemverilog-standard = "1800-2017"
+source-suffixes = [".v", ".sv"]
+vendor-directories = ["sitcp"]
+include-directories = ["basil/firmware/modules", "basil/firmware/modules/utils", "basil/firmware/modules/includes"]
+library-directories = [
+    "basil/firmware/modules/utils",
+    "basil/firmware/modules/bram_fifo",
+    "basil/firmware/modules/cmd_seq",
+    "basil/firmware/modules/fast_spi_rx",
+    "basil/firmware/modules/fei4_rx",
+    "basil/firmware/modules/fx3_if",
+    "basil/firmware/modules/gpac_adc_rx",
+    "basil/firmware/modules/gpio",
+    "basil/firmware/modules/i2c",
+    "basil/firmware/modules/includes",
+    "basil/firmware/modules/jtag_master",
+    "basil/firmware/modules/m26_rx",
+    "basil/firmware/modules/pulse_gen",
+    "basil/firmware/modules/rrp_arbiter",
+    "basil/firmware/modules/seq_gen",
+    "basil/firmware/modules/seq_rec",
+    "basil/firmware/modules/spi",
+    "basil/firmware/modules/sram_fifo",
+    "basil/firmware/modules/tb",
+    "basil/firmware/modules/tdc_s3",
+    "basil/firmware/modules/tdl_tdc",
+    "basil/firmware/modules/tdl_tdc/counter",
+    "basil/firmware/modules/tdl_tdc/delayline",
+    "basil/firmware/modules/tdl_tdc/utils",
+    "basil/firmware/modules/timestamp",
+    "basil/firmware/modules/tlu",
+    "basil/firmware/modules/uart",
+]
+
+[tool.basil-hdl.verible-lint]
+# The disabled rules conflict with Basil's filenames or Verilog-2005 dialect.
+rules = ["-module-filename", "-always-comb", "-explicit-parameter-storage-type", "-unpacked-dimensions-range-ordering", "parameter-name-style=localparam_style:CamelCase|ALL_CAPS"]
+
+[tool.basil-hdl.verible-format]
+args = [
+    "--assignment_statement_alignment=align",
+    "--class_member_variable_alignment=align",
+    "--distribution_items_alignment=align",
+    "--enum_assignment_statement_alignment=align",
+    "--expand_coverpoints=true",
+    "--formal_parameters_alignment=align",
+    "--formal_parameters_indentation=indent",
+    "--module_net_variable_alignment=flush-left",
+    "--named_parameter_alignment=align",
+    "--named_parameter_indentation=indent",
+    "--named_port_alignment=align",
+    "--named_port_indentation=indent",
+    "--port_declarations_alignment=align",
+    "--port_declarations_indentation=indent",
+    "--port_declarations_right_align_packed_dimensions=true",
+    "--port_declarations_right_align_unpacked_dimensions=true",
+    "--struct_union_members_alignment=align",
+    "--indentation_spaces=4",
+    "--failsafe_success=false",
+]
+
+[tool.basil-hdl.verilator]
+# Report legacy warnings; fail on syntax and elaboration errors.
+args = ["--lint-only", "--timing", "-Wall", "-Wno-fatal"]
+
+[tool.basil-hdl.slang]
+args = ["-Wextra", "--timescale=1ns/1ps", "--allow-lib-module-redef", "-Wempty-output-connection"]
+
+[tool.basil-hdl.extra-args]
+"examples/test_eth/firmware_test_eth/src/test_eth.v" = ["-v", "basil/firmware/modules/utils/3_stage_synchronizer.v"]
+
+[tool.basil-hdl.wrappers]
+"basil/firmware/modules/includes/log2func.v" = "module lint_top;\n`include \"{source}\"\nendmodule\n"
+"examples/MMC3/mmc3.srcs/sources_1/mmc3_constants.v" = "module lint_top;\n`include \"{source}\"\nendmodule\n"
+"basil/firmware/modules/tb/silbusb.sv" = "`include \"{source}\"\nmodule lint_top(input clk);\nSiLibUSB bus(clk);\nendmodule\n"
+
+[tool.basil-hdl.install.verible]
+version = "v0.0-4053-g89d4d98a"
+url = "https://github.com/chipsalliance/verible/releases/download/{version}/verible-{version}-linux-static-x86_64.tar.gz"
+sha256 = "1edc1f29c70d74213ed373e727183802d5a733e23f9ab9c74462f5b18b76f2c0"
+
+[tool.basil-hdl.install.verilator]
+version = "5.046"
+url = "https://codeload.github.com/verilator/verilator/tar.gz/refs/tags/v{version}"
+sha256 = "002bc6d92b203eb8b4612e1d198d8108517d4ec9859e131ef328015352fe6d0c"

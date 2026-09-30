@@ -279,6 +279,8 @@ class TestSimSeq(unittest.TestCase):
     # @unittest.skip("saving CPU time")
     def test_start_and_stop_sequence(self):
         cmd_pattern = np.random.randint(0, 256, size=max_cmd_byte_size).tolist()
+        # Always exercise a set first bit to detect capture alignment errors.
+        cmd_pattern[0] |= 0x80
         if isinstance(cmd_pattern, list):
             write_cmd_pattern = list(cmd_pattern)  # copy
             write_cmd_pattern.extend(np.random.randint(0, 256, size=max_cmd_byte_size - len(write_cmd_pattern)))

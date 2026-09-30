@@ -1,0 +1,761 @@
+{
+  "BUFG": {
+    "ports": {
+      "O": [
+        "output",
+        1
+      ],
+      "I": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {}
+  },
+  "IBUF": {
+    "ports": {
+      "O": [
+        "output",
+        1
+      ],
+      "I": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "CAPACITANCE": "\"DONT_CARE\"",
+      "IBUF_DELAY_VALUE": "\"0\"",
+      "IBUF_LOW_PWR": "\"TRUE\"",
+      "IFD_DELAY_VALUE": "\"AUTO\"",
+      "IOSTANDARD": "\"DEFAULT\""
+    }
+  },
+  "IBUFDS": {
+    "ports": {
+      "O": [
+        "output",
+        1
+      ],
+      "I": [
+        "input",
+        1
+      ],
+      "IB": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "CAPACITANCE": "\"DONT_CARE\"",
+      "DIFF_TERM": "\"FALSE\"",
+      "DQS_BIAS": "\"FALSE\"",
+      "IBUF_DELAY_VALUE": "\"0\"",
+      "IBUF_LOW_PWR": "\"TRUE\"",
+      "IFD_DELAY_VALUE": "\"AUTO\"",
+      "IOSTANDARD": "\"DEFAULT\""
+    }
+  },
+  "IBUFDS_GTE2": {
+    "ports": {
+      "O": [
+        "output",
+        1
+      ],
+      "ODIV2": [
+        "output",
+        1
+      ],
+      "CEB": [
+        "input",
+        1
+      ],
+      "I": [
+        "input",
+        1
+      ],
+      "IB": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "CLKCM_CFG": "\"TRUE\"",
+      "CLKRCV_TRST": "\"TRUE\"",
+      "CLKSWING_CFG": "2'b11"
+    }
+  },
+  "IBUFG": {
+    "ports": {
+      "O": [
+        "output",
+        1
+      ],
+      "I": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "CAPACITANCE": "\"DONT_CARE\"",
+      "IBUF_DELAY_VALUE": "\"0\"",
+      "IBUF_LOW_PWR": "\"TRUE\"",
+      "IOSTANDARD": "\"DEFAULT\""
+    }
+  },
+  "IBUFGDS": {
+    "ports": {
+      "O": [
+        "output",
+        1
+      ],
+      "I": [
+        "input",
+        1
+      ],
+      "IB": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "CAPACITANCE": "\"DONT_CARE\"",
+      "DIFF_TERM": "\"FALSE\"",
+      "IBUF_DELAY_VALUE": "\"0\"",
+      "IBUF_LOW_PWR": "\"TRUE\"",
+      "IOSTANDARD": "\"DEFAULT\""
+    }
+  },
+  "IDDR": {
+    "ports": {
+      "Q1": [
+        "output",
+        1
+      ],
+      "Q2": [
+        "output",
+        1
+      ],
+      "C": [
+        "input",
+        1
+      ],
+      "CE": [
+        "input",
+        1
+      ],
+      "D": [
+        "input",
+        1
+      ],
+      "R": [
+        "input",
+        1
+      ],
+      "S": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "DDR_CLK_EDGE": "\"OPPOSITE_EDGE\"",
+      "INIT_Q1": "1'b0",
+      "INIT_Q2": "1'b0",
+      "IS_C_INVERTED": "1'b0",
+      "IS_D_INVERTED": "1'b0",
+      "SRTYPE": "\"SYNC\""
+    }
+  },
+  "IDELAYCTRL": {
+    "ports": {
+      "RDY": [
+        "output",
+        1
+      ],
+      "REFCLK": [
+        "input",
+        1
+      ],
+      "RST": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "SIM_DEVICE": "\"7SERIES\""
+    }
+  },
+  "IDELAYE2": {
+    "ports": {
+      "CNTVALUEOUT": [
+        "output",
+        5
+      ],
+      "DATAOUT": [
+        "output",
+        1
+      ],
+      "C": [
+        "input",
+        1
+      ],
+      "CE": [
+        "input",
+        1
+      ],
+      "CINVCTRL": [
+        "input",
+        1
+      ],
+      "CNTVALUEIN": [
+        "input",
+        5
+      ],
+      "DATAIN": [
+        "input",
+        1
+      ],
+      "IDATAIN": [
+        "input",
+        1
+      ],
+      "INC": [
+        "input",
+        1
+      ],
+      "LD": [
+        "input",
+        1
+      ],
+      "LDPIPEEN": [
+        "input",
+        1
+      ],
+      "REGRST": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "CINVCTRL_SEL": "\"FALSE\"",
+      "DELAY_SRC": "\"IDATAIN\"",
+      "HIGH_PERFORMANCE_MODE": "\"FALSE\"",
+      "IDELAY_TYPE": "\"FIXED\"",
+      "IDELAY_VALUE": "0",
+      "IS_C_INVERTED": "1'b0",
+      "IS_DATAIN_INVERTED": "1'b0",
+      "IS_IDATAIN_INVERTED": "1'b0",
+      "PIPE_SEL": "\"FALSE\"",
+      "REFCLK_FREQUENCY": "200.0",
+      "SIGNAL_PATTERN": "\"DATA\""
+    }
+  },
+  "IOBUF": {
+    "ports": {
+      "O": [
+        "output",
+        1
+      ],
+      "IO": [
+        "inout",
+        1
+      ],
+      "I": [
+        "input",
+        1
+      ],
+      "T": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "DRIVE": "12",
+      "IBUF_LOW_PWR": "\"TRUE\"",
+      "IOSTANDARD": "\"DEFAULT\"",
+      "SLEW": "\"SLOW\""
+    }
+  },
+  "OBUF": {
+    "ports": {
+      "O": [
+        "output",
+        1
+      ],
+      "I": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "CAPACITANCE": "\"DONT_CARE\"",
+      "DRIVE": "12",
+      "IOSTANDARD": "\"DEFAULT\"",
+      "SLEW": "\"SLOW\""
+    }
+  },
+  "OBUFDS": {
+    "ports": {
+      "O": [
+        "output",
+        1
+      ],
+      "OB": [
+        "output",
+        1
+      ],
+      "I": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "CAPACITANCE": "\"DONT_CARE\"",
+      "IOSTANDARD": "\"DEFAULT\"",
+      "SLEW": "\"SLOW\""
+    }
+  },
+  "ODDR": {
+    "ports": {
+      "Q": [
+        "output",
+        1
+      ],
+      "C": [
+        "input",
+        1
+      ],
+      "CE": [
+        "input",
+        1
+      ],
+      "D1": [
+        "input",
+        1
+      ],
+      "D2": [
+        "input",
+        1
+      ],
+      "R": [
+        "input",
+        1
+      ],
+      "S": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "DDR_CLK_EDGE": "\"OPPOSITE_EDGE\"",
+      "INIT": "1'b0",
+      "IS_C_INVERTED": "1'b0",
+      "IS_D1_INVERTED": "1'b0",
+      "IS_D2_INVERTED": "1'b0",
+      "SRTYPE": "\"SYNC\""
+    }
+  },
+  "ODELAYE2": {
+    "ports": {
+      "CNTVALUEOUT": [
+        "output",
+        5
+      ],
+      "DATAOUT": [
+        "output",
+        1
+      ],
+      "C": [
+        "input",
+        1
+      ],
+      "CE": [
+        "input",
+        1
+      ],
+      "CINVCTRL": [
+        "input",
+        1
+      ],
+      "CLKIN": [
+        "input",
+        1
+      ],
+      "CNTVALUEIN": [
+        "input",
+        5
+      ],
+      "INC": [
+        "input",
+        1
+      ],
+      "LD": [
+        "input",
+        1
+      ],
+      "LDPIPEEN": [
+        "input",
+        1
+      ],
+      "ODATAIN": [
+        "input",
+        1
+      ],
+      "REGRST": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "CINVCTRL_SEL": "\"FALSE\"",
+      "DELAY_SRC": "\"ODATAIN\"",
+      "HIGH_PERFORMANCE_MODE": "\"FALSE\"",
+      "IS_C_INVERTED": "1'b0",
+      "IS_ODATAIN_INVERTED": "1'b0",
+      "ODELAY_TYPE": "\"FIXED\"",
+      "ODELAY_VALUE": "0",
+      "PIPE_SEL": "\"FALSE\"",
+      "REFCLK_FREQUENCY": "200.0",
+      "SIGNAL_PATTERN": "\"DATA\""
+    }
+  },
+  "OSERDESE2": {
+    "ports": {
+      "OFB": [
+        "output",
+        1
+      ],
+      "OQ": [
+        "output",
+        1
+      ],
+      "SHIFTOUT1": [
+        "output",
+        1
+      ],
+      "SHIFTOUT2": [
+        "output",
+        1
+      ],
+      "TBYTEOUT": [
+        "output",
+        1
+      ],
+      "TFB": [
+        "output",
+        1
+      ],
+      "TQ": [
+        "output",
+        1
+      ],
+      "CLK": [
+        "input",
+        1
+      ],
+      "CLKDIV": [
+        "input",
+        1
+      ],
+      "D1": [
+        "input",
+        1
+      ],
+      "D2": [
+        "input",
+        1
+      ],
+      "D3": [
+        "input",
+        1
+      ],
+      "D4": [
+        "input",
+        1
+      ],
+      "D5": [
+        "input",
+        1
+      ],
+      "D6": [
+        "input",
+        1
+      ],
+      "D7": [
+        "input",
+        1
+      ],
+      "D8": [
+        "input",
+        1
+      ],
+      "OCE": [
+        "input",
+        1
+      ],
+      "RST": [
+        "input",
+        1
+      ],
+      "SHIFTIN1": [
+        "input",
+        1
+      ],
+      "SHIFTIN2": [
+        "input",
+        1
+      ],
+      "T1": [
+        "input",
+        1
+      ],
+      "T2": [
+        "input",
+        1
+      ],
+      "T3": [
+        "input",
+        1
+      ],
+      "T4": [
+        "input",
+        1
+      ],
+      "TBYTEIN": [
+        "input",
+        1
+      ],
+      "TCE": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "DATA_RATE_OQ": "\"DDR\"",
+      "DATA_RATE_TQ": "\"DDR\"",
+      "DATA_WIDTH": "4",
+      "INIT_OQ": "1'b0",
+      "INIT_TQ": "1'b0",
+      "IS_CLKDIV_INVERTED": "1'b0",
+      "IS_CLK_INVERTED": "1'b0",
+      "IS_D1_INVERTED": "1'b0",
+      "IS_D2_INVERTED": "1'b0",
+      "IS_D3_INVERTED": "1'b0",
+      "IS_D4_INVERTED": "1'b0",
+      "IS_D5_INVERTED": "1'b0",
+      "IS_D6_INVERTED": "1'b0",
+      "IS_D7_INVERTED": "1'b0",
+      "IS_D8_INVERTED": "1'b0",
+      "IS_T1_INVERTED": "1'b0",
+      "IS_T2_INVERTED": "1'b0",
+      "IS_T3_INVERTED": "1'b0",
+      "IS_T4_INVERTED": "1'b0",
+      "SERDES_MODE": "\"MASTER\"",
+      "SRVAL_OQ": "1'b0",
+      "SRVAL_TQ": "1'b0",
+      "TBYTE_CTL": "\"FALSE\"",
+      "TBYTE_SRC": "\"FALSE\"",
+      "TRISTATE_WIDTH": "4"
+    }
+  },
+  "PLLE2_ADV": {
+    "ports": {
+      "CLKFBOUT": [
+        "output",
+        1
+      ],
+      "CLKOUT0": [
+        "output",
+        1
+      ],
+      "CLKOUT1": [
+        "output",
+        1
+      ],
+      "CLKOUT2": [
+        "output",
+        1
+      ],
+      "CLKOUT3": [
+        "output",
+        1
+      ],
+      "CLKOUT4": [
+        "output",
+        1
+      ],
+      "CLKOUT5": [
+        "output",
+        1
+      ],
+      "DO": [
+        "output",
+        16
+      ],
+      "DRDY": [
+        "output",
+        1
+      ],
+      "LOCKED": [
+        "output",
+        1
+      ],
+      "CLKFBIN": [
+        "input",
+        1
+      ],
+      "CLKIN1": [
+        "input",
+        1
+      ],
+      "CLKIN2": [
+        "input",
+        1
+      ],
+      "CLKINSEL": [
+        "input",
+        1
+      ],
+      "DADDR": [
+        "input",
+        7
+      ],
+      "DCLK": [
+        "input",
+        1
+      ],
+      "DEN": [
+        "input",
+        1
+      ],
+      "DI": [
+        "input",
+        16
+      ],
+      "DWE": [
+        "input",
+        1
+      ],
+      "PWRDWN": [
+        "input",
+        1
+      ],
+      "RST": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "BANDWIDTH": "\"OPTIMIZED\"",
+      "CLKFBOUT_MULT": "5",
+      "CLKFBOUT_PHASE": "0.000",
+      "CLKIN1_PERIOD": "0.000",
+      "CLKIN2_PERIOD": "0.000",
+      "CLKOUT0_DIVIDE": "1",
+      "CLKOUT0_DUTY_CYCLE": "0.500",
+      "CLKOUT0_PHASE": "0.000",
+      "CLKOUT1_DIVIDE": "1",
+      "CLKOUT1_DUTY_CYCLE": "0.500",
+      "CLKOUT1_PHASE": "0.000",
+      "CLKOUT2_DIVIDE": "1",
+      "CLKOUT2_DUTY_CYCLE": "0.500",
+      "CLKOUT2_PHASE": "0.000",
+      "CLKOUT3_DIVIDE": "1",
+      "CLKOUT3_DUTY_CYCLE": "0.500",
+      "CLKOUT3_PHASE": "0.000",
+      "CLKOUT4_DIVIDE": "1",
+      "CLKOUT4_DUTY_CYCLE": "0.500",
+      "CLKOUT4_PHASE": "0.000",
+      "CLKOUT5_DIVIDE": "1",
+      "CLKOUT5_DUTY_CYCLE": "0.500",
+      "CLKOUT5_PHASE": "0.000",
+      "COMPENSATION": "\"ZHOLD\"",
+      "DIVCLK_DIVIDE": "1",
+      "IS_CLKINSEL_INVERTED": "1'b0",
+      "IS_PWRDWN_INVERTED": "1'b0",
+      "IS_RST_INVERTED": "1'b0",
+      "REF_JITTER1": "0.010",
+      "REF_JITTER2": "0.010",
+      "STARTUP_WAIT": "\"FALSE\""
+    }
+  },
+  "PLLE2_BASE": {
+    "ports": {
+      "CLKFBOUT": [
+        "output",
+        1
+      ],
+      "CLKOUT0": [
+        "output",
+        1
+      ],
+      "CLKOUT1": [
+        "output",
+        1
+      ],
+      "CLKOUT2": [
+        "output",
+        1
+      ],
+      "CLKOUT3": [
+        "output",
+        1
+      ],
+      "CLKOUT4": [
+        "output",
+        1
+      ],
+      "CLKOUT5": [
+        "output",
+        1
+      ],
+      "LOCKED": [
+        "output",
+        1
+      ],
+      "CLKFBIN": [
+        "input",
+        1
+      ],
+      "CLKIN1": [
+        "input",
+        1
+      ],
+      "PWRDWN": [
+        "input",
+        1
+      ],
+      "RST": [
+        "input",
+        1
+      ]
+    },
+    "parameters": {
+      "BANDWIDTH": "\"OPTIMIZED\"",
+      "CLKFBOUT_MULT": "5",
+      "CLKFBOUT_PHASE": "0.000",
+      "CLKIN1_PERIOD": "0.000",
+      "CLKOUT0_DIVIDE": "1",
+      "CLKOUT0_DUTY_CYCLE": "0.500",
+      "CLKOUT0_PHASE": "0.000",
+      "CLKOUT1_DIVIDE": "1",
+      "CLKOUT1_DUTY_CYCLE": "0.500",
+      "CLKOUT1_PHASE": "0.000",
+      "CLKOUT2_DIVIDE": "1",
+      "CLKOUT2_DUTY_CYCLE": "0.500",
+      "CLKOUT2_PHASE": "0.000",
+      "CLKOUT3_DIVIDE": "1",
+      "CLKOUT3_DUTY_CYCLE": "0.500",
+      "CLKOUT3_PHASE": "0.000",
+      "CLKOUT4_DIVIDE": "1",
+      "CLKOUT4_DUTY_CYCLE": "0.500",
+      "CLKOUT4_PHASE": "0.000",
+      "CLKOUT5_DIVIDE": "1",
+      "CLKOUT5_DUTY_CYCLE": "0.500",
+      "CLKOUT5_PHASE": "0.000",
+      "DIVCLK_DIVIDE": "1",
+      "REF_JITTER1": "0.010",
+      "STARTUP_WAIT": "\"FALSE\""
+    }
+  }
+}

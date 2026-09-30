@@ -82,3 +82,6 @@ examples/tdc_bdaq/firmware/vivado/*
 !examples/tdc_bdaq/firmware/vivado/*.sh
 !examples/tdc_bdaq/firmware/vivado/run.tcl
 examples/tdc_bdaq/firmware/src/SiTCP/*
+
+# Personal language server overrides
+.slang/local/

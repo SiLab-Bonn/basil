@@ -7,28 +7,26 @@
 `ifndef CG_MOD_POS
 `define CG_MOD_POS
 
-`timescale 1ps/1ps
+`timescale 1ps / 1ps
 `default_nettype none
 
 
 module CG_MOD_pos (
-    input wire ck_in,
-    input wire enable,
+    input  wire ck_in,
+    input  wire enable,
     output wire ck_out
 );
 
-wire ck_inb;
-reg enl;
+    wire ck_inb;
+    reg enl;
 
-assign ck_inb = ~ck_in;
+    assign ck_inb = ~ck_in;
 
-// verilator lint_off LATCH
-always @(ck_inb or enable)
-if (ck_inb)
-    enl = enable;
-// verilator lint_on LATCH
+    // verilator lint_off LATCH
+    always @(ck_inb or enable) if (ck_inb) enl = enable;
+    // verilator lint_on LATCH
 
-assign ck_out = ck_in & enl;
+    assign ck_out = ck_in & enl;
 
 endmodule
 

@@ -17,6 +17,12 @@ XScale = namedtuple("XScale", "slope, offset, unit")
 YScale = namedtuple("YScale", "top, bottom")
 FeatureTable = namedtuple("FeatureTable", "name, entries")
 Waveform = namedtuple("Waveform", "data, x_scale, y_scale")
+CapturedWaveform = namedtuple("CapturedWaveform", "channel, raw_data, data, x_scale, y_scale")
+
+
+def response_value(response):
+    """Return the value field from terse or verbose Tektronix responses."""
+    return str(response).strip().split()[-1]
 
 
 class WaveType(Enum):
@@ -75,7 +81,7 @@ class TektronixOscilloscope(scpi):
                 encoding, bit_nr, datatype = encoding_table[wave_type]
 
                 # Set the start and stop point of the record
-                rec_len = int(self._intf.query("horizontal:recordlength?").strip())
+                rec_len = int(response_value(self._intf.query("horizontal:recordlength?")))
 
                 # Keep track of each super channel and math source that has been handled
                 results[source.split("_")[0]] = JobParameters(wave_type, channel, encoding, bit_nr, datatype, rec_len)
@@ -97,14 +103,14 @@ class TektronixOscilloscope(scpi):
         # available and the channel is enabled.
         result = None
         try:
-            xincr = self._intf.query("WFMOutpre:XINCR?").strip()
+            xincr = response_value(self._intf.query("WFMOutpre:XINCR?"))
         except VisaIOError:
             pass
         else:
             # collect more horizontal data
-            pt_off = self._intf.query("WFMOutpre:PT_OFF?").strip()
-            xzero = self._intf.query("WFMOutpre:XZERO?").strip()
-            xunit = self._intf.query("WFMOutpre:XUNIT?").strip()
+            pt_off = response_value(self._intf.query("WFMOutpre:PT_OFF?"))
+            xzero = response_value(self._intf.query("WFMOutpre:XZERO?"))
+            xunit = response_value(self._intf.query("WFMOutpre:XUNIT?"))
 
             # calculate horizontal scale
             slope = float(xincr)
@@ -114,8 +120,8 @@ class TektronixOscilloscope(scpi):
         return result
 
     def _get_yscale(self, channel=1):
-        scale = float(self._intf.query("{}:SCALE?".format("CH" + str(channel))))
-        position = float(self._intf.query("{}:POSITION?".format("CH" + str(channel))))
+        scale = float(response_value(self._intf.query("{}:SCALE?".format("CH" + str(channel)))))
+        position = float(response_value(self._intf.query("{}:POSITION?".format("CH" + str(channel)))))
         top = scale * (5 - position)
         bottom = scale * (-5 - position)
         return YScale(top=top, bottom=bottom)
@@ -133,15 +139,15 @@ class TektronixOscilloscope(scpi):
         """Setup the instrument for the curve query operation"""
 
         # extract the job parameters
-        wave_type, channel, encoding, bit_nr, datatype, rec_len = parameters["CH" + str(channel)]
+        wave_type, source, _encoding, bit_nr, _datatype, _rec_len = parameters["CH" + str(channel)]
 
         # Switch to the source and setup the data encoding
-        self._intf.write("data:source {}".format("CH" + channel))
+        self._intf.write("data:source {}".format(source))
         self.set_data_encoding("ascii")
-        self._intf.write("WFMOUTPRE:BIT_NR {}".format(bit_nr))
+        self.set_data_width(bit_nr // 8)
 
         # Set the start and stop point of the record
-        rec_len = self._intf.query("horizontal:recordlength?").strip()
+        rec_len = response_value(self._intf.query("horizontal:recordlength?"))
         self._intf.write("data:start 1")
         self._intf.write("data:stop {}".format(rec_len))
         return wave_type
@@ -150,35 +156,60 @@ class TektronixOscilloscope(scpi):
         """Post processes analog channel data"""
 
         # Normal analog channels must have the vertical scale and offset applied
-        offset = float(self._intf.query("WFMOutpre:YZEro?"))
-        scale = float(self._intf.query("WFMOutpre:YMUlt?"))
-        source_data = [scale * i + offset for i in source_data]
+        yzero = float(response_value(self._intf.query("WFMOutpre:YZEro?")))
+        ymult = float(response_value(self._intf.query("WFMOutpre:YMUlt?")))
+        yoff = float(response_value(self._intf.query("WFMOutpre:YOFF?")))
+        source_data = [(sample - yoff) * ymult + yzero for sample in source_data]
 
         # Include y-scale information with analog channel waveforms
         y_scale = self._get_yscale(channel=channel)
 
         return channel, source_data, x_scale, y_scale
 
-    def get_waveform(self, channel=1):
-        """Returns an iterator that yields the source data from the oscilloscope"""
-
+    def _read_waveform(self, channel=1):
+        """Read one waveform while the acquisition system is already stopped."""
         jobs = self._make_jobs(channel=channel)
-
-        # remember the state of the acquisition system and then stop acquiring waveforms
-        acq_state = self._intf.query("ACQuire:STATE?").strip()
-        self._intf.write("ACQuire:STATE STOP")
         wave_type = self._setup_curve_query(jobs, channel=channel)
-
-        # Horizontal scale information
         x_scale = self._get_xscale()
-        ret_val = None
-        if x_scale is not None:
-            source_data = [int(i) for i in self.get_data(channel=channel).replace("\n", "").split(",")]
-            if wave_type is WaveType.ANALOG:
-                ret_val = self._post_process_analog(source_data, x_scale, channel=channel)
-            else:
-                raise NotImplementedError(f"Analysis for type {wave_type} data not yet implemented!")
+        if x_scale is None:
+            return None
 
-        # # Restore the acquisition state
-        self._intf.write("ACQuire:STATE {}".format(acq_state))
-        return ret_val
+        raw_data = [
+            int(value) for value in self.get_data(channel=channel).replace("\n", "").split(",") if value.strip()
+        ]
+        if wave_type is not WaveType.ANALOG:
+            raise NotImplementedError(f"Analysis for type {wave_type} data not yet implemented!")
+
+        source_channel, data, x_scale, y_scale = self._post_process_analog(raw_data, x_scale, channel=channel)
+        return CapturedWaveform(source_channel, raw_data, data, x_scale, y_scale)
+
+    def get_waveform(self, channel=1):
+        """Return one analog waveform as ``(channel, data, x_scale, y_scale)``."""
+        acq_state = response_value(self._intf.query("ACQuire:STATE?"))
+        self._intf.write("ACQuire:STATE STOP")
+        try:
+            waveform = self._read_waveform(channel=channel)
+        finally:
+            self._intf.write("ACQuire:STATE {}".format(acq_state))
+
+        if waveform is None:
+            return None
+        return waveform.channel, waveform.data, waveform.x_scale, waveform.y_scale
+
+    def get_waveforms(self, channels):
+        """Return several channel waveforms captured from one stopped acquisition."""
+        channels = tuple(channels)
+        if not channels:
+            return {}
+
+        acq_state = response_value(self._intf.query("ACQuire:STATE?"))
+        self._intf.write("ACQuire:STATE STOP")
+        try:
+            waveforms = {}
+            for channel in channels:
+                waveform = self._read_waveform(channel=channel)
+                if waveform is not None:
+                    waveforms[channel] = waveform
+            return waveforms
+        finally:
+            self._intf.write("ACQuire:STATE {}".format(acq_state))

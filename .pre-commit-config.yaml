@@ -1,9 +1,6 @@
+exclude: (?i)(^|/)sitcp(/|$)
+
 repos:
-  - repo: https://github.com/pycqa/isort
-    rev: 6.0.1
-    hooks:
-      - id: isort
-        name: isort (python)
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.14.0
     hooks:
@@ -33,3 +30,33 @@ repos:
         verbose: true
         files: ^(basil/|tests/|examples/).*\.py$
         stages: [pre-commit]
+      - id: verilator-lint
+        name: verilator lint (Verilog-2005)
+        entry: python tools/lint_verilog.py verilator
+        language: python
+        additional_dependencies: ["tomli==2.2.1; python_version < '3.11'"]
+        pass_filenames: false
+        files: '(\.(v|sv|f)$|^tools/|^pyproject\.toml$)'
+      - id: slang-lint
+        name: slang semantic lint
+        entry: python tools/lint_verilog.py slang
+        language: python
+        # Pre-commit local environments cannot install extras from this checkout.
+        # Keep aligned with project.optional-dependencies.hdl-lint.
+        additional_dependencies: [pyslang==11.0.0, "tomli==2.2.1; python_version < '3.11'"]
+        pass_filenames: false
+        files: '(\.(v|sv|f)$|^tools/|^pyproject\.toml$)'
+      - id: verible-format
+        name: verible format
+        entry: python tools/lint_verilog.py verible-format --fix
+        language: python
+        additional_dependencies: ["tomli==2.2.1; python_version < '3.11'"]
+        types: [verilog]
+        files: '\.(v|sv)$'
+      - id: verible-lint
+        name: verible style lint
+        entry: python tools/lint_verilog.py verible-lint
+        language: python
+        additional_dependencies: ["tomli==2.2.1; python_version < '3.11'"]
+        types: [verilog]
+        files: '\.(v|sv)$'

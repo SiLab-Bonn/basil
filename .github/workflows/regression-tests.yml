@@ -5,8 +5,6 @@ on:
     branches:
     - master
   pull_request:
-    branches:
-    - master
 
 permissions:
   contents: read
@@ -20,9 +18,57 @@ jobs:
     - uses: actions/setup-python@v7
       with:
         python-version: "3.12"
-    - uses: pre-commit/action@v3.0.1
+    - name: Install pre-commit
+      run: python -m pip install pre-commit==4.3.0
+    - name: Check Python and repository hygiene
+      run: pre-commit run --all-files --show-diff-on-failure
       env:
-        SKIP: coverage # Run all normal formatting hooks in CI, but skip the local coverage hook because the coverage job handles it separately.
+        SKIP: coverage,verible-format,verible-lint,verilator-lint,slang-lint # Separate jobs run HDL checks and coverage.
+
+  hdl:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Verible formatting
+            check: verible-format
+            install: verible
+          - name: Verible style lint
+            check: verible-lint
+            install: verible
+          - name: Verilator lint (Verilog-2005)
+            check: verilator
+            install: verilator
+          - name: Slang semantic lint
+            check: slang
+            install: slang
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@v7
+      with:
+        python-version: "3.12"
+    - name: Install Verilator build dependencies
+      if: matrix.install == 'verilator'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          autoconf bison flex g++ help2man make perl libfl-dev zlib1g-dev
+    - name: Install native HDL tool
+      if: matrix.install != 'slang'
+      run: |
+        bash tools/install_hdl_tools.sh "${{ matrix.install }}" "$PWD/build/hdl-tools"
+        echo "$PWD/build/hdl-tools/bin" >> "$GITHUB_PATH"
+    - name: Install Slang Python bindings
+      if: matrix.install == 'slang'
+      run: |
+        python tools/hdl_config.py requirements > "$RUNNER_TEMP/hdl-requirements.txt"
+        python -m pip install -r "$RUNNER_TEMP/hdl-requirements.txt"
+    - name: Check HDL
+      run: python tools/lint_verilog.py "${{ matrix.check }}"
 
   tests:
 
@@ -37,7 +83,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10', '3.11', '3.12', '3.13']
         include:
           - sim: icarus
             python-version: '3.10'

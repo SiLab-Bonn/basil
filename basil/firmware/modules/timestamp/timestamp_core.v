@@ -11,212 +11,197 @@
 `include "utils/cdc_syncfifo.v"
 `include "utils/generic_fifo.v"
 
-`timescale 1ps/1ps
+`timescale 1ps / 1ps
 `default_nettype none
 
 
 module timestamp_core #(
-    parameter ABUSWIDTH = 16,
+    parameter ABUSWIDTH  = 16,
     parameter IDENTIFIER = 4'b0001
 ) (
-    input wire CLK,
-    input wire DI,
-    input wire EXT_ENABLE,
-    input wire [63:0] EXT_TIMESTAMP,
+    input  wire        CLK,
+    input  wire        DI,
+    input  wire        EXT_ENABLE,
+    input  wire [63:0] EXT_TIMESTAMP,
     output wire [63:0] TIMESTAMP_OUT,
 
-    input wire FIFO_READ,
-    output wire FIFO_EMPTY,
+    input  wire        FIFO_READ,
+    output wire        FIFO_EMPTY,
     output wire [31:0] FIFO_DATA,
 
-    input wire BUS_CLK,
-    input wire [ABUSWIDTH-1:0] BUS_ADD,
-    input wire [7:0] BUS_DATA_IN,
-    output reg [7:0] BUS_DATA_OUT,
-    input wire BUS_RST,
-    input wire BUS_WR,
-    input wire BUS_RD
+    input  wire                 BUS_CLK,
+    input  wire [ABUSWIDTH-1:0] BUS_ADD,
+    input  wire [          7:0] BUS_DATA_IN,
+    output reg  [          7:0] BUS_DATA_OUT,
+    input  wire                 BUS_RST,
+    input  wire                 BUS_WR,
+    input  wire                 BUS_RD
 );
 
-localparam VERSION = 2;
+    localparam VERSION = 2;
 
-//output format:
-//31-28: ID, 27-24: 0x1, 23-0: 23-0th bit of timestamp data
-//31-28: ID, 27-24: 0x2, 23-0: 47-24th bit of timestamp data
-//31-28: ID, 27-24: 0x3, 23-16: 0x00, 15-0: 63-48th bit timestamp data
+    //output format:
+    //31-28: ID, 27-24: 0x1, 23-0: 23-0th bit of timestamp data
+    //31-28: ID, 27-24: 0x2, 23-0: 47-24th bit of timestamp data
+    //31-28: ID, 27-24: 0x3, 23-16: 0x00, 15-0: 63-48th bit timestamp data
 
-wire SOFT_RST;
-assign SOFT_RST = (BUS_ADD==0 && BUS_WR);
+    wire SOFT_RST;
+    assign SOFT_RST = (BUS_ADD == 0 && BUS_WR);
 
-wire RST;
-assign RST = BUS_RST | SOFT_RST;
+    wire RST;
+    assign RST = BUS_RST | SOFT_RST;
 
-reg CONF_EN, CONF_EXT_ENABLE;  //TODO add enable/disable by software
-reg CONF_EXT_TIMESTAMP;
-reg [7:0] LOST_DATA_CNT;
+    reg CONF_EN, CONF_EXT_ENABLE;  //TODO add enable/disable by software
+    reg CONF_EXT_TIMESTAMP;
+    reg [7:0] LOST_DATA_CNT;
 
-always @(posedge BUS_CLK) begin
-    if(RST) begin
-        CONF_EN <= 0;
+    always @(posedge BUS_CLK) begin
+        if (RST) begin
+            CONF_EN            <= 0;
             CONF_EXT_TIMESTAMP <= 0;
-            CONF_EXT_ENABLE <= 0;
-    end
-    else if(BUS_WR) begin
-        if(BUS_ADD == 2) begin
-            CONF_EN <= BUS_DATA_IN[0];
-            CONF_EXT_TIMESTAMP <= BUS_DATA_IN[1];
-            CONF_EXT_ENABLE <= BUS_DATA_IN[2];
+            CONF_EXT_ENABLE    <= 0;
+        end else if (BUS_WR) begin
+            if (BUS_ADD == 2) begin
+                CONF_EN            <= BUS_DATA_IN[0];
+                CONF_EXT_TIMESTAMP <= BUS_DATA_IN[1];
+                CONF_EXT_ENABLE    <= BUS_DATA_IN[2];
+            end
         end
     end
-end
 
-always @(posedge BUS_CLK) begin
-    if(BUS_RD) begin
-        if(BUS_ADD == 0)
-            BUS_DATA_OUT <= VERSION;
-        else if(BUS_ADD == 2)
-            BUS_DATA_OUT <= {5'b0, CONF_EXT_ENABLE, CONF_EXT_TIMESTAMP, CONF_EN};
-        else if(BUS_ADD == 3)
-            BUS_DATA_OUT <= LOST_DATA_CNT;
-        else
-            BUS_DATA_OUT <= 8'b0;
+    always @(posedge BUS_CLK) begin
+        if (BUS_RD) begin
+            if (BUS_ADD == 0) BUS_DATA_OUT <= VERSION;
+            else if (BUS_ADD == 2)
+                BUS_DATA_OUT <= {5'b0, CONF_EXT_ENABLE, CONF_EXT_TIMESTAMP, CONF_EN};
+            else if (BUS_ADD == 3) BUS_DATA_OUT <= LOST_DATA_CNT;
+            else BUS_DATA_OUT <= 8'b0;
+        end
     end
-end
 
-wire RST_SYNC;
-wire RST_SOFT_SYNC;
-cdc_pulse_sync rst_pulse_sync (.clk_in(BUS_CLK), .pulse_in(RST), .clk_out(CLK), .pulse_out(RST_SOFT_SYNC));
-assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
-wire EN_SYNC;
-assign EN_SYNC = CONF_EN | (EXT_ENABLE & CONF_EXT_ENABLE);
+    wire RST_SYNC;
+    wire RST_SOFT_SYNC;
+    cdc_pulse_sync rst_pulse_sync (
+        .clk_in   (BUS_CLK),
+        .pulse_in (RST),
+        .clk_out  (CLK),
+        .pulse_out(RST_SOFT_SYNC)
+    );
+    assign RST_SYNC = RST_SOFT_SYNC || BUS_RST;
+    wire EN_SYNC;
+    assign EN_SYNC = CONF_EN | (EXT_ENABLE & CONF_EXT_ENABLE);
 
-reg [7:0] sync_cnt;
-always @(posedge BUS_CLK) begin
-    if(RST)
-        sync_cnt <= 120;
-    else if(sync_cnt != 100)
-        sync_cnt <= sync_cnt +1;
-end
-wire RST_LONG;
-assign RST_LONG = sync_cnt[7];
-
-
-reg [1:0] DI_FF;
-wire DI_SYNC;
-always @(posedge CLK) begin
-    if(RST_SYNC)
-        DI_FF <=2'b0;
-    else
-        DI_FF <= {DI_FF[0],DI};
-end
-assign DI_SYNC = ~DI_FF[1] & DI_FF[0];
-
-reg [63:0] curr_timestamp;
-always @(posedge CLK) begin
-    if(RST_SYNC)
-        curr_timestamp <= 0;
-    else
-        curr_timestamp <= curr_timestamp + 1;
-end
-
-reg [63:0] timestamp_out;
-reg [1:0] cdc_fifo_write_reg;
-reg [3:0] bit_cnt;
-
-always @(posedge CLK) begin // TODO better fo separate cdc_fifo_write_reg?
-    if(RST_SYNC | ~EN_SYNC) begin
-        timestamp_out <= 0;
-        cdc_fifo_write_reg <= 0;
+    reg [7:0] sync_cnt;
+    always @(posedge BUS_CLK) begin
+        if (RST) sync_cnt <= 120;
+        else if (sync_cnt != 100) sync_cnt <= sync_cnt + 1;
     end
-    else if(DI_SYNC & cdc_fifo_write_reg==0) begin
-        if (CONF_EXT_TIMESTAMP)
-              timestamp_out <= EXT_TIMESTAMP;
-        else
-            timestamp_out <= curr_timestamp;
-        cdc_fifo_write_reg <= 1;
+    wire RST_LONG;
+    assign RST_LONG = sync_cnt[7];
+
+
+    reg [1:0] DI_FF;
+    wire DI_SYNC;
+    always @(posedge CLK) begin
+        if (RST_SYNC) DI_FF <= 2'b0;
+        else DI_FF <= {DI_FF[0], DI};
     end
-    else if (cdc_fifo_write_reg==1)
-        cdc_fifo_write_reg <= 2;
-    else
-        cdc_fifo_write_reg <= 0;
-end
+    assign DI_SYNC = ~DI_FF[1] & DI_FF[0];
 
-assign TIMESTAMP_OUT = timestamp_out;
+    reg [63:0] curr_timestamp;
+    always @(posedge CLK) begin
+        if (RST_SYNC) curr_timestamp <= 0;
+        else curr_timestamp <= curr_timestamp + 1;
+    end
 
-wire [63:0] cdc_data_in;
-assign cdc_data_in = timestamp_out;
+    reg [63:0] timestamp_out;
+    reg [1:0] cdc_fifo_write_reg;
+    reg [3:0] bit_cnt;
 
-wire cdc_fifo_write;
-assign cdc_fifo_write = cdc_fifo_write_reg[1];
+    always @(posedge CLK) begin  // TODO better fo separate cdc_fifo_write_reg?
+        if (RST_SYNC | ~EN_SYNC) begin
+            timestamp_out      <= 0;
+            cdc_fifo_write_reg <= 0;
+        end else if (DI_SYNC & cdc_fifo_write_reg == 0) begin
+            if (CONF_EXT_TIMESTAMP) timestamp_out <= EXT_TIMESTAMP;
+            else timestamp_out <= curr_timestamp;
+            cdc_fifo_write_reg <= 1;
+        end else if (cdc_fifo_write_reg == 1) cdc_fifo_write_reg <= 2;
+        else cdc_fifo_write_reg <= 0;
+    end
 
-wire fifo_full,fifo_write,cdc_fifo_empty;
+    assign TIMESTAMP_OUT = timestamp_out;
 
-wire wfull;
-always @(posedge CLK) begin
-    if(RST_SYNC)
-        LOST_DATA_CNT <= 0;
-    else if (wfull && cdc_fifo_write && LOST_DATA_CNT != 8'b1111_1111)
-        LOST_DATA_CNT <= LOST_DATA_CNT + 1;
-end
+    wire [63:0] cdc_data_in;
+    assign cdc_data_in = timestamp_out;
 
-wire [63:0] cdc_data_out;
-wire cdc_fifo_read;
-cdc_syncfifo #(
-    .DSIZE(64),
-    .ASIZE(8)
-) cdc_syncfifo_i (
-    .rdata(cdc_data_out),
-    .wfull(wfull),
-    .rempty(cdc_fifo_empty),
-    .wdata(cdc_data_in),
-    .winc(cdc_fifo_write),
-    .wclk(CLK),
-    .wrst(RST_LONG),
-    .rinc(cdc_fifo_read),
-    .rclk(BUS_CLK),
-    .rrst(RST_LONG)
-);
+    wire cdc_fifo_write;
+    assign cdc_fifo_write = cdc_fifo_write_reg[1];
 
-reg [1:0] byte2_cnt, byte2_cnt_prev;
-always @(posedge BUS_CLK)
-    byte2_cnt_prev <= byte2_cnt;
-assign cdc_fifo_read = (byte2_cnt_prev==0 & byte2_cnt!=0);
-assign fifo_write = byte2_cnt_prev != 0;
+    wire fifo_full, fifo_write, cdc_fifo_empty;
 
-always @(posedge BUS_CLK)
-    if(RST)
-        byte2_cnt <= 0;
-    else if(!cdc_fifo_empty && !fifo_full && byte2_cnt == 0)
-        byte2_cnt <= 3;
-    else if (!fifo_full & byte2_cnt != 0)
-        byte2_cnt <= byte2_cnt - 1;
+    wire wfull;
+    always @(posedge CLK) begin
+        if (RST_SYNC) LOST_DATA_CNT <= 0;
+        else if (wfull && cdc_fifo_write && LOST_DATA_CNT != 8'b1111_1111)
+            LOST_DATA_CNT <= LOST_DATA_CNT + 1;
+    end
 
-reg [63:0] data_buf;
-always @(posedge BUS_CLK)
-    if(cdc_fifo_read)
-        data_buf <= cdc_data_out;
+    wire [63:0] cdc_data_out;
+    wire cdc_fifo_read;
+    cdc_syncfifo #(
+        .DSIZE(64),
+        .ASIZE(8)
+    ) cdc_syncfifo_i (
+        .rdata (cdc_data_out),
+        .wfull (wfull),
+        .rempty(cdc_fifo_empty),
+        .wdata (cdc_data_in),
+        .winc  (cdc_fifo_write),
+        .wclk  (CLK),
+        .wrst  (RST_LONG),
+        .rinc  (cdc_fifo_read),
+        .rclk  (BUS_CLK),
+        .rrst  (RST_LONG)
+    );
 
-wire [31:0] fifo_write_data_byte [3:0];
-assign fifo_write_data_byte[0] = {IDENTIFIER,4'b0001,data_buf[23:0]};
-assign fifo_write_data_byte[1] = {IDENTIFIER,4'b0010,data_buf[47:24]};
-assign fifo_write_data_byte[2] = {IDENTIFIER,4'b0011,8'b0,data_buf[63:48]};
-wire [31:0] fifo_data_in;
-assign fifo_data_in = fifo_write_data_byte[byte2_cnt];
+    reg [1:0] byte2_cnt, byte2_cnt_prev;
+    always @(posedge BUS_CLK) byte2_cnt_prev <= byte2_cnt;
+    assign cdc_fifo_read = (byte2_cnt_prev == 0 & byte2_cnt != 0);
+    assign fifo_write    = byte2_cnt_prev != 0;
 
-generic_fifo #(
-    .DATA_SIZE(32),
-    .DEPTH(1024)
-) fifo_i (
-    .clk(BUS_CLK),
-    .reset(RST_LONG | BUS_RST),
-    .write(fifo_write),
-    .read(FIFO_READ),
-    .data_in(fifo_data_in),
-    .full(fifo_full),
-    .empty(FIFO_EMPTY),
-    .data_out(FIFO_DATA[31:0]),
-    .size()
-);
+    always @(posedge BUS_CLK)
+        if (RST) byte2_cnt <= 0;
+        else if (!cdc_fifo_empty && !fifo_full && byte2_cnt == 0) byte2_cnt <= 3;
+        else if (!fifo_full & byte2_cnt != 0) byte2_cnt <= byte2_cnt - 1;
+
+    reg [63:0] data_buf;
+    always @(posedge BUS_CLK) if (cdc_fifo_read) data_buf <= cdc_data_out;
+
+    wire [31:0] fifo_write_data_byte[3:0];
+    assign fifo_write_data_byte[0] = {IDENTIFIER, 4'b0001, data_buf[23:0]};
+    assign fifo_write_data_byte[1] = {IDENTIFIER, 4'b0010, data_buf[47:24]};
+    assign fifo_write_data_byte[2] = {IDENTIFIER, 4'b0011, 8'b0, data_buf[63:48]};
+    wire [31:0] fifo_data_in;
+    assign fifo_data_in = fifo_write_data_byte[byte2_cnt];
+
+    generic_fifo #(
+        .DATA_SIZE(32),
+        .DEPTH    (1024)
+    ) fifo_i (
+        .clk     (BUS_CLK),
+        .reset   (RST_LONG | BUS_RST),
+        .write   (fifo_write),
+        .read    (FIFO_READ),
+        .data_in (fifo_data_in),
+        .full    (fifo_full),
+        .empty   (FIFO_EMPTY),
+        .data_out(FIFO_DATA[31:0]),
+        // FIFO occupancy is not used here.
+        // slang lint_off empty-output-connection
+        .size    ()
+        // slang lint_on empty-output-connection
+    );
 
 endmodule
 
