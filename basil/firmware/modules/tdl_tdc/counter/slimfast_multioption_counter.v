@@ -35,7 +35,8 @@
 //-- The module can be configured with these parameters (defaults given in braces):
 //--
 //-- outputwidth(32) : width of output register
-//-- size(31)        : Size of counter, set from 5 to outputwidth-1. (overflow bit is extra, so max (outputwidth-1) Bit)
+//-- size(31)        : Size of counter, set from 5 to outputwidth-1. (overflow bit is extra, so max
+//(outputwidth-1) Bit)
 //-- clip_count(1)   : sets if the count signal is to be clipped
 //-- clip_reset(1    : sets if the reset signal is to be clipped
 //--
@@ -43,9 +44,17 @@
 
 
 module slimfast_multioption_counter #(
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter clip_count  = 1,
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter clip_reset  = 1,
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter size        = 31,
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter outputwidth = 32
 ) (
     input  wire                   countClock,
@@ -75,7 +84,8 @@ module slimfast_multioption_counter #(
         .countout     (countout)
     );
 
-    //-- pure combinatorial +1 operation (multi cycle path, this may take up to 40ns without breaking the counter)
+    //-- pure combinatorial +1 operation (multi cycle path, this may take up to 40ns without
+    //breaking the counter)
     assign highbits_next = highbits_this + 1;
 
 endmodule
@@ -90,9 +100,17 @@ module slimfast_multioption_counter_core (
     countout
 );
 
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter clip_count = 1;
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter clip_reset = 1;
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter size = 31;
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter outputwidth = 32;
 
     input wire countClock;
@@ -109,7 +127,8 @@ module slimfast_multioption_counter_core (
     wire final_reset;
 
     reg [2:0] fast_counts = 3'b0;
-    (* KEEP = "true" *) reg [size-3:0] SFC_slow_counts = 'b0;		//SFC_ prefix to make this name unique
+    (* KEEP = "true" *)
+    reg [size-3:0] SFC_slow_counts = 'b0;  //SFC_ prefix to make this name unique
     wire [size-3:0] slow_counts_next;
 
 
@@ -127,6 +146,8 @@ module slimfast_multioption_counter_core (
         assign slow_counts_next[size-3]   = highbits_next[size-3] || highbits_this[size-3];
 
         if (clip_count == 0) assign final_count = count;
+        // Keep the existing generate hierarchy.
+        // verilog_lint: waive generate-label
         else if (clip_count == 1) begin
             wire clipped_count;
             pulse_gen_rising countclip (
@@ -135,7 +156,11 @@ module slimfast_multioption_counter_core (
                 .out   (clipped_count)
             );
             assign final_count = clipped_count;
-        end else	begin // I added this, so that one could switch from "clipped" to "not clipped" without changing the number of flip flop stages
+            // Keep the existing generate hierarchy.
+            // verilog_lint: waive generate-label
+            // Keep the original diagnostic text or reference intact.
+            // verilog_lint: waive line-length
+        end else begin  // I added this, so that one could switch from "clipped" to "not clipped" without changing the number of flip flop stages
             reg piped_count;
             always @(posedge countClock) begin
                 piped_count <= count;
@@ -144,6 +169,8 @@ module slimfast_multioption_counter_core (
         end
 
         if (clip_reset == 0) assign final_reset = reset;
+        // Keep the existing generate hierarchy.
+        // verilog_lint: waive generate-label
         else begin
             wire clipped_reset;
             pulse_gen_rising resetclip (

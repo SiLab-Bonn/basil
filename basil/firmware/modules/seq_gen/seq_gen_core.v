@@ -47,7 +47,8 @@ module seq_gen_core #(
     input wire SEQ_CLK;
     output reg [OUT_BITS-1:0] SEQ_OUT;
 
-    localparam DEF_BIT_OUT = (OUT_BITS > 8) ?  (MEM_BYTES/(OUT_BITS/8)) : (MEM_BYTES*(8/OUT_BITS));
+    localparam
+        DEF_BIT_OUT = (OUT_BITS > 8) ? (MEM_BYTES / (OUT_BITS / 8)) : (MEM_BYTES * (8 / OUT_BITS));
     localparam ADDR_SIZEA = $clog2(MEM_BYTES);
     localparam ADDR_SIZEB = $clog2(DEF_BIT_OUT);
 
@@ -176,7 +177,8 @@ module seq_gen_core #(
 
     wire [ADDR_SIZEB-1:0] memout_addrb;
     //assign memout_addrb = out_bit_cnt-1;
-    assign memout_addrb = out_bit_cnt < CONF_COUNT ? out_bit_cnt-1 : CONF_COUNT-1; //do not change during wait
+    // do not change during wait
+    assign memout_addrb = out_bit_cnt < CONF_COUNT ? out_bit_cnt - 1 : CONF_COUNT - 1;
 
     wire [ADDR_SIZEA-1:0] memout_addra;
     wire [ABUSWIDTH-1:0] BUS_ADD_MEM;
@@ -237,10 +239,12 @@ module seq_gen_core #(
     reg [7:0] dev_cnt;
 
     wire REP_START;
-    assign REP_START = (out_bit_cnt == STOP_BIT && dev_cnt == CONF_CLK_DIV && (CONF_REPEAT==0 || REPEAT_COUNT < CONF_REPEAT));
+    assign REP_START = (out_bit_cnt == STOP_BIT && dev_cnt == CONF_CLK_DIV &&
+                        (CONF_REPEAT == 0 || REPEAT_COUNT < CONF_REPEAT));
 
     wire REP_NESTED_START;
-    assign REP_NESTED_START = (out_bit_cnt == CONF_NESTED_STOP && dev_cnt == CONF_CLK_DIV && (REPEAT_NESTED_COUNT < CONF_NESTED_REPEAT));
+    assign REP_NESTED_START = (out_bit_cnt == CONF_NESTED_STOP && dev_cnt == CONF_CLK_DIV &&
+                               (REPEAT_NESTED_COUNT < CONF_NESTED_REPEAT));
 
 
     always @(posedge SEQ_CLK)

@@ -20,7 +20,11 @@ module ODDR (
     S,
     output wire Q
 );
+    // This Xilinx primitive requires the external vendor simulation library.
+    // verilator lint_off MODMISSING
 
+
+    (* maybe_unknown *)
     OFDDRRSE OFDDRRSE_INST (
         .CE(CE),
         .C0(C),
@@ -31,6 +35,8 @@ module ODDR (
         .S (S),
         .Q (Q)
     );
+
+    // verilator lint_on MODMISSING
 
 endmodule
 

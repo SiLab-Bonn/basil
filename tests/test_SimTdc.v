@@ -135,14 +135,16 @@ module tb (
     wire [1:0] TRIG_FAST_OUT;
     // First TDC module: creates fast sampled trigger signal to use it for other TDC modules.
     tdc_s3 #(
-        .BASEADDR(TDC_BASEADDR),
-        .HIGHADDR(TDC_HIGHADDR),
-        .ABUSWIDTH(ABUSWIDTH),
-        .CLKDV(4),
+        .BASEADDR       (TDC_BASEADDR),
+        .HIGHADDR       (TDC_HIGHADDR),
+        .ABUSWIDTH      (ABUSWIDTH),
+        .CLKDV          (4),
         .DATA_IDENTIFIER(4'b0000),
-        .FAST_TDC(1),
-        .FAST_TRIGGER(1),
-        .BROADCAST(0)  // generate for first TDC module the 640MHz sampled trigger signal and share it with other TDC mddules (broadcast)
+        .FAST_TDC       (1),
+        .FAST_TRIGGER   (1),
+        // generate for first TDC module the 640MHz sampled trigger signal and share it with other
+        // TDC mddules (broadcast)
+        .BROADCAST      (0)
     ) i_tdc (
         .CLK320  (CLK_320),         // 320 MHz
         .CLK160  (CLK_160),         // 160 MHz
@@ -153,8 +155,9 @@ module tb (
         .TRIG_OUT(),
 
         // input/output trigger signals for broadcasting mode
-        .FAST_TRIGGER_IN(16'b0),
-        .FAST_TRIGGER_OUT(FAST_TRIGGER_OUT),  // collect 640 MHz sampled trigger signal to pass it to other TDC modules
+        .FAST_TRIGGER_IN (16'b0),
+        // collect 640 MHz sampled trigger signal to pass it to other TDC modules
+        .FAST_TRIGGER_OUT(FAST_TRIGGER_OUT),
 
         .FIFO_READ (TDC_FIFO_READ[0]),
         .FIFO_EMPTY(TDC_FIFO_EMPTY[0]),
@@ -176,16 +179,20 @@ module tb (
     // Additional TDC modules: Use the fast sampled trigger signal from first TDC module.
     genvar i;
     generate
+        // Keep the existing hierarchical instance paths.
+        // verilog_lint: waive generate-label-prefix
         for (i = 1; i < 3; i = i + 1) begin : tdc_gen
             tdc_s3 #(
-                .BASEADDR(TDC_BASEADDR + 32'h0100 * i),
-                .HIGHADDR(TDC_HIGHADDR + 32'h0100 * i),
-                .ABUSWIDTH(ABUSWIDTH),
-                .CLKDV(CLKDV),
+                .BASEADDR       (TDC_BASEADDR + 32'h0100 * i),
+                .HIGHADDR       (TDC_HIGHADDR + 32'h0100 * i),
+                .ABUSWIDTH      (ABUSWIDTH),
+                .CLKDV          (CLKDV),
                 .DATA_IDENTIFIER(4'b0000),
-                .FAST_TDC(1),
-                .FAST_TRIGGER(1),
-                .BROADCAST(1)  // generate for first TDC module the 640MHz sampled trigger signal and share it with other TDC mddules (broadcast)
+                .FAST_TDC       (1),
+                .FAST_TRIGGER   (1),
+                // generate for first TDC module the 640MHz sampled trigger signal and share it with
+                // other TDC mddules (broadcast)
+                .BROADCAST      (1)
             ) i_tdc (
                 .CLK320  (CLK_320),    // 320 MHz
                 .CLK160  (CLK_160),    // 160 MHz
@@ -197,7 +204,9 @@ module tb (
                 .TRIG_OUT(),
 
                 // input/output trigger signals for broadcasting mode
-                .FAST_TRIGGER_IN(FAST_TRIGGER_OUT),  // Use the already existing 640 MHz sampled trigger signal from first module as FAST TRIGGER (broadcast)
+                // Use the already existing 640 MHz sampled trigger signal from first module as FAST
+                // TRIGGER (broadcast)
+                .FAST_TRIGGER_IN (FAST_TRIGGER_OUT),
                 .FAST_TRIGGER_OUT(),
 
                 .FIFO_READ (TDC_FIFO_READ[i]),
@@ -224,6 +233,8 @@ module tb (
     wire [31:0] FIFO_DATA[2:0];
     genvar k;
     generate
+        // Keep the existing hierarchical instance paths.
+        // verilog_lint: waive generate-label-prefix
         for (k = 0; k < 3; k = k + 1) begin : bram_fifo_gen
             assign FIFO_DATA[k]     = TDC_FIFO_DATA[k];
             assign FIFO_EMPTY[k]    = TDC_FIFO_EMPTY[k];

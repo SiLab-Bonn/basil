@@ -20,7 +20,11 @@ module IDDR (
     R,
     S
 );
+    // This Xilinx primitive requires the external vendor simulation library.
+    // verilator lint_off MODMISSING
 
+
+    (* maybe_unknown *)
     IFDDRRSE IFDDRRSE_inst (
         .Q0(Q1),
         .Q1(Q2),
@@ -31,6 +35,8 @@ module IDDR (
         .R (R),
         .S (S)
     );
+
+    // verilator lint_on MODMISSING
 
 endmodule
 

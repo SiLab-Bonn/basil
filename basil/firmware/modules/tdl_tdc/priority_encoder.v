@@ -14,6 +14,8 @@ module priority_encoder (
 );
 
     // converts thermometercode to onehot
+    // Verilog-2005 functions use static lifetime by default.
+    // verilog_lint: waive explicit-function-lifetime
     function [96/6 -2 : 0] therm2onehot;
         input [96/6 - 1 : 0] thermo;
         integer i;
@@ -25,6 +27,8 @@ module priority_encoder (
     endfunction
 
     // converts a onehot vector to binary
+    // Verilog-2005 functions use static lifetime by default.
+    // verilog_lint: waive explicit-function-lifetime
     function [3:0] onehot2bin;
         input [96/6 - 2 : 0] onehot;
         integer i;
@@ -37,6 +41,8 @@ module priority_encoder (
     endfunction
 
     // sums all the 1s in a vector
+    // Verilog-2005 functions use static lifetime by default.
+    // verilog_lint: waive explicit-function-lifetime
     function [3:0] find_msb;
         input [12 -1 : 0] transition_code;
         integer i;
@@ -66,7 +72,8 @@ module priority_encoder (
         bins_extended_dly <= bins_extended;
         // cycle
         corse_position_dly1 <= corse_position;
-        transition_code <= bins_extended_dly[corse_position*6 +:12]; // the region wiht the transition
+        // the region wiht the transition
+        transition_code <= bins_extended_dly[corse_position*6+:12];
         // cycle
         position_out <= corse_position_dly1 * 6 + find_msb(
             transition_code

@@ -80,7 +80,8 @@ module tcp_to_bus (
         else if (TCP_RESET) INVALID <= 1'b0;
         // check for correct length, substract header size 6
         // check for correct max. address
-        else if (({TCP_RX_DATA, LENGTH[7:0]} > 65529 && BYTE_CNT == 1) || ((LENGTH + {TCP_RX_DATA, TCP_TO_BUS_ADD[23:0]} > 33'h1_0000_0000) && BYTE_CNT == 5))
+        else if (({TCP_RX_DATA, LENGTH[7:0]} > 65529 && BYTE_CNT == 1) || (
+                 (LENGTH + {TCP_RX_DATA, TCP_TO_BUS_ADD[23:0]} > 33'h1_0000_0000) && BYTE_CNT == 5))
             INVALID <= 1'b1;
         else INVALID <= INVALID;
 
@@ -94,8 +95,8 @@ module tcp_to_bus (
         end else begin
             RX_DATA_255_CNT <= RX_DATA_255_CNT;
         end
-
-    assign TCP_RESET = (&TCP_RX_DATA && RX_DATA_255_CNT == 16'hff_fe && TCP_RX_WR) || ((&TCP_RX_DATA && &RX_DATA_255_CNT && TCP_RX_WR));
+    assign TCP_RESET = (&TCP_RX_DATA && RX_DATA_255_CNT == 16'hff_fe && TCP_RX_WR) ||
+        ((&TCP_RX_DATA && &RX_DATA_255_CNT && TCP_RX_WR));
 
     always @(posedge BUS_CLK)
         if (BUS_RST) begin
@@ -140,14 +141,14 @@ module tcp_to_bus (
     end
 
     assign RBCP_TO_BUS_WR = RBCP_WE & RBCP_ACT;
-    assign RBCP_RD[7:0]   = BUS_WR ? 8'bz : BUS_DATA;
+    assign RBCP_RD[7:0]   = BUS_WR ? 8'bzzzzzzzz : BUS_DATA;
 
 
     // BUS
     assign BUS_WR         = TCP_TO_BUS_WR | RBCP_TO_BUS_WR;
     assign BUS_RD         = RBCP_RE & RBCP_ACT & ~BUS_WR;
     assign BUS_ADD        = (TCP_TO_BUS_WR) ? TCP_TO_BUS_ADD : RBCP_ADDR;
-    assign BUS_DATA       = (BUS_WR) ? ((TCP_TO_BUS_WR) ? TCP_RX_DATA : RBCP_WD) : 8'bz;
+    assign BUS_DATA       = (BUS_WR) ? ((TCP_TO_BUS_WR) ? TCP_RX_DATA : RBCP_WD) : 8'bzzzzzzzz;
 
 endmodule
 

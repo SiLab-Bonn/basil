@@ -62,6 +62,12 @@ module tdc_bdaq (
     output wire       sig_out,
     output wire       MGT_REF_SEL
 );
+    wire tdc_fifo_read, tdc_fifo_empty;
+
+    wire [31:0] BUS_ADD;
+    wire [7:0] BUS_DATA;
+    wire BUS_WR, BUS_RD, BUS_RST;
+
     assign MGT_REF_SEL = 1;
 
     wire CLK_156M250_in;
@@ -99,10 +105,11 @@ module tdc_bdaq (
     wire PLL_FEEDBACK, LOCKED;
 
     PLLE2_BASE #(
-        .BANDWIDTH("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
-        .CLKFBOUT_MULT(10),  // Multiply value for all CLKOUT, (2-64)
-        .CLKFBOUT_PHASE(0.0),  // Phase offset in degrees of CLKFB, (-360.000-360.000).
-        .CLKIN1_PERIOD(10.000),      // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+        .BANDWIDTH     ("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
+        .CLKFBOUT_MULT (10),           // Multiply value for all CLKOUT, (2-64)
+        .CLKFBOUT_PHASE(0.0),          // Phase offset in degrees of CLKFB, (-360.000-360.000).
+        // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+        .CLKIN1_PERIOD (10.000),
 
         .CLKOUT0_DIVIDE    (7),    // Divide amount for CLKOUT0 (1-128)
         .CLKOUT0_DUTY_CYCLE(0.5),  // Duty cycle for CLKOUT0 (0.001-0.999).
@@ -145,58 +152,60 @@ module tdc_bdaq (
     // wire CLK160, CLK40;
     // wire PLL2_FEEDBACK, LOCKED160;
     // PLLE2_BASE #(
-    // 	.BANDWIDTH("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
-    // 	.CLKFBOUT_MULT(16),       // Multiply value for all CLKOUT, (2-64)
-    // 	.CLKFBOUT_PHASE(0.0),     // Phase offset in degrees of CLKFB, (-360.000-360.000).
-    // 	.CLKIN1_PERIOD(10.000),      // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+    //  .BANDWIDTH("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
+    //  .CLKFBOUT_MULT(16),       // Multiply value for all CLKOUT, (2-64)
+    //  .CLKFBOUT_PHASE(0.0),     // Phase offset in degrees of CLKFB, (-360.000-360.000).
+    //  .CLKIN1_PERIOD(10.000),      // Input clock period in ns to ps resolution (i.e. 33.333 is 30
+    // MHz).
     //
-    // 	.CLKOUT0_DIVIDE(10),     // Divide amount for CLKOUT0 (1-128)
-    // 	.CLKOUT0_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
-    // 	.CLKOUT0_PHASE(90.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
+    //  .CLKOUT0_DIVIDE(10),     // Divide amount for CLKOUT0 (1-128)
+    //  .CLKOUT0_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
+    //  .CLKOUT0_PHASE(90.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
     //
-    // 	.CLKOUT1_DIVIDE(10),     // Divide amount for CLKOUT0 (1-128)
-    // 	.CLKOUT1_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
-    // 	.CLKOUT1_PHASE(0.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
+    //  .CLKOUT1_DIVIDE(10),     // Divide amount for CLKOUT0 (1-128)
+    //  .CLKOUT1_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
+    //  .CLKOUT1_PHASE(0.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
     //
-    // 	.CLKOUT2_DIVIDE(40),     // Divide amount for CLKOUT0 (1-128)
-    // 	.CLKOUT2_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
-    // 	.CLKOUT2_PHASE(0.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
+    //  .CLKOUT2_DIVIDE(40),     // Divide amount for CLKOUT0 (1-128)
+    //  .CLKOUT2_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
+    //  .CLKOUT2_PHASE(0.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
     //
-    // 	.CLKOUT3_DIVIDE(8),     // Divide amount for CLKOUT0 (1-128)
-    // 	.CLKOUT3_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
-    // 	.CLKOUT3_PHASE(90.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
+    //  .CLKOUT3_DIVIDE(8),     // Divide amount for CLKOUT0 (1-128)
+    //  .CLKOUT3_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
+    //  .CLKOUT3_PHASE(90.0),      // Phase offset for CLKOUT0 (-360.000-360.000).
     //
-    // 	.CLKOUT4_DIVIDE(8),     // Divide amount for CLKOUT0 (1-128)
-    // 	.CLKOUT4_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
-    // 	.CLKOUT4_PHASE(-5.625),      // Phase offset for CLKOUT0 (-360.000-360.000).
+    //  .CLKOUT4_DIVIDE(8),     // Divide amount for CLKOUT0 (1-128)
+    //  .CLKOUT4_DUTY_CYCLE(0.5), // Duty cycle for CLKOUT0 (0.001-0.999).
+    //  .CLKOUT4_PHASE(-5.625),      // Phase offset for CLKOUT0 (-360.000-360.000).
     //
-    // 	.DIVCLK_DIVIDE(1),        // Master division value, (1-56)
-    // 	.REF_JITTER1(0.0),        // Reference input jitter in UI, (0.000-0.999).
-    // 	.STARTUP_WAIT("FALSE")     // Delay DONE until PLL Locks, ("TRUE"/"FALSE")
+    //  .DIVCLK_DIVIDE(1),        // Master division value, (1-56)
+    //  .REF_JITTER1(0.0),        // Reference input jitter in UI, (0.000-0.999).
+    //  .STARTUP_WAIT("FALSE")     // Delay DONE until PLL Locks, ("TRUE"/"FALSE")
     // )
     // PLLE2_BASE_160 (
-    // 	.CLKOUT0(CLK160),
-    // 	.CLKOUT1(),
-    // 	.CLKOUT2(CLK40),
-    // 	.CLKOUT3(),
-    // 	.CLKOUT4(),
-    // 	.CLKOUT5(),
-    // 	.CLKFBOUT(PLL2_FEEDBACK),
-    // 	.LOCKED(LOCKED160),
-    // 	.CLKIN1(clkin),
-    // 	.PWRDWN(0),
-    // 	.RST(!RESET_N),
-    // 	.CLKFBIN(PLL2_FEEDBACK)
+    //  .CLKOUT0(CLK160),
+    //  .CLKOUT1(),
+    //  .CLKOUT2(CLK40),
+    //  .CLKOUT3(),
+    //  .CLKOUT4(),
+    //  .CLKOUT5(),
+    //  .CLKFBOUT(PLL2_FEEDBACK),
+    //  .LOCKED(LOCKED160),
+    //  .CLKIN1(clkin),
+    //  .PWRDWN(0),
+    //  .RST(!RESET_N),
+    //  .CLKFBIN(PLL2_FEEDBACK)
     // );
 
     wire PLL3_FEEDBACK, LOCKED480;
     wire CLK160PLL, CLK480PLL;
 
     PLLE2_BASE #(
-        .BANDWIDTH("HIGH"),  // OPTIMIZED, HIGH, LOW
-        .CLKFBOUT_MULT(6),  // Multiply value for all CLKOUT, (2-64)
-        .CLKFBOUT_PHASE(0.0),  // Phase offset in degrees of CLKFB, (-360.000-360.000).
-        .CLKIN1_PERIOD(6.250),      // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+        .BANDWIDTH     ("HIGH"),  // OPTIMIZED, HIGH, LOW
+        .CLKFBOUT_MULT (6),       // Multiply value for all CLKOUT, (2-64)
+        .CLKFBOUT_PHASE(0.0),     // Phase offset in degrees of CLKFB, (-360.000-360.000).
+        // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+        .CLKIN1_PERIOD (6.250),
 
         .CLKOUT0_DIVIDE    (6),    // Divide amount for CLKOUT0 (1-128)
         .CLKOUT0_DUTY_CYCLE(0.5),  // Duty cycle for CLKOUT0 (0.001-0.999).
@@ -362,8 +371,12 @@ module tdc_bdaq (
     wire RBCP_ACK;
     wire SiTCP_RST;
     reg [10:0] TCP_RX_WC_11B;
+    // SiTCP is supplied separately; omit this external instance from lint.
+    // verilator lint_off MODMISSING
 
 
+
+    (* maybe_unknown *)
     WRAP_SiTCP_GMII_XC7K_32K sitcp (
         .CLK(BUS_CLK),  // in    : System Clock >129MHz
         .RST(RST),      // in    : System reset
@@ -424,10 +437,9 @@ module tdc_bdaq (
         .RBCP_RD(RBCP_RD)  // in    : Read data[7:0]
     );
 
+    // verilator lint_on MODMISSING
 
-    wire [31:0] BUS_ADD;
-    wire [7:0] BUS_DATA;
-    wire BUS_WR, BUS_RD, BUS_RST;
+
     assign BUS_RST = SiTCP_RST;
 
     rbcp_to_bus irbcp_to_bus (
@@ -536,7 +548,6 @@ module tdc_bdaq (
         .fifo_data (tdc_fifo_data)
     );
 
-    wire tdc_fifo_read, tdc_fifo_empty;
     wire ARB_WRITE_OUT;
     wire [31:0] ARB_DATA_OUT;
     wire TCP_FIFO_FULL, TCP_FIFO_EMPTY;
@@ -597,7 +608,7 @@ module tdc_bdaq (
     end
 
     assign LED = ~{ TCP_OPEN_ACK, TCP_CLOSE_REQ, TCP_RX_WR, TCP_TX_WR,
-	TCP_FIFO_FULL, TCP_FIFO_EMPTY, sig_out, trig_out};
+    TCP_FIFO_FULL, TCP_FIFO_EMPTY, sig_out, trig_out};
 
 
 endmodule

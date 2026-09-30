@@ -41,7 +41,10 @@ module fifo_8_to_64 #(
         .full    (FULL),
         .empty   (FIFO_EMPTY_8),
         .data_out(FIFO_DATA_OUT_8),
+        // FIFO occupancy is not used here.
+        // slang lint_off empty-output-connection
         .size    ()
+        // slang lint_on empty-output-connection
     );
 
 
@@ -117,7 +120,10 @@ module fifo_8_to_64 #(
         .full    (FIFO_FULL_64),
         .empty   (EMPTY),
         .data_out(DATA_OUT),
+        // FIFO occupancy is not used here.
+        // slang lint_off empty-output-connection
         .size    ()
+        // slang lint_on empty-output-connection
     );
 
 endmodule

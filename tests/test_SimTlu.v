@@ -33,6 +33,8 @@ module tlu_model (
 
     always @(posedge SYS_CLK) begin
         if (SYS_RST) TRIG <= 0;
+        // Verilog-2005 provides $random, not $urandom.
+        // verilog_lint: waive invalid-system-task-function
         else if ($random(seed) % 100 == 10 && !VETO && ENABLE) TRIG <= 1;
         else TRIG <= 0;
     end

@@ -54,7 +54,8 @@ module m26_rx_ch (
     always @(posedge CLK_RX)
         if (RST) data_len_ok <= 1'b0;
         else
-        if(data_cnt==30 && data_sr[17:2] <= 570)  // maximum valid data words is 570 (total words 574)
+        // maximum valid data words is 570 (total words 574)
+        if (data_cnt == 30 && data_sr[17:2] <= 570)
             data_len_ok <= 1'b1;
 
     always @(posedge CLK_RX)
@@ -77,8 +78,8 @@ module m26_rx_ch (
         if (RST) WRITE <= 1'b0;
         else if (data_cnt == 0 || data_cnt == 16)  // write header and frame counter
             WRITE <= 1'b1;
-        else if(data_len_ok && data_cnt % 16 == 0 && data_cnt / 16 <= data_len + 3)  // including trailer
-            WRITE <= 1'b1;
+        // including trailer
+        else if (data_len_ok && data_cnt % 16 == 0 && data_cnt / 16 <= data_len + 3) WRITE <= 1'b1;
         else if (!data_len_ok && data_cnt == 32)  // just data length w/o trailer
             WRITE <= 1'b1;
         else WRITE <= 1'b0;

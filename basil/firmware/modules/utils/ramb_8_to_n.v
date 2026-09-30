@@ -43,26 +43,28 @@ module ramb_8_to_n (
     output reg [WIDTHA-1:0] doA;
     output reg [WIDTHB-1:0] doB;
 
-    `define max(a, b) {(a) > (b) ? (a) : (b)}
-    `define min(a, b) {(a) < (b) ? (a) : (b)}
+    `define MAX(a, b) {(a) > (b) ? (a) : (b)}
+    `define MIN(a, b) {(a) < (b) ? (a) : (b)}
 
-    localparam maxSIZE = `max(SIZEA, SIZEB);
-    localparam maxWIDTH = `max(WIDTHA, WIDTHB);
-    localparam minWIDTH = `min(WIDTHA, WIDTHB);
-    localparam RATIO = maxWIDTH / minWIDTH;
-    localparam log2RATIO = $clog2(RATIO);
+    localparam MAXSIZE = `MAX(SIZEA, SIZEB);
+    localparam MAXWIDTH = `MAX(WIDTHA, WIDTHB);
+    localparam MINWIDTH = `MIN(WIDTHA, WIDTHB);
+    localparam RATIO = MAXWIDTH / MINWIDTH;
+    localparam LOG2RATIO = $clog2(RATIO);
 
-    reg [minWIDTH-1:0] RAM[0:maxSIZE-1];
+    reg [MINWIDTH-1:0] RAM[0:MAXSIZE-1];
 
     // For simualtion init with 0
     initial begin : INIT_MEM
         integer w;
-        for (w = 0; w < maxSIZE; w = w + 1) begin
+        for (w = 0; w < MAXSIZE; w = w + 1) begin
             RAM[w] = 0;
         end
     end
 
     generate
+        // Keep the existing generate hierarchy.
+        // verilog_lint: waive generate-label
         if (WIDTH == 8) begin
             always @(posedge clkB) begin
                 if (weB) RAM[addrB] <= diB;
@@ -79,6 +81,8 @@ module ramb_8_to_n (
     endgenerate
 
     generate
+        // Keep the existing generate hierarchy.
+        // verilog_lint: waive generate-label
         if (WIDTH < 8) begin
             always @(posedge clkB) begin
                 if (weB) RAM[addrB] <= diB;
@@ -88,13 +92,13 @@ module ramb_8_to_n (
 
             always @(posedge clkA) begin : portA
                 integer i;
-                reg [log2RATIO-1:0] lsbaddr;
+                reg [LOG2RATIO-1:0] lsbaddr;
 
                 for (i = 0; i < RATIO; i = i + 1) begin
                     lsbaddr = i;
-                    if (weA) RAM[{addrA, lsbaddr}] <= diA[(i+1)*minWIDTH-1-:minWIDTH];
+                    if (weA) RAM[{addrA, lsbaddr}] <= diA[(i+1)*MINWIDTH-1-:MINWIDTH];
 
-                    doA[(i+1)*minWIDTH-1-:minWIDTH] <= RAM[{addrA, lsbaddr}];
+                    doA[(i+1)*MINWIDTH-1-:MINWIDTH] <= RAM[{addrA, lsbaddr}];
                 end
             end
         end
@@ -102,6 +106,8 @@ module ramb_8_to_n (
 
 
     generate
+        // Keep the existing generate hierarchy.
+        // verilog_lint: waive generate-label
         if (WIDTH > 8) begin
             always @(posedge clkA) begin
                 if (weA) RAM[addrA] <= diA;
@@ -111,12 +117,12 @@ module ramb_8_to_n (
 
             always @(posedge clkB) begin : portA
                 integer i;
-                reg [log2RATIO-1:0] lsbaddr;
+                reg [LOG2RATIO-1:0] lsbaddr;
                 for (i = 0; i < RATIO; i = i + 1) begin
                     lsbaddr = i;
-                    if (weB) RAM[{addrB, lsbaddr}] <= diB[(i+1)*minWIDTH-1-:minWIDTH];
+                    if (weB) RAM[{addrB, lsbaddr}] <= diB[(i+1)*MINWIDTH-1-:MINWIDTH];
 
-                    doB[(i+1)*minWIDTH-1-:minWIDTH] <= RAM[{addrB, lsbaddr}];
+                    doB[(i+1)*MINWIDTH-1-:MINWIDTH] <= RAM[{addrB, lsbaddr}];
                 end
             end
         end

@@ -74,7 +74,8 @@ module generic_fifo #(
         else empty <= empty_loc;
 
     assign empty_loc = (wr_pointer == rd_pointer);
-    assign full = ((wr_pointer==(DEPTH-1'b1) && rd_pointer==0) || (wr_pointer!=(DEPTH-1'b1) && wr_pointer+1'b1 == rd_pointer));
+    assign full = ((wr_pointer == (DEPTH - 1'b1) && rd_pointer == 0) ||
+                   (wr_pointer != (DEPTH - 1'b1) && wr_pointer + 1'b1 == rd_pointer));
 
     always @(posedge clk) if (write && !full) mem[wr_pointer] <= data_in;
 

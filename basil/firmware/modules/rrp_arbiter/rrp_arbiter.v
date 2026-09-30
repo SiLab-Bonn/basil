@@ -18,10 +18,11 @@ module rrp_arbiter #(
     input wire RST,
     input wire CLK,
 
-    input wire [WIDTH-1:0] WRITE_REQ,  // round robin
-    input wire [WIDTH-1:0] HOLD_REQ, // lower channels have higher priority, has to be high until read was granted
-    input wire [WIDTH*32-1:0] DATA_IN,
-    output wire [WIDTH-1:0] READ_GRANT,
+    input  wire [   WIDTH-1:0] WRITE_REQ,  // round robin
+    // lower channels have higher priority, has to be high until read was granted
+    input  wire [   WIDTH-1:0] HOLD_REQ,
+    input  wire [WIDTH*32-1:0] DATA_IN,
+    output wire [   WIDTH-1:0] READ_GRANT,
 
     input  wire        READY_OUT,
     output wire        WRITE_OUT,
@@ -86,7 +87,11 @@ module rrp_arbiter #(
     // generation of DATA_A
     genvar i, j;
     generate
+        // Keep the existing hierarchical instance paths.
+        // verilog_lint: waive generate-label-prefix
         for (i = 0; i < 32; i = i + 1) begin : gen
+            // Keep the existing hierarchical instance paths.
+            // verilog_lint: waive generate-label-prefix
             for (j = 0; j < WIDTH; j = j + 1) begin : gen2
                 assign DATA_A[i][j] = DATA_IN[j*32+i];
             end
@@ -95,6 +100,8 @@ module rrp_arbiter #(
 
     // selecting bits for DATA_OUT
     generate
+        // Keep the existing hierarchical instance paths.
+        // verilog_lint: waive generate-label-prefix
         for (i = 0; i < 32; i = i + 1) begin : gen3
             assign DATA_OUT[i] = |(DATA_A[i] & select);
         end

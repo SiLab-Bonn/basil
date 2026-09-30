@@ -3,41 +3,51 @@
 
 module word_broker #(
     parameter DATA_IDENTIFIER = 4'b0100,
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter state_bits      = 4,
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter counter_bits    = 10,
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter encodebits      = 7,
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter fine_time_bits  = 2
 ) (
-    input wire CLK,
-    input wire [counter_bits-1:0] corse_count,
+    input wire                      CLK,
+    input wire [  counter_bits-1:0] corse_count,
     input wire [fine_time_bits-1:0] fine_time,
-    input wire [encodebits-1:0] tdl_time,
-    input wire [state_bits-1:0] tdc_state,
-    input wire en_write_timestamp,
-    input wire en_no_trig_err, // This is not implemented as there are no trig errors in this design. The tdl expects bubble errors.
-    input wire [24:0] signal_timestamp,
-    input wire [24:0] reset_timestamp,
+    input wire [    encodebits-1:0] tdl_time,
+    input wire [    state_bits-1:0] tdc_state,
+    input wire                      en_write_timestamp,
+    // This is not implemented as there are no trig errors in this design. The tdl expects bubble
+    // errors.
+    input wire                      en_no_trig_err,
+    input wire [              24:0] signal_timestamp,
+    input wire [              24:0] reset_timestamp,
 
     output reg          out_valid,
     output reg [32-1:0] out_word
 );
 
-    localparam word_type_bits = 3;
+    localparam WORD_TYPE_BITS = 3;
 
     // Word type codes
-    localparam [word_type_bits-1:0] TRIGGERED_WORD = 0;
-    localparam [word_type_bits-1:0] RISING_WORD = 1;
-    localparam [word_type_bits-1:0] FALLING_WORD = 2;
-    localparam [word_type_bits-1:0] TIMESTAMP_WORD = 3;
-    localparam [word_type_bits-1:0] CALIB_WORD = 4;
-    localparam [word_type_bits-1:0] MISS_WORD = 5;
-    localparam [word_type_bits-1:0] RESET_WORD = 6;
+    localparam [WORD_TYPE_BITS-1:0] TRIGGERED_WORD = 0;
+    localparam [WORD_TYPE_BITS-1:0] RISING_WORD = 1;
+    localparam [WORD_TYPE_BITS-1:0] FALLING_WORD = 2;
+    localparam [WORD_TYPE_BITS-1:0] TIMESTAMP_WORD = 3;
+    localparam [WORD_TYPE_BITS-1:0] CALIB_WORD = 4;
+    localparam [WORD_TYPE_BITS-1:0] MISS_WORD = 5;
+    localparam [WORD_TYPE_BITS-1:0] RESET_WORD = 6;
 
     // function [state_bits-1:0] int_to_gray;
-    // 	input [state_bits-1:0] int;
-    // 	begin
-    // 		int_to_gray = int ^ (int >> 1);
-    // 	end
+    //  input [state_bits-1:0] int;
+    //  begin
+    //      int_to_gray = int ^ (int >> 1);
+    //  end
     // endfunction
     // TDC states
     localparam [state_bits-1:0] IDLE = 0;

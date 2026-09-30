@@ -56,20 +56,20 @@ module RAMB16_S1_S9 (
     parameter SIZEB = 2048;
     parameter ADDRWIDTHB = 11;
 
-    `define max(a, b) (a) > (b) ? (a) : (b)
-    `define min(a, b) (a) < (b) ? (a) : (b)
+    `define MAX(a, b) (a) > (b) ? (a) : (b)
+    `define MIN(a, b) (a) < (b) ? (a) : (b)
 
     `include "../includes/log2func.v"
 
-    localparam maxSIZE = `max(SIZEA, SIZEB);
-    localparam maxWIDTH = `max(WIDTHA, WIDTHB);
-    localparam minWIDTH = `min(WIDTHA, WIDTHB);
-    localparam RATIO = maxWIDTH / minWIDTH;
-    localparam log2RATIO = `CLOG2(RATIO);
+    localparam MAXSIZE = `MAX(SIZEA, SIZEB);
+    localparam MAXWIDTH = `MAX(WIDTHA, WIDTHB);
+    localparam MINWIDTH = `MIN(WIDTHA, WIDTHB);
+    localparam RATIO = MAXWIDTH / MINWIDTH;
+    localparam LOG2RATIO = `CLOG2(RATIO);
 
     /* verilator lint_off MULTIDRIVEN */
     // In synthesis, uses IP block; in this model, memory is multi-driven
-    reg [minWIDTH-1:0] RAM[0:maxSIZE-1];
+    reg [MINWIDTH-1:0] RAM[0:MAXSIZE-1];
     /* verilator lint_on MULTIDRIVEN */
 
     always @(posedge CLKA)
@@ -78,11 +78,13 @@ module RAMB16_S1_S9 (
 
     genvar i;
     generate
+        // Keep the existing hierarchical instance paths.
+        // verilog_lint: waive generate-label-prefix
         for (i = 0; i < RATIO; i = i + 1) begin : portA
-            localparam [log2RATIO-1:0] lsbaddr = i;
+            localparam [LOG2RATIO-1:0] LSBADDR = i;
             always @(posedge CLKB)
-                if (WEB) RAM[{ADDRB, lsbaddr}] <= DIB[(i+1)*minWIDTH-1:i*minWIDTH];
-                else DOB[(i+1)*minWIDTH-1:i*minWIDTH] <= RAM[{ADDRB, lsbaddr}];
+                if (WEB) RAM[{ADDRB, LSBADDR}] <= DIB[(i+1)*MINWIDTH-1:i*MINWIDTH];
+                else DOB[(i+1)*MINWIDTH-1:i*MINWIDTH] <= RAM[{ADDRB, LSBADDR}];
         end
     endgenerate
 

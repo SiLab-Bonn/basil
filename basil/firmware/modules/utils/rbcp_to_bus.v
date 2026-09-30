@@ -45,8 +45,8 @@ module rbcp_to_bus (
     assign BUS_WR       = RBCP_WE & RBCP_ACT;
     assign BUS_RD       = RBCP_RE & RBCP_ACT;
 
-    assign BUS_DATA     = BUS_WR ? RBCP_WD[7:0] : 8'bz;
-    assign RBCP_RD[7:0] = BUS_WR ? 8'bz : BUS_DATA;
+    assign BUS_DATA     = BUS_WR ? RBCP_WD[7:0] : 8'bzzzzzzzz;
+    assign RBCP_RD[7:0] = BUS_WR ? 8'bzzzzzzzz : BUS_DATA;
 
     /*
 wire [35:0] control_bus;

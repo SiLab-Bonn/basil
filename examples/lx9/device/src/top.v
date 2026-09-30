@@ -31,7 +31,11 @@ module top (
 
     wire CLKFBOUT, CLKOUT0, CLKOUT1, CLKOUT2, CLKOUT3, CLKOUT4, CLKFBIN, LOCKED;
     wire RST, BUS_CLK, BUS_RST, SPI_CLK;
+    // This Xilinx primitive requires the external vendor simulation library.
+    // verilator lint_off MODMISSING
 
+
+    (* maybe_unknown *)
     PLL_BASE #(
         .BANDWIDTH("OPTIMIZED"),  // "HIGH", "LOW" or "OPTIMIZED"
         .CLKFBOUT_MULT(20),  // Multiply value for all CLKOUT clock outputs (1-64)
@@ -52,7 +56,8 @@ module top (
         .CLKOUT3_DUTY_CYCLE(0.5),
         .CLKOUT4_DUTY_CYCLE(0.5),
         .CLKOUT5_DUTY_CYCLE(0.5),
-        // CLKOUT0_PHASE - CLKOUT5_PHASE: Output phase relationship for CLKOUT# clock output (-360.0-360.0).
+        // CLKOUT0_PHASE - CLKOUT5_PHASE: Output phase relationship for CLKOUT# clock output
+        // (-360.0-360.0).
         .CLKOUT0_PHASE(0.0),
         .CLKOUT1_PHASE(0.0),
         .CLKOUT2_PHASE(0.0),
@@ -60,7 +65,8 @@ module top (
         .CLKOUT4_PHASE(0.0),
         .CLKOUT5_PHASE(0.0),
         .CLK_FEEDBACK("CLKFBOUT"),  // Clock source to drive CLKFBIN ("CLKFBOUT" or "CLKOUT0")
-        .COMPENSATION("SYSTEM_SYNCHRONOUS"), // "SYSTEM_SYNCHRONOUS", "SOURCE_SYNCHRONOUS", "EXTERNAL"
+        .COMPENSATION(
+            "SYSTEM_SYNCHRONOUS"),  // "SYSTEM_SYNCHRONOUS", "SOURCE_SYNCHRONOUS", "EXTERNAL"
         .DIVCLK_DIVIDE(1),  // Division value for all output clocks (1-52)
         .REF_JITTER(0.1),  // Reference Clock Jitter in UI (0.000-0.999).
         .RESET_ON_LOSS_OF_LOCK("FALSE")  // Must be set to FALSE
@@ -78,6 +84,8 @@ module top (
         .CLKIN   (USER_CLOCK),  // 1-bit input: Clock input
         .RST     (USER_RESET)   // 1-bit input: Reset input
     );
+
+    // verilator lint_on MODMISSING
 
     wire RX_CLK, TX_CLK;
     assign RST     = USER_RESET | !LOCKED;
@@ -116,6 +124,10 @@ module top (
     wire mdio_gem_t;
 
     wire [3:0] ETH_TX_D_NO;
+    // SiTCP is supplied separately; omit this external instance from lint.
+    // verilator lint_off MODMISSING
+
+    (* maybe_unknown *)
     WRAP_SiTCP_GMII_XC6S_16K #(
         .TIM_PERIOD(50)
     ) sitcp (
@@ -182,6 +194,8 @@ module top (
         .RBCP_RD(RBCP_RD)  // in    : Read data[7:0]
     );
 
+    // verilator lint_on MODMISSING
+
     IOBUF i_iobuf_mdio (
         .O (mdio_gem_i),
         .IO(ETH_MDIO),
@@ -229,6 +243,10 @@ module top (
 
 
     // MODULES //
+    wire [7:0] gpio_io;
+    assign gpio_io[7:4] = GPIO_DIP;
+    assign GPIO_LED     = gpio_io[3:0];
+
     gpio #(
         .BASEADDR    (GPIO_BASEADDR),
         .HIGHADDR    (GPIO_HIGHADDR),
@@ -242,7 +260,7 @@ module top (
         .BUS_DATA(BUS_DATA),
         .BUS_RD  (BUS_RD),
         .BUS_WR  (BUS_WR),
-        .IO      ({GPIO_DIP, GPIO_LED})
+        .IO      (gpio_io)
     );
 
     wire [7:0] SEQ_OUT;
@@ -271,7 +289,11 @@ module top (
     assign GLOBAL_DAC_LD = SEQ_OUT[3];
     assign PIXEL_SR_EN   = SEQ_OUT[4];
     assign INJECT        = SEQ_OUT[5];
+    // This Xilinx primitive requires the external vendor simulation library.
+    // verilator lint_off MODMISSING
 
+
+    (* maybe_unknown *)
     OFDDRRSE GLOBAL_SR_GC (
         .CE(GLOBAL_SR_EN),
         .C0(~SPI_CLK),
@@ -283,6 +305,12 @@ module top (
         .Q (GLOBAL_SR_CLK)
     );
 
+    // verilator lint_on MODMISSING
+    // This Xilinx primitive requires the external vendor simulation library.
+    // verilator lint_off MODMISSING
+
+
+    (* maybe_unknown *)
     OFDDRRSE PIXEL_SR_GC (
         .CE(PIXEL_SR_EN),
         .C0(~SPI_CLK),
@@ -293,6 +321,8 @@ module top (
         .S (1'b0),
         .Q (PIXEL_SR_CLK)
     );
+
+    // verilator lint_on MODMISSING
 
     wire [31:0] FIFO_DATA_SPI_RX;
     wire FIFO_EMPTY_SPI_RX;

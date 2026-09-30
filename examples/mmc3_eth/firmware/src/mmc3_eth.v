@@ -30,10 +30,11 @@ module mmc3_eth_throughput_test (
     wire PLL_FEEDBACK, LOCKED;
 
     PLLE2_BASE #(
-        .BANDWIDTH("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
-        .CLKFBOUT_MULT(10),  // Multiply value for all CLKOUT, (2-64)
-        .CLKFBOUT_PHASE(0.0),  // Phase offset in degrees of CLKFB, (-360.000-360.000).
-        .CLKIN1_PERIOD(10.000),      // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+        .BANDWIDTH     ("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
+        .CLKFBOUT_MULT (10),           // Multiply value for all CLKOUT, (2-64)
+        .CLKFBOUT_PHASE(0.0),          // Phase offset in degrees of CLKFB, (-360.000-360.000).
+        // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+        .CLKIN1_PERIOD (10.000),
 
         .CLKOUT0_DIVIDE    (7),    // Divide amount for CLKOUT0 (1-128)
         .CLKOUT0_DUTY_CYCLE(0.5),  // Duty cycle for CLKOUT0 (0.001-0.999).
@@ -178,8 +179,12 @@ module mmc3_eth_throughput_test (
     wire RBCP_ACK;
     wire SiTCP_RST;
     reg [10:0] TCP_RX_WC_11B;
+    // SiTCP is supplied separately; omit this external instance from lint.
+    // verilator lint_off MODMISSING
 
 
+
+    (* maybe_unknown *)
     WRAP_SiTCP_GMII_XC7K_32K sitcp (
         .CLK(BUS_CLK),  // in    : System Clock >129MHz
         .RST(RST),  // in    : System reset
@@ -246,6 +251,8 @@ module mmc3_eth_throughput_test (
         .RBCP_RD(RBCP_RD)  // in    : Read data[7:0]
     );
 
+    // verilator lint_on MODMISSING
+
 
     wire BUS_WR, BUS_RD, BUS_RST;
     wire [31:0] BUS_ADD;
@@ -266,7 +273,7 @@ module mmc3_eth_throughput_test (
         .BUS_WR  (BUS_WR),
         .BUS_RD  (BUS_RD),
         .BUS_ADD (BUS_ADD),
-        .BUS_DATA(BUS_DATA)
+        .BUS_DATA(BUS_DATA[7:0])
     );
 
 
@@ -321,7 +328,9 @@ module mmc3_eth_throughput_test (
 
     reg ETH_START_SENDING, ETH_START_SENDING_temp, ETH_START_SENDING_LOCK;
     reg [31:0] datasource;
-    assign LED = ~{TCP_OPEN_ACK, TCP_CLOSE_REQ, TCP_RX_WR, TCP_TX_WR, fifo_full, fifo_empty, fifo_write, TCP_TX_WR};    //GPIO_IO[3:0]};
+    // GPIO_IO[3:0]};
+    assign LED = ~{TCP_OPEN_ACK, TCP_CLOSE_REQ, TCP_RX_WR, TCP_TX_WR, fifo_full, fifo_empty,
+                   fifo_write, TCP_TX_WR};
 
 
     /* -------  Main FSM  ------- */

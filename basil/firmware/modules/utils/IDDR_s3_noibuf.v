@@ -20,8 +20,14 @@ module IDDR (
     R,
     S
 );
+    // This Xilinx primitive requires the external vendor simulation library.
+    // verilator lint_off MODMISSING
 
-    FDRSE F0 (
+
+    (* maybe_unknown *)
+    FDRSE #(
+        .INIT(1'b0)
+    ) F0 (
         .C (C),
         .CE(CE),
         .R (R),
@@ -29,9 +35,17 @@ module IDDR (
         .S (S),
         .Q (Q1)
     );
-    defparam F0.INIT = 1'b0;
 
-    FDRSE F1 (
+    // verilator lint_on MODMISSING
+
+    // This Xilinx primitive requires the external vendor simulation library.
+    // verilator lint_off MODMISSING
+
+
+    (* maybe_unknown *)
+    FDRSE #(
+        .INIT("0")
+    ) F1 (
         .C (~C),
         .CE(CE),
         .R (R),
@@ -39,7 +53,9 @@ module IDDR (
         .S (S),
         .Q (Q2)
     );
-    defparam F1.INIT = "0";
+
+    // verilator lint_on MODMISSING
+
 
 endmodule
 

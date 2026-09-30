@@ -43,7 +43,10 @@ module fifo_32_to_8 #(
         .full    (FULL),
         .empty   (FIFO_EMPTY),
         .data_out(FIFO_DATA_OUT),
+        // FIFO occupancy is not used here.
+        // slang lint_off empty-output-connection
         .size    ()
+        // slang lint_on empty-output-connection
     );
 
     always @(posedge CLK)

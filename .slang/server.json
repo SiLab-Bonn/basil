@@ -1,0 +1,18 @@
+{
+  "flags": "--std=1364-2005 -Wextra --timescale=1ns/1ps -f verilog.f --allow-lib-module-redef -Wempty-output-connection",
+  "index": [
+    {
+      "dirs": [
+        "basil/firmware",
+        "tests",
+        "examples"
+      ],
+      "excludeDirs": [
+        "build",
+        "sim_build",
+        "SiTCP",
+        "sitcp"
+      ]
+    }
+  ]
+}

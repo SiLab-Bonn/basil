@@ -42,19 +42,19 @@ module cdc_fifo_bram #(
         if (arst) begin
             reset_sync_wclk <= 4'b1111;
         end else begin
-            reset_sync_wclk <= {reset_sync_wclk[$left(reset_sync_wclk)-1:0], 1'b0};
+            reset_sync_wclk <= {reset_sync_wclk[2:0], 1'b0};
         end
-    end : reset_sync_wclk_set
-    assign wrst = reset_sync_wclk[$left(reset_sync_wclk)];
+    end
+    assign wrst = reset_sync_wclk[3];
 
     always @(posedge rclk, posedge arst) begin : reset_sync_rclk_set
         if (arst) begin
             reset_sync_rclk <= 4'b1111;
         end else begin
-            reset_sync_rclk <= {reset_sync_rclk[$left(reset_sync_rclk)-1:0], 1'b0};
+            reset_sync_rclk <= {reset_sync_rclk[2:0], 1'b0};
         end
-    end : reset_sync_rclk_set
-    assign rrst = reset_sync_rclk[$left(reset_sync_rclk)];
+    end
+    assign rrst = reset_sync_rclk[3];
 
     // FIFO memory, AMD/Xilinx block RAM should be inferred
     localparam integer MEMORY_SIZE = 2 ** ASIZE;
@@ -68,19 +68,20 @@ module cdc_fifo_bram #(
         if (memory_we) begin
             memory[memory_waddr] <= wdata;
         end
-    end : memory_write
+    end
 
     always @(posedge rclk) begin : memory_read
         memory_q <= memory[memory_raddr];
-    end : memory_read
+    end
 
-    // transfer memory write address into read clock domain and memory read address into write clock domain
+    // transfer memory write address into read clock domain and memory read address into write clock
+    // domain
     wire [ASIZE-1:0] memory_waddr_gray = memory_waddr ^ {1'b0, memory_waddr[ASIZE-1:1]};
     reg [ASIZE-1:0] memory_waddr_gray_rclk[1:0];  // synchronizer chain: 2 FFs for each address bit
     always @(posedge rclk) begin : memory_waddr_gray_rclk_set
         memory_waddr_gray_rclk[1] <= memory_waddr_gray_rclk[0];
         memory_waddr_gray_rclk[0] <= memory_waddr_gray;
-    end : memory_waddr_gray_rclk_set
+    end
     wire [ASIZE-1:0] memory_waddr_rclk;
 
     wire [ASIZE-1:0] memory_raddr_gray = memory_raddr ^ {1'b0, memory_raddr[ASIZE-1:1]};
@@ -88,15 +89,19 @@ module cdc_fifo_bram #(
     always @(posedge wclk) begin : memory_raddr_gray_wclk_set
         memory_raddr_gray_wclk[1] <= memory_raddr_gray_wclk[0];
         memory_raddr_gray_wclk[0] <= memory_raddr_gray;
-    end : memory_raddr_gray_wclk_set
+    end
     wire [ASIZE-1:0] memory_raddr_wclk;
 
     assign memory_waddr_rclk[ASIZE-1] = memory_waddr_gray_rclk[1][ASIZE-1];
     assign memory_raddr_wclk[ASIZE-1] = memory_raddr_gray_wclk[1][ASIZE-1];
-    for (genvar i = ASIZE - 2; i >= 0; i--) begin : g_cdc_addr_loop
-        assign memory_waddr_rclk[i] = memory_waddr_gray_rclk[1][i] ^ memory_waddr_rclk[i+1];
-        assign memory_raddr_wclk[i] = memory_raddr_gray_wclk[1][i] ^ memory_raddr_wclk[i+1];
-    end : g_cdc_addr_loop
+    genvar i;
+    generate
+        for (i = ASIZE - 2; i >= 0; i = i - 1) begin : g_cdc_addr_loop
+            assign memory_waddr_rclk[i] = memory_waddr_gray_rclk[1][i] ^ memory_waddr_rclk[i+1];
+            assign memory_raddr_wclk[i] = memory_raddr_gray_wclk[1][i] ^ memory_raddr_wclk[i+1];
+        end
+
+    endgenerate
 
     // FIFO write port implementation
     wire [ASIZE-1:0] level_wclk = memory_waddr - memory_raddr_wclk;
@@ -113,7 +118,7 @@ module cdc_fifo_bram #(
             end
             ;
         end
-    end : memory_waddr_set
+    end
 
     // FIFO read port implementation
     wire memory_re;
@@ -132,7 +137,7 @@ module cdc_fifo_bram #(
             end
             ;
         end
-    end : memory_raddr_set
+    end
 
     // show-ahead buffer
     reg [DSIZE-1:0] showahead_buf[3:0];
@@ -149,13 +154,13 @@ module cdc_fifo_bram #(
                 showahead_buf_wptr <= showahead_buf_wptr + 1'b1;
             end
         end
-    end : showahead_buf_wptr_set
+    end
 
     always @(posedge rclk) begin : showahead_buf_set
         if (memory_raddr_lsb ^ memory_raddr[0]) begin
             showahead_buf[showahead_buf_wptr] <= memory_q;
         end
-    end : showahead_buf_set
+    end
 
     always @(posedge rclk, posedge rrst) begin : fifo_read
         if (rrst) begin
@@ -178,7 +183,7 @@ module cdc_fifo_bram #(
                 end
             end
         end
-    end : fifo_read
+    end
 
 endmodule
 `endif

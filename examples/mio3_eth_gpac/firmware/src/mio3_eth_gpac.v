@@ -27,10 +27,11 @@ module mio3_eth_gpac (
     // -------  PLL for communication with FPGA  ------- //
 
     PLLE2_BASE #(
-        .BANDWIDTH("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
-        .CLKFBOUT_MULT(10),  // Multiply value for all CLKOUT, (2-64)
-        .CLKFBOUT_PHASE(0.0),  // Phase offset in degrees of CLKFB, (-360.000-360.000).
-        .CLKIN1_PERIOD(10.000),      // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+        .BANDWIDTH     ("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
+        .CLKFBOUT_MULT (10),           // Multiply value for all CLKOUT, (2-64)
+        .CLKFBOUT_PHASE(0.0),          // Phase offset in degrees of CLKFB, (-360.000-360.000).
+        // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+        .CLKIN1_PERIOD (10.000),
 
         .CLKOUT0_DIVIDE    (7),    // Divide amount for CLKOUT0 (1-128)
         .CLKOUT0_DUTY_CYCLE(0.5),  // Duty cycle for CLKOUT0 (0.001-0.999).
@@ -164,7 +165,11 @@ module mio3_eth_gpac (
     wire [7:0] TCP_RX_DATA;
     wire RBCP_ACK;
     wire SiTCP_RST;
+    // SiTCP is supplied separately; omit this external instance from lint.
+    // verilator lint_off MODMISSING
 
+
+    (* maybe_unknown *)
     WRAP_SiTCP_GMII_XC7K_32K sitcp (
         .CLK(BUS_CLK),  // in    : System Clock >129MHz
         .RST(RST),  // in    : System reset
@@ -228,6 +233,8 @@ module mio3_eth_gpac (
         .RBCP_ACK(RBCP_ACK),  // in    : Access acknowledge
         .RBCP_RD(RBCP_RD)  // in    : Read data[7:0]
     );
+
+    // verilator lint_on MODMISSING
 
     // -------  BUS SYGNALING  ------- //
 

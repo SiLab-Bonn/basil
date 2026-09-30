@@ -162,6 +162,8 @@ module tb (
     // Additional TDC modules: Use the fast sampled trigger signal from first TDC module.
     genvar i;
     generate
+        // Keep the existing hierarchical instance paths.
+        // verilog_lint: waive generate-label-prefix
         for (i = 1; i < 3; i = i + 1) begin : tdc_gen
             tdl_tdc #(
                 .BASEADDR       (TDC_BASEADDR + 32'h0100 * i),
@@ -198,6 +200,8 @@ module tb (
     wire [31:0] FIFO_DATA[2:0];
     genvar k;
     generate
+        // Keep the existing hierarchical instance paths.
+        // verilog_lint: waive generate-label-prefix
         for (k = 0; k < 3; k = k + 1) begin : bram_fifo_gen
             assign FIFO_DATA[k]     = TDC_FIFO_DATA[k];
             assign FIFO_EMPTY[k]    = TDC_FIFO_EMPTY[k];

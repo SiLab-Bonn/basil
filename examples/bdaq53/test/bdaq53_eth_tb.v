@@ -90,7 +90,7 @@ module tb (
 
         .BUS_RST (BUS_RST),
         .BUS_ADD (BUS_ADD),
-        .BUS_DATA(BUS_DATA),
+        .BUS_DATA(BUS_DATA[7:0]),
         .BUS_RD  (BUS_RD),
         .BUS_WR  (BUS_WR),
 

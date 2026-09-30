@@ -8,6 +8,8 @@
 `ifdef _IVERILOG_
 `define CLOG2 $clog2
 `else
+// Verilog-2005 functions use static lifetime by default.
+// verilog_lint: waive explicit-function-lifetime
 function integer clog2;
     input integer value;
     reg [31:0] shifted;

@@ -197,7 +197,10 @@ module timestamp_core #(
         .full    (fifo_full),
         .empty   (FIFO_EMPTY),
         .data_out(FIFO_DATA[31:0]),
+        // FIFO occupancy is not used here.
+        // slang lint_off empty-output-connection
         .size    ()
+        // slang lint_on empty-output-connection
     );
 
 endmodule

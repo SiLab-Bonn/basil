@@ -207,7 +207,8 @@ module tdc_sw_interface #(
         .data_out_clk(event_cnt)
     );
 
-    // Buffer upper bits of counter to preserve while reading in blocks of 1 byte (width of bus data)
+    // Buffer upper bits of counter to preserve while reading in blocks of 1 byte (width of bus
+    // data)
     always @(posedge BUS_CLK) begin
         event_cnt_buf <= event_cnt;
         if (ip_add == 2 && ip_rd) event_cnt_buf_read[23:0] <= event_cnt_buf[31:8];

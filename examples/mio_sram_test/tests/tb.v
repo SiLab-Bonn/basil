@@ -34,7 +34,9 @@ module tb (
     wire SDA;
     wire SCL;
 
-    sram_test dut (
+    sram_test #(
+        .FIFO_DEPTH(21'h100)
+    ) dut (
         .FCLK_IN   (FCLK_IN),
         .BUS_DATA  (BUS_DATA),
         .ADD       (ADD),
@@ -56,7 +58,7 @@ module tb (
         .SCL       (SCL)
     );
 
-    defparam dut.i_out_fifo.DEPTH = 21'h100;
+
 
     /// SRAM
     reg [15:0] sram[1048576-1:0];

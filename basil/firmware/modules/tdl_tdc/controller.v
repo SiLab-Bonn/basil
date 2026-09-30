@@ -6,7 +6,11 @@
 `define CONTROLLER
 
 module controller #(
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter state_bits = 4,
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter mux_bits   = 2
 ) (
     input wire       CLK,
@@ -132,11 +136,13 @@ module controller #(
             end
             IDLE: begin
                 if (previous_state == FAL_EDGE)
-                    event_cnt <= event_cnt + 1; // This is really a multicycle path: Only every 4 cycles can this occur.
+                    // This is really a multicycle path: Only every 4 cycles can this occur.
+                    event_cnt <= event_cnt + 1;
             end
             IDLE_TRIG: begin
                 if (previous_state == FAL_EDGE)
-                    event_cnt <= event_cnt + 1; // This is really a multicycle path: Only every 4 cycles can this occur.
+                    // This is really a multicycle path: Only every 4 cycles can this occur.
+                    event_cnt <= event_cnt + 1;
             end
             MISSED: miss_cnt <= miss_cnt + 1;
             default: begin

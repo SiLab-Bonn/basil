@@ -52,6 +52,8 @@ module mmc3_top (
     (* IOB = "FORCE" *) input wire DOBOUT
 
 );
+    wire pll_feedback, LOCKED;
+
 
     assign reset_fx3 = 1;  // not to reset fx3 while loading fpga
 
@@ -97,13 +99,13 @@ module mmc3_top (
     );
 
     wire clk40mhz_pll, clk320mhz_pll, clk160mhz_pll, clk16mhz_pll;
-    wire pll_feedback, LOCKED;
 
     PLLE2_BASE #(
-        .BANDWIDTH("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
-        .CLKFBOUT_MULT(64),  // Multiply value for all CLKOUT, (2-64)
-        .CLKFBOUT_PHASE(0.0),  // Phase offset in degrees of CLKFB, (-360.000-360.000).
-        .CLKIN1_PERIOD(10.000),      // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+        .BANDWIDTH     ("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
+        .CLKFBOUT_MULT (64),           // Multiply value for all CLKOUT, (2-64)
+        .CLKFBOUT_PHASE(0.0),          // Phase offset in degrees of CLKFB, (-360.000-360.000).
+        // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+        .CLKIN1_PERIOD (10.000),
 
         .CLKOUT0_DIVIDE    (32),   // Divide amount for CLKOUT0 (1-128)
         .CLKOUT0_DUTY_CYCLE(0.5),  // Duty cycle for CLKOUT0 (0.001-0.999).
@@ -225,8 +227,8 @@ module mmc3_top (
         .BASEADDR    (GPIO2_BASEADDR),
         .HIGHADDR    (GPIO2_HIGHADDR),
         .ABUSWIDTH   (ABUSWIDTH),
-        .IO_WIDTH    (8),
-        .IO_DIRECTION(8'hff),
+        .IO_WIDTH    (4),
+        .IO_DIRECTION(4'hf),
         .IO_TRI      (0)
     ) gpio2 (
         .BUS_CLK (BUS_CLK),
@@ -266,6 +268,8 @@ module mmc3_top (
 
     genvar i;
     generate
+        // Keep the existing hierarchical instance paths.
+        // verilog_lint: waive generate-label-prefix
         for (i = 3; i < 4; i = i + 1) begin : rx_gen
             fei4_rx #(
                 .BASEADDR       (RX1_BASEADDR - 32'h0100 * i),

@@ -2,10 +2,19 @@
 `define SAMPLE_DESER
 
 module sample_deser #(
-    parameter dlyline_bits = 96,
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
+    parameter dlyline_bits      = 96,
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter internally_rising = 1'b1,
-    parameter fine_time_bits = 2,
-    parameter clk_ratio = 3 // This parameter almost works, only the mux address generation below needs to be set manually
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
+    parameter fine_time_bits    = 2,
+    // This parameter almost works, only the mux address generation below needs to be set manually
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
+    parameter clk_ratio         = 3
 ) (
     input wire                    CLK_FAST,
     input wire                    CLK_SLOW,
@@ -51,9 +60,11 @@ module sample_deser #(
     wire [clk_ratio-1:0] hit_flags;
     genvar k;
     generate
+        // Keep the existing generate hierarchy.
+        // verilog_lint: waive generate-label
         for (k = 0; k < clk_ratio; k = k + 1) begin
-            assign hit_flags[k] = ((samples_160[k][0] ==a) || (samples_160[k][1]  == a)) &&
-			       	((samples_160[k][dlyline_bits -2] == b ) || (samples_160[k][dlyline_bits -1] == b) );
+            assign hit_flags[k] = ((samples_160[k][0] == a) || (samples_160[k][1] == a)) &&
+                ((samples_160[k][dlyline_bits-2] == b) || (samples_160[k][dlyline_bits-1] == b));
         end
     endgenerate
 
@@ -61,22 +72,29 @@ module sample_deser #(
     // indicate that the tdl is too short for the sampling.
     wire [2:0] miss_flags;
     generate
+        // Keep the existing generate hierarchy.
+        // verilog_lint: waive generate-label
         for (k = 0; k < clk_ratio - 1; k = k + 1) begin
+            // Keep the existing generate hierarchy.
+            // verilog_lint: waive generate-label
             if (internally_rising) begin
                 assign miss_flags[k] = (&samples_160[k] == 1 && |samples_160[k+1] == 0);
+                // Keep the existing generate hierarchy.
+                // verilog_lint: waive generate-label
             end else begin
                 assign miss_flags[k] = (|samples_160[k] == 0 && &samples_160[k+1] == 1);
             end
         end
     endgenerate
 
-    // Multiplexer to select the sample of the delay line with an input signal transition, ie. a hit.
+    // Multiplexer to select the sample of the delay line with an input signal transition, ie. a
+    // hit.
     reg [1:0] mux_address;
     always @(hit_flags) begin
         // This is the code that needs to be changed depending on clk_ratio
-        //	 if(hit_flags[3]) begin
-        //		mux_address <= 3;
-        //	end
+        //   if(hit_flags[3]) begin
+        //      mux_address <= 3;
+        //  end
         if (hit_flags[2]) begin
             mux_address <= 2;
         end else if (hit_flags[1]) begin

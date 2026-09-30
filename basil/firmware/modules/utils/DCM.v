@@ -114,8 +114,12 @@ module DCM #(
     assign CLK90 = clk90;
 
     generate
+        // Keep the existing generate hierarchy.
+        // verilog_lint: waive generate-label
         if (CLKFX_MULTIPLY == 2 && CLKFX_DIVIDE == 1) begin
             assign CLKFX = clk2x;
+            // Keep the existing generate hierarchy.
+            // verilog_lint: waive generate-label
         end else begin
             wire CLKINM;
             clock_multiplier #(

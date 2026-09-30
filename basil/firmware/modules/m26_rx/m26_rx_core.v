@@ -271,7 +271,8 @@ module m26_rx_core #(
             gbi_invalid_data_cnt >= 0;
             gbi_invalid_data_cnt = gbi_invalid_data_cnt - 1
         ) begin
-            invalid_data_cnt_bus_clk[gbi_invalid_data_cnt] = invalid_data_cnt_cdc1[gbi_invalid_data_cnt] ^ invalid_data_cnt_bus_clk[gbi_invalid_data_cnt + 1];
+            invalid_data_cnt_bus_clk[gbi_invalid_data_cnt] = invalid_data_cnt_cdc1[
+                gbi_invalid_data_cnt] ^ invalid_data_cnt_bus_clk[gbi_invalid_data_cnt+1];
         end
     end
 
@@ -344,13 +345,17 @@ module m26_rx_core #(
         .full    (fifo_full),
         .empty   (FIFO_EMPTY),
         .data_out(FIFO_DATA[17:0]),
+        // FIFO occupancy is not used here.
+        // slang lint_off empty-output-connection
         .size    ()
+        // slang lint_on empty-output-connection
     );
 
     always @(posedge CLK_RX) begin
         if (wfull && cdc_fifo_write && WRITE_FRAME) begin  // assert when write and FIFO full
             fifo_data_lost <= 1'b1;
-        end else if (!wfull && cdc_fifo_write && WRITE_FRAME) begin  // de-assert when write and FIFO not full
+            // de-assert when write and FIFO not full
+        end else if (!wfull && cdc_fifo_write && WRITE_FRAME) begin
             fifo_data_lost <= 1'b0;
         end
     end
@@ -377,7 +382,8 @@ module m26_rx_core #(
         for (
             gbi_lost_data_cnt = 6; gbi_lost_data_cnt >= 0; gbi_lost_data_cnt = gbi_lost_data_cnt - 1
         ) begin
-            lost_data_cnt_bus_clk[gbi_lost_data_cnt] = lost_data_cnt_cdc1[gbi_lost_data_cnt] ^ lost_data_cnt_bus_clk[gbi_lost_data_cnt + 1];
+            lost_data_cnt_bus_clk[gbi_lost_data_cnt] = lost_data_cnt_cdc1[gbi_lost_data_cnt] ^
+                lost_data_cnt_bus_clk[gbi_lost_data_cnt+1];
         end
     end
 

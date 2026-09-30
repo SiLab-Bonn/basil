@@ -160,7 +160,8 @@ end
     end
 
     wire start_data_count;
-    assign start_data_count = (CONF_START_WITH_SYNC ? (adc_sync_wait && adc_sync_pulse) : start_adc_sync) || ( CONF_EN_EX_TRIGGER && ADC_TRIGGER);
+    assign start_data_count = (CONF_START_WITH_SYNC ? (adc_sync_wait && adc_sync_pulse) :
+                               start_adc_sync) || (CONF_EN_EX_TRIGGER && ADC_TRIGGER);
 
 
     reg [23:0] rec_cnt;
@@ -271,7 +272,10 @@ end
         .full    (fifo_full),
         .empty   (FIFO_EMPTY),
         .data_out(FIFO_DATA[31:0]),
+        // FIFO occupancy is not used here.
+        // slang lint_off empty-output-connection
         .size    ()
+        // slang lint_on empty-output-connection
     );
 
     //assign FIFO_DATA[31:30]  = 0;

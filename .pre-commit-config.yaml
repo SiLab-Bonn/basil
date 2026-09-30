@@ -1,3 +1,5 @@
+exclude: (?i)(^|/)sitcp(/|$)
+
 repos:
   - repo: https://github.com/pycqa/isort
     rev: 6.0.1
@@ -33,3 +35,28 @@ repos:
         verbose: true
         files: ^(basil/|tests/|examples/).*\.py$
         stages: [pre-commit]
+      - id: verilator-lint
+        name: verilator lint (Verilog-2005)
+        entry: python tools/lint_verilog.py verilator
+        language: system
+        pass_filenames: false
+        files: '(\.(v|sv|f)$|^tools/lint_verilog\.py$)'
+      - id: slang-lint
+        name: slang semantic lint
+        entry: python tools/lint_verilog.py slang
+        language: python
+        additional_dependencies: [pyslang==11.0.0]
+        pass_filenames: false
+        files: '(\.(v|sv|f)$|^tools/lint_verilog\.py$|^\.slang/)'
+      - id: verible-format
+        name: verible format
+        entry: verible-verilog-format --flagfile=.rules.verible_format --inplace
+        language: system
+        types: [verilog]
+        files: '\.(v|sv)$'
+      - id: verible-lint
+        name: verible style lint
+        entry: verible-verilog-lint --rules_config=.rules.verible_lint
+        language: system
+        types: [verilog]
+        files: '\.(v|sv)$'

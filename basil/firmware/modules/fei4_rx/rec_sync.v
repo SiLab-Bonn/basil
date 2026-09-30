@@ -75,7 +75,8 @@ module rec_sync #(
             else next_state = WAIT;
 
             CHECK:
-            if (decoder_err == 1'b0)//(data == K28_1P && old_data == K28_1N) || (data == K28_1N && old_data == K28_1P))
+            // (data == K28_1P && old_data == K28_1N) || (data == K28_1N && old_data == K28_1P))
+            if (decoder_err == 1'b0)
                 next_state = IDLE;
             else next_state = BITSHIFT;
 
@@ -126,6 +127,8 @@ module rec_sync #(
                     else rec_sync_ready <= 1'b1;
                 end
 
+                default: begin
+                end
             endcase
         end
     end

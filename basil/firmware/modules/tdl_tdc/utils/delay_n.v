@@ -2,7 +2,11 @@
 `define DELAY_N
 
 module delay_n #(
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter n     = 3,
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter width = 8
 ) (
     input wire             CLK,

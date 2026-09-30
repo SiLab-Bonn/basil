@@ -41,28 +41,28 @@ module tdc_core #(
     output wire [31:0] event_cnt
 );
 
-    localparam dlyline_bits = 96;  // TODO: should this be a localparam?
-    localparam clk_ratio = 3;
+    localparam DLYLINE_BITS = 96;  // TODO: should this be a localparam?
+    localparam CLK_RATIO = 3;
     // The following numbers of bits should add up to 33, as the bus is 32 bit and
     // there is a one bit counter overflow flag
-    localparam corsebits = 17;  // corse counter width, one bit of which is overflow flag.
-    localparam encodebits = 7;  // fine, pure tdl precision
-    localparam fine_time_bits = 2;  // We need that clk_ratio <= 2^fine_time_bits
-    localparam state_bits = 4;
-    localparam word_type_bits = 3;  // TODO: this isn't yet parametric
+    localparam CORSEBITS = 17;  // corse counter width, one bit of which is overflow flag.
+    localparam ENCODEBITS = 7;  // fine, pure tdl precision
+    localparam FINE_TIME_BITS = 2;  // We need that CLK_RATIO <= 2^FINE_TIME_BITS
+    localparam STATE_BITS = 4;
+    localparam WORD_TYPE_BITS = 3;  // TODO: this isn't yet parametric
 
     // Coarse counter
-    wire [corsebits-1:0] corse_count;
+    wire [CORSEBITS-1:0] corse_count;
     wire counter_count, counter_reset;
     // TODO: should clip_reset be set?
     slimfast_multioption_counter #(
         .clip_count (0),
         .clip_reset (1),
-        .outputwidth(corsebits),
-        .size       (corsebits - 1)
+        .outputwidth(CORSEBITS),
+        .size       (CORSEBITS - 1)
     ) corse_counter (
         .countClock(CLK),
-        .count     (counter_count && ~corse_count[corsebits-1]),
+        .count     (counter_count && ~corse_count[CORSEBITS-1]),
         .reset     (counter_reset),
         .countout  (corse_count)
     );
@@ -107,7 +107,7 @@ module tdc_core #(
 
     // Input mux addresses for more verbose code
     // For 4 inputs, 2 bits are sufficient
-    localparam input_mux_bits = 2;
+    localparam INPUT_MUX_BITS = 2;
     // These need to be in sync with the controller
     localparam TRIG_IN = 0;
     localparam SIG_IN = 1;
@@ -118,10 +118,10 @@ module tdc_core #(
     (* mark_debug = "true" *)
     reg tdl_input;
     (* mark_debug = "true" *)
-    wire [input_mux_bits-1:0] input_mux_addr;
+    wire [INPUT_MUX_BITS-1:0] input_mux_addr;
     // The mux address that the controller computes might contain glitches which
     // this buffer removes
-    reg [input_mux_bits-1:0] input_mux_addr_buf;
+    reg [INPUT_MUX_BITS-1:0] input_mux_addr_buf;
     always @(posedge CLK) input_mux_addr_buf <= input_mux_addr;
     always @(*) begin
         case (input_mux_addr_buf)
@@ -129,16 +129,18 @@ module tdc_core #(
             SIG_IN: tdl_input <= sig_in;
             SIG_IN_B: tdl_input <= ~sig_in;
             CALIB_OSC: tdl_input <= sig_calib;
+            default: begin
+            end
         endcase
     end
 
     (* mark_debug = "true" *)
-    wire [dlyline_bits-1:0] selected_sample;
+    wire [DLYLINE_BITS-1:0] selected_sample;
     wire [1:0] hit_status;
-    wire [fine_time_bits -1:0] fine_time;
+    wire [FINE_TIME_BITS -1:0] fine_time;
     tdl_and_detector #(
         .clk_ratio     (3),
-        .fine_time_bits(fine_time_bits)
+        .fine_time_bits(FINE_TIME_BITS)
     ) i_tdl (
         .CLK_FAST(CLK_FAST),
         .CLK_SLOW(CLK),
@@ -150,10 +152,10 @@ module tdc_core #(
     );
 
     (* mark_debug = "true" *)
-    wire [state_bits - 1 : 0] tdc_state;
+    wire [STATE_BITS - 1 : 0] tdc_state;
     controller #(
-        .state_bits(state_bits),
-        .mux_bits  (input_mux_bits)
+        .state_bits(STATE_BITS),
+        .mux_bits  (INPUT_MUX_BITS)
     ) i_controller (
         .CLK                      (CLK),
         .rst                      (rst),
@@ -174,7 +176,7 @@ module tdc_core #(
     );
 
     (* mark_debug = "true" *)
-    wire [encodebits-1 : 0] tdl_time;
+    wire [ENCODEBITS-1 : 0] tdl_time;
     priority_encoder encoder (
         .CLK         (CLK),
         .sample      (selected_sample),
@@ -184,18 +186,18 @@ module tdc_core #(
     // The previous module needs n cycles to do the computation so the remaining data is
     // delayed by the same amount.
     (* mark_debug = "true" *)
-    wire [fine_time_bits-1:0] fine_time_delayed;
+    wire [FINE_TIME_BITS-1:0] fine_time_delayed;
     (* mark_debug = "true" *)
-    wire [state_bits-1:0] tdc_state_delayed;
+    wire [STATE_BITS-1:0] tdc_state_delayed;
     (* mark_debug = "true" *)
-    wire [corsebits-1:0] corse_time_delayed;
+    wire [CORSEBITS-1:0] corse_time_delayed;
 
 
     // The state is actually one cycle behind the selected sample, so we delay it
     // less.
     delay_n #(
         .n    (4 - 1),
-        .width(state_bits)
+        .width(STATE_BITS)
     ) state_pipe (
         .CLK           (CLK),
         .signal        (tdc_state),
@@ -205,16 +207,16 @@ module tdc_core #(
     // the selected sample.
     delay_n #(
         .n    (4 - 1),
-        .width(corsebits)
+        .width(CORSEBITS)
     ) corse_time_pipe (
         .CLK           (CLK),
-        .signal        (corse_count[corsebits-1:0]),  // We don't need the overflow bit
+        .signal        (corse_count[CORSEBITS-1:0]),  // We don't need the overflow bit
         .delayed_signal(corse_time_delayed)
     );
 
     delay_n #(
         .n    (4),
-        .width(fine_time_bits)
+        .width(FINE_TIME_BITS)
     ) fine_time_pipe (
         .CLK           (CLK),
         .signal        (fine_time),
@@ -224,10 +226,10 @@ module tdc_core #(
     // This module assembles the data output based on the tdc state transitions
     word_broker #(
         .DATA_IDENTIFIER(DATA_IDENTIFIER),
-        .state_bits     (state_bits),
-        .counter_bits   (corsebits),
-        .fine_time_bits (fine_time_bits),
-        .encodebits     (encodebits)
+        .state_bits     (STATE_BITS),
+        .counter_bits   (CORSEBITS),
+        .fine_time_bits (FINE_TIME_BITS),
+        .encodebits     (ENCODEBITS)
     ) i_broker (
         .CLK               (CLK),
         .corse_count       (corse_time_delayed),

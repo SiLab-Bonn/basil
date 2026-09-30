@@ -184,7 +184,8 @@ module fei4_rx_core #(
     always @(*) begin
         fifo_size_bus_clk[15] = fifo_size_cdc1[15];
         for (gbi_fifo_size = 14; gbi_fifo_size >= 0; gbi_fifo_size = gbi_fifo_size - 1) begin
-            fifo_size_bus_clk[gbi_fifo_size] = fifo_size_cdc1[gbi_fifo_size] ^ fifo_size_bus_clk[gbi_fifo_size + 1];
+            fifo_size_bus_clk[gbi_fifo_size] = fifo_size_cdc1[gbi_fifo_size] ^
+                fifo_size_bus_clk[gbi_fifo_size+1];
         end
     end
 
@@ -209,7 +210,8 @@ module fei4_rx_core #(
             gbi_decoder_err_cnt >= 0;
             gbi_decoder_err_cnt = gbi_decoder_err_cnt - 1
         ) begin
-            decoder_err_cnt_bus_clk[gbi_decoder_err_cnt] = decoder_err_cnt_cdc1[gbi_decoder_err_cnt] ^ decoder_err_cnt_bus_clk[gbi_decoder_err_cnt + 1];
+            decoder_err_cnt_bus_clk[gbi_decoder_err_cnt] = decoder_err_cnt_cdc1[
+                gbi_decoder_err_cnt] ^ decoder_err_cnt_bus_clk[gbi_decoder_err_cnt+1];
         end
     end
 
@@ -228,7 +230,8 @@ module fei4_rx_core #(
         for (
             gbi_lost_data_cnt = 6; gbi_lost_data_cnt >= 0; gbi_lost_data_cnt = gbi_lost_data_cnt - 1
         ) begin
-            lost_data_cnt_bus_clk[gbi_lost_data_cnt] = lost_data_cnt_cdc1[gbi_lost_data_cnt] ^ lost_data_cnt_bus_clk[gbi_lost_data_cnt + 1];
+            lost_data_cnt_bus_clk[gbi_lost_data_cnt] = lost_data_cnt_cdc1[gbi_lost_data_cnt] ^
+                lost_data_cnt_bus_clk[gbi_lost_data_cnt+1];
         end
     end
 

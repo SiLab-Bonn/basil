@@ -30,9 +30,8 @@ module i2c_slave_model (
         else START <= 1;
 
     reg [7:0] REC_ADDRESS;
-
-
-    localparam STATE_IDLE  = 0, STATE_START = 1, STATE_ADDR = 2, STATE_AACK = 4, STATE_DATA_W = 5, STATE_DATA_R = 6, STATE_DACK_W = 7, STATE_DACK_R = 8, STATE_DACK_LAST = 9, STATE_STOP = 10;
+    localparam STATE_IDLE = 0, STATE_START = 1, STATE_ADDR = 2, STATE_AACK = 4, STATE_DATA_W = 5,
+        STATE_DATA_R = 6, STATE_DACK_W = 7, STATE_DACK_R = 8, STATE_DACK_LAST = 9, STATE_STOP = 10;
 
     reg [3:0] state, next_state;
 
@@ -62,6 +61,8 @@ module i2c_slave_model (
             STATE_DACK_W: next_state = STATE_DATA_W;
             STATE_DACK_R: if (SDA == 0) next_state = STATE_DATA_R;
  else next_state = STATE_IDLE;
+            default: begin
+            end
         endcase
     end
 
@@ -103,7 +104,8 @@ module i2c_slave_model (
 
 
     wire SDA_PRE;
-    assign SDA_PRE = ((state == STATE_AACK & REC_ADDRESS[7:1] == ADDRESS) | state == STATE_DACK_W) ? 1'b0 : state == STATE_DATA_R ? BYTE_DATA_OUT[7-bit_count] : 1;
+    assign SDA_PRE = ((state == STATE_AACK & REC_ADDRESS[7:1] == ADDRESS) | state == STATE_DACK_W) ?
+        1'b0 : state == STATE_DATA_R ? BYTE_DATA_OUT[7-bit_count] : 1;
     reg SDAR;
     initial SDAR = 1;
     always @(negedge SCL) SDAR <= SDA_PRE;

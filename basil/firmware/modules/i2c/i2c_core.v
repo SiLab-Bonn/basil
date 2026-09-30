@@ -153,8 +153,9 @@ module i2c_core #(
 
 
     reg START_FSM;
-
-    localparam STATE_IDLE  = 0, STATE_START = 1, STATE_ADDR = 2, STATE_RW = 3, STATE_AACK = 4, STATE_DATA_W = 5, STATE_DATA_R = 6, STATE_DACK_W = 7, STATE_DACK_R = 8, STATE_DACK_LAST = 9, STATE_STOP = 10;
+    localparam STATE_IDLE = 0,
+        STATE_START = 1, STATE_ADDR = 2, STATE_RW = 3, STATE_AACK = 4, STATE_DATA_W = 5,
+        STATE_DATA_R = 6, STATE_DACK_W = 7, STATE_DACK_R = 8, STATE_DACK_LAST = 9, STATE_STOP = 10;
 
     always @(posedge I2C_CLK) begin
         if (RST_SYNC) START_FSM <= 0;
@@ -195,11 +196,14 @@ module i2c_core #(
             if (byte_count == CONF_SIZE) next_state = STATE_STOP;
             else next_state = STATE_DATA_R;
             STATE_STOP: next_state = STATE_IDLE;
+            default: begin
+            end
         endcase
     end
 
     always @(posedge I2C_CLK) begin
-        if (state == STATE_AACK | state == STATE_START | state == STATE_DACK_W | state == STATE_DACK_R)
+        if (state == STATE_AACK | state == STATE_START | state == STATE_DACK_W |
+            state == STATE_DACK_R)
             bit_count <= 0;
         else if (div_cnt == 3) bit_count <= bit_count + 1;
     end
@@ -248,13 +252,16 @@ module i2c_core #(
             STATE_STOP: begin
                 SDA_D0 = 0;
             end
+            default: begin
+            end
         endcase
     end
 
     wire SLAVE_ACK;
 
     wire NO_ACK;
-    assign NO_ACK = ((state == STATE_AACK & SDA_READBACK) | (state == STATE_DACK_W & SDA_READBACK)) & div_cnt == 3;
+    assign NO_ACK = ((state == STATE_AACK & SDA_READBACK) |
+                     (state == STATE_DACK_W & SDA_READBACK)) & div_cnt == 3;
 
     reg SDA;
     always @(posedge I2C_CLK) if (div_cnt == 0) SDA <= SDA_D0;

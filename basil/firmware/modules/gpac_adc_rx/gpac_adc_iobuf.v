@@ -142,6 +142,8 @@ module gpac_adc_iobuf (
 
     genvar i;
     generate
+        // Keep the existing hierarchical instance paths.
+        // verilog_lint: waive generate-label-prefix
         for (i = 0; i < 4; i = i + 1) begin : gen
             reg [13:0] adc_des;
             always @(negedge ADC_CLK) begin

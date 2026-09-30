@@ -136,7 +136,10 @@ module tdl_tdc #(
         .full    (generic_fifo_full),
         .empty   (fifo_empty),
         .data_out(fifo_data[31:0]),
+        // FIFO occupancy is not used here.
+        // slang lint_off empty-output-connection
         .size    ()
+        // slang lint_on empty-output-connection
     );
 
     tdc_sw_interface #(

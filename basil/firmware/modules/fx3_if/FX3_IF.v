@@ -37,8 +37,8 @@ module FX3_IF (
 
     wire [31:0] DataOut;  // data from FPGA core
     reg [31:0] DataIn;  // data to FPGA core, force IOB register
-    assign BUS_DATA      = BUS_WR ? DataIn[31:0] : 32'bz;
-    assign DataOut[31:0] = BUS_WR ? 32'bz : BUS_DATA;
+    assign BUS_DATA      = BUS_WR ? DataIn[31:0] : 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
+    assign DataOut[31:0] = BUS_WR ? 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz : BUS_DATA;
 
     genvar gen;
 
@@ -59,6 +59,8 @@ module FX3_IF (
 
     // clock buffer
     IBUFG #(
+        // Keep the original diagnostic text or reference intact.
+        // verilog_lint: waive line-length
         .IBUF_LOW_PWR("TRUE"),  // Low power (TRUE) vs. performance (FALSE) setting for referenced I/O standards
         .IOSTANDARD("DEFAULT")  // Specify the input I/O standard
     ) IBUFG_inst (
@@ -137,7 +139,9 @@ module FX3_IF (
     always @(*) begin
         case (state)
             IDLE:
-            if (CS & !OE & !first_word_written_check) // !OE is needed to prevent entering IN_ADDR after read request is finished. !first_word_written_check -||- after writing is finished.
+            // !OE is needed to prevent entering IN_ADDR after read request is finished.
+            // !first_word_written_check -||- after writing is finished.
+            if (CS & !OE & !first_word_written_check)
                 next_state = IN_ADDR;
             else next_state = IDLE;
             IN_ADDR: next_state = IN_COUNT;
@@ -183,9 +187,12 @@ module FX3_IF (
                 BUS_RD        <= 0;
                 RDY           <= 0;
             end else if (state == IN_ADDR) begin
-                BUS_ADD <= DataIn[31:0];
+                BUS_ADD   <= DataIn[31:0];
                 RD_FINISH <= 0;
-                RDY <= 1; // First RDY strobe is generated for FX3. FX3 will receive it and go to Write Data state where fx3_wr signal will be asserted. (3 clock cycles delay between RDY and fx3_wr)
+                // First RDY strobe is generated for FX3. FX3 will receive it and go to Write Data
+                // state where fx3_wr signal will be asserted. (3 clock cycles delay between RDY and
+                // fx3_wr)
+                RDY       <= 1;
             end else if (state == IN_COUNT) begin
                 if (OE) BUS_RD <= 1;
                 else if (BUS_WR) begin
@@ -198,6 +205,8 @@ module FX3_IF (
                     if (BUS_BYTE_ACCESS) RDY <= 0;  // Deassert first RDY strobe
                     else RDY <= 1;
                     if (fx3_wr & BUS_BYTE_ACCESS)
+                        // Keep the original diagnostic text or reference intact.
+                        // verilog_lint: waive line-length
                         WR_BYTE <= 1; // "Or" with WR - to keep WR high even when fx3_wr is low during BYTE_ACCESS
                 end
             end else if (state == WR_ADDR_INC) begin
@@ -206,7 +215,10 @@ module FX3_IF (
                         BUS_ADD[31:0] <= BUS_ADD[31:0] + 1;
                         ReqCount      <= ReqCount + 1;
                         if (ReqCount[1:0] == 2'b11 && ((ReqCount + 4) < ReqCountLimit))
-                            RDY <= 1; // Assert next RDY strobe if there is next transfer of 1-4 bytes expected. RDY will be asserted on the next cycle after the last byte of the current transfer that was sampled.
+                            // Assert next RDY strobe if there is next transfer of 1-4 bytes
+                            // expected. RDY will be asserted on the next cycle after the last byte
+                            // of the current transfer that was sampled.
+                            RDY <= 1;
                         else RDY <= 0;
                     end
 
@@ -250,7 +262,9 @@ module FX3_IF (
                 end else if (fx3_wr & BUS_BYTE_ACCESS) begin
                     if (ReqCountLimit > 1) WR_BYTE <= 1;
                     if ((ReqCount + 4) < ReqCountLimit)
-                        RDY <= 1; // Assert second RDY strobe if there is second transfer of 1-4 bytes expected
+                        // Assert second RDY strobe if there is second transfer of 1-4 bytes
+                        // expected
+                        RDY <= 1;
                 end
             end
         end
@@ -258,6 +272,8 @@ module FX3_IF (
 
     // tristate buffer for bus
     generate
+        // Keep the existing hierarchical instance paths.
+        // verilog_lint: waive generate-label-prefix
         for (gen = 0; gen < 32; gen = gen + 1) begin : tri_buf  // 32 bit databus
             IOBUF #(
                 .DRIVE       (12),          // Specify the output drive strength

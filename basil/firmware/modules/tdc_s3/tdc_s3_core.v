@@ -19,23 +19,31 @@
 
 module tdc_s3_core #(
     parameter DATA_IDENTIFIER = 4'b0100,
-    parameter CLKDV = 4,  // factor of CLK160 to DV_CLK, minimal divider of 2
-    parameter ABUSWIDTH = 16,
-    parameter FAST_TDC = 1,
-    parameter FAST_TRIGGER = 1,
-    parameter BROADCAST = 0  // set this in order to receive the TDC trigger via FAST_TRIGGER_IN (640 MHz sampled TDC trigger signal is shared with other TDC modules)
+    parameter CLKDV           = 4,        // factor of CLK160 to DV_CLK, minimal divider of 2
+    parameter ABUSWIDTH       = 16,
+    parameter FAST_TDC        = 1,
+    parameter FAST_TRIGGER    = 1,
+    // set this in order to receive the TDC trigger via FAST_TRIGGER_IN (640 MHz sampled TDC trigger
+    // signal is shared with other TDC modules)
+    parameter BROADCAST       = 0
 ) (
-    input wire CLK320,
-    input wire CLK160,
-    input wire DV_CLK,
-    input wire TDC_IN, // pulse need to be longer than one cycle of CLK320, distance of pulses needs to be longer than one cycle of DV_CLK
+    input  wire CLK320,
+    input  wire CLK160,
+    input  wire DV_CLK,
+    // pulse need to be longer than one cycle of CLK320, distance of pulses needs to be longer than
+    // one cycle of DV_CLK
+    input  wire TDC_IN,
     output wire TDC_OUT,  // sampled with 320MHz, kept high for at least DV_CLK
-    input wire TRIG_IN,
+    input  wire TRIG_IN,
     output wire TRIG_OUT,
 
     // input/output trigger signals for broadcasting mode
-    input wire [CLKDV*4-1:0] FAST_TRIGGER_IN, // input for effective 640MHz sampled trigger signal, set BROADCAST in order to use this as FAST TRIGGER signal (broadcast)
-    output wire [CLKDV*4-1:0] FAST_TRIGGER_OUT, // outgoing effective 640MHz sampled trigger signal, can be used to share it with other TDC module (broadcast)
+    // input for effective 640MHz sampled trigger signal, set BROADCAST in order to use this as FAST
+    // TRIGGER signal (broadcast)
+    input  wire [CLKDV*4-1:0] FAST_TRIGGER_IN,
+    // outgoing effective 640MHz sampled trigger signal, can be used to share it with other TDC
+    // module (broadcast)
+    output wire [CLKDV*4-1:0] FAST_TRIGGER_OUT,
 
     input  wire        FIFO_READ,
     output wire        FIFO_EMPTY,
@@ -50,7 +58,9 @@ module tdc_s3_core #(
     input  wire                 BUS_RD,
 
     input wire ARM_TDC,  // enable TDC for single measurement, assuming signal slower than DV_CLK
-    input wire EXT_EN, // enable TDC for a fixed time period (signal needs to be asserted to enable TDC) e.g. for occupancy measurements, assuming signal slower than DV_CLK
+    // enable TDC for a fixed time period (signal needs to be asserted to enable TDC) e.g. for
+    // occupancy measurements, assuming signal slower than DV_CLK
+    input wire EXT_EN,
 
     input wire [15:0] TIMESTAMP
 );
@@ -208,6 +218,8 @@ module tdc_s3_core #(
     wire [CLKDV*4-1:0] TDC, TDC_DES;
 
     generate
+        // Keep the existing generate hierarchy.
+        // verilog_lint: waive generate-label
         if (FAST_TDC == 1) begin
             wire [1:0] TDC_FAST;
             ddr_des #(
@@ -222,6 +234,8 @@ module tdc_s3_core #(
             );
             // assigning TDC output, getting effective 2x CLK320 (640MHz) sampling of leading edge
             assign TDC_OUT = CONF_EN_INVERT_TDC_DV_CLK ? &TDC_FAST : |TDC_FAST;
+            // Keep the existing generate hierarchy.
+            // verilog_lint: waive generate-label
         end else begin
             reg [1:0] TDC_DDRQ_DLY;
             always @(posedge CLK320) TDC_DDRQ_DLY[1:0] <= {TDC_IN, TDC_IN};
@@ -345,7 +359,8 @@ module tdc_s3_core #(
     assign FINISH = (state == COUNT && next_state == IDLE);
 
     wire START;
-    assign START = ((state == IDLE && next_state == COUNT) || (state == ARMED && next_state == COUNT));
+    assign
+        START = ((state == IDLE && next_state == COUNT) || (state == ARMED && next_state == COUNT));
 
     reg [15:0] CURR_TIMESTAMP;
     always @(posedge DV_CLK)
@@ -372,7 +387,8 @@ module tdc_s3_core #(
             else TDC_PRE <= TDC_PRE + ONES_TDC;
 
     wire [11:0] TDC_VAL;
-    assign TDC_VAL = (TDC_ERR || TDC_PRE==0) ? 0 : (TDC_PRE+ONES_TDC>13'b0_1111_1111_1111) ? 13'b0_1111_1111_1111 : (NEW_TDC) ? TDC_PRE : TDC_PRE+ONES_TDC;
+    assign TDC_VAL = (TDC_ERR || TDC_PRE == 0) ? 0 : (TDC_PRE + ONES_TDC > 13'b0_1111_1111_1111) ?
+        13'b0_1111_1111_1111 : (NEW_TDC) ? TDC_PRE : TDC_PRE + ONES_TDC;
 
     reg [31:0] EVENT_CNT;
     initial EVENT_CNT = 0;
@@ -393,7 +409,8 @@ module tdc_s3_core #(
     always @(*) begin
         event_cnt_bus_clk[31] = event_cnt_cdc1[31];
         for (gbi_event_cnt = 30; gbi_event_cnt >= 0; gbi_event_cnt = gbi_event_cnt - 1) begin
-            event_cnt_bus_clk[gbi_event_cnt] = event_cnt_cdc1[gbi_event_cnt] ^ event_cnt_bus_clk[gbi_event_cnt + 1];
+            event_cnt_bus_clk[gbi_event_cnt] = event_cnt_cdc1[gbi_event_cnt] ^
+                event_cnt_bus_clk[gbi_event_cnt+1];
         end
     end
 
@@ -411,7 +428,11 @@ module tdc_s3_core #(
     wire [CLKDV*4-1:0] TRIG, TRIG_DES;
 
     generate
+        // Keep the existing generate hierarchy.
+        // verilog_lint: waive generate-label
         if (FAST_TRIGGER == 1) begin
+            // Keep the existing generate hierarchy.
+            // verilog_lint: waive generate-label
             if (BROADCAST == 0) begin
                 wire [1:0] TRIG_FAST;
                 ddr_des #(
@@ -424,16 +445,22 @@ module tdc_s3_core #(
                     .OUT     (TRIG),
                     .OUT_FAST(TRIG_FAST)
                 );
-                // assigning TRIG output, getting effective 2x CLK320 (640MHz) sampling of leading edge
+                // assigning TRIG output, getting effective 2x CLK320 (640MHz) sampling of leading
+                // edge
                 assign TRIG_OUT         = CONF_EN_INVERT_TRIGGER_DV_CLK ? &TRIG_FAST : |TRIG_FAST;
-                // set output wires from ddr deserializer in order to fed them out for broadcasting to other TDC modules
+                // set output wires from ddr deserializer in order to fed them out for broadcasting
+                // to other TDC modules
                 assign FAST_TRIGGER_OUT = TRIG;
+                // Keep the existing generate hierarchy.
+                // verilog_lint: waive generate-label
             end else begin
                 // use inputs from broadcasting
                 assign TRIG             = FAST_TRIGGER_IN;
                 assign FAST_TRIGGER_OUT = FAST_TRIGGER_IN;
                 assign TRIG_OUT         = 0;
             end
+            // Keep the existing generate hierarchy.
+            // verilog_lint: waive generate-label
         end else begin
             reg [1:0] TRIGGER_DDRQ_DLY;
             always @(posedge CLK320) TRIGGER_DDRQ_DLY[1:0] <= {TRIG_IN, TRIG_IN};
@@ -525,7 +552,8 @@ module tdc_s3_core #(
 
     reg TRIG_ERR;
     always @(*)
-        if(ALL_ONES_TRIG!=ONES_TRIG || (LENGTH_TDC>LENGTH_TRIG && NEW_TRIG && NEW_TDC) || (state==COUNT && NEW_TRIG))
+        if (ALL_ONES_TRIG != ONES_TRIG || (LENGTH_TDC > LENGTH_TRIG && NEW_TRIG && NEW_TDC) ||
+            (state == COUNT && NEW_TRIG))
             TRIG_ERR <= 1;
         else TRIG_ERR <= 0;
 
@@ -565,7 +593,8 @@ module tdc_s3_core #(
 
     wire wfull;
     wire cdc_fifo_write;
-    assign cdc_fifo_write = !wfull && FINISH==1 && !(CONF_EN_TRIG_DIST_DV_CLK==1 && CONF_EN_NO_WRITE_TRIG_ERR_DV_CLK==1 && TRIG_DIST==255);
+    assign cdc_fifo_write = !wfull && FINISH == 1 && !(
+        CONF_EN_TRIG_DIST_DV_CLK == 1 && CONF_EN_NO_WRITE_TRIG_ERR_DV_CLK == 1 && TRIG_DIST == 255);
 
     reg [31:0] cdc_data;
     always @(*) begin
@@ -621,7 +650,10 @@ module tdc_s3_core #(
         .full    (fifo_full),
         .empty   (FIFO_EMPTY),
         .data_out(FIFO_DATA[31:0]),
+        // FIFO occupancy is not used here.
+        // slang lint_off empty-output-connection
         .size    ()
+        // slang lint_on empty-output-connection
     );
 
     reg [7:0] LOST_DATA_CNT;
@@ -646,7 +678,8 @@ module tdc_s3_core #(
         for (
             gbi_lost_data_cnt = 6; gbi_lost_data_cnt >= 0; gbi_lost_data_cnt = gbi_lost_data_cnt - 1
         ) begin
-            lost_data_cnt_bus_clk[gbi_lost_data_cnt] = lost_data_cnt_cdc1[gbi_lost_data_cnt] ^ lost_data_cnt_bus_clk[gbi_lost_data_cnt + 1];
+            lost_data_cnt_bus_clk[gbi_lost_data_cnt] = lost_data_cnt_cdc1[gbi_lost_data_cnt] ^
+                lost_data_cnt_bus_clk[gbi_lost_data_cnt+1];
         end
     end
 

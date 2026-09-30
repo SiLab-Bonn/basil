@@ -31,10 +31,11 @@ module test_eth (
     wire CLK125_PLL, CLK125_90_PLL;
     wire PLL_FEEDBACK, LOCKED;
     PLLE2_BASE #(
-        .BANDWIDTH("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
-        .CLKFBOUT_MULT(10),  // Multiply value for all CLKOUT, (2-64)
-        .CLKFBOUT_PHASE(0.0),  // Phase offset in degrees of CLKFB, (-360.000-360.000).
-        .CLKIN1_PERIOD(10.000),      // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+        .BANDWIDTH     ("OPTIMIZED"),  // OPTIMIZED, HIGH, LOW
+        .CLKFBOUT_MULT (10),           // Multiply value for all CLKOUT, (2-64)
+        .CLKFBOUT_PHASE(0.0),          // Phase offset in degrees of CLKFB, (-360.000-360.000).
+        // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+        .CLKIN1_PERIOD (10.000),
 
         .CLKOUT0_DIVIDE    (8),    // Divide amount for CLKOUT0 (1-128)
         .CLKOUT0_DUTY_CYCLE(0.5),  // Duty cycle for CLKOUT0 (0.001-0.999).
@@ -132,18 +133,30 @@ module test_eth (
     reg GMII_1000M;
 
     wire MII_TX_CLK, MII_TX_CLK_90;
+    // This Xilinx primitive requires the external vendor simulation library.
+    // verilator lint_off MODMISSING
+
+    (* maybe_unknown *)
     BUFGMUX GMIIMUX (
         .O (MII_TX_CLK),
         .I0(rgmii_rxc),
         .I1(CLK125_PLL),
         .S (GMII_1000M)
     );
+
+    // verilator lint_on MODMISSING
+    // This Xilinx primitive requires the external vendor simulation library.
+    // verilator lint_off MODMISSING
+
+    (* maybe_unknown *)
     BUFGMUX GMIIMUX90 (
         .O (MII_TX_CLK_90),
         .I0(rgmii_rxc),
         .I1(CLK125_90_PLL),
         .S (GMII_1000M)
     );
+
+    // verilator lint_on MODMISSING
 
     rgmii_io rgmii (
         .rgmii_txd   (rgmii_txd),
@@ -206,7 +219,11 @@ module test_eth (
     wire TCP_TX_FULL;
     wire TCP_TX_WR;
     wire [7:0] TCP_TX_DATA;
+    // SiTCP is supplied separately; omit this external instance from lint.
+    // verilator lint_off MODMISSING
 
+
+    (* maybe_unknown *)
     WRAP_SiTCP_GMII_XC7K_32K #(
         .TIM_PERIOD(8'd133)
     ) sitcp (
@@ -272,6 +289,8 @@ module test_eth (
         .RBCP_ACK(RBCP_ACK),  // in    : Access acknowledge
         .RBCP_RD(RBCP_RD)  // in    : Read data[7:0]
     );
+
+    // verilator lint_on MODMISSING
 
     // -------  BUS SYGNALING  ------- //
 
@@ -590,7 +609,10 @@ module test_eth (
         .full    (gen_tcp_data_fifo_full),
         .empty   (GEN_TCP_DATA_FIFO_EMPTY),
         .data_out(GEN_TCP_FIFO_DATA),
+        // FIFO occupancy is not used here.
+        // slang lint_off empty-output-connection
         .size    ()
+        // slang lint_on empty-output-connection
     );
 
     wire ARB_READY_OUT, ARB_WRITE_OUT;
@@ -709,8 +731,8 @@ module test_eth (
             else FIFO_FULL_SLOW <= 1'b0;
         end
     end
-
-    assign LED[7:4] = ~{clock_speed, duplex_status, (|clock_speed & link_status & (GMII_1000M ? CLK_1HZ : CLK_3HZ)) | INVALID};
+    assign LED[7:4] = ~{clock_speed, duplex_status,
+                        (|clock_speed & link_status & (GMII_1000M ? CLK_1HZ : CLK_3HZ)) | INVALID};
     assign LED[0] = ~CLK_1HZ;
     assign LED[1] = ~FIFO_FULL_SLOW;
     assign LED[2] = 1'b1;

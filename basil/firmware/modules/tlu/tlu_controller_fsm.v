@@ -64,7 +64,9 @@ module tlu_controller_fsm #(
     output wire TLU_TRIGGER_ACCEPT_ERROR_FLAG        // error flag
 );
 
-    //assign TRIGGER_DATA[31:0] = (WRITE_TIMESTAMP==1'b1) ? {1'b1, TIMESTAMP_DATA[30:0]} : ((TRIGGER_MODE==2'b11) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : ({1'b1, TRIGGER_COUNTER_DATA[30:0]}));
+    //assign TRIGGER_DATA[31:0] = (WRITE_TIMESTAMP==1'b1) ? {1'b1, TIMESTAMP_DATA[30:0]} :
+    //((TRIGGER_MODE==2'b11) ? {1'b1, TLU_TRIGGER_NUMBER_DATA[30:0]} : ({1'b1,
+    //TRIGGER_COUNTER_DATA[30:0]}));
 
     always @(*) begin
         if(TRIGGER_MODE == 2'b11) // TLU trigger number
@@ -126,7 +128,8 @@ module tlu_controller_fsm #(
 
     reg TLU_TRIGGER_LOW_TIMEOUT_ERROR_FF;
     always @(posedge TRIGGER_CLK) TLU_TRIGGER_LOW_TIMEOUT_ERROR_FF <= TLU_TRIGGER_LOW_TIMEOUT_ERROR;
-
+    // Keep this expression within the formatter search limit.
+    // verilog_lint: waive line-length
     assign TLU_TRIGGER_LOW_TIMEOUT_ERROR_FLAG = ~TLU_TRIGGER_LOW_TIMEOUT_ERROR_FF & TLU_TRIGGER_LOW_TIMEOUT_ERROR;
 
     reg TLU_TRIGGER_ACCEPT_ERROR_FF;
@@ -155,6 +158,8 @@ module tlu_controller_fsm #(
     end
 
     // combinational always block, blocking assignments
+    // Keep this expression within the formatter search limit.
+    // verilog_lint: waive line-length
     always @(state or TRIGGER_ACKNOWLEDGE or TRIGGER_ACKNOWLEDGED or FIFO_ACKNOWLEDGE or FIFO_ACKNOWLEDGED or TRIGGER_ENABLE or TRIGGER_ENABLE_FLAG or TRIGGER_FLAG or TRIGGER or TRIGGER_MODE or TLU_TRIGGER_LOW_TIMEOUT_ERROR or counter_tlu_clock /*or TLU_TRIGGER_CLOCK_CYCLES*/ or counter_sr_wait_cycles or counter_trigger_high or counter_tlu_handshake_veto or counter_trigger_low_time_out or TLU_TRIGGER_DATA_DELAY or TRIGGER_VETO or TRIGGER_ACCEPT or TLU_TRIGGER_HANDSHAKE_ACCEPT or TRIGGER_THRESHOLD or TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES or TLU_TRIGGER_MAX_CLOCK_CYCLES or DIVISOR)
 begin
         case (state)
@@ -166,16 +171,21 @@ begin
                 && (TRIGGER_ENABLE == 1'b1)
                 && (TRIGGER_VETO == 1'b0)
                 && ((TRIGGER_FLAG == 1'b1 && TRIGGER_THRESHOLD == 0) // trigger threshold disabled
-                    || (TRIGGER_ACCEPT == 1'b1 && TRIGGER_THRESHOLD != 0) // trigger threshold enabled
-                    ))
+                    // trigger threshold enabled
+                    || (TRIGGER_ACCEPT == 1'b1 && TRIGGER_THRESHOLD != 0)))
                     next = SEND_COMMAND;
                 else if ((TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11)
                      && (TRIGGER_ACKNOWLEDGE == 1'b0)
                      && (FIFO_ACKNOWLEDGE == 1'b0)
                      && (TRIGGER_ENABLE == 1'b1)
-                     && ((TRIGGER == 1'b1 && TRIGGER_ENABLE_FLAG == 1'b1) // workaround TLU trigger high when FSM enabled
-                    || (TRIGGER_FLAG == 1'b1 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES == 0) // trigger accept counter disabled
-                    || (TLU_TRIGGER_HANDSHAKE_ACCEPT == 1'b1 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0) // trigger accept counter enabled
+                    // workaround TLU trigger high when FSM enabled
+                    && ((TRIGGER == 1'b1 && TRIGGER_ENABLE_FLAG == 1'b1)
+                    // trigger accept counter disabled
+                    || (TRIGGER_FLAG == 1'b1 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES == 0)
+                    // trigger accept counter enabled
+                    // Keep this expression within the formatter search limit.
+                    // verilog_lint: waive line-length
+                    || (TLU_TRIGGER_HANDSHAKE_ACCEPT == 1'b1 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0)
                     ))
                     next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
                 else next = IDLE;
@@ -186,8 +196,12 @@ begin
             end
 
             SEND_COMMAND_WAIT_FOR_TRIGGER_LOW: begin
+                // Keep this expression within the formatter search limit.
+                // verilog_lint: waive line-length
                 if (TRIGGER_MODE == 2'b10 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1))
                     next = LATCH_DATA;  // wait for trigger low
+                // Keep this expression within the formatter search limit.
+                // verilog_lint: waive line-length
                 else if (TRIGGER_MODE == 2'b11 && (TRIGGER == 1'b0 || TLU_TRIGGER_LOW_TIMEOUT_ERROR == 1'b1))
                     next = SEND_TLU_CLOCK;  // wait for trigger low
                 else next = SEND_COMMAND_WAIT_FOR_TRIGGER_LOW;
@@ -208,8 +222,8 @@ begin
             end
 
             WAIT_BEFORE_LATCH: begin
-                if (counter_sr_wait_cycles == TLU_TRIGGER_DATA_DELAY + 5) // wait at least 3 (2 + next state) clock cycles for sync of the signal
-                    next = LATCH_DATA;
+                // wait at least 3 (2 + next state) clock cycles for sync of the signal
+                if (counter_sr_wait_cycles == TLU_TRIGGER_DATA_DELAY + 5) next = LATCH_DATA;
                 else next = WAIT_BEFORE_LATCH;
             end
 
@@ -283,15 +297,20 @@ begin
                         if (CONF_EXT_TIMESTAMP == 1'b1)
                             TIMESTAMP_DATA <= EXT_TIMESTAMP[31:0]; // timestamp from external source
                         else TIMESTAMP_DATA <= TIMESTAMP[31:0];
-                    if (TRIGGER_ENABLE == 1'b1
-                    && TRIGGER == 1'b1
-                    && (((TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11) && (counter_trigger_high != 0 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0))
-                       || ((TRIGGER_MODE == 2'b00 || TRIGGER_MODE == 2'b01) && (counter_trigger_high != 0 && TRIGGER_THRESHOLD != 0))
+                    if (TRIGGER_ENABLE == 1'b1 && TRIGGER == 1'b1
+                        // Keep this expression within the formatter search limit.
+                        // verilog_lint: waive line-length
+                        && (((TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11) && (counter_trigger_high != 0 && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0))
+                        // Keep this expression within the formatter search limit.
+                        // verilog_lint: waive line-length
+                        || ((TRIGGER_MODE == 2'b00 || TRIGGER_MODE == 2'b01) && (counter_trigger_high != 0 && TRIGGER_THRESHOLD != 0))
                     )
                 )
                         FIFO_PREEMPT_REQ <= 1'b1;
                     else FIFO_PREEMPT_REQ <= 1'b0;
                     TRIGGER_DATA_WRITE <= 1'b0;
+                    // Keep this expression within the formatter search limit.
+                    // verilog_lint: waive line-length
                     if ((TRIGGER_ENABLE == 1'b0 || (TRIGGER_ENABLE == 1'b1 && TRIGGER_VETO == 1'b1 && counter_tlu_handshake_veto == 0)) && TLU_ENABLE_VETO == 1'b1 && (TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11))
                         TLU_ASSERT_VETO <= 1'b1;  // assert only outside Trigger/Busy handshake
                     else TLU_ASSERT_VETO <= 1'b0;
@@ -301,8 +320,12 @@ begin
                     // TLU_BUSY <= 1'b0;
                     TLU_BUSY         <= 1'b0;
                     TLU_CLOCK_ENABLE <= 1'b0;
+                    // Keep this expression within the formatter search limit.
+                    // verilog_lint: waive line-length
                     if (TRIGGER_ENABLE == 1'b1 && counter_trigger_high != 8'b1111_1111 && ((counter_trigger_high > 0 && TRIGGER == 1'b1) || (counter_trigger_high == 0 && TRIGGER_FLAG == 1'b1)))
                         counter_trigger_high <= counter_trigger_high + 1;
+                    // Keep this expression within the formatter search limit.
+                    // verilog_lint: waive line-length
                     else if (TRIGGER_ENABLE == 1'b1 && counter_trigger_high == 8'b1111_1111 && TRIGGER == 1'b1)
                         counter_trigger_high <= counter_trigger_high;
                     else counter_trigger_high <= 8'b0;
@@ -313,6 +336,8 @@ begin
                     if (counter_trigger_high >= TRIGGER_THRESHOLD && TRIGGER_THRESHOLD != 0)
                         TRIGGER_ACCEPT <= 1'b1;
                     else TRIGGER_ACCEPT <= 1'b0;
+                    // Keep this expression within the formatter search limit.
+                    // verilog_lint: waive line-length
                     if (counter_trigger_high >= TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES && TLU_TRIGGER_HANDSHAKE_ACCEPT_WAIT_CYCLES != 0)
                         TLU_TRIGGER_HANDSHAKE_ACCEPT <= 1'b1;
                     else TLU_TRIGGER_HANDSHAKE_ACCEPT <= 1'b0;
@@ -364,6 +389,8 @@ begin
                     counter_trigger_low_time_out <= counter_trigger_low_time_out + 1;
                     counter_tlu_clock            <= 0;
                     counter_sr_wait_cycles       <= 0;
+                    // Keep this expression within the formatter search limit.
+                    // verilog_lint: waive line-length
                     if ((counter_trigger_low_time_out >= TLU_TRIGGER_LOW_TIME_OUT) && (TLU_TRIGGER_LOW_TIME_OUT != 8'b0))
                         TLU_TRIGGER_LOW_TIMEOUT_ERROR <= 1'b1;
                     else TLU_TRIGGER_LOW_TIMEOUT_ERROR <= 1'b0;
@@ -383,7 +410,8 @@ begin
                     TRIGGER_ACCEPTED_FLAG  <= 1'b0;
                     if (TRIGGER_ACKNOWLEDGE == 1'b1) TRIGGER_ACKNOWLEDGED <= 1'b1;
                     if (FIFO_ACKNOWLEDGE == 1'b1) FIFO_ACKNOWLEDGED <= 1'b1;
-                    if (state != next && TRIGGER == 1'b0 && counter_trigger_low_time_out < 4) // 4 clocks cycles = 1 for output + 3 for sync
+                    // 4 clocks cycles = 1 for output + 3 for sync
+                    if (state != next && TRIGGER == 1'b0 && counter_trigger_low_time_out < 4)
                         TLU_TRIGGER_ACCEPT_ERROR <= 1'b1;
                 end
 
@@ -406,6 +434,8 @@ begin
                         for (n = 0; n < TLU_TRIGGER_MAX_CLOCK_CYCLES; n = n + 1) begin
                             if (n > 31 - 1) TLU_TRIGGER_NUMBER_DATA[n] <= 1'b0;
                             else
+                                // Keep this expression within the formatter search limit.
+                                // verilog_lint: waive line-length
                                 TLU_TRIGGER_NUMBER_DATA[n] <= tlu_data_sr[((TLU_TRIGGER_MAX_CLOCK_CYCLES-n)*DIVISOR)-1];
                         end
                     end else begin  // do not reverse
@@ -415,7 +445,8 @@ begin
                         end
                     end
                     /*
-                if (TLU_TRIGGER_CLOCK_CYCLES == 5'b0_0000) begin // 0 results in 32 clock cycles -> 31bit trigger number
+                // 0 results in 32 clock cycles -> 31bit trigger number
+                if (TLU_TRIGGER_CLOCK_CYCLES == 5'b0_0000) begin
                     if (TLU_TRIGGER_DATA_MSB_FIRST == 1'b0) begin // reverse bit order
                         for ( n=0 ; n < 32 ; n = n+1 ) begin
                             if (n > 31-1)
@@ -463,7 +494,10 @@ begin
                     TRIGGER_ACCEPTED_FLAG  <= 1'b0;
                     if (TRIGGER_ACKNOWLEDGE == 1'b1) TRIGGER_ACKNOWLEDGED <= 1'b1;
                     if (FIFO_ACKNOWLEDGE == 1'b1) FIFO_ACKNOWLEDGED <= 1'b1;
-                    if (state != next && TRIGGER == 1'b0 && counter_trigger_low_time_out < 4 && TRIGGER_MODE == 2'b10) // 4 clocks cycles = 1 for output + 3 for sync
+                    // 4 clocks cycles = 1 for output + 3 for sync
+                    // Keep this expression within the formatter search limit.
+                    // verilog_lint: waive line-length
+                    if (state != next && TRIGGER == 1'b0 && counter_trigger_low_time_out < 4 && TRIGGER_MODE == 2'b10)
                         TLU_TRIGGER_ACCEPT_ERROR <= 1'b1;
                 end
 
@@ -496,6 +530,8 @@ begin
 
     // time stamp
     always @(posedge TRIGGER_CLK) begin
+        // Keep this expression within the formatter search limit.
+        // verilog_lint: waive line-length
         if (RESET || (TLU_RESET_FLAG && (TRIGGER_MODE == 2'b10 || TRIGGER_MODE == 2'b11)) || TIMESTAMP_RESET_FLAG)
             TIMESTAMP <= 0;
         else TIMESTAMP <= TIMESTAMP + 1;
@@ -527,7 +563,8 @@ begin
             state
         })
         //.TRIGGER_CLK(CLK_160),
-        //.TRIG0({FMODE, FSTROBE, FREAD, CMD_BUS_WR, RX_BUS_WR, FIFO_WR, BUS_DATA_IN, FE_RX ,WR_B, RD_B})
+        //.TRIG0({FMODE, FSTROBE, FREAD, CMD_BUS_WR, RX_BUS_WR, FIFO_WR, BUS_DATA_IN, FE_RX ,WR_B,
+        //RD_B})
     );
 `endif
 

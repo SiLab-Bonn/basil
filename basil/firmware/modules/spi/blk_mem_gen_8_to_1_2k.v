@@ -15,7 +15,8 @@
  * true-dual-port read-first inference template. The ram_style attribute asks
  * Vivado to map it to a 7-series RAMB18E1, while the same RTL remains usable
  * with Verilator and Icarus.
- * https://docs.amd.com/r/en-US/2026.1/ug901-vivado-synthesis/True-Dual-Port-Asymmetric-RAM-Read-First-Verilog
+ // docs.amd.com/r/en-US/2026.1/ug901-vivado-synthesis/True-Dual-Port-Asymmetric-RAM-Read-First-Verilog
+ * https:
  *
  * The RAMB18E1 primitive is documented in AMD UG953.
  * https://docs.amd.com/r/en-US/ug953-vivado-7series-libraries/RAMB18E1

@@ -29,7 +29,8 @@ module tlu_controller #(
     input wire                 BUS_RD,
     input wire                 BUS_WR,
 
-    input wire                  TRIGGER_CLK, // clock of the TLU FSM, usually connect clock of command sequencer here
+    // clock of the TLU FSM, usually connect clock of command sequencer here
+    input wire TRIGGER_CLK,
 
     input  wire        FIFO_READ,
     output wire        FIFO_EMPTY,

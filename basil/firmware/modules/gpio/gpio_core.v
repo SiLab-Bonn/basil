@@ -90,6 +90,8 @@ module gpio_core #(
 
     genvar i;
     generate
+        // Keep the existing hierarchical instance paths.
+        // verilog_lint: waive generate-label-prefix
         for (i = 0; i < IO_WIDTH; i = i + 1) begin : sreggen
             if (IO_TRI[i]) assign IO[i] = DIRECTION_DATA[i/8][i%8] ? OUTPUT_DATA[i/8][i%8] : 1'bz;
             else if (IO_DIRECTION[i]) assign IO[i] = OUTPUT_DATA[i/8][i%8];

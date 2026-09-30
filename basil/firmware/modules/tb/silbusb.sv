@@ -9,6 +9,8 @@
  *  $Date::                      $:
  */
 
+// Keep the testbench interface name.
+// verilog_lint: waive interface-name-style
 interface SiLibUSB (
     input FCLK
 );
@@ -35,6 +37,8 @@ interface SiLibUSB (
 
     end
 
+    // Verilog-2005 tasks use static lifetime by default.
+    // verilog_lint: waive explicit-task-lifetime
     task ReadExternal;
         input [15:0] ADDIN;
         output [7:0] DATAOUT;
@@ -60,6 +64,8 @@ interface SiLibUSB (
         end
     endtask
 
+    // Verilog-2005 tasks use static lifetime by default.
+    // verilog_lint: waive explicit-task-lifetime
     task WriteExternal;
         input [15:0] ADDIN;
         input [7:0] DATAIN;
@@ -87,6 +93,8 @@ interface SiLibUSB (
         end
     endtask
 
+    // Verilog-2005 tasks use static lifetime by default.
+    // verilog_lint: waive explicit-task-lifetime
     task FastBlockRead;
         output [7:0] DATAOUT;
         begin

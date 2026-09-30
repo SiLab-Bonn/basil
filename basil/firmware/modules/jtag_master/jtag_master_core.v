@@ -306,8 +306,8 @@ module jtag_master_core #(
                 else TMS <= 1;
             end
             SHIFT_DR: begin
-                if (next_state == SHIFT_DR && out_bit_cnt != STOP_BIT - 1) // -1 beacause we need to change state on last bit
-                    TMS <= 0;
+                // -1 beacause we need to change state on last bit
+                if (next_state == SHIFT_DR && out_bit_cnt != STOP_BIT - 1) TMS <= 0;
                 else TMS <= 1;
             end
             EXIT1_DR: begin
@@ -335,8 +335,8 @@ module jtag_master_core #(
                 else TMS <= 1;
             end
             SHIFT_IR: begin
-                if (next_state == SHIFT_IR && out_bit_cnt != STOP_BIT - 1) // -1 beacause we need to change state on last bit
-                    TMS <= 0;
+                // -1 beacause we need to change state on last bit
+                if (next_state == SHIFT_IR && out_bit_cnt != STOP_BIT - 1) TMS <= 0;
                 else TMS <= 1;
             end
             EXIT1_IR: begin

@@ -46,12 +46,16 @@ module rgmii_io (
 );
 
 
-    reg [7:0] gmii_txd_rising;     // gmii_txd signal registered on the rising edge of tx_rgmii_clk_int.
+    // gmii_txd signal registered on the rising edge of tx_rgmii_clk_int.
+    reg [7:0] gmii_txd_rising;
     reg gmii_tx_en_rising;  // gmii_tx_en signal registered on the rising edge of tx_rgmii_clk_int.
-    reg       rgmii_tx_ctl_rising; // RGMII control signal registered on the rising edge of tx_rgmii_clk_int.
-    reg [3:0] gmii_txd_falling;    // gmii_txd signal registered on the falling edge of tx_rgmii_clk_int
+    // RGMII control signal registered on the rising edge of tx_rgmii_clk_int.
+    reg rgmii_tx_ctl_rising;
+    // gmii_txd signal registered on the falling edge of tx_rgmii_clk_int
+    reg [3:0] gmii_txd_falling;
 
-    reg       rgmii_tx_ctl_falling;// RGMII control signal registered on the falling edge of tx_rgmii_clk_int.
+    // RGMII control signal registered on the falling edge of tx_rgmii_clk_int.
+    reg rgmii_tx_ctl_falling;
 
     wire [3:0] rgmii_txd_obuf;  // RGMII transmit data output.
 

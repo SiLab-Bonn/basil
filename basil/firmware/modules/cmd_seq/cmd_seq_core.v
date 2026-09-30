@@ -39,11 +39,15 @@ module cmd_seq_core #(
     localparam VERSION = 1;
 
     generate
+        // Keep the existing generate hierarchy.
+        // verilog_lint: waive generate-label
         if (OUTPUTS > 8) begin
             illegal_outputs_parameter non_existing_module ();
         end
     endgenerate
     generate
+        // Keep the existing generate hierarchy.
+        // verilog_lint: waive generate-label
         if (CMD_MEM_SIZE > 8191) begin
             illegal_outputs_parameter non_existing_module ();
         end
@@ -51,7 +55,8 @@ module cmd_seq_core #(
     // IEEE Std 1800-2009
     // generate
     // if (CONDITION > MAX_ALLOWED) begin
-    //     $error("%m ** Illegal Condition ** CONDITION(%d) > MAX_ALLOWED(%d)", CONDITION, MAX_ALLOWED);
+    //     $error("%m ** Illegal Condition ** CONDITION(%d) > MAX_ALLOWED(%d)", CONDITION,
+    // MAX_ALLOWED);
     // end
     // endgenerate
 
@@ -99,7 +104,9 @@ module cmd_seq_core #(
 
     reg [0:0] CONF_READY;  // 1
     wire CONF_EN_EXT_START, CONF_DIS_CLOCK_GATE, CONF_DIS_CMD_PULSE;  // 2
-    wire [1:0] CONF_OUTPUT_MODE; // 2 Mode == 0: posedge, 1: negedge, 2: Manchester Code according to IEEE 802.3, 3:  Manchester Code according to G.E. Thomas aka Biphase-L or Manchester-II
+    // 2 Mode == 0: posedge, 1: negedge, 2: Manchester Code according to IEEE 802.3, 3:  Manchester
+    // Code according to G.E. Thomas aka Biphase-L or Manchester-II
+    wire [1:0] CONF_OUTPUT_MODE;
     wire [15:0] CONF_CMD_SIZE;  // 3 - 4
     wire [31:0] CONF_REPEAT_COUNT;  // 5 - 8
     wire [15:0] CONF_START_REPEAT;  // 9 - 10
@@ -236,7 +243,8 @@ module cmd_seq_core #(
     end
 
     reg [CMD_ADDR_SIZE-1:0] CMD_MEM_ADD;
-    assign CMD_MEM_DATA = cmd_mem[BUS_RD && BUS_ADD >= 16 && BUS_ADD < (16 + CMD_MEM_SIZE) ? (BUS_ADD - 16) : CMD_MEM_ADD];
+    assign CMD_MEM_DATA =
+        cmd_mem[BUS_RD&&BUS_ADD>=16&&BUS_ADD<(16+CMD_MEM_SIZE)?(BUS_ADD-16) : CMD_MEM_ADD];
 
     wire EXT_START_FLAG;
     assign EXT_START_FLAG = (CMD_EXT_START_FLAG & CMD_EXT_START_ENABLE);
@@ -255,7 +263,8 @@ module cmd_seq_core #(
 
     // reg END_SEQ_REP_NEXT, END_SEQ_REP;
     // always @(*) begin
-    //     if((repeat_cnt < CONF_REPEAT_COUNT_CMD_CLK || CONF_REPEAT_COUNT_CMD_CLK == 0) && cnt == CONF_CMD_SIZE_CMD_CLK - 1 - CONF_STOP_REPEAT_CMD_CLK && !END_SEQ_REP)
+    //     if((repeat_cnt < CONF_REPEAT_COUNT_CMD_CLK || CONF_REPEAT_COUNT_CMD_CLK == 0) && cnt ==
+    // CONF_CMD_SIZE_CMD_CLK - 1 - CONF_STOP_REPEAT_CMD_CLK && !END_SEQ_REP)
     //         END_SEQ_REP_NEXT = 1;
     //     else
     //         END_SEQ_REP_NEXT = 0;
@@ -282,7 +291,8 @@ module cmd_seq_core #(
             if (send_cmd && CONF_CMD_SIZE_CMD_CLK != 0 && START_STOP_REPEAT_OK) next_state = SEND;
             else next_state = WAIT;
             SEND:
-            if (cnt >= CONF_CMD_SIZE_CMD_CLK && repeat_cnt >= SET_REPEAT_COUNT && SET_REPEAT_COUNT != 0)
+            if (cnt >= CONF_CMD_SIZE_CMD_CLK && repeat_cnt >= SET_REPEAT_COUNT &&
+                SET_REPEAT_COUNT != 0)
                 next_state = WAIT;
             else next_state = SEND;
             default: next_state = WAIT;
@@ -296,7 +306,8 @@ module cmd_seq_core #(
             if (next_state == WAIT) begin
                 cnt <= 0;  // TODO: adding start value here
             end else begin
-                if ((repeat_cnt < SET_REPEAT_COUNT || SET_REPEAT_COUNT == 0) && (cnt == CONF_CMD_SIZE_CMD_CLK - CONF_STOP_REPEAT_CMD_CLK - 1)) begin
+                if ((repeat_cnt < SET_REPEAT_COUNT || SET_REPEAT_COUNT == 0) &&
+                    (cnt == CONF_CMD_SIZE_CMD_CLK - CONF_STOP_REPEAT_CMD_CLK - 1)) begin
                     cnt <= CONF_START_REPEAT_CMD_CLK;
                 end else begin
                     cnt <= cnt + 1;
@@ -308,7 +319,8 @@ module cmd_seq_core #(
     always @(posedge CMD_CLK_IN) begin
         if (RST_CMD_CLK) repeat_cnt <= 1;
         else if (next_state == WAIT) repeat_cnt <= 1;
-        else if ((next_state == SEND) && (cnt == CONF_CMD_SIZE_CMD_CLK - CONF_STOP_REPEAT_CMD_CLK - 1))
+        else if ((next_state == SEND) &&
+                 (cnt == CONF_CMD_SIZE_CMD_CLK - CONF_STOP_REPEAT_CMD_CLK - 1))
             repeat_cnt <= repeat_cnt + 1;
     end
 
@@ -332,7 +344,8 @@ module cmd_seq_core #(
         if (RST_CMD_CLK) begin
             CMD_MEM_ADD <= 0;
         end else begin
-            if (cnt == CONF_CMD_SIZE_CMD_CLK - CONF_STOP_REPEAT_CMD_CLK - 1 && repeat_cnt < SET_REPEAT_COUNT && SET_REPEAT_COUNT != 0) begin
+            if (cnt == CONF_CMD_SIZE_CMD_CLK - CONF_STOP_REPEAT_CMD_CLK - 1 &&
+                repeat_cnt < SET_REPEAT_COUNT && SET_REPEAT_COUNT != 0) begin
                 CMD_MEM_ADD <= CONF_START_REPEAT_CMD_CLK / 8;
             end else begin
                 // if ()
@@ -368,13 +381,19 @@ module cmd_seq_core #(
 
     genvar k;
     generate
+        // Keep the existing hierarchical instance paths.
+        // verilog_lint: waive generate-label-prefix
         for (k = 0; k < OUTPUTS; k = k + 1) begin : gen
             ODDR MANCHESTER_CODE_INST (
                 .Q(CMD_DATA[k]),
                 .C(CMD_CLK_IN),
                 .CE(1'b1),
-                .D1((CONF_OUTPUT_MODE_CMD_CLK == 2'b00) ? cmd_data_pos[k] : ((CONF_OUTPUT_MODE_CMD_CLK == 2'b01) ? cmd_data_neg[k] : ((CONF_OUTPUT_MODE_CMD_CLK == 2'b10) ? ~cmd_data_pos[k] :  cmd_data_pos[k]))),
-                .D2((CONF_OUTPUT_MODE_CMD_CLK == 2'b00) ? cmd_data_pos[k] : ((CONF_OUTPUT_MODE_CMD_CLK == 2'b01) ? cmd_data_neg[k] : ((CONF_OUTPUT_MODE_CMD_CLK == 2'b10) ?  cmd_data_pos[k] : ~cmd_data_pos[k]))),
+                .D1((CONF_OUTPUT_MODE_CMD_CLK == 2'b00) ? cmd_data_pos[k] :
+                    ((CONF_OUTPUT_MODE_CMD_CLK == 2'b01) ? cmd_data_neg[k] :
+                     ((CONF_OUTPUT_MODE_CMD_CLK == 2'b10) ? ~cmd_data_pos[k] : cmd_data_pos[k]))),
+                .D2((CONF_OUTPUT_MODE_CMD_CLK == 2'b00) ? cmd_data_pos[k] :
+                    ((CONF_OUTPUT_MODE_CMD_CLK == 2'b01) ? cmd_data_neg[k] :
+                     ((CONF_OUTPUT_MODE_CMD_CLK == 2'b10) ? cmd_data_pos[k] : ~cmd_data_pos[k]))),
                 .R(1'b0),
                 .S(1'b0)
             );
@@ -397,7 +416,8 @@ module cmd_seq_core #(
     // command start flag
     reg CMD_START_SIGNAL;
     always @(posedge CMD_CLK_IN)
-        if (state == SEND && cnt_buf == CONF_START_REPEAT_CMD_CLK && CONF_DIS_CMD_PULSE_CMD_CLK == 1'b0)
+        if (state == SEND && cnt_buf == CONF_START_REPEAT_CMD_CLK &&
+            CONF_DIS_CMD_PULSE_CMD_CLK == 1'b0)
             CMD_START_SIGNAL <= 1'b1;
         else CMD_START_SIGNAL <= 1'b0;
 
@@ -409,7 +429,8 @@ module cmd_seq_core #(
 
     always @(posedge CMD_CLK_IN)
         if (CONF_OUTPUT_MODE_CMD_CLK == 2'b00)
-            CMD_START_FLAG <= ~CMD_START_SIGNAL_FF2 & CMD_START_SIGNAL_FF;  // delay by 1, 180 degree phase shifted data in output mode 0
+            // delay by 1, 180 degree phase shifted data in output mode 0
+            CMD_START_FLAG <= ~CMD_START_SIGNAL_FF2 & CMD_START_SIGNAL_FF;
         else CMD_START_FLAG <= ~CMD_START_SIGNAL_FF & CMD_START_SIGNAL;
 
     // command start flag

@@ -7,7 +7,9 @@
 `timescale 1ps / 1ps
 `default_nettype none
 
-module sram_test (
+module sram_test #(
+    parameter FIFO_DEPTH = 21'h100000
+) (
     input wire FCLK_IN,
 
     // full speed
@@ -166,6 +168,7 @@ module sram_test (
     assign USB_READ = FREAD && FSTROBE;
     wire [7:0] FD_SRAM;
     sram_fifo #(
+        .DEPTH   (FIFO_DEPTH),
         .BASEADDR(FIFO_BASEADDR),
         .HIGHADDR(FIFO_HIGHADDR)
     ) i_out_fifo (

@@ -208,8 +208,8 @@ module spi_core #(
 
     wire EXT_START_PULSE;
     reg [2:0] EXT_START_FF;
-    always @(posedge SPI_CLK) // first stage
-begin
+    always @(posedge SPI_CLK)  // first stage
+        begin
         EXT_START_FF[0] <= EXT_START;
         EXT_START_FF[1] <= EXT_START_FF[0];
         EXT_START_FF[2] <= EXT_START_FF[1];
@@ -221,7 +221,8 @@ begin
     reg [31:0] REPEAT_COUNT;
 
     wire REP_START;
-    assign REP_START = (out_bit_cnt == STOP_BIT && (CONF_REPEAT == 0 || REPEAT_COUNT < CONF_REPEAT));
+    assign
+        REP_START = (out_bit_cnt == STOP_BIT && (CONF_REPEAT == 0 || REPEAT_COUNT < CONF_REPEAT));
 
     reg REP_START_DLY;
     always @(posedge SPI_CLK) REP_START_DLY <= REP_START;

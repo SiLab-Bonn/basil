@@ -11,6 +11,8 @@ module uartlib (
     integer counter;
     initial UART_TX = 1;
 
+    // Verilog-2005 tasks use static lifetime by default.
+    // verilog_lint: waive explicit-task-lifetime
     task write_byte;
         input [7:0] data;
         begin
@@ -36,6 +38,8 @@ module uartlib (
         end
     endtask
 
+    // Verilog-2005 tasks use static lifetime by default.
+    // verilog_lint: waive explicit-task-lifetime
     task write;
         input [31:0] addr;
         input [31:0] size;
@@ -67,6 +71,8 @@ module uartlib (
         end
     endtask
 
+    // Verilog-2005 tasks use static lifetime by default.
+    // verilog_lint: waive explicit-task-lifetime
     task read;
         input [31:0] addr;
         input [31:0] size;

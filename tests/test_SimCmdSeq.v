@@ -93,7 +93,8 @@ module tb (
 
     reg CMD_DATA_FF;
     always @(posedge BUS_CLK) begin
-        CMD_DATA_FF <= CMD_DATA;  // delay data, SEQ_EXT_START signal has to come first by 1 clock cycle
+        // delay data, SEQ_EXT_START signal has to come first by 1 clock cycle
+        CMD_DATA_FF <= CMD_DATA;
     end
 
     reg CMD_READY_FF, CMD_READY_FF2, CMD_READY_FF3;
@@ -103,7 +104,8 @@ module tb (
         CMD_READY_FF3 <= CMD_READY_FF2;
     end
     wire test;
-    assign test = (CMD_START_FLAG && (!CMD_READY_FF || !CMD_READY_FF2)) || (EX_START_PULSE_FF4 && CMD_EXT_START_ENABLE);
+    assign test = (CMD_START_FLAG && (!CMD_READY_FF || !CMD_READY_FF2)) ||
+        (EX_START_PULSE_FF4 && CMD_EXT_START_ENABLE);
 
     seq_rec #(
         .BASEADDR (SEQ_REC_BASEADDR),
@@ -119,7 +121,9 @@ module tb (
         .BUS_RD  (BUS_RD),
         .BUS_WR  (BUS_WR),
 
-        .SEQ_EXT_START((CMD_START_FLAG && (!CMD_READY_FF || !CMD_READY_FF2)) || (EX_START_PULSE_FF4 && CMD_EXT_START_ENABLE)),  // all output modes
+        // all output modes
+        .SEQ_EXT_START((CMD_START_FLAG && (!CMD_READY_FF || !CMD_READY_FF2)) ||
+                       (EX_START_PULSE_FF4 && CMD_EXT_START_ENABLE)),
         // .SEQ_EXT_START(EX_START_PULSE_FF4 && CMD_EXT_START_ENABLE),  // output mode 0
         // .SEQ_EXT_START(EX_START_PULSE_FF3 && CMD_EXT_START_ENABLE),  // output mode 1
         .SEQ_CLK(BUS_CLK),

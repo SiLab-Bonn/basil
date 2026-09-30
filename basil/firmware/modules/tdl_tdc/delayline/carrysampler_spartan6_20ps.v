@@ -42,7 +42,11 @@ module CHAIN_CELL (
     input wire CINIT;
 
     wire [3:0] carry_out;
+    // This Xilinx primitive requires the external vendor simulation library.
+    // verilator lint_off MODMISSING
 
+
+    (* maybe_unknown *)
     CARRY4 CARRY4_inst (
         .CO    (carry_out),  // 4-bit carry out
         .O     (),           // 4-bit carry chain XOR data out
@@ -51,9 +55,16 @@ module CHAIN_CELL (
         .DI    (4'b0000),    // 4-bit carry-MUX data in
         .S     (4'b1111)     // 4-bit carry-MUX select input
     );
+
+    // verilator lint_on MODMISSING
     assign CO = carry_out[3];
 
-    (* BEL = "FFD" *) FDCE #(
+    // These flip-flops require the external Xilinx simulation library.
+    // verilator lint_off MODMISSING
+
+    (* BEL = "FFD" *)
+    (* maybe_unknown *)
+    FDCE #(
         .INIT(1'b0)
     ) TDL_FF_D (
         .D  (carry_out[3]),
@@ -62,7 +73,7 @@ module CHAIN_CELL (
         .CE (1'b1),
         .CLR(1'b0)
     );
-    (* BEL = "FFC" *) FDCE #(
+    (* maybe_unknown *) (* BEL = "FFC" *) FDCE #(
         .INIT(1'b0)
     ) TDL_FF_C (
         .D  (carry_out[2]),
@@ -71,7 +82,7 @@ module CHAIN_CELL (
         .CE (1'b1),
         .CLR(1'b0)
     );
-    (* BEL = "FFB" *) FDCE #(
+    (* maybe_unknown *) (* BEL = "FFB" *) FDCE #(
         .INIT(1'b0)
     ) TDL_FF_B (
         .D  (carry_out[1]),
@@ -80,7 +91,7 @@ module CHAIN_CELL (
         .CE (1'b1),
         .CLR(1'b0)
     );
-    (* BEL = "FFA" *) FDCE #(
+    (* maybe_unknown *) (* BEL = "FFA" *) FDCE #(
         .INIT(1'b0)
     ) TDL_FF_A (
         .D  (carry_out[0]),
@@ -89,6 +100,9 @@ module CHAIN_CELL (
         .CE (1'b1),
         .CLR(1'b0)
     );
+
+    // verilator lint_on MODMISSING
+
 
 endmodule
 
@@ -100,7 +114,11 @@ module carry_sampler_spartan6 (
     CLK
 );
 
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter bits = 74;
+    // Keep the existing public parameter names.
+    // verilog_lint: waive parameter-name-style
     parameter resolution = 1;
 
     input wire d;
@@ -122,6 +140,8 @@ module carry_sampler_spartan6 (
             .CLK  (CLK)
         );
 
+        // Keep the existing hierarchical instance paths.
+        // verilog_lint: waive generate-label-prefix
         for (i = 1; i < bits * resolution / 4; i = i + 1) begin : carry_chain
             CHAIN_CELL MoreCells (
                 .DO({
@@ -137,6 +157,8 @@ module carry_sampler_spartan6 (
             );
         end
 
+        // Keep the existing hierarchical instance paths.
+        // verilog_lint: waive generate-label-prefix
         for (j = 0; j < bits; j = j + 1) begin : carry_sampler
             assign q[j] = register_out[j*resolution];
         end

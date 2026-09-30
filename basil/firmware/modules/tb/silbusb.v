@@ -39,6 +39,8 @@ module SiLibUSB (
 
     end
 
+    // Verilog-2005 tasks use static lifetime by default.
+    // verilog_lint: waive explicit-task-lifetime
     task ReadExternal;
         input [15:0] ADDIN;
         output [7:0] DATAOUT;
@@ -64,6 +66,8 @@ module SiLibUSB (
         end
     endtask
 
+    // Verilog-2005 tasks use static lifetime by default.
+    // verilog_lint: waive explicit-task-lifetime
     task WriteExternal;
         input [15:0] ADDIN;
         input [7:0] DATAIN;
@@ -91,6 +95,8 @@ module SiLibUSB (
         end
     endtask
 
+    // Verilog-2005 tasks use static lifetime by default.
+    // verilog_lint: waive explicit-task-lifetime
     task FastBlockRead;
         output [7:0] DATAOUT;
         begin
