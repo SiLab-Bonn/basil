@@ -408,7 +408,7 @@ module tdc_bdaq (
         .TCP_CLOSE_REQ(TCP_CLOSE_REQ),  // out    : Connection close request
         .TCP_CLOSE_ACK(TCP_CLOSE_REQ),  // in    : Acknowledge for closing
         .TCP_RX_WC({
-            5'b1, TCP_RX_WC_11B
+            5'b00001, TCP_RX_WC_11B
         }),  // in    : Rx FIFO write count[15:0] (Unused bits should be set 1)
         .TCP_RX_WR(TCP_RX_WR),  // out    : Write enable
         .TCP_RX_DATA(TCP_RX_DATA),  // out    : Write data[7:0]
