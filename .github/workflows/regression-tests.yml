@@ -5,8 +5,6 @@ on:
     branches:
     - master
   pull_request:
-    branches:
-    - master
 
 permissions:
   contents: read
@@ -20,47 +18,57 @@ jobs:
     - uses: actions/setup-python@v7
       with:
         python-version: "3.12"
-    - uses: pre-commit/action@v3.0.1
+    - name: Install pre-commit
+      run: python -m pip install pre-commit==4.3.0
+    - name: Check Python and repository hygiene
+      run: pre-commit run --all-files --show-diff-on-failure
       env:
         SKIP: coverage,verible-format,verible-lint,verilator-lint,slang-lint # Separate jobs run HDL checks and coverage.
 
   hdl:
-    name: Verilog lint and format
+    name: ${{ matrix.name }}
     runs-on: ubuntu-24.04
-    defaults:
-      run:
-        shell: bash -l {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Verible formatting
+            check: verible-format
+            install: verible
+          - name: Verible style lint
+            check: verible-lint
+            install: verible
+          - name: Verilator lint (Verilog-2005)
+            check: verilator
+            install: verilator
+          - name: Slang semantic lint
+            check: slang
+            install: slang
     steps:
     - uses: actions/checkout@v4
       with:
-        fetch-depth: 0
         persist-credentials: false
-    - uses: conda-incubator/setup-miniconda@v3
+    - uses: actions/setup-python@v7
       with:
-        miniforge-version: latest
         python-version: "3.12"
-        activate-environment: hdl
-        conda-remove-defaults: "true"
-    - name: Install HDL tools
+    - name: Install Verilator build dependencies
+      if: matrix.install == 'verilator'
       run: |
-        conda install --yes verilator=5.046
-        pip install pre-commit==4.3.0
-        curl --fail --location --retry 3 \
-          https://github.com/chipsalliance/verible/releases/download/v0.0-4053-g89d4d98a/verible-v0.0-4053-g89d4d98a-linux-static-x86_64.tar.gz \
-          --output "$RUNNER_TEMP/verible.tar.gz"
-        echo "1edc1f29c70d74213ed373e727183802d5a733e23f9ab9c74462f5b18b76f2c0  $RUNNER_TEMP/verible.tar.gz" | sha256sum --check
-        mkdir "$RUNNER_TEMP/verible"
-        tar -xzf "$RUNNER_TEMP/verible.tar.gz" -C "$RUNNER_TEMP/verible" --strip-components=1
-        echo "$RUNNER_TEMP/verible/bin" >> "$GITHUB_PATH"
-    - name: Check all Verilog files
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          autoconf bison flex g++ help2man make perl libfl-dev zlib1g-dev
+    - name: Install native HDL tool
+      if: matrix.install != 'slang'
       run: |
-        verilator --version
-        verible-verilog-lint --version
-        status=0
-        for hook in verible-format verible-lint verilator-lint slang-lint; do
-          pre-commit run "$hook" --all-files --show-diff-on-failure || status=1
-        done
-        exit "$status"
+        bash tools/install_hdl_tools.sh "${{ matrix.install }}" "$PWD/build/hdl-tools"
+        echo "$PWD/build/hdl-tools/bin" >> "$GITHUB_PATH"
+    - name: Install Slang Python bindings
+      if: matrix.install == 'slang'
+      run: |
+        python tools/hdl_config.py requirements > "$RUNNER_TEMP/hdl-requirements.txt"
+        python -m pip install -r "$RUNNER_TEMP/hdl-requirements.txt"
+    - name: Check HDL
+      run: python tools/lint_verilog.py "${{ matrix.check }}"
 
   tests:
 
