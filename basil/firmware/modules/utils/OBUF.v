@@ -12,15 +12,16 @@
 
 
 module OBUF #(
-    parameter DRIVE      = 12,
-    parameter IOSTANDARD = "DEFAULT",
-    parameter SLEW       = "SLOW"
+    parameter         CAPACITANCE = "DONT_CARE",
+    parameter integer DRIVE       = 12,
+    parameter         IOSTANDARD  = "DEFAULT",
+    parameter         SLEW        = "SLOW"
 ) (
     output wire O,
     input  wire I
 );
 
-    assign O = I;
+    buf output_buffer (O, I);
 
 endmodule
 

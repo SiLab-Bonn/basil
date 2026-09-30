@@ -1,4 +1,4 @@
-// Xilinx UG953: https://docs.amd.com/r/2025.2-English/ug953-vivado-7series-libraries/IDELAYCTRL
+// Xilinx UG953 (2026.1): https://docs.amd.com/r/en-US/ug953-vivado-7series-libraries/IDELAYCTRL
 // Xilinx UG471: https://docs.amd.com/v/u/en-US/ug471_7Series_SelectIO
 // Model the IDELAYCTRL primitive.
 `ifndef IDELAYCTRL_SIM
@@ -7,7 +7,9 @@
 `timescale 1ps / 1ps
 `default_nettype none
 
-module IDELAYCTRL (
+module IDELAYCTRL #(
+    parameter SIM_DEVICE = "7SERIES"
+) (
     output reg  RDY,
     input  wire REFCLK,
     input  wire RST

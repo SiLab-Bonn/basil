@@ -12,19 +12,19 @@
 
 
 module IOBUF #(
-    parameter DRIVE        = 12,
-    parameter IBUF_LOW_PWR = "TRUE",
-    parameter IOSTANDARD   = "DEFAULT",
-    parameter SLEW         = "SLOW"
+    parameter integer DRIVE        = 12,
+    parameter         IBUF_LOW_PWR = "TRUE",
+    parameter         IOSTANDARD   = "DEFAULT",
+    parameter         SLEW         = "SLOW"
 ) (
+    output wire O,
     inout  wire IO,
     input  wire I,
-    output wire O,
     input  wire T
 );
 
     assign IO = T ? 1'bz : I;
-    assign O  = IO;
+    buf input_buffer (O, IO);
 
 endmodule
 

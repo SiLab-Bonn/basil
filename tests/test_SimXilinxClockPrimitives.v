@@ -2,7 +2,8 @@
 `default_nettype none
 
 module test_SimXilinxClockPrimitives #(
-    parameter UseBase = 0
+    parameter       UseBase        = 0,
+    parameter [2:0] InvertControls = 3'b0
 );
     reg stopped;
     reg powerdown;
@@ -119,11 +120,14 @@ module test_SimXilinxClockPrimitives #(
             );
         end else begin : g_adv
             PLLE2_ADV #(
-                .CLKFBOUT_MULT (8),
-                .CLKIN1_PERIOD (10.0),
-                .DIVCLK_DIVIDE (1),
-                .CLKOUT0_DIVIDE(8),
-                .CLKOUT1_DIVIDE(2)
+                .IS_CLKINSEL_INVERTED(InvertControls[0]),
+                .IS_PWRDWN_INVERTED  (InvertControls[1]),
+                .IS_RST_INVERTED     (InvertControls[2]),
+                .CLKFBOUT_MULT       (8),
+                .CLKIN1_PERIOD       (10.0),
+                .DIVCLK_DIVIDE       (1),
+                .CLKOUT0_DIVIDE      (8),
+                .CLKOUT1_DIVIDE      (2)
             ) pll_under_test (
                 .CLKOUT0 (pll_clk0),
                 .CLKOUT1 (pll_clk1),
@@ -135,10 +139,10 @@ module test_SimXilinxClockPrimitives #(
                 .LOCKED  (pll_locked),
                 .CLKIN1  (gte_clk),
                 .CLKIN2  (1'b0),
-                .CLKINSEL(1'b1),
+                .CLKINSEL(1'b1 ^ InvertControls[0]),
                 .CLKFBIN (pll_feedback),
-                .PWRDWN  (powerdown),
-                .RST     (pll_reset),
+                .PWRDWN  (powerdown ^ InvertControls[1]),
+                .RST     (pll_reset ^ InvertControls[2]),
                 .DADDR   (7'd0),
                 .DCLK    (refclk),
                 .DEN     (1'b0),

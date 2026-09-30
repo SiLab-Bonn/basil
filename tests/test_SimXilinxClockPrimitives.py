@@ -7,8 +7,8 @@ from pathlib import Path
 import pytest
 
 
-@pytest.mark.parametrize("use_base", [0, 1])
-def test_xilinx_clock_primitive_models(tmp_path, use_base):
+@pytest.mark.parametrize("use_base,inversions", [(0, n) for n in range(8)] + [(1, 0)])
+def test_xilinx_clock_primitive_models(tmp_path, use_base, inversions):
     iverilog = shutil.which("iverilog")
     vvp = shutil.which("vvp")
     if iverilog is None or vvp is None:
@@ -38,6 +38,7 @@ def test_xilinx_clock_primitive_models(tmp_path, use_base):
             "-s",
             "test_SimXilinxClockPrimitives",
             f"-Ptest_SimXilinxClockPrimitives.UseBase={use_base}",
+            f"-Ptest_SimXilinxClockPrimitives.InvertControls={inversions}",
             "-o",
             simulation,
             *sources,

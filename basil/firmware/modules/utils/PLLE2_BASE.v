@@ -1,4 +1,4 @@
-// Xilinx UG953: https://docs.amd.com/r/2025.2-English/ug953-vivado-7series-libraries/PLLE2_BASE
+// Xilinx UG953 (2026.1): https://docs.amd.com/r/en-US/ug953-vivado-7series-libraries/PLLE2_BASE
 // Xilinx UG472: https://docs.amd.com/v/u/en-US/ug472_7Series_Clocking
 // Adapted from: https://github.com/nmi-leipzig/sim-x-pll/tree/850f59a
 // Author: Till Mahlburg (Universität Leipzig); Copyright: 2019-2020; License: ISC
@@ -23,68 +23,46 @@
 
 `timescale 1 ns / 1 ps
 
-// A reference for the interface can be found in Xilinx UG953 page 509ff
+// Functional port and parameter order matches Vivado 2025.2 UNISIM.
 module PLLE2_BASE #(
-    // not implemented
-    parameter BANDWIDTH = "OPTIMIZED",
-
-    parameter CLKFBOUT_MULT  = 5,
-    parameter CLKFBOUT_PHASE = 0.0,
-
-    // is ignored, but should be set
-    parameter CLKIN1_PERIOD = 0.0,
-
-    parameter CLKOUT0_DIVIDE = 1,
-    parameter CLKOUT1_DIVIDE = 1,
-    parameter CLKOUT2_DIVIDE = 1,
-    parameter CLKOUT3_DIVIDE = 1,
-    parameter CLKOUT4_DIVIDE = 1,
-    parameter CLKOUT5_DIVIDE = 1,
-
-    parameter CLKOUT0_DUTY_CYCLE = 0.5,
-    parameter CLKOUT1_DUTY_CYCLE = 0.5,
-    parameter CLKOUT2_DUTY_CYCLE = 0.5,
-    parameter CLKOUT3_DUTY_CYCLE = 0.5,
-    parameter CLKOUT4_DUTY_CYCLE = 0.5,
-    parameter CLKOUT5_DUTY_CYCLE = 0.5,
-
-    parameter CLKOUT0_PHASE = 0.0,
-    parameter CLKOUT1_PHASE = 0.0,
-    parameter CLKOUT2_PHASE = 0.0,
-    parameter CLKOUT3_PHASE = 0.0,
-    parameter CLKOUT4_PHASE = 0.0,
-    parameter CLKOUT5_PHASE = 0.0,
-
-    parameter DIVCLK_DIVIDE = 1,
-
-    // both not implemented
-    parameter REF_JITTER1  = 0.0,
-    parameter STARTUP_WAIT = "FALSE",
-
-    // Setting the FPGA model and speed grade allows a more realistic simulation. Default values are
-    // the most restrictive
-    parameter FPGA_TYPE   = "ARTIX",
-    parameter SPEED_GRADE = "-1"
+    parameter         BANDWIDTH          = "OPTIMIZED",
+    parameter integer CLKFBOUT_MULT      = 5,
+    parameter real    CLKFBOUT_PHASE     = 0.000,
+    parameter real    CLKIN1_PERIOD      = 0.000,
+    parameter integer CLKOUT0_DIVIDE     = 1,
+    parameter real    CLKOUT0_DUTY_CYCLE = 0.500,
+    parameter real    CLKOUT0_PHASE      = 0.000,
+    parameter integer CLKOUT1_DIVIDE     = 1,
+    parameter real    CLKOUT1_DUTY_CYCLE = 0.500,
+    parameter real    CLKOUT1_PHASE      = 0.000,
+    parameter integer CLKOUT2_DIVIDE     = 1,
+    parameter real    CLKOUT2_DUTY_CYCLE = 0.500,
+    parameter real    CLKOUT2_PHASE      = 0.000,
+    parameter integer CLKOUT3_DIVIDE     = 1,
+    parameter real    CLKOUT3_DUTY_CYCLE = 0.500,
+    parameter real    CLKOUT3_PHASE      = 0.000,
+    parameter integer CLKOUT4_DIVIDE     = 1,
+    parameter real    CLKOUT4_DUTY_CYCLE = 0.500,
+    parameter real    CLKOUT4_PHASE      = 0.000,
+    parameter integer CLKOUT5_DIVIDE     = 1,
+    parameter real    CLKOUT5_DUTY_CYCLE = 0.500,
+    parameter real    CLKOUT5_PHASE      = 0.000,
+    parameter integer DIVCLK_DIVIDE      = 1,
+    parameter real    REF_JITTER1        = 0.010,
+    parameter         STARTUP_WAIT       = "FALSE"
 ) (
-    output CLKOUT0,
-    output CLKOUT1,
-    output CLKOUT2,
-    output CLKOUT3,
-    output CLKOUT4,
-    output CLKOUT5,
-    // PLL feedback output.
-    output CLKFBOUT,
-
-    output LOCKED,
-
-    input CLKIN1,
-    // PLL feedback input. Ignored in this implementation, but should be connected to CLKFBOUT for
-    // internal feedback.
-    input CLKFBIN,
-
-    // Used to power down instatiated but unused PLLs
-    input PWRDWN,
-    input RST
+    output wire CLKFBOUT,
+    output wire CLKOUT0,
+    output wire CLKOUT1,
+    output wire CLKOUT2,
+    output wire CLKOUT3,
+    output wire CLKOUT4,
+    output wire CLKOUT5,
+    output wire LOCKED,
+    input  wire CLKFBIN,
+    input  wire CLKIN1,
+    input  wire PWRDWN,
+    input  wire RST
 );
     wire [15:0] DO;
     wire DRDY;
@@ -123,10 +101,7 @@ module PLLE2_BASE #(
         .STARTUP_WAIT (STARTUP_WAIT),
         .COMPENSATION ("ZHOLD"),
 
-        .MODULE_TYPE("PLLE2_BASE"),
-
-        .FPGA_TYPE  (FPGA_TYPE),
-        .SPEED_GRADE(SPEED_GRADE)
+        .MODULE_TYPE("PLLE2_BASE")
     ) plle2_base (
         .CLKOUT0(CLKOUT0),
         .CLKOUT1(CLKOUT1),
