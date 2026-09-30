@@ -7,19 +7,20 @@
 `ifndef IBUFDS_SIM
 `define IBUFDS_SIM
 
-`timescale 1ps/1ps
+`timescale 1ps / 1ps
 `default_nettype none
 
 module IBUFDS #(
-    parameter DIFF_TERM = "TRUE",
+    parameter DIFF_TERM    = "TRUE",
     parameter IBUF_LOW_PWR = "FALSE",
-    parameter IOSTANDARD = "LVDS_25"
+    parameter IOSTANDARD   = "LVDS_25"
 ) (
     output wire O,
-    input wire I, IB
+    input  wire I,
+    IB
 );
 
-assign O = I && !IB;
+    assign O = I && !IB;
 
 endmodule
 

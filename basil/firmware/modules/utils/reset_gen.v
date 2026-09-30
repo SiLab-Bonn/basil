@@ -7,7 +7,7 @@
 `ifndef RESET_GEN
 `define RESET_GEN
 
-`timescale 1ps/1ps
+`timescale 1ps / 1ps
 `default_nettype none
 
 
@@ -18,18 +18,16 @@ module reset_gen #(
     RST
 );
 
-input wire CLK;
-output wire RST;
+    input wire CLK;
+    output wire RST;
 
-reg [7:0] rst_cnt;
+    reg [7:0] rst_cnt;
 
-initial rst_cnt = CNT;
+    initial rst_cnt = CNT;
 
-always @(posedge CLK)
-     if(rst_cnt != 0)
-        rst_cnt <= rst_cnt -1;
+    always @(posedge CLK) if (rst_cnt != 0) rst_cnt <= rst_cnt - 1;
 
-assign RST = (rst_cnt != 0 );
+    assign RST = (rst_cnt != 0);
 
 endmodule
 

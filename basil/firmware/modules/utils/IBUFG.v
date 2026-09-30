@@ -7,19 +7,19 @@
 `ifndef IBUFG_SIM
 `define IBUFG_SIM
 
-`timescale 1ps/1ps
+`timescale 1ps / 1ps
 `default_nettype none
 
 
 module IBUFG #(
     parameter IBUF_LOW_PWR = "TRUE",
-    parameter IOSTANDARD = "DEFAULT"
+    parameter IOSTANDARD   = "DEFAULT"
 ) (
     output wire O,
-    input wire I
+    input  wire I
 );
 
-assign O = I;
+    assign O = I;
 
 endmodule
 

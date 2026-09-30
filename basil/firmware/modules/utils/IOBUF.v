@@ -7,24 +7,24 @@
 `ifndef IOBUF_SIM
 `define IOBUF_SIM
 
-`timescale 1ps/1ps
+`timescale 1ps / 1ps
 `default_nettype none
 
 
 module IOBUF #(
-    parameter DRIVE = 12,
+    parameter DRIVE        = 12,
     parameter IBUF_LOW_PWR = "TRUE",
-    parameter IOSTANDARD = "DEFAULT",
-    parameter SLEW = "SLOW"
+    parameter IOSTANDARD   = "DEFAULT",
+    parameter SLEW         = "SLOW"
 ) (
-    inout wire IO,
-    input wire I,
+    inout  wire IO,
+    input  wire I,
     output wire O,
-    input wire T
+    input  wire T
 );
 
-assign IO = T ? 1'bz : I;
-assign O = IO;
+    assign IO = T ? 1'bz : I;
+    assign O  = IO;
 
 endmodule
 
