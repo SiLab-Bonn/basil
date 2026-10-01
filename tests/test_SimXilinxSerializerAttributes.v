@@ -93,7 +93,8 @@ module test_SimXilinxSerializerAttributes #(
         reset = 1'b1;
         #100000;
         check(1'b0, (TristateRate == "BUF") ? 1'b0 : 1'b1);
-        reset           = 1'b0;
+        @(posedge divided_clock);
+        #1000 reset = 1'b0;
         data_enable     = 1'b1;
         tristate_enable = 1'b1;
         #100000;

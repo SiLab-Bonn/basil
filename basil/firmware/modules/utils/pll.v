@@ -139,10 +139,15 @@ module pll #(
     wire [31:0] clkin_period_length_1000;
     wire reference_present;
     wire clock_reset;
+    reg reference_lost = 1'b0;
     wire feedback_internal;
 
-    // Reset clock generation on reference loss; retain DRP settings.
-    assign clock_reset = RST || !reference_present;
+    // A stopped reference requires an explicit reset before relocking.
+    always @(negedge reference_present or posedge RST or posedge PWRDWN) begin
+        if (RST || PWRDWN) reference_lost <= 1'b0;
+        else reference_lost <= 1'b1;
+    end
+    assign clock_reset = RST || reference_lost || !reference_present;
     assign CLKFBOUT    = (!clock_reset && !PWRDWN) ? feedback_internal : 1'b0;
 
     // internal values

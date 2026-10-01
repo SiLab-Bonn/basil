@@ -1,54 +1,26 @@
-"""Compile and exercise the functional Xilinx clock primitive models."""
+"""Functional clock checks shared with the external AMD reference."""
 
-import shutil
-import subprocess
 from pathlib import Path
 
 import pytest
+from xilinx_sim import run_primitive_bench
 
 
 @pytest.mark.parametrize("use_base,inversions", [(0, n) for n in range(8)] + [(1, 0)])
 def test_xilinx_clock_primitive_models(tmp_path, use_base, inversions):
-    iverilog = shutil.which("iverilog")
-    vvp = shutil.which("vvp")
-    if iverilog is None or vvp is None:
-        pytest.skip("Icarus Verilog is not installed")
-
-    basil_root = Path(__file__).resolve().parents[1]
-    utils = basil_root / "basil" / "firmware" / "modules" / "utils"
-    testbench = Path(__file__).with_suffix(".v")
-    simulation = tmp_path / "xilinx_clock_primitives.vvp"
-    sources = [
-        testbench,
-        utils / "IBUFDS_GTE2.v",
-        utils / "PLLE2_ADV.v",
-        utils / "PLLE2_BASE.v",
-        utils / "pll.v",
-        utils / "dyn_reconf.v",
-        utils / "period_count.v",
-        utils / "period_check.v",
-        utils / "freq_gen.v",
-        utils / "phase_shift.v",
-    ]
-
-    subprocess.run(
+    run_primitive_bench(
+        tmp_path,
+        Path(__file__).with_suffix(".v"),
         [
-            iverilog,
-            "-g2005",
-            "-s",
-            "test_SimXilinxClockPrimitives",
-            f"-Ptest_SimXilinxClockPrimitives.UseBase={use_base}",
-            f"-Ptest_SimXilinxClockPrimitives.InvertControls={inversions}",
-            "-o",
-            simulation,
-            *sources,
+            "IBUFDS_GTE2",
+            "PLLE2_ADV",
+            "PLLE2_BASE",
+            "pll",
+            "dyn_reconf",
+            "period_count",
+            "period_check",
+            "freq_gen",
+            "phase_shift",
         ],
-        cwd=tmp_path,
-        check=True,
-        capture_output=True,
-        text=True,
-        timeout=30,
+        [("UseBase", use_base), ("InvertControls", inversions)],
     )
-    result = subprocess.run([vvp, simulation], cwd=tmp_path, check=True, capture_output=True, text=True, timeout=30)
-    assert "PASS: Xilinx clock primitive models" in result.stdout
-    assert "FAIL:" not in result.stdout

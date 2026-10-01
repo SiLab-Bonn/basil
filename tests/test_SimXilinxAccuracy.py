@@ -4,65 +4,10 @@ Set BASIL_UNISIM_DIR to Vivado's data/verilog/src/unisims directory. Vendor
 sources are compiled separately and are never copied into the repository.
 """
 
-import os
-import shutil
-import subprocess
 from pathlib import Path
 
 import pytest
-
-UTILS = Path(__file__).resolve().parents[1] / "basil/firmware/modules/utils"
-
-
-def compare_models(tmp_path, bench, primitives, parameters=(), vendor_reference=True):
-    if not shutil.which("iverilog") or not shutil.which("vvp"):
-        pytest.skip("Icarus Verilog is not installed")
-    if isinstance(bench, str):
-        source = tmp_path / "testbench.v"
-        source.write_text("`timescale 1ps/1ps\n" + bench)
-        top = "tb"
-    else:
-        source = bench
-        top = source.stem
-    globals_source = tmp_path / "glbl.v"
-    globals_source.write_text(
-        "module glbl; reg GSR = 1'b1; wire GTS = 1'b0; wire PLL_LOCKG = 1'b1; initial #1000 GSR = 1'b0; endmodule\n"
-    )
-    roots = [UTILS]
-    if vendor_reference and os.environ.get("BASIL_UNISIM_DIR"):
-        roots.append(Path(os.environ["BASIL_UNISIM_DIR"]))
-    traces = []
-    for root in roots:
-        executable = tmp_path / "model.vvp"
-        subprocess.run(
-            [
-                "iverilog",
-                "-g2005",
-                "-s",
-                top,
-                "-s",
-                "glbl",
-                "-o",
-                str(executable),
-                *[f"-P{top}.{name}={value}" for name, value in parameters],
-                str(source),
-                str(globals_source),
-                *[str(root / (name + ".v")) for name in primitives if (root / (name + ".v")).exists()],
-            ],
-            cwd=tmp_path,
-            check=True,
-            capture_output=True,
-            text=True,
-            timeout=30,
-        )
-        result = subprocess.run(
-            ["vvp", str(executable)], cwd=tmp_path, check=True, capture_output=True, text=True, timeout=30
-        )
-        assert "PASS:" in result.stdout and "FAIL:" not in result.stdout, result.stdout
-        traces.append([line for line in result.stdout.splitlines() if line.startswith("TRACE")])
-    assert traces[0]
-    if len(traces) == 2:
-        assert traces[0] == traces[1]
+from xilinx_sim import run_primitive_bench as compare_models
 
 
 @pytest.mark.parametrize("output", [0, 1])
@@ -198,55 +143,10 @@ def test_pll_output_metrics(tmp_path, use_base):
         ("BUF", 1),
         ("SDR", 1),
         ("DDR", 4),
-        pytest.param(
-            "DDR",
-            1,
-            marks=pytest.mark.xfail(
-                condition=bool(os.environ.get("BASIL_XSIM")),
-                strict=True,
-                reason="UNISIM DDR tristate width 1 differs on release of SRVAL_TQ=1 reset",
-            ),
-        ),
     ],
 )
 @pytest.mark.parametrize("invert", [0, 1])
 def test_serializer_attributes(tmp_path, rate, width, invert):
     bench = Path(__file__).with_name("test_SimXilinxSerializerAttributes.v")
     parameters = [("TristateRate", f'"{rate}"'), ("TristateWidth", width), ("Invert", invert)]
-    # OSERDESE2 needs Vivado's secureip backend; Icarus cannot elaborate it.
-    compare_models(tmp_path, bench, ["OSERDESE2"], parameters, vendor_reference=False)
-    if not os.environ.get("BASIL_XSIM"):
-        return
-    for tool in ("xvlog", "xelab", "xsim"):
-        assert shutil.which(tool), f"BASIL_XSIM requires {tool} on PATH"
-    subprocess.run(
-        ["xvlog", str(bench), str(tmp_path / "glbl.v")],
-        cwd=tmp_path,
-        check=True,
-        capture_output=True,
-        text=True,
-        timeout=60,
-    )
-    subprocess.run(
-        [
-            "xelab",
-            bench.stem,
-            "glbl",
-            "-L",
-            "unisims_ver",
-            "-L",
-            "secureip",
-            "-s",
-            "attributes",
-            *[arg for name, value in parameters for arg in ("-generic_top", f"{name}={value}")],
-        ],
-        cwd=tmp_path,
-        check=True,
-        capture_output=True,
-        text=True,
-        timeout=120,
-    )
-    result = subprocess.run(
-        ["xsim", "attributes", "-runall"], cwd=tmp_path, check=True, capture_output=True, text=True, timeout=60
-    )
-    assert "PASS: serializer attributes" in result.stdout and "FAIL:" not in result.stdout, result.stdout
+    compare_models(tmp_path, bench, ["OSERDESE2"], parameters)

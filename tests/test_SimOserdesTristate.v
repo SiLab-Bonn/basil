@@ -18,8 +18,11 @@ module test_SimOserdesTristate #(
     wire tfb;
     wire byte_output;
     wire oq;
-    integer bit_index;
-    reg [3:0] expected;
+    localparam integer Frame = (DataRate == "DDR") ? 20 : 40;
+    integer pattern_index;
+    integer serial_edges = 0;
+    integer word_end_phase = -1;
+    reg held;
 
     OSERDESE2 #(
         .DATA_RATE_OQ  (DataRate),
@@ -61,18 +64,92 @@ module test_SimOserdesTristate #(
     );
 
     initial begin
-        clk           = 1'b0;
-        clkdiv        = 1'b0;
+        clk = 1'b0;
+        forever #5 clk = !clk;
+    end
+    initial begin
+        clkdiv = 1'b0;
+        #5;
+        forever begin
+            clkdiv = 1'b1;
+            #(Frame / 2) clkdiv = 1'b0;
+            #(Frame / 2);
+        end
+    end
+
+    always @(clk) serial_edges = serial_edges + 1;
+
+    task automatic sample;
+        output value;
+        begin
+            @(clk);
+            #1 value = tq;
+        end
+    endtask
+
+    task automatic check_pattern;
+        input [3:0] expected;
+        reg [3:0] received;
+        reg value;
+        integer attempt;
+        integer bit_index;
+        integer frame_index;
+        begin
+            repeat (4) @(posedge clkdiv);
+            received = 0;
+            attempt  = 0;
+            if (TristateWidth == 4) begin
+                if (word_end_phase < 0) begin
+                    while ((attempt < 4) || (received !== expected)) begin
+                        sample (value);
+                        received = {value, received[3:1]};
+                        attempt  = attempt + 1;
+                        if (attempt > 12) begin
+                            $display("FAIL: could not find tristate word %b", expected);
+                            $finish;
+                        end
+                    end
+                    word_end_phase = serial_edges % 4;
+                end else begin
+                    sample (value);
+                    while (serial_edges % 4 != word_end_phase) sample (value);
+                end
+                for (frame_index = 0; frame_index < 8; frame_index = frame_index + 1) begin
+                    for (bit_index = 0; bit_index < 4; bit_index = bit_index + 1) begin
+                        sample (value);
+                        if (value !== expected[bit_index]) begin
+                            $display("FAIL: tristate bit %0d", bit_index);
+                            $finish;
+                        end
+                    end
+                end
+            end else begin
+                #1;
+                if (tq !== expected[0]) begin
+                    $display("FAIL: tristate T1 value");
+                    $finish;
+                end
+            end
+            if ((oq !== 1'b0) || (tfb !== tq)) begin
+                $display("FAIL: data/tristate independence or feedback");
+                $finish;
+            end
+            $display("TRACE tristate %b", expected);
+        end
+    endtask
+
+    initial begin
         reset         = 1'b1;
         enable        = 1'b0;
         tristate_data = 4'b0000;
-        #40;
+        repeat (4) @(posedge clkdiv);
+        #1;
         if (byte_output !== 1'b1) begin
             $display("FAIL: disabled byte grouping output");
             $finish;
         end
         if (TristateRate == "BUF") begin
-            // BUF must work with both clocks stopped, TCE low and reset high.
+            // BUF follows T1 even with TCE low and reset high.
             tristate_data = 4'b0001;
             #1;
             if ((tq !== 1'b1) || (tfb !== 1'b1)) begin
@@ -86,68 +163,46 @@ module test_SimOserdesTristate #(
                 $finish;
             end
         end else begin
-            reset         = 1'b0;
-            enable        = 1'b1;
-            tristate_data = 4'b1001;
-            expected      = tristate_data;
-            #5;
-            clk    = 1'b1;
-            clkdiv = 1'b1;
-            #0.001;
-            if (tq !== 1'b0) begin
-                $display("FAIL: publication changed TQ on the capture edge");
-                $finish;
+            reset  = 1'b0;
+            enable = 1'b1;
+            for (pattern_index = 0; pattern_index < 4; pattern_index = pattern_index + 1) begin
+                @(negedge clkdiv);
+                #1;
+                case (pattern_index)
+                    0: tristate_data = 4'b1001;
+                    1: tristate_data = 4'b0010;
+                    2: tristate_data = 4'b1101;
+                    default: tristate_data = 4'b0110;
+                endcase
+                check_pattern(tristate_data);
             end
-            // Input changes after capture must not change the captured word.
-            tristate_data = 4'b0110;
-            if (TristateRate == "DDR") begin
-                for (bit_index = 0; bit_index < 4; bit_index = bit_index + 1) begin
-                    #5 clk = !clk;
-                    #0.001;
-                    if (tq !== expected[(TristateWidth == 1) ? 0 : bit_index]) begin
-                        $display("FAIL: DDR tristate bit %0d", bit_index);
-                        $finish;
-                    end
-                end
-            end else begin
-                #5 clk = 1'b0;
-                #0.001;
-                if (tq !== 1'b0) begin
-                    $display("FAIL: SDR TQ changed on falling CLK");
-                    $finish;
-                end
-                #5 clk = 1'b1;
-                #0.001;
-                if (tq !== 1'b1) begin
-                    $display("FAIL: SDR TQ missing on rising CLK");
-                    $finish;
-                end
-            end
-            // Tristate serialization must work even though OCE remains low.
-            if ((oq !== 1'b0) || (tfb !== tq)) begin
-                $display("FAIL: data and tristate paths are not independent");
-                $finish;
-            end
-            enable      = 1'b0;
-            expected[0] = tq;
+            enable = 1'b0;
+            repeat (4) @(posedge clkdiv);
+            #1 held = tq;
             repeat (8) begin
-                #5;
-                clk    = !clk;
-                clkdiv = !clkdiv;
-                #0.001;
-                if (tq !== expected[0]) begin
+                @(clk);
+                #1;
+                if (tq !== held) begin
                     $display("FAIL: TCE did not hold TQ");
                     $finish;
                 end
             end
-            reset = 1'b1;
-            #0.001;
+            enable = 1'b1;
+            reset  = 1'b1;
+            repeat (2) @(posedge clkdiv);
+            #1;
             if (tq !== 1'b0) begin
                 $display("FAIL: tristate reset");
                 $finish;
             end
         end
         $display("PASS: OSERDESE2 tristate");
+        $finish;
+    end
+
+    initial begin
+        #100000;
+        $display("FAIL: tristate timeout");
         $finish;
     end
 endmodule

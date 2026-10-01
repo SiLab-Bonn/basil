@@ -16,11 +16,10 @@ module test_SimOserdes #(
     wire serial_data;
     wire shift1;
     wire shift2;
-    integer sent;
-    integer frame_index;
-    integer bit_index;
+    integer word_index;
+    integer serial_edges = 0;
+    integer word_end_phase;
     integer pass_index;
-    reg [9:0] expected;
     reg held;
 
     function automatic [9:0] pattern;
@@ -47,17 +46,6 @@ module test_SimOserdes #(
             #(Frame / 2);
             clkdiv = 1'b0;
             #(Frame / 2);
-        end
-    end
-
-    // Send distinct words to detect mixed data and cascade bits.
-    always @(negedge clkdiv) begin
-        if (reset) begin
-            sent = 0;
-            data = pattern(0);
-        end else if (enable) begin
-            sent = sent + 1;
-            data = pattern(sent);
         end
     end
 
@@ -142,33 +130,81 @@ module test_SimOserdes #(
         end
     endgenerate
 
+    always @(clk) begin
+        if ((DataRate == "DDR") || clk) serial_edges = serial_edges + 1;
+    end
+
+    task automatic sample;
+        output value;
+        begin
+            if (DataRate == "DDR") @(clk);
+            else @(posedge clk);
+            // UNISIM includes a 100 ps output propagation delay.
+            #1 value = serial_data;
+        end
+    endtask
+
+    task automatic check_words;
+        input [9:0] expected;
+        reg [9:0] received;
+        reg value;
+        integer attempt;
+        integer frame_index;
+        integer bit_index;
+        begin
+            // Allow the documented input/output pipeline to fill, then locate
+            // D1 in the repeated word without assuming zero capture latency.
+            repeat (4) @(posedge clkdiv);
+            if (word_end_phase < 0) begin
+                received = 0;
+                attempt  = 0;
+                while ((attempt < DataWidth) ||
+                       (received[DataWidth-1:0] !== expected[DataWidth-1:0])) begin
+                    sample (value);
+                    received              = received >> 1;
+                    received[DataWidth-1] = value;
+                    attempt               = attempt + 1;
+                    if (attempt > 3 * DataWidth) begin
+                        $display("FAIL: could not find serialized word %h", expected);
+                        $finish;
+                    end
+                end
+                word_end_phase = serial_edges % DataWidth;
+            end else begin
+                // Keep the phase found with the first word for every pattern.
+                // Re-aligning each pattern could hide a reversed bit order.
+                sample (value);
+                while (serial_edges % DataWidth != word_end_phase) sample (value);
+            end
+            for (frame_index = 0; frame_index < 8; frame_index = frame_index + 1) begin
+                for (bit_index = 0; bit_index < DataWidth; bit_index = bit_index + 1) begin
+                    sample (value);
+                    if (value !== expected[bit_index]) begin
+                        $display("FAIL: word=%h bit=%0d got=%b", expected, bit_index, value);
+                        $finish;
+                    end
+                end
+            end
+            $display("TRACE word %h", expected);
+        end
+    endtask
+
     initial begin
         reset  = 1'b1;
         enable = 1'b1;
-        sent   = 0;
         data   = pattern(0);
         for (pass_index = 0; pass_index < 2; pass_index = pass_index + 1) begin
-            repeat (2) @(negedge clkdiv);
+            word_end_phase = -1;
+            repeat (4) @(posedge clkdiv);
             #1 reset = 1'b0;
-            @(posedge clkdiv);
-            // Check D1 on the first serial edge after capture.
-            if (DataRate == "DDR") @(clk);
-            else @(posedge clk);
-            #0.001;
-            for (frame_index = 0; frame_index < 16; frame_index = frame_index + 1) begin
-                expected = pattern(frame_index);
-                for (bit_index = 0; bit_index < DataWidth; bit_index = bit_index + 1) begin
-                    if (serial_data !== expected[bit_index]) begin
-                        $display("FAIL: frame=%0d bit=%0d got=%b expected=%b", frame_index,
-                                 bit_index, serial_data, expected[bit_index]);
-                        $finish;
-                    end
-                    #Step;
-                end
+            for (word_index = 0; word_index < 4; word_index = word_index + 1) begin
+                @(negedge clkdiv);
+                #1 data = pattern(word_index);
+                check_words(pattern(word_index));
             end
-            // OCE must hold the output even while both clocks run.
             enable = 1'b0;
-            held   = serial_data;
+            repeat (4) @(posedge clkdiv);
+            #1 held = serial_data;
             repeat (2 * DataWidth) begin
                 #Step;
                 if (serial_data !== held) begin
@@ -176,13 +212,16 @@ module test_SimOserdes #(
                     $finish;
                 end
             end
-            reset = 1'b1;
-            #0.001;
+            enable = 1'b1;
+            reset  = 1'b1;
+            repeat (2) @(posedge clkdiv);
+            #1;
             if (serial_data !== 1'b0) begin
-                $display("FAIL: asynchronous reset");
+                $display("FAIL: reset output");
                 $finish;
             end
             enable = 1'b1;
+            data   = pattern(0);
         end
         $display("PASS: OSERDESE2 words");
         $finish;
