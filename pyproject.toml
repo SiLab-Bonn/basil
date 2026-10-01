@@ -1,88 +1,74 @@
 [build-system]
-requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
+requires = [
+    "setuptools >= 61.0",
+]
 
 [project]
-name = "basil_daq"
-dynamic = ["version"]
-license = { "text" = "BSD 3-Clause ('BSD New' or 'BSD Simplified') License" }
-description = "Basil is a modular data acquisition system and system testing framework in Python.\nIt also provides generic FPGA firmware modules for different hardware platforms and drivers for wide range of lab appliances."
-readme = "README.md"
-requires-python = ">=3.10,<3.14"
 authors = [
     {name = "Tomasz Hemperek", email="hemperek@uni-bonn.de"},
     {name = "Jens Janssen", email="janssen@physik.uni-bonn.de"},
     {name = "David-Leon Pohl", email="pohl@physik.uni-bonn.de"}
 ]
-
+dependencies = [
+    "GitPython",
+    "bitarray>=3.4.0",
+    "numpy",
+    "pyyaml",
+    "ruamel.yaml",
+    "six",
+]
+description = "Basil is a modular data acquisition system and system testing framework in Python.\nIt also provides generic FPGA firmware modules for different hardware platforms and drivers for wide range of lab appliances."
+dynamic = [
+    "version",
+]
 maintainers = [
   {name = "Yannick Dieter", email = "dieter@physik.uni-bonn.de"},
   {name = "Christian Bespin", email = "bespin@physik.uni-bonn.de"},
 ]
+name = "basil_daq"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
 
-dependencies = [
-    "numpy",
-    "pyyaml",
-    "bitarray>=3.4.0",
-    "GitPython",
-    "six",
-    "ruamel.yaml",
-]
-
-[project.urls]
-"Documentation" = "https://basil.readthedocs.io/en/latest/"
-"Repository" = "https://github.com/SiLab-Bonn/basil/"
+[project.license]
+text = "BSD 3-Clause ('BSD New' or 'BSD Simplified') License"
 
 [project.optional-dependencies]
-hw = ["pyserial", "PyVISA"]
-
-test = [
-    "coverage",
-    "cocotb>=2.0.1",
-    "cocotb-bus>=0.3.0",
-    "cocotb-test>=0.2.6",
-    "diff-cover",
-    "pytest>=9.0.3",
-    "PyVISA",
-    "pyvisa-sim",
-]
-
-hdl-lint = [
-    "pyslang==11.0.0",
-    "tomli==2.2.1; python_version < '3.11'",
-]
-
 docs = [
     "sphinx",
     "sphinx-book-theme",
 ]
+hdl-lint = [
+    "pyslang==12.0.0; python_version >= '3.11'",
+    # TOML parsing fallback until Python 3.10 reaches EOL; Python 3.11+ provides tomllib.
+    "tomli==2.2.1; python_version < '3.11'",
+]
+hw = [
+    "PyVISA",
+    "pyserial",
+]
+test = [
+    "PyVISA",
+    "cocotb-bus>=0.3.0",
+    "cocotb-test>=0.2.6",
+    "cocotb>=2.0.1",
+    "coverage[toml]",
+    "diff-cover",
+    "pytest>=9.0.3",
+    "pyvisa-sim",
+]
 
-[tool.setuptools]
-include-package-data = true
+[project.urls]
+Documentation = "https://basil.readthedocs.io/en/latest/"
+Repository = "https://github.com/SiLab-Bonn/basil/"
 
-[tool.setuptools.dynamic]
-version = {attr = "basil.__version__"}
-
-[tool.pytest.ini_options]
-markers = ["verilator: Verilog tests."]
-
-[tool.ruff]
-# Set the maximum line length to 120.
-line-length = 120
-
-[tool.ruff.lint]
-extend-select = ["I"]
-
-[tool.uv.sources]
-cocotb-test = { git = "https://github.com/themperek/cocotb-test.git", rev = "4e6b7db" }
-
+[sources.hdl]
 # Repository scripts translate these settings into native HDL tool arguments.
-[tool.basil-hdl]
-verilog-standard = "1364-2005"
-systemverilog-standard = "1800-2017"
-source-suffixes = [".v", ".sv"]
-vendor-directories = ["sitcp"]
-include-directories = ["basil/firmware/modules", "basil/firmware/modules/utils", "basil/firmware/modules/includes"]
+include-directories = [
+    "basil/firmware/modules",
+    "basil/firmware/modules/utils",
+    "basil/firmware/modules/includes",
+]
 library-directories = [
     "basil/firmware/modules/utils",
     "basil/firmware/modules/bram_fifo",
@@ -112,12 +98,78 @@ library-directories = [
     "basil/firmware/modules/tlu",
     "basil/firmware/modules/uart",
 ]
+source-suffixes = [
+    ".v",
+    ".sv",
+]
+systemverilog-standard = "1800-2017"
+vendor-directories = [
+    "sitcp",
+]
+verilog-standard = "1364-2005"
 
-[tool.basil-hdl.verible-lint]
-# The disabled rules conflict with Basil's filenames or Verilog-2005 dialect.
-rules = ["-module-filename", "-always-comb", "-explicit-parameter-storage-type", "-unpacked-dimensions-range-ordering", "parameter-name-style=localparam_style:CamelCase|ALL_CAPS"]
+[tool.verible.install]
+sha256 = "8569defb891d2316067613ea00442af28a7a09d405d95b54c0c91f9942d26635"
+url = "https://github.com/chipsalliance/verible/releases/download/{version}/verible-{version}-linux-static-x86_64.tar.gz"
+version = "v0.0-4296-g0f262651"
 
-[tool.basil-hdl.verible-format]
+[tool.oss-cad-suite.install]
+sha256 = "1c91249e9671666b58d94e2fe8a81e6103d37b254eab77bd82625802c208bf4d"
+url = "https://github.com/YosysHQ/oss-cad-suite-build/releases/download/{version}/oss-cad-suite-linux-x64-{date}.tgz"
+version = "2026-10-01"
+
+[tool.pytest.ini_options]
+addopts = ["--basetemp=build/sim/pytest", "--junitxml=build/tests/results.xml"]
+cache_dir = "build/tests/pytest-cache"
+log_file = "build/log/pytest.log"
+markers = [
+    "verilator: Verilog tests.",
+]
+
+[tool.coverage.run]
+data_file = "build/cov/.coverage"
+
+[tool.coverage.xml]
+output = "build/cov/coverage.xml"
+
+[tool.coverage.html]
+directory = "build/cov/html"
+
+[tool.coverage.json]
+output = "build/cov/coverage.json"
+
+[tool.coverage.lcov]
+output = "build/cov/coverage.lcov"
+
+[tool.ruff]
+cache-dir = "build/tests/ruff-cache"
+# Set the maximum line length to 120.
+line-length = 120
+
+[tool.ruff.lint]
+extend-select = [
+    "I",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.dynamic.version]
+attr = "basil.__version__"
+
+[tool.slang]
+args = [
+    "-Wextra",
+    "--timescale=1ns/1ps",
+    "--allow-lib-module-redef",
+    "-Wempty-output-connection",
+]
+
+[tool.uv.sources.cocotb-test]
+git = "https://github.com/themperek/cocotb-test.git"
+rev = "4e6b7db"
+
+[tool.verible-format]
 args = [
     "--assignment_statement_alignment=align",
     "--class_member_variable_alignment=align",
@@ -140,27 +192,21 @@ args = [
     "--failsafe_success=false",
 ]
 
-[tool.basil-hdl.verilator]
-# Report legacy warnings; fail on syntax and elaboration errors.
-args = ["--lint-only", "--timing", "-Wall", "-Wno-fatal"]
+[tool.verible-lint]
+# The disabled rules conflict with the Verilog-2005 dialect.
+rules = [
+    "-always-comb",
+    "-explicit-parameter-storage-type",
+    "-unpacked-dimensions-range-ordering",
+    "parameter-name-style=localparam_style:CamelCase|ALL_CAPS",
+]
 
-[tool.basil-hdl.slang]
-args = ["-Wextra", "--timescale=1ns/1ps", "--allow-lib-module-redef", "-Wempty-output-connection"]
-
-[tool.basil-hdl.extra-args]
-"examples/test_eth/firmware_test_eth/src/test_eth.v" = ["-v", "basil/firmware/modules/utils/3_stage_synchronizer.v"]
-
-[tool.basil-hdl.wrappers]
-"basil/firmware/modules/includes/log2func.v" = "module lint_top;\n`include \"{source}\"\nendmodule\n"
-"examples/MMC3/mmc3.srcs/sources_1/mmc3_constants.v" = "module lint_top;\n`include \"{source}\"\nendmodule\n"
-"basil/firmware/modules/tb/silbusb.sv" = "`include \"{source}\"\nmodule lint_top(input clk);\nSiLibUSB bus(clk);\nendmodule\n"
-
-[tool.basil-hdl.install.verible]
-version = "v0.0-4053-g89d4d98a"
-url = "https://github.com/chipsalliance/verible/releases/download/{version}/verible-{version}-linux-static-x86_64.tar.gz"
-sha256 = "1edc1f29c70d74213ed373e727183802d5a733e23f9ab9c74462f5b18b76f2c0"
-
-[tool.basil-hdl.install.verilator]
-version = "5.046"
-url = "https://codeload.github.com/verilator/verilator/tar.gz/refs/tags/v{version}"
-sha256 = "002bc6d92b203eb8b4612e1d198d8108517d4ec9859e131ef328015352fe6d0c"
+[tool.verilator]
+# Report legacy warnings; fail on implicit nets, syntax and elaboration errors.
+args = [
+    "--lint-only",
+    "--timing",
+    "-Wall",
+    "-Wno-fatal",
+    "-Werror-IMPLICIT",
+]

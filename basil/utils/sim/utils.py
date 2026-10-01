@@ -7,6 +7,7 @@
 
 import os
 import subprocess
+from pathlib import Path
 
 import basil
 
@@ -31,6 +32,7 @@ def cocotb_makefile(
 ):
     basil_dir = get_basil_dir()
     include_dirs += (basil_dir + "/firmware/modules", basil_dir + "/firmware/modules/includes")
+    include_dirs = tuple(os.path.abspath(str(directory)) for directory in include_dirs)
 
     mkfile = "SIMULATION_HOST?=%s\nSIMULATION_PORT?=%d\nSIMULATION_BUS?=%s\n" % (sim_host, sim_port, sim_bus)
 
@@ -107,13 +109,25 @@ include $(shell cocotb-config --makefiles)/Makefile.sim
     return mkfile
 
 
-def cocotb_compile_and_run(*args, **kw):
+def cocotb_compile_and_run(*args, sim_dir=None, **kw):
     # run simulator in background
-    with open("Makefile", "w") as f:
+    directory = Path(sim_dir or Path.cwd() / "build/sim").resolve()
+    directory.mkdir(parents=True, exist_ok=True)
+    with (directory / "Makefile").open("w") as f:
         f.write(cocotb_makefile(*args, **kw))
-    subprocess.Popen(["make"])
+    environment = os.environ.copy()
+    environment["PYTHONPATH"] = os.pathsep.join(filter(None, (str(Path.cwd()), environment.get("PYTHONPATH"))))
+    log = Path.cwd() / "build/log/simulation.log"
+    log.parent.mkdir(parents=True, exist_ok=True)
+    with log.open("w") as stream:
+        return subprocess.Popen(["make"], cwd=directory, env=environment, stdout=stream, stderr=subprocess.STDOUT)
 
 
-def cocotb_compile_clean():
-    subprocess.call("make clean", shell=True)
-    subprocess.call("rm -f Makefile", shell=True)
+def cocotb_compile_clean(sim_dir=None):
+    directory = Path(sim_dir or Path.cwd() / "build/sim").resolve()
+    if (directory / "Makefile").is_file():
+        log = Path.cwd() / "build/log/simulation.log"
+        log.parent.mkdir(parents=True, exist_ok=True)
+        with log.open("a") as stream:
+            subprocess.call(["make", "clean"], cwd=directory, stdout=stream, stderr=subprocess.STDOUT)
+        (directory / "Makefile").unlink()

@@ -2,6 +2,42 @@
 Firmware
 ############
 
+HDL checks
+==========
+
+Install the Python bindings with ``pip install -e .[hdl-lint]`` and download
+native tools with the shared installer::
+
+    bash tools/install.sh verible "$PWD/build/tools/verible"
+    bash tools/install.sh oss-cad-suite "$PWD/build/tools/oss-cad-suite"
+    export PATH="$VIRTUAL_ENV/bin:$PWD/build/tools/verible/bin:$PWD/build/tools/oss-cad-suite/bin:$PATH"
+
+The installer uses pinned, checksum-verified prebuilt packages; it does not
+compile tools. Keep the project's Python environment ahead of the native tool
+bundles on ``PATH`` so simulation uses the project's Cocotb installation.
+Local commands and the separate CI jobs use the same four checks::
+
+    python tools/run.py verilator-lint
+    python tools/run.py slang-lint
+    python tools/run.py verible-format
+    python tools/run.py verible-lint
+
+Verilator elaborates designs and reports connection, width, driver and latch
+issues while enforcing Verilog-2005 and rejecting implicit nets. Slang provides
+an independent check of names, types, parameters and elaboration. Verible
+formatting standardizes whitespace and layout; Verible lint checks source
+conventions and constructs that formatting alone cannot check.
+``verible-format`` applies formatting and exits unsuccessfully when files
+changed, so the same command catches uncommitted formatting changes in CI.
+
+``tools/sources.py`` reads the shared ``[sources.hdl]`` section of
+``pyproject.toml``; tool-specific arguments remain under ``[tool.verilator]``,
+``[tool.slang]``, ``[tool.verible-format]`` and ``[tool.verible-lint]``.
+Tool logs go under ``build/log/``, simulation output under ``build/sim/``,
+pytest cache and JUnit output under ``build/tests/``, and coverage reports
+under ``build/cov/``. Pytest's built-in temporary-directory option also keeps
+standalone primitive simulations under ``build/sim/pytest/``.
+
 Simulation primitives
 =====================
 
@@ -25,28 +61,55 @@ Other models retain these limitations:
   buffer behavior. Drive strength, I/O standards, power settings and slew
   attributes do not model analog behavior. IBUFDS/IBUFGDS include floating-input
   bias behavior; IOBUF models high impedance and contention.
-* IBUFDS_GTE2 uses a simplified differential input, enable and divide-by-two
-  implementation. Enable changes and invalid differential pairs can differ
-  from UNISIM's event behavior. Clock receiver configuration is not electrical.
-* IDELAYCTRL asserts ready after four reference-clock rising edges following
-  reset. It does not reproduce UNISIM's calibration or reference-clock loss
-  detection. ``SIM_DEVICE`` does not select a separate device implementation.
+* IBUFDS_GTE2 follows the functional UNISIM receiver: I drives O, enable is
+  sampled when I changes, and the divider retains its phase while disabled.
+  IB and clock receiver attributes do not add electrical behavior.
+* IDELAYCTRL measures the reference-clock period and deasserts ready when an
+  opposite clock edge is missing. Reset gates ready independently of that
+  measurement. The model covers 7-series functional calibration, not physical
+  calibration time or a separate UltraScale delay implementation.
 * IDELAYE2/ODELAYE2 support fixed, variable and loaded counts, optional count
-  pipelining, clock inversion and data-source selection. Their single scheduled
-  delay uses an approximate tap interval from ``REFCLK_FREQUENCY``; it does
-  not reproduce UNISIM's discrete frequency bands, tap-chain pulse filtering,
-  or switching taps while a transition is in flight. High-performance and
-  signal-pattern attributes do not change the digital delay approximation.
+  pipelining, clock inversion and data-source selection. Their 32-tap chains
+  use UNISIM's 78/52/39 ps intervals in the supported reference-frequency
+  bands, with a 600 ps output delay. Short pulses and switching taps during a
+  transition are modeled. Unknown controls hold counts; unknown count inputs
+  retain the last complete value. High-performance and signal-pattern
+  attributes do not add electrical behavior. Startup before the delay chain
+  settles is not guaranteed to reproduce UNISIM's global initialization.
 * OSERDESE2 supports the implemented SDR/DDR widths and 10-bit cascade.
   Unsupported widths, tristate combinations and byte grouping stop simulation.
   Its simple word-loading and serialization pipeline is not cycle-identical
-  to AMD's binary-backed implementation. The cited third-party serializer
+  to AMD's ``secureip`` implementation. The cited third-party serializer
   supplied a cascade wiring example, not primitive behavioral internals.
+  DDR tristate width 1 also differs on release of reset with ``SRVAL_TQ=1``;
+  the optional vendor comparison marks that known difference explicitly.
 * PLLE2_BASE/PLLE2_ADV approximate clock frequency, phase, duty cycle, reset,
   powerdown, input selection and dynamic reconfiguration. They do not model
   the feedback loop, analog lock/jitter behavior, compensation, bandwidth,
   reference-jitter settings or startup-wait semantics. Use UNISIM when those
   distinctions matter.
+
+Verification
+------------
+
+Interface tests check all 17 primitive declarations, including positional
+port order and parameter types/widths. Functional tests cover buffers,
+DDR edge/reset modes, GTE receiver/divider events, delay controls and tap
+transitions, serializer words/tristate/attributes, and PLL output frequency,
+phase, duty cycle, reset, powerdown and dynamic reconfiguration.
+
+For optional comparisons with an installed Vivado 2025.2 library, run::
+
+    BASIL_UNISIM_DIR=/path/to/Vivado/data/verilog/src/unisims python -m pytest \
+        tests/test_SimDdr.py tests/test_SimXilinxInterfaces.py \
+        tests/test_SimXilinxAccuracy.py
+
+The accuracy tests compare directed and seeded DDR/delay traces and PLL
+steady-state measurements. Set ``BASIL_XSIM=1`` with ``xvlog``, ``xelab`` and
+``xsim`` on PATH to also check serializer attributes against ``unisims_ver``
+and ``secureip``. Vendor sources and binaries remain external. Serializer
+attribute comparisons do not establish equivalence of its word-loading
+latency, cascade or unsupported modes.
 
 The FPGA firmware is built around a simple single-master bus connecting a set of standard modules. Control modules (SPI, GPIO) configure the DUT, while data-taking modules (receivers, TDCs) pass 32-bit words through an arbiter into a FIFO that the host can continuously read. Each word carries a source identifier so the host can demultiplex data from different modules.
 

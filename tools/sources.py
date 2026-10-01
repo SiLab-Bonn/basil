@@ -12,22 +12,25 @@ except ModuleNotFoundError:
 ROOT = Path(__file__).resolve().parents[1]
 with (ROOT / "pyproject.toml").open("rb") as stream:
     PROJECT = tomllib.load(stream)
-CONFIG = PROJECT["tool"]["basil-hdl"]
+CONFIG = PROJECT["sources"]["hdl"]
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["requirements", "download"])
-    parser.add_argument("tool", nargs="?", choices=["verible", "verilator"])
+    parser.add_argument("command", choices=["requirements", "download", "version"])
+    parser.add_argument("tool", nargs="?", choices=["verible", "oss-cad-suite"])
     options = parser.parse_args()
     if options.command == "requirements":
         print("\n".join(PROJECT["project"]["optional-dependencies"]["hdl-lint"]))
     else:
         if options.tool is None:
-            parser.error("download requires a tool")
-        install = CONFIG["install"][options.tool]
-        print(install["url"].format(version=install["version"]))
-        print(install["sha256"])
+            parser.error(options.command + " requires a tool")
+        install = PROJECT["tool"][options.tool]["install"]
+        if options.command == "version":
+            print(install["version"])
+        else:
+            print(install["url"].format(version=install["version"], date=install["version"].replace("-", "")))
+            print(install["sha256"])
     return 0
 
 

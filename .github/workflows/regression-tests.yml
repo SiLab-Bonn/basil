@@ -23,7 +23,7 @@ jobs:
     - name: Check Python and repository hygiene
       run: pre-commit run --all-files --show-diff-on-failure
       env:
-        SKIP: coverage,verible-format,verible-lint,verilator-lint,slang-lint # Separate jobs run HDL checks and coverage.
+        SKIP: verible-format,verible-lint,verilator-lint,slang-lint # Separate jobs run the four HDL checks.
 
   hdl:
     name: ${{ matrix.name }}
@@ -32,17 +32,24 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Verible formatting
+          # Keeps indentation, spacing and line wrapping consistent.
+          - name: verible-format
             check: verible-format
             install: verible
-          - name: Verible style lint
+          # Checks source conventions such as naming, module filenames,
+          # unused declarations and confusing constructs; formatting cannot catch these.
+          - name: verible-lint
             check: verible-lint
             install: verible
-          - name: Verilator lint (Verilog-2005)
-            check: verilator
-            install: verilator
-          - name: Slang semantic lint
-            check: slang
+          # Elaborates Verilog-2005 designs; catches implicit nets, width mismatches,
+          # missing ports, multiple drivers and unintended latches.
+          - name: verilator-lint
+            check: verilator-lint
+            install: oss-cad-suite
+          # Independent elaboration catches name, type and parameter errors,
+          # including issues Verilator may accept or diagnose differently.
+          - name: slang-lint
+            check: slang-lint
             install: slang
     steps:
     - uses: actions/checkout@v4
@@ -51,24 +58,29 @@ jobs:
     - uses: actions/setup-python@v7
       with:
         python-version: "3.12"
-    - name: Install Verilator build dependencies
-      if: matrix.install == 'verilator'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends \
-          autoconf bison flex g++ help2man make perl libfl-dev zlib1g-dev
-    - name: Install native HDL tool
+    - name: Cache native HDL tool
       if: matrix.install != 'slang'
+      id: native-cache
+      uses: actions/cache@v4
+      with:
+        path: build/tools/${{ matrix.install }}
+        key: hdl-v3-${{ runner.os }}-${{ runner.arch }}-${{ matrix.install }}-${{ hashFiles('pyproject.toml') }}
+    # Extract pinned prebuilt binaries; lint setup never builds tools from source.
+    - name: Install native HDL tool
+      if: matrix.install != 'slang' && steps.native-cache.outputs.cache-hit != 'true'
       run: |
-        bash tools/install_hdl_tools.sh "${{ matrix.install }}" "$PWD/build/hdl-tools"
-        echo "$PWD/build/hdl-tools/bin" >> "$GITHUB_PATH"
+        bash tools/install.sh "${{ matrix.install }}" "$PWD/build/tools/${{ matrix.install }}"
+    - name: Add native HDL tool to PATH
+      if: matrix.install != 'slang'
+      run: echo "$PWD/build/tools/${{ matrix.install }}/bin" >> "$GITHUB_PATH"
     - name: Install Slang Python bindings
       if: matrix.install == 'slang'
       run: |
-        python tools/hdl_config.py requirements > "$RUNNER_TEMP/hdl-requirements.txt"
-        python -m pip install -r "$RUNNER_TEMP/hdl-requirements.txt"
+        mkdir -p build/tools
+        python tools/sources.py requirements > build/tools/hdl-requirements.txt
+        python -m pip install --only-binary=:all: -r build/tools/hdl-requirements.txt
     - name: Check HDL
-      run: python tools/lint_verilog.py "${{ matrix.check }}"
+      run: python tools/run.py "${{ matrix.check }}"
 
   tests:
 
@@ -98,8 +110,7 @@ jobs:
             coverage: true
 
           - sim: verilator
-            sim-version: 5.044
-            python-version: '3.10'
+            python-version: '3.12'
             pytest-marker: "-m verilator"
 
     steps:
@@ -113,16 +124,20 @@ jobs:
         python-version: ${{matrix.python-version}}
         conda-remove-defaults: "true" # explicitly remove conda default channel in favor of conda-forge
 
-    - name: Install verilator
-      if: matrix.sim == 'verilator'
+    - name: Cache native simulation tools
+      id: simulation-cache
+      uses: actions/cache@v4
+      with:
+        path: build/tools/oss-cad-suite
+        key: hdl-v3-${{ runner.os }}-${{ runner.arch }}-oss-cad-suite-${{ hashFiles('pyproject.toml') }}
+    - name: Install native simulation tools
+      if: steps.simulation-cache.outputs.cache-hit != 'true'
       shell: bash -l {0}
       run: |
-        conda install verilator==${{matrix.sim-version}}
-
-    - name: Install Icarus Verilog
-      if: matrix.sim == 'icarus'
-      run: |
-        sudo apt install -y --no-install-recommends iverilog
+        python -m pip install "tomli==2.2.1; python_version < '3.11'"
+        bash tools/install.sh oss-cad-suite "$PWD/build/tools/oss-cad-suite"
+    - name: Add native simulation tools to PATH
+      run: echo "$PWD/build/tools/oss-cad-suite/bin" >> "$GITHUB_PATH"
 
     - name: Install package
       shell: bash -l {0}
@@ -133,15 +148,18 @@ jobs:
       if: ${{ !matrix.coverage }}
       shell: bash -l {0}
       run: |
+        export PATH="$CONDA_PREFIX/bin:$PATH"
         pytest ${{matrix.pytest-marker}} tests/test_*.py examples/*/*/test_*.py
 
     - name: Test with coverage
       if: matrix.coverage
       shell: bash -l {0}
       run: |
+        export PATH="$CONDA_PREFIX/bin:$PATH"
+        mkdir -p build/cov
         coverage run --source=basil -m pytest ${{matrix.pytest-marker}} \
           tests/test_*.py examples/*/*/test_*.py
-        coverage xml -o coverage.xml
+        coverage xml
         coverage report --format=total | awk '{print "### Test coverage: " $1 "%"}' >> "$GITHUB_STEP_SUMMARY"
 
     - name: Create differential coverage report
@@ -150,10 +168,10 @@ jobs:
         BASE_REF: ${{github.base_ref}}
       shell: bash -l {0}
       run: |
-        diff-cover coverage.xml \
+        diff-cover build/cov/coverage.xml \
           --compare-branch="origin/${BASE_REF}" \
-          --format=markdown:diff-cover.md
-        cat diff-cover.md >> "$GITHUB_STEP_SUMMARY"
+          --format=markdown:build/cov/diff-cover.md
+        cat build/cov/diff-cover.md >> "$GITHUB_STEP_SUMMARY"
 
     - name: Publish differential coverage check
       if: >-
@@ -174,5 +192,5 @@ jobs:
           --raw-field status=completed \
           --raw-field conclusion=neutral \
           --raw-field "output[title]=Differential coverage" \
-          --field "output[summary]=@diff-cover.md" \
+          --field "output[summary]=@build/cov/diff-cover.md" \
           --silent
