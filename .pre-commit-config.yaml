@@ -45,7 +45,7 @@ repos:
         types: [verilog]
         files: '\.(v|sv)$'
       # Checks source conventions such as naming, module filenames,
-      # unused declarations and confusing constructs; formatting cannot catch these.
+      # missing case defaults and risky constructs; formatting cannot catch these.
       - id: verible-lint
         name: verible-lint
         entry: python tools/run.py verible-lint

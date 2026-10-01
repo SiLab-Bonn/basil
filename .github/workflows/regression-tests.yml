@@ -37,7 +37,7 @@ jobs:
             check: verible-format
             install: verible
           # Checks source conventions such as naming, module filenames,
-          # unused declarations and confusing constructs; formatting cannot catch these.
+          # missing case defaults and risky constructs; formatting cannot catch these.
           - name: verible-lint
             check: verible-lint
             install: verible
