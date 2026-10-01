@@ -1,6 +1,6 @@
 SCRIPT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 REPO_ROOT := $(abspath $(SCRIPT_DIR)/../../../..)
-BUILD_DIR := $(REPO_ROOT)/build/fpga/bdaq53
+BUILD_DIR := $(REPO_ROOT)/build/fpga/tdc_bdaq
 
 # Targets
 .PHONY: all clean
@@ -17,7 +17,7 @@ download:
 synthesize:
 	@echo "Starting firmware synthesis"
 	mkdir -p "$(BUILD_DIR)"
-	cd "$(BUILD_DIR)" && vivado -mode batch -source "$(REPO_ROOT)/examples/bdaq53/firmware/vivado/run.tcl" -notrace
+	cd "$(BUILD_DIR)" && vivado -mode batch -source "$(REPO_ROOT)/examples/tdc_bdaq/firmware/vivado/run.tcl" -notrace
 
 # Clean generated files
 clean:

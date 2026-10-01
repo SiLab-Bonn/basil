@@ -12,3 +12,5 @@ The firmware makes use of the free SiTcp Ethernet module ([SiTCP netlist on Gith
 4. At the end, the average data rate is printed and the FPGA data source is stopped by clearing bit [0].
 
 Test for CocoTB available in */firmware/test*
+
+Build with `make -C firmware/vivado download synthesize`. The project, reports and bitstream are generated under `build/fpga/mmc3_eth/` in the Basil checkout. The SiTCP V110 netlist must use EDIF (`.edf`) for current Vivado. See `docs/fpga_builds.rst` for the other example builds.

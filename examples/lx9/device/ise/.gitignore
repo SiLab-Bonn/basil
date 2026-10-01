@@ -1,5 +1,5 @@
 *
 
 !.gitignore
-!*.xise
-!*.bit
+!Makefile
+!run.tcl
