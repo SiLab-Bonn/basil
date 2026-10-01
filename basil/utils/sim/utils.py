@@ -5,11 +5,73 @@
 # ------------------------------------------------------------
 #
 
+import atexit
 import os
+import signal
 import subprocess
 from pathlib import Path
 
 import basil
+
+_simulation_lock = None
+_simulations = {}
+
+
+def _simulation_directory(sim_dir):
+    simulator = os.environ.get("SIM", "icarus")
+    simulator = "iverilog" if simulator == "icarus" else simulator
+    return Path(sim_dir or Path.cwd() / "build/sim" / simulator).resolve()
+
+
+def _lock_simulations():
+    global _simulation_lock
+    if _simulation_lock is not None or os.name != "posix":
+        return
+    import fcntl
+
+    # Keep the lock for this Python process: all socket tests share port 12345.
+    path = Path.cwd() / "build/sim/.socket-tests.lock"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    stream = path.open("a")
+    try:
+        fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        stream.close()
+        raise RuntimeError(
+            "Another Basil simulation test run is active in this checkout; run the suites sequentially."
+        ) from None
+    _simulation_lock = stream
+
+
+def _stop_simulation(process):
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        pass
+    # make may have exited while its simulator is still running.
+    if os.name == "posix":
+        try:
+            os.killpg(process.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+    elif process.poll() is None:
+        process.terminate()
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        if os.name == "posix":
+            os.killpg(process.pid, signal.SIGKILL)
+        else:
+            process.kill()
+        process.wait()
+
+
+@atexit.register
+def _cleanup_simulations():
+    for process in _simulations.values():
+        _stop_simulation(process)
+    if _simulation_lock is not None:
+        _simulation_lock.close()
 
 
 def get_basil_dir():
@@ -111,22 +173,36 @@ include $(shell cocotb-config --makefiles)/Makefile.sim
 
 def cocotb_compile_and_run(*args, sim_dir=None, **kw):
     # run simulator in background
-    directory = Path(sim_dir or Path.cwd() / "build/sim").resolve()
+    _lock_simulations()
+    directory = _simulation_directory(sim_dir)
+    if directory in _simulations:
+        _stop_simulation(_simulations.pop(directory))
     directory.mkdir(parents=True, exist_ok=True)
     with (directory / "Makefile").open("w") as f:
         f.write(cocotb_makefile(*args, **kw))
     environment = os.environ.copy()
     environment["PYTHONPATH"] = os.pathsep.join(filter(None, (str(Path.cwd()), environment.get("PYTHONPATH"))))
-    log = Path.cwd() / "build/log/simulation.log"
+    log = Path.cwd() / "build/log" / (directory.name + "-simulation.log")
     log.parent.mkdir(parents=True, exist_ok=True)
     with log.open("w") as stream:
-        return subprocess.Popen(["make"], cwd=directory, env=environment, stdout=stream, stderr=subprocess.STDOUT)
+        process = subprocess.Popen(
+            ["make"],
+            cwd=directory,
+            env=environment,
+            stdout=stream,
+            stderr=subprocess.STDOUT,
+            start_new_session=os.name == "posix",
+        )
+    _simulations[directory] = process
+    return process
 
 
 def cocotb_compile_clean(sim_dir=None):
-    directory = Path(sim_dir or Path.cwd() / "build/sim").resolve()
+    directory = _simulation_directory(sim_dir)
+    if directory in _simulations:
+        _stop_simulation(_simulations.pop(directory))
     if (directory / "Makefile").is_file():
-        log = Path.cwd() / "build/log/simulation.log"
+        log = Path.cwd() / "build/log" / (directory.name + "-simulation.log")
         log.parent.mkdir(parents=True, exist_ok=True)
         with log.open("a") as stream:
             subprocess.call(["make", "clean"], cwd=directory, stdout=stream, stderr=subprocess.STDOUT)
