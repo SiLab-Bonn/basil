@@ -14,6 +14,8 @@
 `include "gpio/gpio.v"
 
 
+// Preserve the existing module name and its callers.
+// verilog_lint: waive module-filename
 module bdaq53_eth_throughput_test (
     input wire RESET_N,
     input wire clkin,

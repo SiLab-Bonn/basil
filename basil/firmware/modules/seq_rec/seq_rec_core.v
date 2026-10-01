@@ -8,12 +8,11 @@
 `define SEQ_REC_CORE
 
 `include "utils/flag_domain_crossing.v"
-`include "utils/3_stage_synchronizer.v"
+`include "utils/three_stage_synchronizer.v"
 `include "utils/cdc_pulse_sync.v"
 `include "utils/ramb_8_to_n.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module seq_rec_core #(

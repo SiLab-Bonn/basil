@@ -11,7 +11,6 @@
 `include "utils/bus_to_ip.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 module sram_fifo #(
     parameter BASEADDR                    = 16'h0000,

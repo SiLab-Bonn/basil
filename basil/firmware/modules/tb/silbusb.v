@@ -13,6 +13,8 @@
 `ifndef SILIBUSB
 `define SILIBUSB
 
+// Preserve the existing module name and its callers.
+// verilog_lint: waive module-filename
 module SiLibUSB (
     input FCLK
 );

@@ -7,11 +7,10 @@
 `ifndef FEI4_RX_CORE
 `define FEI4_RX_CORE
 
-`include "utils/3_stage_synchronizer.v"
+`include "utils/three_stage_synchronizer.v"
 `include "fei4_rx/receiver_logic.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 module fei4_rx_core #(
     parameter DSIZE           = 10,

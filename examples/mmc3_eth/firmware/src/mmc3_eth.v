@@ -8,6 +8,8 @@
 `include "utils/fifo_32_to_8.v"
 `include "utils/generic_fifo.v"
 
+// Preserve the existing module name and its callers.
+// verilog_lint: waive module-filename
 module mmc3_eth_throughput_test (
     input wire RESET_N,
     input wire clkin,

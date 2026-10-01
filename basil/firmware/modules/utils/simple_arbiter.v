@@ -8,7 +8,6 @@
 `define ARBITER
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 // 'base' is a one hot signal indicating the first request
 // that should be considered for a grant.  Followed by higher
@@ -17,6 +16,8 @@
 //       this arbiter will finish all requests by the first request,
 //       and then go on with higher indexed request request.
 
+// Preserve the existing module name and its callers.
+// verilog_lint: waive module-filename
 module arbiter (
     req,
     grant,

@@ -8,7 +8,6 @@
 `define CLOCK_DIVIDER
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 // clock divider generating clock and clock enable

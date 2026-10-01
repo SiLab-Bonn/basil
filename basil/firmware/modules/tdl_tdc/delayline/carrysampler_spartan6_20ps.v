@@ -108,6 +108,8 @@ endmodule
 
 
 
+// Preserve the existing module name and its callers.
+// verilog_lint: waive module-filename
 module carry_sampler_spartan6 (
     d,
     q,

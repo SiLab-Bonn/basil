@@ -11,7 +11,6 @@
 `include "utils/cdc_pulse_sync.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module seq_gen_core #(

@@ -8,7 +8,6 @@
 `define GENERIC_FIFO
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module generic_fifo #(

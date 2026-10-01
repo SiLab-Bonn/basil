@@ -1,5 +1,4 @@
 `timescale 1ns / 1ps
-`default_nettype none
 
 module test_SimIddr #(
     parameter       EdgeMode    = "OPPOSITE_EDGE",
@@ -155,6 +154,8 @@ module test_SimIddr #(
     end
 endmodule
 
+// Preserve the existing module name and its callers.
+// verilog_lint: waive module-filename
 module test_SimOddr #(
     parameter       EdgeMode    = "OPPOSITE_EDGE",
     parameter       ResetType   = "SYNC",
@@ -163,7 +164,7 @@ module test_SimOddr #(
     parameter [0:0] InvertData1 = 1'b0,
     parameter [0:0] InvertData2 = 1'b0
 );
-    localparam SameEdge = ({152'b0, EdgeMode} == "SAME_EDGE");
+    localparam SameEdge   = ({152'b0, EdgeMode} == "SAME_EDGE");
     localparam AsyncReset = ({40'b0, ResetType} == "ASYNC");
     reg clock;
     reg enable;
@@ -317,5 +318,3 @@ module test_SimOddr #(
         $finish;
     end
 endmodule
-
-`default_nettype wire

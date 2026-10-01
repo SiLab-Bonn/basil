@@ -103,6 +103,7 @@ module uart_master (
 
 
     ////////////////////////////// Kombinatorischer Block /////////////////////////////////////
+    wire uart_busy;
     assign uart_busy = is_receiving || is_transmitting;
 
     //reset counter:

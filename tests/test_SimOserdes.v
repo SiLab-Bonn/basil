@@ -1,5 +1,4 @@
 `timescale 1ns / 1ps
-`default_nettype none
 
 module test_SimOserdes #(
     parameter         DataRate  = "DDR",
@@ -7,7 +6,7 @@ module test_SimOserdes #(
     parameter         Invert    = 1'b0,
     parameter integer DivPhase  = 0
 );
-    localparam integer Step = (DataRate == "DDR") ? 5 : 10;
+    localparam integer Step  = (DataRate == "DDR") ? 5 : 10;
     localparam integer Frame = Step * DataWidth;
     reg clk;
     reg clkdiv;
@@ -195,5 +194,3 @@ module test_SimOserdes #(
         $finish;
     end
 endmodule
-
-`default_nettype wire

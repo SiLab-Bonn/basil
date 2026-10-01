@@ -19,7 +19,6 @@
 `define DECODE_8B10B
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 module decode_8b10b (
     datain,

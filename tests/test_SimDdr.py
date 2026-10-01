@@ -33,12 +33,15 @@ def run_ddr(tmp_path, primitive, parameters):
         command += [f"-P{top}.{key}={value}" for key, value in parameters.items()]
         subprocess.run(
             [*command, str(TESTBENCH), str(model), str(global_signals)],
+            cwd=tmp_path,
             check=True,
             capture_output=True,
             text=True,
             timeout=30,
         )
-        result = subprocess.run([vvp, str(simulation)], check=True, capture_output=True, text=True, timeout=30)
+        result = subprocess.run(
+            [vvp, str(simulation)], cwd=tmp_path, check=True, capture_output=True, text=True, timeout=30
+        )
         assert f"PASS: {primitive} behavior" in result.stdout, (label, result.stdout)
         assert "FAIL:" not in result.stdout and "ERROR:" not in result.stdout, (label, result.stdout)
 
@@ -108,11 +111,14 @@ def test_invalid_ddr_parameters(tmp_path, primitive, attribute, value):
     executable = tmp_path / "invalid.vvp"
     subprocess.run(
         [iverilog, "-g2005", "-s", "tb", "-o", str(executable), str(bench), str(UTILS / (primitive + ".v"))],
+        cwd=tmp_path,
         check=True,
         capture_output=True,
         text=True,
         timeout=30,
     )
-    result = subprocess.run([vvp, str(executable)], check=True, capture_output=True, text=True, timeout=30)
+    result = subprocess.run(
+        [vvp, str(executable)], cwd=tmp_path, check=True, capture_output=True, text=True, timeout=30
+    )
     assert f"ERROR: {primitive}" in result.stdout
     assert "FAIL:" not in result.stdout

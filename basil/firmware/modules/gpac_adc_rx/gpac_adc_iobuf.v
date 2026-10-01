@@ -8,7 +8,6 @@
 `define GPAC_ADC_IOBUF
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 module gpac_adc_iobuf (
     input ADC_CLK,

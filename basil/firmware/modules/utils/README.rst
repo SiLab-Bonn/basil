@@ -5,7 +5,7 @@
 
 Various Verilog modules used by basil.
 
-- 3_stage_synchronizer
+- three_stage_synchronizer
 - bus_to_ip
 - cdc_pulse_sync
 - cdc_pulse_sync_cnt

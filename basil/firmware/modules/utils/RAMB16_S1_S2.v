@@ -8,7 +8,6 @@
 `define RAMB16_S1_S2_SIM
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module RAMB16_S1_S2 (
@@ -59,13 +58,12 @@ module RAMB16_S1_S2 (
     `define MAX(a, b) (a) > (b) ? (a) : (b)
     `define MIN(a, b) (a) < (b) ? (a) : (b)
 
-    `include "../includes/log2func.v"
 
     localparam MAXSIZE = `MAX(SIZEA, SIZEB);
     localparam MAXWIDTH = `MAX(WIDTHA, WIDTHB);
     localparam MINWIDTH = `MIN(WIDTHA, WIDTHB);
     localparam RATIO = MAXWIDTH / MINWIDTH;
-    localparam LOG2RATIO = `CLOG2(RATIO);
+    localparam LOG2RATIO = ((RATIO < 2) ? RATIO : $clog2(RATIO));
 
     reg [MINWIDTH-1:0] RAM[0:MAXSIZE-1];
 

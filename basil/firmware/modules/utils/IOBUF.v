@@ -8,7 +8,6 @@
 `define IOBUF_SIM
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module IOBUF #(
@@ -28,5 +27,4 @@ module IOBUF #(
 
 endmodule
 
-`default_nettype wire
 `endif

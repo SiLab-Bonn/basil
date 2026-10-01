@@ -20,6 +20,8 @@
 `include "gpio/gpio_sbus.v"
 `endif
 
+// Preserve the existing module name and its callers.
+// verilog_lint: waive module-filename
 module tb (
     input  wire        BUS_CLK,
     input  wire        BUS_RST,

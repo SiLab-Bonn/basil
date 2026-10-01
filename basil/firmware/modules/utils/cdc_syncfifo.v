@@ -8,7 +8,6 @@
 `define CDC_SYNCFIFO
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module cdc_syncfifo #(

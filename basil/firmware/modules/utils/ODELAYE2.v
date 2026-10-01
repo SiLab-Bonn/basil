@@ -5,22 +5,21 @@
 `define ODELAYE2_SIM
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 // verilator lint_off ZERODLY
 // verilator lint_off WIDTHEXPAND
 
 module ODELAYE2 #(
-    parameter         CINVCTRL_SEL          = "FALSE",
-    parameter         DELAY_SRC             = "ODATAIN",
-    parameter         HIGH_PERFORMANCE_MODE = "FALSE",
-    parameter         IS_C_INVERTED         = 1'b0,
-    parameter         IS_ODATAIN_INVERTED   = 1'b0,
-    parameter         ODELAY_TYPE           = "FIXED",
-    parameter integer ODELAY_VALUE          = 0,
-    parameter         PIPE_SEL              = "FALSE",
-    parameter real    REFCLK_FREQUENCY      = 200.0,
-    parameter         SIGNAL_PATTERN        = "DATA"
+    parameter               CINVCTRL_SEL          = "FALSE",
+    parameter               DELAY_SRC             = "ODATAIN",
+    parameter               HIGH_PERFORMANCE_MODE = "FALSE",
+    parameter         [0:0] IS_C_INVERTED         = 1'b0,
+    parameter         [0:0] IS_ODATAIN_INVERTED   = 1'b0,
+    parameter               ODELAY_TYPE           = "FIXED",
+    parameter integer       ODELAY_VALUE          = 0,
+    parameter               PIPE_SEL              = "FALSE",
+    parameter real          REFCLK_FREQUENCY      = 200.0,
+    parameter               SIGNAL_PATTERN        = "DATA"
 ) (
     output wire [4:0] CNTVALUEOUT,
     output reg        DATAOUT,
@@ -37,12 +36,17 @@ module ODELAYE2 #(
 );
     // Slang does not count parameter uses in delay controls.
     (* maybe_unused *) localparam real FixedDelayPs = 600.0;
-    (* maybe_unused *) localparam real TapDelayPs = 1000000.0 / (64.0 * REFCLK_FREQUENCY);
+    (* maybe_unused *) localparam integer TapDelayPs = (REFCLK_FREQUENCY >= 390.0) ? 39 :
+                                                     (REFCLK_FREQUENCY >= 290.0) ? 52 : 78;
 
     wire delay_input;
     wire delay_clock;
     reg [4:0] tap_count;
     reg [4:0] pipelined_count;
+    reg [4:0] valid_count = 5'b0;
+    wire [31:0] delayed_taps;
+    wire selected_tap;
+    genvar tap;
 
     assign delay_input = (DELAY_SRC == "CLKIN") ? CLKIN : (ODATAIN ^ IS_ODATAIN_INVERTED);
     assign delay_clock = (C ^ IS_C_INVERTED) ^ ((CINVCTRL_SEL == "TRUE") ? CINVCTRL : 1'b0);
@@ -55,23 +59,37 @@ module ODELAYE2 #(
         DATAOUT = 1'b0;
     end
 
+    // Unknown count bits retain the last complete input value.
+    always @(CNTVALUEIN) begin
+        if ((^CNTVALUEIN) !== 1'bx) valid_count = CNTVALUEIN;
+    end
+
     always @(posedge delay_clock) begin
-        if (REGRST) pipelined_count <= 5'b0;
-        else if (LDPIPEEN) pipelined_count <= CNTVALUEIN;
+        if (REGRST == 1'b1) pipelined_count <= 5'b0;
+        else if ((REGRST == 1'b0) && (LDPIPEEN == 1'b1)) pipelined_count <= valid_count;
 
         if (ODELAY_TYPE != "FIXED") begin
-            if (LD) begin
+            if (LD == 1'b1) begin
                 if (ODELAY_TYPE == "VARIABLE") tap_count <= ODELAY_VALUE[4:0];
                 else if (PIPE_SEL == "TRUE") tap_count <= pipelined_count;
-                else tap_count <= CNTVALUEIN;
-            end else if (CE) begin
-                if (INC) tap_count <= (tap_count == 5'd31) ? 5'd0 : tap_count + 1'b1;
-                else tap_count <= (tap_count == 5'd0) ? 5'd31 : tap_count - 1'b1;
+                else tap_count <= valid_count;
+            end else if ((LD == 1'b0) && (CE == 1'b1)) begin
+                if (INC == 1'b1) tap_count <= (tap_count == 5'd31) ? 5'd0 : tap_count + 1'b1;
+                else if (INC == 1'b0) tap_count <= (tap_count == 5'd0) ? 5'd31 : tap_count - 1'b1;
             end
         end
     end
 
-    always @(delay_input) DATAOUT <= #(FixedDelayPs + tap_count * TapDelayPs) delay_input;
+    // Continuous tap delays also model pulse rejection and tap switching
+    // while an input transition is in flight. The output delay is transport.
+    assign delayed_taps[0] = delay_input;
+    generate
+        for (tap = 1; tap < 32; tap = tap + 1) begin : g_delay_taps
+            assign #(TapDelayPs) delayed_taps[tap] = delayed_taps[tap-1];
+        end
+    endgenerate
+    assign selected_tap = delayed_taps[tap_count];
+    always @(selected_tap) DATAOUT <= #(FixedDelayPs) selected_tap;
 
 endmodule
 

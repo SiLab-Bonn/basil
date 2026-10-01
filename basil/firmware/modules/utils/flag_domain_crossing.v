@@ -8,7 +8,6 @@
 `define FLAG_DOMAIN_CROSSING
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 // synchronize flag (signal lasts just one clock cycle) to new clock domain (CLK_B)

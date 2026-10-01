@@ -12,7 +12,6 @@
 `include "utils/cdc_pulse_sync.v"
 `include "utils/CG_MOD_pos.v"
 
-`default_nettype none
 
 
 module jtag_master_core #(

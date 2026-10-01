@@ -10,7 +10,6 @@
 `include "utils/flag_domain_crossing.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 module rec_sync #(
     parameter DSIZE = 10
@@ -56,7 +55,7 @@ module rec_sync #(
     integer wait_cnt;
     reg [2:0] state, next_state;
 
-    localparam START = 0, WAIT = 1, CHECK = 2, BITSHIFT = 3, IDLE = 4;
+    localparam START  = 0, WAIT = 1, CHECK = 2, BITSHIFT = 3, IDLE = 4;
 
     localparam K28_1P = 10'b00_1111_1001, K28_1N = 10'b11_0000_0110;
 

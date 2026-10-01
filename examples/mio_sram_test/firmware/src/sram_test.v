@@ -5,7 +5,6 @@
  * ------------------------------------------------------------
  */
 `timescale 1ps / 1ps
-`default_nettype none
 
 module sram_test #(
     parameter FIFO_DEPTH = 21'h100000

@@ -10,7 +10,6 @@
 `include "utils/cdc_pulse_sync.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module i2c_core #(

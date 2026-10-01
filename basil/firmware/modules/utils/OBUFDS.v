@@ -8,7 +8,6 @@
 `define OBUFDS_SIM
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 module OBUFDS #(
     parameter CAPACITANCE = "DONT_CARE",

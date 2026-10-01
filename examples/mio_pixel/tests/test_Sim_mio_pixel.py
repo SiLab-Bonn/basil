@@ -44,7 +44,7 @@ class TestPixel(unittest.TestCase):
                 os.path.join(fw_path, "utils/clock_divider.v"),
                 os.path.join(fw_path, "utils/clock_multiplier.v"),
                 os.path.join(fw_path, "utils/flag_domain_crossing.v"),
-                os.path.join(fw_path, "utils/3_stage_synchronizer.v"),
+                os.path.join(fw_path, "utils/three_stage_synchronizer.v"),
                 os.path.join(fw_path, "fast_spi_rx/fast_spi_rx.v"),
                 os.path.join(fw_path, "fast_spi_rx/fast_spi_rx_core.v"),
                 os.path.join(fw_path, "seq_gen/seq_gen.v"),

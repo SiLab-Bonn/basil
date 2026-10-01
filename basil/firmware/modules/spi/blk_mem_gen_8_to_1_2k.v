@@ -26,7 +26,6 @@
 `define BLK_MEM_GEN_8_TO_1_2K
 
 `timescale 1ns / 1ps
-`default_nettype none
 
 
 module blk_mem_gen_8_to_1_2k (

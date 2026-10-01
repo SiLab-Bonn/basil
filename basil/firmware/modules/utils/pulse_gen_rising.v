@@ -8,7 +8,6 @@
 `define PULSE_GEN_RISING
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module pulse_gen_rising (

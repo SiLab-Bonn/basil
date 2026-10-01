@@ -8,13 +8,12 @@
 `define TDC_S3_CORE
 
 `include "utils/flag_domain_crossing.v"
-`include "utils/3_stage_synchronizer.v"
+`include "utils/three_stage_synchronizer.v"
 `include "utils/ddr_des.v"
 `include "utils/cdc_syncfifo.v"
 `include "utils/generic_fifo.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module tdc_s3_core #(

@@ -1,5 +1,4 @@
 `timescale 1ns / 1ps
-`default_nettype none
 
 module test_SimOserdesTristate #(
     parameter         DataRate      = "SDR",
@@ -17,6 +16,7 @@ module test_SimOserdesTristate #(
     reg [3:0] tristate_data;
     wire tq;
     wire tfb;
+    wire byte_output;
     wire oq;
     integer bit_index;
     reg [3:0] expected;
@@ -57,7 +57,7 @@ module test_SimOserdesTristate #(
         .OFB      (),
         .SHIFTOUT1(),
         .SHIFTOUT2(),
-        .TBYTEOUT ()
+        .TBYTEOUT (byte_output)
     );
 
     initial begin
@@ -67,6 +67,10 @@ module test_SimOserdesTristate #(
         enable        = 1'b0;
         tristate_data = 4'b0000;
         #40;
+        if (byte_output !== 1'b1) begin
+            $display("FAIL: disabled byte grouping output");
+            $finish;
+        end
         if (TristateRate == "BUF") begin
             // BUF must work with both clocks stopped, TCE low and reset high.
             tristate_data = 4'b0001;
@@ -100,7 +104,7 @@ module test_SimOserdesTristate #(
                 for (bit_index = 0; bit_index < 4; bit_index = bit_index + 1) begin
                     #5 clk = !clk;
                     #0.001;
-                    if (tq !== expected[(TristateWidth==1)?0 : bit_index]) begin
+                    if (tq !== expected[(TristateWidth == 1) ? 0 : bit_index]) begin
                         $display("FAIL: DDR tristate bit %0d", bit_index);
                         $finish;
                     end
@@ -147,5 +151,3 @@ module test_SimOserdesTristate #(
         $finish;
     end
 endmodule
-
-`default_nettype wire

@@ -43,11 +43,12 @@ def test_xilinx_clock_primitive_models(tmp_path, use_base, inversions):
             simulation,
             *sources,
         ],
+        cwd=tmp_path,
         check=True,
         capture_output=True,
         text=True,
         timeout=30,
     )
-    result = subprocess.run([vvp, simulation], check=True, capture_output=True, text=True, timeout=30)
+    result = subprocess.run([vvp, simulation], cwd=tmp_path, check=True, capture_output=True, text=True, timeout=30)
     assert "PASS: Xilinx clock primitive models" in result.stdout
     assert "FAIL:" not in result.stdout

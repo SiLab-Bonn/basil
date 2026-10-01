@@ -1,5 +1,4 @@
 `timescale 1ns / 1ps
-`default_nettype none
 
 module test_SimXilinxBuffers;
     reg positive;
@@ -150,5 +149,3 @@ module test_SimXilinxBuffers;
         $finish;
     end
 endmodule
-
-`default_nettype wire

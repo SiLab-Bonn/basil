@@ -15,6 +15,11 @@ UTILS = Path(__file__).resolve().parents[1] / "basil/firmware/modules/utils"
 INTERFACES = json.loads(Path(__file__).with_name("data").joinpath("xilinx_7series_interfaces.json").read_text())
 
 
+PARAMETER_TYPES = json.loads(
+    Path(__file__).with_name("data").joinpath("xilinx_7series_parameter_types.json").read_text()
+)
+
+
 def numeric_or_literal(value):
     try:
         return float(value)
@@ -37,6 +42,13 @@ def test_functional_interface(primitive):
     assert list(params) == list(expected["parameters"])
     for name, default in expected["parameters"].items():
         assert numeric_or_literal(params[name].strip()) == numeric_or_literal(default), name
+    types = dict(
+        (name, declaration.strip())
+        for declaration, name in re.findall(
+            r"\bparameter\s+((?:(?:integer|real)\s+)?(?:\[[^\]]+\]\s*)?)(\w+)\s*=", header
+        )
+    )
+    assert types == PARAMETER_TYPES[primitive]
     ports = {}
     port_list = header.rsplit(") (", 1)[-1] if "#(" in header else header.split("(", 1)[1]
     for direction, msb, lsb, name in re.findall(
@@ -81,11 +93,14 @@ def test_buffer_behavior(tmp_path):
                 str(globals_source),
                 *map(str, sources),
             ],
+            cwd=tmp_path,
             check=True,
             capture_output=True,
             text=True,
             timeout=30,
         )
-        result = subprocess.run([vvp, str(executable)], check=True, capture_output=True, text=True, timeout=30)
+        result = subprocess.run(
+            [vvp, str(executable)], cwd=tmp_path, check=True, capture_output=True, text=True, timeout=30
+        )
         assert "PASS: Xilinx buffers" in result.stdout, result.stdout
         assert "FAIL:" not in result.stdout, result.stdout

@@ -8,7 +8,6 @@
 `define FIFO_32_TO_8
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module fifo_32_to_8 #(

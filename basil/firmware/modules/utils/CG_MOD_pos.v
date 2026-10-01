@@ -8,7 +8,6 @@
 `define CG_MOD_POS
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module CG_MOD_pos (

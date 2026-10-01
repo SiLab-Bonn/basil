@@ -8,7 +8,6 @@
 `define FX2_TO_BUS
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module fx2_to_bus #(

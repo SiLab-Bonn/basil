@@ -7,11 +7,10 @@
 `ifndef PULSE_GEN_CORE
 `define PULSE_GEN_CORE
 
-`include "utils/3_stage_synchronizer.v"
+`include "utils/three_stage_synchronizer.v"
 `include "utils/cdc_pulse_sync.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module pulse_gen_core #(

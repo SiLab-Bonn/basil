@@ -29,34 +29,33 @@
 `define OSERDESE2_SIM
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 module OSERDESE2 #(
-    parameter         DATA_RATE_OQ       = "DDR",
-    parameter         DATA_RATE_TQ       = "DDR",
-    parameter integer DATA_WIDTH         = 4,
-    parameter         INIT_OQ            = 1'b0,
-    parameter         INIT_TQ            = 1'b0,
-    parameter         IS_CLKDIV_INVERTED = 1'b0,
-    parameter         IS_CLK_INVERTED    = 1'b0,
-    parameter         IS_D1_INVERTED     = 1'b0,
-    parameter         IS_D2_INVERTED     = 1'b0,
-    parameter         IS_D3_INVERTED     = 1'b0,
-    parameter         IS_D4_INVERTED     = 1'b0,
-    parameter         IS_D5_INVERTED     = 1'b0,
-    parameter         IS_D6_INVERTED     = 1'b0,
-    parameter         IS_D7_INVERTED     = 1'b0,
-    parameter         IS_D8_INVERTED     = 1'b0,
-    parameter         IS_T1_INVERTED     = 1'b0,
-    parameter         IS_T2_INVERTED     = 1'b0,
-    parameter         IS_T3_INVERTED     = 1'b0,
-    parameter         IS_T4_INVERTED     = 1'b0,
-    parameter         SERDES_MODE        = "MASTER",
-    parameter         SRVAL_OQ           = 1'b0,
-    parameter         SRVAL_TQ           = 1'b0,
-    parameter         TBYTE_CTL          = "FALSE",
-    parameter         TBYTE_SRC          = "FALSE",
-    parameter integer TRISTATE_WIDTH     = 4
+    parameter               DATA_RATE_OQ       = "DDR",
+    parameter               DATA_RATE_TQ       = "DDR",
+    parameter integer       DATA_WIDTH         = 4,
+    parameter         [0:0] INIT_OQ            = 1'b0,
+    parameter         [0:0] INIT_TQ            = 1'b0,
+    parameter         [0:0] IS_CLKDIV_INVERTED = 1'b0,
+    parameter         [0:0] IS_CLK_INVERTED    = 1'b0,
+    parameter         [0:0] IS_D1_INVERTED     = 1'b0,
+    parameter         [0:0] IS_D2_INVERTED     = 1'b0,
+    parameter         [0:0] IS_D3_INVERTED     = 1'b0,
+    parameter         [0:0] IS_D4_INVERTED     = 1'b0,
+    parameter         [0:0] IS_D5_INVERTED     = 1'b0,
+    parameter         [0:0] IS_D6_INVERTED     = 1'b0,
+    parameter         [0:0] IS_D7_INVERTED     = 1'b0,
+    parameter         [0:0] IS_D8_INVERTED     = 1'b0,
+    parameter         [0:0] IS_T1_INVERTED     = 1'b0,
+    parameter         [0:0] IS_T2_INVERTED     = 1'b0,
+    parameter         [0:0] IS_T3_INVERTED     = 1'b0,
+    parameter         [0:0] IS_T4_INVERTED     = 1'b0,
+    parameter               SERDES_MODE        = "MASTER",
+    parameter         [0:0] SRVAL_OQ           = 1'b0,
+    parameter         [0:0] SRVAL_TQ           = 1'b0,
+    parameter               TBYTE_CTL          = "FALSE",
+    parameter               TBYTE_SRC          = "FALSE",
+    parameter integer       TRISTATE_WIDTH     = 4
 ) (
     output wire OFB,
     output reg  OQ,
@@ -123,7 +122,8 @@ module OSERDESE2 #(
 
     assign OFB = OQ;
     assign TFB = TQ;
-    assign TBYTEOUT = 1'b0;
+    // Disabled byte grouping leaves its active-low enable output high.
+    assign TBYTEOUT = 1'b1;
 
     // Slave D3/D4 supply bits 9/10 to the master.
     assign SHIFTOUT1 = (SERDES_MODE == "SLAVE") ? data_inputs[2] : 1'b0;
@@ -246,5 +246,4 @@ module OSERDESE2 #(
 
 endmodule
 
-`default_nettype wire
 `endif

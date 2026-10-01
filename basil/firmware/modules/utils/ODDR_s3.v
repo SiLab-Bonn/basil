@@ -8,9 +8,10 @@
 `define ODDR_S3_SIM
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
+// Preserve the existing module name and its callers.
+// verilog_lint: waive module-filename
 module ODDR (
     input  wire D1,
     D2,

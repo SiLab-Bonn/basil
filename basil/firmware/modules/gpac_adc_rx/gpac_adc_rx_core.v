@@ -14,7 +14,6 @@
 `include "utils/generic_fifo.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module gpac_adc_rx_core #(

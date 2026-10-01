@@ -4,12 +4,11 @@
 `define IBUFDS_GTE2_SIM
 
 `timescale 1 ps / 1 ps
-`default_nettype none
 
 module IBUFDS_GTE2 #(
-    parameter CLKCM_CFG    = "TRUE",
-    parameter CLKRCV_TRST  = "TRUE",
-    parameter CLKSWING_CFG = 2'b11
+    parameter       CLKCM_CFG    = "TRUE",
+    parameter       CLKRCV_TRST  = "TRUE",
+    parameter [1:0] CLKSWING_CFG = 2'b11
 ) (
     output wire O,
     output wire ODIV2,
@@ -18,26 +17,23 @@ module IBUFDS_GTE2 #(
     input  wire IB
 );
 
-    reg divided_clock;
-    wire differential_high;
-    wire configuration_used;
+    reg clock_output = 1'b0;
+    reg divided_clock = 1'b0;
+    reg divide_phase = 1'b0;
 
-    assign differential_high = I && !IB;
-    assign O                 = CEB ? 1'b0 : differential_high;
-    assign ODIV2             = CEB ? 1'b0 : divided_clock;
+    // The functional receiver follows I; IB and the electrical attributes
+    // do not affect UNISIM's digital outputs. Enable is sampled on I events.
+    assign O     = clock_output;
+    assign ODIV2 = divided_clock;
 
-    initial divided_clock = 1'b0;
+    always @(I) clock_output <= I & ~CEB;
 
-    always @(posedge differential_high or posedge CEB) begin
-        if (CEB) divided_clock <= 1'b0;
-        else divided_clock <= !divided_clock;
+    always @(posedge I) begin
+        divided_clock <= divide_phase;
+        if (divide_phase) divide_phase <= 1'b0;
+        else if (CEB == 1'b0) divide_phase <= 1'b1;
     end
-
-    assign configuration_used = (CLKCM_CFG == "TRUE") ||
-                                (CLKRCV_TRST == "TRUE") ||
-                                (CLKSWING_CFG == 2'b11);
 
 endmodule
 
-`default_nettype wire
 `endif

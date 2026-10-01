@@ -11,7 +11,6 @@
 `include "utils/bus_to_ip.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 module bram_fifo #(
     parameter BASEADDR  = 32'h0000,

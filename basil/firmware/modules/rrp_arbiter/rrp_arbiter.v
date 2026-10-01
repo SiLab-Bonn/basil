@@ -8,7 +8,6 @@
 `define RRP_ARBITER
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 //TODO: check with more then 1 hold/priority at a time
 
@@ -30,7 +29,6 @@ module rrp_arbiter #(
 
 );
 
-    //`include "../includes/log2func.v"
     //localparam SEL_SIZE = log2(WIDTH);
 
     integer m;

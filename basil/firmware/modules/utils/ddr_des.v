@@ -8,7 +8,6 @@
 `define DDR_DES
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module ddr_des #(

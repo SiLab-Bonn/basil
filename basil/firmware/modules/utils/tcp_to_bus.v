@@ -9,7 +9,6 @@
 `define TCP_TO_BUS
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 module tcp_to_bus (
     input wire BUS_RST,

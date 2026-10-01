@@ -8,7 +8,6 @@
 `define CDC_PULSE_SYNC_CNT
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module cdc_pulse_sync_cnt (

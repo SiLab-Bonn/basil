@@ -4,6 +4,8 @@
 `include "tdl_tdc/delayline/carrysampler_spartan6_20ps.v"
 `include "tdl_tdc/delayline/sample_deser.v"
 
+// Preserve the existing module name and its callers.
+// verilog_lint: waive module-filename
 module tdl_and_detector #(
     // Keep the existing public parameter names.
     // verilog_lint: waive parameter-name-style

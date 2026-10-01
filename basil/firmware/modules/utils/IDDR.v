@@ -8,7 +8,6 @@
 `define IDDR_SIM
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 // Functional interface: UG953 2026.1 and Vivado 2025.2 UNISIM.
@@ -91,5 +90,4 @@ module IDDR #(
 
 endmodule
 
-`default_nettype wire
 `endif

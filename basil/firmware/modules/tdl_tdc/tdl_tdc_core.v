@@ -16,6 +16,8 @@
 `include "tdl_tdc/utils/delay_n.v"
 
 
+// Preserve the existing module name and its callers.
+// verilog_lint: waive module-filename
 module tdc_core #(
     parameter DATA_IDENTIFIER = 4'b0100
 ) (

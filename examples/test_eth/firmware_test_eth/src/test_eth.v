@@ -6,7 +6,6 @@
  */
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 module test_eth (
     input wire RESET_N,

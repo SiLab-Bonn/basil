@@ -8,7 +8,6 @@
 `define RBCP_TO_BUS
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module rbcp_to_bus (

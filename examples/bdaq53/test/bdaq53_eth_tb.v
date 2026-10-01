@@ -21,6 +21,8 @@
 `include "utils/bus_to_ip.v"
 
 
+// Preserve the existing module name and its callers.
+// verilog_lint: waive module-filename
 module tb (
     input  wire        BUS_CLK,
     input  wire        BUS_RST,
@@ -103,7 +105,7 @@ module tb (
 
 
     initial begin
-        $dumpfile("/tmp/mmc3_eth.vcd");
+        $dumpfile("bdaq53_eth.vcd");
         $dumpvars(0);
     end
 

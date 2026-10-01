@@ -8,9 +8,10 @@
 `define IDDR_S3_NOIBUF_SIM
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
+// Preserve the existing module name and its callers.
+// verilog_lint: waive module-filename
 module IDDR (
     output wire Q1,
     Q2,

@@ -8,7 +8,6 @@
 `define THREE_STAGE_SYNCHRONIZER
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module three_stage_synchronizer #(

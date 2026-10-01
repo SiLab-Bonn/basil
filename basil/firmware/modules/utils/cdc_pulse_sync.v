@@ -8,7 +8,6 @@
 `define CDC_PULSE_SYNC
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 // Closed loop solution

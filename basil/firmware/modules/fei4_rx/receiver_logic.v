@@ -15,7 +15,6 @@
 `include "fei4_rx/decode_8b10b.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 module receiver_logic #(
     parameter DSIZE = 10

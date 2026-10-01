@@ -12,7 +12,6 @@
 `include "utils/generic_fifo.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module fast_spi_rx_core #(

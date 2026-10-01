@@ -10,7 +10,6 @@
 `include "utils/generic_fifo.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module bram_fifo_core #(

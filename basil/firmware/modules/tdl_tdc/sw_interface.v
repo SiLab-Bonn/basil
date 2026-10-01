@@ -4,8 +4,10 @@
 `include "tdl_tdc/utils/graycode_2stage_cdc.v"
 `include "utils/bus_to_ip.v"
 `include "utils/flag_domain_crossing.v"
-`include "utils/3_stage_synchronizer.v"
+`include "utils/three_stage_synchronizer.v"
 
+// Preserve the existing module name and its callers.
+// verilog_lint: waive module-filename
 module tdc_sw_interface #(
     parameter VERSION   = 8'b00000000,
     parameter BASEADDR  = 16'h0,

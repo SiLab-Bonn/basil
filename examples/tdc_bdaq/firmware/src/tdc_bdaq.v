@@ -14,7 +14,7 @@
 `include "tdl_tdc/tdl_tdc.v"
 
 // tdl_tdc dependencies
-`include "utils/3_stage_synchronizer.v"
+`include "utils/three_stage_synchronizer.v"
 `include "utils/flag_domain_crossing.v"
 `include "utils/generic_fifo.v"
 `include "utils/cdc_syncfifo.v"
@@ -282,8 +282,8 @@ module tdc_bdaq (
 
     localparam I2C_MEM_BYTES = 32;
 
-    localparam I2C_BASEADDR = 32'h6000;
-    localparam I2C_HIGHADDR = 32'h6100 - 1;
+    localparam I2C_BASEADDR  = 32'h6000;
+    localparam I2C_HIGHADDR  = 32'h6100 - 1;
 
     i2c #(
         .BASEADDR (I2C_BASEADDR),

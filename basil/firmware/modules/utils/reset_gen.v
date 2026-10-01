@@ -8,7 +8,6 @@
 `define RESET_GEN
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module reset_gen #(

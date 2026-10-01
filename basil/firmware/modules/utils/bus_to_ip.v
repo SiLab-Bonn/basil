@@ -8,7 +8,6 @@
 `define BUS_TO_IP
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module bus_to_ip #(

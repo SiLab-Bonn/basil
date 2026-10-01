@@ -8,10 +8,9 @@
 `define CMD_SEQ_CORE
 
 `include "utils/flag_domain_crossing.v"
-`include "utils/3_stage_synchronizer.v"
+`include "utils/three_stage_synchronizer.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module cmd_seq_core #(
@@ -60,8 +59,7 @@ module cmd_seq_core #(
     // end
     // endgenerate
 
-    `include "../includes/log2func.v"
-    localparam CMD_ADDR_SIZE = `CLOG2(CMD_MEM_SIZE);
+    localparam CMD_ADDR_SIZE = ((CMD_MEM_SIZE < 2) ? CMD_MEM_SIZE : $clog2(CMD_MEM_SIZE));
 
     wire SOFT_RST;  //0
     assign SOFT_RST = (BUS_ADD == 0 && BUS_WR);

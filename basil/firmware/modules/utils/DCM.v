@@ -5,7 +5,6 @@ Based on: https://github.com/dirjud/Nitro-Parts-lib-Xilinx
 `define DCM_SIM
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module clock_divider_sim #(

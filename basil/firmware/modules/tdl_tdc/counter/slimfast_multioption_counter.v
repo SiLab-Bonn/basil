@@ -5,7 +5,6 @@
 
 `include "utils/pulse_gen_rising.v"
 
-//`default_nettype none
 //---------------------------------------------------------------------
 //--                                                                 --
 //-- Company:  University of Bonn                                    --

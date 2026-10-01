@@ -12,7 +12,6 @@
 `include "utils/CG_MOD_pos.v"
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 
 module spi_core #(

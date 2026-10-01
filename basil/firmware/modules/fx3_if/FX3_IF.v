@@ -8,7 +8,6 @@
 `define FX3_IF
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 module FX3_IF (
     inout  wire [31:0] fx3_bus,

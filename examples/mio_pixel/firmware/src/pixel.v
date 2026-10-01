@@ -6,7 +6,6 @@
  */
 
 `timescale 1ps / 1ps
-//`default_nettype none
 
 module pixel (
     input wire FCLK_IN,

@@ -8,7 +8,6 @@
 `define IBUFGDS_SIM
 
 `timescale 1ps / 1ps
-`default_nettype none
 
 module IBUFGDS #(
     parameter CAPACITANCE      = "DONT_CARE",

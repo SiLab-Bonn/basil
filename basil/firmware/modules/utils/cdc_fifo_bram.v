@@ -14,7 +14,6 @@
 `define CDC_FIFO_BRAM
 
 `timescale 1ns / 1ps
-`default_nettype none
 
 
 // Dual-clock show-ahead FIFO with overflow protection utilizing AMD/Xilinx block RAM

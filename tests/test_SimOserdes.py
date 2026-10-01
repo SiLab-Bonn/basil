@@ -16,6 +16,7 @@ def run_model(tmp_path, top, source, parameters=()):
     executable = tmp_path / "serializer.vvp"
     subprocess.run(
         [iverilog, "-g2005", "-s", top, *parameters, "-o", str(executable), str(source), str(model)],
+        cwd=tmp_path,
         check=True,
         capture_output=True,
         text=True,
@@ -23,6 +24,7 @@ def run_model(tmp_path, top, source, parameters=()):
     )
     return subprocess.run(
         [vvp, str(executable)],
+        cwd=tmp_path,
         check=True,
         capture_output=True,
         text=True,
