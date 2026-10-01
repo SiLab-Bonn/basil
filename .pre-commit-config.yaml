@@ -2,16 +2,18 @@ exclude: (?i)(^|/)sitcp(/|$)
 
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.0
+    rev: v0.16.9
     hooks:
       - id: ruff-check
-        args: [ --fix ]
+        args: [--fix]
       - id: ruff-format
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
-    -   id: end-of-file-fixer
-    -   id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
   - repo: local
     hooks:
       # Elaborates Verilog-2005 designs; catches implicit nets, width mismatches,
@@ -23,6 +25,7 @@ repos:
         additional_dependencies: ["tomli==2.2.1; python_version < '3.11'"]
         pass_filenames: false
         files: '(\.(v|sv|f)$|^tools/|^pyproject\.toml$)'
+
       # Independent elaboration catches name, type and parameter errors,
       # including issues Verilator may accept or diagnose differently.
       - id: slang-lint
@@ -35,6 +38,7 @@ repos:
         additional_dependencies: [pyslang==12.0.0, "tomli==2.2.1; python_version < '3.11'"]
         pass_filenames: false
         files: '(\.(v|sv|f)$|^tools/|^pyproject\.toml$)'
+
       # Keeps indentation, spacing and line wrapping consistent.
       - id: verible-format
         name: verible-format
@@ -44,6 +48,7 @@ repos:
         pass_filenames: false
         types: [verilog]
         files: '\.(v|sv)$'
+
       # Checks source conventions such as naming, module filenames,
       # missing case defaults and risky constructs; formatting cannot catch these.
       - id: verible-lint

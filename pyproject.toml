@@ -16,6 +16,7 @@ dependencies = [
     "numpy",
     "pyyaml",
     "ruamel.yaml",
+    # TODO: Replace six compatibility imports with Python 3 built-ins and remove this dependency.
     "six",
 ]
 description = "Basil is a modular data acquisition system and system testing framework in Python.\nIt also provides generic FPGA firmware modules for different hardware platforms and drivers for wide range of lab appliances."
@@ -28,7 +29,7 @@ maintainers = [
 ]
 name = "basil_daq"
 readme = "README.md"
-requires-python = ">=3.10,<3.14"
+requires-python = ">=3.10,<3.15"
 
 [project.license]
 text = "BSD 3-Clause ('BSD New' or 'BSD Simplified') License"
@@ -38,6 +39,7 @@ docs = [
     "sphinx",
     "sphinx-book-theme",
 ]
+# We also depend on verible and verilator; see tools/install.sh
 hdl-lint = [
     "pyslang==12.0.0; python_version >= '3.11'",
     # TOML parsing fallback until Python 3.10 reaches EOL; Python 3.11+ provides tomllib.
@@ -51,7 +53,8 @@ test = [
     "PyVISA",
     "cocotb-bus>=0.3.0",
     "cocotb-test>=0.2.6",
-    "cocotb>=2.0.1",
+    # Cocotb 2.1 adds support for Python 3.14.
+    "cocotb>=2.1.0",
     "coverage[toml]",
     "diff-cover",
     "pytest>=9.0.3",
@@ -109,14 +112,14 @@ vendor-directories = [
 verilog-standard = "1364-2005"
 
 [tool.verible.install]
+version = "v0.0-4296-g0f262651"
 sha256 = "8569defb891d2316067613ea00442af28a7a09d405d95b54c0c91f9942d26635"
 url = "https://github.com/chipsalliance/verible/releases/download/{version}/verible-{version}-linux-static-x86_64.tar.gz"
-version = "v0.0-4296-g0f262651"
 
 [tool.oss-cad-suite.install]
+version = "2026-10-01"
 sha256 = "1c91249e9671666b58d94e2fe8a81e6103d37b254eab77bd82625802c208bf4d"
 url = "https://github.com/YosysHQ/oss-cad-suite-build/releases/download/{version}/oss-cad-suite-linux-x64-{date}.tgz"
-version = "2026-10-01"
 
 [tool.pytest.ini_options]
 addopts = ["--basetemp=build/sim/pytest", "--junitxml=build/tests/results.xml"]
@@ -147,6 +150,9 @@ cache-dir = "build/tests/ruff-cache"
 line-length = 120
 
 [tool.ruff.lint]
+# Keep the existing checks explicit across Ruff default-rule changes.
+# TODO: Remove this explicit selection when we are ready to enforce the additional default lint rules.
+select = ["E4", "E7", "E9", "F"]
 extend-select = [
     "I",
 ]

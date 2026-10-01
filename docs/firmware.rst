@@ -8,12 +8,11 @@ HDL checks
 Install the Python bindings with ``pip install -e .[hdl-lint]`` and download
 native tools with the shared installer::
 
-    bash tools/install.sh verible "$PWD/build/tools/verible"
-    bash tools/install.sh oss-cad-suite "$PWD/build/tools/oss-cad-suite"
+    bash tools/install.sh
     export PATH="$VIRTUAL_ENV/bin:$PWD/build/tools/verible/bin:$PWD/build/tools/oss-cad-suite/bin:$PATH"
 
 The installer uses pinned, checksum-verified prebuilt packages; it does not
-compile tools. Keep the project's Python environment ahead of the native tool
+compile tools. Both bundles are installed under ``build/tools/``. Keep the project's Python environment ahead of the native tool
 bundles on ``PATH`` so simulation uses the project's Cocotb installation.
 Local commands and the separate CI jobs use the same four checks::
 
@@ -37,6 +36,11 @@ Tool logs go under ``build/log/``, simulation output under ``build/sim/``,
 pytest cache and JUnit output under ``build/tests/``, and coverage reports
 under ``build/cov/``. Pytest's built-in temporary-directory option also keeps
 standalone primitive simulations under ``build/sim/pytest/``.
+Socket-based simulations use ``build/sim/iverilog/`` or
+``build/sim/verilator/``, with separate logs under ``build/log/``.
+On POSIX hosts, a process lock rejects overlapping socket-test runs in the
+same checkout because these tests share TCP port 12345. Run the suites
+sequentially; cleanup waits for the simulator and stops lingering children.
 
 Simulation primitives
 =====================
@@ -81,12 +85,17 @@ Other models retain these limitations:
   Its simple word-loading and serialization pipeline is not cycle-identical
   to AMD's ``secureip`` implementation. The cited third-party serializer
   supplied a cascade wiring example, not primitive behavioral internals.
-  DDR tristate width 1 also differs on release of reset with ``SRVAL_TQ=1``;
-  the optional vendor comparison marks that known difference explicitly.
+  Conformance tests use the supported data/tristate combinations in UG471
+  Table 3-8: SDR data with SDR tristate, or DDR data with four-bit DDR
+  tristate or single-bit SDR tristate. BUF tests cover the T1 bypass.
+  Tests check word order after pipeline settling; exact input/output latency
+  and global startup are not asserted.
 * PLLE2_BASE/PLLE2_ADV approximate clock frequency, phase, duty cycle, reset,
   powerdown, input selection and dynamic reconfiguration. They do not model
   the feedback loop, analog lock/jitter behavior, compensation, bandwidth,
-  reference-jitter settings or startup-wait semantics. Use UNISIM when those
+  reference-jitter settings or startup-wait semantics. Reference-clock loss
+  deasserts lock and requires a reset before relocking. Output waveforms
+  while unlocked are not specified by the conformance tests. Use UNISIM when those
   distinctions matter.
 
 Verification
@@ -96,20 +105,26 @@ Interface tests check all 17 primitive declarations, including positional
 port order and parameter types/widths. Functional tests cover buffers,
 DDR edge/reset modes, GTE receiver/divider events, delay controls and tap
 transitions, serializer words/tristate/attributes, and PLL output frequency,
-phase, duty cycle, reset, powerdown and dynamic reconfiguration.
+phase, duty cycle, reset, powerdown and reference-loss recovery.
 
 For optional comparisons with an installed Vivado 2025.2 library, run::
 
     BASIL_UNISIM_DIR=/path/to/Vivado/data/verilog/src/unisims python -m pytest \
         tests/test_SimDdr.py tests/test_SimXilinxInterfaces.py \
-        tests/test_SimXilinxAccuracy.py
+        tests/test_SimXilinxAccuracy.py tests/test_SimOserdes.py \
+        tests/test_SimXilinxClockPrimitives.py
 
-The accuracy tests compare directed and seeded DDR/delay traces and PLL
-steady-state measurements. Set ``BASIL_XSIM=1`` with ``xvlog``, ``xelab`` and
-``xsim`` on PATH to also check serializer attributes against ``unisims_ver``
-and ``secureip``. Vendor sources and binaries remain external. Serializer
-attribute comparisons do not establish equivalence of its word-loading
-latency, cascade or unsupported modes.
+All model tests use the same assertions for both libraries. Interface tests
+preprocess each library with timing-only attributes disabled and compare it
+against the same JSON fixtures. Functional tests compare normalized traces
+where the testbench emits them. Invalid/unsupported configuration diagnostics
+are not tested because error messages and supported model subsets differ.
+
+Serializer comparisons require ``xvlog``, ``xelab`` and ``xsim`` on PATH;
+the runner uses ``unisims_ver`` and ``secureip`` automatically when
+``BASIL_UNISIM_DIR`` is set. Other comparisons use Icarus. Backend selection
+changes compilation only, not stimulus or expected results. Vendor sources
+and binaries remain external.
 
 The FPGA firmware is built around a simple single-master bus connecting a set of standard modules. Control modules (SPI, GPIO) configure the DUT, while data-taking modules (receivers, TDCs) pass 32-bit words through an arbiter into a FIFO that the host can continuously read. Each word carries a source identifier so the host can demultiplex data from different modules.
 

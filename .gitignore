@@ -1,94 +1,47 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*~
-*.swp
-*.py~
+# Generated outputs; tools create this directory as needed.
+/build/
 
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
-uv.lock
+# Python environments, package metadata, and local caches.
 .venv/
-
-# Legacy Cocotb outputs (new runs write beneath build/sim)
-/Makefile
-/tests/Makefile
-
-# Python test/lint caches
+uv.lock
+__pycache__/
+*.egg-info/
 .pytest_cache/
 .ruff_cache/
 
-# icarus verilog
-host/tests/Makefile
+# Generated file types, wherever an accidental output lands.
+*.py[cod]
+*.so
+*.egg
+*.doctree
 *.vvp
-
-# Docs
-docs/_build
-
-# FPGA build artifacts
 *.vcd
-tests/results.xml
-sim_build
+*.fst
 *.out
-
-# Test coverage
-.coverage
+*.log
+*.jou
+*.str
+*.bit
+*.bin
+*.dcp
+*.ngc
+*.ngd
+*.ncd
+*.rpt
+*.xpr
+*.xise
+.coverage*
 coverage.xml
-
-# PyDev files
-.project
-.pydevproject
-.vcd
-
-# Mac
-.DS_Store
-tests/qverilog.log
-tests/work
 results.xml
 
-firmware/modules/chipscope/*
-!firmware/modules/chipscope/*.xise
-!firmware/modules/chipscope/*.xco
+# Downloaded vendor inputs (not build outputs).
+SiTCP/
+SiTCP10G/
 
-examples/lx9/device/src/SiTCP
-
-examples/mmc3_eth/firmware/vivado/*
-!examples/mmc3_eth/firmware/vivado/Makefile
-!examples/mmc3_eth/firmware/vivado/run.tcl
-examples/mmc3_eth/firmware/src/SiTCP/*
-
-examples/mio3_eth_gpac/firmware/vivado/*
-!examples/mio3_eth_gpac/firmware/vivado/Makefile
-!examples/mio3_eth_gpac/firmware/vivado/run.tcl
-examples/mio3_eth_gpac/firmware/src/SiTCP/*
-
-examples/tdc_bdaq/firmware/vivado/*
-!examples/tdc_bdaq/firmware/vivado/*.sh
-!examples/tdc_bdaq/firmware/vivado/run.tcl
-!examples/tdc_bdaq/firmware/vivado/Makefile
-examples/tdc_bdaq/firmware/src/SiTCP/*
-
-# Personal language server overrides
+# Editor and machine-local settings.
+*~
+*.swp
+.project
+.pydevproject
+.DS_Store
 .slang/local/
-
-# FPGA project files are generated; keep the per-example build definitions.
-examples/**/*.xpr
-examples/**/*.xise
