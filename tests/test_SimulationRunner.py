@@ -58,9 +58,11 @@ def test_compile_failure_is_reported(monkeypatch, tmp_path):
     monkeypatch.setenv("SIM", "icarus")
     source = tmp_path / "broken.v"
     source.write_text("module broken; this is not Verilog; endmodule\n")
-    with pytest.raises(subprocess.CalledProcessError) as failure:
+    # Cocotb 2.0 propagates CalledProcessError; 2.1 wraps it in RuntimeError.
+    with pytest.raises((subprocess.CalledProcessError, RuntimeError), match="return code|exit status") as failure:
         cocotb_compile_and_run([source], top_level="broken")
-    assert failure.value.returncode != 0
+    if isinstance(failure.value, subprocess.CalledProcessError):
+        assert failure.value.returncode != 0
     directory = _simulation_directory(None)
     assert directory not in _simulations
     assert not (directory / "runner.json").exists()
