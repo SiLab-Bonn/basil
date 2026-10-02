@@ -13,14 +13,14 @@ import subprocess
 from pathlib import Path
 
 import pytest
-from xilinx_sim import run_primitive_bench
+from sim_7series import run_primitive_bench
 
 UTILS = Path(__file__).resolve().parents[1] / "basil/firmware/modules/utils"
-INTERFACES = json.loads(Path(__file__).with_name("data").joinpath("xilinx_7series_interfaces.json").read_text())
+INTERFACES = json.loads(Path(__file__).with_name("data").joinpath("models_7series_interfaces.json").read_text())
 
 
 PARAMETER_TYPES = json.loads(
-    Path(__file__).with_name("data").joinpath("xilinx_7series_parameter_types.json").read_text()
+    Path(__file__).with_name("data").joinpath("models_7series_parameter_types.json").read_text()
 )
 
 
@@ -89,6 +89,6 @@ def test_functional_interface(tmp_path, primitive):
 def test_buffer_behavior(tmp_path):
     run_primitive_bench(
         tmp_path,
-        Path(__file__).with_name("test_SimXilinxBuffers.v"),
+        Path(__file__).with_name("test_Sim7seriesBuffers.v"),
         ["BUFG", "IBUF", "IBUFG", "OBUF", "OBUFDS", "IOBUF", "IBUFDS", "IBUFGDS"],
     )

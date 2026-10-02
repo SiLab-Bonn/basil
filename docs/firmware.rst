@@ -42,6 +42,15 @@ On POSIX hosts, a process lock rejects overlapping socket-test runs in the
 same checkout because these tests share TCP port 12345. Run the suites
 sequentially; cleanup waits for the simulator and stops lingering children.
 
+Simulation builds use Cocotb's Python runner rather than generated Cocotb
+Makefiles. ``cocotb_compile_and_run`` builds synchronously, reporting compile
+errors immediately, then starts the socket server in a background Python
+process. Existing unittest/pytest tests continue to connect through ``Dut``.
+``cocotb_compile_clean`` stops the process and reports simulation failures;
+it retains build artifacts and results for inspection. Set ``WAVES=1`` to
+enable the runner's waveform recording. Verilator still generates a native
+Makefile to compile its C++ simulation executable.
+
 Simulation primitives
 =====================
 
@@ -110,21 +119,24 @@ phase, duty cycle, reset, powerdown and reference-loss recovery.
 For optional comparisons with an installed Vivado 2025.2 library, run::
 
     BASIL_UNISIM_DIR=/path/to/Vivado/data/verilog/src/unisims python -m pytest \
-        tests/test_SimDdr.py tests/test_SimXilinxInterfaces.py \
-        tests/test_SimXilinxAccuracy.py tests/test_SimOserdes.py \
-        tests/test_SimXilinxClockPrimitives.py
+        tests/test_SimDdr.py tests/test_Sim7seriesInterfaces.py \
+        tests/test_Sim7seriesAccuracy.py tests/test_SimOserdes.py \
+        tests/test_Sim7seriesClockPrimitives.py
 
 All model tests use the same assertions for both libraries. Interface tests
 preprocess each library with timing-only attributes disabled and compare it
-against the same JSON fixtures. Functional tests compare normalized traces
-where the testbench emits them. Invalid/unsupported configuration diagnostics
+against the same JSON fixtures. Functional tests use shared Cocotb stimulus
+and Python assertions; the HDL wrappers contain only declarations and wiring.
+Tests also compare recorded transition/measurement traces where applicable.
+Invalid/unsupported configuration diagnostics
 are not tested because error messages and supported model subsets differ.
 
-Serializer comparisons require ``xvlog``, ``xelab`` and ``xsim`` on PATH;
-the runner uses ``unisims_ver`` and ``secureip`` automatically when
-``BASIL_UNISIM_DIR`` is set. Other comparisons use Icarus. Backend selection
-changes compilation only, not stimulus or expected results. Vendor sources
-and binaries remain external.
+Serializer comparisons require Xcelium's ``xrun`` on PATH because Cocotb
+does not support XSIM. The runner loads AMD's external encrypted
+``data/secureip/oserdese2`` sources automatically when ``BASIL_UNISIM_DIR``
+is set. Other comparisons use Icarus. Backend selection changes compilation
+and simulation only, not stimulus or expected results. Vendor sources and
+binaries remain external.
 
 The FPGA firmware is built around a simple single-master bus connecting a set of standard modules. Control modules (SPI, GPIO) configure the DUT, while data-taking modules (receivers, TDCs) pass 32-bit words through an arbiter into a FIFO that the host can continuously read. Each word carries a source identifier so the host can demultiplex data from different modules.
 

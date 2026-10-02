@@ -7,7 +7,7 @@ these same expected traces with the vendor models. No vendor source is copied.
 from pathlib import Path
 
 import pytest
-from xilinx_sim import run_primitive_bench
+from sim_7series import run_primitive_bench
 
 
 def run_ddr(tmp_path, primitive, parameters):

@@ -3,7 +3,7 @@
 from pathlib import Path
 
 import pytest
-from xilinx_sim import run_primitive_bench
+from sim_7series import run_primitive_bench
 
 
 @pytest.mark.parametrize("rate,width", [("DDR", n) for n in (4, 6, 8, 10)] + [("SDR", n) for n in range(2, 9)])

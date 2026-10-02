@@ -1,6 +1,6 @@
 `timescale 1ps / 1ps
 
-module test_SimXilinxSerializerAttributes #(
+module test_Sim7seriesSerializerAttributes #(
     parameter       TristateRate  = "DDR",
     parameter       TristateWidth = 1,
     parameter [0:0] Invert        = 1'b0
@@ -18,8 +18,6 @@ module test_SimXilinxSerializerAttributes #(
     wire tristate_feedback;
     wire byte_output;
 
-    always #5000 clock = !clock;
-    always #10000 divided_clock = !divided_clock;
     OSERDESE2 #(
         .DATA_WIDTH        (4),
         .DATA_RATE_TQ      (TristateRate),
@@ -72,40 +70,4 @@ module test_SimXilinxSerializerAttributes #(
         .SHIFTOUT2()
     );
 
-    task automatic check;
-        input expected_data;
-        input expected_tristate;
-        begin
-            if ({output_data,output_feedback,output_tristate,tristate_feedback,byte_output} !==
-                {expected_data,expected_data,expected_tristate,expected_tristate,1'b1}) begin
-                $display("FAIL: serializer attributes OQ=%b OFB=%b TQ=%b TFB=%b byte=%b",
-                         output_data, output_feedback, output_tristate, tristate_feedback,
-                         byte_output);
-                $finish;
-            end
-            $display("TRACE attributes %b%b%b", output_data, output_tristate, byte_output);
-        end
-    endtask
-
-    initial begin
-        #200000;
-        check(1'b1, 1'b0);
-        reset = 1'b1;
-        #100000;
-        check(1'b0, (TristateRate == "BUF") ? 1'b0 : 1'b1);
-        @(posedge divided_clock);
-        #1000 reset = 1'b0;
-        data_enable     = 1'b1;
-        tristate_enable = 1'b1;
-        #100000;
-        check(1'b1, 1'b0);
-        data_enable     = 1'b0;
-        tristate_enable = 1'b0;
-        data            = 1'b1;
-        tristate_data   = 1'b0;
-        #100000;
-        check(1'b1, (TristateRate == "BUF") ? 1'b1 : 1'b0);
-        $display("PASS: serializer attributes");
-        $finish;
-    end
 endmodule

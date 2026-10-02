@@ -52,7 +52,6 @@ hw = [
 test = [
     "PyVISA",
     "cocotb-bus>=0.3.0",
-    "cocotb-test>=0.2.6",
     # Cocotb 2.1 adds support for Python 3.14.
     "cocotb>=2.1.0",
     "coverage[toml]",
@@ -170,10 +169,6 @@ args = [
     "--allow-lib-module-redef",
     "-Wempty-output-connection",
 ]
-
-[tool.uv.sources.cocotb-test]
-git = "https://github.com/themperek/cocotb-test.git"
-rev = "4e6b7db"
 
 [tool.verible-format]
 args = [
