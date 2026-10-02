@@ -6,7 +6,7 @@
 Required modules
 ----------------
 
-* `utils/3_stage_synchronizer.v`
+* `utils/three_stage_synchronizer.v`
 * `utils/flag_domain_crossing.v`
 * `utils/generic_fifo.v`
 * `utils/cdc_syncfifo.v`

@@ -2,6 +2,142 @@
 Firmware
 ############
 
+HDL checks
+==========
+
+Install the Python bindings with ``pip install -e .[hdl-lint]`` and download
+native tools with the shared installer::
+
+    bash tools/install.sh
+    export PATH="$VIRTUAL_ENV/bin:$PWD/build/tools/verible/bin:$PWD/build/tools/oss-cad-suite/bin:$PATH"
+
+The installer uses pinned, checksum-verified prebuilt packages; it does not
+compile tools. Both bundles are installed under ``build/tools/``. Keep the project's Python environment ahead of the native tool
+bundles on ``PATH`` so simulation uses the project's Cocotb installation.
+Local commands and the separate CI jobs use the same four checks::
+
+    python tools/run.py verilator-lint
+    python tools/run.py slang-lint
+    python tools/run.py verible-format
+    python tools/run.py verible-lint
+
+Verilator elaborates designs and reports connection, width, driver and latch
+issues while enforcing Verilog-2005 and rejecting implicit nets. Slang provides
+an independent check of names, types, parameters and elaboration. Verible
+formatting standardizes whitespace and layout; Verible lint checks source
+conventions and constructs that formatting alone cannot check.
+``verible-format`` applies formatting and exits unsuccessfully when files
+changed, so the same command catches uncommitted formatting changes in CI.
+
+``tools/sources.py`` reads the shared ``[sources.hdl]`` section of
+``pyproject.toml``; tool-specific arguments remain under ``[tool.verilator]``,
+``[tool.slang]``, ``[tool.verible-format]`` and ``[tool.verible-lint]``.
+Tool logs go under ``build/log/``, simulation output under ``build/sim/``,
+pytest cache and JUnit output under ``build/tests/``, and coverage reports
+under ``build/cov/``. Pytest's built-in temporary-directory option also keeps
+standalone primitive simulations under ``build/sim/pytest/``.
+Socket-based simulations use ``build/sim/iverilog/`` or
+``build/sim/verilator/``, with separate logs under ``build/log/``.
+On POSIX hosts, a process lock rejects overlapping socket-test runs in the
+same checkout because these tests share TCP port 12345. Run the suites
+sequentially; cleanup waits for the simulator and stops lingering children.
+
+Simulation builds use Cocotb's Python runner rather than generated Cocotb
+Makefiles. ``cocotb_compile_and_run`` builds synchronously, reporting compile
+errors immediately, then starts the socket server in a background Python
+process. Existing unittest/pytest tests continue to connect through ``Dut``.
+``cocotb_compile_clean`` stops the process and reports simulation failures;
+it retains build artifacts and results for inspection. Set ``WAVES=1`` to
+enable the runner's waveform recording. Verilator still generates a native
+Makefile to compile its C++ simulation executable.
+
+Simulation primitives
+=====================
+
+The models in ``basil/firmware/modules/utils`` are standalone functional
+approximations. The 7-series interfaces follow UG953, including parameter and
+positional port order. They do not require AMD simulation binaries or
+``glbl``. They omit global GSR/GTS startup behavior, electrical effects,
+SDF delays, timing checks and timing notifiers.
+
+IDDR and ODDR support every functional parameter: edge mode, initial values,
+clock/data inversion and synchronous/asynchronous reset and set. Reset wins
+over set, including asynchronous reset-to-set handoff without a clock edge.
+Unknown control inputs hold state; unknown data is captured when controls are
+valid. Directed tests run with both Basil and AMD models when
+``BASIL_UNISIM_DIR`` points to Vivado's ``data/verilog/src/unisims`` directory.
+Those tests cover specific traces; they do not prove complete equivalence.
+
+Other models retain these limitations:
+
+* BUFG, IBUF, IBUFG, OBUF, OBUFDS, IOBUF, IBUFDS and IBUFGDS model digital
+  buffer behavior. Drive strength, I/O standards, power settings and slew
+  attributes do not model analog behavior. IBUFDS/IBUFGDS include floating-input
+  bias behavior; IOBUF models high impedance and contention.
+* IBUFDS_GTE2 follows the functional UNISIM receiver: I drives O, enable is
+  sampled when I changes, and the divider retains its phase while disabled.
+  IB and clock receiver attributes do not add electrical behavior.
+* IDELAYCTRL measures the reference-clock period and deasserts ready when an
+  opposite clock edge is missing. Reset gates ready independently of that
+  measurement. The model covers 7-series functional calibration, not physical
+  calibration time or a separate UltraScale delay implementation.
+* IDELAYE2/ODELAYE2 support fixed, variable and loaded counts, optional count
+  pipelining, clock inversion and data-source selection. Their 32-tap chains
+  use UNISIM's 78/52/39 ps intervals in the supported reference-frequency
+  bands, with a 600 ps output delay. Short pulses and switching taps during a
+  transition are modeled. Unknown controls hold counts; unknown count inputs
+  retain the last complete value. High-performance and signal-pattern
+  attributes do not add electrical behavior. Startup before the delay chain
+  settles is not guaranteed to reproduce UNISIM's global initialization.
+* OSERDESE2 supports the implemented SDR/DDR widths and 10-bit cascade.
+  Unsupported widths, tristate combinations and byte grouping stop simulation.
+  Its simple word-loading and serialization pipeline is not cycle-identical
+  to AMD's ``secureip`` implementation. The cited third-party serializer
+  supplied a cascade wiring example, not primitive behavioral internals.
+  Conformance tests use the supported data/tristate combinations in UG471
+  Table 3-8: SDR data with SDR tristate, or DDR data with four-bit DDR
+  tristate or single-bit SDR tristate. BUF tests cover the T1 bypass.
+  Tests check word order after pipeline settling; exact input/output latency
+  and global startup are not asserted.
+* PLLE2_BASE/PLLE2_ADV approximate clock frequency, phase, duty cycle, reset,
+  powerdown, input selection and dynamic reconfiguration. They do not model
+  the feedback loop, analog lock/jitter behavior, compensation, bandwidth,
+  reference-jitter settings or startup-wait semantics. Reference-clock loss
+  deasserts lock and requires a reset before relocking. Output waveforms
+  while unlocked are not specified by the conformance tests. Use UNISIM when those
+  distinctions matter.
+
+Verification
+------------
+
+Interface tests check all 17 primitive declarations, including positional
+port order and parameter types/widths. Functional tests cover buffers,
+DDR edge/reset modes, GTE receiver/divider events, delay controls and tap
+transitions, serializer words/tristate/attributes, and PLL output frequency,
+phase, duty cycle, reset, powerdown and reference-loss recovery.
+
+For optional comparisons with an installed Vivado 2025.2 library, run::
+
+    BASIL_UNISIM_DIR=/path/to/Vivado/data/verilog/src/unisims python -m pytest \
+        tests/test_SimDdr.py tests/test_Sim7seriesInterfaces.py \
+        tests/test_Sim7seriesAccuracy.py tests/test_SimOserdes.py \
+        tests/test_Sim7seriesClockPrimitives.py
+
+All model tests use the same assertions for both libraries. Interface tests
+preprocess each library with timing-only attributes disabled and compare it
+against the same JSON fixtures. Functional tests use shared Cocotb stimulus
+and Python assertions; the HDL wrappers contain only declarations and wiring.
+Tests also compare recorded transition/measurement traces where applicable.
+Invalid/unsupported configuration diagnostics
+are not tested because error messages and supported model subsets differ.
+
+Serializer comparisons require Xcelium's ``xrun`` on PATH because Cocotb
+does not support XSIM. The runner loads AMD's external encrypted
+``data/secureip/oserdese2`` sources automatically when ``BASIL_UNISIM_DIR``
+is set. Other comparisons use Icarus. Backend selection changes compilation
+and simulation only, not stimulus or expected results. Vendor sources and
+binaries remain external.
+
 The FPGA firmware is built around a simple single-master bus connecting a set of standard modules. Control modules (SPI, GPIO) configure the DUT, while data-taking modules (receivers, TDCs) pass 32-bit words through an arbiter into a FIFO that the host can continuously read. Each word carries a source identifier so the host can demultiplex data from different modules.
 
 .. graphviz::

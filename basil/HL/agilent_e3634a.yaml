@@ -1,0 +1,13 @@
+# Device description for the HP/Agilent E3634A single-output power supply.
+identifier: HEWLETT-PACKARD,E3634A
+set_voltage: VOLT
+get_set_voltage: VOLT?
+get_voltage: MEAS:VOLT?
+set_current_limit: CURR
+get_current_limit: CURR?
+get_current: MEAS:CURR?
+set_voltage_range: VOLT:RANG
+get_voltage_range: VOLT:RANG?
+set_enable: OUTP
+get_enable: OUTP?
+get_error: SYST:ERR?

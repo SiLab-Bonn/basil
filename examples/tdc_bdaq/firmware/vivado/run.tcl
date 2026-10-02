@@ -5,7 +5,7 @@
 #
 #   This script creates Vivado projects and bitfiles for the supported hardware platforms
 #
-#   vivado -mode tcl -source run.tcl
+#   Run Vivado from build/fpga/tdc_bdaq with this script as an absolute -source path.
 #
 
 # Use current environment python instead of vivado included python
@@ -18,6 +18,13 @@ if {[info exists ::env(PYTHONHOME)]} {
 # Get rid of Vivado python (since Vivado 2021) in PATH and use python from calling shell
 set env(PATH) [join [lsearch -inline -all -not -regexp [split $::env(PATH) ":"] (.*)lnx64\/python(.*)] ":"]
 
+# Resolve inputs before moving all generated output into the repository build tree.
+set firmware_dir [file dirname [file dirname [file normalize [info script]]]]
+set repo_dir [file normalize [file join $firmware_dir ../../..]]
+set build_dir [file join $repo_dir build fpga tdc_bdaq]
+file mkdir $build_dir
+cd $build_dir
+
 set basil_dir [exec python -c "import basil, os; print(str(os.path.dirname(basil.__file__)))"]
 set include_dirs [list $basil_dir/firmware/modules $basil_dir/firmware/modules/utils]
 
@@ -25,23 +32,25 @@ file mkdir output reports
 
 
 proc read_design_files {} {
-    read_verilog ../src/tdc_bdaq.v
+    global firmware_dir
+    read_verilog $firmware_dir/src/tdc_bdaq.v
 
-    read_edif ../SiTCP/SiTCP_XC7K_32K_BBT_V110.ngc
-    read_verilog ../SiTCP/TIMER.v
-    read_verilog ../SiTCP/SiTCP_XC7K_32K_BBT_V110.V
-    read_verilog ../SiTCP/WRAP_SiTCP_GMII_XC7K_32K.V
+    read_edif $firmware_dir/SiTCP/SiTCP_XC7K_32K_BBT_V110.edf
+    read_verilog $firmware_dir/SiTCP/TIMER.v
+    read_verilog $firmware_dir/SiTCP/SiTCP_XC7K_32K_BBT_V110.V
+    read_verilog $firmware_dir/SiTCP/WRAP_SiTCP_GMII_XC7K_32K.V
 }
 
 
 proc run_bit { part board xdc_file size option} {
     set prjname $board$option\_TDL_TDC
 
+    global firmware_dir
     create_project -force -part $part $prjname designs
     read_design_files
     read_xdc $xdc_file
-    read_xdc ../src/tdc_bdaq.xdc
-    read_xdc ../src/SiTCP.xdc
+    read_xdc $firmware_dir/src/tdc_bdaq.xdc
+    read_xdc $firmware_dir/src/SiTCP.xdc
 
     global include_dirs
 
@@ -63,6 +72,6 @@ proc run_bit { part board xdc_file size option} {
 # Create projects and bitfiles
 
 #       FPGA type           board name  constraints file    flash size  option
-run_bit xc7k160tffg676-2    BDAQ53      ../src/bdaq53.xdc   64          ""
+run_bit xc7k160tffg676-2    BDAQ53      $firmware_dir/src/bdaq53.xdc   64          ""
 
 exit

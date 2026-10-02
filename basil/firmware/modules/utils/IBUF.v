@@ -7,19 +7,21 @@
 `ifndef IBUF_SIM
 `define IBUF_SIM
 
-`timescale 1ps/1ps
-`default_nettype none
+`timescale 1ps / 1ps
 
 
 module IBUF #(
-    parameter IBUF_LOW_PWR = "TRUE",
-    parameter IOSTANDARD = "DEFAULT"
+    parameter CAPACITANCE      = "DONT_CARE",
+    parameter IBUF_DELAY_VALUE = "0",
+    parameter IBUF_LOW_PWR     = "TRUE",
+    parameter IFD_DELAY_VALUE  = "AUTO",
+    parameter IOSTANDARD       = "DEFAULT"
 ) (
     output wire O,
-    input wire I
+    input  wire I
 );
 
-assign O = I;
+    buf output_buffer (O, I);
 
 endmodule
 

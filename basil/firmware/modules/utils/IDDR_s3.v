@@ -7,25 +7,37 @@
 `ifndef IDDR_S3_SIM
 `define IDDR_S3_SIM
 
-`timescale 1ps/1ps
-`default_nettype none
+`timescale 1ps / 1ps
 
 
+// Preserve the existing module name and its callers.
+// verilog_lint: waive module-filename
 module IDDR (
-    output wire Q1, Q2,
-    input wire C, CE, D, R, S
+    output wire Q1,
+    Q2,
+    input  wire C,
+    CE,
+    D,
+    R,
+    S
 );
+    // This Xilinx primitive requires the external vendor simulation library.
+    // verilator lint_off MODMISSING
 
-IFDDRRSE IFDDRRSE_inst (
-    .Q0(Q1),
-    .Q1(Q2),
-    .C0(C),
-    .C1(~C),
-    .CE(CE),
-    .D(D),
-    .R(R),
-    .S(S)
-);
+
+    (* maybe_unknown *)
+    IFDDRRSE IFDDRRSE_inst (
+        .Q0(Q1),
+        .Q1(Q2),
+        .C0(C),
+        .C1(~C),
+        .CE(CE),
+        .D (D),
+        .R (R),
+        .S (S)
+    );
+
+    // verilator lint_on MODMISSING
 
 endmodule
 

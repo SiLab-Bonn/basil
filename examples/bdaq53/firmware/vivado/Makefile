@@ -1,3 +1,7 @@
+SCRIPT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+REPO_ROOT := $(abspath $(SCRIPT_DIR)/../../../..)
+BUILD_DIR := $(REPO_ROOT)/build/fpga/bdaq53
+
 # Targets
 .PHONY: all clean
 
@@ -7,15 +11,15 @@ all: download synthesize
 # Download SiTCP to the base directory
 download:
 	@echo "Downloading SiTCP library"
-	@python -c "from basil.utils import utils; utils.get_si_tcp('..')"
+	cd "$(SCRIPT_DIR)" && python -c "from basil.utils import utils; utils.get_si_tcp('..')"
 
 # Start synthesis
 synthesize:
 	@echo "Starting firmware synthesis"
-	vivado -mode batch -source run.tcl -notrace
+	mkdir -p "$(BUILD_DIR)"
+	cd "$(BUILD_DIR)" && vivado -mode batch -source "$(REPO_ROOT)/examples/bdaq53/firmware/vivado/run.tcl" -notrace
 
 # Clean generated files
 clean:
 	@echo "Removing generated Vivado files"
-	rm -f *.log *.jou *.str
-	rm -rf designs reports output .Xil .ngc2edfcache ipcore.*
+	rm -rf "$(BUILD_DIR)"

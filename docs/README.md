@@ -41,13 +41,13 @@ python -m pip install -e ".[docs]"
 Build the HTML documentation:
 
 ```bash
-python -m sphinx -b html docs docs/_build/html
+python -m sphinx -b html docs build/docs/html
 ```
 
 For a stricter local check that fails on warnings:
 
 ```bash
-python -m sphinx -b html -W --keep-going docs docs/_build/html
+python -m sphinx -b html -W --keep-going docs build/docs/html
 ```
 
-Open `docs/_build/html/index.html` in a browser to view the result.
+Open `build/docs/html/index.html` in a browser to view the result.

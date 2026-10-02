@@ -1,35 +1,61 @@
+exclude: (?i)(^|/)sitcp(/|$)
+
 repos:
-  - repo: https://github.com/pycqa/isort
-    rev: 6.0.1
-    hooks:
-      - id: isort
-        name: isort (python)
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.0
+    rev: v0.16.9
     hooks:
       - id: ruff-check
-        args: [ --fix ]
+        args: [--fix]
       - id: ruff-format
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
-    -   id: end-of-file-fixer
-    -   id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
   - repo: local
     hooks:
-      - id: coverage
-        name: Coverage
-        entry: >-
-          bash -c 'SIM=icarus coverage run
-          --source=basil -m pytest
-          -q --disable-warnings
-          tests/test_*.py examples/*/*/test_*.py
-          && coverage xml -q -o coverage.xml
-          && diff-cover coverage.xml
-          --compare-branch=origin/master
-          --show-uncovered'
-        language: system
+      # Elaborates Verilog-2005 designs; catches implicit nets, width mismatches,
+      # missing ports, multiple drivers and unintended latches.
+      - id: verilator-lint
+        name: verilator-lint
+        entry: python tools/run.py verilator-lint
+        language: python
+        additional_dependencies: ["tomli==2.2.1; python_version < '3.11'"]
         pass_filenames: false
-        verbose: true
-        files: ^(basil/|tests/|examples/).*\.py$
-        stages: [pre-commit]
+        files: '(\.(v|sv|f)$|^tools/|^pyproject\.toml$)'
+
+      # Independent elaboration catches name, type and parameter errors,
+      # including issues Verilator may accept or diagnose differently.
+      - id: slang-lint
+        name: slang-lint
+        entry: python tools/run.py slang-lint
+        language: python
+        # Pre-commit local environments cannot install extras from this checkout.
+        # Keep aligned with project.optional-dependencies.hdl-lint.
+        language_version: python3.12
+        additional_dependencies: [pyslang==12.0.0, "tomli==2.2.1; python_version < '3.11'"]
+        pass_filenames: false
+        files: '(\.(v|sv|f)$|^tools/|^pyproject\.toml$)'
+
+      # Keeps indentation, spacing and line wrapping consistent.
+      - id: verible-format
+        name: verible-format
+        entry: python tools/run.py verible-format
+        language: python
+        additional_dependencies: ["tomli==2.2.1; python_version < '3.11'"]
+        pass_filenames: false
+        types: [verilog]
+        files: '\.(v|sv)$'
+
+      # Checks source conventions such as naming, module filenames,
+      # missing case defaults and risky constructs; formatting cannot catch these.
+      - id: verible-lint
+        name: verible-lint
+        entry: python tools/run.py verible-lint
+        language: python
+        additional_dependencies: ["tomli==2.2.1; python_version < '3.11'"]
+        pass_filenames: false
+        types: [verilog]
+        files: '\.(v|sv)$'

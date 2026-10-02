@@ -68,6 +68,7 @@ FPGA Firmware:
    self
    hardware
    firmware
+   fpga_builds
    software
    modules
    examples

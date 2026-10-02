@@ -21,3 +21,7 @@ You can find further build instructions in the *Firmware section* of the ([bdaq5
 
 ## Test
 A test for CocoTB is available under `test`
+
+Generated projects, reports, logs and bitstreams are written to
+`build/fpga/bdaq_core/` under the Basil repository root. `make clean` removes that
+example's build directory.
