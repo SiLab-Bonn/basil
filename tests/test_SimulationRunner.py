@@ -58,8 +58,9 @@ def test_compile_failure_is_reported(monkeypatch, tmp_path):
     monkeypatch.setenv("SIM", "icarus")
     source = tmp_path / "broken.v"
     source.write_text("module broken; this is not Verilog; endmodule\n")
-    with pytest.raises(RuntimeError, match="return code"):
+    with pytest.raises(subprocess.CalledProcessError) as failure:
         cocotb_compile_and_run([source], top_level="broken")
+    assert failure.value.returncode != 0
     directory = _simulation_directory(None)
     assert directory not in _simulations
     assert not (directory / "runner.json").exists()
