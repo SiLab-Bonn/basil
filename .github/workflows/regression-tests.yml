@@ -37,7 +37,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10', '3.11', '3.12', '3.13']
         include:
           - sim: icarus
             python-version: '3.10'
@@ -50,11 +49,17 @@ jobs:
 
           - sim: icarus
             python-version: '3.13'
+
+          - sim: icarus
+            python-version: '3.14'
+            # Collect coverage only once, using the full test suite.
             coverage: true
 
+          # Verilator runs only the marked simulation subset, so it cannot
+          # provide coverage for the full suite.
           - sim: verilator
             sim-version: 5.044
-            python-version: '3.10'
+            python-version: '3.14'
             pytest-marker: "-m verilator"
 
     steps:

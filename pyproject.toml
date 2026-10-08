@@ -8,7 +8,7 @@ dynamic = ["version"]
 license = { "text" = "BSD 3-Clause ('BSD New' or 'BSD Simplified') License" }
 description = "Basil is a modular data acquisition system and system testing framework in Python.\nIt also provides generic FPGA firmware modules for different hardware platforms and drivers for wide range of lab appliances."
 readme = "README.md"
-requires-python = ">=3.10,<3.14"
+requires-python = ">=3.10,<3.15"
 authors = [
     {name = "Tomasz Hemperek", email="hemperek@uni-bonn.de"},
     {name = "Jens Janssen", email="janssen@physik.uni-bonn.de"},
