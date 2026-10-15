@@ -26,8 +26,6 @@ Install via PyPI:
 pip install basil-daq
 ```
 
-> **Note:** The PyPI package may be outdated. Installing from source (below) is recommended to get the latest version.
-
 Or install from source:
 
 ```bash
@@ -39,8 +37,6 @@ pip install -e .
 ## Support
 
 Please use GitHub's [issue tracker](https://github.com/SiLab-Bonn/basil/issues) for bug reports/feature requests/questions.
-
-*For CERN users*: Feel free to subscribe to the [basil mailing list](https://e-groups.cern.ch/e-groups/EgroupsSubscription.do?egroupName=basil-devel).
 
 ## Documentation
 
