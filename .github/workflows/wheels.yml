@@ -43,4 +43,13 @@ jobs:
       with:
         name: package-dist
         path: dist
+    - name: Check tag matches package version
+      run: |
+        TAG_VERSION="${GITHUB_REF_NAME#v}"
+        for f in dist/*.whl dist/*.tar.gz; do
+          case "$(basename "$f")" in
+            basil_daq-"$TAG_VERSION"-*.whl|basil_daq-"$TAG_VERSION".tar.gz) ;;
+            *) echo "::error::$f does not match tag $GITHUB_REF_NAME"; exit 1 ;;
+          esac
+        done
     - uses: pypa/gh-action-pypi-publish@release/v1
