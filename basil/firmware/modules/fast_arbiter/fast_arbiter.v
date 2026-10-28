@@ -38,14 +38,14 @@ wire [WIDTH-1:0] grant_high;
 wire [WIDTH-1:0] grant_low;
 wire [WIDTH-1:0] grant_prio;
 
-assign mask_above_prev = ~((prev_select << 1) - 1);
+assign mask_above_prev = ~((prev_select << 1) - 1'b1);
 assign wr_req_high = WRITE_REQ & mask_above_prev;  // channels above prev_select with data
-assign grant_high = wr_req_high & (~wr_req_high + 1);  // lowest channel above prev_select with data
-assign grant_low = WRITE_REQ & (~WRITE_REQ + 1);  // lowest channel overall with data (wrap-around)
+assign grant_high = wr_req_high & (~wr_req_high + 1'b1);  // lowest channel above prev_select with data
+assign grant_low = WRITE_REQ & (~WRITE_REQ + 1'b1);  // lowest channel overall with data (wrap-around)
 
 // Priority channels
 assign mask_prio_req = WRITE_REQ & PRIO_REQ;  // Priority channels with data
-assign grant_prio = mask_prio_req & (~mask_prio_req + 1);  // lowest channel of the priority input
+assign grant_prio = mask_prio_req & (~mask_prio_req + 1'b1);  // lowest channel of the priority input
 
 // Prioritize lowest PRIO_REQ channel, then higher ones; if no PRIO_REQ, regular arbitration
 assign select = |grant_prio ? grant_prio : (|wr_req_high ? grant_high : grant_low);
