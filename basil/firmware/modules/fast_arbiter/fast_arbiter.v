@@ -53,7 +53,7 @@ assign READ_GRANT = select & {WIDTH{READY_OUT}};
 assign WRITE_OUT = |READ_GRANT;
 
 reg [DWIDTH-1:0] data_out_reg;
-always @(*) begin : g_data_out_mux
+always @(*) begin : data_out_mux
     integer k;
 
     data_out_reg = {DWIDTH{1'b0}};  // Initialize before every change
