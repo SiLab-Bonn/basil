@@ -67,7 +67,7 @@ assign DATA_OUT = data_out_reg;
 always @(posedge CLK) begin
     if (RST)
         prev_select <= {1'b1, {(WIDTH-1){1'b0}}};
-    else if (|READ_GRANT)
+    else if (|READ_GRANT & !(|grant_prio))
         // Advance select and calculate new mask
         prev_select <= select;
 end
