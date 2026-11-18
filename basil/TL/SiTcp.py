@@ -13,6 +13,7 @@ import select
 import socket
 import struct
 from array import array
+from collections import deque
 from threading import RLock as Lock
 from threading import Thread
 from time import time
@@ -141,19 +142,22 @@ class SiTcp(SiTransferLayer):
         self._tcp_lock = Lock()
         self._tcp_readout_interval = 0.05
         self._tcp_readout_thread = None
-        self._tcp_read_buff = None
+        self._tcp_read_buff = deque()  # Received TCP chunks (bytes), oldest first. Chunks are never copied on receive
+        self._tcp_read_buff_size = 0  # Total number of bytes in _tcp_read_buff
         self.RBCP_ID = 0
 
     def reset(self):
         with self._tcp_lock:
-            self._tcp_read_buff = array("B")
+            self._tcp_read_buff = deque()
+            self._tcp_read_buff_size = 0
 
     def reset_fifo(self):
+        # Remove all complete 32-bit words, keep the incomplete last word (if any)
         with self._tcp_lock:
-            fifo_size = self._get_tcp_data_size()
-            fifo_int_size = int((fifo_size - (fifo_size % 4)) / 4)
-            del_size = fifo_int_size * 4
-            self._tcp_read_buff = self._tcp_read_buff[del_size:]
+            data = b"".join(self._tcp_read_buff)
+            tail = data[len(data) - (len(data) % 4) :]
+            self._tcp_read_buff = deque([tail]) if tail else deque()
+            self._tcp_read_buff_size = len(tail)
 
     def init(self):
         super(SiTcp, self).init()
@@ -460,23 +464,41 @@ class SiTcp(SiTransferLayer):
                 )
                 time_read = time()
                 if rlist:
-                    with self._tcp_lock:
-                        data = self._sock_tcp.recv(1024 * 8)
-                        self._tcp_read_buff.extend(array("B", data))
+                    data = self._sock_tcp.recv(1024 * 8)
+                    if data:
+                        with self._tcp_lock:  # Hold the lock only for the append (no copy, no reallocation)
+                            self._tcp_read_buff.append(data)
+                            self._tcp_read_buff_size += len(data)
             except AttributeError:
                 pass
 
     def _get_tcp_data_size(self):
         with self._tcp_lock:
-            size = len(self._tcp_read_buff)
+            size = self._tcp_read_buff_size
         return size
 
     def _get_tcp_data(self, size):
+        """Remove and return up to `size` bytes (a multiple of 4) of received TCP data as a bytearray.
+
+        Only the swap of the chunk queue happens under the lock, so the receiving thread is not blocked by the copy
+        of data. Data that is not returned (incomplete word or `size` smaller than the available data) is put back at
+        the front of the queue, so that the order is preserved.
+        """
         with self._tcp_lock:
-            ret_size = min((size, self._get_tcp_data_size()))
+            ret_size = min((size, self._tcp_read_buff_size))
             ret_size = ret_size - (ret_size % 4)  # modulo 4 bytes
-            ret = self._tcp_read_buff[:ret_size]
-            self._tcp_read_buff = self._tcp_read_buff[ret_size:]
+            if ret_size == 0:
+                return bytearray()
+            chunks = self._tcp_read_buff
+            self._tcp_read_buff = deque()
+            self._tcp_read_buff_size = 0
+        ret = bytearray().join(chunks)  # Single copy, without the lock
+        rest = len(ret) - ret_size
+        if rest > 0:
+            with self._tcp_lock:
+                self._tcp_read_buff.appendleft(bytes(ret[ret_size:]))
+                self._tcp_read_buff_size += rest
+            del ret[ret_size:]
         return ret
 
     def _send_tcp_data(self, data):
