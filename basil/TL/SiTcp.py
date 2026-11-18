@@ -464,7 +464,7 @@ class SiTcp(SiTransferLayer):
                 )
                 time_read = time()
                 if rlist:
-                    data = self._sock_tcp.recv(1024 * 8)
+                    data = self._sock_tcp.recv(1024 * 64)
                     if data:
                         with self._tcp_lock:  # Hold the lock only for the append (no copy, no reallocation)
                             self._tcp_read_buff.append(data)
